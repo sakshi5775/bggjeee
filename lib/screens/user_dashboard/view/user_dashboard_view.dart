@@ -1,0 +1,4357 @@
+import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/svg_assets.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
+import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
+import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/AnimatedChakra.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/our_services_section.dart'
+    as os;
+import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
+import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
+import 'package:astrobharataiuser/data_model/live_stream_model.dart';
+import 'package:astrobharataiuser/data_model/blog_model.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
+import 'package:astrobharataiuser/screens/courses/widgets/video_player_widget.dart';
+import 'package:astrobharataiuser/widgets/language_selector.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'dart:async';
+import 'dart:math' as math;
+
+class UserDashboardView extends BasePage<UserDashboardController> {
+  const UserDashboardView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Ensure controller is available
+    if (!Get.isRegistered<UserDashboardController>()) {
+      Get.put(UserDashboardController());
+    }
+
+    return Scaffold(
+      backgroundColor: "#F7C443".toColor(), // Background gradient base
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              "#fce5ab".toColor(), // Light yellow/cream at top (3%)
+              "#FFFCF3".toColor(), // Light cream in middle (52%)
+              "#FFFFFF".toColor(), // White at bottom (100%)
+            ],
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            stops: const [3.0, 0.52, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              // Scrollable content with pull-to-refresh
+              RefreshIndicator(
+                onRefresh: controller.refreshDashboard,
+                color: "#6F221E".toColor(),
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header with menu, logo, icons and search bar
+                      _buildHeader(context),
+
+                      // Body with curve, gradient and all content sections
+                      _buildBodyWithCurve(),
+
+                      // Bottom padding to prevent content from being hidden behind sticky banner
+                      Spacing.h(100),
+                    ],
+                  ),
+                ),
+              ),
+              // Circular button for AI Chat navigation at bottom - just above bottom nav
+              Positioned(
+                right: 1.w,
+                bottom: 60
+                    .h, // Position just above bottom nav (60h nav + 20h spacing)
+                child: _buildCircularChatButton(),
+              ),
+              // Floating action buttons row
+              Positioned(
+                left: 16.w,
+                right: 16.w,
+                bottom: 6.h,
+                child: _buildAstrologerActionsRow(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      child: Stack(
+        children: [
+          // Animated fullchakra background - positioned in header background
+          Positioned(
+            right: -20.w,
+            top: -15.h,
+            child: AnimatedChakra(
+              child: SvgAssets(
+                path: 'assets/app/fullchakra.svg',
+                width: 200.w,
+                height: 200.h,
+              ),
+            ),
+          ),
+          // Header content
+          Column(
+            children: [
+              // Top section with menu, logo and icons
+              Container(
+                height: 80.h,
+                padding: AppPaddings.symmetric(h: 16, v: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        // Menu icon
+                        IconButton(
+                          onPressed: () {
+                            final scaffoldState = context
+                                .findAncestorStateOfType<ScaffoldState>();
+                            scaffoldState?.openDrawer();
+                          },
+                          icon: Icon(
+                            Icons.menu,
+                            size: 24.w,
+                            color: "#6F221E".toColor(),
+                          ),
+                        ),
+                        Spacing.w(8),
+                        // Logo placed near drawer
+                        SvgAssets(
+                          path: 'assets/app/AstrobharatAi .svg',
+                          width: 120.w,
+                          height: 30.h,
+                        ),
+                      ],
+                    ),
+                    // Wallet, Language and Cart icons
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Get.toNamed(AppRoutes.wallet);
+                          },
+                          icon: Icon(
+                            Icons.account_balance_wallet,
+                            size: 24.w,
+                            color: "#6F221E".toColor(),
+                          ),
+                        ),
+                        // Language selector
+                        LanguageSelector(
+                          iconColor: "#6F221E".toColor(),
+                          iconSize: 24.w,
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Get.toNamed(AppRoutes.cart);
+                          },
+                          icon: SvgAssets(
+                            path: 'assets/app/cart.svg',
+                            width: 24.w,
+                            height: 24.h,
+                            colorFilter: ColorFilter.mode(
+                              "#6F221E".toColor(),
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              // Search Bar inside header
+              Padding(
+                padding: AppPaddings.symmetric(h: 16, v: 0),
+                child: _buildSearchBar(context),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchBar(BuildContext context) {
+    return Obx(() {
+      final controller = Get.find<UserDashboardController>();
+      final hasQuery = controller.searchQuery.value.isNotEmpty;
+
+      return Container(
+        margin: EdgeInsets.only(bottom: 16.h),
+        padding: AppPaddings.symmetric(h: 13, v: 12),
+        decoration: BoxDecoration(
+          color: "#FFFFFF".toColor(),
+          borderRadius: BorderRadius.circular(100.r),
+          border: Border.all(
+            color: controller.isListening.value
+                ? "#FF6B35".toColor()
+                : "#FFFFFF".toColor().withOpacity(0.2),
+            width: controller.isListening.value ? 2.0 : 1.1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 14,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 10.w),
+              child: SvgAssets(
+                path: 'assets/app/search.svg',
+                width: 20.w,
+                height: 20.h,
+                colorFilter: ColorFilter.mode(
+                  "#3D0C11".toColor(),
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+            Spacing.w(10),
+            Expanded(
+              child: controller.isListening.value && hasQuery
+                  ? AutoTranslateText(
+                      controller.searchQuery.value,
+                      style: AppTypography.body1.copyWith(
+                        color: "#3D0C11".toColor(),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  : Obx(() {
+                      // Check if controller is still available and controller is not disposed
+                      try {
+                        if (!Get.isRegistered<UserDashboardController>()) {
+                          return const SizedBox.shrink();
+                        }
+
+                        // Check if controller is still valid
+                        final searchText = controller.searchController.text;
+                        final showAnimatedText =
+                            searchText.isEmpty &&
+                            !controller.isListening.value &&
+                            controller.animatedSearchText.value.isNotEmpty;
+
+                        return Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            // Actual TextField (always present for input)
+                            TextField(
+                              controller: controller.searchController,
+                              style: MyTextTheme.mediumBCN
+                                  .copyWith(
+                                    color: "#3D0C11".toColor(),
+                                    fontWeight: FontWeight.w500,
+                                  )
+                                  .merge(AppTypography.body1),
+                              decoration: InputDecoration(
+                                hintText: controller.isListening.value
+                                    ? 'Listening...'
+                                    : showAnimatedText
+                                    ? controller.animatedSearchText.value
+                                    : 'Search horoscope, kundli, tarot...',
+                                hintStyle: MyTextTheme.mediumBCN
+                                    .copyWith(
+                                      color: "#3D0C11".toColor().withOpacity(
+                                        0.5,
+                                      ),
+                                      fontWeight: FontWeight.w500,
+                                    )
+                                    .merge(AppTypography.body1),
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                focusedErrorBorder: InputBorder.none,
+                                isDense: true,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                              enabled: !controller.isListening.value,
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
+                                  controller.stopTypewriterAnimation();
+                                } else {
+                                  controller.resumeTypewriterAnimation();
+                                }
+                              },
+                              onSubmitted: (value) {
+                                if (value.trim().isNotEmpty) {
+                                  controller.processTextSearch(value);
+                                }
+                              },
+                              onTap: () {
+                                controller.stopTypewriterAnimation();
+                              },
+                            ),
+                          ],
+                        );
+                      } catch (e) {
+                        // Controller disposed, return empty widget
+                        return const SizedBox.shrink();
+                      }
+                    }),
+            ),
+            Spacing.w(8),
+            GestureDetector(
+              onTap: () => controller.toggleVoiceSearch(),
+              child: Obx(
+                () => Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: controller.isListening.value
+                        ? "#FF6B35".toColor().withOpacity(0.1)
+                        : Colors.transparent,
+                    shape: BoxShape.circle,
+                  ),
+                  child: SvgAssets(
+                    path: 'assets/app/mic.svg',
+                    width: 28.w,
+                    height: 28.h,
+                    colorFilter: ColorFilter.mode(
+                      controller.isListening.value
+                          ? "#FF6B35".toColor()
+                          : "#AAAAAA".toColor(),
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildBodyWithCurve() {
+    return Container(
+      decoration: BoxDecoration(
+        color: "#fef3d7".toColor(), // Solid color for curved container
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(61.r), // 61px from Figma
+          topRight: Radius.circular(0),
+          bottomLeft: Radius.circular(0),
+          bottomRight: Radius.circular(0),
+        ),
+        border: Border(top: BorderSide(color: "#DBCCA8".toColor(), width: 2)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.35),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.only(top: 20.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            os.OurServicesSection(),
+            Spacing.h(24),
+            // Horoscope Card with overlapping image
+            Padding(
+              // Minimal padding; overlap handled inside the card
+              padding: EdgeInsets.only(
+                top: 30.h,
+                left: 16.w,
+                right: 16.w,
+                bottom: 0,
+              ),
+              child: StreamBuilder<int>(
+                stream: Stream<int>.periodic(
+                  const Duration(seconds: 4),
+                  (c) => c,
+                ),
+                builder: (context, snapshot) {
+                  final cards = [
+                    {
+                      'title': 'Your Horoscope',
+                      'desc':
+                          '"Today emphasizes the importance of clarity and calm communication rather than rushing into conflict or reaction. You may f your words carefully."',
+                      'asset': AppConstant.horoscopeGuru,
+                      'type': 'horoscope',
+                    },
+                    {
+                      'title': 'Need a Consultation?',
+                      'buttonText': 'FREE SESSION',
+                      'asset': 'assets/app/ganeshji.png',
+                      'type': 'consultation',
+                      'bgColor': '#fff0dd', // Light peach/cream
+                    },
+                    {
+                      'title': 'Get Palm Reading',
+                      'buttonText': 'FREE SESSION',
+                      'asset': 'assets/app/palmReadingCard.png',
+                      'type': 'consultation',
+                      'bgColor': '#f1d2a4', // Light beige/cream
+                    },
+                    {
+                      'title': 'Ready To Know All About Your Kundli',
+                      'buttonText': 'FREE SESSION',
+                      'asset': 'assets/app/kundlicard.png',
+                      'type': 'consultation',
+                      'bgColor': '#fdd8a1', // Light orange-yellow
+                    },
+                    {
+                      'title': 'Get to know near by pooja',
+                      'buttonText': 'LETS SEARCH',
+                      'asset': 'assets/app/nearbypooja.png',
+                      'type': 'consultation',
+                      'bgColor': '#fee6cc', // Light peach/pale orange
+                    },
+                  ];
+                  final idx = (snapshot.data ?? 0) % cards.length;
+                  final card = cards[idx];
+                  // Fixed height wrapper prevents up/down jump when cards swap
+                  return SizedBox(
+                    height: 185.h, // match tallest card height
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 500),
+                        transitionBuilder: (child, anim) =>
+                            FadeTransition(opacity: anim, child: child),
+                        child: card['type'] == 'horoscope'
+                            ? _buildHoroscopeCard(card, idx)
+                            : _buildConsultationCard(card, idx),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            Spacing.h(24),
+
+            // Our Services Section (First - Square Cards)
+            _buildLiveAstrologersSection(),
+            Spacing.h(24),
+
+            // Our Services Section (Second - Pill-shaped buttons)
+            _buildOurServicesPillSection(),
+
+            Spacing.h(24),
+
+            // Talk to AI Astrologer Card
+            _buildTalkToAIAstrologerCard(),
+
+            Spacing.h(24),
+
+            // Quote of the Day Section
+            _buildQuoteOfTheDaySection(),
+
+            Spacing.h(24),
+
+            // Kundli Matching Promotional Card
+            _buildKundliMatchingCard(),
+
+            Spacing.h(24),
+
+            // Live Pooja in Temples Section
+            _buildLivePoojaSection(),
+
+            Spacing.h(24),
+
+            // Sacred Mandirs of Bharat Section
+            _buildSacredMandirsSection(),
+
+            Spacing.h(24),
+
+            // Astro Remedy Section
+            _buildAstroRemedySection(),
+
+            Spacing.h(24),
+
+            // AI Astrologers Section
+            _buildAIAstrologersSection(),
+
+            Spacing.h(24),
+
+            // Join Live Webinar Section
+            _buildJoinLiveWebinarSection(),
+
+            Spacing.h(24),
+
+            // Prashna Kundli Astrologers Section
+            _buildPrashnaKundliSection(),
+
+            Spacing.h(24),
+
+            // Blog Section
+            _buildBlogSection(),
+
+            Spacing.h(24),
+
+            // Features Section (scrollable with close button)
+            _buildFeaturesSection(),
+
+            Spacing.h(24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOurServicesPillSection() {
+    return Padding(
+      padding: AppPaddings.symmetric(h: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              AutoTranslateText(
+                'OUR SERVICES',
+                style: AppTypography.h2.copyWith(
+                  color: "#6F221E".toColor(),
+                  letterSpacing: -0.05,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Get.to(() => const ComingSoonPage());
+                },
+                child: AutoTranslateText(
+                  'View All',
+                  style: AppTypography.body1.copyWith(
+                    color: "#6F221E".toColor(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Spacing.h(16),
+          // Service cards in 2x2 grid
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: _buildPillServiceCard(
+                  'Digital Ecommerce',
+                  'assets/app/divine_shop.png',
+                  onTap: () {
+                    Get.offNamed('/user-shop', id: 1);
+                  },
+                ),
+              ),
+              Spacing.w(10),
+              Expanded(
+                child: _buildPillServiceCard(
+                  'Digital Pooja',
+                  'assets/app/e_pooja.png',
+                  onTap: () {},
+                ),
+              ),
+            ],
+          ),
+          Spacing.h(10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: _buildPillServiceCard(
+                  'AI-Astrologer',
+                  'assets/app/ai_astrologer.png',
+                  onTap: () {},
+                ),
+              ),
+              Spacing.w(10),
+              Expanded(
+                child: _buildPillServiceCard(
+                  'Digital Education',
+                  'assets/app/education.png',
+                  onTap: () {
+                    Get.toNamed(AppRoutes.courses);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTalkToAIAstrologerCard() {
+    return Padding(
+      padding: AppPaddings.symmetric(h: 16),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final double availableWidth = constraints.maxWidth.isFinite
+              ? constraints.maxWidth
+              : 388.w;
+          final double cardWidth = availableWidth.clamp(0.0, 388.w).toDouble();
+          final double scale = (cardWidth / 388.w).clamp(0.78, 1.0);
+          final double cardHeight = 205.h;
+          final double imageWidth = 135.w * scale;
+          final double imageHeight = 150.h * scale;
+          final double desiredImageLeft = 228.w * scale;
+          final double desiredImageTop = 40.h * scale;
+          final double safeImageLeft = math.max(
+            0,
+            cardWidth - imageWidth - 12.w * scale,
+          );
+          final double imageLeft = math.min(desiredImageLeft, safeImageLeft);
+          final double safeImageTop = math.max(0, cardHeight - imageHeight);
+          final double imageTop = math.min(desiredImageTop, safeImageTop);
+          final double rightPadding = math.max(
+            22.w * scale,
+            cardWidth - imageLeft + 12.w * scale,
+          );
+
+          return Center(
+            child: Container(
+              width: cardWidth,
+              height: cardHeight,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF211339), Color(0xFF0C0C2B)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: AppRadius.all(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.28),
+                    blurRadius: 28,
+                    offset: const Offset(0, 16),
+                  ),
+                ],
+              ),
+              child: Stack(
+                children: [
+                  // Floating glyphs overlay for subtle depth
+                  Positioned(
+                    left: 90.w * scale,
+                    top: 62.h * scale,
+                    child: Opacity(
+                      opacity: 0.25,
+                      child: Icon(
+                        Icons.hexagon_outlined,
+                        color: const Color(0xFFA38BD7),
+                        size: 26.w * scale,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 140.w * scale,
+                    top: 28.h * scale,
+                    child: Opacity(
+                      opacity: 0.22,
+                      child: Icon(
+                        Icons.change_history,
+                        color: const Color(0xFF7D60C3),
+                        size: 20.w * scale,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 40.w * scale,
+                    bottom: 36.h * scale,
+                    child: Opacity(
+                      opacity: 0.18,
+                      child: Icon(
+                        Icons.all_inclusive,
+                        color: const Color(0xFF9A84D8),
+                        size: 24.w * scale,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 22.w * scale,
+                      right: rightPadding,
+                      top: 18.h * scale,
+                      bottom: 13.5.h * scale,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: cardWidth - rightPadding - 4.w,
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12.w * scale,
+                                vertical: 6.h * scale,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0x2600BC7D),
+                                borderRadius: AppRadius.all(30),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 8.w * scale,
+                                    height: 8.w * scale,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Color(0xFF00BC7D),
+                                    ),
+                                  ),
+                                  Spacing.w(6 * scale),
+                                  AutoTranslateText(
+                                    '50+ AI Astrologers LIVE',
+                                    style: AppTypography.body2.copyWith(
+                                      color: const Color(0xFF5EE9B5),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Spacing.h(12 * scale),
+                        AutoTranslateText(
+                          'Talk to AI \nAstrologer',
+                          style: AppTypography.h1.copyWith(
+                            color: Colors.white,
+                            height: 1.08,
+                          ),
+                        ),
+                        Spacing.h(12 * scale),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              AutoTranslateText(
+                                'Instant answers',
+                                style: MyTextTheme.mediumBCN
+                                    .copyWith(
+                                      color: const Color(0xFFD7D0E6),
+                                      fontFamily: 'Poppins',
+                                    )
+                                    .merge(AppTypography.body2),
+                              ),
+                              Spacing.w(8 * scale),
+                              Container(
+                                width: 5.w * scale,
+                                height: 5.w * scale,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color(0xFF7D60C3),
+                                ),
+                              ),
+                              Spacing.w(8 * scale),
+                              AutoTranslateText(
+                                'Accurate predictions',
+                                style: MyTextTheme.mediumBCN
+                                    .copyWith(
+                                      color: const Color(0xFFD7D0E6),
+                                      fontFamily: 'Poppins',
+                                    )
+                                    .merge(AppTypography.body2),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Spacing.h(11.5 * scale),
+                        GestureDetector(
+                          onTap: () {
+                            Get.toNamed('/ai-guider');
+                          },
+                          child: Container(
+                            height: 44.h * scale,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20.w * scale,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFFFFD33D), Color(0xFFF7C443)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: AppRadius.all(30),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(
+                                    0xFFFFD33D,
+                                  ).withOpacity(0.45),
+                                  blurRadius: 22,
+                                  offset: const Offset(0, 12),
+                                ),
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.18),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  child: AutoTranslateText(
+                                    'Start Free Chat',
+                                    style: MyTextTheme.mediumBCB
+                                        .copyWith(
+                                          color: "#222222".toColor(),
+                                          fontWeight: FontWeight.w600,
+                                          fontFamily: 'Poppins',
+                                        )
+                                        .merge(AppTypography.body1),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Spacing.w(10 * scale),
+                                Icon(
+                                  Icons.arrow_forward,
+                                  color: "#222222".toColor(),
+                                  size: 18.w * scale,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    left: imageLeft,
+                    top: imageTop,
+                    child: Container(
+                      padding: EdgeInsets.all(2.w * scale),
+                      child: ClipRRect(
+                        borderRadius: AppRadius.all(12),
+                        child: Image.asset(
+                          'assets/app/talktoaiastrologer.png',
+                          width: imageWidth,
+                          height: imageHeight,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: imageWidth,
+                              height: imageHeight,
+                              color: Colors.white.withOpacity(0.06),
+                              child: Icon(
+                                Icons.image_not_supported_outlined,
+                                color: Colors.white.withOpacity(0.6),
+                                size: 28.w,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildHoroscopeCard(Map<String, dynamic> card, int index) {
+    // Responsive dimensions - all using .w, .h, .r for proper scaling
+    final double cardHeight = 185.h; // Match consultation card height
+    final double guruImageWidth = 160.w; // Responsive width
+    final double guruImageHeight =
+        320.h; // Increased for stronger top overlap per Figma
+    // Bottom flush with card: offset = cardHeight - guruHeight (negative -> head overlaps)
+    final double guruTopOffset = cardHeight - guruImageHeight;
+
+    return Container(
+      key: ValueKey('horoscope_$index'),
+      width: double.infinity, // Full width minus parent padding - responsive
+      height: cardHeight, // Match consultation card height (185.h)
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            "#FFEDB4".toColor(), // Light cream from reference
+            "#FFFFFF".toColor(), // White from reference
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12.r), // Responsive border radius
+        boxShadow: [
+          BoxShadow(
+            color: "#E75426".toColor().withOpacity(0.2),
+            blurRadius: 38.1,
+            offset: const Offset(0, -1),
+          ),
+          BoxShadow(
+            color: "#DC3E3E".toColor().withOpacity(0.2),
+            blurRadius: 10.9,
+            offset: const Offset(-6, -2),
+          ),
+          BoxShadow(
+            color: "#E03419".toColor().withOpacity(0.1),
+            blurRadius: 0,
+            offset: const Offset(0, 0),
+          ),
+        ],
+      ),
+      child: Stack(
+        clipBehavior: Clip.none, // Allow image to extend above card
+        children: [
+          // Guru image on the left, overlapping at the top - head extends above card
+          Positioned(
+            left: 0,
+            top: guruTopOffset, // Head overlaps above card - responsive
+            child: SizedBox(
+              width: guruImageWidth, // Responsive width
+              height: guruImageHeight, // Responsive height
+              child: Image.asset(
+                card['asset'] as String,
+                fit: BoxFit.cover, // Maintain aspect ratio and fill
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey.withOpacity(0.3),
+                    child: Icon(Icons.person, color: Colors.white, size: 60.w),
+                  );
+                },
+              ),
+            ),
+          ),
+          // AutoTranslateText content on the right - positioned to fit within card
+          Positioned(
+            left: guruImageWidth + 10.w, // Image width + small gap - responsive
+            right: 16.w, // Right padding - responsive
+            top: 12.h, // Top padding - responsive
+            bottom: 12.h, // Bottom padding - responsive
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AutoTranslateText(
+                  card['title'] as String,
+                  style: MyTextTheme.mediumBCB
+                      .copyWith(
+                        color: "#6F221E".toColor(),
+                        fontWeight: FontWeight.w700,
+                        fontFamily: 'Baloo',
+                      )
+                      .merge(AppTypography.h2),
+                ),
+                SizedBox(height: 8.h), // Responsive spacing
+                Expanded(
+                  child: AutoTranslateText(
+                    card['desc'] as String,
+                    style: MyTextTheme.smallBCN
+                        .copyWith(
+                          color: "#6F6F6F".toColor(),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Poppins',
+                          height: 1.4, // Line height
+                        )
+                        .merge(AppTypography.label),
+                    textAlign: TextAlign.left,
+                    maxLines: 6, // More lines now that card is taller
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildConsultationCard(Map<String, dynamic> card, int index) {
+    final bgColor = (card['bgColor'] as String?) ?? '#FFF5E6';
+    final buttonText = card['buttonText'] as String;
+    final isLetsSearch = buttonText == 'LETS SEARCH';
+    final title = card['title'] as String;
+    final isKundliCard = title.toLowerCase().contains('kundli');
+
+    return GestureDetector(
+      onTap: () {
+        if (isKundliCard) {
+          Get.toNamed(AppRoutes.kundliForm);
+        } else if (isLetsSearch) {
+          // Handle LETS SEARCH action
+        } else {
+          // Handle other consultation cards
+        }
+      },
+      child: Container(
+        key: ValueKey('${card['title']}_$index'),
+        height: 185.h,
+        decoration: BoxDecoration(
+          color: bgColor.toColor(),
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Row(
+          children: [
+            // Left side - AutoTranslateText and Button
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 16.w,
+                  top: 14.h,
+                  bottom: 14.h,
+                  right: 8.w,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    AutoTranslateText(
+                      card['title'] as String,
+                      style: MyTextTheme.mediumBCB
+                          .copyWith(
+                            color: "#6F221E".toColor(),
+                            fontWeight: FontWeight.w700,
+                            fontFamily: 'Baloo',
+                            height: 1.2,
+                          )
+                          .merge(AppTypography.h2),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Spacing.h(10),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 18.w,
+                        vertical: 11.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: "#FFFFFF".toColor(),
+                        borderRadius: BorderRadius.circular(25.r),
+                        border: Border.all(
+                          color: "#FF8C42".toColor().withOpacity(0.5),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: isLetsSearch
+                          ? Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                AutoTranslateText(
+                                  'LETS',
+                                  style: MyTextTheme.mediumBCB
+                                      .copyWith(
+                                        color: "#9B2D87"
+                                            .toColor(), // Reddish-purple
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Baloo',
+                                      )
+                                      .merge(AppTypography.body1),
+                                ),
+                                AutoTranslateText(
+                                  ' SEARCH',
+                                  style: MyTextTheme.mediumBCB
+                                      .copyWith(
+                                        color: "#FF8C42".toColor(), // Orange
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Baloo',
+                                      )
+                                      .merge(AppTypography.body1),
+                                ),
+                              ],
+                            )
+                          : AutoTranslateText(
+                              buttonText,
+                              style: MyTextTheme.mediumBCB
+                                  .copyWith(
+                                    color: "#6F221E".toColor(),
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Baloo',
+                                  )
+                                  .merge(AppTypography.body1),
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Right side - Image
+            Container(
+              width: 140.w,
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(12.r),
+                  bottomRight: Radius.circular(12.r),
+                ),
+                child: Image.asset(
+                  card['asset'] as String,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey.withOpacity(0.3),
+                      child: Icon(Icons.image, color: Colors.white, size: 60.w),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPillServiceCard(
+    String label,
+    String iconPath, {
+    VoidCallback? onTap,
+  }) {
+    // Use AutoTranslateText for the label to enable translation
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 60.34.h,
+        padding: EdgeInsets.only(
+          left: 4.02.w,
+          right: 16.09.w,
+          top: 4.02.h,
+          bottom: 4.02.h,
+        ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              "#F38B3B".toColor(), // 3rd-orange from Figma
+              "#DD2914".toColor(), // Orange gradient end
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(80.45.r),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Circular image with white border
+            Container(
+              width: 52.3.w,
+              height: 52.3.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: "#FFFFFF".toColor(), width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 16.98,
+                    offset: const Offset(0, 2.72),
+                  ),
+                ],
+              ),
+              child: ClipOval(
+                child: Image.asset(
+                  iconPath,
+                  width: 52.3.w,
+                  height: 52.3.h,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 52.3.w,
+                      height: 52.3.h,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.2),
+                      ),
+                      child: Icon(Icons.error, size: 24.w, color: Colors.white),
+                    );
+                  },
+                ),
+              ),
+            ),
+            Spacing.w(10),
+            Expanded(
+              child: AutoTranslateText(
+                label,
+                style: MyTextTheme.smallBCN
+                    .copyWith(
+                      color: "#FFFFFF".toColor(),
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Baloo Bhai 2',
+                      height: 1.1,
+                    )
+                    .merge(AppTypography.body2),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLiveAstrologersSection() {
+    return Obx(() {
+      if (controller.isLoadingLiveStreams.value &&
+          controller.liveStreams.isEmpty) {
+        return Padding(
+          padding: AppPaddings.symmetric(h: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AutoTranslateText(
+                    'LIVE ASTROLOGERS',
+                    style: MyTextTheme.largeBCB
+                        .copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Baloo',
+                          letterSpacing: -0.05,
+                          height: 1.2999999788072374,
+                        )
+                        .merge(AppTypography.h2),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      debugPrint(
+                        'View All button tapped - navigating to live astrologers',
+                      );
+                      Get.toNamed(AppRoutes.liveAstrologers);
+                    },
+                    borderRadius: BorderRadius.circular(4.r),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 4.h,
+                      ),
+                      child: AutoTranslateText(
+                        'View All',
+                        style: MyTextTheme.mediumBCN
+                            .copyWith(
+                              color: "#6F221E".toColor(),
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Poppins',
+                              height: 1.5,
+                            )
+                            .merge(AppTypography.body1),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Spacing.h(16),
+              SizedBox(
+                height: 85.h,
+                child: Center(
+                  child: CircularProgressIndicator(color: "#6F221E".toColor()),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
+      if (controller.liveStreams.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return Padding(
+        padding: AppPaddings.symmetric(h: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AutoTranslateText(
+                  'LIVE ASTROLOGERS',
+                  style: MyTextTheme.largeBCB
+                      .copyWith(
+                        color: "#6F221E".toColor(),
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Baloo',
+                        letterSpacing: -0.05,
+                        height: 1.2999999788072374,
+                      )
+                      .merge(AppTypography.h2),
+                ),
+                InkWell(
+                  onTap: () {
+                    debugPrint(
+                      'View All button tapped - navigating to live astrologers',
+                    );
+                    Get.toNamed(AppRoutes.liveAstrologers);
+                  },
+                  borderRadius: BorderRadius.circular(4.r),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 4.h,
+                    ),
+                    child: AutoTranslateText(
+                      'View All',
+                      style: MyTextTheme.mediumBCN
+                          .copyWith(
+                            color: "#6F221E".toColor(),
+                            fontWeight: FontWeight.w400,
+                            fontFamily: 'Poppins',
+                            height: 1.5,
+                          )
+                          .merge(AppTypography.body1),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Spacing.h(16),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: controller.liveStreams.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final stream = entry.value;
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      right: index < controller.liveStreams.length - 1
+                          ? 12.w
+                          : 0,
+                    ),
+                    child: _buildAstrologerAvatar(stream),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildAstrologerAvatar(LiveStreamModel stream) {
+    final controller = Get.find<UserDashboardController>();
+    final profilePicture = controller.getProfilePictureForAstrologer(
+      stream.astrologerId,
+    );
+    final astrologerName = controller.getAstrologerName(stream.astrologerId);
+
+    return GestureDetector(
+      onTap: () {
+        Get.to(
+          () => LiveStreamView(
+            stream: stream,
+            astrologerName: astrologerName,
+            astrologerProfilePicture: profilePicture,
+          ),
+        );
+      },
+      child: Container(
+        width: 85.w,
+        height: 85.h,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: "#08A44F".toColor(), // Green
+            width: 3,
+          ),
+        ),
+        child: Stack(
+          children: [
+            ClipOval(
+              child: profilePicture != null && profilePicture.isNotEmpty
+                  ? NetworkImageWithLoader(
+                      url: profilePicture,
+                      width: 85.w,
+                      height: 85.h,
+                      isCircular: true,
+                    )
+                  : Image.asset(
+                      'assets/app/astrology.png',
+                      width: 85.w,
+                      height: 85.h,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xFFE0E0E0),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+            // Online indicator
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                width: 16.w,
+                height: 16.h,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: "#08A44F".toColor(),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildKundliMatchingCard() {
+    final Color bg = const Color(0xFFF6C55B);
+    final Color primaryText = const Color(0xFF7A1C32);
+    final Color accentText = const Color(0xFFD14F2F);
+    return Container(
+      margin: AppPaddings.symmetric(h: 16),
+      padding: AppPaddings.all(20),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: AppRadius.all(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.18),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.favorite_border, color: primaryText, size: 18.w),
+              Spacing.w(8),
+              Expanded(
+                child: AutoTranslateText(
+                  'Marriage Compatibility',
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    color: primaryText,
+                    fontWeight: FontWeight.w200,
+                    fontFamily: 'Poppins',
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Spacing.w(10),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFF7893D), Color(0xFFF2552A)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: AppRadius.all(18),
+                ),
+                child: AutoTranslateText(
+                  'New ✨',
+                  style: MyTextTheme.smallBCN
+                      .copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Poppins',
+                      )
+                      .merge(AppTypography.label),
+                ),
+              ),
+            ],
+          ),
+          Spacing.h(16),
+          AutoTranslateText(
+            'Kundali Matching',
+            style: MyTextTheme.largeBCB
+                .copyWith(
+                  color: primaryText,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Baloo',
+                  height: 1.2,
+                )
+                .merge(AppTypography.h3),
+          ),
+          Spacing.h(7),
+          AutoTranslateText(
+            'Find your perfect match with 36 Gun Milan analysis and AI-powered compatibility insights.',
+            style: MyTextTheme.mediumBCB
+                .copyWith(
+                  color: accentText,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins',
+                  height: 1.35,
+                )
+                .merge(AppTypography.body1),
+          ),
+          Spacing.h(7),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildBulletPoint(
+                      '36 Gun Milan Score',
+                      color: primaryText,
+                      size: 14.sp,
+                    ),
+                    Spacing.h(10),
+                    _buildBulletPoint(
+                      'Manglik Dosha Check',
+                      color: primaryText,
+                      size: 14.sp,
+                    ),
+                    Spacing.h(10),
+                    _buildBulletPoint(
+                      'AI Relationship Insights',
+                      color: primaryText,
+                      size: 14.sp,
+                    ),
+                  ],
+                ),
+              ),
+              Spacing.w(12),
+              AutoTranslateText(
+                '👩‍❤️‍👨',
+                style: AppTypography.h1, // Emoji uses h1 for large size
+              ),
+            ],
+          ),
+          Spacing.h(10),
+          Container(
+            width: double.infinity,
+            height: 46.h,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF6B0F25), Color(0xFF5A0D1F)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(26.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.18),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Center(
+              child: AutoTranslateText(
+                'Check Compatibility Now',
+                style: MyTextTheme.mediumBCB
+                    .copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Poppins',
+                    )
+                    .merge(AppTypography.body1),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBulletPoint(
+    String text, {
+    Color color = Colors.white,
+    double? size,
+  }) {
+    return Row(
+      children: [
+        Container(
+          width: 6.w,
+          height: 6.h,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+        ),
+        Spacing.w(8),
+        AutoTranslateText(
+          text,
+          style: MyTextTheme.smallBCN.copyWith(
+            color: color,
+            fontSize: size ?? 12.sp,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLivePoojaSection() {
+    return Padding(
+      padding: AppPaddings.symmetric(h: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              AutoTranslateText(
+                'LIVE POOJA IN TEMPLES',
+                style: MyTextTheme.largeBCB
+                    .copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Baloo',
+                      letterSpacing: -0.05,
+                    )
+                    .merge(AppTypography.h2),
+              ),
+              AutoTranslateText(
+                'View All',
+                style: MyTextTheme.mediumBCN
+                    .copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Poppins',
+                    )
+                    .merge(AppTypography.body1),
+              ),
+            ],
+          ),
+          Spacing.h(16),
+          SizedBox(
+            height: 320.h,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.zero,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return _buildPoojaCard(
+                    'Anuj Kumar',
+                    'Hawan Puja • Birthday Puja',
+                    '10:25 AM, 15th Sep',
+                    AppConstant.poojaAnuj,
+                    235.w,
+                  );
+                }
+                return _buildPoojaCard(
+                  'Abhishek Singh',
+                  'Wedding Puja • Rituals',
+                  '10:25 AM, 15th Sep',
+                  AppConstant.poojaAbhishek,
+                  207.19.w,
+                );
+              },
+              separatorBuilder: (_, __) => Spacing.w(24),
+              itemCount: 2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPoojaCard(
+    String name,
+    String type,
+    String time,
+    String imagePath,
+    double width,
+  ) {
+    final List<String> parts = type.split(' • ');
+    final String primaryType = parts.isNotEmpty ? parts[0] : '';
+    final String secondaryType = parts.length > 1 ? parts[1] : '';
+    final Color titleColor = "#5B2A2A".toColor();
+    final Color subtitleColor = const Color(0xFF6E6E6E);
+    final double cardRadius = 6.r;
+    final double imageRadius = 10.r;
+    final double imageHeight = 190.h;
+
+    return Container(
+      width: width,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(cardRadius),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.16),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image section
+          Padding(
+            padding: EdgeInsets.all(12.w),
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(imageRadius),
+                  child: Image.asset(
+                    imagePath,
+                    width: width - 24.w,
+                    height: imageHeight,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: width - 24.w,
+                        height: imageHeight,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(imageRadius),
+                          color: "#CCCCCC".toColor(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Positioned(
+                  top: 12.h,
+                  right: 12.w,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 14.w,
+                      vertical: 7.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFD7D7D7),
+                      borderRadius: BorderRadius.circular(18.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.10),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: AutoTranslateText(
+                      time,
+                      style: MyTextTheme.mediumBCN
+                          .copyWith(
+                            color: "#6F221E".toColor(),
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Poppins',
+                          )
+                          .merge(AppTypography.body2),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Details section
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name
+                AutoTranslateText(
+                  name,
+                  style: MyTextTheme.mediumBCB
+                      .copyWith(
+                        color: titleColor,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: 'Baloo',
+                        height: 1.3,
+                      )
+                      .merge(AppTypography.h2),
+                ),
+                Spacing.h(8),
+                // Pooja types
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: AutoTranslateText(
+                        primaryType,
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: subtitleColor,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Poppins',
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (secondaryType.isNotEmpty) ...[
+                      Container(
+                        width: 5.w,
+                        height: 5.h,
+                        margin: EdgeInsets.symmetric(horizontal: 6.w),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: subtitleColor,
+                        ),
+                      ),
+                      Flexible(
+                        child: AutoTranslateText(
+                          secondaryType,
+                          style: MyTextTheme.mediumBCN.copyWith(
+                            color: subtitleColor,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'Poppins',
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAstroRemedySection() {
+    return Padding(
+      padding: AppPaddings.symmetric(h: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              AutoTranslateText(
+                'ASTRO REMEDY',
+                style: MyTextTheme.largeBCB
+                    .copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Baloo',
+                      letterSpacing: -0.05,
+                    )
+                    .merge(AppTypography.h2),
+              ),
+              AutoTranslateText(
+                'View All',
+                style: MyTextTheme.mediumBCN
+                    .copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Poppins',
+                    )
+                    .merge(AppTypography.body1),
+              ),
+            ],
+          ),
+          Spacing.h(16),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildRemedyCard(
+                  'Chanting Mala',
+                  AppConstant.chantingMala,
+                  150.w,
+                ),
+                Spacing.w(12),
+                _buildRemedyCard(
+                  'Astro-Rudraksha',
+                  AppConstant.rudraksha,
+                  150.w,
+                ),
+                Spacing.w(12),
+                _buildRemedyCard(
+                  'Gemstone Consultation',
+                  AppConstant.gemstone,
+                  150.w,
+                ),
+                Spacing.w(12),
+                _buildRemedyCard('E-Pooja', AppConstant.ePoojaRemedy, 150.w),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBlogSection() {
+    return Padding(
+      padding: AppPaddings.symmetric(h: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              AutoTranslateText(
+                'BLOGS AND NEWS',
+                style: MyTextTheme.largeBCB
+                    .copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Baloo',
+                      letterSpacing: -0.05,
+                      height: 1.5740000406901042,
+                    )
+                    .merge(AppTypography.h2),
+              ),
+              InkWell(
+                onTap: () => Get.toNamed(AppRoutes.allBlogs),
+                child: AutoTranslateText(
+                  'View All',
+                  style: MyTextTheme.mediumBCN
+                      .copyWith(
+                        color: "#6F221E".toColor(),
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Poppins',
+                        height: 1.5,
+                      )
+                      .merge(AppTypography.body1),
+                ),
+              ),
+            ],
+          ),
+          Spacing.h(16),
+          Obx(() {
+            if (controller.isLoadingBlogs.value && controller.blogs.isEmpty) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+
+            if (controller.blogs.isEmpty) {
+              return const SizedBox.shrink();
+            }
+
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: controller.blogs.asMap().entries.map((entry) {
+                  final blog = entry.value;
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      right: entry.key < controller.blogs.length - 1 ? 8.w : 0,
+                    ),
+                    child: _buildBlogCardFromModel(blog, 168.42.w),
+                  );
+                }).toList(),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBlogCard(
+    String title,
+    String duration,
+    String imagePath,
+    double width,
+  ) {
+    return Container(
+      width: width,
+      decoration: BoxDecoration(
+        color: "#FFFFFF".toColor().withOpacity(0.8),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: "#E3B341".toColor().withOpacity(0.1),
+          width: 0.53,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image
+          ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.r),
+              topRight: Radius.circular(16.r),
+            ),
+            child: Image.asset(
+              imagePath,
+              width: width,
+              height: 96.h,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: width,
+                  height: 96.h,
+                  color: Colors.grey.withOpacity(0.3),
+                  child: Icon(Icons.image, size: 40.w),
+                );
+              },
+            ),
+          ),
+          // Content
+          Padding(
+            padding: EdgeInsets.all(11.99.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AutoTranslateText(
+                  title,
+                  style: MyTextTheme.smallBCB.copyWith(
+                    color: "#DFB343".toColor(),
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Baloo Bhai 2',
+                    height: 1.25,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Spacing.h(3.99),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      size: 11.99.w,
+                      color: "#F38B3B".toColor(),
+                    ),
+                    Spacing.w(3.99),
+                    AutoTranslateText(
+                      duration,
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: "#F38B3B".toColor(),
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Poppins',
+                        height: 1.33,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBlogCardFromModel(Blog blog, double width) {
+    final isVideo = _isVideoUrl(blog.featuredImage ?? '');
+    return GestureDetector(
+      onTap: () => Get.toNamed(AppRoutes.blogDetail, arguments: blog),
+      child: Container(
+        width: width,
+        decoration: BoxDecoration(
+          color: "#FFFFFF".toColor().withOpacity(0.8),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: "#E3B341".toColor().withOpacity(0.1),
+            width: 0.53,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 6,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image or Video
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16.r),
+                topRight: Radius.circular(16.r),
+              ),
+              child: Container(
+                width: width,
+                height: 96.h,
+                color: Colors.black,
+                child:
+                    isVideo &&
+                        blog.featuredImage != null &&
+                        blog.featuredImage!.isNotEmpty
+                    ? Stack(
+                        children: [
+                          ClipRect(
+                            child: OverflowBox(
+                              maxWidth: width,
+                              maxHeight: 96.h,
+                              alignment: Alignment.center,
+                              child: AspectRatio(
+                                aspectRatio: 16 / 9,
+                                child: VideoPlayerWidget(
+                                  videoUrl: blog.featuredImage!,
+                                  autoPlay: false,
+                                  showControls: false,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Center(
+                            child: Container(
+                              padding: EdgeInsets.all(8.w),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.play_circle_filled,
+                                color: Colors.white,
+                                size: 32.w,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : blog.featuredImage != null &&
+                          blog.featuredImage!.isNotEmpty
+                    ? NetworkImageWithLoader(
+                        url: blog.featuredImage!,
+                        width: width,
+                        height: 96.h,
+                      )
+                    : Icon(Icons.image, size: 40.w, color: Colors.grey),
+              ),
+            ),
+            // Content
+            Padding(
+              padding: EdgeInsets.all(11.99.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AutoTranslateText(
+                    blog.title ?? 'Untitled',
+                    style: MyTextTheme.smallBCB.copyWith(
+                      color: "#DFB343".toColor(),
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Baloo Bhai 2',
+                      height: 1.25,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Spacing.h(3.99),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time,
+                        size: 11.99.w,
+                        color: "#F38B3B".toColor(),
+                      ),
+                      Spacing.w(3.99),
+                      AutoTranslateText(
+                        '${blog.readingTime ?? 0} min',
+                        style: MyTextTheme.smallBCN.copyWith(
+                          color: "#F38B3B".toColor(),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Poppins',
+                          height: 1.33,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  bool _isVideoUrl(String url) {
+    if (url.isEmpty) return false;
+    final lowerUrl = url.toLowerCase();
+    return lowerUrl.endsWith('.mp4') ||
+        lowerUrl.endsWith('.mov') ||
+        lowerUrl.endsWith('.avi') ||
+        lowerUrl.endsWith('.mkv') ||
+        lowerUrl.endsWith('.webm') ||
+        lowerUrl.contains('/video/') ||
+        lowerUrl.contains('video');
+  }
+
+  Widget _buildRemedyCard(String label, String imagePath, double width) {
+    return Container(
+      width: width,
+      height: 150.h,
+      decoration: BoxDecoration(
+        color: "#E9F6FE".toColor(),
+        borderRadius: BorderRadius.circular(15.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.14),
+            blurRadius: 18.93,
+            offset: const Offset(3.15, 3.15),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // Background image
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15.r),
+            child: Image.asset(
+              imagePath,
+              width: width,
+              height: 150.h,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: width,
+                  height: 150.h,
+                  color: "#E9F6FE".toColor(),
+                  child: Icon(Icons.image, size: 40.w, color: Colors.grey),
+                );
+              },
+            ),
+          ),
+          // Gradient overlay at bottom
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 50.h,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(15.r),
+                  bottomRight: Radius.circular(15.r),
+                ),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    "#6F221E".toColor().withOpacity(0.6),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // Label at bottom
+          Positioned(
+            bottom: 4.h,
+            left: 4.w,
+            right: 4.w,
+            child: AutoTranslateText(
+              label,
+              style: MyTextTheme.smallBCN
+                  .copyWith(
+                    color: "#FFFFFF".toColor(),
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Poppins',
+                    letterSpacing: -0.04,
+                    height: 1.5,
+                  )
+                  .merge(AppTypography.body2),
+              textAlign: TextAlign.left,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPrashnaKundliSection() {
+    return Padding(
+      padding: AppPaddings.symmetric(h: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: AutoTranslateText(
+                  'PRASHNA KUNDLI ASTROLOGERS',
+                  style: MyTextTheme.largeBCB
+                      .copyWith(
+                        color: "#6F221E".toColor(),
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Baloo',
+                        letterSpacing: -0.05,
+                        height: 1.5740000406901042,
+                      )
+                      .merge(AppTypography.h2),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Spacing.w(8),
+              AutoTranslateText(
+                'View All',
+                style: MyTextTheme.mediumBCN
+                    .copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Poppins',
+                      height: 1.5,
+                    )
+                    .merge(AppTypography.body1),
+              ),
+            ],
+          ),
+          Spacing.h(16),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildAstrologerCard(
+                  'Anuj Kumar',
+                  'Experience: 5 years',
+                  'Hindi/English',
+                  '₹ 30/Min',
+                  AppConstant.astrologerAnuj,
+                ),
+                Spacing.w(12),
+                _buildAstrologerCard(
+                  'Shashi Sharma',
+                  'Experience: 15 years',
+                  'Hindi/English',
+                  '₹ 100/Min',
+                  AppConstant.astrologerShashi,
+                ),
+                Spacing.w(12),
+                _buildAstrologerCard(
+                  'Prakhar Singh',
+                  'Experience: 7 years',
+                  'Hindi/English',
+                  '₹ 45/Min',
+                  AppConstant.astrologerPrakhar,
+                ),
+                Spacing.w(12),
+                _buildAstrologerCard(
+                  'Ritik Yadav',
+                  'Experience: 4 years',
+                  'Hindi/English',
+                  '₹ 25/Min',
+                  AppConstant.astrologerRitik,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAstrologerCard(
+    String name,
+    String experience,
+    String languages,
+    String price,
+    String imagePath,
+  ) {
+    return Container(
+      width: 163.25.w,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(6.31.r),
+        color: "#FFFFFF".toColor(),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.14),
+            blurRadius: 18.93,
+            offset: const Offset(3.15, 3.15),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image section
+          Padding(
+            padding: EdgeInsets.all(9.08.w),
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4.73.r),
+                  child: Image.asset(
+                    imagePath,
+                    width: double.infinity,
+                    height: 145.24.h,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: double.infinity,
+                        height: 180.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          color: const Color(0xFFCCCCCC),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                // Available badge overlay in top-left
+                Positioned(
+                  top: 8.h,
+                  left: 8.w,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 6.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: "#08A44F".toColor(),
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: AutoTranslateText(
+                      'Available',
+                      style: MyTextTheme.smallBCN
+                          .copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          )
+                          .merge(AppTypography.label),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Details section with white background
+          Padding(
+            padding: EdgeInsets.all(12.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name in dark brown, bold
+                AutoTranslateText(
+                  name,
+                  style: MyTextTheme.smallBCB
+                      .copyWith(
+                        color: "#6F221E".toColor(),
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.body1),
+                ),
+                Spacing.h(4),
+                // Experience in lighter gray
+                AutoTranslateText(
+                  experience,
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: const Color(0xFF666666),
+                  ),
+                ),
+                Spacing.h(2),
+                // Languages in lighter gray
+                AutoTranslateText(
+                  languages,
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: const Color(0xFF666666),
+                  ),
+                ),
+                Spacing.h(4),
+                // Price in dark brown
+                AutoTranslateText(
+                  price,
+                  style: MyTextTheme.mediumBCB
+                      .copyWith(
+                        color: "#6F221E".toColor(),
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.body2),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeaturesSection() {
+    return Obx(() {
+      final showBanner = controller.showConsultationBanner.value;
+      if (!showBanner) return const SizedBox.shrink();
+
+      return Padding(
+        padding: AppPaddings.symmetric(h: 16),
+        child: Container(
+          padding: AppPaddings.all(20),
+          decoration: BoxDecoration(
+            color: "#FFF8F0".toColor(), // Light yellow/cream
+            borderRadius: AppRadius.all(12),
+          ),
+          child: Stack(
+            children: [
+              // Features Row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildFeatureItem(
+                    icon: Icons.lock,
+                    label: 'Private & Confidential',
+                  ),
+                  _buildFeatureItem(
+                    icon: Icons.verified_user,
+                    label: 'Verified Astrologers',
+                  ),
+                  _buildFeatureItem(
+                    icon: Icons.payment,
+                    label: 'Secure Payments',
+                  ),
+                ],
+              ),
+              // Close button positioned at top right
+              Positioned(
+                top: -20,
+                // right: -20,
+                child: IconButton(
+                  onPressed: () {
+                    controller.showConsultationBanner.value = false;
+                  },
+                  icon: Icon(
+                    Icons.close,
+                    color: "#6F221E".toColor(),
+                    size: 20.w,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buildFeatureItem({required IconData icon, required String label}) {
+    return Column(
+      children: [
+        Container(
+          width: 50.w,
+          height: 50.h,
+          decoration: BoxDecoration(
+            color: "#6F221E".toColor(), // Dark red
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 2),
+          ),
+          child: Icon(icon, color: Colors.white, size: 24.w),
+        ),
+        Spacing.h(8),
+        SizedBox(
+          width: 80.w,
+          child: AutoTranslateText(
+            label,
+            textAlign: TextAlign.center,
+            style: MyTextTheme.smallBCN
+                .copyWith(color: "#6F221E".toColor())
+                .merge(AppTypography.label),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCircularChatButton() {
+    return GestureDetector(
+      onTap: () {
+        Get.toNamed('/ai-guider');
+      },
+      child: Container(
+        width: 100.w,
+        height: 100.h,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(
+            8.r,
+          ), // Rounded corners instead of circle
+        ),
+        child: Image.asset(
+          'assets/app/ai_astro_icon.png',
+          fit: BoxFit.contain,
+          width: 100.w,
+          height: 100.h,
+          errorBuilder: (_, __, ___) =>
+              Icon(Icons.chat_bubble_outline, color: Colors.white, size: 28.w),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAstrologerActionsRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: _goldPillButton(
+            icon: Icons.chat,
+            label: 'Chat with Astrologer',
+            onTap: () => Get.to(() => const AstrologyServicesView()),
+          ),
+        ),
+        Spacing.w(12),
+        Expanded(
+          child: _goldPillButton(
+            icon: Icons.call,
+            label: 'Call with Astrologer',
+            onTap: () => Get.to(() => const AstrologyServicesView()),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _goldPillButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 52.h,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFF6C55B), Color(0xFFDFA532)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(32.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.18),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: "#6F221E".toColor(), size: 20.w),
+            Spacing.w(10),
+            Flexible(
+              child: AutoTranslateText(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: MyTextTheme.mediumBCB
+                    .copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.w900,
+                      fontFamily: 'Poppins',
+                    )
+                    .merge(AppTypography.label),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuoteOfTheDaySection() {
+    return Obx(() {
+      final quote = controller.dailyQuote.value;
+      final isLoading = controller.isLoadingDailyQuote.value;
+
+      return Padding(
+        padding: AppPaddings.symmetric(h: 16),
+        child: AspectRatio(
+          aspectRatio: 990 / 768, // keep full parchment visible
+          child: Container(
+            padding: AppPaddings.symmetric(h: 20, v: 24),
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(AppConstant.quoteBackground),
+                fit: BoxFit.contain, // show entire image without cropping
+                alignment: Alignment.center,
+              ),
+              borderRadius: AppRadius.all(0), // avoid clipping edges of artwork
+            ),
+            child: isLoading || quote == null || quote.sanskrit.text.isEmpty
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: "#6F221E".toColor(),
+                    ),
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      AutoTranslateText(
+                        'Quote of the Day',
+                        style: MyTextTheme.mediumBCB
+                            .copyWith(
+                              color: "#6F221E".toColor(),
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Baloo Bhai 2',
+                              height: 1.5,
+                            )
+                            .merge(AppTypography.h3),
+                        textAlign: TextAlign.center,
+                      ),
+                      Spacing.h(15),
+                      AutoTranslateText(
+                        quote.sanskrit.text,
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: "#F38B3B".toColor(),
+                          fontWeight: FontWeight.w900,
+                          fontFamily: 'Poppins',
+                          height: 1.5,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      Spacing.h(10),
+                      AutoTranslateText(
+                        quote.sanskrit.meaning,
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: "#551F23".toColor(),
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Poppins',
+                          height: 1.6,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buildSacredMandirsSection() {
+    return Padding(
+      padding: AppPaddings.symmetric(h: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              AutoTranslateText(
+                'SACRED MANDIRS OF BHARAT',
+                style: MyTextTheme.largeBCB
+                    .copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Baloo',
+                      letterSpacing: -0.05,
+                      height: 1.5740000406901042,
+                    )
+                    .merge(AppTypography.h2),
+              ),
+              AutoTranslateText(
+                'View All',
+                style: MyTextTheme.mediumBCN
+                    .copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Poppins',
+                      height: 1.5,
+                    )
+                    .merge(AppTypography.body1),
+              ),
+            ],
+          ),
+          Spacing.h(16),
+          SizedBox(
+            height: 520.h,
+            child: StreamBuilder<int>(
+              stream: Stream.periodic(const Duration(seconds: 5), (x) => x),
+              initialData: 0,
+              builder: (context, snapshot) {
+                final mandirs = [
+                  {
+                    'title': 'Mahakaleshwar Jyotirlinga',
+                    'location': 'Ujjain, Madhya Pradesh',
+                    'desc':
+                        'It is the only Jyotirlinga facing south, symbolizing Mahadev\'s role as the destroyer of evil forces. The temple stands on the banks of the holy Shipra River, where the Kumbh Mela is held.',
+                    'image': AppConstant.templeMahakaleshwar,
+                  },
+                  {
+                    'title': 'Shore Temple',
+                    'location': 'Mahabalipuram, Tamil Nadu',
+                    'desc':
+                        'An 8th-century seaside temple built by the Pallavas; a UNESCO World Heritage Site. Dedicated to Shiva and Vishnu, carved entirely from granite. Stands strong against sea waves and salty winds for over a thousand years.',
+                    'image': 'assets/app/shore_temple.jpg',
+                  },
+                  {
+                    'title': 'Brahma Temple',
+                    'location': 'Pushkar, Rajasthan',
+                    'desc':
+                        'Around 2,000 years old and one of the very few temples of Lord Brahma. Believed to be the site where Brahma performed a sacred yajna. Built with red stone and marble, housing a four-faced idol of Brahma.',
+                    'image': 'assets/app/brahma_temple.jpg',
+                  },
+                ];
+                final idx = (snapshot.data ?? 0) % mandirs.length;
+                final card = mandirs[idx];
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 500),
+                  transitionBuilder: (child, anim) =>
+                      FadeTransition(opacity: anim, child: child),
+                  child: _buildMandirCard(
+                    key: ValueKey(idx),
+                    title: card['title'] as String,
+                    location: card['location'] as String,
+                    desc: card['desc'] as String,
+                    image: card['image'] as String,
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMandirCard({
+    Key? key,
+    required String title,
+    required String location,
+    required String desc,
+    required String image,
+  }) {
+    return Container(
+      key: key,
+      margin: EdgeInsets.only(bottom: 18.h),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFF7C443), Color(0xFFFFFCF3), Color(0xFFFFFFFF)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.25),
+            blurRadius: 20,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.r),
+        child: Container(
+          padding: EdgeInsets.all(14.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14.r),
+                child: Image.asset(
+                  image,
+                  width: double.infinity,
+                  height: 210.h,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: double.infinity,
+                      height: 210.h,
+                      color: Colors.grey.withOpacity(0.3),
+                      child: Icon(Icons.temple_hindu, size: 60.w),
+                    );
+                  },
+                ),
+              ),
+              Spacing.h(12),
+              AutoTranslateText(
+                title,
+                style: MyTextTheme.largeBCB
+                    .copyWith(
+                      color: "#E46E2E".toColor(),
+                      fontWeight: FontWeight.w800,
+                      fontFamily: 'Baloo',
+                    )
+                    .merge(AppTypography.h1),
+              ),
+              Spacing.h(10),
+              Row(
+                children: [
+                  Icon(
+                    Icons.location_on,
+                    size: 18.w,
+                    color: "#6F221E".toColor(),
+                  ),
+                  Spacing.w(6),
+                  Flexible(
+                    child: AutoTranslateText(
+                      location,
+                      style: MyTextTheme.mediumBCN
+                          .copyWith(
+                            color: "#6F221E".toColor(),
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Poppins',
+                          )
+                          .merge(AppTypography.body1),
+                    ),
+                  ),
+                ],
+              ),
+              Spacing.h(12),
+              AutoTranslateText(
+                desc,
+                style: MyTextTheme.mediumBCN
+                    .copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Poppins',
+                      height: 1.55,
+                    )
+                    .merge(AppTypography.body1),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAIAstrologersSection() {
+    return Padding(
+      padding: AppPaddings.symmetric(h: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              AutoTranslateText(
+                'AI ASTROLOGERS',
+                style: MyTextTheme.largeBCB
+                    .copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Baloo',
+                      letterSpacing: -0.05,
+                    )
+                    .merge(AppTypography.h2),
+              ),
+              AutoTranslateText(
+                'View All',
+                style: MyTextTheme.mediumBCN
+                    .copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Poppins',
+                    )
+                    .merge(AppTypography.body1),
+              ),
+            ],
+          ),
+          Spacing.h(16),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildAIAstrologerCard(
+                  'Vedic AI Guru',
+                  'Vedic Astrology',
+                  ['Birth Chart', 'Dasha', 'Remedies'],
+                  AppConstant.aiGuruVedic,
+                  '♈',
+                ),
+                Spacing.w(15.99),
+                _buildAIAstrologerCard(
+                  'Tarot AI Master',
+                  'Tarot Reading',
+                  ['Card Reading', 'Future', 'Love Tarot'],
+                  AppConstant.aiTarot,
+                  '🔮',
+                ),
+                Spacing.w(15.99),
+                _buildAIAstrologerCard(
+                  'Numero AI Expert',
+                  'Numerology',
+                  ['Lucky Numbers', 'Name', 'Life Path'],
+                  AppConstant.aiNumerology,
+                  '🔢',
+                ),
+                Spacing.w(15.99),
+                _buildAIAstrologerCard(
+                  'Palm AI Reader',
+                  'Palmistry',
+                  ['Palm Reading', 'Lines', 'Future'],
+                  AppConstant.aiPalm,
+                  '🤚',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAIAstrologerCard(
+    String title,
+    String subtitle,
+    List<String> tags,
+    String imagePath,
+    String emoji,
+  ) {
+    return Container(
+      width: 255.99.w,
+      height: 350.04.h,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            "#3D0C11".toColor(),
+            "#5D1C21".toColor(),
+            "#3D0C11".toColor(),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          stops: const [0.0, 0.5, 1.0],
+        ),
+        borderRadius: BorderRadius.circular(24.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // Background decorative circles
+          Positioned(
+            top: 92.63.h,
+            left: 51.19.w,
+            child: Container(
+              width: 3.99.w,
+              height: 3.99.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: "#E3B341".toColor().withOpacity(0.22),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 208.57.h,
+            left: 89.59.w,
+            child: Container(
+              width: 3.99.w,
+              height: 3.99.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: "#E3B341".toColor().withOpacity(0.42),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 86.51.h,
+            left: 127.99.w,
+            child: Container(
+              width: 3.99.w,
+              height: 3.99.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: "#E3B341".toColor().withOpacity(0.33),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 214.83.h,
+            left: 166.39.w,
+            child: Container(
+              width: 3.99.w,
+              height: 3.99.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: "#E3B341".toColor().withOpacity(0.31),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 93.2.h,
+            left: 204.79.w,
+            child: Container(
+              width: 3.99.w,
+              height: 3.99.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: "#E3B341".toColor().withOpacity(0.21),
+              ),
+            ),
+          ),
+          // Content
+          Padding(
+            padding: EdgeInsets.all(15.99.w),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Image with emoji overlay - moved to top
+                  SizedBox(
+                    width: 224.w,
+                    height: 127.99.h,
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16.r),
+                          child: Image.asset(
+                            imagePath,
+                            width: 224.w,
+                            height: 127.99.h,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 224.w,
+                                height: 127.99.h,
+                                color: Colors.grey.withOpacity(0.3),
+                              );
+                            },
+                          ),
+                        ),
+                        // Gradient overlay
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            height: 50.h,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.8),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Emoji badge
+                        Positioned(
+                          top: 72.h,
+                          right: 72.w,
+                          child: Container(
+                            width: 48.w,
+                            height: 48.h,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  "#E3B341".toColor(),
+                                  "#C9A033".toColor(),
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.2),
+                                width: 1.58,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: AutoTranslateText(
+                                emoji,
+                                style: TextStyle().merge(AppTypography.h1),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Spacing.h(12),
+                  // Title and subtitle
+                  AutoTranslateText(
+                    title,
+                    style: MyTextTheme.mediumBCB
+                        .copyWith(
+                          color: "#DFB343".toColor(),
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Baloo Bhai 2',
+                          height: 1.33,
+                        )
+                        .merge(AppTypography.h2),
+                  ),
+                  Spacing.h(4),
+                  AutoTranslateText(
+                    subtitle,
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: "#FFF6C2".toColor().withOpacity(0.7),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Poppins',
+                      height: 1.33,
+                    ),
+                  ),
+                  Spacing.h(12),
+                  // Tags
+                  Wrap(
+                    spacing: 8.w,
+                    runSpacing: 8.h,
+                    children: tags
+                        .map(
+                          (tag) => Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8.53.w,
+                              vertical: 4.99.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: "#E3B341".toColor().withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(17722700.r),
+                              border: Border.all(
+                                color: "#E3B341".toColor().withOpacity(0.3),
+                                width: 0.53,
+                              ),
+                            ),
+                            child: AutoTranslateText(
+                              tag,
+                              style: MyTextTheme.smallBCN.copyWith(
+                                color: "#FFF6C2".toColor(),
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'Poppins',
+                                height: 1.33,
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  Spacing.h(12),
+                  // Online status and Chat Now button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 6.w,
+                            height: 6.h,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: "#05DF72".toColor().withOpacity(0.91),
+                            ),
+                          ),
+                          Spacing.w(6),
+                          AutoTranslateText(
+                            'Online',
+                            style: MyTextTheme.smallBCN.copyWith(
+                              color: "#E3B341".toColor(),
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Poppins',
+                              height: 1.33,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 6.h,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        child: AutoTranslateText(
+                          'Chat Now',
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: "#FFFFFF".toColor(),
+                            fontWeight: FontWeight.w400,
+                            fontFamily: 'Poppins',
+                            height: 1.67,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // FREE badge - positioned in top right of card
+          Positioned(
+            right: 12.w,
+            top: 12.h,
+            child: Container(
+              padding: EdgeInsets.only(
+                left: 7.99.w,
+                right: 7.99.w,
+                top: 0,
+                bottom: 0,
+              ),
+              decoration: BoxDecoration(
+                color: "#05DF72".toColor(),
+                borderRadius: BorderRadius.circular(17722700.r),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.star, size: 12.w, color: "#3D0C11".toColor()),
+                  Spacing.w(3.99),
+                  AutoTranslateText(
+                    'FREE',
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: "#3D0C11".toColor(),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Poppins',
+                      height: 1.33,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildJoinLiveWebinarSection() {
+    return Container(
+      margin: AppPaddings.symmetric(h: 16),
+      padding: AppPaddings.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: ["#FF6B35".toColor(), "#DD2914".toColor()],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: AppRadius.all(22.56),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.25),
+            blurRadius: 23.5,
+            offset: const Offset(0, 11.28),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: AppPaddings.symmetric(h: 8, v: 4),
+
+                child: AutoTranslateText(
+                  'LIVE NOW',
+                  style: MyTextTheme.smallBCN
+                      .copyWith(
+                        color: "#05DF72".toColor(),
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Poppins',
+                      )
+                      .merge(AppTypography.body2),
+                ),
+              ),
+            ],
+          ),
+          Spacing.h(26.32),
+          AutoTranslateText(
+            'Join Live Webinar',
+            style: MyTextTheme.largeBCB
+                .copyWith(
+                  color: "#FFFFFF".toColor(),
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins',
+                  height: 1.56,
+                )
+                .merge(AppTypography.h3),
+          ),
+          Spacing.h(8),
+          AutoTranslateText(
+            '"Career Guidance Using Vedic Astrology" - Starting in 30 min',
+            style: MyTextTheme.mediumBCN
+                .copyWith(
+                  color: Colors.white.withOpacity(0.75),
+                  fontWeight: FontWeight.w400,
+                )
+                .merge(AppTypography.body2),
+          ),
+          Spacing.h(22.56),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: AppPaddings.symmetric(h: 11.28, v: 4.23),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: AppRadius.all(22.56),
+                ),
+                child: AutoTranslateText(
+                  'FREE',
+                  style: MyTextTheme.smallBCN
+                      .copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                      )
+                      .merge(AppTypography.body2),
+                ),
+              ),
+              AutoTranslateText(
+                '1,247 watching →',
+                style: MyTextTheme.mediumBCN
+                    .copyWith(color: Colors.white, fontWeight: FontWeight.w400)
+                    .merge(AppTypography.body2),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVideosSection() {
+    return Obx(() {
+      // Filter blogs that have video featured images
+      final videoBlogs = controller.blogs
+          .where(
+            (blog) =>
+                _isVideoUrl(blog.featuredImage ?? '') &&
+                blog.featuredImage != null &&
+                blog.featuredImage!.isNotEmpty,
+          )
+          .take(5)
+          .toList();
+
+      if (controller.isLoadingBlogs.value && videoBlogs.isEmpty) {
+        return Padding(
+          padding: AppPaddings.symmetric(h: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 32.w,
+                        height: 32.h,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: ["#E63946".toColor(), "#FF8C42".toColor()],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                          borderRadius: BorderRadius.circular(17801400.r),
+                        ),
+                        child: Icon(
+                          Icons.play_circle_filled,
+                          color: Colors.white,
+                          size: 20.w,
+                        ),
+                      ),
+                      Spacing.w(8),
+                      AutoTranslateText(
+                        'Videos',
+                        style: MyTextTheme.largeBCB
+                            .copyWith(
+                              color: "#6F221E".toColor(),
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Baloo Bhai 2',
+                              height: 1.5,
+                            )
+                            .merge(AppTypography.h3),
+                      ),
+                    ],
+                  ),
+                  AutoTranslateText(
+                    'View All',
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Poppins',
+                          height: 1.5,
+                        )
+                        .merge(AppTypography.body1),
+                  ),
+                ],
+              ),
+              Spacing.h(16),
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
+      if (videoBlogs.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return Padding(
+        padding: AppPaddings.symmetric(h: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 32.w,
+                      height: 32.h,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: ["#E63946".toColor(), "#FF8C42".toColor()],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                        borderRadius: BorderRadius.circular(17801400.r),
+                      ),
+                      child: Icon(
+                        Icons.play_circle_filled,
+                        color: Colors.white,
+                        size: 20.w,
+                      ),
+                    ),
+                    Spacing.w(8),
+                    AutoTranslateText(
+                      'Videos',
+                      style: MyTextTheme.largeBCB
+                          .copyWith(
+                            color: "#6F221E".toColor(),
+                            fontWeight: FontWeight.w400,
+                            fontFamily: 'Baloo Bhai 2',
+                            height: 1.5,
+                          )
+                          .merge(AppTypography.h3),
+                    ),
+                  ],
+                ),
+                InkWell(
+                  onTap: () => Get.toNamed(AppRoutes.allBlogs),
+                  child: AutoTranslateText(
+                    'View All',
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Poppins',
+                          height: 1.5,
+                        )
+                        .merge(AppTypography.body1),
+                  ),
+                ),
+              ],
+            ),
+            Spacing.h(16),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: videoBlogs.asMap().entries.map((entry) {
+                  final blog = entry.value;
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      right: entry.key < videoBlogs.length - 1 ? 10.w : 0,
+                    ),
+                    child: _buildVideoCardFromBlog(blog, 168.42.w),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildVideoCardFromBlog(Blog blog, double width) {
+    return GestureDetector(
+      onTap: () => Get.toNamed(AppRoutes.blogDetail, arguments: blog),
+      child: Container(
+        width: width,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.8),
+          borderRadius: AppRadius.all(16),
+          border: Border.all(
+            color: "#E3B341".toColor().withOpacity(0.1),
+            width: 0.53,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.r),
+                    topRight: Radius.circular(16.r),
+                  ),
+                  child: Container(
+                    width: width,
+                    height: 96.h,
+                    color: Colors.black,
+                    child:
+                        blog.featuredImage != null &&
+                            blog.featuredImage!.isNotEmpty
+                        ? SizedBox(
+                            width: width,
+                            height: 96.h,
+                            child: ClipRect(
+                              child: OverflowBox(
+                                maxWidth: width,
+                                maxHeight: 96.h,
+                                alignment: Alignment.center,
+                                child: VideoPlayerWidget(
+                                  videoUrl: blog.featuredImage!,
+                                  autoPlay: false,
+                                  showControls: false,
+                                ),
+                              ),
+                            ),
+                          )
+                        : Icon(
+                            Icons.video_library,
+                            size: 40.w,
+                            color: Colors.grey,
+                          ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 8.h,
+                  right: 8.w,
+                  child: Container(
+                    padding: AppPaddings.symmetric(h: 6, v: 3),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: AppRadius.all(4),
+                    ),
+                    child: AutoTranslateText(
+                      _formatDuration(blog.readingTime ?? 0),
+                      style: MyTextTheme.smallBCN
+                          .copyWith(color: Colors.white)
+                          .merge(AppTypography.label),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 8.h,
+                  right: 8.w,
+                  child: Container(
+                    padding: AppPaddings.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.5),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.play_circle_filled,
+                      color: Colors.white,
+                      size: 24.w,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.all(12.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AutoTranslateText(
+                    blog.title ?? 'Untitled',
+                    style: MyTextTheme.smallBCB.copyWith(
+                      color: "#DFB343".toColor(),
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Baloo Bhai 2',
+                      height: 1.25,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Spacing.h(8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.visibility,
+                        size: 12.w,
+                        color: "#F38B3B".toColor(),
+                      ),
+                      Spacing.w(4),
+                      AutoTranslateText(
+                        '${_formatViews(blog.viewsCount ?? 0)} views',
+                        style: MyTextTheme.smallBCN
+                            .copyWith(color: "#F38B3B".toColor())
+                            .merge(AppTypography.label),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatDuration(int minutes) {
+    if (minutes < 60) return '$minutes:00';
+    final hours = minutes ~/ 60;
+    final mins = minutes % 60;
+    return '${hours}:${mins.toString().padLeft(2, '0')}';
+  }
+
+  String _formatViews(int views) {
+    if (views >= 1000000) return '${(views / 1000000).toStringAsFixed(1)}M';
+    if (views >= 1000) return '${(views / 1000).toStringAsFixed(1)}K';
+    return views.toString();
+  }
+
+  Widget _buildVideoCard({
+    required String thumbnail,
+    required String title,
+    required String author,
+    required String views,
+    required String duration,
+  }) {
+    return Container(
+      width: 168.42.w,
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.8),
+        borderRadius: AppRadius.all(16),
+        border: Border.all(
+          color: "#E3B341".toColor().withOpacity(0.1),
+          width: 0.53,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16.r),
+                  topRight: Radius.circular(16.r),
+                ),
+                child: Image.asset(
+                  thumbnail,
+                  width: double.infinity,
+                  height: 96.h,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: double.infinity,
+                      height: 96.h,
+                      color: Colors.grey.withOpacity(0.3),
+                      child: Icon(Icons.video_library, size: 40.w),
+                    );
+                  },
+                ),
+              ),
+              Positioned(
+                bottom: 8.h,
+                right: 8.w,
+                child: Container(
+                  padding: AppPaddings.symmetric(h: 8, v: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.7),
+                    borderRadius: AppRadius.all(4),
+                  ),
+                  child: AutoTranslateText(
+                    duration,
+                    style: MyTextTheme.smallBCN.copyWith(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: AppPaddings.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AutoTranslateText(
+                  title,
+                  style: MyTextTheme.smallBCB
+                      .copyWith(
+                        color: "#DFB343".toColor(),
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Baloo Bhai 2',
+                        height: 1.25,
+                      )
+                      .merge(AppTypography.h3),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Spacing.h(4),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.visibility,
+                      size: 12.w,
+                      color: Colors.white.withOpacity(0.9),
+                    ),
+                    Spacing.w(4),
+                    AutoTranslateText(
+                      views,
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: Colors.white.withOpacity(0.9),
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget buildDrawer(BuildContext context) {
+    final controller = Get.isRegistered<UserDashboardController>()
+        ? Get.find<UserDashboardController>()
+        : null;
+    return Drawer(
+      backgroundColor: const Color(
+        0xFFFEF5DF,
+      ), // Light beige/yellowish background
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Header with logo and close button
+              Padding(
+                padding: AppPaddings.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 40.w,
+                          height: 40.h,
+                          decoration: BoxDecoration(
+                            color: "#6F221E".toColor(), // Dark maroon
+                            shape: BoxShape.circle,
+                          ),
+                          child: ClipOval(
+                            child: Image.asset(
+                              'assets/app/logo1.png',
+                              width: 40.w,
+                              height: 40.h,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(
+                                  Icons.star,
+                                  color: const Color(0xFFFFD700), // Gold
+                                  size: 24.w,
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        Spacing.w(12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AutoTranslateText(
+                              'AstroBharat AI',
+                              style: MyTextTheme.mediumBCB
+                                  .copyWith(
+                                    color: "#6F221E".toColor(), // Dark maroon
+                                    fontWeight: FontWeight.bold,
+                                  )
+                                  .merge(AppTypography.h2),
+                            ),
+                            AutoTranslateText(
+                              'Divine Guidance',
+                              style: MyTextTheme.smallBCN.copyWith(
+                                color: const Color(0xFF5F2221).withOpacity(0.7),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: Icon(
+                        Icons.close,
+                        color: "#6F221E".toColor(), // Dark maroon
+                        size: 24.w,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Profile Card
+              Container(
+                margin: AppPaddings.symmetric(h: 16),
+                padding: AppPaddings.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white, // White card background
+                  borderRadius: AppRadius.all(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 50.w,
+                          height: 50.h,
+                          decoration: BoxDecoration(
+                            color: "#FF6B35".toColor(), // Orange
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: 30.w,
+                          ),
+                        ),
+                        Spacing.w(12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              controller != null
+                                  ? Obx(
+                                      () => AutoTranslateText(
+                                        controller.userName.value.isNotEmpty
+                                            ? controller.userName.value
+                                            : 'Rajesh Kumar',
+                                        style: MyTextTheme.mediumBCB
+                                            .copyWith(
+                                              color: "#6F221E"
+                                                  .toColor(), // Dark maroon
+                                              fontWeight: FontWeight.bold,
+                                            )
+                                            .merge(AppTypography.h3),
+                                      ),
+                                    )
+                                  : AutoTranslateText(
+                                      'Rajesh Kumar',
+                                      style: MyTextTheme.mediumBCB
+                                          .copyWith(
+                                            color: "#6F221E"
+                                                .toColor(), // Dark maroon
+                                            fontWeight: FontWeight.bold,
+                                          )
+                                          .merge(AppTypography.h3),
+                                    ),
+                              Spacing.h(4),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: AppPaddings.symmetric(h: 6, v: 2),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF9C27B0), // Purple
+                                      borderRadius: AppRadius.all(8),
+                                    ),
+                                    child: AutoTranslateText(
+                                      'Virgo',
+                                      style: MyTextTheme.smallBCN
+                                          .copyWith(color: Colors.white)
+                                          .merge(AppTypography.label),
+                                    ),
+                                  ),
+                                  Spacing.w(6),
+                                  Icon(
+                                    Icons.star,
+                                    color: const Color(0xFFFFD700), // Gold
+                                    size: 14.w,
+                                  ),
+                                  Spacing.w(4),
+                                  AutoTranslateText(
+                                    'Premium',
+                                    style: MyTextTheme.smallBCN
+                                        .copyWith(
+                                          color: const Color(
+                                            0xFFFFD700,
+                                          ), // Gold
+                                        )
+                                        .merge(AppTypography.label),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Spacing.h(16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildStatItemStatic('12', 'Consults'),
+                        _buildStatItemStatic('4', 'Orders'),
+                        Obx(() {
+                          final walletController =
+                              Get.isRegistered<WalletController>()
+                              ? Get.find<WalletController>()
+                              : null;
+                          final balance =
+                              walletController?.walletBalance.value ?? 0.0;
+                          final formattedBalance = balance >= 1000
+                              ? '₹${(balance / 1000).toStringAsFixed(1)}K'
+                              : '₹${balance.toStringAsFixed(0)}';
+                          return _buildStatItemStatic(
+                            formattedBalance,
+                            'Wallet',
+                          );
+                        }),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Spacing.h(24),
+              // EXPLORE Section
+              Padding(
+                padding: AppPaddings.symmetric(h: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AutoTranslateText(
+                      'EXPLORE',
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: const Color(
+                          0xFF5F2221,
+                        ).withOpacity(0.6), // Dark maroon with opacity
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Spacing.h(12),
+                    _buildDrawerItemStatic(
+                      context: context,
+                      icon: Icons.home,
+                      label: 'Home',
+                      isSelected: true,
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        Get.offNamed('/user-home', id: 1);
+                      },
+                    ),
+                    _buildDrawerItemStatic(
+                      context: context,
+                      icon: Icons.star,
+                      label: 'AI Astrologer',
+                      hasBadge: true,
+                      badgeText: 'New',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        Get.toNamed('/ai-guider');
+                      },
+                    ),
+                    _buildDrawerItemStatic(
+                      context: context,
+                      icon: Icons.people,
+                      label: 'Consult Expert',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        Get.toNamed(AppRoutes.astrologyServices);
+                      },
+                    ),
+                    _buildDrawerItemStatic(
+                      context: context,
+                      icon: Icons.calendar_today,
+                      label: 'Horoscope',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        Get.toNamed(AppRoutes.horoscope);
+                      },
+                    ),
+                    _buildDrawerItemStatic(
+                      context: context,
+                      icon: Icons.book,
+                      label: 'Kundli',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        Get.toNamed(AppRoutes.kundliForm);
+                      },
+                    ),
+                    _buildDrawerItemStatic(
+                      context: context,
+                      icon: Icons.favorite,
+                      label: 'Virtual Temple',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    _buildDrawerItemStatic(
+                      context: context,
+                      icon: Icons.shopping_bag,
+                      label: 'AstroShop',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        Get.offNamed('/user-shop', id: 1);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Spacing.h(24),
+              Divider(
+                color: const Color(
+                  0xFF5F2221,
+                ).withOpacity(0.2), // Dark maroon with opacity
+                thickness: 1,
+              ),
+              Spacing.h(12),
+              // ACCOUNT Section
+              Padding(
+                padding: AppPaddings.symmetric(h: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AutoTranslateText(
+                      'ACCOUNT',
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: const Color(
+                          0xFF5F2221,
+                        ).withOpacity(0.6), // Dark maroon with opacity
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Spacing.h(12),
+                    Obx(() {
+                      final walletController =
+                          Get.isRegistered<WalletController>()
+                          ? Get.find<WalletController>()
+                          : null;
+                      final balance =
+                          walletController?.walletBalance.value ?? 0.0;
+                      return _buildDrawerItemStatic(
+                        context: context,
+                        icon: Icons.account_balance_wallet,
+                        label: 'Wallet',
+                        trailing: AutoTranslateText(
+                          walletController?.formatCurrency(balance) ?? '₹0',
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: "#FF6B35".toColor(), // Orange
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Get.toNamed(AppRoutes.wallet);
+                        },
+                      );
+                    }),
+                    _buildDrawerItemStatic(
+                      context: context,
+                      icon: Icons.shopping_bag_outlined,
+                      label: 'My Orders',
+                      trailing: Container(
+                        padding: AppPaddings.symmetric(h: 8, v: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFF6B35), // Orange
+                          shape: BoxShape.circle,
+                        ),
+                        child: AutoTranslateText(
+                          '4',
+                          style: MyTextTheme.smallBCN
+                              .copyWith(color: Colors.white)
+                              .merge(AppTypography.label),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        Get.toNamed(AppRoutes.orders);
+                      },
+                    ),
+                    _buildDrawerItemStatic(
+                      context: context,
+                      icon: Icons.phone,
+                      label: 'My Bookings',
+                      trailing: Container(
+                        padding: AppPaddings.symmetric(h: 8, v: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFF6B35), // Orange
+                          shape: BoxShape.circle,
+                        ),
+                        child: AutoTranslateText(
+                          '4',
+                          style: MyTextTheme.smallBCN
+                              .copyWith(color: Colors.white)
+                              .merge(AppTypography.label),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    _buildDrawerItemStatic(
+                      context: context,
+                      icon: Icons.person,
+                      label: 'Profile',
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        Get.toNamed(AppRoutes.profile);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Widget _buildStatItemStatic(String value, String label) {
+    return Column(
+      children: [
+        AutoTranslateText(
+          value,
+          style: MyTextTheme.mediumBCB
+              .copyWith(
+                color: "#6F221E".toColor(), // Dark maroon
+                fontWeight: FontWeight.bold,
+              )
+              .merge(AppTypography.body1),
+        ),
+        SizedBox(height: 4.h),
+        AutoTranslateText(
+          label,
+          style: MyTextTheme.smallBCN
+              .copyWith(
+                color: const Color(
+                  0xFF5F2221,
+                ).withOpacity(0.7), // Dark maroon with opacity
+              )
+              .merge(AppTypography.label),
+        ),
+      ],
+    );
+  }
+
+  static Widget _buildDrawerItemStatic({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    bool isSelected = false,
+    bool hasBadge = false,
+    String? badgeText,
+    Widget? trailing,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.only(bottom: 8.h),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? const Color(0xFF5F2221)
+              : Colors.transparent, // Dark maroon for selected
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: isSelected
+                  ? Colors.white
+                  : const Color(
+                      0xFF5F2221,
+                    ), // White for selected, dark maroon for unselected
+              size: 20.w,
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: AutoTranslateText(
+                label,
+                style: MyTextTheme.mediumBCN
+                    .copyWith(
+                      color: isSelected
+                          ? Colors.white
+                          : const Color(
+                              0xFF5F2221,
+                            ), // White for selected, dark maroon for unselected
+                    )
+                    .merge(AppTypography.body1),
+              ),
+            ),
+            if (hasBadge && badgeText != null)
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF6B35), // Orange
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: AutoTranslateText(
+                  badgeText,
+                  style: MyTextTheme.smallBCN
+                      .copyWith(color: Colors.white)
+                      .merge(AppTypography.label),
+                ),
+              ),
+            if (trailing != null) ...[SizedBox(width: 8.w), trailing],
+          ],
+        ),
+      ),
+    );
+  }
+}
