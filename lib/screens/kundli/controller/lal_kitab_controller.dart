@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class LalKitabController extends BaseController {
   // Lal Kitab table data for main page (removed Cloud)

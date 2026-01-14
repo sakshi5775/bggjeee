@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
 class YoginiDashaWidget extends StatelessWidget {
@@ -58,7 +59,27 @@ class YoginiDashaWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
+            Row(
+              children: [
+                Container(
+                  height: 50.h,
+                  width: 50.w,
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                      Color(0xFFFF8C42),
+                      Color(0xFFE63946),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+                  child: Icon(Icons.import_contacts, color: Colors.white),
+                  ),
+                Spacing.w(16),
+// Title
             AutoTranslateText(
               controller.getYoginiLevelTitle(),
               style: MyTextTheme.largeBCB.copyWith(
@@ -66,6 +87,10 @@ class YoginiDashaWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+              ],
+            ),
+
+            
             
             Spacing.h(16),
             
@@ -237,11 +262,18 @@ class YoginiDashaWidget extends StatelessWidget {
             if (controller.canGoBackYogini())
               Container(
                 width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF3D0C11), Color(0xFF5D1C21),]
+                  ),
+                  borderRadius: BorderRadius.circular(12.r)
+                ),
                 margin: EdgeInsets.only(bottom: 16.h),
                 child: ElevatedButton(
                   onPressed: () => controller.navigateYoginiBack(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: "#DFB343".toColor(),
+                    // backgroundColor: "#DFB343".toColor(),
+                    
                     padding: EdgeInsets.symmetric(vertical: 14.h),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.r),
@@ -251,8 +283,9 @@ class YoginiDashaWidget extends StatelessWidget {
                   child: AutoTranslateText(
                     'BACK',
                     style: MyTextTheme.mediumBCB.copyWith(
-                      color: Colors.white,
+                      color: Color(0xFFE3B341),
                       fontWeight: FontWeight.bold,
+                      fontFamily: 'baloo2'
                     ),
                   ),
                 ),
@@ -275,6 +308,15 @@ class YoginiDashaWidget extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  // Container(
+                  //   height: 10.h,
+                  //   width: 10.w,
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.red.shade100,
+                  //     borderRadius: BorderRadius.circular(50.r)
+                  //   ),
+                  //   child: Icon(Icons.info_outline, color: Colors.white,)
+                  // ),
                   Expanded(
                     child: AutoTranslateText(
                       controller.yoginiCurrentLevel.value == 'main'
@@ -303,6 +345,7 @@ class YoginiDashaWidget extends StatelessWidget {
     final startDate = mainInfo['sub_dasha_start_dates']?.toString() ?? '';
     
     return Container(
+      width: double.infinity,
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: "#ed6f30".toColor().withOpacity(0.1),

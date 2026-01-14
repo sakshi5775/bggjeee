@@ -1,116 +1,66 @@
 import 'dart:io';
 
 import 'package:astrobharataiuser/app_manager/common/image_picker.dart';
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/my_appbar.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
+import 'package:astrobharataiuser/app_manager/widgets/phone_field_with_country_code.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/profile_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
 class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});
 
-  static final LinearGradient gradientBackground = LinearGradient(
-    colors: ["#FCE5AA".toColor(), "#FFFCF3".toColor(), "#FFFFFF".toColor()],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: gradientBackground,
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildCustomAppBar(),
-              Expanded(
-                child: Obx(
-                  () => RefreshIndicator(
-                    onRefresh: controller.loadProfile,
-                    color: AppColors.saffron,
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.all(16.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildHeaderCard(),
-                          SizedBox(height: 24.h),
-                          _buildAccountInfoCard(context),
-                          SizedBox(height: 24.h),
-                          _buildActionGrid(context),
-                          SizedBox(height: 32.h),
-                          _buildRecentOrders(),
-                          SizedBox(height: 32.h),
-                          _buildHelpSection(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+      backgroundColor: AppColors.lightBackground,
+      appBar: const MyAppbar(
+        title: 'Account',
+        showLeading: true,
       ),
-    );
-  }
-
-  Widget _buildCustomAppBar() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-       
-          SizedBox(width: 16.w),
-          // Title and Subtitle
-          Expanded(
+      body: Obx(
+        () => RefreshIndicator(
+          onRefresh: controller.loadProfile,
+          color: AppColors.saffron,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AutoTranslateText(
-                  'Account',
-                  style: TextStyle(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF8B1925),
-                  ),
-                ),
-                AutoTranslateText(
-                  'Welcome to Your Profile',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
+                _buildHeaderCard(),
+                SizedBox(height: 24.h),
+                _buildAccountInfoCard(context),
+                SizedBox(height: 24.h),
+                _buildActionGrid(context),
+                SizedBox(height: 32.h),
+                _buildRecentOrders(),
+                SizedBox(height: 32.h),
+                _buildHelpSection(),
               ],
             ),
           ),
-        
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildAccountInfoCard(BuildContext context) {
     final profile = controller.profile.value;
-    final memberSince = _formatMemberSinceDate(profile?.createdAt);
+    final memberSince = _formatReadableDate(profile?.createdAt);
 
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -127,62 +77,54 @@ class ProfileView extends GetView<ProfileController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AutoTranslateText(
-            'Account Details',
+            'Account details',
             style: TextStyle(
               fontWeight: FontWeight.w700,
-              fontSize: 16.sp,
-              color: const Color(0xFF8B1925),
+              color: AppColors.textPrimary,
             ),
           ),
-          SizedBox(height: 16.h),
-          _AccountDetailRow(
-            icon: Icons.email_outlined,
+          SizedBox(height: 12.h),
+          _InfoRow(
+            icon: Icons.alternate_email_outlined,
             label: 'Email',
             value: controller.userEmail.value.isEmpty ? 'Not set' : controller.userEmail.value,
-            iconColor: const Color(0xFFFFA500),
-           
+            trailing: controller.emailVerified.value
+                ? _buildVerificationTag('Verified')
+                : _buildVerificationTag('Pending', color: AppColors.saffron),
           ),
           Divider(height: 24.h, color: AppColors.textSecondary.withOpacity(0.1)),
-          _AccountDetailRow(
+          _InfoRow(
             icon: Icons.phone_outlined,
             label: 'Phone',
             value: controller.userPhone.value.isEmpty ? 'Not set' : controller.userPhone.value,
-            iconColor: const Color(0xFFB39DDB),
-            
+            trailing: controller.phoneVerified.value
+                ? _buildVerificationTag('Verified')
+                : _buildVerificationTag('Pending', color: AppColors.saffron),
           ),
           Divider(height: 24.h, color: AppColors.textSecondary.withOpacity(0.1)),
-          _AccountDetailRow(
-            icon: Icons.star_outlined,
+          _InfoRow(
+            icon: Icons.workspace_premium_outlined,
             label: 'Status',
             value: profile?.metadata?.accountStatus?.toUpperCase() ?? 'ACTIVE',
-            iconColor: Colors.green,
           ),
           Divider(height: 24.h, color: AppColors.textSecondary.withOpacity(0.1)),
-          _AccountDetailRow(
+          _InfoRow(
             icon: Icons.calendar_today_outlined,
-            label: 'Member Since',
+            label: 'Member since',
             value: memberSince,
-            iconColor: const Color(0xFF9C27B0),
           ),
           SizedBox(height: 16.h),
           Align(
             alignment: Alignment.centerRight,
-            child: GestureDetector(
-              onTap: () => _showEditProfileSheet(context),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.edit_outlined, size: 16.sp, color: AppColors.saffron),
-                  SizedBox(width: 4.w),
-                  AutoTranslateText(
-                    'Manage Your Profile',
-                    style: TextStyle(
-                      color: AppColors.saffron,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13.sp,
-                    ),
-                  ),
-                ],
+            child: TextButton.icon(
+              onPressed: () => _showEditProfileSheet(context),
+              icon: Icon(Icons.manage_accounts_outlined, color: AppColors.saffron),
+              label: AutoTranslateText(
+                'Manage profile',
+                style: TextStyle(
+                  color: AppColors.saffron,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -194,350 +136,340 @@ class ProfileView extends GetView<ProfileController> {
   Widget _buildHeaderCard() {
     return Builder(
       builder: (context) {
+        final profile = controller.profile.value;
         final avatarUrl = controller.profileImageUrl.value;
         final hasAvatar = avatarUrl.isNotEmpty;
 
         return Container(
           width: double.infinity,
-          margin: EdgeInsets.symmetric(horizontal: 16.w),
           padding: EdgeInsets.all(20.w),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(18.r),
+            borderRadius: BorderRadius.circular(20.r),
+            gradient: LinearGradient(
+              colors: [
+                AppColors.saffron.withOpacity(0.85),
+                AppColors.saffron.withOpacity(0.65),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 3),
+                color: AppColors.saffron.withOpacity(0.25),
+                blurRadius: 16,
+                offset: const Offset(0, 8),
               ),
             ],
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile Section with Avatar, Name, Email, Phone
-              Stack(
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  Stack(
                     children: [
-                      // Avatar with Camera Icon
-                      Stack(
-                        children: [
-                          Container(
-                            width: 100.w,
-                            height: 100.h,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: hasAvatar ? null : LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  "#F38B3B".toColor(),
-                                  "#DD2914".toColor(),
-                                ],
-                              ),
-                              image: hasAvatar ? DecorationImage(
-                                image: NetworkImage(avatarUrl),
-                                fit: BoxFit.cover,
-                              ) : null,
-                            ),
-                            child: !hasAvatar
-                                ? Icon(
-                                    Icons.person_outline,
-                                    size: 50.sp,
-                                    color: Colors.white,
-                                  )
-                                : null,
-                          ),
-                          Positioned(
-                            right: 0,
-                            bottom: 0,
-                            child: GestureDetector(
-                              onTap: () async {
-                                final image = await ImagePickerHelper.pickImage(context);
-                                if (image != null) {
-                                  controller.setProfilePicture(image);
-                                  // Update profile with new picture
-                                  final success = await controller.updateProfile();
-                                  if (success) {
-                                    await controller.loadProfile();
-                                  }
-                                }
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(6.w),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 4,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Icon(
-                                  Icons.camera_alt_outlined,
-                                  size: 14.sp,
+                      CircleAvatar(
+                        radius: 40.r,
+                        backgroundColor: Colors.white.withOpacity(0.9),
+                        backgroundImage: hasAvatar ? NetworkImage(avatarUrl) : null,
+                        child: !hasAvatar
+                            ? AutoTranslateText(
+                                controller.userInitials,
+                                style: TextStyle(
                                   color: AppColors.saffron,
                                 ),
-                              ),
+                              )
+                            : null,
+                      ),
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: GestureDetector(
+                          onTap: () => _showEditProfileSheet(context),
+                          child: Container(
+                        padding: EdgeInsets.all(6.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 12.h),
-                      // Name
-                      AutoTranslateText(
-                        controller.userName.value,
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF8B1925),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.camera_alt_outlined,
+                          size: 16.sp,
+                          color: AppColors.saffron,
                         ),
                       ),
-                      SizedBox(height: 4.h),
-                      // Email
-                      if (controller.userEmail.value.isNotEmpty)
-                        AutoTranslateText(
-                          controller.userEmail.value,
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      // Phone
-                      if (controller.userPhone.value.isNotEmpty) ...[
-                        SizedBox(height: 2.h),
-                        AutoTranslateText(
-                          controller.userPhone.value,
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    
-                    ],
+                    ),
                   ),
-                 
                 ],
               ),
-              SizedBox(height: 16.h),
-              // Loyalty Balance and Last Login Banner
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(16.w),
-                decoration: BoxDecoration(
-                  color: "#FE7A1B".toColor(),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              SizedBox(width: 16.w),
+              Expanded(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                
-                    SizedBox(width: 8.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          AutoTranslateText(
-                            'Last Login',
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: AutoTranslateText(
+                            controller.userName.value,
                             style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Colors.white.withOpacity(0.9),
-                            ),
-                          ),
-                          SizedBox(height: 6.h),
-                          AutoTranslateText(
-                            controller.lastLoginText.value.isNotEmpty
-                                ? controller.lastLoginText.value
-                                : '18 Dec 2025 . 08:33 PM',
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.w600,
                               color: Colors.white,
                             ),
-                            textAlign: TextAlign.right,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ],
+                        ),
+                        IconButton(
+                          onPressed: () => _showEditProfileSheet(context),
+                          icon: Icon(
+                            Icons.edit_outlined,
+                            color: Colors.white,
+                            size: 22.sp,
+                          ),
+                          tooltip: 'Edit profile',
+                        ),
+                      ],
+                    ),
+                    if (controller.userEmail.value.isNotEmpty) ...[
+                      SizedBox(height: 6.h),
+                      AutoTranslateText(
+                        controller.userEmail.value,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.92),
+                        ),
                       ),
+                    ],
+                    if (controller.userPhone.value.isNotEmpty) ...[
+                      SizedBox(height: 4.h),
+                      AutoTranslateText(
+                        controller.userPhone.value,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.85),
+                        ),
+                      ),
+                    ],
+                    SizedBox(height: 10.h),
+                    Wrap(
+                      spacing: 8.w,
+                      runSpacing: 6.h,
+                      children: [
+                        _buildStatusChip(
+                          label: controller.emailVerified.value
+                              ? 'Email verified'
+                              : 'Email not verified',
+                          icon: controller.emailVerified.value
+                              ? Icons.verified_outlined
+                              : Icons.mark_email_unread_outlined,
+                          background: controller.emailVerified.value
+                              ? Colors.green.withOpacity(0.2)
+                              : Colors.white.withOpacity(0.18),
+                          foreground: Colors.white,
+                        ),
+                        _buildStatusChip(
+                          label: controller.phoneVerified.value
+                              ? 'Phone verified'
+                              : 'Phone not verified',
+                          icon: controller.phoneVerified.value
+                              ? Icons.phone_iphone
+                              : Icons.phone_disabled_outlined,
+                          background: controller.phoneVerified.value
+                              ? Colors.green.withOpacity(0.2)
+                              : Colors.white.withOpacity(0.18),
+                          foreground: Colors.white,
+                        ),
+                        if (profile?.metadata?.isActive == true)
+                          _buildStatusChip(
+                            label: 'Account active',
+                            icon: Icons.shield_outlined,
+                            background: Colors.white.withOpacity(0.18),
+                            foreground: Colors.white,
+                          )
+                        else if (profile != null)
+                          _buildStatusChip(
+                            label: 'Account inactive',
+                            icon: Icons.shield_outlined,
+                            background: Colors.red.withOpacity(0.25),
+                            foreground: Colors.white,
+                          ),
+                      ],
                     ),
                   ],
                 ),
               ),
             ],
           ),
+          if (controller.lastLoginText.value.isNotEmpty) ...[
+            SizedBox(height: 18.h),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      AutoTranslateText(
+                        'Last login',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.85),
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      AutoTranslateText(
+                        controller.lastLoginText.value,
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
         );
       },
     );
   }
 
-
   Widget _buildActionGrid(BuildContext context) {
     final actions = [
       _ProfileAction(
-        icon: Icons.shopping_bag_outlined,
+        icon: Icons.inventory_2_outlined,
         label: 'Orders',
-        subtitle: '${controller.ordersCount} Orders',
+        subtitle: '${controller.ordersCount} orders',
         onTap: () => Get.toNamed(AppRoutes.orders),
       ),
       _ProfileAction(
-        icon: Icons.local_florist_outlined,
-        label: 'My Pooja',
-        subtitle: '2 Poojas',
-        onTap: controller.onFollowingTap,
-      ),
-      _ProfileAction(
-        icon: Icons.auto_awesome_outlined,
+        icon: Icons.favorite_border,
         label: 'Wishlist',
-        subtitle: '${controller.wishlistCount} Items',
+        subtitle: '${controller.wishlistCount} items',
         onTap: () => Get.toNamed(AppRoutes.wishlist),
       ),
       _ProfileAction(
         icon: Icons.favorite,
         label: 'Following',
-        subtitle: '${controller.followingCount} Astrologers',
+        subtitle: '${controller.followingCount} astrologers',
         onTap: controller.onFollowingTap,
       ),
       _ProfileAction(
         icon: Icons.location_on_outlined,
         label: 'Addresses',
-        subtitle: '${controller.addressesCount} Addresses',
+        subtitle: '${controller.addressesCount} saved',
         onTap: controller.onAddressesTap,
       ),
       _ProfileAction(
-        icon: Icons.percent,
+        icon: Icons.card_giftcard_outlined,
         label: 'Coupons',
-        subtitle: '${controller.couponCount} Coupons',
-        onTap: () => Get.toNamed(AppRoutes.coupons),
+        subtitle: '${controller.couponCount} offers',
+        onTap: controller.onCouponsTap,
+      ),
+      _ProfileAction(
+        icon: Icons.logout,
+        label: 'Logout',
+        subtitle: 'Sign out safely',
+        onTap: () => controller.onLogoutTap(),
       ),
     ];
 
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: actions.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 16.h,
+        crossAxisSpacing: 16.w,
+        childAspectRatio: 0.95,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AutoTranslateText(
-            'Your Dashboard',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16.sp,
-              color: const Color(0xFF8B1925),
-            ),
-          ),
-          SizedBox(height: 12.h),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: actions.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12.h,
-              crossAxisSpacing: 12.w,
-              childAspectRatio: 1.0,
-            ),
-            itemBuilder: (_, index) => _ProfileActionTile(action: actions[index]),
-          ),
-        ],
-      ),
+      itemBuilder: (_, index) => _ProfileActionTile(action: actions[index]),
     );
   }
 
   Widget _buildRecentOrders() {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AutoTranslateText(
+          'Recent Orders',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AutoTranslateText(
-            'Recent Orders',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16.sp,
-              color: const Color(0xFF8B1925),
-            ),
-          ),
-          SizedBox(height: 12.h),
-          if (controller.isLoading.value)
-            Container(
-              padding: EdgeInsets.all(24.w),
-              decoration: BoxDecoration(
-                color: AppColors.lightBackground,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: const Center(child: CircularProgressIndicator()),
-            )
-          else if (controller.recentOrders.isEmpty)
-            Container(
-              padding: EdgeInsets.all(24.w),
-              decoration: BoxDecoration(
-                color: AppColors.lightBackground,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: AutoTranslateText(
-                'No orders placed yet. Start exploring the shop!',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
+        ),
+        SizedBox(height: 12.h),
+        if (controller.isLoading.value)
+          Container(
+            padding: EdgeInsets.all(24.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
                 ),
-              ),
-            )
-          else
-            Column(
-              children: controller.recentOrders
-                  .take(3)
-                  .map((order) => _RecentOrderTile(order: order))
-                  .toList(),
+              ],
             ),
-        ],
-      ),
+            child: const Center(child: CircularProgressIndicator()),
+          )
+        else if (controller.recentOrders.isEmpty)
+          Container(
+            padding: EdgeInsets.all(24.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: AutoTranslateText(
+              'No orders placed yet. Start exploring the shop!',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          )
+        else
+          Column(
+            children: controller.recentOrders
+                .take(3)
+                .map((order) => _RecentOrderTile(order: order))
+                .toList(),
+          ),
+      ],
     );
   }
 
   Widget _buildHelpSection() {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(18.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18.r),
+        borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
+            blurRadius: 8,
             offset: const Offset(0, 3),
           ),
         ],
@@ -546,58 +478,35 @@ class ProfileView extends GetView<ProfileController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AutoTranslateText(
-            'Needs Assistance ?',
+            'Need Assistance?',
             style: TextStyle(
               fontWeight: FontWeight.w700,
-              fontSize: 18.sp,
-              color: const Color(0xFF8B1925),
+              color: AppColors.textPrimary,
             ),
           ),
           SizedBox(height: 8.h),
           AutoTranslateText(
-            'Our Support Team is available 24x7 to assist you with your orders, refunds, and product queries.',
+            'Our support team is available 24x7 to assist you with your orders, refunds, and product queries.',
             style: TextStyle(
               color: AppColors.textSecondary,
               height: 1.4,
-              fontSize: 14.sp,
             ),
           ),
-          SizedBox(height: 16.h),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  "#8B1925".toColor(),
-                  "#5D1C21".toColor(),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            child: ElevatedButton.icon(
-              onPressed: () {
-                Get.toNamed(AppRoutes.supportTickets);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                elevation: 0,
-              ),
-              icon: const Icon(Icons.headset_mic_outlined, size: 20),
-              label: AutoTranslateText(
-                'Contact Support',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15.sp,
-                ),
+          SizedBox(height: 12.h),
+          ElevatedButton.icon(
+            onPressed: () {
+              Get.toNamed(AppRoutes.supportTickets);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.saffron,
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
               ),
             ),
+            icon: const Icon(Icons.headset_mic_outlined),
+            label: const AutoTranslateText('Contact Support'),
           ),
         ],
       ),
@@ -609,21 +518,6 @@ class ProfileView extends GetView<ProfileController> {
     try {
       final date = DateTime.parse(isoString).toLocal();
       return DateFormat('dd MMM yyyy').format(date);
-    } catch (_) {
-      return 'Not available';
-    }
-  }
-
-  String _formatMemberSinceDate(String? isoString) {
-    if (isoString == null || isoString.isEmpty) return 'Not available';
-    try {
-      final date = DateTime.parse(isoString).toLocal();
-      final day = date.day;
-      String suffix = 'th';
-      if (day == 1 || day == 21 || day == 31) suffix = 'st';
-      if (day == 2 || day == 22) suffix = 'nd';
-      if (day == 3 || day == 23) suffix = 'rd';
-      return '${day}$suffix ${DateFormat('MMMM,yyyy').format(date)}';
     } catch (_) {
       return 'Not available';
     }
@@ -665,57 +559,24 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  Widget _AccountDetailRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color iconColor,
-    Widget? trailing,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                color: iconColor,
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(icon, size: 14.sp, color: Colors.white),
-                  SizedBox(width: 6.w),
-                  AutoTranslateText(
-                    label,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (trailing != null) ...[
-              Spacer(),
-              trailing,
-            ],
-          ],
+  Widget _buildVerificationTag(String label, {Color? color}) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: (color ?? Colors.green).withOpacity(0.12),
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(
+          color: (color ?? Colors.green).withOpacity(0.3),
+          width: 1,
         ),
-        SizedBox(height: 8.h),
-        AutoTranslateText(
-          value,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 14.sp,
-            color: AppColors.textPrimary,
-          ),
+      ),
+      child: AutoTranslateText(
+        label,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          color: color ?? Colors.green,
         ),
-      ],
+      ),
     );
   }
 
@@ -1303,68 +1164,51 @@ class _ProfileActionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: action.onTap,
-      borderRadius: BorderRadius.circular(14.r),
-      child: Container(
+      borderRadius: BorderRadius.circular(16.r),
+      child: Ink(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              "#F38B3B".toColor(),
-              "#DD2914".toColor(),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(14.r),
-        ),
-        child: Container(
-          margin: EdgeInsets.all(1.5.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.5.r),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(12.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(10.w),
-                  decoration: BoxDecoration(
-                    color: "#FE7A1B".toColor().withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  child: Icon(
-                    action.icon,
-                    color: "#FE7A1B".toColor(),
-                    size: 24.sp,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                AutoTranslateText(
-                  action.label,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13.sp,
-                    color: const Color(0xFF8B1925),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 4.h),
-                Flexible(
-                  child: AutoTranslateText(
-                    action.subtitle,
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      color: AppColors.textSecondary,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
             ),
+          ],
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                  color: AppColors.saffron.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Icon(action.icon, color: AppColors.saffron, size: 24.sp),
+              ),
+              SizedBox(height: 12.h),
+              AutoTranslateText(
+                action.label,
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              SizedBox(height: 6.h),
+              Flexible(
+                child: AutoTranslateText(
+                  action.subtitle,
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -1393,8 +1237,15 @@ class _RecentOrderTile extends StatelessWidget {
           margin: EdgeInsets.only(bottom: 12.h),
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
           decoration: BoxDecoration(
-            color: AppColors.lightBackground,
-            borderRadius: BorderRadius.circular(12.r),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Row(
           children: [
@@ -1469,8 +1320,15 @@ class _RecentOrderTile extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 12.h),
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
-          color: AppColors.lightBackground,
-          borderRadius: BorderRadius.circular(12.r),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
@@ -1492,6 +1350,5 @@ class _RecentOrderTile extends StatelessWidget {
     }
   }
 }
-
 
 

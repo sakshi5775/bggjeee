@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class LagnaChartWidget extends StatelessWidget {
   const LagnaChartWidget({super.key});
@@ -16,7 +17,7 @@ class LagnaChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<KundliResultController>();
-    
+
     return Obx(() {
       final svgData = controller.svgData.value;
       if (svgData == null || svgData.isEmpty) {
@@ -24,9 +25,7 @@ class LagnaChartWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                color: const Color(0xFFDFB343),
-              ),
+              CircularProgressIndicator(color: const Color(0xFFDFB343)),
               Spacing.h(16),
               AutoTranslateText(
                 'Loading chart...',
@@ -96,22 +95,22 @@ class LagnaChartWidget extends StatelessWidget {
                 },
               ),
             ),
-            
+
             Spacing.h(16),
-            
+
             // Legend
             _buildLegend(),
-            
+
             Spacing.h(20),
-            
+
             // Action Buttons
             _buildActionButtons(controller),
-            
+
             Spacing.h(20),
-            
+
             // Planetary Degrees
             _buildPlanetaryDegrees(),
-            
+
             Spacing.h(20),
           ],
         ),
@@ -130,16 +129,52 @@ class LagnaChartWidget extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: Wrap(
-        spacing: 16.w,
-        runSpacing: 8.h,
-        alignment: WrapAlignment.center,
+      child: Column(
         children: [
-          _buildLegendItem('*', 'Retrograde'),
-          _buildLegendItem('^', 'Combust'),
-          _buildLegendItem('□', 'Vargottama'),
-          _buildLegendItem('↑', 'Exalted'),
-          _buildLegendItem('↓', 'Debilitated'),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Container(
+                  height: 50.h,
+                  width: 50.w,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                    ),
+                    borderRadius: BorderRadius.circular(16.r),
+                  ),
+                  child: Icon(
+                    Icons.table_chart_rounded,
+                    color: Colors.white,
+                    size: 24.w,
+                  ),
+                ),
+              ),
+              Spacing.w(16),
+              AutoTranslateText(
+                'Lagna Chart',
+                style: MyTextTheme.largeBCB
+                    .copyWith(
+                      color: Color(0xFF3D0C11),
+                      fontWeight: FontWeight.bold,
+                    )
+                    .merge(AppTypography.h2),
+              ),
+            ],
+          ),
+          Wrap(
+            spacing: 16.w,
+            runSpacing: 8.h,
+            alignment: WrapAlignment.center,
+            children: [
+              _buildLegendItem('*', 'Retrograde'),
+              _buildLegendItem('^', 'Combust'),
+              _buildLegendItem('□', 'Vargottama'),
+              _buildLegendItem('↑', 'Exalted'),
+              _buildLegendItem('↓', 'Debilitated'),
+            ],
+          ),
         ],
       ),
     );
@@ -154,6 +189,8 @@ class LagnaChartWidget extends StatelessWidget {
           style: MyTextTheme.mediumBCB.copyWith(
             color: "#6F221E".toColor(),
             fontWeight: FontWeight.bold,
+            fontSize: 16.sp,
+            fontFamily: 'Baloo2',
           ),
         ),
         Spacing.w(4),
@@ -161,6 +198,8 @@ class LagnaChartWidget extends StatelessWidget {
           label,
           style: MyTextTheme.smallBCN.copyWith(
             color: "#6F221E".toColor().withOpacity(0.7),
+            fontSize: 16.sp,
+            fontFamily: 'Baloo2',
           ),
         ),
       ],
@@ -169,10 +208,11 @@ class LagnaChartWidget extends StatelessWidget {
 
   Widget _buildActionButtons(KundliResultController controller) {
     // Fetch planet details if not loaded (to get yoga data)
-    if (controller.planetDetailsData.value == null && !controller.isLoadingPlanetDetails.value) {
+    if (controller.planetDetailsData.value == null &&
+        !controller.isLoadingPlanetDetails.value) {
       controller.fetchPlanetDetails();
     }
-    
+
     return Obx(() {
       // Get yoga from planet details (reactive)
       String yogaButtonText = 'Raj Yoga';
@@ -184,7 +224,7 @@ class LagnaChartWidget extends StatelessWidget {
           yogaButtonText = yoga;
         }
       }
-      
+
       final actionButtons = [
         'Planet',
         'Dasha',
@@ -197,60 +237,92 @@ class LagnaChartWidget extends StatelessWidget {
         'Transit',
       ];
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AutoTranslateText(
-            'Actions',
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Spacing.h(12),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final crossAxisCount = constraints.maxWidth > 600 ? 3 : 3;
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  childAspectRatio: 2.5,
-                  crossAxisSpacing: 8.w,
-                  mainAxisSpacing: 8.h,
+      return Container(
+        padding: EdgeInsets.all(12.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  height: 50.h,
+                  width: 50.w,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                    ),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Icon(Icons.ac_unit, color: Colors.white),
                 ),
-                itemCount: actionButtons.length,
-                itemBuilder: (context, index) {
-                  final buttonText = actionButtons[index];
-                  // Check if this is the yoga button (7th index)
-                  final isYogaButton = index == 7;
-                  return _buildActionButton(buttonText, controller, isYogaButton: isYogaButton);
-                },
-              );
-            },
-          ),
-        ],
+                Spacing.w(12),
+                AutoTranslateText(
+                  'Actions',
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: "#6F221E".toColor(),
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'baloo2',
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+
+            Spacing.h(12),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final crossAxisCount = constraints.maxWidth > 600 ? 3 : 3;
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    childAspectRatio: 2.5,
+                    crossAxisSpacing: 8.w,
+                    mainAxisSpacing: 8.h,
+                  ),
+                  itemCount: actionButtons.length,
+                  itemBuilder: (context, index) {
+                    final buttonText = actionButtons[index];
+                    // Check if this is the yoga button (7th index)
+                    final isYogaButton = index == 7;
+                    return _buildActionButton(
+                      buttonText,
+                      controller,
+                      isYogaButton: isYogaButton,
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ),
       );
     });
   }
 
-  Widget _buildActionButton(String title, KundliResultController controller, {bool isYogaButton = false}) {
+  Widget _buildActionButton(
+    String title,
+    KundliResultController controller, {
+    bool isYogaButton = false,
+  }) {
     return GestureDetector(
       onTap: () {
         // Handle Yoga button navigation
         if (isYogaButton) {
           Get.toNamed(
             AppRoutes.yog,
-            arguments: {
-              'formData': controller.formData.value,
-            },
+            arguments: {'formData': controller.formData.value},
           );
           return;
         }
-        
+
         final titleLower = title.toLowerCase();
-        
+
         // Map of action buttons to their routes
         final routeMap = {
           'planet': AppRoutes.planets,
@@ -262,41 +334,39 @@ class LagnaChartWidget extends StatelessWidget {
           'lal kitab': AppRoutes.lalKitab,
           'varshphal': null, // Will be handled by onFeatureTap
         };
-        
+
         // Handle Varshphal separately - it's a widget, not a route
         if (titleLower == 'varshphal') {
           controller.onFeatureTap(title);
           return;
         }
-        
+
         // Check if there's a direct route for this action
         final route = routeMap[titleLower];
         if (route != null) {
           // Navigate to the route
           Get.toNamed(
             route,
-            arguments: {
-              'formData': controller.formData.value,
-            },
+            arguments: {'formData': controller.formData.value},
           );
           return;
         }
-        
+
         // Check if it's a tab in the controller
         final tabIndex = controller.tabs.indexWhere(
           (tab) => tab.toLowerCase() == titleLower,
         );
-        
+
         if (tabIndex != -1) {
           // It's a tab, switch to it
           controller.onTabSelected(tabIndex);
           return;
         }
-        
+
         // Try onFeatureTap - it might handle some features like Transit
         // But we need to check if it actually navigates or just switches tabs
         final featureLower = titleLower;
-        
+
         // Check if onFeatureTap will handle it by checking known features
         final handledFeatures = [
           'birth details',
@@ -307,18 +377,19 @@ class LagnaChartWidget extends StatelessWidget {
           'ashtakvarga chart',
           'ascendant report',
         ];
-        
+
         if (handledFeatures.contains(featureLower)) {
           controller.onFeatureTap(title);
           return;
         }
-        
+
         // For features not handled above, navigate to coming soon
         Get.toNamed(AppRoutes.comingSoon);
       },
       child: Container(
         decoration: BoxDecoration(
-          color: "#ed6f30".toColor(),
+          color: "#FFFFFF".toColor(),
+          border: Border.all(color: Colors.deepOrange, width: 1),
           borderRadius: BorderRadius.circular(8.r),
           boxShadow: [
             BoxShadow(
@@ -329,16 +400,25 @@ class LagnaChartWidget extends StatelessWidget {
           ],
         ),
         child: Center(
-          child: AutoTranslateText(
-            title,
-            textAlign: TextAlign.center,
-            style: MyTextTheme.smallBCB.copyWith(
-              color: Colors.white,
-              fontSize: isYogaButton ? 11.sp : 12.sp,
-              fontWeight: FontWeight.w600,
+          child: ShaderMask(
+            shaderCallback: (bounds) {
+              return const LinearGradient(
+                colors: [Color(0xFFFF8A3D), Color(0xFFED6F30)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ).createShader(bounds);
+            },
+            child: AutoTranslateText(
+              title,
+              textAlign: TextAlign.center,
+              style: MyTextTheme.smallBCB.copyWith(
+                color: Colors.white, // IMPORTANT: white hi rakho
+                fontSize: isYogaButton ? 11.sp : 12.sp,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: isYogaButton ? 2 : 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: isYogaButton ? 2 : 1,
-            overflow: TextOverflow.ellipsis,
           ),
         ),
       ),
@@ -347,7 +427,7 @@ class LagnaChartWidget extends StatelessWidget {
 
   Widget _buildPlanetaryDegrees() {
     final controller = Get.find<KundliResultController>();
-    
+
     return Obx(() {
       if (controller.isLoadingPlanetDetails.value) {
         return Column(
@@ -372,15 +452,13 @@ class LagnaChartWidget extends StatelessWidget {
                 ),
               ),
               child: Center(
-                child: CircularProgressIndicator(
-                  color: "#ed6f30".toColor(),
-                ),
+                child: CircularProgressIndicator(color: "#ed6f30".toColor()),
               ),
             ),
           ],
         );
       }
-      
+
       final planetData = controller.planetDetailsData.value;
       if (planetData == null) {
         return Column(
@@ -415,7 +493,7 @@ class LagnaChartWidget extends StatelessWidget {
           ],
         );
       }
-      
+
       // Extract planets (0-9)
       final planets = <String, Map<String, dynamic>>{};
       for (int i = 0; i <= 9; i++) {
@@ -424,17 +502,35 @@ class LagnaChartWidget extends StatelessWidget {
           planets[planetKey] = planetData[planetKey] as Map<String, dynamic>;
         }
       }
-      
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AutoTranslateText(
+          Row(
+            children: [
+              Container(
+                height: 50.h,
+                width: 50.w,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [
+                    Color(0xFFFF8C42),
+                    Color(0xFFE63946)
+                  ],),
+                  borderRadius: BorderRadius.circular(12.r)
+                  ),
+                  child: Icon(Icons.ac_unit, color: Colors.white),
+              ),
+              Spacing.w(12),
+              AutoTranslateText(
             'Planetary Positions',
             style: MyTextTheme.mediumBCB.copyWith(
               color: "#6F221E".toColor(),
               fontWeight: FontWeight.bold,
             ),
           ),
+            ],
+          ),
+          
           Spacing.h(12),
           Container(
             padding: EdgeInsets.all(16.w),
@@ -479,7 +575,7 @@ class LagnaChartWidget extends StatelessWidget {
       );
     });
   }
-  
+
   Widget _buildPlanetPositionCard(Map<String, dynamic> planet) {
     return Container(
       padding: EdgeInsets.all(12.w),
@@ -500,7 +596,9 @@ class LagnaChartWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: AutoTranslateText(
-                  planet['full_name']?.toString() ?? planet['name']?.toString() ?? 'Unknown',
+                  planet['full_name']?.toString() ??
+                      planet['name']?.toString() ??
+                      'Unknown',
                   style: MyTextTheme.smallBCB.copyWith(
                     color: "#6F221E".toColor(),
                     fontWeight: FontWeight.bold,
@@ -531,9 +629,15 @@ class LagnaChartWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildPlanetDetail('Zodiac', planet['zodiac']?.toString() ?? '-'),
+                    _buildPlanetDetail(
+                      'Zodiac',
+                      planet['zodiac']?.toString() ?? '-',
+                    ),
                     Spacing.h(4),
-                    _buildPlanetDetail('House', planet['house']?.toString() ?? '-'),
+                    _buildPlanetDetail(
+                      'House',
+                      planet['house']?.toString() ?? '-',
+                    ),
                   ],
                 ),
               ),
@@ -542,9 +646,15 @@ class LagnaChartWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildPlanetDetail('Degree', _formatDegree(planet['local_degree'])),
+                    _buildPlanetDetail(
+                      'Degree',
+                      _formatDegree(planet['local_degree']),
+                    ),
                     Spacing.h(4),
-                    _buildPlanetDetail('Nakshatra', planet['nakshatra']?.toString() ?? '-'),
+                    _buildPlanetDetail(
+                      'Nakshatra',
+                      planet['nakshatra']?.toString() ?? '-',
+                    ),
                   ],
                 ),
               ),
@@ -554,7 +664,7 @@ class LagnaChartWidget extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildPlanetDetail(String label, String value) {
     return Row(
       children: [
@@ -581,7 +691,7 @@ class LagnaChartWidget extends StatelessWidget {
       ],
     );
   }
-  
+
   String _formatDegree(dynamic degree) {
     if (degree == null) return '-';
     if (degree is num) {
@@ -590,4 +700,3 @@ class LagnaChartWidget extends StatelessWidget {
     return '$degree°';
   }
 }
-

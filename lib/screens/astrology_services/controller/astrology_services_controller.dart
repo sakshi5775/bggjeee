@@ -3,41 +3,43 @@ import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/live_stream_service.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AstrologyServicesController extends GetxController {
   final AstrologerService _astrologerService = AstrologerService();
   final LiveStreamService _liveStreamService = LiveStreamService();
-
-  // Categories data - matching the image exactly
+// Categories data - matching the image exactly
   final List<Map<String, dynamic>> categories = [
     {
       'name': 'Daily Horoscope',
-      'icon': Icons.calendar_today, // Cancer zodiac symbol
+      'icon':
+          AppConstant.consultationCategoryHoroScopes, // Cancer zodiac symbol
     },
     {
       'name': 'Kundli Analysis',
-      'icon': Icons.star, // Geometric star/sun symbol
+      'icon':
+          AppConstant.consultationCategoryKundli, // Geometric star/sun symbol
     },
     {
       'name': 'Compatibility',
-      'icon': Icons.favorite, // Heart symbol
+      'icon': AppConstant.consultationCategoryCompatibility, // Heart symbol
     },
     {
       'name': 'Tarot Reading',
-      'icon': Icons.auto_awesome, // Tarot card symbol
+      'icon': AppConstant.consultationCategoryTarot, // Tarot card symbol
     },
     {
       'name': 'Numerology',
-      'icon': Icons.numbers, // 9+ symbol
+      'icon': AppConstant.consultationCategoryNumerology, // 9+ symbol
     },
     {
       'name': 'Remedies',
-      'icon': Icons.healing, // Mortar and pestle symbol
+      'icon':
+          AppConstant.consultationCategoryRemedies, // Mortar and pestle symbol
     },
   ];
-
   // Reactive variables
   final RxList<AstrologerModel> allAstrologers = <AstrologerModel>[].obs;
   final RxBool isLoading = false.obs;

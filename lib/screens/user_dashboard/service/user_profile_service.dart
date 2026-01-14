@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/core/base/api_helper_mixin.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class UserProfileService with ApiHelperMixin {
   final ApiClient _apiRepository = Get.find<ApiClient>();

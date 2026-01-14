@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/widgets/user_bottom_nav
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class UserMainView extends GetView<UserMainController> {
   const UserMainView({super.key});

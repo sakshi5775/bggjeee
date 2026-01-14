@@ -13,59 +13,64 @@ class EcommerceHomeController extends BaseController {
   // Categories
   final categories = <CategoryModel>[].obs;
   final categoryTree = <CategoryModel>[].obs;
-  final allCategories = <CategoryModel>[].obs; // All categories including subcategories
+  final allCategories =
+      <CategoryModel>[].obs; // All categories including subcategories
   final selectedCategory = Rxn<CategoryModel>();
   final selectedSubcategory = Rxn<CategoryModel>();
   final isLoadingCategories = false.obs;
-  
+
   // Get subcategories for selected category
   List<CategoryModel> get subcategories {
     if (selectedCategory.value == null) return [];
     final categoryId = selectedCategory.value!.id;
     if (categoryId == null) return [];
-    
+
     // First, try to find subcategories from category tree (children property)
     final parentCategory = categoryTree.firstWhereOrNull(
       (cat) => cat.id == categoryId,
     );
-    
-    if (parentCategory?.children != null && parentCategory!.children!.isNotEmpty) {
+
+    if (parentCategory?.children != null &&
+        parentCategory!.children!.isNotEmpty) {
       return parentCategory.children!;
     }
-    
+
     // Also check if any category in tree has this as parent
-    final subcatsFromTree = categoryTree.where((cat) => 
-      cat.parent?.id == categoryId
-    ).toList();
-    
+    final subcatsFromTree = categoryTree
+        .where((cat) => cat.parent?.id == categoryId)
+        .toList();
+
     if (subcatsFromTree.isNotEmpty) {
       return subcatsFromTree;
     }
-    
+
     // Check allCategories list (includes all categories, not just featured)
-    final subcatsFromAll = allCategories.where((cat) => 
-      cat.parent?.id == categoryId
-    ).toList();
-    
+    final subcatsFromAll = allCategories
+        .where((cat) => cat.parent?.id == categoryId)
+        .toList();
+
     if (subcatsFromAll.isNotEmpty) {
       return subcatsFromAll;
     }
-    
+
     // Fallback: check categories list (featured categories)
-    final subcatsFromFeatured = categories.where((cat) => 
-      cat.parent?.id == categoryId
-    ).toList();
-    
+    final subcatsFromFeatured = categories
+        .where((cat) => cat.parent?.id == categoryId)
+        .toList();
+
     return subcatsFromFeatured;
   }
-  
+
   void selectSubcategory(CategoryModel? subcategory) {
     selectedSubcategory.value = subcategory;
     if (subcategory != null && selectedCategory.value != null) {
-      Get.toNamed('/product-list', arguments: {
-        'category': selectedCategory.value,
-        'subcategory': subcategory,
-      });
+      Get.toNamed(
+        '/product-list',
+        arguments: {
+          'category': selectedCategory.value,
+          'subcategory': subcategory,
+        },
+      );
     }
   }
 
@@ -84,6 +89,15 @@ class EcommerceHomeController extends BaseController {
   final currentBannerIndex = 0.obs;
   Timer? _bannerTimer;
 
+  // Promotional banner scroll
+  final ScrollController promotionalBannerScrollController = ScrollController();
+  Timer? _promotionalBannerTimer;
+  final RxDouble promotionalBannerScrollPosition = 0.0.obs;
+  bool promotionalBannerInitialized = false;
+
+  // Make timer accessible for checking if it's active
+  Timer? get promotionalBannerTimer => _promotionalBannerTimer;
+
   @override
   void onInit() {
     super.onInit();
@@ -92,9 +106,18 @@ class EcommerceHomeController extends BaseController {
   }
 
   @override
+  void onReady() {
+    super.onReady();
+    // Scroll initialization is handled in the widget's build method
+    // via post-frame callback to ensure the ListView is attached
+  }
+
+  @override
   void onClose() {
     _bannerTimer?.cancel();
+    _promotionalBannerTimer?.cancel();
     bannerPageController.dispose();
+    promotionalBannerScrollController.dispose();
     super.onClose();
   }
 
@@ -102,7 +125,9 @@ class EcommerceHomeController extends BaseController {
     _bannerTimer?.cancel();
     _bannerTimer = Timer.periodic(Duration(seconds: 3), (timer) {
       if (featuredProducts.isNotEmpty) {
-        final featuredCount = featuredProducts.length > 3 ? 3 : featuredProducts.length;
+        final featuredCount = featuredProducts.length > 3
+            ? 3
+            : featuredProducts.length;
         if (featuredCount > 1) {
           final nextIndex = (currentBannerIndex.value + 1) % featuredCount;
           if (bannerPageController.hasClients) {
@@ -126,6 +151,54 @@ class EcommerceHomeController extends BaseController {
     });
   }
 
+  void startPromotionalBannerAutoScroll() {
+    if (_promotionalBannerTimer?.isActive == true) {
+      return; // Already running
+    }
+
+    if (!promotionalBannerScrollController.hasClients) {
+      // If controller doesn't have clients yet, try again after a delay
+      Future.delayed(Duration(milliseconds: 100), () {
+        if (promotionalBannerScrollController.hasClients) {
+          startPromotionalBannerAutoScroll();
+        }
+      });
+      return;
+    }
+
+    _promotionalBannerTimer?.cancel();
+    _promotionalBannerTimer = Timer.periodic(Duration(milliseconds: 10), (
+      timer,
+    ) {
+      if (!promotionalBannerScrollController.hasClients) {
+        timer.cancel();
+        return;
+      }
+
+      try {
+        final position = promotionalBannerScrollController.position;
+        if (position.hasContentDimensions && position.maxScrollExtent > 0) {
+          final maxScroll = position.maxScrollExtent;
+          final currentScroll = position.pixels;
+
+          final newPosition = currentScroll + 0.8; // Adjust scroll speed here
+
+          if (newPosition >= maxScroll) {
+            // Reset to start for seamless loop (news ticker effect)
+            promotionalBannerScrollController.jumpTo(0.0);
+            promotionalBannerScrollPosition.value = 0.0;
+          } else {
+            promotionalBannerScrollController.jumpTo(newPosition);
+            promotionalBannerScrollPosition.value = newPosition;
+          }
+        }
+      } catch (e) {
+        // Handle any scroll errors gracefully - scroll controller might be disposed
+        timer.cancel();
+      }
+    });
+  }
+
   Future<void> loadInitialData() async {
     await Future.wait([
       loadCategoryTree(),
@@ -139,18 +212,18 @@ class EcommerceHomeController extends BaseController {
   Future<void> loadCategoryTree() async {
     try {
       isLoadingCategories.value = true;
-      
+
       // Load all categories (not just featured) to get subcategories
       final allCategoryData = await _ecommerceService.getCategories(
         page: 1,
         limit: 200, // Load more to get all categories including subcategories
         isActive: true,
       );
-      
+
       if (allCategoryData != null && allCategoryData.items != null) {
         allCategories.value = allCategoryData.items!;
       }
-      
+
       // First try to get featured categories using getCategories API
       final categoryData = await _ecommerceService.getCategories(
         page: 1,
@@ -158,15 +231,17 @@ class EcommerceHomeController extends BaseController {
         isActive: true,
         isFeatured: true,
       );
-      
-      if (categoryData != null && categoryData.items != null && categoryData.items!.isNotEmpty) {
+
+      if (categoryData != null &&
+          categoryData.items != null &&
+          categoryData.items!.isNotEmpty) {
         // Use getCategories for featured categories
         categories.value = categoryData.items!
             .where((cat) => cat.parent == null)
             .take(8)
             .toList();
       }
-      
+
       // Always load category tree for hierarchical structure
       final result = await _ecommerceService.getCategoryTree();
       if (result != null) {
@@ -261,7 +336,7 @@ class EcommerceHomeController extends BaseController {
   void selectCategory(CategoryModel? category) {
     selectedCategory.value = category;
     selectedSubcategory.value = null; // Reset subcategory when category changes
-    
+
     // Don't navigate immediately - let user see subcategories first
     // Navigation will happen when subcategory is selected or user clicks on category again
     if (category != null) {
@@ -271,7 +346,10 @@ class EcommerceHomeController extends BaseController {
         if (category.id != null) {
           Get.toNamed('/product-list', arguments: {'category': category});
         } else if (category.slug != null) {
-          Get.toNamed('/product-list', arguments: {'categorySlug': category.slug});
+          Get.toNamed(
+            '/product-list',
+            arguments: {'categorySlug': category.slug},
+          );
         }
       }
       // If category has subcategories, stay on home page to show subcategory filter
@@ -305,10 +383,7 @@ class EcommerceHomeController extends BaseController {
   void navigateToProductDetail(ProductModel product, {String? heroTag}) {
     Get.toNamed(
       '/product-detail',
-      arguments: {
-        'product': product,
-        if (heroTag != null) 'heroTag': heroTag,
-      },
+      arguments: {'product': product, if (heroTag != null) 'heroTag': heroTag},
     );
   }
 
@@ -326,4 +401,3 @@ class EcommerceHomeController extends BaseController {
     );
   }
 }
-

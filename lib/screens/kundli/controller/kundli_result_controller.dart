@@ -5,30 +5,48 @@ import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
 class KundliResultController extends BaseController {
   // Kundli data
   final kundliData = Rxn<Map<String, dynamic>>();
   final formData = Rxn<Map<String, dynamic>>();
-  
+
   // Selected tab
   final selectedTabIndex = 0.obs;
-  
+
   // PageController for swipeable tabs
   late PageController pageController;
-  
+
   // Tabs
-  final tabs = ['Basic', 'Lagna', 'Navamsha', 'Sun', 'Moon', 'Bhav-Chalit', 
+  final tabs = [
+    'Basic',
+    'Lagna',
+    'Navamsha',
+    'Sun',
+    'Moon',
+    'Bhav-Chalit',
     'Birth Details',
     'Ashtakvarga',
     'Divisional Chart',
-    'Shad Bala',  'Planets', 'Ascendant Report',
+    'Shad Bala',
+    'Planets',
+    'Ascendant Report',
     'Panchang',
     'Binnashtakvarga',
     'Transit',
-    'Ashtakvarga Chart', 'Varshphal', 'Bhav Madhya', 'Person Details', 'Ghatak and Favourable', 'Reports' , 'Friendship', 'Avkahada Chakra', 'Download PDF' ];
-  
+    'Ashtakvarga Chart',
+    'Varshphal',
+    'Bhav Madhya',
+    'Person Details',
+    'Ghatak and Favourable',
+    'Reports',
+    'Friendship',
+    'Avkahada Chakra',
+    'Download PDF',
+  ];
+
   // Feature grid items
   final featureGridItems = [
     {'title': 'Dasha', 'icon': Icons.timeline},
@@ -40,45 +58,46 @@ class KundliResultController extends BaseController {
     {'title': 'Lal Kitab', 'icon': Icons.menu_book},
     {'title': 'Varshphal', 'icon': Icons.calendar_today},
   ];
-  
+
   // Feature list items (left column)
   final leftColumnFeatures = [
     'Lagna',
     'Sun',
     'Bhav-Chalit',
-   
+
     'Birth Details',
     'Ashtakvarga',
     'Divisional Chart',
     'Shad Bala',
-    'Ascendant Report'
+    'Ascendant Report',
   ];
-  
+
   // Feature list items (right column)
   final rightColumnFeatures = [
     'Navamsha',
     'Moon',
     'Planets',
-    
+
     'Panchang',
     'Binnashtakvarga',
     'Transit',
     'Ashtakvarga Chart',
   ];
-  
+
   // Additional features (grid)
   final additionalFeatures = [
- 
     {'title': 'Bhav Madhya', 'icon': Icons.center_focus_strong},
     {'title': 'Person Details', 'icon': Icons.person},
     {'title': 'Ghatak and Favourable', 'icon': Icons.favorite},
     {'title': 'Reports', 'icon': Icons.description},
-  
+
     {'title': 'Friendship', 'icon': Icons.people},
     {'title': 'Avkahada Chakra', 'icon': Icons.radio_button_checked},
     {'title': 'Download PDF', 'icon': Icons.download},
-   
   ];
+
+  // Reactive variable to control showing all features
+  final showAllFeatures = false.obs;
 
   @override
   void onInit() {
@@ -87,13 +106,13 @@ class KundliResultController extends BaseController {
     pageController = PageController(initialPage: selectedTabIndex.value);
     _loadData();
   }
-  
+
   @override
   void onClose() {
     pageController.dispose();
     super.onClose();
   }
-  
+
   // Handle page change from swipe
   void onPageChanged(int index) {
     selectedTabIndex.value = index;
@@ -108,48 +127,48 @@ class KundliResultController extends BaseController {
   final moonSvgData = Rxn<String>();
   final chalitSvgData = Rxn<String>();
   final transitSvgData = Rxn<String>();
-  
+
   // Planet details data
   final planetDetailsData = Rxn<Map<String, dynamic>>();
   final isLoadingPlanetDetails = false.obs;
-  
+
   // Birth details data
   final mangalDoshData = Rxn<Map<String, dynamic>>();
   final isLoadingMangalDosh = false.obs;
-  
+
   // Panchang data
   final panchangData = Rxn<Map<String, dynamic>>();
   final isLoadingPanchang = false.obs;
-  
+
   // Ashtakvarga data
   final ashtakvargaData = Rxn<Map<String, dynamic>>();
   final isLoadingAshtakvarga = false.obs;
-  
+
   // Binnashtakvarga data
   final binnashtakvargaData = Rxn<Map<String, dynamic>>();
   final isLoadingBinnashtakvarga = false.obs;
   final selectedPlanetForBinnashtakvarga = Rxn<String>();
-  
+
   // Ashtakvarga Chart data (SVG)
   final ashtakvargaChartSvg = Rxn<String>();
   final isLoadingAshtakvargaChart = false.obs;
-  
+
   // Divisional Chart data
   final divisionalChartData = Rxn<Map<String, dynamic>>();
   final isLoadingDivisionalChart = false.obs;
   final selectedDivisionForChart = Rxn<String>();
-  
+
   // Ascendant Report data
   final ascendantReportData = Rxn<Map<String, dynamic>>();
   final isLoadingAscendantReport = false.obs;
-  
+
   // Varshphal data
   final varshphalDetailsData = Rxn<Map<String, dynamic>>();
   final varshphalYearlyChartData = Rxn<Map<String, dynamic>>();
   final isLoadingVarshphalDetails = false.obs;
   final isLoadingVarshphalYearlyChart = false.obs;
   final selectedVarshphalTab = 0.obs; // 0 = Details, 1 = Yearly Chart
-  
+
   // Service
   final _kundliService = KundliService();
   final _panchangService = PanchangService();
@@ -159,13 +178,15 @@ class KundliResultController extends BaseController {
     if (arguments != null) {
       kundliData.value = arguments['kundliData'] as Map<String, dynamic>?;
       formData.value = arguments['formData'] as Map<String, dynamic>?;
-      
+
       // Extract SVG string from API response
       if (kundliData.value != null) {
         final data = kundliData.value!['data'] as String?;
         if (data != null && data.isNotEmpty) {
           svgData.value = data;
-          debugPrint('SVG Data loaded: ${data.substring(0, data.length > 100 ? 100 : data.length)}...');
+          debugPrint(
+            'SVG Data loaded: ${data.substring(0, data.length > 100 ? 100 : data.length)}...',
+          );
         } else {
           debugPrint('SVG Data is null or empty');
         }
@@ -176,19 +197,19 @@ class KundliResultController extends BaseController {
       debugPrint('Arguments is null');
     }
   }
-  
+
   /// Fetch Navamsha chart when needed
   Future<void> fetchNavamshaChart() async {
     if (navamshaSvgData.value != null && navamshaSvgData.value!.isNotEmpty) {
       // Already loaded
       return;
     }
-    
+
     if (formData.value == null) {
       debugPrint('Form data is null, cannot fetch Navamsha chart');
       return;
     }
-    
+
     try {
       final form = formData.value!;
       final date = form['date'] as String?;
@@ -200,12 +221,16 @@ class KundliResultController extends BaseController {
       final style = form['style'] as String? ?? 'north';
       final coloredPlanets = form['coloredPlanets'] as bool? ?? true;
       const colorHex = '#ed6f30';
-      
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Navamsha chart');
         return;
       }
-      
+
       final data = await _kundliService.generateNavamsha(
         date: date,
         time: time,
@@ -217,7 +242,7 @@ class KundliResultController extends BaseController {
         coloredPlanets: coloredPlanets,
         color: colorHex,
       );
-      
+
       if (data != null) {
         final svgString = data['data'] as String?;
         if (svgString != null && svgString.isNotEmpty) {
@@ -240,12 +265,12 @@ class KundliResultController extends BaseController {
       // Already loaded
       return;
     }
-    
+
     if (formData.value == null) {
       debugPrint('Form data is null, cannot fetch Sun chart');
       return;
     }
-    
+
     try {
       final form = formData.value!;
       final date = form['date'] as String?;
@@ -257,12 +282,16 @@ class KundliResultController extends BaseController {
       final style = form['style'] as String? ?? 'north';
       final coloredPlanets = form['coloredPlanets'] as bool? ?? true;
       const colorHex = '#ed6f30';
-      
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Sun chart');
         return;
       }
-      
+
       final data = await _kundliService.generateSun(
         date: date,
         time: time,
@@ -274,7 +303,7 @@ class KundliResultController extends BaseController {
         coloredPlanets: coloredPlanets,
         color: colorHex,
       );
-      
+
       if (data != null) {
         final svgString = data['data'] as String?;
         if (svgString != null && svgString.isNotEmpty) {
@@ -297,12 +326,12 @@ class KundliResultController extends BaseController {
       // Already loaded
       return;
     }
-    
+
     if (formData.value == null) {
       debugPrint('Form data is null, cannot fetch Moon chart');
       return;
     }
-    
+
     try {
       final form = formData.value!;
       final date = form['date'] as String?;
@@ -314,12 +343,16 @@ class KundliResultController extends BaseController {
       final style = form['style'] as String? ?? 'north';
       final coloredPlanets = form['coloredPlanets'] as bool? ?? true;
       const colorHex = '#ed6f30';
-      
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Moon chart');
         return;
       }
-      
+
       final data = await _kundliService.generateMoon(
         date: date,
         time: time,
@@ -331,7 +364,7 @@ class KundliResultController extends BaseController {
         coloredPlanets: coloredPlanets,
         color: colorHex,
       );
-      
+
       if (data != null) {
         final svgString = data['data'] as String?;
         if (svgString != null && svgString.isNotEmpty) {
@@ -354,12 +387,12 @@ class KundliResultController extends BaseController {
       // Already loaded
       return;
     }
-    
+
     if (formData.value == null) {
       debugPrint('Form data is null, cannot fetch Transit chart');
       return;
     }
-    
+
     try {
       final form = formData.value!;
       final date = form['date'] as String?;
@@ -371,12 +404,16 @@ class KundliResultController extends BaseController {
       final style = form['style'] as String? ?? 'north';
       final coloredPlanets = form['coloredPlanets'] as bool? ?? true;
       const colorHex = '#ed6f30';
-      
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Transit chart');
         return;
       }
-      
+
       // Parse birth date and time
       DateTime? birthDateTime;
       try {
@@ -385,57 +422,69 @@ class KundliResultController extends BaseController {
           final birthDay = int.parse(birthDateParts[0]);
           final birthMonth = int.parse(birthDateParts[1]);
           final birthYear = int.parse(birthDateParts[2]);
-          
+
           final timeParts = time.split(':');
           if (timeParts.length >= 2) {
             final birthHour = int.parse(timeParts[0]);
             final birthMinute = int.parse(timeParts[1]);
-            
-            birthDateTime = DateTime(birthYear, birthMonth, birthDay, birthHour, birthMinute);
+
+            birthDateTime = DateTime(
+              birthYear,
+              birthMonth,
+              birthDay,
+              birthHour,
+              birthMinute,
+            );
           }
         }
       } catch (e) {
         debugPrint('Error parsing birth date/time: $e');
       }
-      
+
       // Get current date and time
       DateTime transitDateTime = DateTime.now();
-      
+
       // Ensure transit date/time is always after birth date/time
       if (birthDateTime != null) {
         // Compare transit with birth date/time
-        if (transitDateTime.isBefore(birthDateTime) || 
+        if (transitDateTime.isBefore(birthDateTime) ||
             transitDateTime.isAtSameMomentAs(birthDateTime)) {
           // Transit is before or equal to birth, add 1 day to birth
           transitDateTime = birthDateTime.add(const Duration(days: 1));
-          debugPrint('Transit date/time adjusted: Added 1 day to birth date/time');
+          debugPrint(
+            'Transit date/time adjusted: Added 1 day to birth date/time',
+          );
         } else {
           // Check if same date but same or earlier time
-          final sameDate = transitDateTime.year == birthDateTime.year &&
-                          transitDateTime.month == birthDateTime.month &&
-                          transitDateTime.day == birthDateTime.day;
-          
+          final sameDate =
+              transitDateTime.year == birthDateTime.year &&
+              transitDateTime.month == birthDateTime.month &&
+              transitDateTime.day == birthDateTime.day;
+
           if (sameDate) {
             // Same date - check time
-            final transitMinutes = transitDateTime.hour * 60 + transitDateTime.minute;
+            final transitMinutes =
+                transitDateTime.hour * 60 + transitDateTime.minute;
             final birthMinutes = birthDateTime.hour * 60 + birthDateTime.minute;
-            
+
             if (transitMinutes <= birthMinutes) {
               // Transit time is same or earlier, add at least 1 hour
               transitDateTime = birthDateTime.add(const Duration(hours: 1));
-              debugPrint('Transit date/time adjusted: Added 1 hour to birth time (same date)');
+              debugPrint(
+                'Transit date/time adjusted: Added 1 hour to birth time (same date)',
+              );
             }
           }
         }
       }
-      
+
       final transitDate = DateFormat('dd/MM/yyyy').format(transitDateTime);
       final transitTime = DateFormat('HH:mm').format(transitDateTime);
-      
+
       debugPrint('Birth Date: $date, Birth Time: $time');
       debugPrint('Transit Date (Auto): $transitDate');
       debugPrint('Transit Time (Auto): $transitTime');
-      
+
       final data = await _kundliService.generateTransitChart(
         date: date,
         time: time,
@@ -449,7 +498,7 @@ class KundliResultController extends BaseController {
         coloredPlanets: coloredPlanets,
         color: colorHex,
       );
-      
+
       if (data != null) {
         final svgString = data['data'] as String?;
         if (svgString != null && svgString.isNotEmpty) {
@@ -472,12 +521,12 @@ class KundliResultController extends BaseController {
       // Already loaded
       return;
     }
-    
+
     if (formData.value == null) {
       debugPrint('Form data is null, cannot fetch Chalit chart');
       return;
     }
-    
+
     try {
       final form = formData.value!;
       final date = form['date'] as String?;
@@ -489,12 +538,16 @@ class KundliResultController extends BaseController {
       final style = form['style'] as String? ?? 'north';
       final coloredPlanets = form['coloredPlanets'] as bool? ?? true;
       const colorHex = '#ed6f30';
-      
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Chalit chart');
         return;
       }
-      
+
       final data = await _kundliService.generateChalit(
         date: date,
         time: time,
@@ -506,7 +559,7 @@ class KundliResultController extends BaseController {
         coloredPlanets: coloredPlanets,
         color: colorHex,
       );
-      
+
       if (data != null) {
         final svgString = data['data'] as String?;
         if (svgString != null && svgString.isNotEmpty) {
@@ -525,20 +578,15 @@ class KundliResultController extends BaseController {
 
   void onTabSelected(int index) {
     final tabName = tabs[index];
-    
+
     // Handle Planets tab - navigate to Planets screen
     if (tabName.toLowerCase() == 'planets') {
-      Get.toNamed(
-        AppRoutes.planets,
-        arguments: {
-          'formData': formData.value,
-        },
-      );
+      Get.toNamed(AppRoutes.planets, arguments: {'formData': formData.value});
       return;
     }
-    
+
     selectedTabIndex.value = index;
-    
+
     // Animate PageView to selected tab
     if (pageController.hasClients && pageController.page?.round() != index) {
       pageController.animateToPage(
@@ -547,99 +595,121 @@ class KundliResultController extends BaseController {
         curve: Curves.easeInOut,
       );
     }
-    
+
     // Fetch Navamsha chart when NAVAMSHA tab is selected
-    if (index == 2) { // NAVAMSHA tab index
+    if (index == 2) {
+      // NAVAMSHA tab index
       fetchNavamshaChart();
     }
-    
+
     // Fetch Sun chart when SUN tab is selected
-    if (index == 3) { // SUN tab index
+    if (index == 3) {
+      // SUN tab index
       fetchSunChart();
     }
-    
+
     // Fetch Moon chart when MOON tab is selected
-    if (index == 4) { // MOON tab index
+    if (index == 4) {
+      // MOON tab index
       fetchMoonChart();
     }
-    
+
     // Fetch Chalit chart when CHALIT tab is selected
-    if (index == 5) { // BHAV-CHALIT tab index
+    if (index == 5) {
+      // BHAV-CHALIT tab index
       fetchChalitChart();
     }
-    
+
     // Fetch Transit chart when TRANSIT tab is selected
-    final transitIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'transit');
+    final transitIndex = tabs.indexWhere(
+      (tab) => tab.toLowerCase() == 'transit',
+    );
     if (transitIndex != -1 && index == transitIndex) {
       fetchTransitChart();
     }
-    
+
     // Fetch Planet details when LAGNA tab is selected (index 1)
     if (index == 1) {
       fetchPlanetDetails();
     }
-    
+
     // Fetch Birth Details data when BIRTH DETAILS tab is selected
-    final birthDetailsIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'birth details');
+    final birthDetailsIndex = tabs.indexWhere(
+      (tab) => tab.toLowerCase() == 'birth details',
+    );
     if (birthDetailsIndex != -1 && index == birthDetailsIndex) {
       fetchBirthDetailsData();
     }
-    
+
     // Fetch Panchang data when PANCHANG tab is selected
-    final panchangIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'panchang');
+    final panchangIndex = tabs.indexWhere(
+      (tab) => tab.toLowerCase() == 'panchang',
+    );
     if (panchangIndex != -1 && index == panchangIndex) {
       fetchPanchangData();
     }
-    
+
     // Fetch Ashtakvarga data when ASHTAKVARGA tab is selected
-    final ashtakvargaIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'ashtakvarga');
+    final ashtakvargaIndex = tabs.indexWhere(
+      (tab) => tab.toLowerCase() == 'ashtakvarga',
+    );
     if (ashtakvargaIndex != -1 && index == ashtakvargaIndex) {
       fetchAshtakvargaData();
     }
-    
+
     // Reset Binnashtakvarga when BINNASHTAKVARGA tab is selected (user needs to select planet)
-    final binnashtakvargaIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'binnashtakvarga');
+    final binnashtakvargaIndex = tabs.indexWhere(
+      (tab) => tab.toLowerCase() == 'binnashtakvarga',
+    );
     if (binnashtakvargaIndex != -1 && index == binnashtakvargaIndex) {
       // Don't fetch automatically, user needs to select a planet first
       selectedPlanetForBinnashtakvarga.value = null;
       binnashtakvargaData.value = null;
     }
-    
+
     // Fetch Ashtakvarga Chart when ASHTAKVARGA CHART tab is selected
-    final ashtakvargaChartIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'ashtakvarga chart');
+    final ashtakvargaChartIndex = tabs.indexWhere(
+      (tab) => tab.toLowerCase() == 'ashtakvarga chart',
+    );
     if (ashtakvargaChartIndex != -1 && index == ashtakvargaChartIndex) {
       fetchAshtakvargaChart();
     }
-    
+
     // Reset Divisional Chart when DIVISIONAL CHART tab is selected (user needs to select division)
-    final divisionalChartIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'divisional chart');
+    final divisionalChartIndex = tabs.indexWhere(
+      (tab) => tab.toLowerCase() == 'divisional chart',
+    );
     if (divisionalChartIndex != -1 && index == divisionalChartIndex) {
       // Don't fetch automatically, user needs to select a division first
       selectedDivisionForChart.value = null;
       divisionalChartData.value = null;
     }
-    
+
     // Fetch Ascendant Report when ASCENDANT REPORT tab is selected
-    final ascendantReportIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'ascendant report');
+    final ascendantReportIndex = tabs.indexWhere(
+      (tab) => tab.toLowerCase() == 'ascendant report',
+    );
     if (ascendantReportIndex != -1 && index == ascendantReportIndex) {
       fetchAscendantReport();
     }
-    
+
     // Reset Varshphal when VARSHPHAL tab is selected (user needs to select tab)
-    final varshphalIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'varshphal');
+    final varshphalIndex = tabs.indexWhere(
+      (tab) => tab.toLowerCase() == 'varshphal',
+    );
     if (varshphalIndex != -1 && index == varshphalIndex) {
       selectedVarshphalTab.value = 0;
       fetchVarshphalDetails();
     }
   }
-  
+
   /// Fetch Ashtakvarga Chart (SVG)
   Future<void> fetchAshtakvargaChart() async {
     if (ashtakvargaChartSvg.value != null) {
       // Already loaded
       return;
     }
-    
+
     if (formData.value == null) {
       debugPrint('Form data is null, cannot fetch Ashtakvarga Chart');
       return;
@@ -647,7 +717,7 @@ class KundliResultController extends BaseController {
 
     try {
       isLoadingAshtakvargaChart.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -658,7 +728,11 @@ class KundliResultController extends BaseController {
       final style = form['style'] as String? ?? 'north';
       final color = form['color'] as String? ?? '#ed6f30';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Ashtakvarga Chart');
         isLoadingAshtakvargaChart.value = false;
         return;
@@ -677,15 +751,17 @@ class KundliResultController extends BaseController {
 
       if (data != null) {
         debugPrint('Ashtakvarga Chart data received, keys: ${data.keys}');
-        
+
         // The API returns SVG as a string in the response
         // Check if it's directly a string or in a 'data' field
         String? svgString;
-        
+
         // First check if data itself is a string (from service layer)
         if (data['data'] != null) {
           svgString = data['data'] as String?;
-          debugPrint('Found SVG in data["data"], type: ${svgString.runtimeType}, length: ${svgString?.length}');
+          debugPrint(
+            'Found SVG in data["data"], type: ${svgString.runtimeType}, length: ${svgString?.length}',
+          );
         } else if (data['response'] != null) {
           final response = data['response'];
           debugPrint('Found response field, type: ${response.runtimeType}');
@@ -694,21 +770,27 @@ class KundliResultController extends BaseController {
             debugPrint('Response is String, length: ${svgString.length}');
           } else if (response is Map && response['data'] != null) {
             svgString = response['data'] as String?;
-            debugPrint('Response is Map with data field, length: ${svgString?.length}');
+            debugPrint(
+              'Response is Map with data field, length: ${svgString?.length}',
+            );
           } else if (response is Map && response['svg'] != null) {
             svgString = response['svg'] as String?;
-            debugPrint('Response is Map with svg field, length: ${svgString?.length}');
+            debugPrint(
+              'Response is Map with svg field, length: ${svgString?.length}',
+            );
           }
         } else if (data['svg'] != null) {
           svgString = data['svg'] as String?;
           debugPrint('Found SVG in data["svg"], length: ${svgString?.length}');
         }
-        
+
         // Clean up the SVG string - JSON decode already unescapes, but check for edge cases
         if (svgString != null) {
           // Remove surrounding quotes if present (shouldn't happen after JSON decode, but just in case)
           svgString = svgString.trim();
-          if (svgString.startsWith('"') && svgString.endsWith('"') && svgString.length > 1) {
+          if (svgString.startsWith('"') &&
+              svgString.endsWith('"') &&
+              svgString.length > 1) {
             svgString = svgString.substring(1, svgString.length - 1);
             debugPrint('Removed surrounding quotes');
           }
@@ -727,14 +809,18 @@ class KundliResultController extends BaseController {
             debugPrint('Fixed escaped slashes');
           }
           debugPrint('Cleaned SVG string, final length: ${svgString.length}');
-          debugPrint('SVG starts with: ${svgString.substring(0, svgString.length > 50 ? 50 : svgString.length)}');
+          debugPrint(
+            'SVG starts with: ${svgString.substring(0, svgString.length > 50 ? 50 : svgString.length)}',
+          );
           debugPrint('SVG contains <svg>: ${svgString.contains('<svg')}');
         }
-        
+
         if (svgString != null && svgString.isNotEmpty) {
           ashtakvargaChartSvg.value = svgString;
           isLoadingAshtakvargaChart.value = false;
-          debugPrint('Ashtakvarga Chart SVG loaded successfully, length: ${svgString.length}');
+          debugPrint(
+            'Ashtakvarga Chart SVG loaded successfully, length: ${svgString.length}',
+          );
         } else {
           isLoadingAshtakvargaChart.value = false;
           debugPrint('Ashtakvarga Chart SVG is empty or null');
@@ -749,14 +835,14 @@ class KundliResultController extends BaseController {
       debugPrint('Error fetching Ashtakvarga Chart: $e');
     }
   }
-  
+
   /// Fetch Ashtakvarga data
   Future<void> fetchAshtakvargaData() async {
     if (ashtakvargaData.value != null) {
       // Already loaded
       return;
     }
-    
+
     if (formData.value == null) {
       debugPrint('Form data is null, cannot fetch Ashtakvarga');
       return;
@@ -764,7 +850,7 @@ class KundliResultController extends BaseController {
 
     try {
       isLoadingAshtakvarga.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -773,7 +859,11 @@ class KundliResultController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Ashtakvarga');
         isLoadingAshtakvarga.value = false;
         return;
@@ -801,7 +891,7 @@ class KundliResultController extends BaseController {
       debugPrint('Error fetching Ashtakvarga data: $e');
     }
   }
-  
+
   /// Fetch Divisional Chart data for selected division
   Future<void> fetchDivisionalChartData(String division) async {
     if (formData.value == null) {
@@ -812,7 +902,7 @@ class KundliResultController extends BaseController {
     try {
       isLoadingDivisionalChart.value = true;
       selectedDivisionForChart.value = division;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -821,7 +911,11 @@ class KundliResultController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Divisional Chart');
         isLoadingDivisionalChart.value = false;
         return;
@@ -850,14 +944,14 @@ class KundliResultController extends BaseController {
       debugPrint('Error fetching Divisional Chart data: $e');
     }
   }
-  
+
   /// Fetch Ascendant Report
   Future<void> fetchAscendantReport() async {
     if (ascendantReportData.value != null) {
       // Already loaded
       return;
     }
-    
+
     if (formData.value == null) {
       debugPrint('Form data is null, cannot fetch Ascendant Report');
       return;
@@ -865,7 +959,7 @@ class KundliResultController extends BaseController {
 
     try {
       isLoadingAscendantReport.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -874,7 +968,11 @@ class KundliResultController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Ascendant Report');
         isLoadingAscendantReport.value = false;
         return;
@@ -900,7 +998,9 @@ class KundliResultController extends BaseController {
           ascendantReportData.value = response as Map<String, dynamic>;
           debugPrint('Ascendant Report data loaded successfully');
         } else {
-          debugPrint('Failed to fetch Ascendant Report - invalid response format');
+          debugPrint(
+            'Failed to fetch Ascendant Report - invalid response format',
+          );
         }
       } else {
         debugPrint('Failed to fetch Ascendant Report data');
@@ -910,14 +1010,14 @@ class KundliResultController extends BaseController {
       debugPrint('Error fetching Ascendant Report: $e');
     }
   }
-  
+
   /// Fetch Varshphal Details
   Future<void> fetchVarshphalDetails() async {
     if (varshphalDetailsData.value != null) {
       // Already loaded
       return;
     }
-    
+
     if (formData.value == null) {
       debugPrint('Form data is null, cannot fetch Varshphal Details');
       return;
@@ -925,7 +1025,7 @@ class KundliResultController extends BaseController {
 
     try {
       isLoadingVarshphalDetails.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -934,7 +1034,11 @@ class KundliResultController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Varshphal Details');
         isLoadingVarshphalDetails.value = false;
         return;
@@ -947,9 +1051,13 @@ class KundliResultController extends BaseController {
           final dobYear = int.parse(dateParts[2]);
           final currentYear = DateTime.now().year;
           if (dobYear == currentYear) {
-            debugPrint('DOB is in current year, Varshphal is not completed yet');
+            debugPrint(
+              'DOB is in current year, Varshphal is not completed yet',
+            );
             isLoadingVarshphalDetails.value = false;
-            varshphalDetailsData.value = {'error': 'Varshphal is not completed yet'};
+            varshphalDetailsData.value = {
+              'error': 'Varshphal is not completed yet',
+            };
             return;
           }
         }
@@ -971,13 +1079,16 @@ class KundliResultController extends BaseController {
       if (data != null) {
         // Handle nested response structure
         if (data['data'] != null && data['data']['response'] != null) {
-          varshphalDetailsData.value = data['data']['response'] as Map<String, dynamic>;
+          varshphalDetailsData.value =
+              data['data']['response'] as Map<String, dynamic>;
           debugPrint('Varshphal Details data loaded successfully');
         } else if (data['response'] != null) {
           varshphalDetailsData.value = data['response'] as Map<String, dynamic>;
           debugPrint('Varshphal Details data loaded successfully');
         } else {
-          debugPrint('Failed to fetch Varshphal Details - invalid response format');
+          debugPrint(
+            'Failed to fetch Varshphal Details - invalid response format',
+          );
         }
       } else {
         debugPrint('Failed to fetch Varshphal Details data');
@@ -987,14 +1098,14 @@ class KundliResultController extends BaseController {
       debugPrint('Error fetching Varshphal Details: $e');
     }
   }
-  
+
   /// Fetch Varshphal Yearly Chart
   Future<void> fetchVarshphalYearlyChart() async {
     if (varshphalYearlyChartData.value != null) {
       // Already loaded
       return;
     }
-    
+
     if (formData.value == null) {
       debugPrint('Form data is null, cannot fetch Varshphal Yearly Chart');
       return;
@@ -1002,7 +1113,7 @@ class KundliResultController extends BaseController {
 
     try {
       isLoadingVarshphalYearlyChart.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -1011,7 +1122,11 @@ class KundliResultController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Varshphal Yearly Chart');
         isLoadingVarshphalYearlyChart.value = false;
         return;
@@ -1024,9 +1139,13 @@ class KundliResultController extends BaseController {
           final dobYear = int.parse(dateParts[2]);
           final currentYear = DateTime.now().year;
           if (dobYear == currentYear) {
-            debugPrint('DOB is in current year, Varshphal is not completed yet');
+            debugPrint(
+              'DOB is in current year, Varshphal is not completed yet',
+            );
             isLoadingVarshphalYearlyChart.value = false;
-            varshphalYearlyChartData.value = {'error': 'Varshphal is not completed yet'};
+            varshphalYearlyChartData.value = {
+              'error': 'Varshphal is not completed yet',
+            };
             return;
           }
         }
@@ -1048,13 +1167,17 @@ class KundliResultController extends BaseController {
       if (data != null) {
         // Handle nested response structure
         if (data['data'] != null && data['data']['response'] != null) {
-          varshphalYearlyChartData.value = data['data']['response'] as Map<String, dynamic>;
+          varshphalYearlyChartData.value =
+              data['data']['response'] as Map<String, dynamic>;
           debugPrint('Varshphal Yearly Chart data loaded successfully');
         } else if (data['response'] != null) {
-          varshphalYearlyChartData.value = data['response'] as Map<String, dynamic>;
+          varshphalYearlyChartData.value =
+              data['response'] as Map<String, dynamic>;
           debugPrint('Varshphal Yearly Chart data loaded successfully');
         } else {
-          debugPrint('Failed to fetch Varshphal Yearly Chart - invalid response format');
+          debugPrint(
+            'Failed to fetch Varshphal Yearly Chart - invalid response format',
+          );
         }
       } else {
         debugPrint('Failed to fetch Varshphal Yearly Chart data');
@@ -1064,7 +1187,7 @@ class KundliResultController extends BaseController {
       debugPrint('Error fetching Varshphal Yearly Chart: $e');
     }
   }
-  
+
   /// Fetch Binnashtakvarga data for selected planet
   Future<void> fetchBinnashtakvargaData(String planet) async {
     if (formData.value == null) {
@@ -1075,7 +1198,7 @@ class KundliResultController extends BaseController {
     try {
       isLoadingBinnashtakvarga.value = true;
       selectedPlanetForBinnashtakvarga.value = planet;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -1084,7 +1207,11 @@ class KundliResultController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Binnashtakvarga');
         isLoadingBinnashtakvarga.value = false;
         return;
@@ -1104,7 +1231,9 @@ class KundliResultController extends BaseController {
 
       if (data != null && data['response'] != null) {
         binnashtakvargaData.value = data['response'] as Map<String, dynamic>;
-        debugPrint('Binnashtakvarga data loaded successfully for planet: $planet');
+        debugPrint(
+          'Binnashtakvarga data loaded successfully for planet: $planet',
+        );
       } else {
         debugPrint('Failed to fetch Binnashtakvarga data');
       }
@@ -1113,14 +1242,14 @@ class KundliResultController extends BaseController {
       debugPrint('Error fetching Binnashtakvarga data: $e');
     }
   }
-  
+
   /// Fetch Panchang data
   Future<void> fetchPanchangData() async {
     if (panchangData.value != null) {
       // Already loaded
       return;
     }
-    
+
     if (formData.value == null) {
       debugPrint('Form data is null, cannot fetch Panchang');
       return;
@@ -1128,7 +1257,7 @@ class KundliResultController extends BaseController {
 
     try {
       isLoadingPanchang.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -1137,7 +1266,11 @@ class KundliResultController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Panchang');
         isLoadingPanchang.value = false;
         return;
@@ -1165,27 +1298,27 @@ class KundliResultController extends BaseController {
       debugPrint('Error fetching Panchang data: $e');
     }
   }
-  
+
   /// Fetch Birth Details data (Planet Details and Mangal Dosh)
   Future<void> fetchBirthDetailsData() async {
     // Fetch planet details if not already loaded
     if (planetDetailsData.value == null) {
       await fetchPlanetDetails();
     }
-    
+
     // Fetch mangal dosh if not already loaded
     if (mangalDoshData.value == null) {
       await fetchMangalDosh();
     }
   }
-  
+
   /// Fetch Mangal Dosh
   Future<void> fetchMangalDosh() async {
     if (mangalDoshData.value != null) {
       // Already loaded
       return;
     }
-    
+
     if (formData.value == null) {
       debugPrint('Form data is null, cannot fetch Mangal Dosh');
       return;
@@ -1193,7 +1326,7 @@ class KundliResultController extends BaseController {
 
     try {
       isLoadingMangalDosh.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -1202,7 +1335,11 @@ class KundliResultController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Mangal Dosh');
         isLoadingMangalDosh.value = false;
         return;
@@ -1230,7 +1367,7 @@ class KundliResultController extends BaseController {
       debugPrint('Error fetching Mangal Dosh data: $e');
     }
   }
-  
+
   // Get Name from form data or user profile
   String getName() {
     // First check form data
@@ -1266,9 +1403,10 @@ class KundliResultController extends BaseController {
   // Get Place from form data
   String getPlace() {
     if (formData.value == null) return '-';
-    return formData.value!['place']?.toString() ?? 
-           formData.value!['city']?.toString() ?? 
-           formData.value!['selectedLocation']?.toString() ?? '-';
+    return formData.value!['place']?.toString() ??
+        formData.value!['city']?.toString() ??
+        formData.value!['selectedLocation']?.toString() ??
+        '-';
   }
 
   // Get Gender from form data
@@ -1284,14 +1422,15 @@ class KundliResultController extends BaseController {
   // Get Ayanamsa from planet details
   String getAyanamsa() {
     if (planetDetailsData.value == null) return '-';
-    final panchang = planetDetailsData.value!['panchang'] as Map<String, dynamic>?;
+    final panchang =
+        planetDetailsData.value!['panchang'] as Map<String, dynamic>?;
     if (panchang == null) return '-';
-    
+
     final ayanamsaName = panchang['ayanamsa_name']?.toString() ?? '';
     final ayanamsa = panchang['ayanamsa']?.toString() ?? '';
-    
+
     if (ayanamsaName.isEmpty && ayanamsa.isEmpty) return '-';
-    
+
     // Format ayanamsa as degrees
     String formattedAyanamsa = '';
     if (ayanamsa.isNotEmpty) {
@@ -1299,13 +1438,15 @@ class KundliResultController extends BaseController {
         final ayanamsaValue = double.parse(ayanamsa);
         final degrees = ayanamsaValue.floor();
         final minutes = ((ayanamsaValue - degrees) * 60).floor();
-        final seconds = (((ayanamsaValue - degrees) * 60 - minutes) * 60).floor();
-        formattedAyanamsa = '${degrees.toString().padLeft(3, '0')}°${minutes.toString().padLeft(2, '0')}\'${seconds.toString().padLeft(2, '0')}"';
+        final seconds = (((ayanamsaValue - degrees) * 60 - minutes) * 60)
+            .floor();
+        formattedAyanamsa =
+            '${degrees.toString().padLeft(3, '0')}°${minutes.toString().padLeft(2, '0')}\'${seconds.toString().padLeft(2, '0')}"';
       } catch (e) {
         formattedAyanamsa = ayanamsa;
       }
     }
-    
+
     if (ayanamsaName.isNotEmpty && formattedAyanamsa.isNotEmpty) {
       return '$ayanamsaName ($formattedAyanamsa)';
     } else if (ayanamsaName.isNotEmpty) {
@@ -1324,7 +1465,8 @@ class KundliResultController extends BaseController {
   // Get Mangal Dosh status
   String getMangalDosh() {
     if (mangalDoshData.value != null) {
-      final response = mangalDoshData.value!['response'] as Map<String, dynamic>?;
+      final response =
+          mangalDoshData.value!['response'] as Map<String, dynamic>?;
       if (response != null) {
         final hasDosh = response['has_dosh'] as bool? ?? false;
         final doshType = response['dosh_type']?.toString() ?? '';
@@ -1351,7 +1493,7 @@ class KundliResultController extends BaseController {
     if (formData.value == null) return '-';
     final dateStr = formData.value!['date']?.toString();
     if (dateStr == null || dateStr == '-') return '-';
-    
+
     try {
       // Parse date in dd/MM/yyyy format
       final dateParts = dateStr.split('/');
@@ -1361,28 +1503,28 @@ class KundliResultController extends BaseController {
         final year = int.parse(dateParts[2]);
         final birthDate = DateTime(year, month, day);
         final now = DateTime.now();
-        
+
         int years = now.year - birthDate.year;
         int months = now.month - birthDate.month;
         int days = now.day - birthDate.day;
-        
+
         if (days < 0) {
           months--;
           final lastMonth = DateTime(now.year, now.month - 1, 0);
           days += lastMonth.day;
         }
-        
+
         if (months < 0) {
           years--;
           months += 12;
         }
-        
+
         return '${years}Y${months}M${days}D';
       }
     } catch (e) {
       debugPrint('Error calculating age: $e');
     }
-    
+
     return '-';
   }
 
@@ -1390,10 +1532,11 @@ class KundliResultController extends BaseController {
   String getBalDasa() {
     if (planetDetailsData.value == null) return '-';
     final birthDasa = planetDetailsData.value!['birth_dasa']?.toString() ?? '';
-    final birthDasaTime = planetDetailsData.value!['birth_dasa_time']?.toString() ?? '';
-    
+    final birthDasaTime =
+        planetDetailsData.value!['birth_dasa_time']?.toString() ?? '';
+
     if (birthDasa.isEmpty && birthDasaTime.isEmpty) return '-';
-    
+
     // Parse birth_dasa_time to extract years, months, days
     if (birthDasaTime.isNotEmpty) {
       try {
@@ -1406,23 +1549,25 @@ class KundliResultController extends BaseController {
           final year = int.parse(dateParts[2]);
           final dasaDate = DateTime(year, month, day);
           final now = DateTime.now();
-          
+
           int years = now.year - dasaDate.year;
           int months = now.month - dasaDate.month;
           int days = now.day - dasaDate.day;
-          
+
           if (days < 0) {
             months--;
             final lastMonth = DateTime(now.year, now.month - 1, 0);
             days += lastMonth.day;
           }
-          
+
           if (months < 0) {
             years--;
             months += 12;
           }
-          
-          final dasaPlanet = birthDasa.split('/').isNotEmpty ? birthDasa.split('/').last : '';
+
+          final dasaPlanet = birthDasa.split('/').isNotEmpty
+              ? birthDasa.split('/').last
+              : '';
           return '$dasaPlanet $years Y $months M $days D';
         }
       } catch (e) {
@@ -1430,25 +1575,25 @@ class KundliResultController extends BaseController {
         return birthDasaTime;
       }
     }
-    
+
     return birthDasa;
   }
-  
+
   /// Fetch Planet Details for Lagna Chart
   Future<void> fetchPlanetDetails() async {
     if (planetDetailsData.value != null) {
       // Already loaded
       return;
     }
-    
+
     if (formData.value == null) {
       debugPrint('Form data is null, cannot fetch Planet Details');
       return;
     }
-    
+
     try {
       isLoadingPlanetDetails.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -1457,7 +1602,11 @@ class KundliResultController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Planet Details');
         isLoadingPlanetDetails.value = false;
         return;
@@ -1489,90 +1638,101 @@ class KundliResultController extends BaseController {
   void onFeatureTap(String feature) {
     // Find matching tab by name (case-insensitive)
     final featureLower = feature.toLowerCase();
-    
+
     // Handle Planets navigation FIRST - before checking for tab matching
     if (featureLower == 'planet' || featureLower == 'planets') {
-      Get.toNamed(
-        AppRoutes.planets,
-        arguments: {
-          'formData': formData.value,
-        },
-      );
+      Get.toNamed(AppRoutes.planets, arguments: {'formData': formData.value});
       return;
     }
-    
+
     // Handle Birth Details - switch to Birth Details tab
     if (featureLower == 'birth details') {
-      final birthDetailsIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'birth details');
+      final birthDetailsIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == 'birth details',
+      );
       if (birthDetailsIndex != -1) {
         onTabSelected(birthDetailsIndex);
       }
       return;
     }
-    
+
     // Handle Panchang - switch to Panchang tab
     if (featureLower == 'panchang') {
-      final panchangIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'panchang');
+      final panchangIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == 'panchang',
+      );
       if (panchangIndex != -1) {
         onTabSelected(panchangIndex);
       }
       return;
     }
-    
+
     // Handle Ashtakvarga - switch to Ashtakvarga tab
     if (featureLower == 'ashtakvarga') {
-      final ashtakvargaIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'ashtakvarga');
+      final ashtakvargaIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == 'ashtakvarga',
+      );
       if (ashtakvargaIndex != -1) {
         onTabSelected(ashtakvargaIndex);
       }
       return;
     }
-    
+
     // Handle Binnashtakvarga - switch to Binnashtakvarga tab
     if (featureLower == 'binnashtakvarga') {
-      final binnashtakvargaIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'binnashtakvarga');
+      final binnashtakvargaIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == 'binnashtakvarga',
+      );
       if (binnashtakvargaIndex != -1) {
         onTabSelected(binnashtakvargaIndex);
       }
       return;
     }
-    
+
     // Handle Ashtakvarga Chart - switch to Ashtakvarga Chart tab
     if (featureLower == 'ashtakvarga chart') {
-      final ashtakvargaChartIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'ashtakvarga chart');
+      final ashtakvargaChartIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == 'ashtakvarga chart',
+      );
       if (ashtakvargaChartIndex != -1) {
         onTabSelected(ashtakvargaChartIndex);
       }
       return;
     }
-    
+
     // Handle Divisional Chart - switch to Divisional Chart tab
     if (featureLower == 'divisional chart') {
-      final divisionalChartIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'divisional chart');
+      final divisionalChartIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == 'divisional chart',
+      );
       if (divisionalChartIndex != -1) {
         onTabSelected(divisionalChartIndex);
       }
       return;
     }
-    
+
     // Handle Ascendant Report - switch to Ascendant Report tab
     if (featureLower == 'ascendant report') {
-      final ascendantReportIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'ascendant report');
+      final ascendantReportIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == 'ascendant report',
+      );
       if (ascendantReportIndex != -1) {
         onTabSelected(ascendantReportIndex);
       }
       return;
     }
-    
+
     // Handle Varshphal - switch to Varshphal tab
     if (featureLower == 'varshphal') {
-      final varshphalIndex = tabs.indexWhere((tab) => tab.toLowerCase() == 'varshphal');
+      final varshphalIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == 'varshphal',
+      );
       if (varshphalIndex != -1) {
         onTabSelected(varshphalIndex);
       }
       return;
     }
-    
+
     // Map feature names to tab names
     final Map<String, String> featureToTabMap = {
       'lagna': 'Lagna',
@@ -1585,7 +1745,7 @@ class KundliResultController extends BaseController {
       'ashtakvarga': 'Ashtakvarga',
       'Divisional Chart': 'Divisional Chart',
       'shad bala': 'Shad Bala',
-       'ascendant report' :'Ascendant Report',
+      'ascendant report': 'Ascendant Report',
       'chalit table': 'Chalit Table',
       'panchang': 'Panchang',
       'Binnashtakvarga': 'Binnashtakvarga',
@@ -1599,121 +1759,100 @@ class KundliResultController extends BaseController {
       'avkahada chakra': 'Avkahada Chakra',
       'download pdf': 'Download PDF',
     };
-    
+
     // Get the tab name from the map
     final tabName = featureToTabMap[featureLower];
-    
+
     if (tabName != null) {
       // Find the index of the matching tab
-      final tabIndex = tabs.indexWhere((tab) => tab.toLowerCase() == tabName.toLowerCase());
-      
+      final tabIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == tabName.toLowerCase(),
+      );
+
       if (tabIndex != -1) {
         selectedTabIndex.value = tabIndex;
-        
+
         // Fetch chart data for specific tabs
-        if (tabIndex == 2) { // NAVAMSHA
+        if (tabIndex == 2) {
+          // NAVAMSHA
           fetchNavamshaChart();
-        } else if (tabIndex == 3) { // SUN
+        } else if (tabIndex == 3) {
+          // SUN
           fetchSunChart();
-        } else if (tabIndex == 4) { // MOON
+        } else if (tabIndex == 4) {
+          // MOON
           fetchMoonChart();
-        } else if (tabIndex == 5) { // BHAV-CHALIT
+        } else if (tabIndex == 5) {
+          // BHAV-CHALIT
           fetchChalitChart();
         } else if (tabName.toLowerCase() == 'transit') {
           fetchTransitChart();
         }
-        
+
         return;
       }
     }
-    
+
     // Handle Shodashvarga navigation
     if (feature.toLowerCase() == 'shodashvarga') {
       // Pass form data to Shodashvarga view
       Get.toNamed(
         AppRoutes.shodashvarga,
-        arguments: {
-          'formData': formData.value,
-        },
+        arguments: {'formData': formData.value},
       );
       return;
     }
-    
+
     // Handle Dasha navigation
     if (feature.toLowerCase() == 'dasha') {
       // Pass form data to Dasha view
-      Get.toNamed(
-        AppRoutes.dasha,
-        arguments: {
-          'formData': formData.value,
-        },
-      );
+      Get.toNamed(AppRoutes.dasha, arguments: {'formData': formData.value});
       return;
     }
-    
+
     // Handle Yog navigation
     if (feature.toLowerCase() == 'yog') {
       // Pass form data to Yog view
-      Get.toNamed(
-        AppRoutes.yog,
-        arguments: {
-          'formData': formData.value,
-        },
-      );
+      Get.toNamed(AppRoutes.yog, arguments: {'formData': formData.value});
       return;
     }
-    
+
     // Handle Dosh navigation
     if (feature.toLowerCase() == 'dosh') {
       // Pass form data to Dosh view
-      Get.toNamed(
-        AppRoutes.dosh,
-        arguments: {
-          'formData': formData.value,
-        },
-      );
+      Get.toNamed(AppRoutes.dosh, arguments: {'formData': formData.value});
       return;
     }
-    
+
     // Handle KP System navigation
-    if (feature.toLowerCase() == 'kp system' || feature.toLowerCase().contains('kp')) {
+    if (feature.toLowerCase() == 'kp system' ||
+        feature.toLowerCase().contains('kp')) {
       // Pass form data to KP System view
-      Get.toNamed(
-        AppRoutes.kpSystem,
-        arguments: {
-          'formData': formData.value,
-        },
-      );
+      Get.toNamed(AppRoutes.kpSystem, arguments: {'formData': formData.value});
       return;
     }
-    
+
     // Handle Lal Kitab navigation
-    if (feature.toLowerCase().contains('lal kitab') || feature.toLowerCase().contains('lal')) {
+    if (feature.toLowerCase().contains('lal kitab') ||
+        feature.toLowerCase().contains('lal')) {
       // Pass form data to Lal Kitab view
-      Get.toNamed(
-        AppRoutes.lalKitab,
-        arguments: {
-          'formData': formData.value,
-        },
-      );
+      Get.toNamed(AppRoutes.lalKitab, arguments: {'formData': formData.value});
       return;
     }
-    
+
     // Handle Predictions navigation
-    if (feature.toLowerCase().contains('prediction') || feature.toLowerCase().contains('predictions')) {
+    if (feature.toLowerCase().contains('prediction') ||
+        feature.toLowerCase().contains('predictions')) {
       // Pass form data to Predictions view
       Get.toNamed(
         AppRoutes.predictions,
-        arguments: {
-          'formData': formData.value,
-        },
+        arguments: {'formData': formData.value},
       );
       return;
     }
-    
+
     // Handle other features - navigate to specific feature page
     // This will be implemented based on API endpoints
     debugPrint('Feature tapped: $feature (no matching tab found)');
   }
 }
-

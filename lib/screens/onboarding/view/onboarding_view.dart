@@ -1,168 +1,288 @@
+import 'dart:ui';
+
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/onboarding/controller/onboarding_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+
+import 'widget/glass_button.dart';
+import 'widget/rotating_logo.dart';
 
 class OnboardingView extends BasePage<OnboardingController> {
   const OnboardingView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double blurHeight = screenHeight * 0.7;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF5C2020), // Dark maroon background
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Skip button (optional - can be removed if not needed)
-            Expanded(
-              child: PageView(
-                controller: controller.pageController,
-                onPageChanged: controller.onPageChanged,
-                children: [
-                  _buildFirstPage(),
-                  _buildSecondPage(),
-                  _buildThirdPage(),
-                ],
-              ),
-            ),
-            // Bottom navigation (hidden during auto-advance)
-            Obx(() => controller.isAutoAdvancing.value
-                ? const SizedBox.shrink()
-                : _buildBottomNavigation(context)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFirstPage() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 60.h),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body: Stack(
         children: [
-          // Logo
-          Image.asset(
-            'assets/app/logo.png',
-            width: 280.w,
-            height: 280.h,
-            fit: BoxFit.contain,
+          /// 1️⃣ BACKGROUND IMAGE
+          PageView(
+            controller: controller.pageController,
+            onPageChanged: controller.onPageChanged,
+            children: const [
+              _BgImage(img: "assets/images/onboarding_screen1_bgimg.png"),
+              _BgImage(img: "assets/images/onboarding_screen2_bgimg.png"),
+              _BgImage(img: "assets/images/onboarding_screen3_bgimg.png"),
+            ],
           ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildSecondPage() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 60.h),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Logo
-          Image.asset(
-            'assets/app/horoscopelogo.png',
-            width: 300.w,
-            height: 300.h,
-            fit: BoxFit.contain,
-          ),
-          SizedBox(height: 60.h),
-          // AutoTranslateText
-          AutoTranslateText(
-            'Daily, weekly or monthly\nhoroscopes, birth charts,\nnumerology and memes.',
-            style: AppTypography.h2.copyWith(
-              color: Color(0xffF8E6B5),
-              height: 1.6,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildThirdPage() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 60.h),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Logo SVG
-          SvgPicture.asset(
-            'assets/app/fullchakra.svg',
-            width: 300.w,
-            height: 300.h,
-            fit: BoxFit.contain,
-            colorFilter: const ColorFilter.mode(
-              Color(0xFFF5E6D3),
-              BlendMode.srcIn,
-            ),
-          ),
-          SizedBox(height: 60.h),
-          // AutoTranslateText
-          AutoTranslateText(
-            'Explore the cosmos and\nconnect with astrologers.',
-            style: AppTypography.h2.copyWith(
-              color: const Color(0xFFF5E6D3),
-              height: 1.6,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigation(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 30.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Page indicators (simple horizontal dashes)
-          Obx(() => Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(3, (index) {
-                  final isActive = index == controller.currentPage.value;
-                  return Container(
-                    margin: EdgeInsets.symmetric(horizontal: 3.w),
-                    width: isActive ? 32.w : 24.w,
-                    height: 4.h,
-                    decoration: BoxDecoration(
-                      color: isActive
-                          ? const Color(0xFFF5E6D3)
-                          : const Color(0xFF7A5A5A),
-                      borderRadius: BorderRadius.circular(2.r),
-                    ),
-                  );
-                }),
-              )),
-          // Next button
-          GestureDetector(
-            onTap: controller.nextPage,
+          /// 2️⃣ TOP LINEAR GRADIENT
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 0,
+            height: screenHeight * 0.3,
             child: Container(
-              width: 70.w,
-              height: 70.h,
               decoration: BoxDecoration(
-                color: const Color(0xFFF5E6D3),
-                borderRadius: BorderRadius.circular(16.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFFFE9A00).withOpacity(0.75),
+                    const Color(0xFF6900).withOpacity(0.55),
+                    const Color(0xFFE7000B).withOpacity(0.35),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          /// 3️⃣ BOTTOM BLUR (70 HEIGHT)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                child: Container(
+                  height: blurHeight,
+                  color: Colors.black.withOpacity(0.1),
+                ),
+              ),
+            ),
+          ),
+
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: blurHeight - 10,
+            child: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: -1, sigmaY: -1),
+                child: Container(
+                  height: 20,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.black.withOpacity(0.1),
+                        Colors.black.withOpacity(0.1),
+                      ],
+                    ),
                   ),
-                ],
+                ),
               ),
-              child: Icon(
-                Icons.arrow_forward,
-                color: const Color(0xFF5C2020),
-                size: 28.sp,
-              ),
+            ),
+          ),
+
+          /// 4️⃣ CONTENT
+          SafeArea(
+            child: Column(
+              children: [
+                /// BACK ICON
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: InkWell(
+                      child: const Icon(Icons.arrow_back, color: Colors.white),
+                      onTap: () => controller.back(),
+                    ),
+                  ),
+                ),
+
+                // const Spacer(),
+                SizedBox(height: 30),
+
+                /// LOGO + SLOGAN
+                Column(
+                  children: [
+                    const RotatingLogo(),
+                    const SizedBox(height: 25),
+
+                    ClipRRect(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+
+                        // overlay for text visibility
+                        child: const Text(
+                          "Get Instant Divine Guidance",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: 'poppins',
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(width: 60, height: 2, color: Colors.white),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          child: Icon(
+                            Icons.star,
+                            size: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Container(width: 60, height: 2, color: Colors.white),
+                      ],
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    Obx(() {
+                      // Har page ke liye description
+                      final descriptions = [
+                        "Chat with our AI astrologer 24/7 or connect with verified expert pandits through video calls and live chat.",
+                        "Chat with our AI astrologer 24/7 or connect with verified expert pandits through video calls and live chat.",
+                        "Chat with our AI astrologer 24/7 or connect with verified expert pandits through video calls and live chat.",
+                      ];
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32),
+                        child: Text(
+                          descriptions[controller.currentPage.value],
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontFamily: 'poppins',
+                            fontSize: 14,
+                            height: 1.5,
+                            color: Colors.white,
+                          ),
+                        ),
+                      );
+                    }),
+
+                    const SizedBox(height: 22),
+
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Obx(() {
+                        final pageIndex = controller.currentPage.value;
+
+                        return Column(
+                          children: List.generate(3, (i) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: StaggeredSlideFade(
+                                index: i,
+                                currentPage: pageIndex,
+                                child: GlassMenuButton(
+                                  title: controller.pageButtons[pageIndex][i],
+                                  icon: i == 0
+                                      ? Icons.chat_bubble_outline
+                                      : i == 1
+                                      ? Icons.video_call_outlined
+                                      : Icons.person_outline,
+                                  onTap: () {},
+                                ),
+                              ),
+                            );
+                          }),
+                        );
+                      }),
+                    ),
+                  ],
+                ),
+
+                const Spacer(),
+
+                /// CIRCLE PAGE INDICATOR (ABOVE BUTTONS)
+                Obx(
+                  () => Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      3,
+                      (index) => AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        height: 8,
+                        width: controller.currentPage.value == index ? 22 : 8,
+                        decoration: BoxDecoration(
+                          color: controller.currentPage.value == index
+                              ? Colors.white
+                              : Colors.white38,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                /// BUTTONS
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _btn(
+                          text: "Skip",
+                          onTap: controller.skip,
+                          gradient: const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [Color(0xFFf07c35), Color(0xFFE0391B)],
+                          ),
+                          textColor: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _btn(
+                          text: "Next  >",
+                          gradient: const LinearGradient(
+                            colors: [Colors.white, Colors.white],
+                          ),
+                          textColor: const Color(0xFFFF6A00),
+                          onTap: controller.nextPage,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 25),
+
+                /// PAGE INDICATOR TEXT
+                Obx(
+                  () => Text(
+                    "${controller.currentPage.value + 1} of 3",
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                ),
+
+                const SizedBox(height: 14),
+              ],
             ),
           ),
         ],
@@ -171,3 +291,58 @@ class OnboardingView extends BasePage<OnboardingController> {
   }
 }
 
+//image
+class _BgImage extends StatelessWidget {
+  final String img;
+  const _BgImage({required this.img});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.expand(child: Image.asset(img, fit: BoxFit.cover));
+  }
+}
+
+//button
+Widget _btn({
+  required String text,
+  required VoidCallback onTap,
+  Gradient? gradient,
+  Color textColor = Colors.white,
+}) {
+  return SizedBox(
+    height: 50,
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+        gradient:
+            gradient ??
+            const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFFF8A00), // orange
+                Color(0xFFFF3D00), // deep orange
+              ],
+            ),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: ElevatedButton(
+        onPressed: onTap,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    ),
+  );
+}

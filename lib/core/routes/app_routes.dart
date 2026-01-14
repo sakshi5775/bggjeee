@@ -17,6 +17,7 @@ class AppRoutes {
   static const String astrologerChatHistory = '/astrologer-chat-history';
   static const String astrologerVoiceCall = '/astrologer-voice-call';
   static const String astrologerVideoCall = '/astrologer-video-call';
+  static const String aichat = '/ai-chat';
 
   // Blog Routes
 

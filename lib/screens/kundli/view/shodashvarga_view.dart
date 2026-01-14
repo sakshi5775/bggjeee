@@ -16,43 +16,52 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(),
-            
-            // Tabs Slider
-            _buildTabs(),
-            
-            // Content - PageView for swipeable tabs
-            Expanded(
-              child: PageView.builder(
-                controller: controller.pageController,
-                onPageChanged: controller.onPageChanged,
-                itemCount: controller.tabs.length,
-                itemBuilder: (context, index) {
-                  // Show table for SHODASHVARGA tab (index 0)
-                  if (index == 0) {
-                    return SingleChildScrollView(
-                      padding: EdgeInsets.all(16.w),
-                      child: _buildDivisionsTable(),
+      // backgroundColor: '#FFF8E1'.toColor(),
+      body: Container(
+        decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [Color(0xFFFFF6C2), Color(0xFFFFE8A3), Color(0xFFFFD580) ],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        ),
+        
+      ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              _buildHeader(),
+              
+              // Tabs Slider
+              _buildTabs(),
+              
+              // Content - PageView for swipeable tabs
+              Expanded(
+                child: PageView.builder(
+                  controller: controller.pageController,
+                  onPageChanged: controller.onPageChanged,
+                  itemCount: controller.tabs.length,
+                  itemBuilder: (context, index) {
+                    // Show table for SHODASHVARGA tab (index 0)
+                    if (index == 0) {
+                      return SingleChildScrollView(
+                        padding: EdgeInsets.all(16.w),
+                        child: _buildDivisionsTable(),
+                      );
+                    }
+                    
+                    // For other tabs, show chart
+                    final division = controller.tabs[index];
+                    final svgData = controller.getSvgDataForDivision(division);
+                    
+                    return DivisionChartWidget(
+                      svgData: svgData,
+                      divisionName: division,
                     );
-                  }
-                  
-                  // For other tabs, show chart
-                  final division = controller.tabs[index];
-                  final svgData = controller.getSvgDataForDivision(division);
-                  
-                  return DivisionChartWidget(
-                    svgData: svgData,
-                    divisionName: division,
-                  );
-                },
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -62,12 +71,20 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: "#6F221E".toColor(),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF3D0C11), Color(0xFF5D1C21)],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(24.r),
+          bottomRight: Radius.circular(24.r),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -75,7 +92,7 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
         children: [
           // Back button
           IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
+            icon: Icon(Icons.arrow_back, color: Color(0xFFF7C443), size: 24.w),
             onPressed: () => Get.back(),
           ),
           
@@ -86,7 +103,7 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
             child: AutoTranslateText(
               'Shodashvarga',
               style: MyTextTheme.largeBCB.copyWith(
-                color: Colors.white,
+                color: Color(0xFFF7C443),
                 fontWeight: FontWeight.bold,
               ).merge(AppTypography.h2),
             ),
@@ -156,18 +173,43 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+            spreadRadius: 0,
           ),
         ],
       ),
       child: Column(
         children: [
-          // Table Header
+          Row(
+            children: [
+              Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              height: 50.h,
+              width: 50.w,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [Color(0xFFFF8C42), Color(0xFFE63946)]),
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Icon(Icons.table_chart_rounded, color: Colors.white, size: 24.w),
+            ),
+          ),
+          Spacing.w(16),
+          AutoTranslateText(
+            'Shodashvarga',
+            style: MyTextTheme.largeBCB.copyWith(
+              color: Color(0xFF3D0C11),
+              fontWeight: FontWeight.bold,
+            ).merge(AppTypography.h2),
+          ),
+            ],
+          ),
+          // Table Header with Light Yellow/Cream Background
           Container(
-            padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
             decoration: BoxDecoration(
-              color: '#FF6B35'.toColor().withOpacity(0.1),
+              color: '#FFF9C4'.toColor(), // Light yellow/cream background
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16.r),
                 topRight: Radius.circular(16.r),
@@ -180,8 +222,9 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
                   child: AutoTranslateText(
                     'Division',
                     style: MyTextTheme.mediumBCB.copyWith(
-                      color: '#3E2723'.toColor(),
+                      color: '#ed6f30'.toColor(), // Orange/reddish color
                       fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
                     ),
                   ),
                 ),
@@ -191,8 +234,9 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
                     'Code',
                     textAlign: TextAlign.center,
                     style: MyTextTheme.mediumBCB.copyWith(
-                      color: '#3E2723'.toColor(),
+                      color: '#ed6f30'.toColor(), // Orange/reddish color
                       fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
                     ),
                   ),
                 ),
@@ -202,8 +246,9 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
                     'Description',
                     textAlign: TextAlign.center,
                     style: MyTextTheme.mediumBCB.copyWith(
-                      color: '#3E2723'.toColor(),
+                      color: '#ed6f30'.toColor(), // Orange/reddish color
                       fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
                     ),
                   ),
                 ),
@@ -220,11 +265,14 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
             return GestureDetector(
               onTap: () => controller.onDivisionTap(division['code'] as String),
               child: Container(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
                 decoration: BoxDecoration(
+                  color: Colors.white,
                   border: Border(
                     bottom: BorderSide(
-                      color: isLast ? Colors.transparent : '#FF6B35'.toColor().withOpacity(0.1),
+                      color: isLast 
+                          ? Colors.transparent 
+                          : Colors.grey.withOpacity(0.2), // Light gray separator
                       width: 1,
                     ),
                   ),
@@ -236,9 +284,10 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
                       child: AutoTranslateText(
                         division['name'] as String,
                         style: MyTextTheme.mediumBCN.copyWith(
-                          color: '#3E2723'.toColor(),
-                          fontWeight: FontWeight.w500,
-                        ).merge(AppTypography.body1),
+                          color: '#3E2723'.toColor(), // Dark text
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13.sp,
+                        ),
                       ),
                     ),
                     Expanded(
@@ -246,10 +295,11 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
                       child: AutoTranslateText(
                         division['code'] as String,
                         textAlign: TextAlign.center,
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: '#FF6B35'.toColor(),
-                          fontWeight: FontWeight.bold,
-                        ).merge(AppTypography.body1),
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: '#3E2723'.toColor(), // Dark text
+                          fontWeight: FontWeight.w400,
+                          fontSize: 13.sp,
+                        ),
                       ),
                     ),
                     Expanded(
@@ -258,8 +308,12 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
                         division['description'] as String,
                         textAlign: TextAlign.center,
                         style: MyTextTheme.smallBCN.copyWith(
-                          color: '#3E2723'.toColor().withOpacity(0.7),
-                        ).merge(AppTypography.body2),
+                          color: '#3E2723'.toColor(), // Dark text
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12.sp,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],

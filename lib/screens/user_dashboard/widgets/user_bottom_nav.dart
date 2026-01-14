@@ -1,27 +1,24 @@
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 
 class UserBottomNav extends StatelessWidget {
   final Function(int) onTap;
   const UserBottomNav({super.key, required this.onTap});
 
-  static const LinearGradient _inactiveGradient = LinearGradient(
-    colors: [
-      Color(0xFFE3B341),
-      Color(0xFFC9A033),
-    ],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  );
+  static final LinearGradient _inactiveGradient = AppColors.orangeGradient;
 
   @override
   Widget build(BuildContext context) {
     final c = Get.find<UserMainController>();
-    return Obx(() => Container(
+    return Obx(
+      () => Container(
         decoration: BoxDecoration(
           color: Colors.white, // White background
           boxShadow: [
@@ -34,8 +31,8 @@ class UserBottomNav extends StatelessWidget {
         ),
         child: SafeArea(
           child: Container(
-            height: 60.h,
-            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            height: 70.h,
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -52,7 +49,7 @@ class UserBottomNav extends StatelessWidget {
                   index: 1,
                   selectedIndex: c.selectedIndex.value,
                   onTap: () => onTap(1),
-          ),
+                ),
                 _buildNavItem(
                   icon: Icons.school,
                   label: 'Education',
@@ -66,14 +63,14 @@ class UserBottomNav extends StatelessWidget {
                   index: 3,
                   selectedIndex: c.selectedIndex.value,
                   onTap: () => onTap(3),
-          ),
+                ),
                 _buildNavItem(
                   icon: Icons.person_outline,
                   label: 'Profile',
                   index: 4,
                   selectedIndex: c.selectedIndex.value,
                   onTap: () => onTap(4),
-          ),
+                ),
               ],
             ),
           ),
@@ -94,8 +91,12 @@ class UserBottomNav extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFFFF8F0) : Colors.transparent, // Light yellow/cream for active
+            gradient: isSelected ? AppColors.orangeGradient : null,
+            color: isSelected
+                ? const Color(0xFFFFF8F0)
+                : Colors.transparent, // Light yellow/cream for active
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: Column(
@@ -103,28 +104,18 @@ class UserBottomNav extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               isSelected
-                  ? Icon(
-                      icon,
-                      color: const Color(0xFF5F2221),
-                      size: 22.w,
-                    )
+                  ? Icon(icon, color: Colors.white, size: 22.w)
                   : ShaderMask(
                       shaderCallback: (bounds) =>
                           _inactiveGradient.createShader(bounds),
                       blendMode: BlendMode.srcIn,
-                      child: Icon(
-                        icon,
-                        color: Colors.white,
-                        size: 22.w,
-                      ),
+                      child: Icon(icon, color: Colors.white, size: 22.w),
                     ),
               SizedBox(height: 2.h),
               isSelected
                   ? AutoTranslateText(
                       label,
-                      style: AppTypography.label.copyWith(
-                        color: const Color(0xFF5F2221),
-                      ),
+                      style: AppTypography.label.copyWith(color: Colors.white),
                     )
                   : ShaderMask(
                       shaderCallback: (bounds) =>
@@ -137,7 +128,7 @@ class UserBottomNav extends StatelessWidget {
                         ),
                       ),
                     ),
-        ],
+            ],
           ),
         ),
       ),

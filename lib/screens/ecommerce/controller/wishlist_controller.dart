@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/data_model/wishlist_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class WishlistController extends BaseController {
   final EcommerceService _service = EcommerceService();

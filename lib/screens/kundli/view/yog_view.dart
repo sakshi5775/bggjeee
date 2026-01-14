@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class YogView extends BasePage<YogController> {
   const YogView({super.key});
@@ -40,16 +41,17 @@ class YogView extends BasePage<YogController> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            '#FF6B35'.toColor(),
-            '#FF8C42'.toColor(),
-          ],
+          colors: [Color(0xFF3D0C11), Color(0xFF5D1C21)],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(24.r),
+          bottomRight: Radius.circular(24.r),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -57,7 +59,7 @@ class YogView extends BasePage<YogController> {
         children: [
           // Back button
           IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
+            icon: Icon(Icons.arrow_back, color: Color(0xFFF7C443), size: 24.w),
             onPressed: () => Get.back(),
           ),
           
@@ -68,7 +70,7 @@ class YogView extends BasePage<YogController> {
             child: AutoTranslateText(
               'Yog',
               style: MyTextTheme.largeBCB.copyWith(
-                color: Colors.white,
+                color: Color(0xFFF7C443),
                 fontWeight: FontWeight.bold,
               ).merge(AppTypography.h2),
             ),

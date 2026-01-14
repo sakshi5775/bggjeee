@@ -8,7 +8,9 @@ import 'package:astrobharataiuser/binding/courses_binding/live_webinars_binding.
 import 'package:astrobharataiuser/binding/courses_binding/my_learning_binding.dart';
 import 'package:astrobharataiuser/binding/dashboard_binding/user_main_binding.dart';
 import 'package:astrobharataiuser/binding/waiting_screen_binding/waiting_screen_binding.dart';
+import 'package:astrobharataiuser/binding/onboarding_binding/onboarding_binding.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/ai_chat/views/ai_chat_view.dart';
 import 'package:astrobharataiuser/screens/blogs/view/all_blogs_view.dart';
 import 'package:astrobharataiuser/screens/blogs/view/blog_comments_view.dart';
 import 'package:astrobharataiuser/screens/blogs/view/blog_detail_view.dart';
@@ -17,6 +19,7 @@ import 'package:astrobharataiuser/screens/ai_chat/views/persona_detail_view.dart
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/views/persona_voice_call_view.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/views/persona_voice_history_view.dart';
+import 'package:astrobharataiuser/screens/login/login/view/login_view.dart';
 import 'package:astrobharataiuser/screens/prashna_kundali/binding/prashna_kundali_binding.dart';
 import 'package:astrobharataiuser/screens/prashna_kundali/view/prashna_kundali_history_view.dart';
 import 'package:astrobharataiuser/screens/prashna_kundali/view/prashna_kundali_results_view.dart';
@@ -33,6 +36,8 @@ import 'package:astrobharataiuser/screens/ramal_shastra/view/ramal_shastra_resul
 import 'package:astrobharataiuser/screens/ramal_shastra/view/ramal_shastra_history_view.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/view/ramal_shastra_stats_view.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/view/ramal_shastra_detail_view.dart';
+import 'package:astrobharataiuser/screens/waiting_screen/waiting_screen/view/waiting_screen_view.dart';
+import 'package:astrobharataiuser/screens/onboarding/view/onboarding_view.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart'
     show AutoTranslateText;
 import 'package:flutter/material.dart';
@@ -43,12 +48,12 @@ import 'package:astrobharataiuser/screens/courses/views/content_player_view.dart
 import 'package:astrobharataiuser/screens/courses/views/live_webinars_view.dart';
 import 'package:astrobharataiuser/screens/courses/views/live_webinar_session_view.dart';
 import 'package:astrobharataiuser/screens/courses/views/my_learning_view.dart';
-import 'package:astrobharataiuser/screens/login/view/login_view.dart';
+
 import 'package:astrobharataiuser/screens/otp/view/otp_view.dart';
 import 'package:astrobharataiuser/screens/sign_up/view/signup_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_main_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
-import 'package:astrobharataiuser/screens/waiting_screen/view/waiting_screen_view.dart';
+
 import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrologer_detail_view.dart';
@@ -224,12 +229,12 @@ class PageRoutes {
       transition: leftToRight,
       binding: WaitingScreenBinding(),
     ),
-    // GetPage(
-    // name: AppRoutes.onboarding,
-    // page: () => const OnboardingView(),
-    // transition: Transition.fadeIn,
-    // binding: OnboardingBinding(),
-    // ),
+    GetPage(
+      name: AppRoutes.onboarding,
+      page: () => const OnboardingView(),
+      transition: Transition.fadeIn,
+      binding: OnboardingBinding(),
+    ),
     GetPage(
       name: AppRoutes.search,
       page: () => const EcommerceSearchView(),
@@ -326,6 +331,12 @@ class PageRoutes {
     GetPage(
       name: AppRoutes.astrologerVideoCall,
       page: () => const AstrologerVideoCallView(),
+      transition: Transition.fadeIn,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+     GetPage(
+      name: AppRoutes.aichat,
+      page: () => const AiChatView(),
       transition: Transition.fadeIn,
       transitionDuration: Duration(milliseconds: 300),
     ),

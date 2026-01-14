@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class KpCuspsWidget extends StatelessWidget {
   final KpSystemController controller;
@@ -85,8 +86,8 @@ class KpCuspsWidget extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            "#ed6f30".toColor().withOpacity(0.1),
-            "#ed6f30".toColor().withOpacity(0.05),
+            "#FF8C42".toColor().withOpacity(0.1),
+            "#FF8C42".toColor().withOpacity(0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -106,7 +107,10 @@ class KpCuspsWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: "#ed6f30".toColor(),
+                  // color: "#ed6f30".toColor(),
+                  gradient: LinearGradient(colors: [
+                    Color(0xFFFF8C42), Color(0xFFE63946)
+                  ]),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: AutoTranslateText(

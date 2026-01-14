@@ -17,6 +17,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class KpSystemView extends BasePage<KpSystemController> {
   const KpSystemView({super.key});
@@ -24,48 +25,58 @@ class KpSystemView extends BasePage<KpSystemController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(),
-            
-            // Tabs (always visible when not in table view)
-            Obx(() {
-              if (controller.selectedTabIndex.value == -1) {
-                return SizedBox.shrink();
-              }
-              return _buildTabs();
-            }),
-            
-            // Content
-            Expanded(
-              child: Obx(() {
-                // Show table view if selectedTabIndex is -1
-                if (controller.selectedTabIndex.value == -1) {
-                  return KpSystemTableWidget(controller: controller);
-                }
-                // Otherwise show swipeable PageView for tabs
-                return PageView(
-                  controller: controller.pageController,
-                  onPageChanged: controller.onPageChanged,
-                  children: [
-                    KpChartWidget(controller: controller),
-                    KpRasiChartWidget(controller: controller),
-                    KpPlanetsWidget(controller: controller),
-                    KpCuspsWidget(controller: controller),
-                    KpPlanetSignificationWidget(controller: controller),
-                    KpHouseSignificatorsWidget(controller: controller),
-                    KpPlanetSignificationLevelWiseWidget(controller: controller),
-                    KpComingSoonWidget(title: 'Nakshatra Nadi'),
-                  ],
-                );
-              }),
-            ),
-          ],
+      // backgroundColor: '#FFF8E1'.toColor(),
+
+    body: Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [Color(0xFFFFF6C2), Color(0xFFFFE8A3), Color(0xFFFFD580) ],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
         ),
+        
       ),
+      child: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              _buildHeader(),
+              
+              // Tabs (always visible when not in table view)
+              Obx(() {
+                if (controller.selectedTabIndex.value == -1) {
+                  return SizedBox.shrink();
+                }
+                return _buildTabs();
+              }),
+              
+              // Content
+              Expanded(
+                child: Obx(() {
+                  // Show table view if selectedTabIndex is -1
+                  if (controller.selectedTabIndex.value == -1) {
+                    return KpSystemTableWidget(controller: controller);
+                  }
+                  // Otherwise show swipeable PageView for tabs
+                  return PageView(
+                    controller: controller.pageController,
+                    onPageChanged: controller.onPageChanged,
+                    children: [
+                      KpChartWidget(controller: controller),
+                      KpRasiChartWidget(controller: controller),
+                      KpPlanetsWidget(controller: controller),
+                      KpCuspsWidget(controller: controller),
+                      KpPlanetSignificationWidget(controller: controller),
+                      KpHouseSignificatorsWidget(controller: controller),
+                      KpPlanetSignificationLevelWiseWidget(controller: controller),
+                      KpComingSoonWidget(title: 'Nakshatra Nadi'),
+                    ],
+                  );
+                }),
+              ),
+            ],
+          ),
+        ),
+    ),
     );
   }
 
@@ -76,16 +87,17 @@ class KpSystemView extends BasePage<KpSystemController> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            '#FF6B35'.toColor(),
-            '#FF8C42'.toColor(),
-          ],
+          colors: [Color(0xFF3D0C11), Color(0xFF5D1C21)],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(24.r),
+          bottomRight: Radius.circular(24.r),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -93,7 +105,7 @@ class KpSystemView extends BasePage<KpSystemController> {
         children: [
           // Back button
           IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
+            icon: Icon(Icons.arrow_back, color: Color(0xFFF7C443), size: 24.w),
             onPressed: () => Get.back(),
           ),
           
@@ -104,7 +116,7 @@ class KpSystemView extends BasePage<KpSystemController> {
             child: AutoTranslateText(
               'KP System',
               style: MyTextTheme.largeBCB.copyWith(
-                color: Colors.white,
+                color: Color(0xFFF7C443),
                 fontWeight: FontWeight.bold,
               ).merge(AppTypography.h2),
             ),
@@ -156,12 +168,14 @@ class KpSystemView extends BasePage<KpSystemController> {
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
           decoration: BoxDecoration(
             color: isSelected ? '#FF6B35'.toColor().withOpacity(0.1) : Colors.transparent,
+            
                     border: Border(
                       bottom: BorderSide(
                         color: isSelected ? '#FF6B35'.toColor() : Colors.transparent,
                 width: 3,
               ),
             ),
+            
           ),
           child: AutoTranslateText(
             title,

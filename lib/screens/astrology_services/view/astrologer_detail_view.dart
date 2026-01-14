@@ -1,18 +1,20 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_detail_controller.dart';
-import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
-import 'package:flutter/foundation.dart';
-import 'package:astrobharataiuser/screens/astrology_services/widgets/astrology_header_widget.dart';
+import 'package:astrobharataiuser/screens/astrology_services/controller/booking_controller.dart'
+    show CallType;
 import 'package:astrobharataiuser/screens/astrology_services/widgets/astrologer_review_dialog.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:astrobharataiuser/utils/chat_initiation_helper.dart';
 import 'package:get/get.dart';
+
+
 
 class AstrologerDetailView extends StatelessWidget {
   const AstrologerDetailView({Key? key}) : super(key: key);
@@ -24,29 +26,45 @@ class AstrologerDetailView extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFf8f0be), // Light cream background
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            // Header with Profile title
-            _buildHeader(context, controller),
+            // Header with Profile title - positioned at top
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: _buildHeaderWithDots(context, controller),
+            ),
 
-            // Main Content
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Profile Card
-                    _buildProfileCard(controller),
-                    Spacing.h(16),
+            // Main Content with Positioned widgets
+            Positioned.fill(
+              child: Stack(
+                children: [
+                  // Scrollable content positioned after header
+                  Positioned(
+                    top: 70,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          // Profile Card - positioned after header
+                          _buildProfileCard(controller),
+                          Spacing.h(16),
 
-                    // Navigation Tabs
-                    _buildTabs(controller),
-                    Spacing.h(16),
+                          // Navigation Tabs
+                          _buildTabs(controller),
+                          Spacing.h(16),
 
-                    // Content based on selected tab
-                    Obx(() => _buildTabContent(controller)),
-                    Spacing.h(100), // Space for bottom bar
-                  ],
-                ),
+                          // Content based on selected tab
+                          Obx(() => _buildTabContent(controller)),
+                          Spacing.h(50), // Space for bottom bar
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -57,96 +75,156 @@ class AstrologerDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(
+  // Content that overlaps the header
+
+  Widget _buildHeaderWithDots(
     BuildContext context,
     AstrologerDetailController controller,
   ) {
-    return AstrologyHeaderWidget(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      content: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Back button
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Row(
-              children: [
-                Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
-                Spacing.w(8),
-                AutoTranslateText(
-                  'Profile',
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // Header (interactive) - base layer
+        _buildHeader(context, controller),
+
+        // Random positioned dots (non-interactive - decorative layer on top)
+        // Using IgnorePointer to ensure dots don't block touches
+        Positioned.fill(
+          child: IgnorePointer(
+            ignoring: true,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: _buildRandomDots(context),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Generate random positioned dots
+  List<Widget> _buildRandomDots(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final headerHeight = MediaQuery.of(context).padding.top + 80.h;
+
+    // Generate random positions for dots using a seed for consistency
+    final random = DateTime.now().millisecondsSinceEpoch;
+    final dots = <Widget>[];
+
+    // Create 20-25 random dots scattered across the header
+    for (int i = 0; i < 22; i++) {
+      final seed = (random + i * 23) % 1000;
+      // Distribute dots more evenly across the header
+      final x = (seed * 4.2) % (screenWidth - 30);
+      final y = 10.h + (seed * 2.8) % (headerHeight - 30);
+      // Random size between 3-6 pixels (increased for visibility)
+      final size = 3.0 + (seed % 4) * 0.75;
+      // Random opacity between 0.4-0.8 (increased for visibility)
+      final opacity = 0.4 + (seed % 5) * 0.08;
+
+      dots.add(
+        Positioned(
+          left: x.w,
+          top: y.h,
+          child: Container(
+            width: size.w,
+            height: size.w,
+            decoration: BoxDecoration(
+              color: AppColors.templeGold.withOpacity(opacity),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.templeGold.withOpacity(0.3),
+                  blurRadius: 2,
+                  spreadRadius: 0.5,
                 ),
               ],
             ),
           ),
-          // Share icon and Follow button
-          Row(
-            children: [
-              // Follow/Unfollow button
-              Obx(() {
-                final isFollowing = controller.isFollowing.value;
-                final isToggling = controller.isTogglingFollow.value;
-                return GestureDetector(
-                  onTap: isToggling ? null : () => controller.toggleFollow(),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 6.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isFollowing
-                          ? Colors.grey[300]
-                          : const Color(0xFFDFB343),
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (isToggling)
-                          SizedBox(
-                            width: 14.w,
-                            height: 14.h,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                isFollowing ? Colors.black87 : Colors.white,
-                              ),
-                            ),
-                          )
-                        else
-                          Icon(
-                            isFollowing ? Icons.check : Icons.person_add,
-                            color: isFollowing ? Colors.black87 : Colors.white,
-                            size: 16.w,
-                          ),
-                        SizedBox(width: 4.w),
-                        AutoTranslateText(
-                          isFollowing ? 'Following' : 'Follow',
-                          style: MyTextTheme.smallBCB.copyWith(
-                            color: isFollowing ? Colors.black87 : Colors.white,
-                            fontWeight: FontWeight.w600,
+        ),
+      );
+    }
+
+    return dots;
+  }
+
+  Widget _buildHeader(
+    BuildContext context,
+    AstrologerDetailController controller,
+  ) {
+    return CommonHeader(
+      title: 'Profile',
+      subtitle: SizedBox(height: 50.h),
+      onBackPressed: () => Get.back(),
+      actions: [
+        Obx(() {
+          final isFollowing = controller.isFollowing.value;
+          final isToggling = controller.isTogglingFollow.value;
+          return Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: isToggling ? null : () => controller.toggleFollow(),
+              borderRadius: BorderRadius.circular(20.r),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  color: isFollowing
+                      ? Colors.grey[300]
+                      : const Color(0xFFDFB343),
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isToggling)
+                      SizedBox(
+                        width: 14.w,
+                        height: 14.h,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            isFollowing ? Colors.black87 : Colors.white,
                           ),
                         ),
-                      ],
+                      )
+                    else
+                      Icon(
+                        isFollowing ? Icons.check : Icons.person_add,
+                        color: isFollowing ? Colors.black87 : Colors.white,
+                        size: 16.w,
+                      ),
+                    SizedBox(width: 4.w),
+                    AutoTranslateText(
+                      isFollowing ? 'Following' : 'Follow',
+                      style: MyTextTheme.smallBCB.copyWith(
+                        color: isFollowing ? Colors.black87 : Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                );
-              }),
-              Spacing.w(8),
-              // Share icon
-              Icon(
-                Icons.share,
-                color: const Color(0xFFDFB343), // Gold color
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              // Add share functionality here
+            },
+            borderRadius: BorderRadius.circular(20.r),
+            child: Padding(
+              padding: EdgeInsets.all(8.w),
+              child: Icon(
+                Icons.share_outlined,
+                color: AppColors.templeGold,
                 size: 24.w,
               ),
-            ],
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -331,51 +409,64 @@ class AstrologerDetailView extends StatelessWidget {
   Widget _buildTabs(AstrologerDetailController controller) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Row(
-        children: [
-          _buildTab('About', controller),
-          Spacing.w(8),
-          _buildTab('Expertise', controller),
-          Spacing.w(8),
-          _buildTab('Reviews', controller),
-        ],
+      child: Container(
+        padding: EdgeInsets.all(6.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(child: _buildTab('About', controller)),
+            SizedBox(width: 4.w),
+            Expanded(child: _buildTab('Expertise', controller)),
+            SizedBox(width: 4.w),
+            Expanded(child: _buildTab('Reviews', controller)),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildTab(String tabName, AstrologerDetailController controller) {
-    return Expanded(
-      child: Obx(() {
-        final isSelected = controller.selectedTab.value == tabName;
-        return GestureDetector(
-          onTap: () => controller.setSelectedTab(tabName),
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 12.h),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? const Color(0xFFDFB343) // Gold when selected
-                  : Colors.white, // White when not selected
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(
+    return Obx(() {
+      final isSelected = controller.selectedTab.value == tabName;
+      return GestureDetector(
+        onTap: () => controller.setSelectedTab(tabName),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? AppColors
+                      .templeGold // Golden-yellow when selected
+                : Colors.transparent, // Transparent when not selected
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          child: Center(
+            child: AutoTranslateText(
+              tabName,
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 14.sp,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 color: isSelected
-                    ? const Color(0xFFDFB343)
-                    : const Color(0xFFE0E0E0),
-                width: 1,
-              ),
-            ),
-            child: Center(
-              child: AutoTranslateText(
-                tabName,
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: const Color(0xFF5F2221), // Dark maroon
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
+                    ? const Color(0xFF5F2221) // Dark brown/black when selected
+                    : const Color(0xFF666666), // Medium gray when not selected
               ),
             ),
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 
   Widget _buildTabContent(AstrologerDetailController controller) {
@@ -795,20 +886,8 @@ class AstrologerDetailView extends StatelessWidget {
     BuildContext context,
     AstrologerDetailController controller,
     AstrologerModel astrologer,
-  ) async {
+  ) {
     final reviewController = controller.reviewController;
-    
-    // Fetch current follow status before showing dialog
-    bool isFollowing = controller.isFollowing.value;
-    try {
-      final astrologerService = AstrologerService();
-      final status = await astrologerService.getFollowStatus(astrologer.astrologerId);
-      isFollowing = status?['isFollowing'] ?? false;
-    } catch (e) {
-      // Use current value if fetch fails
-      if (kDebugMode) print('Error fetching follow status for review dialog: $e');
-    }
-    
     AstrologerReviewDialog.show(
       context: context,
       astrologerId: astrologer.astrologerId,
@@ -816,13 +895,6 @@ class AstrologerDetailView extends StatelessWidget {
       serviceType:
           'VIDEO', // Default, can be changed based on last service used
       existingReview: reviewController.myReview.value,
-      isFollowing: isFollowing,
-      onFollow: () async {
-        await controller.toggleFollow();
-        // Refresh follow status after toggle
-        await controller.loadFollowStatus();
-        // Update dialog if still open (would need to pass a callback or use Get.find)
-      },
     );
   }
 
@@ -945,31 +1017,24 @@ class AstrologerDetailView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Consultation Rate - Use Flexible/Expanded to prevent overflow
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Column(
-                children: [
-                  AutoTranslateText(
-                    'Consultation Rate:',
-                    style: MyTextTheme.smallBCN
-                        .copyWith(color: const Color(0xFF666666))
-                        .merge(AppTypography.body2),
-                    textAlign: TextAlign.center,
+            // Consultation Rate
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AutoTranslateText(
+                  'Consultation Rate: ',
+                  style: MyTextTheme.smallBCN
+                      .copyWith(color: const Color(0xFF666666))
+                      .merge(AppTypography.body2),
+                ),
+                AutoTranslateText(
+                  '₹${controller.getPrice()}',
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: const Color(0xFFDFB343),
+                    fontWeight: FontWeight.bold,
                   ),
-                  Spacing.h(4),
-                  AutoTranslateText(
-                    controller.getPrice(),
-                    style: MyTextTheme.smallBCB.copyWith(
-                      color: const Color(0xFFDFB343),
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
             Spacing.h(12),
             // Action Buttons
@@ -979,7 +1044,13 @@ class AstrologerDetailView extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      ChatInitiationHelper.initiateChat(controller.astrologer);
+                      Get.toNamed(
+                        AppRoutes.booking,
+                        arguments: {
+                          'astrologer': controller.astrologer,
+                          'callType': CallType.chat,
+                        },
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFDFB343), // Gold
@@ -1019,7 +1090,13 @@ class AstrologerDetailView extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      controller.initiateVoiceCall();
+                      Get.toNamed(
+                        '/booking',
+                        arguments: {
+                          'astrologer': controller.astrologer,
+                          'callType': CallType.voice,
+                        },
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF5D1C21), // Dark maroon
@@ -1055,7 +1132,13 @@ class AstrologerDetailView extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      controller.initiateVideoCall();
+                      Get.toNamed(
+                        '/booking',
+                        arguments: {
+                          'astrologer': controller.astrologer,
+                          'callType': CallType.video,
+                        },
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF5D1C21), // Dark maroon

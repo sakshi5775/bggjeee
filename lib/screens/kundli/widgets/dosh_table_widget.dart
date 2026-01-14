@@ -40,14 +40,16 @@ class DoshTableWidget extends StatelessWidget {
                 margin: EdgeInsets.only(bottom: 12.h),
                 padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      "#ed6f30".toColor().withOpacity(0.9),
-                      "#ed6f30".toColor().withOpacity(0.7),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  // gradient: LinearGradient(
+                  //   colors: [
+                  //     "#ed6f30".toColor().withOpacity(0.9),
+                  //     "#ed6f30".toColor().withOpacity(0.7),
+                  //   ],
+                  //   begin: Alignment.topLeft,
+                  //   end: Alignment.bottomRight,
+                  // ),
+                  color: Colors.white,
+                  border: Border.all(color: Colors.deepOrange),
                   borderRadius: BorderRadius.circular(16.r),
                   boxShadow: [
                     BoxShadow(
@@ -62,7 +64,8 @@ class DoshTableWidget extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        // color: Colors.white.withOpacity(0.2),
+                        gradient: LinearGradient(colors: ['#FF8C42'.toColor(), '#E63946'.toColor()],),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -76,13 +79,13 @@ class DoshTableWidget extends StatelessWidget {
                       child: AutoTranslateText(
                         title,
                         style: AppTypography.h2.copyWith(
-                          color: Colors.white,
+                          color: Colors.deepOrange,
                         ),
                       ),
                     ),
                     Icon(
                       Icons.arrow_forward_ios,
-                      color: Colors.white,
+                      color: Colors.deepOrange,
                       size: 18.w,
                     ),
                   ],

@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class FreeServicesService {
   final ApiRepository _apiRepository = Get.find();

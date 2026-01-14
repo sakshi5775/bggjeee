@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class YogController extends BaseController {
   // Form data

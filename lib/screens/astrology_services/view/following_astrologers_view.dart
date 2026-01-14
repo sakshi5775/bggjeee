@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class FollowingAstrologersView extends StatelessWidget {
   const FollowingAstrologersView({Key? key}) : super(key: key);
@@ -171,18 +172,15 @@ class FollowingAstrologersView extends StatelessWidget {
     final languages = astrologer.languages.take(2).join(', ');
     final experience = '${astrologer.experienceYears} years';
     
-    // Get all prices
-    List<String> prices = [];
-    if (astrologer.chatPricePerMin != null && astrologer.chatPricePerMin! > 0) {
-      prices.add('Chat: ₹${astrologer.chatPricePerMin!.toStringAsFixed(0)}/min');
-    }
+    // Get price
+    String price = 'N/A';
     if (astrologer.voicePricePerMin != null && astrologer.voicePricePerMin! > 0) {
-      prices.add('Call: ₹${astrologer.voicePricePerMin!.toStringAsFixed(0)}/min');
+      price = '₹${astrologer.voicePricePerMin!.toStringAsFixed(0)}/min';
+    } else if (astrologer.videoPricePerMin != null && astrologer.videoPricePerMin! > 0) {
+      price = '₹${astrologer.videoPricePerMin!.toStringAsFixed(0)}/min';
+    } else if (astrologer.chatPrice != null && astrologer.chatPrice! > 0) {
+      price = '₹${astrologer.chatPrice!.toStringAsFixed(0)}/msg';
     }
-    if (astrologer.videoPricePerMin != null && astrologer.videoPricePerMin! > 0) {
-      prices.add('Video: ₹${astrologer.videoPricePerMin!.toStringAsFixed(0)}/min');
-    }
-    String price = prices.isEmpty ? 'N/A' : prices.join(' • ');
 
     return GestureDetector(
       onTap: () {

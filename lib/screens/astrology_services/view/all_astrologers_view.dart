@@ -1,16 +1,18 @@
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/all_astrologers_controller.dart';
-import 'package:astrobharataiuser/screens/astrology_services/widgets/astrology_header_widget.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/screens/astrology_services/controller/booking_controller.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/utils/chat_initiation_helper.dart';
-import 'package:astrobharataiuser/utils/call_initiation_helper.dart';
+
+import '../../../theme/app_typography.dart';
 
 class AllAstrologersView extends StatelessWidget {
   final String? initialFilter;
@@ -23,95 +25,100 @@ class AllAstrologersView extends StatelessWidget {
       AllAstrologersController(initialFilter: initialFilter),
     );
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFf8f0be), // Light cream background
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header and Filter Section (combined with curved bottom)
-            _buildHeaderWithFilters(context, controller),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header and Filter Section (combined with curved bottom)
+              _buildHeaderWithFilters(context, controller),
 
-            // Astrologer List
-            Expanded(
-              child: Obx(() {
-                if (controller.isLoading.value &&
-                    controller.astrologers.isEmpty) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: Color(0xFFDFB343)),
-                  );
-                }
-
-                if (controller.errorMessage.value.isNotEmpty &&
-                    controller.astrologers.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AutoTranslateText(
-                          controller.errorMessage.value,
-                          style: MyTextTheme.mediumBCN.copyWith(
-                            color: const Color(0xFF5F2221),
-                          ),
-                        ),
-                        Spacing.h(16),
-                        ElevatedButton(
-                          onPressed: () => controller.refresh(),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFDFB343),
-                          ),
-                          child: const AutoTranslateText('Retry'),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                if (controller.astrologers.isEmpty) {
-                  return Center(
-                    child: AutoTranslateText(
-                      'No astrologers found',
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: const Color(0xFF5F2221),
+              // Astrologer List
+              Expanded(
+                child: Obx(() {
+                  if (controller.isLoading.value &&
+                      controller.astrologers.isEmpty) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFFDFB343),
                       ),
-                    ),
-                  );
-                }
+                    );
+                  }
 
-                return RefreshIndicator(
-                  onRefresh: controller.refresh,
-                  color: const Color(0xFFDFB343),
-                  child: ListView.builder(
-                    controller: controller.scrollController,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 16.h,
-                    ),
-                    itemCount:
-                        controller.astrologers.length +
-                        (controller.hasMoreData.value ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == controller.astrologers.length) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: CircularProgressIndicator(
-                              color: Color(0xFFDFB343),
+                  if (controller.errorMessage.value.isNotEmpty &&
+                      controller.astrologers.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AutoTranslateText(
+                            controller.errorMessage.value,
+                            style: MyTextTheme.mediumBCN.copyWith(
+                              color: const Color(0xFF5F2221),
                             ),
                           ),
+                          Spacing.h(16),
+                          ElevatedButton(
+                            onPressed: () => controller.refresh(),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFDFB343),
+                            ),
+                            child: const AutoTranslateText('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  if (controller.astrologers.isEmpty) {
+                    return Center(
+                      child: AutoTranslateText(
+                        'No astrologers found',
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: const Color(0xFF5F2221),
+                        ),
+                      ),
+                    );
+                  }
+
+                  return RefreshIndicator(
+                    onRefresh: controller.refresh,
+                    color: const Color(0xFFDFB343),
+                    child: ListView.builder(
+                      controller: controller.scrollController,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 16.h,
+                      ),
+                      itemCount:
+                          controller.astrologers.length +
+                          (controller.hasMoreData.value ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == controller.astrologers.length) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: CircularProgressIndicator(
+                                color: Color(0xFFDFB343),
+                              ),
+                            ),
+                          );
+                        }
+                        final astrologer = controller.astrologers[index];
+                        return _buildAstrologerCard(
+                          astrologer,
+                          controller,
+                          isFirst: index == 0,
                         );
-                      }
-                      final astrologer = controller.astrologers[index];
-                      return _buildAstrologerCard(
-                        astrologer,
-                        controller,
-                        isFirst: index == 0,
-                      );
-                    },
-                  ),
-                );
-              }),
-            ),
-          ],
+                      },
+                    ),
+                  );
+                }),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -121,53 +128,76 @@ class AllAstrologersView extends StatelessWidget {
     BuildContext context,
     AllAstrologersController controller,
   ) {
-    return AstrologyHeaderWidget(
-      padding: EdgeInsets.zero, // We'll handle padding in the content
-      content: Column(
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(26.r),
+          bottomRight: Radius.circular(26.r),
+        ),
+      ),
+      child: Column(
         children: [
           // Header Row
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 10.h),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // Back button
                 GestureDetector(
                   onTap: () => Get.back(),
-                  child: Icon(
-                    Icons.arrow_back,
-                    color: Colors.white, // White color for back arrow
-                    size: 24.w,
+                  child: Container(
+                    width: 32.w,
+                    height: 32.w,
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: AppColors.templeGold,
+                      size: 20.w,
+                    ),
                   ),
                 ),
-                // Logo/App Name
-                AutoTranslateText(
-                  'AstroBharatAI',
-                  style: MyTextTheme.largeBCB
-                      .copyWith(
-                        color: const Color(0xFFDFB343), // Gold color
-                        fontWeight: FontWeight.bold,
-                      )
-                      .merge(AppTypography.h2),
+                Spacing.w(16),
+                // Logo/App Name - Split into three parts
+                SvgAssets(
+                  path: 'assets/app/AstrobharatAi .svg',
+                  width: 150.w,
+                  height: 30.h,
+                  colorFilter: ColorFilter.mode(
+                    '#D9AB3B'.toColor(),
+                    BlendMode.srcIn,
+                  ),
                 ),
-                // Wallet and Cart icons
+                Spacer(),
+                // Right Accessory (Wallet and Cart)
                 Row(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        Get.toNamed(AppRoutes.wallet);
-                      },
-                      child: Icon(
-                        Icons.account_balance_wallet,
-                        color: Colors.white, // White color
-                        size: 24.w,
+                      onTap: () => Get.toNamed(AppRoutes.wallet),
+                      child: Container(
+                        width: 32.w,
+                        height: 32.w,
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.account_balance_wallet_outlined,
+                          color: AppColors.templeGold,
+                          size: 20.w,
+                        ),
                       ),
                     ),
-                    Spacing.w(16),
-                    Icon(
-                      Icons.shopping_cart,
-                      color: Colors.white, // White color
-                      size: 24.w,
+                    SizedBox(width: 4.w),
+                    GestureDetector(
+                      onTap: () => Get.toNamed(AppRoutes.cart),
+                      child: Container(
+                        width: 32.w,
+                        height: 32.w,
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.shopping_cart_outlined,
+                          color: AppColors.templeGold,
+                          size: 20.w,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -176,15 +206,15 @@ class AllAstrologersView extends StatelessWidget {
           ),
           // Filter Section
           Padding(
-            padding: EdgeInsets.only(bottom: 12.h, left: 16.w, right: 16.w),
+            padding: EdgeInsets.fromLTRB(16.w, 20.h, 0, 20.h),
             child: SizedBox(
-              height: 40.h,
+              height: 36.h,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.only(right: 16.w),
                 itemCount: controller.filterOptions.length,
                 itemBuilder: (context, index) {
                   final filter = controller.filterOptions[index];
-
                   return Obx(() {
                     final isSelected =
                         controller.selectedFilter.value == filter;
@@ -197,35 +227,23 @@ class AllAstrologersView extends StatelessWidget {
                           vertical: 8.h,
                         ),
                         decoration: BoxDecoration(
-                          color: isSelected
-                              ? Colors
-                                    .white // White background when selected
-                              : const Color(
-                                  0xFF5D1C21,
-                                ), // Dark maroon when not selected (matches parent)
-                          borderRadius: BorderRadius.circular(20.r),
+                          color: isSelected ? Colors.white : Color(0xFF5D1C21),
+                          borderRadius: BorderRadius.circular(8.r),
                           border: isSelected
-                              ? Border.all(
-                                  color: const Color(
-                                    0xFFDFB343,
-                                  ), // Gold border when selected
-                                  width: 1,
-                                )
+                              ? Border.all(color: '#DEAF3E'.toColor(), width: 1)
                               : null,
                         ),
                         child: Center(
                           child: AutoTranslateText(
                             filter,
-                            style: MyTextTheme.mediumBCN.copyWith(
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 13.sp,
                               color: isSelected
-                                  ? const Color(
-                                      0xFF5D1C21,
-                                    ) // Dark maroon text when selected
-                                  : Colors
-                                        .white, // White text when not selected
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
+                                  ? '#DDAF3E'.toColor()
+                                  : Colors.white,
+                              height: 1,
                             ),
                           ),
                         ),
@@ -259,16 +277,16 @@ class AllAstrologersView extends StatelessWidget {
         Get.toNamed('/astrologer-detail', arguments: astrologer);
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 16.h),
+        margin: EdgeInsets.only(bottom: 12.h),
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: Colors.white, // White background
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
+              blurRadius: 8,
+              offset: Offset(0, 2),
             ),
           ],
         ),
@@ -277,72 +295,74 @@ class AllAstrologersView extends StatelessWidget {
           children: [
             // Left Side: Profile Picture and Rating
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Profile Picture
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      width: 80.w,
-                      height: 80.h,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: const Color(0xFFDFB343), // Gold border
-                          width: 2,
+                // Profile Picture Container
+                Container(
+                  width: 80.w,
+                  height: 80.w,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      // Profile Picture with border
+                      Container(
+                        width: 80.w,
+                        height: 80.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: '#96090A'.toColor(),
+                            width: 2,
+                          ),
                         ),
-                      ),
-                      child: ClipOval(
-                        child: _buildImage(astrologer.profilePicture, size: 80),
-                      ),
-                    ),
-                    // Online indicator
-                    if (isOnline)
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          width: 18.w,
-                          height: 18.h,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF4CAF50), // Green
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2.5),
+                        child: ClipOval(
+                          child: _buildImage(
+                            astrologer.profilePicture,
+                            size: 80,
                           ),
                         ),
                       ),
-                  ],
+                      // Online indicator (bottom-left position)
+                      if (isOnline)
+                        Positioned(
+                          bottom: 2,
+                          left: 2,
+                          child: Container(
+                            width: 16.w,
+                            height: 16.w,
+                            decoration: BoxDecoration(
+                              color: '#05DF72'.toColor(),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-                Spacing.h(8),
-                // Rating Badge (below image, slightly offset to left)
+                SizedBox(height: 8.h),
+                // Rating Badge
                 Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 10.w,
-                    vertical: 5.h,
+                    vertical: 4.h,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white, // White background
+                    color: AppColors.templeGold.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(
-                      color: const Color(0xFFDFB343), // Gold border
-                      width: 1,
-                    ),
+                    border: Border.all(color: AppColors.templeGold, width: 1),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.star,
-                        color: const Color(0xFFDFB343),
-                        size: 14.w,
-                      ),
-                      Spacing.w(4),
+                      Icon(Icons.star, color: AppColors.templeGold, size: 14.w),
+                      SizedBox(width: 4.w),
                       AutoTranslateText(
                         rating.toStringAsFixed(1),
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: const Color(0xFF5F2221),
-                          fontWeight: FontWeight.bold,
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13.sp,
+                          color: '#68171E'.toColor(),
                         ),
                       ),
                     ],
@@ -350,50 +370,93 @@ class AllAstrologersView extends StatelessWidget {
                 ),
               ],
             ),
-            Spacing.w(12),
+            SizedBox(width: 16.w),
             // Right Side: Details and Actions
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Name with verified checkmark
+                  // Name with Follow button
                   Row(
                     children: [
                       Expanded(
                         child: AutoTranslateText(
                           astrologer.displayName,
-                          style: MyTextTheme.mediumBCB.copyWith(
-                            color: const Color(0xFF5F2221), // Dark maroon
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
                             fontWeight: FontWeight.bold,
+                            fontSize: 16.sp,
+                            color: '#68171E'.toColor(),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      // Follow Button
+                      GestureDetector(
+                        onTap: () {
+                          // Handle follow action
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 4.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4.r),
+                            border: Border.all(
+                              color: AppColors.orangeGradient.colors.first,
+                              width: 1,
+                            ),
+                          ),
+                          child: AutoTranslateText(
+                            'Follow',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 10.sp,
+                              color: AppColors.orangeGradient.colors.first,
+                            ),
                           ),
                         ),
                       ),
-                      Icon(Icons.verified, color: Colors.blue, size: 18.w),
                     ],
                   ),
-                  Spacing.h(6),
+                  SizedBox(height: 6.h),
                   // Specialization
                   AutoTranslateText(
                     specializations,
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: const Color(0xFF5F2221), // Dark text
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 11.sp,
+                      color: '#909090'.toColor(),
+                      height: 1.3,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  Spacing.h(6),
+                  SizedBox(height: 4.h),
                   // Languages
                   Row(
                     children: [
                       Icon(
-                        Icons.chat_bubble_outline,
-                        size: 14.w,
-                        color: const Color(0xFF5F2221),
+                        Icons.language,
+                        size: 12.w,
+                        color: '#909090'.toColor(),
                       ),
-                      Spacing.w(4),
-                      Flexible(
+                      SizedBox(width: 4.w),
+                      Expanded(
                         child: AutoTranslateText(
                           languages,
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: const Color(0xFF5F2221),
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 11.sp,
+                            color: '#909090'.toColor(),
+                            height: 1.3,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -401,126 +464,179 @@ class AllAstrologersView extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Spacing.h(6),
+                  SizedBox(height: 4.h),
                   // Experience
                   Row(
                     children: [
                       Icon(
                         Icons.access_time,
-                        size: 14.w,
-                        color: const Color(0xFF5F2221),
+                        size: 12.w,
+                        color: '#909090'.toColor(),
                       ),
-                      Spacing.w(4),
+                      SizedBox(width: 4.w),
                       AutoTranslateText(
                         experience,
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: const Color(0xFF5F2221),
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 11.sp,
+                          color: '#909090'.toColor(),
+                          height: 1.3,
                         ),
                       ),
                     ],
                   ),
-                  Spacing.h(6),
-                  // Rate with reviews
+                  SizedBox(height: 4.h),
+                  // Price and Reviews Row
                   Row(
                     children: [
-                      AutoTranslateText(
-                        '₹',
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: const Color(0xFF5F2221),
-                        ),
+                      Icon(
+                        Icons.currency_rupee,
+                        color: AppColors.templeGold,
+                        size: 13.w,
                       ),
                       AutoTranslateText(
-                        '$price (${totalRatings} reviews)',
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: const Color(0xFF5F2221),
+                        '$price/min',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12.sp,
+                          color: AppColors.templeGold,
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: AutoTranslateText(
+                          '($totalRatings reviews)',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 11.sp,
+                            color: '#3D0C11'.toColor().withOpacity(0.5),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-                  Spacing.h(12),
+                  SizedBox(height: 12.h),
                   // Action Buttons
                   Row(
                     children: [
                       // Chat Button
                       Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            ChatInitiationHelper.initiateChat(astrologer);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFDFB343), // Gold
-                            padding: EdgeInsets.symmetric(vertical: 12.h),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.r),
+                        flex: 2,
+                        child: Container(
+                          height: 36.h,
+                          decoration: BoxDecoration(
+                            gradient: AppColors.goldenGradient,
+                            borderRadius: BorderRadius.circular(6.r),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                Get.toNamed(
+                                  AppRoutes.booking,
+                                  arguments: {
+                                    'astrologer': astrologer,
+                                    'callType': CallType.chat,
+                                  },
+                                );
+                              },
+                              borderRadius: BorderRadius.circular(6.r),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.chat_bubble_outline,
+                                    color: '#68171E'.toColor(),
+                                    size: 16.w,
+                                  ),
+                                  SizedBox(width: 6.w),
+                                  AutoTranslateText(
+                                    'Chat',
+                                    style: MyTextTheme.mediumBCB
+                                        .copyWith(color: '#68171E'.toColor())
+                                        .merge(
+                                          AppTypography.h1.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16.sp,
+                                          ),
+                                        ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.chat_bubble_outline,
-                                color: Colors.white,
-                                size: 18.w,
-                              ),
-                              Spacing.w(6),
-                              AutoTranslateText(
-                                'Chat',
-                                style: MyTextTheme.mediumBCB.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
                       ),
-                      Spacing.w(8),
+                      SizedBox(width: 8.w),
                       // Call Button
                       Container(
-                        width: 48.w,
-                        height: 48.h,
+                        width: 36.w,
+                        height: 36.h,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(8.r),
+                          borderRadius: BorderRadius.circular(6.r),
                           border: Border.all(
-                            color: const Color(0xFFDFB343),
+                            color: AppColors.templeGold,
                             width: 1,
                           ),
                         ),
-                        child: IconButton(
-                          onPressed: () {
-                            CallInitiationHelper.initiateVoiceCall(astrologer);
-                          },
-                          padding: EdgeInsets.zero,
-                          icon: Icon(
-                            Icons.phone,
-                            color: const Color(0xFF5F2221), // Dark maroon icon
-                            size: 20.w,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              Get.toNamed(
+                                '/booking',
+                                arguments: {
+                                  'astrologer': astrologer,
+                                  'callType': CallType.voice,
+                                },
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(6.r),
+                            child: Icon(
+                              Icons.phone,
+                              color: '#68171E'.toColor(),
+                              size: 16.w,
+                            ),
                           ),
                         ),
                       ),
-                      Spacing.w(8),
+                      SizedBox(width: 8.w),
                       // Video Call Button
                       Container(
-                        width: 48.w,
-                        height: 48.h,
+                        width: 36.w,
+                        height: 36.h,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(8.r),
+                          borderRadius: BorderRadius.circular(6.r),
                           border: Border.all(
-                            color: const Color(0xFFDFB343),
+                            color: AppColors.templeGold,
                             width: 1,
                           ),
                         ),
-                        child: IconButton(
-                          onPressed: () {
-                            CallInitiationHelper.initiateVideoCall(astrologer);
-                          },
-                          padding: EdgeInsets.zero,
-                          icon: Icon(
-                            Icons.videocam,
-                            color: const Color(0xFF5F2221), // Dark maroon icon
-                            size: 20.w,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              Get.toNamed(
+                                '/booking',
+                                arguments: {
+                                  'astrologer': astrologer,
+                                  'callType': CallType.video,
+                                },
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(6.r),
+                            child: Icon(
+                              Icons.videocam,
+                              color: '#68171E'.toColor(),
+                              size: 16.w,
+                            ),
                           ),
                         ),
                       ),

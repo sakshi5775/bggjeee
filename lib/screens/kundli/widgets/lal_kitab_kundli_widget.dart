@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class LalKitabKundliWidget extends StatelessWidget {
   final LalKitabController controller;
@@ -81,8 +82,8 @@ class LalKitabKundliWidget extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            "#ed6f30".toColor().withOpacity(0.1),
-            "#ed6f30".toColor().withOpacity(0.05),
+            "#FFFFFF".toColor(),
+            "#FFFFFF".toColor(),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -109,7 +110,12 @@ class LalKitabKundliWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: "#ed6f30".toColor(),
+                  // color: "#ed6f30".toColor(),
+                  gradient: LinearGradient(colors: 
+                  [
+                     "#FF8C42".toColor(),
+                     "#E63946".toColor(),
+                  ]),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: AutoTranslateText(
@@ -180,6 +186,7 @@ class LalKitabKundliWidget extends StatelessWidget {
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.5),
+                border: Border.all(color: Colors.deepOrange, width: 1),
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: Row(

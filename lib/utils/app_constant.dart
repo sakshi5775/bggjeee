@@ -1,6 +1,7 @@
 class AppConstant {
   AppConstant._();
 
+  
   // Google Maps API Key for Geocoding and Places Autocomplete
   static const String googleMapsApiKey =
       'AIzaSyBLAoT6aFAsHaFWBIvK3hha1BDbMzPFOb0';
@@ -18,6 +19,7 @@ class AppConstant {
   static const String editIcon = 'assets/icons/edit-icon.svg';
   static const String deleteIcon = 'assets/icons/delete.svg';
   static const String callIcon = 'assets/icons/call_icon.svg';
+  static const String chatIcon = 'assets/icons/chat_icon_new.svg';
 
   static const String galleryIcon = 'assets/icons/gallery-icon.svg';
   static const String cameraIcon = 'assets/icons/camera-icon.svg';
@@ -56,6 +58,36 @@ class AppConstant {
   static const String aiNumerology = 'assets/app/ai_numerology.png';
   static const String aiPalm = 'assets/app/ai_palm.png';
 
+  /// astrology tool icons
+  static const String astrologyToolTarotReading =
+      'assets/images/tarot reading final.png';
+  static const String astrologyToolWritingAstrology =
+      'assets/images/Writing Astrology.png';
+  static const String astrologyToolPrashnKundli =
+      'assets/images/prashna final.png';
+  static const String astrologyToolFaceReading =
+      'assets/images/face reading final.png';
+  static const String astrologyToolPalmReading =
+      'assets/images/pal reading final.png';
+  static const String astrologyToolVastuReading =
+      'assets/images/vastu final.png';
+  static const String astrologyToolRamalShastra =
+      'assets/app/RAMAL SHASTRA.png';
+
+  // ecommerce images
+  static const String shopMainBanner = 'assets/images/shop_main_banner.png';
+
+  // astrology report images
+  static const String astrologyReportBrihatKudli =
+      'assets/app/brihat_kundli.png';
+  static const String astrologyReportHoroscope2026 =
+      'assets/app/horoscope_2026_report.png';
+  static const String astrologyYearBookReport =
+      'assets/app/year_book_report.png';
+  static const String astrologyYearBookReportShani =
+      'assets/app/year_book_shani_report.png';
+  static const String astrologyRajYogaReport = 'assets/app/raj_yoga_report.png';
+
   // Service Icons (from Figma)
   static const String service2025 = 'assets/app/service_2025.svg';
   static const String serviceGenerateKundali =
@@ -80,12 +112,12 @@ class AppConstant {
   static const String cardKundli = 'assets/app/kundlicard.png';
 
   static const String tarot = 'assets/app/tarot.svg';
+
   static const String horoscope = 'assets/app/horoscope.png';
   static const String vastu = 'assets/app/Vastu.png';
   static const String writingAstrology = 'assets/app/writingAstrology.png';
   static const String ramalShastra = 'assets/app/ramalShastra.png';
   static const String carrotAstrology = 'assets/app/carrotAstrology.png';
-  static const String prashnaKundali = 'assets/app/prashnakundali.svg';
 
   // Panchang Icons
   static const String panchangBackButton = 'assets/icons/close-icon.svg';
@@ -111,4 +143,39 @@ class AppConstant {
   static const String bhadraIcon = 'assets/app/bhadra_icon.svg';
   static const String muhuratIcon = 'assets/app/muhurat_icon.svg';
   static const String lagnaTableIcon = 'assets/app/lagna_table_icon.svg';
+
+  static const String securePaymentOptionIcon =
+      'assets/icons/secure_payment_option.png';
+  static const String trustedIcon = 'assets/icons/trusted_icon.png';
+  static const String verifiedAstrologersIcon =
+      'assets/icons/verified_astrologer_icon.png';
+
+  // astro remedy images
+
+  // shop banner images
+  static const String shopBanner1 = 'assets/images/BANNER 1.png';
+  static const String shopBanner2 = 'assets/images/BANNER 2.png';
+  static const String shopBanner3 = 'assets/images/BANNER 3.png';
+  static const String shopBanner4 = 'assets/images/BANNER 4.png';
+  static const String shopBanner5 = 'assets/images/BANNER 5.png';
+
+  // cunsultation category icons
+
+  static const String consultationCategoryHoroScopes =
+      'assets/icons/horoscope_category.png';
+  static const String consultationCategoryKundli =
+      'assets/icons/kudli_category.png';
+  static const String consultationCategoryCompatibility =
+      'assets/icons/compatibility_category.png';
+  static const String consultationCategoryNumerology =
+      'assets/icons/numerology_category.png';
+  static const String consultationCategoryTarot =
+      'assets/icons/tarot_reading_category.png';
+  static const String consultationCategoryRemedies =
+      'assets/icons/ramedies_category.png';
+
+
+   static const String prashnaKundali =
+      'assets/icons/prashnakundali.svg';
+      
 }

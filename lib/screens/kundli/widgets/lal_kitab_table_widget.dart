@@ -69,12 +69,12 @@ class LalKitabTableWidget extends StatelessWidget {
           gradient: LinearGradient(
             colors: hasApi
                 ? [
-                    "#ed6f30".toColor().withOpacity(0.9),
-                    "#ed6f30".toColor().withOpacity(0.7),
+                    "#FF8C42".toColor().withOpacity(0.9),
+                    "#E63946".toColor().withOpacity(0.7),
                   ]
                 : [
-                    Colors.grey.withOpacity(0.3),
-                    Colors.grey.withOpacity(0.2),
+                    "#3D0C11".toColor(),
+                    "#5D1C21".toColor(),
                   ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -95,7 +95,7 @@ class LalKitabTableWidget extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: MyTextTheme.mediumBCB.copyWith(
-                color: Colors.white,
+                color: Color(0xFFFFFFFF),
                 fontWeight: FontWeight.bold,
               ).merge(AppTypography.body1),
             ),
@@ -105,7 +105,7 @@ class LalKitabTableWidget extends StatelessWidget {
                 'Coming Soon',
                 textAlign: TextAlign.center,
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: Colors.white.withOpacity(0.8),
+                  color: Color(0xFFFFFFFF),
                 ).merge(AppTypography.label),
               ),
             ],

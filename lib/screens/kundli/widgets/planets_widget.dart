@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class PlanetsWidget extends StatelessWidget {
   final PlanetsController controller;
@@ -87,7 +88,24 @@ class PlanetsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('Planetary Positions'),
+        Row(
+          children: [
+            Container(
+              height: 50.h,
+              width: 50.w,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  Color(0xFFFF8C42), Color(0xFFE63946)
+                ]),
+                borderRadius: BorderRadius.circular(12.r)
+              ),
+              child: Icon(Icons.star_outline_outlined),
+            ),
+            Spacing.w(12),
+                    _buildSectionTitle('Planetary Positions'),
+          ],
+        ),
+
         Spacing.h(12),
         ...planets.entries.map((entry) {
           return Padding(
@@ -217,7 +235,24 @@ class PlanetsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('Lucky Things'),
+        Row(
+          children: [
+            Container(
+              height: 50.h,
+              width: 50.w,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  Color(0xFFFF8C42), Color(0xFFE63946)
+                ]),
+                borderRadius: BorderRadius.circular(12.r)
+              ),
+              child: Icon(Icons.star_outline_outlined),
+            ),
+            Spacing.w(12),
+                     _buildSectionTitle('Lucky Things'),
+          ],
+        ),
+        // _buildSectionTitle('Lucky Things'),
         Spacing.h(12),
         Container(
           padding: EdgeInsets.all(16.w),
@@ -292,7 +327,24 @@ class PlanetsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('Birth Details'),
+        Row(
+          children: [
+            Container(
+              height: 50.h,
+              width: 50.w,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  Color(0xFFFF8C42), Color(0xFFE63946)
+                ]),
+                borderRadius: BorderRadius.circular(12.r)
+              ),
+              child: Icon(Icons.info_outline),
+            ),
+            Spacing.w(12),
+                     _buildSectionTitle('Birth Details'),
+          ],
+        ),
+        
         Spacing.h(12),
         Container(
           padding: EdgeInsets.all(16.w),
@@ -327,7 +379,24 @@ class PlanetsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('Panchang'),
+        Row(
+          children: [
+            Container(
+              height: 50.h,
+              width: 50.w,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  Color(0xFFFF8C42), Color(0xFFE63946)
+                ]),
+                borderRadius: BorderRadius.circular(12.r)
+              ),
+              child: Icon(Icons.star_outline_outlined),
+            ),
+            Spacing.w(12),
+                     _buildSectionTitle('Panchang'),
+          ],
+        ),
+       
         Spacing.h(12),
         Container(
           padding: EdgeInsets.all(16.w),
@@ -376,7 +445,24 @@ class PlanetsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('Ghatka Chakra'),
+        Row(
+          children: [
+            Container(
+              height: 50.h,
+              width: 50.w,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  Color(0xFFFF8C42), Color(0xFFE63946)
+                ]),
+                borderRadius: BorderRadius.circular(12.r)
+              ),
+              child: Icon(Icons.description),
+            ),
+            Spacing.w(12),
+                     _buildSectionTitle('Ghatka Chakra'),
+          ],
+        ),
+        
         Spacing.h(12),
         Container(
           padding: EdgeInsets.all(16.w),
@@ -431,7 +517,24 @@ class PlanetsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('Dasa'),
+        Row(
+          children: [
+            Container(
+              height: 50.h,
+              width: 50.w,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  Color(0xFFFF8C42), Color(0xFFE63946)
+                ]),
+                borderRadius: BorderRadius.circular(12.r)
+              ),
+              child: Icon(Icons.star_outline_outlined),
+            ),
+            Spacing.w(12),
+                     _buildSectionTitle('Dasa'),
+          ],
+        ),
+        
         Spacing.h(12),
         Container(
           padding: EdgeInsets.all(16.w),

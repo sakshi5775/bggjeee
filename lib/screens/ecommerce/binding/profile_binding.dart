@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/screens/ecommerce/controller/profile_controller.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class ProfileBinding extends Bindings {
   @override

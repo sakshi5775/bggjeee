@@ -7,28 +7,24 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class DailyPredictionWidget extends StatelessWidget {
   final PredictionsController controller;
 
-  const DailyPredictionWidget({
-    super.key,
-    required this.controller,
-  });
+  const DailyPredictionWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingDaily.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.dailyPredictionData.value;
-      
+
       if (data == null || data.isEmpty) {
         return Center(
           child: Column(
@@ -76,7 +72,7 @@ class DailyPredictionWidget extends StatelessWidget {
       final luckyColor = response['lucky_color'] as String? ?? '';
       final colorCode = response['color_code'] as String? ?? '';
       final luckyNumbers = response['lucky_numbers'] as List<dynamic>? ?? [];
-      
+
       // Scores
       final health = response['health'] as int? ?? 0;
       final friends = response['friends'] as int? ?? 0;
@@ -99,27 +95,37 @@ class DailyPredictionWidget extends StatelessWidget {
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    "#ed6f30".toColor(),
-                    "#ed6f30".toColor().withOpacity(0.8),
-                  ],
+                  colors: ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
                 ),
+                border: Border.all(color: Colors.deepOrange, width: 1),
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.calendar_today,
-                    color: Colors.white,
-                    size: 24.w,
+                  Container(
+                    height: 40.h,
+                    width: 40.h,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                      ),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Icon(
+                      Icons.calendar_today,
+                      color: Colors.white,
+                      size: 24.w,
+                    ),
                   ),
                   Spacing.w(12),
                   Expanded(
                     child: AutoTranslateText(
                       date,
                       style: MyTextTheme.largeBCB.copyWith(
-                        color: Colors.white,
+                        color: Color(0xFF3D0C11),
                         fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        fontFamily: 'baloo2'
                       ),
                     ),
                   ),
@@ -130,7 +136,7 @@ class DailyPredictionWidget extends StatelessWidget {
             // Day Selector
             _buildDaySelector(),
             Spacing.h(16),
-            
+
             // Total Score
             Container(
               padding: EdgeInsets.all(16.w),
@@ -165,7 +171,7 @@ class DailyPredictionWidget extends StatelessWidget {
               ),
             ),
             Spacing.h(16),
-            
+
             // Scores Grid
             _buildScoresGrid([
               {'label': 'Health', 'value': health},
@@ -179,13 +185,14 @@ class DailyPredictionWidget extends StatelessWidget {
               {'label': 'Physique', 'value': physique},
             ]),
             Spacing.h(16),
-            
+
             // Lucky Color
             if (luckyColor.isNotEmpty) ...[
               Container(
                 padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
                   color: Colors.white,
+                  border: Border.all(color: Colors.deepOrange, width: 1),
                   borderRadius: BorderRadius.circular(16.r),
                   boxShadow: [
                     BoxShadow(
@@ -201,7 +208,7 @@ class DailyPredictionWidget extends StatelessWidget {
                       width: 40.w,
                       height: 40.w,
                       decoration: BoxDecoration(
-                        color: colorCode.isNotEmpty ? colorCode.toColor() : Colors.grey,
+                         gradient: LinearGradient(colors: [Color(0xFFFF8C42), Color(0xFFE63946)]),
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: Colors.grey.withOpacity(0.3),
@@ -214,6 +221,11 @@ class DailyPredictionWidget extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Row(
+                            children: [
+
+                            ],
+                          ),
                           AutoTranslateText(
                             'Lucky Color',
                             style: MyTextTheme.smallBCN.copyWith(
@@ -236,13 +248,14 @@ class DailyPredictionWidget extends StatelessWidget {
               ),
               Spacing.h(16),
             ],
-            
+
             // Lucky Numbers
             if (luckyNumbers.isNotEmpty) ...[
               Container(
                 padding: EdgeInsets.all(16.w),
                 decoration: BoxDecoration(
                   color: Colors.white,
+                  border: Border.all(color: Colors.deepOrange, width: 1),
                   borderRadius: BorderRadius.circular(16.r),
                   boxShadow: [
                     BoxShadow(
@@ -255,13 +268,39 @@ class DailyPredictionWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AutoTranslateText(
-                      'Lucky Numbers',
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: "#6F221E".toColor(),
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0, bottom: 10.0),
+                          child: Container(
+                            height: 50.h,
+                            width: 50.h,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: Icon(
+                              Icons.numbers_outlined,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                        ),
+                        Spacing.w(12),
+                        AutoTranslateText(
+                          'Lucky Numbers',
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: "#6F221E".toColor(),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
+                    
                     Spacing.h(12),
                     Wrap(
                       spacing: 12.w,
@@ -295,7 +334,7 @@ class DailyPredictionWidget extends StatelessWidget {
               ),
               Spacing.h(16),
             ],
-            
+
             // Horoscope Data
             if (horoscopeData.isNotEmpty) ...[
               Container(
@@ -303,8 +342,8 @@ class DailyPredictionWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      "#ed6f30".toColor().withOpacity(0.1),
-                      "#ed6f30".toColor().withOpacity(0.05),
+                      "#FFFFFF".toColor(),
+                      "#FFFFFF".toColor(),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -320,11 +359,28 @@ class DailyPredictionWidget extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(
-                          Icons.auto_awesome,
-                          color: "#ed6f30".toColor(),
-                          size: 20.w,
-                        ),
+                        Container(
+                            height: 50.h,
+                            width: 50.h,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: Icon(
+                              Icons.auto_awesome,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                        // Icon(
+                        //   Icons.auto_awesome,
+                        //   color: "#ed6f30".toColor(),
+                        //   size: 20.w,
+                        // ),
                         Spacing.w(8),
                         AutoTranslateText(
                           'Daily Prediction',
@@ -368,11 +424,12 @@ class DailyPredictionWidget extends StatelessWidget {
         final score = scores[index];
         final label = score['label'] as String;
         final value = score['value'] as int;
-        
+
         return Container(
           padding: EdgeInsets.all(12.w),
           decoration: BoxDecoration(
             color: Colors.white,
+            border: Border.all(color: Colors.deepOrange, width: 1),
             borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
@@ -416,80 +473,88 @@ class DailyPredictionWidget extends StatelessWidget {
   }
 
   Widget _buildDaySelector() {
-    return Obx(() => Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AutoTranslateText(
-            'Select Day',
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.bold,
+    return Obx(
+      () => Container(
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: Colors.deepOrange, width: 1),
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-          ),
-          Spacing.h(12),
-          Row(
-            children: controller.dayOptions.map((day) {
-              final isSelected = controller.selectedDay.value == day;
-              return Expanded(
-                child: GestureDetector(
-                  onTap: () {
-                    controller.selectedDay.value = day;
-                    controller.dailyPredictionData.value = null; // Clear cached data
-                    controller.fetchDailyPrediction(); // Fetch new data
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 4.w),
-                    padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
-                    decoration: BoxDecoration(
-                      gradient: isSelected
-                          ? LinearGradient(
-                              colors: [
-                                "#ed6f30".toColor(),
-                                "#ed6f30".toColor().withOpacity(0.8),
-                              ],
-                            )
-                          : null,
-                      color: isSelected ? null : Colors.grey.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(
-                        color: isSelected
-                            ? "#ed6f30".toColor()
-                            : Colors.grey.withOpacity(0.3),
-                        width: 1,
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AutoTranslateText(
+              'Select Day',
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: "#6F221E".toColor(),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Spacing.h(12),
+            Row(
+              children: controller.dayOptions.map((day) {
+                final isSelected = controller.selectedDay.value == day;
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      controller.selectedDay.value = day;
+                      controller.dailyPredictionData.value =
+                          null; // Clear cached data
+                      controller.fetchDailyPrediction(); // Fetch new data
+                    },
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 4.w),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 12.h,
+                        horizontal: 8.w,
                       ),
-                    ),
-                    child: Center(
-                      child: AutoTranslateText(
-                        day.substring(0, 1).toUpperCase() + day.substring(1),
-                        style: MyTextTheme.smallBCB.copyWith(
+                      decoration: BoxDecoration(
+                        gradient: isSelected
+                            ? LinearGradient(
+                                colors: [
+                                  "#FF8C42".toColor(),
+                                  "#E63946".toColor(),
+                                ],
+                              )
+                            : null,
+                        color: isSelected ? null : Colors.grey.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
                           color: isSelected
-                              ? Colors.white
-                              : "#6F221E".toColor().withOpacity(0.7),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                              ? "#ed6f30".toColor()
+                              : Colors.deepOrange.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Center(
+                        child: AutoTranslateText(
+                          day.substring(0, 1).toUpperCase() + day.substring(1),
+                          style: MyTextTheme.smallBCB.copyWith(
+                            color: isSelected
+                                ? Colors.white
+                                : "#6F221E".toColor().withOpacity(0.7),
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
+                );
+              }).toList(),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
-

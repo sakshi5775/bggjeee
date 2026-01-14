@@ -7,28 +7,24 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class KaalsarpDoshWidget extends StatelessWidget {
   final DoshController controller;
 
-  const KaalsarpDoshWidget({
-    super.key,
-    required this.controller,
-  });
+  const KaalsarpDoshWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingKaalsarpDosh.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.kaalsarpDoshData.value;
-      
+
       if (data == null || data.isEmpty) {
         return Center(
           child: AutoTranslateText(
@@ -56,26 +52,33 @@ class KaalsarpDoshWidget extends StatelessWidget {
       final botResponse = response['bot_response'] as String? ?? '';
       final remedies = response['remedies'] as List<dynamic>? ?? [];
 
-      return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Bot Response
-            if (botResponse.isNotEmpty)
-              _buildBotResponseCard(botResponse),
-            
-            Spacing.h(16),
-            
-            // Dosh Status
-            _buildStatusCard(isDoshaPresent),
-            
-            Spacing.h(16),
-            
-            // Remedies
-            if (remedies.isNotEmpty)
-              _buildRemediesCard(remedies),
-          ],
+      return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFFF6C2), Color(0xFFFFE8A3), Color(0xFFFFD580)],
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Bot Response
+              if (botResponse.isNotEmpty) _buildBotResponseCard(botResponse),
+
+              Spacing.h(16),
+
+              // Dosh Status
+              _buildStatusCard(isDoshaPresent),
+
+              Spacing.h(16),
+
+              // Remedies
+              if (remedies.isNotEmpty) _buildRemediesCard(remedies),
+            ],
+          ),
         ),
       );
     });
@@ -111,9 +114,7 @@ class KaalsarpDoshWidget extends StatelessWidget {
           Expanded(
             child: AutoTranslateText(
               botResponse,
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: "#6F221E".toColor(),
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: "#6F221E".toColor()),
             ),
           ),
         ],
@@ -148,7 +149,7 @@ class KaalsarpDoshWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
             decoration: BoxDecoration(
-              color: isDoshaPresent 
+              color: isDoshaPresent
                   ? Colors.red.withOpacity(0.1)
                   : Colors.green.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12.r),
@@ -185,11 +186,22 @@ class KaalsarpDoshWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.healing,
-                color: "#ed6f30".toColor(),
-                size: 20.w,
+              Container(
+                height: 50.h,
+                width: 50.w,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                  ),
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                child: Icon(
+                  Icons.healing_outlined,
+                  color: Colors.white,
+                  size: 24.w,
+                ),
               ),
+
               Spacing.w(8),
               AutoTranslateText(
                 'Remedies',
@@ -201,32 +213,92 @@ class KaalsarpDoshWidget extends StatelessWidget {
             ],
           ),
           Spacing.h(12),
+
+          // ...remedies.asMap().entries.map((entry) {
+          //   final index = entry.key;
+          //   final remedy = entry.value.toString();
+          //   return Padding(
+          //     padding: EdgeInsets.only(bottom: 12.h),
+          //     child: Row(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: [
+          //         Container(
+          //           width: 24.w,
+          //           height: 24.w,
+          //           decoration: BoxDecoration(
+          //             color: "#ed6f30".toColor().withOpacity(0.1),
+          //             shape: BoxShape.circle,
+          //           ),
+          //           child: Center(
+          //             child: AutoTranslateText(
+          //               '${index + 1}',
+          //               style: MyTextTheme.smallBCB.copyWith(
+          //                 color: "#ed6f30".toColor(),
+          //                 fontWeight: FontWeight.bold,
+          //               ),
+          //             ),
+          //           ),
+          //         ),
+          //         Spacing.w(12),
+          //         Expanded(
+          //           child: AutoTranslateText(
+          //             remedy,
+          //             style: MyTextTheme.smallBCN.copyWith(
+          //               color: "#6F221E".toColor(),
+          //               height: 1.5,
+          //             ),
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   );
+          // }).toList(),
           ...remedies.asMap().entries.map((entry) {
             final index = entry.key;
             final remedy = entry.value.toString();
-            return Padding(
-              padding: EdgeInsets.only(bottom: 12.h),
+
+            return Container(
+              margin: EdgeInsets.only(bottom: 12.h),
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: "#ed6f30".toColor().withOpacity(0.2)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  /// Number Circle
                   Container(
                     width: 24.w,
                     height: 24.w,
                     decoration: BoxDecoration(
-                      color: "#ed6f30".toColor().withOpacity(0.1),
+                      gradient: LinearGradient(
+                        colors: ["#ed6f30".toColor(), "#f39c6b".toColor()],
+                      ),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: AutoTranslateText(
                         '${index + 1}',
                         style: MyTextTheme.smallBCB.copyWith(
-                          color: "#ed6f30".toColor(),
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
+
                   Spacing.w(12),
+
+                  /// Remedy Text
                   Expanded(
                     child: AutoTranslateText(
                       remedy,
@@ -245,4 +317,3 @@ class KaalsarpDoshWidget extends StatelessWidget {
     );
   }
 }
-

@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ProductDetailController extends BaseController {
@@ -23,12 +24,18 @@ class ProductDetailController extends BaseController {
   final isLoadingVariants = false.obs;
   final isLoadingReviews = false.obs;
   final currentImageIndex = 0.obs;
+  late final pageController = PageController().obs;
   final quantity = 1.obs;
   final selectedVariant = Rxn<ProductVariant>();
   int reviewsPage = 1;
   final int reviewsLimit = 10;
   final hasMoreReviews = true.obs;
   String? heroTag;
+
+  // Widget expansion states
+  final isSpecificationsExpanded = false.obs;
+  final isDescriptionExpanded = false.obs;
+  final isReviewsExpanded = false.obs;
 
   @override
   void onInit() {
@@ -38,6 +45,7 @@ class ProductDetailController extends BaseController {
         : Get.put(CartController());
     ever(cartController.cart, (_) => syncQuantityWithCart());
     _handleArguments();
+    pageController.value = PageController();
   }
 
   @override
@@ -59,12 +67,16 @@ class ProductDetailController extends BaseController {
       loadProductDetails();
     } else if (args != null && args['productId'] != null) {
       final productId = args['productId'];
-      print('Loading product by ID: $productId (type: ${productId.runtimeType})');
+      print(
+        'Loading product by ID: $productId (type: ${productId.runtimeType})',
+      );
       final productIdStr = productId.toString();
       loadProductById(productIdStr);
     } else if (args != null && args['productSlug'] != null) {
       final productSlug = args['productSlug'];
-      print('Loading product by slug: $productSlug (type: ${productSlug.runtimeType})');
+      print(
+        'Loading product by slug: $productSlug (type: ${productSlug.runtimeType})',
+      );
       final productSlugStr = productSlug.toString();
       loadProductBySlug(productSlugStr);
     } else {
@@ -208,7 +220,9 @@ class ProductDetailController extends BaseController {
 
     try {
       isLoadingVariants.value = true;
-      final result = await _ecommerceService.getProductVariants(product.value!.id!);
+      final result = await _ecommerceService.getProductVariants(
+        product.value!.id!,
+      );
       if (result != null && result.isNotEmpty) {
         variants.value = result;
         // Auto-select first variant if none selected
@@ -241,7 +255,7 @@ class ProductDetailController extends BaseController {
         page: reviewsPage,
         limit: reviewsLimit,
       );
-      
+
       if (result != null) {
         if (result.items != null && result.items!.isNotEmpty) {
           reviews.addAll(result.items!);
@@ -264,11 +278,18 @@ class ProductDetailController extends BaseController {
 
   void changeImageIndex(int index) {
     currentImageIndex.value = index;
+    pageController.value.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   void incrementQuantity() {
     final maxAllowed = availableQuantity > 0
-        ? (availableQuantity < CartController.maxQuantity ? availableQuantity : CartController.maxQuantity)
+        ? (availableQuantity < CartController.maxQuantity
+              ? availableQuantity
+              : CartController.maxQuantity)
         : CartController.maxQuantity;
     if (quantity.value >= maxAllowed) {
       showErrorMessage(
@@ -291,7 +312,10 @@ class ProductDetailController extends BaseController {
   int get availableQuantity {
     if (inventoryItems.isEmpty) return CartController.maxQuantity;
     final first = inventoryItems.first;
-    final available = first.quantityAvailable ?? first.totalStock ?? CartController.maxQuantity;
+    final available =
+        first.quantityAvailable ??
+        first.totalStock ??
+        CartController.maxQuantity;
     return available > 0 ? available : 0;
   }
 
@@ -331,7 +355,10 @@ class ProductDetailController extends BaseController {
       return;
     }
 
-    final target = quantity.value.clamp(CartController.minQuantity, availableQuantity);
+    final target = quantity.value.clamp(
+      CartController.minQuantity,
+      availableQuantity,
+    );
 
     final success = await cartController.setProductQuantity(
       product: productToUse,
@@ -366,7 +393,10 @@ class ProductDetailController extends BaseController {
       return;
     }
 
-    final target = quantity.value.clamp(CartController.minQuantity, availableQuantity);
+    final target = quantity.value.clamp(
+      CartController.minQuantity,
+      availableQuantity,
+    );
 
     final success = await cartController.setProductQuantity(
       product: productToUse,
@@ -385,10 +415,7 @@ class ProductDetailController extends BaseController {
   void navigateToProduct(ProductModel product, {String? heroTag}) {
     Get.toNamed(
       '/product-detail',
-      arguments: {
-        'product': product,
-        if (heroTag != null) 'heroTag': heroTag,
-      },
+      arguments: {'product': product, if (heroTag != null) 'heroTag': heroTag},
     );
   }
 
@@ -397,7 +424,9 @@ class ProductDetailController extends BaseController {
     if (current?.id == null) return;
     final cartQty = cartController.quantityForProduct(current!);
     final maxAllowed = availableQuantity > 0
-        ? (availableQuantity < CartController.maxQuantity ? availableQuantity : CartController.maxQuantity)
+        ? (availableQuantity < CartController.maxQuantity
+              ? availableQuantity
+              : CartController.maxQuantity)
         : CartController.maxQuantity;
     if (cartQty > 0) {
       quantity.value = cartQty > maxAllowed ? maxAllowed : cartQty;
@@ -405,5 +434,130 @@ class ProductDetailController extends BaseController {
       quantity.value = availableQuantity > 0 ? 1 : 0;
     }
   }
-}
 
+  // Toggle expansion states
+  void toggleSpecificationsExpanded() {
+    isSpecificationsExpanded.value = !isSpecificationsExpanded.value;
+  }
+
+  void toggleDescriptionExpanded() {
+    isDescriptionExpanded.value = !isDescriptionExpanded.value;
+  }
+
+  void toggleReviewsExpanded() {
+    isReviewsExpanded.value = !isReviewsExpanded.value;
+  }
+
+  // Get processed specifications list
+  List<MapEntry<String, String>> get specificationsList {
+    final currentProduct = product.value;
+    if (currentProduct == null) return [];
+
+    final specs = currentProduct.specifications;
+    if (specs == null) return [];
+
+    final specItems = <MapEntry<String, String>>[];
+
+    if (specs.size != null && specs.size!.isNotEmpty) {
+      specItems.add(MapEntry('Size', specs.size!));
+    }
+    if (specs.origin != null && specs.origin!.isNotEmpty) {
+      specItems.add(MapEntry('Origin', specs.origin!));
+    }
+    if (specs.mukhiCount != null) {
+      specItems.add(MapEntry('Mukhis', '${specs.mukhiCount} Face'));
+    }
+    if (specs.quality != null && specs.quality!.isNotEmpty) {
+      specItems.add(MapEntry('Type', specs.quality!));
+    }
+    if (currentProduct.certification?.isCertified == true) {
+      specItems.add(MapEntry('Certification', 'Lab Certified'));
+    }
+    if (currentProduct.isEnergized == true) {
+      specItems.add(MapEntry('Energy', 'Vedic Energized'));
+    }
+
+    return specItems;
+  }
+
+  // Get description data
+  String get productDescription {
+    return product.value?.description ?? '';
+  }
+
+  List<String> get productKeyBenefits {
+    return product.value?.spiritualBenefits ?? [];
+  }
+
+  // Get reviews data
+  int get reviewCount {
+    return product.value?.reviewCount ?? staticReviews.length;
+  }
+
+  // Static review data (as API doesn't have it yet)
+  static final List<Map<String, dynamic>> staticReviews = [
+    {
+      'name': 'Rajesh Kumar',
+      'rating': 5,
+      'verified': true,
+      'timeAgo': '2 weeks ago',
+      'review': 'Excellent quality! Got amazing results after wearing this. Highly recommended.',
+    },
+    {
+      'name': 'Priya Sharma',
+      'rating': 5,
+      'verified': true,
+      'timeAgo': '1 month ago',
+      'review': 'Authentic product with proper certification. Very satisfied with the purchase.',
+    },
+    {
+      'name': 'Amit Patel',
+      'rating': 4,
+      'verified': true,
+      'timeAgo': '1 month ago',
+      'review': 'Good product but delivery took longer than expected. Quality is great though.',
+    },
+  ];
+
+  List<Map<String, dynamic>> get productReviews {
+    // Return API reviews if available, otherwise static reviews
+    if (reviews.isNotEmpty) {
+      return reviews.map((review) {
+        DateTime? createdAt;
+        if (review.createdAt != null) {
+          try {
+            createdAt = DateTime.parse(review.createdAt!);
+          } catch (e) {
+            // If parsing fails, createdAt remains null
+          }
+        }
+        return {
+          'name': review.userName ?? 'Anonymous',
+          'rating': review.rating ?? 5,
+          'verified': review.isVerified ?? false,
+          'timeAgo': createdAt != null
+              ? _formatTimeAgo(createdAt)
+              : 'Recently',
+          'review': review.comment ?? '',
+        };
+      }).toList();
+    }
+    return staticReviews;
+  }
+
+  String _formatTimeAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inDays > 30) {
+      final months = (difference.inDays / 30).floor();
+      return '$months ${months == 1 ? 'month' : 'months'} ago';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'} ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'} ago';
+    } else {
+      return 'Recently';
+    }
+  }
+}

@@ -12,6 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../utils/app_colors.dart';
+import '../../../utils/app_constant.dart';
+
 class AstrologyServicesView extends StatelessWidget {
   const AstrologyServicesView({Key? key}) : super(key: key);
 
@@ -19,138 +22,186 @@ class AstrologyServicesView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(AstrologyServicesController());
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFf8f0be), // Light cream background
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header Section with Dark Red/Maroon Background (includes search bar)
-            _buildHeader(context, controller),
-            
-            // Main Scrollable Content
-            Expanded(
-              child: Obx(() {
-                if (controller.isLoading.value && controller.allAstrologers.isEmpty) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: Color(0xFFDFB343),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header Section with Dark Red/Maroon Background (includes search bar)
+              _buildHeader(context, controller),
+
+              // Main Scrollable Content
+              Expanded(
+                child: Obx(() {
+                  if (controller.isLoading.value &&
+                      controller.allAstrologers.isEmpty) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFFDFB343),
+                      ),
+                    );
+                  }
+
+                  if (controller.errorMessage.value.isNotEmpty &&
+                      controller.allAstrologers.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AutoTranslateText(
+                            controller.errorMessage.value,
+                            style: MyTextTheme.mediumBCN.copyWith(
+                              color: const Color(0xFF5F2221),
+                            ),
+                          ),
+                          Spacing.h(16),
+                          ElevatedButton(
+                            onPressed: () =>
+                                controller.loadAstrologers(refresh: true),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFDFB343),
+                            ),
+                            child: const AutoTranslateText('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return RefreshIndicator(
+                    onRefresh: controller.refresh,
+                    color: const Color(0xFFDFB343),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Spacing.h(16),
+
+                          // Explore Categories Section
+                          _buildExploreCategoriesSection(context, controller),
+
+                          Spacing.h(10),
+
+                          // Show filtered results if any filter is active
+                          Obx(() {
+                            final hasActiveFilters =
+                                controller
+                                    .selectedSpecialization
+                                    .value
+                                    .isNotEmpty ||
+                                controller.selectedLanguage.value.isNotEmpty ||
+                                controller
+                                    .selectedAvailability
+                                    .value
+                                    .isNotEmpty ||
+                                controller.searchQuery.value.isNotEmpty ||
+                                controller.minRating.value > 0 ||
+                                controller.maxPrice.value > 0 ||
+                                controller.minExperience.value > 0 ||
+                                controller
+                                    .selectedAstrologerCategory
+                                    .value
+                                    .isNotEmpty;
+
+                            if (hasActiveFilters) {
+                              return _buildFilteredResultsSection(
+                                context,
+                                controller,
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          }),
+
+                          Spacing.h(12),
+
+                          // Recommended for You Section (only show when no filters)
+                          Obx(() {
+                            final hasActiveFilters =
+                                controller
+                                    .selectedSpecialization
+                                    .value
+                                    .isNotEmpty ||
+                                controller.selectedLanguage.value.isNotEmpty ||
+                                controller
+                                    .selectedAvailability
+                                    .value
+                                    .isNotEmpty ||
+                                controller.searchQuery.value.isNotEmpty ||
+                                controller.minRating.value > 0 ||
+                                controller.maxPrice.value > 0 ||
+                                controller.minExperience.value > 0 ||
+                                controller
+                                    .selectedAstrologerCategory
+                                    .value
+                                    .isNotEmpty;
+
+                            if (!hasActiveFilters) {
+                              return _buildRecommendedSection(
+                                context,
+                                controller,
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          }),
+
+                          Spacing.h(24),
+
+                          // Live Now Section
+                          _buildLiveNowSection(context, controller),
+
+                          Spacing.h(24),
+
+                          // Vedic Astrologer Section (only show when no filters)
+                          Obx(() {
+                            final hasActiveFilters =
+                                controller
+                                    .selectedSpecialization
+                                    .value
+                                    .isNotEmpty ||
+                                controller.selectedLanguage.value.isNotEmpty ||
+                                controller
+                                    .selectedAvailability
+                                    .value
+                                    .isNotEmpty ||
+                                controller.searchQuery.value.isNotEmpty ||
+                                controller.minRating.value > 0 ||
+                                controller.maxPrice.value > 0 ||
+                                controller.minExperience.value > 0 ||
+                                controller
+                                    .selectedAstrologerCategory
+                                    .value
+                                    .isNotEmpty;
+
+                            if (!hasActiveFilters) {
+                              return _buildVedicAstrologerSection(
+                                context,
+                                controller,
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          }),
+
+                          Spacing.h(24),
+                        ],
+                      ),
                     ),
                   );
-                }
-
-                if (controller.errorMessage.value.isNotEmpty && controller.allAstrologers.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AutoTranslateText(
-                          controller.errorMessage.value,
-                          style: MyTextTheme.mediumBCN.copyWith(
-                            color: const Color(0xFF5F2221),
-                          ),
-                        ),
-                        Spacing.h(16),
-                        ElevatedButton(
-                          onPressed: () => controller.loadAstrologers(refresh: true),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFDFB343),
-                          ),
-                          child: const AutoTranslateText('Retry'),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                return RefreshIndicator(
-                  onRefresh: controller.refresh,
-                  color: const Color(0xFFDFB343),
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Spacing.h(16),
-                        
-                        // Explore Categories Section
-                        _buildExploreCategoriesSection(context, controller),
-                        
-                        Spacing.h(24),
-                        
-                        // Show filtered results if any filter is active
-                        Obx(() {
-                          final hasActiveFilters = controller.selectedSpecialization.value.isNotEmpty ||
-                              controller.selectedLanguage.value.isNotEmpty ||
-                              controller.selectedAvailability.value.isNotEmpty ||
-                              controller.searchQuery.value.isNotEmpty ||
-                              controller.minRating.value > 0 ||
-                              controller.maxPrice.value > 0 ||
-                              controller.minExperience.value > 0 ||
-                              controller.selectedAstrologerCategory.value.isNotEmpty;
-                          
-                          if (hasActiveFilters) {
-                            return _buildFilteredResultsSection(context, controller);
-                          }
-                          return const SizedBox.shrink();
-                        }),
-                        
-                        Spacing.h(24),
-                        
-                        // Recommended for You Section (only show when no filters)
-                        Obx(() {
-                          final hasActiveFilters = controller.selectedSpecialization.value.isNotEmpty ||
-                              controller.selectedLanguage.value.isNotEmpty ||
-                              controller.selectedAvailability.value.isNotEmpty ||
-                              controller.searchQuery.value.isNotEmpty ||
-                              controller.minRating.value > 0 ||
-                              controller.maxPrice.value > 0 ||
-                              controller.minExperience.value > 0 ||
-                              controller.selectedAstrologerCategory.value.isNotEmpty;
-                          
-                          if (!hasActiveFilters) {
-                            return _buildRecommendedSection(context, controller);
-                          }
-                          return const SizedBox.shrink();
-                        }),
-                        
-                        Spacing.h(24),
-                        
-                        // Live Now Section
-                        _buildLiveNowSection(context, controller),
-                        
-                        Spacing.h(24),
-                        
-                        // Vedic Astrologer Section (only show when no filters)
-                        Obx(() {
-                          final hasActiveFilters = controller.selectedSpecialization.value.isNotEmpty ||
-                              controller.selectedLanguage.value.isNotEmpty ||
-                              controller.selectedAvailability.value.isNotEmpty ||
-                              controller.searchQuery.value.isNotEmpty ||
-                              controller.minRating.value > 0 ||
-                              controller.maxPrice.value > 0 ||
-                              controller.minExperience.value > 0 ||
-                              controller.selectedAstrologerCategory.value.isNotEmpty;
-                          
-                          if (!hasActiveFilters) {
-                            return _buildVedicAstrologerSection(context, controller);
-                          }
-                          return const SizedBox.shrink();
-                        }),
-                        
-                        Spacing.h(24),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ],
+                }),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context, AstrologyServicesController controller) {
+  Widget _buildHeader(
+    BuildContext context,
+    AstrologyServicesController controller,
+  ) {
     return AstrologyHeaderWidget(
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -181,7 +232,9 @@ class AstrologyServicesView extends StatelessWidget {
                     AutoTranslateText(
                       'Discover your cosmic destiny',
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: const Color(0xFFDFB343).withOpacity(0.9), // #DFB343 color
+                        color: const Color(
+                          0xFFDFB343,
+                        ).withOpacity(0.9), // #DFB343 color
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -198,11 +251,15 @@ class AstrologyServicesView extends StatelessWidget {
           Spacing.h(16),
           // Search Bar inside header - Semi-transparent maroon with gold border
           Padding(
-            padding: EdgeInsets.only(bottom: 16.h), // Add bottom padding to search bar
+            padding: EdgeInsets.only(
+              bottom: 16.h,
+            ), // Add bottom padding to search bar
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFFFFF).withOpacity(0.2), // Semi-transparent maroon
+                color: const Color(
+                  0xFFFFFFFF,
+                ).withOpacity(0.2), // Semi-transparent maroon
                 borderRadius: BorderRadius.circular(20.r),
                 border: Border.all(
                   color: const Color(0xFFDFB343), // #DFB343 border
@@ -226,7 +283,9 @@ class AstrologyServicesView extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: 'Search by Zodiac, Category, or Astrologer',
                         hintStyle: MyTextTheme.mediumBCN.copyWith(
-                          color: const Color(0xFFDFB343).withOpacity(0.7), // #DFB343 color
+                          color: const Color(
+                            0xFFDFB343,
+                          ).withOpacity(0.7), // #DFB343 color
                         ),
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
@@ -252,21 +311,23 @@ class AstrologyServicesView extends StatelessWidget {
                       },
                     ),
                   ),
-                  Obx(() => controller.searchQuery.value.isNotEmpty
-                      ? GestureDetector(
-                          onTap: () {
-                            controller.searchDebounceTimer?.cancel();
-                            controller.searchController.clear();
-                            controller.searchQuery.value = '';
-                            controller.loadAstrologers(refresh: true);
-                          },
-                          child: Icon(
-                            Icons.clear,
-                            color: const Color(0xFFDFB343),
-                            size: 18.w,
-                          ),
-                        )
-                      : const SizedBox.shrink()),
+                  Obx(
+                    () => controller.searchQuery.value.isNotEmpty
+                        ? GestureDetector(
+                            onTap: () {
+                              controller.searchDebounceTimer?.cancel();
+                              controller.searchController.clear();
+                              controller.searchQuery.value = '';
+                              controller.loadAstrologers(refresh: true);
+                            },
+                            child: Icon(
+                              Icons.clear,
+                              color: const Color(0xFFDFB343),
+                              size: 18.w,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
                   Spacing.w(8),
                   // Filter Icon
                   GestureDetector(
@@ -286,7 +347,10 @@ class AstrologyServicesView extends StatelessWidget {
     );
   }
 
-  Widget _buildExploreCategoriesSection(BuildContext context, AstrologyServicesController controller) {
+  Widget _buildExploreCategoriesSection(
+    BuildContext context,
+    AstrologyServicesController controller,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -301,10 +365,7 @@ class AstrologyServicesView extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      const Color(0xFF3D0C11),
-                      const Color(0xFF5D1C21),
-                    ],
+                    colors: [const Color(0xFF3D0C11), const Color(0xFF5D1C21)],
                   ),
                   borderRadius: BorderRadius.circular(2.r),
                 ),
@@ -322,7 +383,7 @@ class AstrologyServicesView extends StatelessWidget {
         ),
         Spacing.h(16),
         SizedBox(
-          height: 100.h,
+          height: 120.h,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -340,29 +401,20 @@ class AstrologyServicesView extends StatelessWidget {
   Widget _buildCategoryCard(Map<String, dynamic> category) {
     return Container(
       width: 80.w,
-      margin: EdgeInsets.only(right: 12.w),
+      // margin: EdgeInsets.only(right: 8.w),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 70.w,
-            height: 70.h,
+            padding: AppPaddings.symmetric(h: 20, v: 20),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  const Color(0xFF3D0C11),
-                  const Color(0xFF5D1C21),
-                ],
-              ),
-              shape: BoxShape.rectangle,
+              gradient: AppColors.orangeGradient,
               borderRadius: BorderRadius.circular(15.r),
             ),
-            child: Icon(
-              category['icon'] as IconData,
-              color: const Color(0xFFDFB343), // #DFB343 color
-              size: 32.w,
+            child: Image.asset(
+              category['icon'] as String,
+              height: 20.h,
+              width: 20.w,
             ),
           ),
           Spacing.h(6),
@@ -382,15 +434,16 @@ class AstrologyServicesView extends StatelessWidget {
     );
   }
 
-  Widget _buildFilteredResultsSection(BuildContext context, AstrologyServicesController controller) {
+  Widget _buildFilteredResultsSection(
+    BuildContext context,
+    AstrologyServicesController controller,
+  ) {
     return Obx(() {
       if (controller.isLoading.value && controller.allAstrologers.isEmpty) {
         return const Center(
           child: Padding(
             padding: EdgeInsets.all(24.0),
-            child: CircularProgressIndicator(
-              color: Color(0xFFDFB343),
-            ),
+            child: CircularProgressIndicator(color: Color(0xFFDFB343)),
           ),
         );
       }
@@ -488,14 +541,15 @@ class AstrologyServicesView extends StatelessWidget {
                 final astrologer = {
                   'astrologer': astrologerModel,
                   'name': astrologerModel.displayName,
-                  'specialization': astrologerModel.specializations.isNotEmpty 
-                      ? astrologerModel.specializations.first 
+                  'specialization': astrologerModel.specializations.isNotEmpty
+                      ? astrologerModel.specializations.first
                       : 'Astrology',
                   'rating': astrologerModel.rating.toStringAsFixed(1),
                   'sessions': sessions,
                   'price': _getPriceText(astrologerModel),
                   'experience': '${astrologerModel.experienceYears} years',
-                  'image': astrologerModel.profilePicture ?? 'assets/app/guru.png',
+                  'image':
+                      astrologerModel.profilePicture ?? 'assets/app/guru.png',
                   'isLive': false,
                   'isOnline': astrologerModel.isOnline,
                 };
@@ -508,78 +562,84 @@ class AstrologyServicesView extends StatelessWidget {
     });
   }
 
-  Widget _buildRecommendedSection(BuildContext context, AstrologyServicesController controller) {
-    return Obx(() => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 4.w,
-                    height: 20.h,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          const Color(0xFF3D0C11),
-                          const Color(0xFF5D1C21),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(2.r),
-                    ),
-                  ),
-                  Spacing.w(8),
-                  AutoTranslateText(
-                    'Recommended for You',
-                    style: MyTextTheme.largeBCB.copyWith(
-                      color: const Color(0xFF5F2221),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              GestureDetector(
-                onTap: () => Get.toNamed(
-                  '/all-astrologers',
-                  arguments: null,
-                ),
-                child: AutoTranslateText(
-                  'View All →',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: const Color(0xFFFF6B35),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Spacing.h(16),
-        SizedBox(
-          height: 176.h, // Allow more vertical room for card content on small screens
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
+  Widget _buildRecommendedSection(
+    BuildContext context,
+    AstrologyServicesController controller,
+  ) {
+    return Obx(
+      () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
-            itemCount: controller.recommendedAstrologers.length,
-            itemBuilder: (context, index) {
-              final astrologer = controller.recommendedAstrologers[index];
-              return _buildAstrologerCard(astrologer, isLive: false);
-            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 4.w,
+                      height: 20.h,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            const Color(0xFF3D0C11),
+                            const Color(0xFF5D1C21),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(2.r),
+                      ),
+                    ),
+                    Spacing.w(8),
+                    AutoTranslateText(
+                      'Recommended for You',
+                      style: MyTextTheme.largeBCB.copyWith(
+                        color: const Color(0xFF5F2221),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                GestureDetector(
+                  onTap: () => Get.toNamed('/all-astrologers', arguments: null),
+                  child: AutoTranslateText(
+                    'View All →',
+                    style: MyTextTheme.mediumBCN.copyWith(
+                      color: const Color(0xFFFF6B35),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
-    ));
+          Spacing.h(16),
+          SizedBox(
+            height: 150.h,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              itemCount: controller.recommendedAstrologers.length,
+              itemBuilder: (context, index) {
+                final astrologer = controller.recommendedAstrologers[index];
+                return _buildAstrologerCard(astrologer, isLive: false);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  Widget _buildLiveNowSection(BuildContext context, AstrologyServicesController controller) {
+  Widget _buildLiveNowSection(
+    BuildContext context,
+    AstrologyServicesController controller,
+  ) {
     return Obx(() {
       // Hide section if loading and no data, or if no live streams
-      if (controller.isLoadingLiveStreams.value && controller.liveStreams.isEmpty) {
+      if (controller.isLoadingLiveStreams.value &&
+          controller.liveStreams.isEmpty) {
         return const SizedBox.shrink();
       }
 
@@ -587,85 +647,89 @@ class AstrologyServicesView extends StatelessWidget {
         return const SizedBox.shrink();
       }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 4.w,
-                    height: 20.h,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          const Color(0xFF3D0C11),
-                          const Color(0xFF5D1C21),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 4.w,
+                      height: 20.h,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            const Color(0xFF3D0C11),
+                            const Color(0xFF5D1C21),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(2.r),
+                      ),
+                    ),
+                    Spacing.w(8),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 4.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4CAF50), // Green
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 6.w,
+                            height: 6.h,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          Spacing.w(4),
+                          AutoTranslateText(
+                            'LIVE',
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ],
                       ),
-                      borderRadius: BorderRadius.circular(2.r),
                     ),
-                  ),
-                  Spacing.w(8),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4CAF50), // Green
-                      borderRadius: BorderRadius.circular(12.r),
+                    Spacing.w(8),
+                    AutoTranslateText(
+                      'Live Now',
+                      style: MyTextTheme.largeBCB.copyWith(
+                        color: const Color(0xFF5F2221),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 6.w,
-                          height: 6.h,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        Spacing.w(4),
-                        AutoTranslateText(
-                          'LIVE',
-                          style: MyTextTheme.smallBCB.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Spacing.w(8),
-                  AutoTranslateText(
-                    'Live Now',
-                    style: MyTextTheme.largeBCB.copyWith(
-                      color: const Color(0xFF5F2221),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              GestureDetector(
+                  ],
+                ),
+                GestureDetector(
                   onTap: () => Get.toNamed(AppRoutes.liveAstrologers),
-                child: AutoTranslateText(
-                  'View All →',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: const Color(0xFFFF6B35),
+                  child: AutoTranslateText(
+                    'View All →',
+                    style: MyTextTheme.mediumBCN.copyWith(
+                      color: const Color(0xFFFF6B35),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Spacing.h(16),
-        SizedBox(
-          height: 270.h, // Extra room for live cards to avoid overflow on small screens
+          Spacing.h(16),
+          SizedBox(
+            height: 270
+                .h, // Extra room for live cards to avoid overflow on small screens
             child: controller.isLoadingLiveStreams.value
                 ? Center(
                     child: CircularProgressIndicator(
@@ -673,90 +737,96 @@ class AstrologyServicesView extends StatelessWidget {
                     ),
                   )
                 : ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            itemCount: controller.liveAstrologers.length,
-            itemBuilder: (context, index) {
-              final astrologer = controller.liveAstrologers[index];
-              return _buildAstrologerCard(astrologer, isLive: true);
-            },
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    itemCount: controller.liveAstrologers.length,
+                    itemBuilder: (context, index) {
+                      final astrologer = controller.liveAstrologers[index];
+                      return _buildAstrologerCard(astrologer, isLive: true);
+                    },
+                  ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
     });
   }
 
-  Widget _buildVedicAstrologerSection(BuildContext context, AstrologyServicesController controller) {
-    return Obx(() => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 4.w,
-                    height: 20.h,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          const Color(0xFF3D0C11),
-                          const Color(0xFF5D1C21),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(2.r),
-                    ),
-                  ),
-                  Spacing.w(8),
-                  AutoTranslateText(
-                    'Vedic Astrologer',
-                    style: MyTextTheme.largeBCB.copyWith(
-                      color: const Color(0xFF5F2221),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              GestureDetector(
-                onTap: () => Get.toNamed(
-                  '/all-astrologers',
-                  arguments: 'Vedic',
-                ),
-                child: AutoTranslateText(
-                  'View All →',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: const Color(0xFFFF6B35),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Spacing.h(16),
-        SizedBox(
-          height: 176.h, // Match card height with recommended section to avoid overflow
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
+  Widget _buildVedicAstrologerSection(
+    BuildContext context,
+    AstrologyServicesController controller,
+  ) {
+    return Obx(
+      () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
-            itemCount: controller.vedicAstrologers.length,
-            itemBuilder: (context, index) {
-              final astrologer = controller.vedicAstrologers[index];
-              return _buildAstrologerCard(astrologer, isLive: false);
-            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 4.w,
+                      height: 20.h,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            const Color(0xFF3D0C11),
+                            const Color(0xFF5D1C21),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(2.r),
+                      ),
+                    ),
+                    Spacing.w(8),
+                    AutoTranslateText(
+                      'Vedic Astrologer',
+                      style: MyTextTheme.largeBCB.copyWith(
+                        color: const Color(0xFF5F2221),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                GestureDetector(
+                  onTap: () =>
+                      Get.toNamed('/all-astrologers', arguments: 'Vedic'),
+                  child: AutoTranslateText(
+                    'View All →',
+                    style: MyTextTheme.mediumBCN.copyWith(
+                      color: const Color(0xFFFF6B35),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
-    ));
+          Spacing.h(16),
+          SizedBox(
+            height: 150.h,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              itemCount: controller.vedicAstrologers.length,
+              itemBuilder: (context, index) {
+                final astrologer = controller.vedicAstrologers[index];
+                return _buildAstrologerCard(astrologer, isLive: false);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   // Card for Recommended and Vedic sections (First image style)
-  Widget _buildAstrologerCard(Map<String, dynamic> astrologer, {required bool isLive}) {
+  Widget _buildAstrologerCard(
+    Map<String, dynamic> astrologer, {
+    required bool isLive,
+  }) {
     if (isLive) {
       // Live Now card style (Second image)
       return _buildLiveCard(astrologer);
@@ -770,7 +840,7 @@ class AstrologyServicesView extends StatelessWidget {
   Widget _buildRecommendedCard(Map<String, dynamic> astrologer) {
     final isOnline = astrologer['isOnline'] as bool? ?? false;
     final astrologerModel = astrologer['astrologer'] as AstrologerModel?;
-    
+
     return GestureDetector(
       onTap: () {
         if (astrologerModel != null) {
@@ -778,23 +848,17 @@ class AstrologyServicesView extends StatelessWidget {
         }
       },
       child: Container(
-      width: 250.w,
-      margin: EdgeInsets.only(right: 12.w),
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        width: 250.w,
+        margin: EdgeInsets.only(right: 12.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: AppColors.deepOrange, width: 1),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             // Profile Picture on Left
             Stack(
               clipBehavior: Clip.none,
@@ -810,7 +874,10 @@ class AstrologyServicesView extends StatelessWidget {
                     ),
                   ),
                   child: ClipOval(
-                    child: _buildImage(astrologer['image'] as String?, size: 65),
+                    child: _buildImage(
+                      astrologer['image'] as String?,
+                      size: 65,
+                    ),
                   ),
                 ),
                 // Green dot only when online
@@ -831,123 +898,126 @@ class AstrologyServicesView extends StatelessWidget {
               ],
             ),
             Spacing.w(10),
-          // Info on Right
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                // Name
-                AutoTranslateText(
-                  astrologer['name'] as String,
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: const Color(0xFF5F2221),
-                    fontWeight: FontWeight.bold,
+            // Info on Right
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  // Name
+                  AutoTranslateText(
+                    astrologer['name'] as String,
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: const Color(0xFF5F2221),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Spacing.h(4),
-                // Specialization
-                AutoTranslateText(
-                  astrologer['specialization'] as String,
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: const Color(0xFF666666),
+                  Spacing.h(4),
+                  // Specialization
+                  AutoTranslateText(
+                    astrologer['specialization'] as String,
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: const Color(0xFF666666),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Spacing.h(4),
-                // Rating and Sessions Row
-                Row(
-                  children: [
-                    // Rating Badge
-                    Flexible(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(5.r),
-                          border: Border.all(
-                            color: const Color(0xFFDFB343),
-                            width: 1,
+                  Spacing.h(4),
+                  // Rating and Sessions Row
+                  Row(
+                    children: [
+                      // Rating Badge
+                      Flexible(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 5.w,
+                            vertical: 2.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFDFB343).withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(5.r),
+                            border: Border.all(
+                              color: const Color(0xFFDFB343),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.star,
+                                color: const Color(0xFFDFB343),
+                                size: 11.w,
+                              ),
+                              Spacing.w(2),
+                              Flexible(
+                                child: AutoTranslateText(
+                                  astrologer['rating'] as String,
+                                  style: MyTextTheme.smallBCB.copyWith(
+                                    color: const Color(0xFF5F2221),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.star,
-                              color: const Color(0xFFDFB343),
-                              size: 11.w,
-                            ),
-                            Spacing.w(2),
-                            Flexible(
-                              child: AutoTranslateText(
-                                astrologer['rating'] as String,
-                                style: MyTextTheme.smallBCB.copyWith(
-                                  color: const Color(0xFF5F2221),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
+                      ),
+                      Spacing.w(4),
+                      // Sessions
+                      Flexible(
+                        child: AutoTranslateText(
+                          '${astrologer['sessions']} sessions',
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: const Color(0xFF999999),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    ),
-                    Spacing.w(4),
-                    // Sessions
-                    Flexible(
-                      child: AutoTranslateText(
-                        '${astrologer['sessions']} sessions',
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: const Color(0xFF999999),
+                    ],
+                  ),
+                  Spacing.h(4),
+                  // Price and Experience Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Price
+                      Flexible(
+                        child: AutoTranslateText(
+                          astrologer['price'] as String,
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: const Color(0xFFDFB343),
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
-                ),
-                Spacing.h(4),
-                // Price and Experience Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Price
-                    Flexible(
-                      child: AutoTranslateText(
-                        astrologer['price'] as String,
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: const Color(0xFFDFB343),
-                          fontWeight: FontWeight.bold,
+                      Spacing.w(6),
+                      // Experience
+                      Flexible(
+                        child: AutoTranslateText(
+                          astrologer['experience'] as String,
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: const Color(0xFF999999),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    Spacing.w(6),
-                    // Experience
-                    Flexible(
-                      child: AutoTranslateText(
-                        astrologer['experience'] as String,
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: const Color(0xFF999999),
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
@@ -957,7 +1027,7 @@ class AstrologyServicesView extends StatelessWidget {
     final streamId = astrologer['streamId'] as String?;
     final astrologerName = astrologer['name'] as String?;
     final image = astrologer['image'] as String?;
-    
+
     return GestureDetector(
       onTap: () {
         if (streamId != null) {
@@ -972,170 +1042,177 @@ class AstrologyServicesView extends StatelessWidget {
             // Stream not found
           }
           if (stream != null) {
-            Get.to(() => LiveStreamView(
-              stream: stream!,
-              astrologerName: astrologerName,
-              astrologerProfilePicture: image,
-            ));
+            Get.to(
+              () => LiveStreamView(
+                stream: stream!,
+                astrologerName: astrologerName,
+                astrologerProfilePicture: image,
+              ),
+            );
           }
         }
       },
       child: Container(
-      width: 180.w,
-      margin: EdgeInsets.only(right: 12.w),
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFF8F0), // Light cream background
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: const Color(0xFFDFB343), // Gold border
-          width: 1,
+        width: 180.w,
+        margin: EdgeInsets.only(right: 12.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFF8F0), // Light cream background
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: const Color(0xFFDFB343), // Gold border
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Profile Picture with LIVE Badge
-          Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.center,
-            children: [
-              Container(
-                width: 82.w,
-                height: 82.h,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: const Color(0xFFDFB343), // Gold border
-                    width: 2,
-                  ),
-                ),
-                child: ClipOval(
-                  child: _buildImage(astrologer['image'] as String?, size: 90),
-                ),
-              ),
-              // LIVE Badge
-              Positioned(
-                top: -4,
-                right: -4,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Profile Picture with LIVE Badge
+            Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 82.w,
+                  height: 82.h,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF4CAF50), // Green
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.play_arrow,
-                        color: Colors.white,
-                        size: 9.w,
-                      ),
-                      Spacing.w(2),
-                      AutoTranslateText(
-                        'LIVE',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(8),
-          // Name
-          AutoTranslateText(
-            (astrologer['name'] as String?) ?? 'Astrologer',
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: const Color(0xFF5F2221),
-              fontWeight: FontWeight.bold,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
-          Spacing.h(2),
-          // Specialization
-          AutoTranslateText(
-            (astrologer['specialization'] as String?) ?? 'Astrology',
-            style: MyTextTheme.smallBCN.copyWith(
-              color: const Color(0xFF666666),
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
-          Spacing.h(8),
-          // Rating Badge and Price Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Rating Badge
-              Flexible(
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFDFB343).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(6.r),
+                    shape: BoxShape.circle,
                     border: Border.all(
-                      color: const Color(0xFFDFB343),
-                      width: 1,
+                      color: const Color(0xFFDFB343), // Gold border
+                      width: 2,
                     ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.star,
-                        color: const Color(0xFFDFB343),
-                        size: 11.w,
-                      ),
-                      Spacing.w(2),
-                      Flexible(
-                        child: AutoTranslateText(
-                          (astrologer['rating'] as String?) ?? '0.0',
-                          style: MyTextTheme.smallBCB.copyWith(
-                            color: const Color(0xFF5F2221),
+                  child: ClipOval(
+                    child: _buildImage(
+                      astrologer['image'] as String?,
+                      size: 90,
+                    ),
+                  ),
+                ),
+                // LIVE Badge
+                Positioned(
+                  top: -4,
+                  right: -4,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 5.w,
+                      vertical: 2.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF4CAF50), // Green
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.play_arrow, color: Colors.white, size: 9.w),
+                        Spacing.w(2),
+                        AutoTranslateText(
+                          'LIVE',
+                          style: TextStyle(
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Spacing.h(8),
+            // Name
+            AutoTranslateText(
+              (astrologer['name'] as String?) ?? 'Astrologer',
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: const Color(0xFF5F2221),
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+            Spacing.h(2),
+            // Specialization
+            AutoTranslateText(
+              (astrologer['specialization'] as String?) ?? 'Astrology',
+              style: MyTextTheme.smallBCN.copyWith(
+                color: const Color(0xFF666666),
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+            Spacing.h(8),
+            // Rating Badge and Price Row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Rating Badge
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 6.w,
+                      vertical: 3.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDFB343).withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(6.r),
+                      border: Border.all(
+                        color: const Color(0xFFDFB343),
+                        width: 1,
                       ),
-                    ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.star,
+                          color: const Color(0xFFDFB343),
+                          size: 11.w,
+                        ),
+                        Spacing.w(2),
+                        Flexible(
+                          child: AutoTranslateText(
+                            (astrologer['rating'] as String?) ?? '0.0',
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: const Color(0xFF5F2221),
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Spacing.w(6),
-              // Price
-              Flexible(
-                child: AutoTranslateText(
-                  (astrologer['price'] as String?) ?? 'N/A',
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: const Color(0xFFDFB343),
-                    fontWeight: FontWeight.bold,
+                Spacing.w(6),
+                // Price
+                Flexible(
+                  child: AutoTranslateText(
+                    (astrologer['price'] as String?) ?? 'N/A',
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: const Color(0xFFDFB343),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1175,7 +1252,7 @@ class AstrologyServicesView extends StatelessWidget {
               child: CircularProgressIndicator(
                 value: loadingProgress.expectedTotalBytes != null
                     ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
+                          loadingProgress.expectedTotalBytes!
                     : null,
                 color: const Color(0xFFDFB343),
               ),
@@ -1202,7 +1279,10 @@ class AstrologyServicesView extends StatelessWidget {
     }
   }
 
-  void _showFilterBottomSheet(BuildContext context, AstrologyServicesController controller) {
+  void _showFilterBottomSheet(
+    BuildContext context,
+    AstrologyServicesController controller,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -1275,248 +1355,318 @@ class AstrologyServicesView extends StatelessWidget {
                     // Specialization Filter
                     _buildFilterSection(
                       title: 'Specialization',
-                      child: Obx(() => Wrap(
-                        spacing: 8.w,
-                        runSpacing: 8.h,
-                        children: [
-                          'VEDIC',
-                          'KP',
-                          'NADI',
-                          'NUMEROLOGY',
-                          'TAROT',
-                          'PALMISTRY',
-                          'VASTU',
-                          'GEMOLOGY',
-                          'HORARY',
-                          'PRASHNA',
-                        ].map((spec) {
-                          final isSelected = controller.selectedSpecialization.value == spec;
-                          return FilterChip(
-                            label: AutoTranslateText(spec),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              controller.setSpecialization(selected ? spec : null);
-                            },
-                            selectedColor: const Color(0xFFDFB343).withOpacity(0.3),
-                            checkmarkColor: const Color(0xFF5F2221),
-                            labelStyle: TextStyle(
-                              color: isSelected ? const Color(0xFF5F2221) : Colors.grey[700],
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            ),
-                          );
-                        }).toList(),
-                      )),
+                      child: Obx(
+                        () => Wrap(
+                          spacing: 8.w,
+                          runSpacing: 8.h,
+                          children:
+                              [
+                                'VEDIC',
+                                'KP',
+                                'NADI',
+                                'NUMEROLOGY',
+                                'TAROT',
+                                'PALMISTRY',
+                                'VASTU',
+                                'GEMOLOGY',
+                                'HORARY',
+                                'PRASHNA',
+                              ].map((spec) {
+                                final isSelected =
+                                    controller.selectedSpecialization.value ==
+                                    spec;
+                                return FilterChip(
+                                  label: AutoTranslateText(spec),
+                                  selected: isSelected,
+                                  onSelected: (selected) {
+                                    controller.setSpecialization(
+                                      selected ? spec : null,
+                                    );
+                                  },
+                                  selectedColor: const Color(
+                                    0xFFDFB343,
+                                  ).withOpacity(0.3),
+                                  checkmarkColor: const Color(0xFF5F2221),
+                                  labelStyle: TextStyle(
+                                    color: isSelected
+                                        ? const Color(0xFF5F2221)
+                                        : Colors.grey[700],
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                );
+                              }).toList(),
+                        ),
+                      ),
                     ),
                     Spacing.h(24),
                     // Language Filter
                     _buildFilterSection(
                       title: 'Language',
-                      child: Obx(() => Wrap(
-                        spacing: 8.w,
-                        runSpacing: 8.h,
-                        children: [
-                          'Hindi',
-                          'English',
-                          'Punjabi',
-                          'Bengali',
-                          'Tamil',
-                          'Telugu',
-                        ].map((lang) {
-                          final isSelected = controller.selectedLanguage.value == lang;
-                          return FilterChip(
-                            label: AutoTranslateText(lang),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              controller.setLanguage(selected ? lang : null);
-                            },
-                            selectedColor: const Color(0xFFDFB343).withOpacity(0.3),
-                            checkmarkColor: const Color(0xFF5F2221),
-                            labelStyle: TextStyle(
-                              color: isSelected ? const Color(0xFF5F2221) : Colors.grey[700],
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            ),
-                          );
-                        }).toList(),
-                      )),
+                      child: Obx(
+                        () => Wrap(
+                          spacing: 8.w,
+                          runSpacing: 8.h,
+                          children:
+                              [
+                                'Hindi',
+                                'English',
+                                'Punjabi',
+                                'Bengali',
+                                'Tamil',
+                                'Telugu',
+                              ].map((lang) {
+                                final isSelected =
+                                    controller.selectedLanguage.value == lang;
+                                return FilterChip(
+                                  label: AutoTranslateText(lang),
+                                  selected: isSelected,
+                                  onSelected: (selected) {
+                                    controller.setLanguage(
+                                      selected ? lang : null,
+                                    );
+                                  },
+                                  selectedColor: const Color(
+                                    0xFFDFB343,
+                                  ).withOpacity(0.3),
+                                  checkmarkColor: const Color(0xFF5F2221),
+                                  labelStyle: TextStyle(
+                                    color: isSelected
+                                        ? const Color(0xFF5F2221)
+                                        : Colors.grey[700],
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                );
+                              }).toList(),
+                        ),
+                      ),
                     ),
                     Spacing.h(24),
                     // Availability Filter
                     _buildFilterSection(
                       title: 'Availability',
-                      child: Obx(() => Wrap(
-                        spacing: 8.w,
-                        runSpacing: 8.h,
-                        children: [
-                          'ONLINE',
-                          'OFFLINE',
-                          'BUSY',
-                          'ON_BREAK',
-                        ].map((avail) {
-                          final isSelected = controller.selectedAvailability.value == avail;
-                          return FilterChip(
-                            label: AutoTranslateText(avail.replaceAll('_', ' ')),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              controller.setAvailability(selected ? avail : null);
-                            },
-                            selectedColor: const Color(0xFFDFB343).withOpacity(0.3),
-                            checkmarkColor: const Color(0xFF5F2221),
-                            labelStyle: TextStyle(
-                              color: isSelected ? const Color(0xFF5F2221) : Colors.grey[700],
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            ),
-                          );
-                        }).toList(),
-                      )),
+                      child: Obx(
+                        () => Wrap(
+                          spacing: 8.w,
+                          runSpacing: 8.h,
+                          children: ['ONLINE', 'OFFLINE', 'BUSY', 'ON_BREAK']
+                              .map((avail) {
+                                final isSelected =
+                                    controller.selectedAvailability.value ==
+                                    avail;
+                                return FilterChip(
+                                  label: AutoTranslateText(
+                                    avail.replaceAll('_', ' '),
+                                  ),
+                                  selected: isSelected,
+                                  onSelected: (selected) {
+                                    controller.setAvailability(
+                                      selected ? avail : null,
+                                    );
+                                  },
+                                  selectedColor: const Color(
+                                    0xFFDFB343,
+                                  ).withOpacity(0.3),
+                                  checkmarkColor: const Color(0xFF5F2221),
+                                  labelStyle: TextStyle(
+                                    color: isSelected
+                                        ? const Color(0xFF5F2221)
+                                        : Colors.grey[700],
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                );
+                              })
+                              .toList(),
+                        ),
+                      ),
                     ),
                     Spacing.h(24),
                     // Astrologer Category Filter
                     _buildFilterSection(
                       title: 'Astrologer Category',
-                      child: Obx(() => Wrap(
-                        spacing: 8.w,
-                        runSpacing: 8.h,
-                        children: [
-                          'KID_ASTROLOGER',
-                          'CELEBRITY_ASTROLOGER',
-                          'NORMAL',
-                        ].map((category) {
-                          final isSelected = controller.selectedAstrologerCategory.value == category;
-                          return FilterChip(
-                            label: AutoTranslateText(category.replaceAll('_', ' ')),
-                            selected: isSelected,
-                            onSelected: (selected) {
-                              controller.setAstrologerCategory(selected ? category : null);
-                            },
-                            selectedColor: const Color(0xFFDFB343).withOpacity(0.3),
-                            checkmarkColor: const Color(0xFF5F2221),
-                            labelStyle: TextStyle(
-                              color: isSelected ? const Color(0xFF5F2221) : Colors.grey[700],
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            ),
-                          );
-                        }).toList(),
-                      )),
+                      child: Obx(
+                        () => Wrap(
+                          spacing: 8.w,
+                          runSpacing: 8.h,
+                          children:
+                              [
+                                'KID_ASTROLOGER',
+                                'CELEBRITY_ASTROLOGER',
+                                'NORMAL',
+                              ].map((category) {
+                                final isSelected =
+                                    controller
+                                        .selectedAstrologerCategory
+                                        .value ==
+                                    category;
+                                return FilterChip(
+                                  label: AutoTranslateText(
+                                    category.replaceAll('_', ' '),
+                                  ),
+                                  selected: isSelected,
+                                  onSelected: (selected) {
+                                    controller.setAstrologerCategory(
+                                      selected ? category : null,
+                                    );
+                                  },
+                                  selectedColor: const Color(
+                                    0xFFDFB343,
+                                  ).withOpacity(0.3),
+                                  checkmarkColor: const Color(0xFF5F2221),
+                                  labelStyle: TextStyle(
+                                    color: isSelected
+                                        ? const Color(0xFF5F2221)
+                                        : Colors.grey[700],
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                );
+                              }).toList(),
+                        ),
+                      ),
                     ),
                     Spacing.h(24),
                     // Min Rating Filter
                     _buildFilterSection(
                       title: 'Minimum Rating',
-                      child: Obx(() => Slider(
-                        value: controller.minRating.value,
-                        min: 0,
-                        max: 5,
-                        divisions: 10,
-                        label: controller.minRating.value > 0
-                            ? controller.minRating.value.toStringAsFixed(1)
-                            : 'Any',
-                        onChanged: (value) {
-                          controller.setMinRating(value);
-                        },
-                        activeColor: const Color(0xFFDFB343),
-                      )),
-                    ),
-                    Obx(() => Padding(
-                      padding: EdgeInsets.only(left: 16.w),
-                      child: AutoTranslateText(
-                        controller.minRating.value > 0
-                            ? 'Rating: ${controller.minRating.value.toStringAsFixed(1)}+'
-                            : 'Any rating',
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: const Color(0xFF666666),
+                      child: Obx(
+                        () => Slider(
+                          value: controller.minRating.value,
+                          min: 0,
+                          max: 5,
+                          divisions: 10,
+                          label: controller.minRating.value > 0
+                              ? controller.minRating.value.toStringAsFixed(1)
+                              : 'Any',
+                          onChanged: (value) {
+                            controller.setMinRating(value);
+                          },
+                          activeColor: const Color(0xFFDFB343),
                         ),
                       ),
-                    )),
+                    ),
+                    Obx(
+                      () => Padding(
+                        padding: EdgeInsets.only(left: 16.w),
+                        child: AutoTranslateText(
+                          controller.minRating.value > 0
+                              ? 'Rating: ${controller.minRating.value.toStringAsFixed(1)}+'
+                              : 'Any rating',
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: const Color(0xFF666666),
+                          ),
+                        ),
+                      ),
+                    ),
                     Spacing.h(24),
                     // Max Price Filter
                     _buildFilterSection(
                       title: 'Maximum Price (₹/min)',
-                      child: Obx(() => Slider(
-                        value: controller.maxPrice.value > 0 ? controller.maxPrice.value : 500,
-                        min: 0,
-                        max: 1000,
-                        divisions: 20,
-                        label: controller.maxPrice.value > 0
-                            ? '₹${controller.maxPrice.value.toStringAsFixed(0)}'
-                            : 'Any',
-                        onChanged: (value) {
-                          controller.setMaxPrice(value > 0 ? value : 0);
-                        },
-                        activeColor: const Color(0xFFDFB343),
-                      )),
-                    ),
-                    Obx(() => Padding(
-                      padding: EdgeInsets.only(left: 16.w),
-                      child: AutoTranslateText(
-                        controller.maxPrice.value > 0
-                            ? 'Max Price: ₹${controller.maxPrice.value.toStringAsFixed(0)}/min'
-                            : 'Any price',
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: const Color(0xFF666666),
+                      child: Obx(
+                        () => Slider(
+                          value: controller.maxPrice.value > 0
+                              ? controller.maxPrice.value
+                              : 500,
+                          min: 0,
+                          max: 1000,
+                          divisions: 20,
+                          label: controller.maxPrice.value > 0
+                              ? '₹${controller.maxPrice.value.toStringAsFixed(0)}'
+                              : 'Any',
+                          onChanged: (value) {
+                            controller.setMaxPrice(value > 0 ? value : 0);
+                          },
+                          activeColor: const Color(0xFFDFB343),
                         ),
                       ),
-                    )),
+                    ),
+                    Obx(
+                      () => Padding(
+                        padding: EdgeInsets.only(left: 16.w),
+                        child: AutoTranslateText(
+                          controller.maxPrice.value > 0
+                              ? 'Max Price: ₹${controller.maxPrice.value.toStringAsFixed(0)}/min'
+                              : 'Any price',
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: const Color(0xFF666666),
+                          ),
+                        ),
+                      ),
+                    ),
                     Spacing.h(24),
                     // Min Experience Filter
                     _buildFilterSection(
                       title: 'Minimum Experience (Years)',
-                      child: Obx(() => Slider(
-                        value: controller.minExperience.value > 0
-                            ? controller.minExperience.value.toDouble()
-                            : 10,
-                        min: 0,
-                        max: 20,
-                        divisions: 20,
-                        label: controller.minExperience.value > 0
-                            ? '${controller.minExperience.value} years'
-                            : 'Any',
-                        onChanged: (value) {
-                          controller.setMinExperience(value.toInt());
-                        },
-                        activeColor: const Color(0xFFDFB343),
-                      )),
-                    ),
-                    Obx(() => Padding(
-                      padding: EdgeInsets.only(left: 16.w),
-                      child: AutoTranslateText(
-                        controller.minExperience.value > 0
-                            ? 'Experience: ${controller.minExperience.value}+ years'
-                            : 'Any experience',
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: const Color(0xFF666666),
+                      child: Obx(
+                        () => Slider(
+                          value: controller.minExperience.value > 0
+                              ? controller.minExperience.value.toDouble()
+                              : 10,
+                          min: 0,
+                          max: 20,
+                          divisions: 20,
+                          label: controller.minExperience.value > 0
+                              ? '${controller.minExperience.value} years'
+                              : 'Any',
+                          onChanged: (value) {
+                            controller.setMinExperience(value.toInt());
+                          },
+                          activeColor: const Color(0xFFDFB343),
                         ),
                       ),
-                    )),
+                    ),
+                    Obx(
+                      () => Padding(
+                        padding: EdgeInsets.only(left: 16.w),
+                        child: AutoTranslateText(
+                          controller.minExperience.value > 0
+                              ? 'Experience: ${controller.minExperience.value}+ years'
+                              : 'Any experience',
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: const Color(0xFF666666),
+                          ),
+                        ),
+                      ),
+                    ),
                     Spacing.h(24),
                     // Sort By Filter
                     _buildFilterSection(
                       title: 'Sort By',
-                      child: Obx(() => Column(
-                        children: [
-                          'rating',
-                          'experience',
-                          'price_low',
-                          'price_high',
-                          'consultations',
-                        ].map((sort) {
-                          return RadioListTile<String>(
-                            title: AutoTranslateText(
-                              _getSortLabel(sort),
-                              style: MyTextTheme.mediumBCN.copyWith(
-                                color: const Color(0xFF5F2221),
-                              ),
-                            ),
-                            value: sort,
-                            groupValue: controller.sortBy.value,
-                            onChanged: (value) {
-                              if (value != null) {
-                                controller.setSortBy(value);
-                              }
-                            },
-                            activeColor: const Color(0xFFDFB343),
-                          );
-                        }).toList(),
-                      )),
+                      child: Obx(
+                        () => Column(
+                          children:
+                              [
+                                'rating',
+                                'experience',
+                                'price_low',
+                                'price_high',
+                                'consultations',
+                              ].map((sort) {
+                                return RadioListTile<String>(
+                                  title: AutoTranslateText(
+                                    _getSortLabel(sort),
+                                    style: MyTextTheme.mediumBCN.copyWith(
+                                      color: const Color(0xFF5F2221),
+                                    ),
+                                  ),
+                                  value: sort,
+                                  groupValue: controller.sortBy.value,
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      controller.setSortBy(value);
+                                    }
+                                  },
+                                  activeColor: const Color(0xFFDFB343),
+                                );
+                              }).toList(),
+                        ),
+                      ),
                     ),
                     Spacing.h(24),
                     // Apply Button
@@ -1588,23 +1738,16 @@ class AstrologyServicesView extends StatelessWidget {
   }
 
   String _getPriceText(dynamic astrologerModel) {
-    List<String> prices = [];
-    
-    if (astrologerModel.chatPricePerMin != null && astrologerModel.chatPricePerMin! > 0) {
-      prices.add('Chat: ₹${astrologerModel.chatPricePerMin!.toStringAsFixed(0)}/min');
+    if (astrologerModel.voicePricePerMin != null &&
+        astrologerModel.voicePricePerMin! > 0) {
+      return '₹${astrologerModel.voicePricePerMin!.toStringAsFixed(0)}/min';
+    } else if (astrologerModel.videoPricePerMin != null &&
+        astrologerModel.videoPricePerMin! > 0) {
+      return '₹${astrologerModel.videoPricePerMin!.toStringAsFixed(0)}/min';
+    } else if (astrologerModel.chatPrice != null &&
+        astrologerModel.chatPrice! > 0) {
+      return '₹${astrologerModel.chatPrice!.toStringAsFixed(0)}/msg';
     }
-    if (astrologerModel.voicePricePerMin != null && astrologerModel.voicePricePerMin! > 0) {
-      prices.add('Call: ₹${astrologerModel.voicePricePerMin!.toStringAsFixed(0)}/min');
-    }
-    if (astrologerModel.videoPricePerMin != null && astrologerModel.videoPricePerMin! > 0) {
-      prices.add('Video: ₹${astrologerModel.videoPricePerMin!.toStringAsFixed(0)}/min');
-    }
-    
-    if (prices.isEmpty) {
-      return 'N/A';
-    }
-    return prices.join(' • ');
+    return 'N/A';
   }
-
 }
-

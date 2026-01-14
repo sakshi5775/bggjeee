@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/data_model/address_model.dart';
 import 'package:astrobharataiuser/data_model/cart_model.dart';
@@ -7,7 +9,7 @@ import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.da
 import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_razorpay_service.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class CartController extends BaseController {
   static const int maxQuantity = 50;
@@ -31,89 +33,18 @@ class CartController extends BaseController {
   final couponController = TextEditingController();
   final _pendingProducts = <String, bool>{}.obs;
 
-  // Payment Method
-  final RxString selectedPaymentMethod = 'online'.obs; // Default to online
-
-  final EcommerceRazorpayService _razorpayService = EcommerceRazorpayService();
-
   @override
   void onInit() {
     super.onInit();
     loadCart();
     loadAddresses();
-    _initializeRazorpay();
   }
 
   @override
   void onClose() {
     couponController.dispose();
-    _razorpayService.dispose();
     super.onClose();
   }
-
-  void _initializeRazorpay() {
-    _razorpayService.initialize(
-      onSuccess: (data) {
-        _handlePaymentSuccess(data);
-      },
-      onError: (message) {
-        isPlacingOrder.value = false;
-        showErrorMessage(title: 'Payment Failed', message: message);
-      },
-      onFailure: (response) {
-        isPlacingOrder.value = false;
-        showErrorMessage(
-          title: 'Payment Failed',
-          message: '${response.code}: ${response.message}',
-        );
-      },
-    );
-  }
-
-  Future<void> _handlePaymentSuccess(Map<String, dynamic> data) async {
-    try {
-      final paymentId = data['paymentId']?.toString() ?? '';
-      final orderId = data['orderId']?.toString() ?? '';
-      final signature = data['signature']?.toString() ?? '';
-
-      // We need the original payment ID (database ID) from initiation
-      // Since we can't easily pass state through Razorpay callbacks without local storage,
-      // we can rely on the fact that verifyPayment needs 'paymentId' (our DB id) which we have available in the scope if we were inside placeOrder.
-      // BUT callbacks are async.
-      // A common pattern is to store the Pending Payment ID in a variable.
-
-      if (_pendingPaymentId == null) {
-        showErrorMessage(
-          title: "Error",
-          message: "Payment session lost. Please contact support.",
-        );
-        isPlacingOrder.value = false;
-        return;
-      }
-
-      await _service.verifyPayment(
-        paymentId: _pendingPaymentId!,
-        razorpayOrderId: orderId,
-        razorpayPaymentId: paymentId,
-        razorpaySignature: signature,
-      );
-
-      showSuccessMessage(
-        title: 'Order placed',
-        message: 'Your order has been placed successfully.',
-      );
-      await clearCart();
-      await loadCart();
-    } catch (e) {
-      showErrorMessage(title: 'Error', message: 'Verification failed: $e');
-    } finally {
-      isPlacingOrder.value = false;
-      _pendingPaymentId = null;
-    }
-  }
-
-  // Temporary storage for payment verification
-  String? _pendingPaymentId;
 
   Future<void> loadCart() async {
     try {
@@ -240,8 +171,7 @@ class CartController extends BaseController {
           } else if (previousQty == 0 && newQty > 0) {
             showSuccessMessage(
               title: 'Added to cart',
-              message:
-                  '${product.name ?? 'Product'} has been added to your cart',
+              message: '${product.name ?? 'Product'} has been added to your cart',
             );
           } else if (previousQty != newQty) {
             showSuccessMessage(
@@ -294,10 +224,7 @@ class CartController extends BaseController {
   Future<void> incrementItem(CartItem item) async {
     final product = item.product;
     if (product == null) {
-      showErrorMessage(
-        title: 'Error',
-        message: 'Product data missing for this item',
-      );
+      showErrorMessage(title: 'Error', message: 'Product data missing for this item');
       return;
     }
     final current = item.quantity ?? 0;
@@ -319,10 +246,7 @@ class CartController extends BaseController {
   Future<void> decrementItem(CartItem item) async {
     final product = item.product;
     if (product == null) {
-      showErrorMessage(
-        title: 'Error',
-        message: 'Product data missing for this item',
-      );
+      showErrorMessage(title: 'Error', message: 'Product data missing for this item');
       return;
     }
     final current = item.quantity ?? 0;
@@ -389,11 +313,7 @@ class CartController extends BaseController {
   }
 
   String resolveProductKey(ProductModel product) {
-    return product.id ??
-        product.slug ??
-        product.sku ??
-        product.name ??
-        product.hashCode.toString();
+    return product.id ?? product.slug ?? product.sku ?? product.name ?? product.hashCode.toString();
   }
 
   CartItem? _findCartItem(ProductModel product) {
@@ -529,9 +449,7 @@ class CartController extends BaseController {
     }
 
     final product = productOverride ?? item.product;
-    final pendingKey = product != null
-        ? resolveProductKey(product)
-        : _resolveCartItemKey(item);
+    final pendingKey = product != null ? resolveProductKey(product) : _resolveCartItemKey(item);
 
     try {
       _pendingProducts[pendingKey] = true;
@@ -574,8 +492,7 @@ class CartController extends BaseController {
         }
         showSuccessMessage(
           title: 'Saved for later',
-          message:
-              '${item.product?.name ?? item.productSnapshot?.name ?? 'Product'} saved for later.',
+          message: '${item.product?.name ?? item.productSnapshot?.name ?? 'Product'} saved for later.',
         );
       }
     } catch (e) {
@@ -608,8 +525,7 @@ class CartController extends BaseController {
         }
         showSuccessMessage(
           title: 'Moved to cart',
-          message:
-              '${item.product?.name ?? item.productSnapshot?.name ?? 'Product'} moved to cart.',
+          message: '${item.product?.name ?? item.productSnapshot?.name ?? 'Product'} moved to cart.',
         );
       }
     } catch (e) {
@@ -643,8 +559,7 @@ class CartController extends BaseController {
         }
         showSuccessMessage(
           title: 'Moved to cart',
-          message:
-              '${item.product?.name ?? 'Item'} moved to cart successfully.',
+          message: '${item.product?.name ?? 'Item'} moved to cart successfully.',
         );
       }
     } catch (e) {
@@ -666,10 +581,7 @@ class CartController extends BaseController {
       final result = await _service.applyCartCoupon(code);
       if (result != null) {
         _updateCartState(result);
-        showSuccessMessage(
-          title: 'Coupon applied',
-          message: 'Coupon "$code" applied successfully.',
-        );
+        showSuccessMessage(title: 'Coupon applied', message: 'Coupon "$code" applied successfully.');
       }
     } finally {
       isApplyingCoupon.value = false;
@@ -683,10 +595,7 @@ class CartController extends BaseController {
       if (result != null) {
         _updateCartState(result);
         couponController.clear();
-        showSuccessMessage(
-          title: 'Coupon removed',
-          message: 'Coupon removed successfully.',
-        );
+        showSuccessMessage(title: 'Coupon removed', message: 'Coupon removed successfully.');
       }
     } finally {
       isApplyingCoupon.value = false;
@@ -726,10 +635,7 @@ class CartController extends BaseController {
     }
   }
 
-  Future<void> saveAddress(
-    AddressModel address, {
-    bool setAsDefault = false,
-  }) async {
+  Future<void> saveAddress(AddressModel address, {bool setAsDefault = false}) async {
     try {
       isSavingAddress.value = true;
       final saved = await _service.upsertAddress(address);
@@ -778,16 +684,10 @@ class CartController extends BaseController {
     }
   }
 
-  Future<void> placeOrder() async {
-    final paymentMethod = selectedPaymentMethod.value;
-    print('Placing order with payment method: $paymentMethod'); // Debug log
-
+  Future<void> placeOrder({String paymentMethod = 'cod'}) async {
     final currentCart = cart.value;
     if (currentCart == null || (currentCart.items?.isEmpty ?? true)) {
-      showErrorMessage(
-        title: 'Cart empty',
-        message: 'Please add items to cart first.',
-      );
+      showErrorMessage(title: 'Cart empty', message: 'Please add items to cart first.');
       return;
     }
     final address = selectedAddress.value;
@@ -812,63 +712,45 @@ class CartController extends BaseController {
 
       if (orderData == null) return;
 
-      print('Order Data received: $orderData'); // Debugging
-
-      // Extract Display ID (e.g., ORD12345) for UI
-      final displayOrderId =
-          orderData['orderId']?.toString() ??
+      final orderId = orderData['orderId']?.toString() ??
           orderData['order']?['orderId']?.toString() ??
           '';
+      final pricingMap = orderData['pricing'] is Map<String, dynamic>
+          ? Map<String, dynamic>.from(orderData['pricing'] as Map)
+          : orderData['order'] is Map && orderData['order']['pricing'] is Map
+              ? Map<String, dynamic>.from(orderData['order']['pricing'] as Map)
+              : null;
+      final totalAmount = pricingMap?['total'] is num
+          ? (pricingMap!['total'] as num).toDouble()
+          : total;
 
-      // Extract Internal ID (MongoDB _id) for Payment API
-      // If _id or id is missing, fallback to displayOrderId (though likely wrong)
-      final paymentOrderId =
-          orderData['_id']?.toString() ??
-          orderData['id']?.toString() ??
-          orderData['order']?['_id']?.toString() ??
-          orderData['order']?['id']?.toString() ??
-          displayOrderId;
-
-      print('Payment Order ID: $paymentOrderId');
-      print('Display Order ID: $displayOrderId');
-
-      if (paymentMethod != 'cod' && paymentOrderId.isNotEmpty) {
+      if (paymentMethod != 'cod' && orderId.isNotEmpty) {
         final paymentInit = await _service.initiatePayment(
-          orderId: paymentOrderId,
-          paymentMethod: paymentMethod, // removed amount
+          orderId: orderId,
+          amount: totalAmount,
+          paymentMethod: paymentMethod,
         );
 
-        if (paymentInit != null &&
-            paymentInit.success &&
-            paymentInit.data?.razorpay != null) {
-          _pendingPaymentId = paymentInit.data!.paymentId;
-
-          _razorpayService.openCheckout(
-            razorpayData: paymentInit.data!.razorpay!,
-          );
-          // Wait for callback
-        } else {
-          isPlacingOrder.value = false;
-          showErrorMessage(
-            title: "Payment Error",
-            message: "Failed to initiate payment parameters.",
+        if (paymentInit != null && paymentInit['paymentId'] != null) {
+          final paymentId = paymentInit['paymentId'].toString();
+          final transactionId = 'TXN_${DateTime.now().millisecondsSinceEpoch}_${Random().nextInt(9999)}';
+          await _service.verifyPayment(
+            paymentId: paymentId,
+            transactionId: transactionId,
           );
         }
-      } else {
-        // COD or other sync success
-        showSuccessMessage(
-          title: 'Order placed',
-          message: displayOrderId.isNotEmpty
-              ? 'Order #$displayOrderId has been placed successfully.'
-              : 'Your order has been placed successfully.',
-        );
-        await clearCart();
-        await loadCart();
-        isPlacingOrder.value = false;
       }
-    } catch (e) {
+
+      showSuccessMessage(
+        title: 'Order placed',
+        message: orderId.isNotEmpty
+            ? 'Order #$orderId has been placed successfully.'
+            : 'Your order has been placed successfully.',
+      );
+      await clearCart();
+      await loadCart();
+    } finally {
       isPlacingOrder.value = false;
-      showErrorMessage(title: 'Error', message: e.toString());
     }
   }
 }

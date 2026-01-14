@@ -1,14 +1,18 @@
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/wallet_model.dart';
-import 'package:astrobharataiuser/screens/astrology_services/widgets/astrology_header_widget.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:astrobharataiuser/screens/wallet/widgets/recharge_dialog.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import '../../../app_manager/my_text_theme.dart';
+import '../../../theme/app_typography.dart';
 
 class WalletView extends StatelessWidget {
   const WalletView({Key? key}) : super(key: key);
@@ -16,100 +20,81 @@ class WalletView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final WalletController controller = Get.put(WalletController());
-    
-    // Refresh wallet balance when screen is opened
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.loadWalletBalance();
-      controller.loadRechargeHistory(refresh: true);
-    });
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5DC), // Light cream background
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header Section
-            _buildHeader(context),
-            
-            // Main Scrollable Content
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  await controller.loadWalletBalance();
-                  await controller.loadRechargeHistory(refresh: true);
-                },
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Available Balance Card
-                      Obx(() => _buildBalanceCard(controller)),
-                      
-                      Spacing.h(24),
-                      
-                      // Transaction History Section
-                      _buildTransactionHistorySection(controller),
-                    ],
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header Section
+              _buildHeader(context),
+
+              // Main Scrollable Content
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    await controller.loadWalletBalance();
+                    await controller.loadRechargeHistory(refresh: true);
+                  },
+                  color: AppColors.templeGold,
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 16.h,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Available Balance Card
+                        Obx(() => _buildBalanceCard(controller)),
+
+                        Spacing.h(24),
+
+                        // Transaction History Section
+                        _buildTransactionHistorySection(controller),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildHeader(BuildContext context) {
-    return AstrologyHeaderWidget(
-      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 16.h, bottom: 24.h),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                onTap: () => Get.back(),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: Color(0xFFE3B341),
-                  size: 24.w,
-                ),
-              ),
-              Expanded(
-                child: AutoTranslateText(
-                  'Wallet',
-                  style: AppTypography.h2.copyWith(
-                    color: Color(0xFFE3B341),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              SizedBox(width: 24.w), // Balance the back button
-            ],
-          ),
-        ],
+    return CommonHeader(
+      title: 'Wallet',
+      subtitle: AutoTranslateText(
+        'Manage your wallet balance',
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 12.sp,
+          color: Colors.white.withOpacity(0.9),
+        ),
       ),
+      onBackPressed: () => Get.back(),
     );
   }
 
   Widget _buildBalanceCard(WalletController controller) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFE3B341), // Golden yellow
-            Color(0xFFC9A033), // Amber
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20.r),
+        gradient: AppColors.goldenGradient,
+        borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
+          BoxShadow(
+            color: AppColors.templeGold.withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+            spreadRadius: 2,
+          ),
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
@@ -123,62 +108,92 @@ class WalletView extends StatelessWidget {
           // Wallet icon and label
           Row(
             children: [
-              Icon(
-                Icons.account_balance_wallet,
-                color: const Color(0xFF333333),
-                size: 20.w,
+              Container(
+                padding: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Icon(
+                  Icons.account_balance_wallet_rounded,
+                  color: '#68171E'.toColor(),
+                  size: 24.w,
+                ),
               ),
-              Spacing.w(8),
+              Spacing.w(12),
               AutoTranslateText(
                 'Available Balance',
-                style: AppTypography.body1.copyWith(
-                  color: const Color(0xFF333333),
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 14.sp,
+                  color: '#68171E'.toColor().withOpacity(0.8),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
           ),
-          
-          Spacing.h(16),
-          
+
+          Spacing.h(20),
+
           // Balance amount
           AutoTranslateText(
             controller.formatCurrency(controller.walletBalance.value),
-            style: AppTypography.h1.copyWith(
-              color: const Color(0xFF333333),
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 36.sp,
+              fontWeight: FontWeight.w700,
+              color: '#68171E'.toColor(),
+              height: 1.2,
             ),
           ),
-          
+
           Spacing.h(24),
-          
+
           // Add Money button
-          Center(
-            child: GestureDetector(
-              onTap: () {
-                Get.dialog(const RechargeDialog());
-              },
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 14.h),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF3D0C11), // Dark maroon
-                  borderRadius: BorderRadius.circular(12.r),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.circular(16.r),
+              boxShadow: [
+                BoxShadow(
+                  color: '#68171E'.toColor().withOpacity(0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.add,
-                      color: Color(0xFFE3B341),
-                      size: 20.w,
-                    ),
-                    Spacing.w(8),
-                    AutoTranslateText(
-                      'Add Money',
-                      style: AppTypography.h2.copyWith(
-                        color: Color(0xFFE3B341),
+              ],
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Get.dialog(const RechargeDialog());
+                },
+                borderRadius: BorderRadius.circular(16.r),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  alignment: Alignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.add_circle_rounded,
+                        color: AppColors.templeGold,
+                        size: 24.w,
                       ),
-                    ),
-                  ],
+                      Spacing.w(8),
+                      AutoTranslateText(
+                        'Add Money',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.templeGold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -193,13 +208,13 @@ class WalletView extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F6F0), // Warm off-white background
-        borderRadius: BorderRadius.circular(20.r),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -210,107 +225,147 @@ class WalletView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Expanded(
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
                 child: AutoTranslateText(
                   'Recharge History',
-                  style: AppTypography.h2.copyWith(
-                    color: const Color(0xFFC9A033), // Orange-gold color
-                  ),
-                  overflow: TextOverflow.ellipsis,
+                  style: MyTextTheme.largeBCB
+                      .copyWith(color: Colors.white)
+                      .merge(AppTypography.h3),
                 ),
               ),
-              SizedBox(width: 8.w),
               // Filter button
-              PopupMenuButton<String>(
-                icon: Icon(
-                  Icons.filter_list,
-                  color: const Color(0xFFC9A033),
-                  size: 24.w,
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.templeGold.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(
+                    color: AppColors.templeGold.withOpacity(0.3),
+                    width: 1,
+                  ),
                 ),
-                onSelected: (value) {
-                  controller.filterByStatus(value.isEmpty ? null : value);
-                },
-                itemBuilder: (context) {
-                  // Access observable directly - menu rebuilds when opened
-                  final selectedStatus = controller.selectedStatus.value;
-                  return [
-                    PopupMenuItem(
-                      value: '',
-                      child: AutoTranslateText(
-                        'All',
-                        style: TextStyle(
-                          fontWeight: selectedStatus.isEmpty
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                child: PopupMenuButton<String>(
+                  icon: Icon(
+                    Icons.filter_list_rounded,
+                    color: '#68171E'.toColor(),
+                    size: 24.w,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  onSelected: (value) {
+                    controller.filterByStatus(value.isEmpty ? null : value);
+                  },
+                  itemBuilder: (context) {
+                    final selectedStatus = controller.selectedStatus.value;
+                    return [
+                      PopupMenuItem(
+                        value: '',
+                        child: AutoTranslateText(
+                          'All',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: selectedStatus.isEmpty
+                                ? FontWeight.w700
+                                : FontWeight.w400,
+                            color: selectedStatus.isEmpty
+                                ? '#68171E'.toColor()
+                                : Colors.grey[700],
+                          ),
                         ),
                       ),
-                    ),
-                    PopupMenuItem(
-                      value: 'INITIATED',
-                      child: AutoTranslateText(
-                        'Initiated',
-                        style: TextStyle(
-                          fontWeight: selectedStatus == 'INITIATED'
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                      PopupMenuItem(
+                        value: 'INITIATED',
+                        child: AutoTranslateText(
+                          'Initiated',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: selectedStatus == 'INITIATED'
+                                ? FontWeight.w700
+                                : FontWeight.w400,
+                            color: selectedStatus == 'INITIATED'
+                                ? '#68171E'.toColor()
+                                : Colors.grey[700],
+                          ),
                         ),
                       ),
-                    ),
-                    PopupMenuItem(
-                      value: 'PENDING',
-                      child: AutoTranslateText(
-                        'Pending',
-                        style: TextStyle(
-                          fontWeight: selectedStatus == 'PENDING'
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                      PopupMenuItem(
+                        value: 'PENDING',
+                        child: AutoTranslateText(
+                          'Pending',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: selectedStatus == 'PENDING'
+                                ? FontWeight.w700
+                                : FontWeight.w400,
+                            color: selectedStatus == 'PENDING'
+                                ? '#68171E'.toColor()
+                                : Colors.grey[700],
+                          ),
                         ),
                       ),
-                    ),
-                    PopupMenuItem(
-                      value: 'COMPLETED',
-                      child: AutoTranslateText(
-                        'Completed',
-                        style: TextStyle(
-                          fontWeight: selectedStatus == 'COMPLETED'
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                      PopupMenuItem(
+                        value: 'COMPLETED',
+                        child: AutoTranslateText(
+                          'Completed',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: selectedStatus == 'COMPLETED'
+                                ? FontWeight.w700
+                                : FontWeight.w400,
+                            color: selectedStatus == 'COMPLETED'
+                                ? '#68171E'.toColor()
+                                : Colors.grey[700],
+                          ),
                         ),
                       ),
-                    ),
-                    PopupMenuItem(
-                      value: 'FAILED',
-                      child: AutoTranslateText(
-                        'Failed',
-                        style: TextStyle(
-                          fontWeight: selectedStatus == 'FAILED'
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                      PopupMenuItem(
+                        value: 'FAILED',
+                        child: AutoTranslateText(
+                          'Failed',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: selectedStatus == 'FAILED'
+                                ? FontWeight.w700
+                                : FontWeight.w400,
+                            color: selectedStatus == 'FAILED'
+                                ? '#68171E'.toColor()
+                                : Colors.grey[700],
+                          ),
                         ),
                       ),
-                    ),
-                    PopupMenuItem(
-                      value: 'CANCELLED',
-                      child: AutoTranslateText(
-                        'Cancelled',
-                        style: TextStyle(
-                          fontWeight: selectedStatus == 'CANCELLED'
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                      PopupMenuItem(
+                        value: 'CANCELLED',
+                        child: AutoTranslateText(
+                          'Cancelled',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: selectedStatus == 'CANCELLED'
+                                ? FontWeight.w700
+                                : FontWeight.w400,
+                            color: selectedStatus == 'CANCELLED'
+                                ? '#68171E'.toColor()
+                                : Colors.grey[700],
+                          ),
                         ),
                       ),
-                    ),
-                  ];
-                },
+                    ];
+                  },
+                ),
               ),
             ],
           ),
-          
+
           Spacing.h(16),
-          
+
           // Transaction List
           Obx(() {
-            if (controller.isLoadingHistory.value && controller.rechargeHistory.isEmpty) {
+            if (controller.isLoadingHistory.value &&
+                controller.rechargeHistory.isEmpty) {
               return Center(
                 child: Padding(
                   padding: EdgeInsets.all(40.h),
@@ -325,16 +380,30 @@ class WalletView extends StatelessWidget {
                   padding: EdgeInsets.all(40.h),
                   child: Column(
                     children: [
-                      Icon(
-                        Icons.history,
-                        size: 48.w,
-                        color: Colors.grey,
+                      Container(
+                        padding: EdgeInsets.all(24.w),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppColors.templeGold.withOpacity(0.1),
+                              AppColors.templeGold.withOpacity(0.05),
+                            ],
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.history_rounded,
+                          size: 48.w,
+                          color: AppColors.templeGold,
+                        ),
                       ),
                       Spacing.h(16),
                       AutoTranslateText(
                         'No recharge history',
-                        style: AppTypography.body1.copyWith(
-                          color: Colors.grey,
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 14.sp,
+                          color: Colors.grey[600],
                         ),
                       ),
                     ],
@@ -345,21 +414,60 @@ class WalletView extends StatelessWidget {
 
             return Column(
               children: [
-                ...controller.rechargeHistory.map((recharge) => _buildRechargeItem(recharge, controller)),
+                ...controller.rechargeHistory.map(
+                  (recharge) => _buildRechargeItem(recharge, controller),
+                ),
                 if (controller.hasMore.value)
                   Padding(
                     padding: EdgeInsets.only(top: 16.h),
-                    child: Obx(() => controller.isLoadingMore.value
-                        ? const Center(child: CircularProgressIndicator())
-                        : TextButton(
-                            onPressed: () => controller.loadMoreHistory(),
-                            child: AutoTranslateText(
-                              'Load More',
-                              style: MyTextTheme.mediumBCB.copyWith(
-                                color: const Color(0xFFE3B341),
+                    child: Obx(
+                      () => controller.isLoadingMore.value
+                          ? Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(16.h),
+                                child: CircularProgressIndicator(
+                                  color: AppColors.templeGold,
+                                ),
+                              ),
+                            )
+                          : Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                gradient: AppColors.orangeGradient,
+                                borderRadius: BorderRadius.circular(16.r),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.orangeGradient.colors.first
+                                        .withOpacity(0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () => controller.loadMoreHistory(),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 14.h,
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: AutoTranslateText(
+                                      'Load More',
+                                      style: TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          )),
+                    ),
                   ),
               ],
             );
@@ -369,22 +477,29 @@ class WalletView extends StatelessWidget {
     );
   }
 
-  Widget _buildRechargeItem(WalletRechargeHistoryItem recharge, WalletController controller) {
+  Widget _buildRechargeItem(
+    WalletRechargeHistoryItem recharge,
+    WalletController controller,
+  ) {
     final isCredit = recharge.status == 'COMPLETED';
     final statusColor = _getStatusColor(recharge.status);
     final statusBgColor = _getStatusBgColor(recharge.status);
     final date = recharge.initiatedAtDate ?? recharge.createdAtDate;
 
     return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(16.w),
+      margin: EdgeInsets.only(bottom: 16.h),
+      padding: EdgeInsets.all(18.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.2),
-          width: 1,
-        ),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: Colors.grey.withOpacity(0.15), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -393,21 +508,32 @@ class WalletView extends StatelessWidget {
             children: [
               // Status icon
               Container(
-                width: 48.w,
-                height: 48.w,
+                width: 56.w,
+                height: 56.w,
                 decoration: BoxDecoration(
-                  color: statusBgColor,
+                  gradient: LinearGradient(
+                    colors: [statusBgColor, statusBgColor.withOpacity(0.7)],
+                  ),
                   shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: statusColor.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Icon(
-                  isCredit ? Icons.check_circle : _getStatusIcon(recharge.status),
+                  isCredit
+                      ? Icons.check_circle_rounded
+                      : _getStatusIcon(recharge.status),
                   color: statusColor,
-                  size: 24.w,
+                  size: 28.w,
                 ),
               ),
-              
+
               Spacing.w(16),
-              
+
               // Recharge details
               Expanded(
                 child: Column(
@@ -415,28 +541,43 @@ class WalletView extends StatelessWidget {
                   children: [
                     AutoTranslateText(
                       'Wallet Recharge',
-                      style: AppTypography.h3.copyWith(
-                        color: const Color(0xFF333333),
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: '#68171E'.toColor(),
                       ),
                     ),
-                    Spacing.h(4),
+                    Spacing.h(6),
                     if (date != null)
                       AutoTranslateText(
                         _formatTransactionDate(date),
-                        style: AppTypography.body2.copyWith(
-                          color: const Color(0xFF666666),
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 12.sp,
+                          color: Colors.grey[600],
                         ),
                       ),
-                    Spacing.h(4),
+                    Spacing.h(8),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 5.h,
+                      ),
                       decoration: BoxDecoration(
                         color: statusBgColor,
                         borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(
+                          color: statusColor.withOpacity(0.3),
+                          width: 1,
+                        ),
                       ),
                       child: AutoTranslateText(
                         recharge.status,
-                        style: AppTypography.label.copyWith(
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w600,
                           color: statusColor,
                         ),
                       ),
@@ -444,53 +585,87 @@ class WalletView extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               // Amount
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   AutoTranslateText(
-                    '+₹${recharge.amount.toString().replaceAllMapped(
-                      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                      (Match m) => '${m[1]},',
-                    )}',
-                    style: AppTypography.h2.copyWith(
+                    '+₹${recharge.amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w700,
                       color: isCredit ? const Color(0xFF4CAF50) : statusColor,
                     ),
                   ),
-                  if (recharge.rechargeId.isNotEmpty)
+                  if (recharge.rechargeId.isNotEmpty) ...[
+                    Spacing.h(4),
                     AutoTranslateText(
-                      recharge.rechargeId.substring(0, recharge.rechargeId.length > 12 
-                          ? 12 
-                          : recharge.rechargeId.length),
-                      style: AppTypography.label.copyWith(
-                        color: Colors.grey,
+                      recharge.rechargeId.substring(
+                        0,
+                        recharge.rechargeId.length > 12
+                            ? 12
+                            : recharge.rechargeId.length,
+                      ),
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 10.sp,
+                        color: Colors.grey[500],
                       ),
                     ),
+                  ],
                 ],
               ),
             ],
           ),
-          
+
           // Cancel button for INITIATED/PENDING status
           if (recharge.canCancel)
             Padding(
-              padding: EdgeInsets.only(top: 12.h),
+              padding: EdgeInsets.only(top: 16.h),
               child: Align(
                 alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () => _showCancelDialog(recharge, controller),
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                    backgroundColor: Colors.red.withOpacity(0.1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.r),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10.r),
+                    border: Border.all(
+                      color: Colors.red.withOpacity(0.3),
+                      width: 1,
                     ),
                   ),
-                  child: AutoTranslateText(
-                    'Cancel',
-                    style: AppTypography.body2.copyWith(
-                      color: Colors.red,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => _showCancelDialog(recharge, controller),
+                      borderRadius: BorderRadius.circular(10.r),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 8.h,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.cancel_outlined,
+                              color: Colors.red,
+                              size: 16.w,
+                            ),
+                            Spacing.w(6),
+                            AutoTranslateText(
+                              'Cancel',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -547,60 +722,226 @@ class WalletView extends StatelessWidget {
     }
   }
 
-  void _showCancelDialog(WalletRechargeHistoryItem recharge, WalletController controller) {
+  void _showCancelDialog(
+    WalletRechargeHistoryItem recharge,
+    WalletController controller,
+  ) {
     Get.dialog(
-      AlertDialog(
-        title: AutoTranslateText(
-          'Cancel Recharge',
-          style: AppTypography.h2.copyWith(
-          ),
-        ),
-        content: AutoTranslateText(
-          'Are you sure you want to cancel this recharge?',
-          style: AppTypography.body1,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: AutoTranslateText(
-              'No',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: Colors.grey,
-              ),
+      Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.white, AppColors.cream],
             ),
+            borderRadius: BorderRadius.circular(30.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () async {
-              Get.back();
-              final success = await controller.cancelRecharge(recharge.rechargeId);
-              if (success) {
-                Get.showSnackbar(
-                  GetSnackBar(
-                    message: 'Recharge cancelled successfully',
-                    duration: const Duration(seconds: 2),
-                    backgroundColor: Colors.green,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Container(
+                padding: EdgeInsets.all(24.w),
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(30.r),
                   ),
-                );
-              }
-            },
-            child: AutoTranslateText(
-              'Yes, Cancel',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: Colors.red,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: AutoTranslateText(
+                        'Cancel Recharge',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => Get.back(),
+                        borderRadius: BorderRadius.circular(20.r),
+                        child: Container(
+                          padding: EdgeInsets.all(8.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: Colors.white,
+                            size: 20.w,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              // Content
+              Padding(
+                padding: EdgeInsets.all(24.w),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: '#68171E'.toColor().withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.warning_amber_rounded,
+                            color: Colors.orange,
+                            size: 24.w,
+                          ),
+                          Spacing.w(12),
+                          Expanded(
+                            child: AutoTranslateText(
+                              'Are you sure you want to cancel this recharge?',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 14.sp,
+                                color: '#68171E'.toColor(),
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Spacing.h(24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.r),
+                              border: Border.all(
+                                color: Colors.grey.withOpacity(0.3),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () => Get.back(),
+                                borderRadius: BorderRadius.circular(16.r),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                                  alignment: Alignment.center,
+                                  child: AutoTranslateText(
+                                    'No',
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Spacing.w(12),
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: AppColors.orangeGradient,
+                              borderRadius: BorderRadius.circular(16.r),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.orangeGradient.colors.first
+                                      .withOpacity(0.4),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ],
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () async {
+                                  Get.back();
+                                  final success = await controller
+                                      .cancelRecharge(recharge.rechargeId);
+                                  if (success) {
+                                    Get.showSnackbar(
+                                      GetSnackBar(
+                                        message:
+                                            'Recharge cancelled successfully',
+                                        duration: const Duration(seconds: 2),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                  }
+                                },
+                                borderRadius: BorderRadius.circular(16.r),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                                  alignment: Alignment.center,
+                                  child: AutoTranslateText(
+                                    'Yes, Cancel',
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
   String _formatTransactionDate(DateTime date) {
     final monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
-    
+
     final month = monthNames[date.month - 1];
     final day = date.day;
     final year = date.year;
@@ -609,7 +950,7 @@ class WalletView extends StatelessWidget {
     final period = hour >= 12 ? 'PM' : 'AM';
     final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
     final displayMinute = minute.toString().padLeft(2, '0');
-    
+
     return '$month $day, $year • $displayHour:$displayMinute $period';
   }
 }

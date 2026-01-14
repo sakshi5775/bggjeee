@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class VimshottariDashaWidget extends StatelessWidget {
   final DashaController controller;
@@ -41,11 +42,34 @@ class VimshottariDashaWidget extends StatelessWidget {
       }
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(8.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
+            Row(
+              children: [
+                Container(
+              height: 50.h,
+              width: 50.w,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                      Color(0xFFFF8C42),
+                      Color(0xFFE63946),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Icon(
+                Icons.table_chart,
+                color: Colors.white,
+                size: 24.w,
+              ),
+            ),
+            Spacing.w(16),
+  // Title
             AutoTranslateText(
               controller.getLevelTitle(),
               style: MyTextTheme.largeBCB.copyWith(
@@ -53,6 +77,9 @@ class VimshottariDashaWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+              ],
+            ),
+            
             
             Spacing.h(16),
             

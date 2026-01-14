@@ -204,6 +204,7 @@ class ChatService {
   final String currency;
   final int totalChats;
   final double? pricePerMinute; // CHANGED: Now uses pricePerMinute instead of pricePerMessage
+  
 
   ChatService({
     required this.enabled,
@@ -220,8 +221,8 @@ class ChatService {
       // Support both pricePerMinute (new) and pricePerMessage (old) for backward compatibility
       pricePerMinute: json['pricePerMinute'] != null 
           ? (json['pricePerMinute'] as num).toDouble() 
-          : (json['pricePerMessage'] != null 
-              ? (json['pricePerMessage'] as num).toDouble() 
+          : (json['pricePerMinute'] != null 
+              ? (json['pricePerMinute'] as num).toDouble() 
               : null),
     );
   }

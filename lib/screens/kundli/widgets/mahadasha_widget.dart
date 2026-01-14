@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
 class MahadashaWidget extends StatelessWidget {
@@ -60,18 +61,49 @@ class MahadashaWidget extends StatelessWidget {
       final dashaRemaining = response['dasha_remaining_at_birth'] as String? ?? '';
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(08.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
-            AutoTranslateText(
-              'Mahadasha',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.bold,
+              Row(
+                children: [
+                  Container(
+                    height: 50.h,
+                    width: 50.w,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFFFF8C42),
+                          Color(0xFFE63946),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    child: Icon(
+                      Icons.calendar_month,
+                      color: Colors.white,
+                      size: 24.w,
+                    ),
+                  ),
+                  Spacing.w(16),
+                  AutoTranslateText(
+                    'Mahadasha',
+                    style: MyTextTheme.largeBCB.copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
-            ),
+            
+            // Title
+            // AutoTranslateText(
+            //   'Mahadasha',
+            //   style: MyTextTheme.largeBCB.copyWith(
+            //     color: "#6F221E".toColor(),
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
             
             Spacing.h(16),
             
@@ -127,7 +159,7 @@ class MahadashaWidget extends StatelessWidget {
                         Expanded(
                           flex: 2,
                           child: AutoTranslateText(
-                            'Start Date',
+                            'End Date',
                             textAlign: TextAlign.right,
                             style: MyTextTheme.mediumBCB.copyWith(
                               color: "#6F221E".toColor(),
@@ -195,8 +227,12 @@ class MahadashaWidget extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: "#FFFFFF".toColor(),
         borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: "#ed6f30".toColor(),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),

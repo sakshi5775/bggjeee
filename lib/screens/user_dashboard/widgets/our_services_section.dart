@@ -1,11 +1,13 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
 import 'package:astrobharataiuser/screens/palm_reading/view/palm_reading_view.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -14,100 +16,88 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class OurServicesSection extends StatelessWidget {
-  OurServicesSection({super.key});
-  //
-  final ValueNotifier<bool> _expanded = ValueNotifier<bool>(false);
+class OurServicesSection extends BasePage<UserDashboardController> {
+  final String title;
+  const OurServicesSection({super.key, required this.title});
 
   final List<(String, String)> _items = const [
-    ('2026', AppConstant.service2025),
+    ('Consult Astrologer', AppConstant.serviceConsult),
     ('Generate\nKundli', AppConstant.serviceGenerateKundali),
-    ('Face reading', AppConstant.serviceFaceReading),
-    ('Palm Reading', AppConstant.servicePalmReading),
-    ('Consult', AppConstant.serviceConsult),
-    ('Panchang', AppConstant.servicePanchang),
+    // ('Everything About 2025', AppConstant.service2025),
     ('Match making', AppConstant.serviceMatchMaking),
-    ('Numerology', AppConstant.serviceNumerology),
-    ('Tarot card reading', AppConstant.tarot),
-    ('Horoscope', AppConstant.horoscope),
-    ('Ramal Shastra', AppConstant.ramalShastra),
-    ('Prashna Kundali', AppConstant.prashnaKundali),
-    ('Vastu Reading', AppConstant.vastu),
-    ('Writing Astrology', AppConstant.writingAstrology),
+    // ('Numerology', AppConstant.serviceNumerology),
+    // ('Panchang', AppConstant.servicePanchang),
+    // ('Check Horoscope', AppConstant.horoscope),
+    // ('Tarot reading', AppConstant.tarot),
     ('Carrot Astrology', AppConstant.carrotAstrology),
+    ('Writing Astrology', AppConstant.writingAstrology),
+    ('Prshan Kundli', AppConstant.writingAstrology),
+
+    // ('Face reading', AppConstant.serviceFaceReading),
+    // ('Palm Reading', AppConstant.servicePalmReading),
+
+    // ('Ramal Shastra', AppConstant.ramalShastra),
+    // ('Vastu Reading', AppConstant.vastu),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: AppPaddings.symmetric(h: 10),
-      child: ValueListenableBuilder<bool>(
-        valueListenable: _expanded,
-        builder: (context, expanded, _) {
-          List<Widget> buildRow(int start) {
-            final slice = _items.skip(start).take(4).toList();
-            return [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:
-                    slice
-                        .map((e) => Expanded(child: _serviceButton(e.$1, e.$2)))
-                        .expand((w) => [w, SizedBox(width: 3.w)])
-                        .toList()
-                      ..removeLast(),
-              ),
-            ];
-          }
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
                 padding: AppPaddings.symmetric(h: 6),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AutoTranslateText(
-                      'OUR SERVICES',
-                      style: AppTypography.h2.copyWith(
-                        color: "#6F221E".toColor(),
-                        letterSpacing: -0.05,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => _expanded.value = !expanded,
-                      child: AutoTranslateText(
-                        expanded ? 'Hide' : 'View All',
-                        style: AppTypography.body1.copyWith(
-                          color: "#6F221E".toColor(),
-                        ),
-                      ),
-                    ),
-                  ],
+                child: AutoTranslateText(
+                  title,
+                  style: AppTypography.h2.copyWith(
+                    color: "#6F221E".toColor(),
+                    letterSpacing: -0.05,
+                  ),
                 ),
               ),
-              Spacing.h(10),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5.w),
-                child: Column(
-                  children: [
-                    ...buildRow(0),
-                    Spacing.h(6),
-                    ...buildRow(4),
-                    if (expanded) ...[
-                      Spacing.h(6),
-                      ...buildRow(8),
-                      if (_items.length > 12) ...[
-                        Spacing.h(6),
-                        ...buildRow(12),
-                      ],
-                    ],
-                  ],
+
+              GestureDetector(
+                onTap: controller.toggleView,
+                child: Obx(
+                  () => AutoTranslateText(
+                    controller.viewText,
+                    style: AppTypography.body1.copyWith(
+                      color: "#9D4807".toColor(),
+                      letterSpacing: -0.05,
+                    ),
+                  ),
                 ),
               ),
             ],
-          );
-        },
+          ),
+
+          Spacing.h(10),
+          Obx(() {
+            final itemCount = controller.visibleItemCount(_items.length);
+
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 0.w),
+              itemCount: itemCount,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                crossAxisSpacing: 4.w,
+                mainAxisSpacing: 4.h,
+                childAspectRatio: 0.75,
+              ),
+              itemBuilder: (context, index) {
+                final item = _items[index];
+                return _serviceButton(item.$1, item.$2);
+              },
+            );
+          }),
+        ],
       ),
     );
   }
@@ -201,18 +191,6 @@ class OurServicesSection extends StatelessWidget {
               message: 'Login to explore Vastu services.',
             );
             break;
-          case 'prashna kundali':
-            _requireLogin(
-              () async => Get.toNamed(AppRoutes.prashnaKundali),
-              message: 'Login to start Prashna Kundali analysis.',
-            );
-            break;
-          case 'ramal shastra':
-            _requireLogin(
-              () async => Get.toNamed(AppRoutes.ramalShastra),
-              message: 'Login to start Ramal Shastra reading.',
-            );
-            break;
           default:
             // Check if label contains "kundli" (case insensitive)
             if (label.toLowerCase().contains('kundli')) {
@@ -226,97 +204,89 @@ class OurServicesSection extends StatelessWidget {
         }
       },
       child: Container(
-        width: width,
-        height: 103.h,
-        padding: EdgeInsets.only(top: 10.h),
+        width: 110.w,
+
         decoration: BoxDecoration(
-          color: "#FFFFFF".toColor(),
+          color: Colors.white,
+
           borderRadius: BorderRadius.circular(16.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
-            ),
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 3,
-              offset: const Offset(0, 1),
-            ),
-          ],
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: label == 'Writing Astrology' || label == 'Ramal Shastra'
-                  ? 60.w
-                  : 48.w,
-              height: label == 'Writing Astrology' || label == 'Ramal Shastra'
-                  ? 60.h
-                  : 48.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: iconPath.endsWith('.svg')
-                  ? SvgAssets(
-                      path: iconPath,
-                      width:
-                          label == 'Writing Astrology' ||
-                              label == 'Ramal Shastra'
-                          ? 64.w
-                          : 48.w,
-                      height:
-                          label == 'Writing Astrology' ||
-                              label == 'Ramal Shastra'
-                          ? 64.h
-                          : 48.h,
-                    )
-                  : Image.asset(
-                      iconPath,
-                      width:
-                          label == 'Writing Astrology' ||
-                              label == 'Ramal Shastra'
-                          ? 64.w
-                          : 48.w,
-                      height:
-                          label == 'Writing Astrology' ||
-                              label == 'Ramal Shastra'
-                          ? 64.h
-                          : 48.h,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        final iconSize =
+        child: Padding(
+          padding: AppPaddings.all(12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+
+            children: [
+              Container(
+                width: label == 'Writing Astrology' || label == 'Ramal Shastra'
+                    ? 27.w
+                    : 27.w,
+                height: label == 'Writing Astrology' || label == 'Ramal Shastra'
+                    ? 27.h
+                    : 27.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: iconPath.endsWith('.svg')
+                    ? SvgAssets(
+                        path: iconPath,
+                        width:
                             label == 'Writing Astrology' ||
                                 label == 'Ramal Shastra'
-                            ? 64.w
-                            : 48.w;
-                        return Container(
-                          width: iconSize,
-                          height: iconSize,
-                          color: Colors.grey.withOpacity(0.3),
-                          child: Icon(Icons.error, size: 24.w),
-                        );
-                      },
+                            ? 27.w
+                            : 27.w,
+                        height:
+                            label == 'Writing Astrology' ||
+                                label == 'Ramal Shastra'
+                            ? 27.h
+                            : 27.h,
+                      )
+                    : Image.asset(
+                        iconPath,
+                        width:
+                            label == 'Writing Astrology' ||
+                                label == 'Ramal Shastra'
+                            ? 27.w
+                            : 27.w,
+                        height:
+                            label == 'Writing Astrology' ||
+                                label == 'Ramal Shastra'
+                            ? 27.h
+                            : 27.h,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          final iconSize =
+                              label == 'Writing Astrology' ||
+                                  label == 'Ramal Shastra'
+                              ? 27.w
+                              : 27.w;
+                          return Container(
+                            width: iconSize,
+                            height: iconSize,
+                            color: Colors.grey.withOpacity(0.3),
+                            child: Icon(Icons.error, size: 24.w),
+                          );
+                        },
+                      ),
+              ),
+              Spacing.h(8),
+              Flexible(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
+                  child: AutoTranslateText(
+                    label,
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: "#6F221E".toColor(),
+                      height: 1.0,
                     ),
-            ),
-            Spacing.h(8),
-            Flexible(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child: AutoTranslateText(
-                  label,
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: "#6F221E".toColor(),
-                    height: 1.0,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

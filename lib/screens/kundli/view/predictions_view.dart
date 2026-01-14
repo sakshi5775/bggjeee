@@ -18,6 +18,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class PredictionsView extends BasePage<PredictionsController> {
   const PredictionsView({super.key});
@@ -25,8 +26,17 @@ class PredictionsView extends BasePage<PredictionsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
+      // backgroundColor: '#FFF8E1'.toColor(),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFFF6C2), Color(0xFFFFE8A3), Color(0xFFFFD580),
+            ],
+          ),
+        ),
+      child: SafeArea(
         child: Column(
           children: [
             // Header
@@ -68,6 +78,7 @@ class PredictionsView extends BasePage<PredictionsController> {
           ],
         ),
       ),
+    ),
     );
   }
 
@@ -78,16 +89,17 @@ class PredictionsView extends BasePage<PredictionsController> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            '#FF6B35'.toColor(),
-            '#FF8C42'.toColor(),
-          ],
+          colors: [Color(0xFF3D0C11), Color(0xFF5D1C21)],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(24.r),
+          bottomRight: Radius.circular(24.r),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -95,7 +107,7 @@ class PredictionsView extends BasePage<PredictionsController> {
         children: [
           // Back button
           IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
+            icon: Icon(Icons.arrow_back, color: Color(0xFFF7C443), size: 24.w),
             onPressed: () => Get.back(),
           ),
           
@@ -106,7 +118,7 @@ class PredictionsView extends BasePage<PredictionsController> {
             child: AutoTranslateText(
               'Predictions',
               style: MyTextTheme.largeBCB.copyWith(
-                color: Colors.white,
+                color: Color(0xFFF7C443),
                 fontWeight: FontWeight.bold,
               ).merge(AppTypography.h2),
             ),

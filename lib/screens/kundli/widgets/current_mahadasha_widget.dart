@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
 class CurrentMahadashaWidget extends StatelessWidget {
@@ -54,10 +55,34 @@ class CurrentMahadashaWidget extends StatelessWidget {
       }
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(8.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              children: [
+                Container(
+              height: 50.h,
+              width: 50.w,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                      Color(0xFFFF8C42),
+                      Color(0xFFE63946),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Icon(
+                Icons.alarm_add_outlined,
+                color: Colors.white,
+                size: 24.w,
+              ),
+            ),
+            Spacing.w(16),
+  // Title
             // Title
             AutoTranslateText(
               'Current Mahadasha',
@@ -66,6 +91,9 @@ class CurrentMahadashaWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+              ],
+            ),
+            
             
             Spacing.h(20),
             
@@ -313,12 +341,19 @@ class CurrentMahadashaWidget extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
-                    color: "#ed6f30".toColor().withOpacity(0.2),
-                    shape: BoxShape.circle,
-                  ),
+                gradient: LinearGradient(
+                  colors: [
+                      Color(0xFFFF8C42),
+                      Color(0xFFE63946),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16.r),
+              ),
                   child: Icon(
                     icon,
-                    color: "#ed6f30".toColor(),
+                    color: Color(0x0FFFFFFFFF),
                     size: 20.w,
                   ),
                 ),

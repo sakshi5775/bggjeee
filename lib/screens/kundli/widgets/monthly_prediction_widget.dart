@@ -7,28 +7,24 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class MonthlyPredictionWidget extends StatelessWidget {
   final PredictionsController controller;
 
-  const MonthlyPredictionWidget({
-    super.key,
-    required this.controller,
-  });
+  const MonthlyPredictionWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingMonthly.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.monthlyPredictionData.value;
-      
+
       if (data == null || data.isEmpty) {
         return Center(
           child: Column(
@@ -75,7 +71,7 @@ class MonthlyPredictionWidget extends StatelessWidget {
       final horoscopeData = response['horoscope_data'] as String? ?? '';
       final challengingDays = response['challenging_days'] as String? ?? '';
       final standoutDays = response['standout_days'] as String? ?? '';
-      
+
       // Scores
       final love = response['love'] as int? ?? 0;
       final finances = response['finances'] as int? ?? 0;
@@ -97,27 +93,40 @@ class MonthlyPredictionWidget extends StatelessWidget {
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    "#ed6f30".toColor(),
-                    "#ed6f30".toColor().withOpacity(0.8),
-                  ],
+                  colors: ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
                 ),
+                border: Border.all(color: Colors.deepOrange),
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.calendar_month,
-                    color: Colors.white,
-                    size: 24.w,
+                  Container(
+                    height: 50.h,
+                    width: 50.h,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Icon(
+                      Icons.calendar_month,
+                      color: Colors.white,
+                      size: 24.w,
+                    ),
                   ),
+
                   Spacing.w(12),
                   Expanded(
                     child: AutoTranslateText(
                       month,
                       style: MyTextTheme.largeBCB.copyWith(
-                        color: Colors.white,
+                        color: Color(0xFF3D0C11),
                         fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        fontFamily: 'baloo2'
                       ),
                     ),
                   ),
@@ -125,12 +134,13 @@ class MonthlyPredictionWidget extends StatelessWidget {
               ),
             ),
             Spacing.h(16),
-            
+
             // Total Score
             Container(
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
                 color: Colors.white,
+                border: Border.all(color: Colors.deepOrange, width: 1),
                 borderRadius: BorderRadius.circular(16.r),
                 boxShadow: [
                   BoxShadow(
@@ -160,7 +170,7 @@ class MonthlyPredictionWidget extends StatelessWidget {
               ),
             ),
             Spacing.h(16),
-            
+
             // Important Days
             if (standoutDays.isNotEmpty || challengingDays.isNotEmpty) ...[
               Row(
@@ -173,7 +183,7 @@ class MonthlyPredictionWidget extends StatelessWidget {
                           color: Colors.green.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12.r),
                           border: Border.all(
-                            color: Colors.green.withOpacity(0.3),
+                            color: Colors.deepOrange.withOpacity(0.3),
                             width: 1,
                           ),
                         ),
@@ -257,7 +267,7 @@ class MonthlyPredictionWidget extends StatelessWidget {
               ),
               Spacing.h(16),
             ],
-            
+
             // Scores Grid
             _buildScoresGrid([
               {'label': 'Love', 'value': love},
@@ -270,7 +280,7 @@ class MonthlyPredictionWidget extends StatelessWidget {
               {'label': 'Health', 'value': health},
             ]),
             Spacing.h(16),
-            
+
             // Horoscope Data
             if (horoscopeData.isNotEmpty) ...[
               Container(
@@ -278,8 +288,8 @@ class MonthlyPredictionWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      "#ed6f30".toColor().withOpacity(0.1),
-                      "#ed6f30".toColor().withOpacity(0.05),
+                      "#FFFFFF".toColor(),
+                      "#FFFFFF".toColor(),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -295,12 +305,25 @@ class MonthlyPredictionWidget extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Icon(
-                          Icons.auto_awesome,
-                          color: "#ed6f30".toColor(),
-                          size: 20.w,
+                        Container(
+                          height: 50.h,
+                          width: 50.h,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Icon(
+                            Icons.auto_awesome,
+                            color: "#FFFFFF".toColor(),
+                            size: 20.w,
+                          ),
                         ),
-                        Spacing.w(8),
+                        Spacing.w(12),
+                        
                         AutoTranslateText(
                           'Monthly Prediction',
                           style: MyTextTheme.mediumBCB.copyWith(
@@ -343,11 +366,12 @@ class MonthlyPredictionWidget extends StatelessWidget {
         final score = scores[index];
         final label = score['label'] as String;
         final value = score['value'] as int;
-        
+
         return Container(
           padding: EdgeInsets.all(12.w),
           decoration: BoxDecoration(
             color: Colors.white,
+            border: Border.all(color: Colors.deepOrange, width: 1),
             borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
@@ -390,4 +414,3 @@ class MonthlyPredictionWidget extends StatelessWidget {
     return Colors.red;
   }
 }
-

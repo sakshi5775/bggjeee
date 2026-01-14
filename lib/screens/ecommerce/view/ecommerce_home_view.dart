@@ -1,4 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/my_text_field.dart';
+import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
@@ -9,6 +11,13 @@ import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.d
 import 'package:astrobharataiuser/screens/ecommerce/controller/ecommerce_home_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/product_list_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
+import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/big_sale_banner_widget.dart';
+import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/featured_products_widget.dart';
+import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/promotional_banner_widget.dart';
+import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/shop_banner_carousel_widget.dart';
+import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/shop_by_category_widget.dart';
+import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/shop_by_purpose_widget.dart';
+import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/why_shop_with_us_widget.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -37,67 +46,62 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
 
               // Search Bar
               _buildSearchBar(context),
-                
-              // Category Filters
-              if (controller.categories.isNotEmpty)
-                _buildCategoryFilters(context),
-                
-              // Subcategory Filters (only shown when a category is selected)
-              Obx(() {
-                if (controller.selectedCategory.value != null && 
-                    controller.subcategories.isNotEmpty) {
-                  return _buildSubcategoryFilters(context, controller);
-                }
-                return SliverToBoxAdapter(child: SizedBox.shrink());
-              }),
-                
-              // Featured Products Banner (Carousel)
-              if (controller.featuredProducts.isNotEmpty)
-                _buildFeaturedBanner(context),
-                
-              // Featured Products Section
-              if (controller.featuredProducts.isNotEmpty)
-                _buildFeaturedProductsSection(context),
-                
+
+              // Shop Banner Carousel
+              SliverToBoxAdapter(child: ShopBannerCarouselWidget()),
+              // Promotional Banner (News ticker style)
+              SliverToBoxAdapter(child: PromotionalBannerWidget()),
+
+              SliverToBoxAdapter(child: Spacing.h(15.h)),
               // Shop by Category Section
               if (controller.categoryTree.isNotEmpty)
-                _buildShopByCategorySection(context),
-                
+                ShopByCategoryWidget(controller: controller),
+              SliverToBoxAdapter(child: Spacing.h(15.h)),
+              // Big Sale Banner
+              BigSaleBannerWidget(controller: controller),
+              SliverToBoxAdapter(child: Spacing.h(15.h)),
+              // Featured Products Section
+              FeaturedProductsWidget(controller: controller),
+              SliverToBoxAdapter(child: Spacing.h(15.h)),
+              // Shop by Purpose Section
+              ShopByPurposeWidget(),
+              SliverToBoxAdapter(child: Spacing.h(15.h)),
               // Best Sellers Section
               if (controller.topSellingProducts.isNotEmpty)
                 _buildBestSellersSection(context),
 
-                // Recommendations
-                if (controller.isLoadingRecommendations.value ||
-                    controller.recommendedProducts.isNotEmpty)
-                  _buildHorizontalProductRail(
-                    context,
-                    title: 'Recommended for you',
-                    products: controller.recommendedProducts,
-                    isLoading: controller.isLoadingRecommendations.value,
-                  ),
+              // Recommendations
+              if (controller.isLoadingRecommendations.value ||
+                  controller.recommendedProducts.isNotEmpty)
+                _buildHorizontalProductRail(
+                  context,
+                  title: 'Recommended for you',
+                  products: controller.recommendedProducts,
+                  isLoading: controller.isLoadingRecommendations.value,
+                ),
 
-                // Recently viewed
-                if (controller.recentlyViewedProducts.isNotEmpty)
-                  _buildHorizontalProductRail(
-                    context,
-                    title: 'Recently viewed',
-                    products: controller.recentlyViewedProducts,
-                    isLoading: controller.isLoadingRecentlyViewed.value,
-                    emptyPlaceholder: 'Browse products to see them here.',
-                  )
-                else if (controller.isLoadingRecentlyViewed.value)
-                  _buildHorizontalProductRail(
-                    context,
-                    title: 'Recently viewed',
-                    products: controller.recentlyViewedProducts,
-                    isLoading: controller.isLoadingRecentlyViewed.value,
-                  ),
-                
+              // Recently viewed
+              if (controller.recentlyViewedProducts.isNotEmpty)
+                _buildHorizontalProductRail(
+                  context,
+                  title: 'Recently viewed',
+                  products: controller.recentlyViewedProducts,
+                  isLoading: controller.isLoadingRecentlyViewed.value,
+                  emptyPlaceholder: 'Browse products to see them here.',
+                )
+              else if (controller.isLoadingRecentlyViewed.value)
+                _buildHorizontalProductRail(
+                  context,
+                  title: 'Recently viewed',
+                  products: controller.recentlyViewedProducts,
+                  isLoading: controller.isLoadingRecentlyViewed.value,
+                ),
+
+              // Why Shop With Us Section
+              WhyShopWithUsWidget(),
+
               // Bottom padding
-              SliverToBoxAdapter(
-                child: SizedBox(height: 20.h),
-              ),
+              SliverToBoxAdapter(child: SizedBox(height: 20.h)),
             ],
           ),
         ),
@@ -105,215 +109,276 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
     );
   }
 
-  Widget _buildHeader(
-    BuildContext context,
-  ) {
+  Widget _buildHeader(BuildContext context) {
     final cartController = Get.isRegistered<CartController>()
         ? Get.find<CartController>()
         : Get.put(CartController());
     final wishlistController = Get.isRegistered<WishlistController>()
         ? Get.find<WishlistController>()
         : null;
-    
+
     return SliverToBoxAdapter(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 14.71.w, vertical: 14.71.h),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              '#820B17'.toColor(),
+              '#68171E'.toColor(),
+              '#5D1C21'.toColor(),
+            ],
+          ),
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(11.04.r),
+            bottomRight: Radius.circular(11.04.r),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.35),
+              blurRadius: 15,
+              offset: Offset(0, 5),
+            ),
+          ],
+        ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Back button
-            GestureDetector(
-              onTap: () {
-                // Try to pop from nested navigator, if can't, go to home
-                final navigator = Get.nestedKey(1)?.currentState;
-                if (navigator != null && navigator.canPop()) {
-                  navigator.pop();
-                } else {
-                  // At root of shop tab, navigate to home tab directly
-                  try {
-                    final mainController = Get.find<UserMainController>();
-                    mainController.selectedIndex.value = 0;
-                    // Use offNamed to replace current route with home
-                    Get.offNamed('/user-home', id: 1);
-                  } catch (e) {
-                    // Fallback if controller not found - should not happen
-                    // But just in case, navigate using Get
-                    Get.offAllNamed('/user-dashboard');
-                  }
-                }
-              },
-              child: Container(
-                width: 40.w,
-                height: 40.w,
-                decoration: BoxDecoration(
-                  color: '#ffffff'.toColor(),
-                  borderRadius: BorderRadius.circular(8.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+            // Logo/Brand Name and Subtitle
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AutoTranslateText(
+                  'Astro Shop',
+                  style: TextStyle(
+                    fontFamily: 'Baloo 2',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 27.59.sp,
+                    color: '#DFB343'.toColor(),
+                    height: 1.2,
+                  ),
                 ),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: '#3E2723'.toColor(),
-                  size: 20.w,
+                AutoTranslateText(
+                  'Certified • Authentic • Blessed',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.04.sp,
+                    color: Colors.white.withOpacity(0.6),
+                    height: 1.33,
+                  ),
                 ),
-              ),
+              ],
             ),
-            Spacing.w(12),
-            // Logo/Brand Name
-            Expanded(
-              child: AutoTranslateText(
-                'AstroBharatAI',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                  fontFamily: 'Montserrat',
-                ),
-              ),
-            ),
-            // Wishlist Icon
-            if (wishlistController != null)
-              Obx(() {
-                final wishCount = wishlistController.items.length;
-                final iconColor = wishCount > 0 ? AppColors.saffron : AppColors.textPrimary;
-                return Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        wishCount > 0 ? Icons.favorite : Icons.favorite_border,
-                        color: iconColor,
-                      ),
-                      onPressed: () => Get.toNamed(AppRoutes.wishlist),
-                    ),
-                    if (wishCount > 0)
-                      Positioned(
-                        right: 6,
-                        top: 6,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+            // Right side icons
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Wishlist Icon
+                GestureDetector(
+                  onTap: () => Get.toNamed(AppRoutes.wishlist),
+                  child: wishlistController != null
+                      ? Obx(() {
+                          final wishCount = wishlistController.items.length;
+                          return Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Container(
+                                width: 36.79.w,
+                                height: 36.79.h,
+                                padding: EdgeInsets.all(9.2.w),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      '#E3B341'.toColor(),
+                                      '#C9A033'.toColor(),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    15429.03.r,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 5.52,
+                                      offset: Offset(0, -2.76),
+                                    ),
+                                  ],
+                                ),
+                                child: Icon(
+                                  wishCount > 0
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: '#3D0C11'.toColor(),
+                                  size: 18.39.w,
+                                ),
+                              ),
+                              if (wishCount > 0)
+                                Positioned(
+                                  right: -3.68,
+                                  top: -3.68,
+                                  child: Container(
+                                    width: 18.39.w,
+                                    height: 18.39.h,
+                                    decoration: BoxDecoration(
+                                      color: '#3D0C11'.toColor(),
+                                      borderRadius: BorderRadius.circular(
+                                        15429.03.r,
+                                      ),
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: AutoTranslateText(
+                                        wishCount > 99
+                                            ? '99+'
+                                            : wishCount.toString(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 9.2.sp,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        })
+                      : Container(
+                          width: 36.79.w,
+                          height: 36.79.h,
+                          padding: EdgeInsets.all(9.2.w),
                           decoration: BoxDecoration(
-                            color: AppColors.saffron,
-                            borderRadius: BorderRadius.circular(12.r),
+                            gradient: LinearGradient(
+                              colors: [
+                                '#E3B341'.toColor(),
+                                '#C9A033'.toColor(),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(15429.03.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 5.52,
+                                offset: Offset(0, -2.76),
+                              ),
+                            ],
                           ),
-                          child: AutoTranslateText(
-                            wishCount > 99 ? '99+' : wishCount.toString(),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                          child: Icon(
+                            Icons.favorite_border,
+                            color: '#3D0C11'.toColor(),
+                            size: 18.39.w,
+                          ),
+                        ),
+                ),
+                Spacing.w(5.52),
+                // Cart Icon
+                GestureDetector(
+                  onTap: () => Get.toNamed(AppRoutes.cart),
+                  child: Obx(() {
+                    final count = cartController.itemCount;
+                    return Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          width: 36.79.w,
+                          height: 36.79.h,
+                          padding: EdgeInsets.all(9.2.w),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                '#E3B341'.toColor(),
+                                '#C9A033'.toColor(),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(15429.03.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 5.52,
+                                offset: Offset(0, -2.76),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.shopping_cart,
+                            color: '#3D0C11'.toColor(),
+                            size: 18.39.w,
+                          ),
+                        ),
+                        if (count > 0)
+                          Positioned(
+                            right: -3.68,
+                            top: -3.68,
+                            child: Container(
+                              width: 18.39.w,
+                              height: 18.39.h,
+                              decoration: BoxDecoration(
+                                color: '#3D0C11'.toColor(),
+                                borderRadius: BorderRadius.circular(15429.03.r),
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Center(
+                                child: AutoTranslateText(
+                                  count > 99 ? '99+' : count.toString(),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 9.2.sp,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                  ],
-                );
-              })
-            else
-              IconButton(
-                icon: Icon(Icons.favorite_border, color: AppColors.textPrimary),
-                onPressed: () => Get.toNamed(AppRoutes.wishlist),
-              ),
-            // Cart Icon
-            Obx(() {
-              final count = cartController.itemCount;
-              return Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.shopping_cart, color: AppColors.textPrimary),
-                    onPressed: () {
-                      Get.toNamed(AppRoutes.cart);
-                    },
-                  ),
-                  if (count > 0)
-                    Positioned(
-                      right: 6,
-                      top: 6,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-                        decoration: BoxDecoration(
-                          color: AppColors.sacredRed,
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: AutoTranslateText(
-                          count > 99 ? '99+' : count.toString(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              );
-            }),
+                      ],
+                    );
+                  }),
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSearchBar(
-    BuildContext context,
-  ) {
+  Widget _buildSearchBar(BuildContext context) {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-        child: Row(
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  readOnly: true,
-                  onTap: () => controller.navigateToSearch(),
-                  decoration: InputDecoration(
-                    hintText: 'Search products...',
-                    hintStyle: TextStyle(color: AppColors.textSecondary),
-                    prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                  ),
-                ),
-              ),
+        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
+        child: GestureDetector(
+          onTap: () {
+            controller.navigateToSearch();
+          },
+          child: Card(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.r),
             ),
-            SizedBox(width: 8.w),
-            // Filter Icon
-            Container(
-              width: 48.w,
-              height: 48.h,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: Offset(0, 2),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              child: Row(
+                children: [
+                  Icon(Icons.search, color: "#DD2914".toColor()),
+                  Spacing.w(10.w),
+                  AutoTranslateText(
+                    'Search products...',
+                    style: TextStyle(color: AppColors.textSecondary),
                   ),
+                  Spacer(),
+                  Icon(Icons.tune, color: "#DD2914".toColor()),
                 ],
               ),
-              child: IconButton(
-                icon: Icon(Icons.filter_list, color: AppColors.textPrimary),
-                onPressed: () {
-                  controller.navigateToProductList();
-                },
-              ),
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -331,9 +396,12 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
               itemCount: controller.categories.length + 1, // +1 for "All"
               itemBuilder: (context, index) {
                 final isAll = index == 0;
-                final isSelected = isAll && controller.selectedCategory.value == null ||
-                    !isAll && controller.selectedCategory.value?.id == controller.categories[index - 1].id;
-                
+                final isSelected =
+                    isAll && controller.selectedCategory.value == null ||
+                    !isAll &&
+                        controller.selectedCategory.value?.id ==
+                            controller.categories[index - 1].id;
+
                 return Padding(
                   padding: EdgeInsets.only(right: 8.w),
                   child: GestureDetector(
@@ -348,22 +416,36 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                       }
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
                       decoration: BoxDecoration(
                         gradient: isSelected
                             ? LinearGradient(
-                                colors: [AppColors.saffron, AppColors.deepOrange],
+                                colors: [
+                                  AppColors.saffron,
+                                  AppColors.deepOrange,
+                                ],
                               )
                             : null,
                         color: isSelected ? null : Colors.white,
                         borderRadius: BorderRadius.circular(25.r),
-                        border: isSelected ? null : Border.all(color: AppColors.textSecondary.withOpacity(0.3)),
+                        border: isSelected
+                            ? null
+                            : Border.all(
+                                color: AppColors.textSecondary.withOpacity(0.3),
+                              ),
                       ),
                       alignment: Alignment.center,
                       child: AutoTranslateText(
-                        isAll ? 'All' : controller.categories[index - 1].name ?? '',
+                        isAll
+                            ? 'All'
+                            : controller.categories[index - 1].name ?? '',
                         style: TextStyle(
-                          color: isSelected ? Colors.white : AppColors.textPrimary,
+                          color: isSelected
+                              ? Colors.white
+                              : AppColors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -379,7 +461,10 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
     );
   }
 
-  Widget _buildSubcategoryFilters(BuildContext context, EcommerceHomeController controller) {
+  Widget _buildSubcategoryFilters(
+    BuildContext context,
+    EcommerceHomeController controller,
+  ) {
     return SliverToBoxAdapter(
       child: SizedBox(
         height: 50.h,
@@ -389,9 +474,12 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
           itemCount: controller.subcategories.length + 1, // +1 for "All"
           itemBuilder: (context, index) {
             final isAll = index == 0;
-            final isSelected = isAll && controller.selectedSubcategory.value == null ||
-                !isAll && controller.selectedSubcategory.value?.id == controller.subcategories[index - 1].id;
-            
+            final isSelected =
+                isAll && controller.selectedSubcategory.value == null ||
+                !isAll &&
+                    controller.selectedSubcategory.value?.id ==
+                        controller.subcategories[index - 1].id;
+
             return Padding(
               padding: EdgeInsets.only(right: 8.w),
               child: GestureDetector(
@@ -402,17 +490,28 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                     final category = controller.selectedCategory.value;
                     if (category != null) {
                       if (category.id != null) {
-                        Get.toNamed('/product-list', arguments: {'category': category});
+                        Get.toNamed(
+                          '/product-list',
+                          arguments: {'category': category},
+                        );
                       } else if (category.slug != null) {
-                        Get.toNamed('/product-list', arguments: {'categorySlug': category.slug});
+                        Get.toNamed(
+                          '/product-list',
+                          arguments: {'categorySlug': category.slug},
+                        );
                       }
                     }
                   } else {
-                    controller.selectSubcategory(controller.subcategories[index - 1]);
+                    controller.selectSubcategory(
+                      controller.subcategories[index - 1],
+                    );
                   }
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 8.h,
+                  ),
                   decoration: BoxDecoration(
                     gradient: isSelected
                         ? LinearGradient(
@@ -421,11 +520,17 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                         : null,
                     color: isSelected ? null : Colors.white,
                     borderRadius: BorderRadius.circular(25.r),
-                    border: isSelected ? null : Border.all(color: AppColors.textSecondary.withOpacity(0.3)),
+                    border: isSelected
+                        ? null
+                        : Border.all(
+                            color: AppColors.textSecondary.withOpacity(0.3),
+                          ),
                   ),
                   alignment: Alignment.center,
                   child: AutoTranslateText(
-                    isAll ? 'All ${controller.selectedCategory.value?.name ?? ""}' : controller.subcategories[index - 1].name ?? '',
+                    isAll
+                        ? 'All ${controller.selectedCategory.value?.name ?? ""}'
+                        : controller.subcategories[index - 1].name ?? '',
                     style: TextStyle(
                       color: isSelected ? Colors.white : AppColors.textPrimary,
                       fontWeight: FontWeight.w600,
@@ -440,216 +545,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
     );
   }
 
-  Widget _buildFeaturedBanner(BuildContext context) {
-    final featuredProducts = controller.featuredProducts.take(3).toList();
-    if (featuredProducts.isEmpty) return SliverToBoxAdapter(child: SizedBox.shrink());
-
-    return SliverToBoxAdapter(
-      child: Column(
-        children: [
-          Container(
-            height: 200.h,
-            margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-            child: PageView.builder(
-              key: ValueKey('banner_${featuredProducts.length}'),
-              controller: controller.bannerPageController,
-              onPageChanged: controller.onBannerPageChanged,
-              itemCount: featuredProducts.length,
-              itemBuilder: (context, index) {
-                if (index >= featuredProducts.length) {
-                  return const SizedBox.shrink();
-                }
-                final product = featuredProducts[index];
-                final heroTag = 'banner_${index}_${product.id ?? product.slug ?? index}';
-                ProductImage? primaryImage;
-                
-                // Safely get primary image
-                if (product.images != null && product.images!.isNotEmpty) {
-                  try {
-                    primaryImage = product.images!.firstWhere(
-                      (img) => img.isPrimary == true,
-                      orElse: () => product.images!.first,
-                    );
-                  } catch (e) {
-                    // If firstWhere fails, try to get first image
-                    if (product.images!.isNotEmpty) {
-                      primaryImage = product.images!.first;
-                    }
-                  }
-                }
-                
-                // Get full image URL
-                String? imageUrl;
-                if (primaryImage?.url != null) {
-                  imageUrl = primaryImage!.url!;
-                  // Handle relative URLs
-                  if (imageUrl.startsWith('/')) {
-                    imageUrl = 'http://65.1.131.197:8000$imageUrl';
-                  }
-                }
-
-                return GestureDetector(
-                  onTap: () => controller.navigateToProductDetail(product, heroTag: heroTag),
-                  child: Hero(
-                    tag: heroTag,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 4.w),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16.r),
-                          child: imageUrl != null
-                              ? NetworkImageWithLoader(
-                                  url: imageUrl,
-                                  height: 200.h,
-                                  width: double.infinity,
-                                )
-                              : Container(
-                                  decoration: BoxDecoration(
-                                    color: AppColors.textSecondary.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(16.r),
-                                  ),
-                                  child: Center(
-                                    child: Icon(Icons.image, size: 50, color: AppColors.textSecondary),
-                                  ),
-                                ),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          // Page indicators
-          if (featuredProducts.length > 1)
-            Obx(() => Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(featuredProducts.length, (index) {
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4.w),
-                  width: 8.w,
-                  height: 8.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: controller.currentBannerIndex.value == index
-                        ? AppColors.saffron
-                        : AppColors.textSecondary.withOpacity(0.3),
-                  ),
-                );
-              }),
-            )),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFeaturedProductsSection(
-    BuildContext context,
-  ) {
-    return SliverToBoxAdapter(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                AutoTranslateText(
-                  'Featured Products',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => controller.navigateToProductList(),
-                  child: AutoTranslateText(
-                    'View All',
-                    style: TextStyle(color: AppColors.saffron),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 220.h,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              itemCount: controller.featuredProducts.length,
-              itemBuilder: (context, index) {
-                final product = controller.featuredProducts[index];
-                final heroTag = 'home_featured_${index}_${product.id ?? product.slug ?? index}';
-                return buildProductCard(
-                  context,
-                  product,
-                  null,
-                  isHorizontal: true,
-                  heroTag: heroTag,
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildShopByCategorySection(
-    BuildContext context,
-  ) {
-    final featuredCategories = controller.categoryTree
-        .where((cat) => cat.isFeatured == true && cat.parent == null)
-        .take(4)
-        .toList();
-
-    if (featuredCategories.isEmpty) return SliverToBoxAdapter(child: SizedBox.shrink());
-
-    return SliverToBoxAdapter(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-            child: AutoTranslateText(
-              'Shop by Category',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12.w,
-                mainAxisSpacing: 12.h,
-                childAspectRatio: 1.5,
-              ),
-              itemCount: featuredCategories.length,
-              itemBuilder: (context, index) {
-                final category = featuredCategories[index];
-                return _buildCategoryCard(context, category);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBestSellersSection(
-    BuildContext context,
-  ) {
+  Widget _buildBestSellersSection(BuildContext context) {
     return SliverToBoxAdapter(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -671,7 +567,8 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
             itemCount: controller.topSellingProducts.length,
             itemBuilder: (context, index) {
               final product = controller.topSellingProducts[index];
-              final heroTag = 'home_best_${index}_${product.id ?? product.slug ?? index}';
+              final heroTag =
+                  'home_best_${index}_${product.id ?? product.slug ?? index}';
               return buildProductListItem(
                 context,
                 product,
@@ -708,14 +605,18 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                     color: AppColors.textPrimary,
                   ),
                 ),
-                if (title.toLowerCase().contains('recommended') || title.toLowerCase().contains('recently'))
+                if (title.toLowerCase().contains('recommended') ||
+                    title.toLowerCase().contains('recently'))
                   TextButton(
                     onPressed: () {
                       Get.toNamed(
                         AppRoutes.productList,
                         arguments: {
                           'title': title,
-                          'filterType': title.toLowerCase().contains('recommended') ? 'recommended' : 'recentlyViewed',
+                          'filterType':
+                              title.toLowerCase().contains('recommended')
+                              ? 'recommended'
+                              : 'recentlyViewed',
                         },
                       );
                     },
@@ -741,9 +642,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               child: AutoTranslateText(
                 emptyPlaceholder ?? 'No items available at the moment.',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(color: AppColors.textSecondary),
               ),
             )
           else
@@ -786,7 +685,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
     final wishlistController = Get.isRegistered<WishlistController>()
         ? Get.find<WishlistController>()
         : null;
-    
+
     // Safely get primary image
     if (product.images != null && product.images!.isNotEmpty) {
       try {
@@ -801,7 +700,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
         }
       }
     }
-    
+
     // Get full image URL
     String? imageUrl;
     if (primaryImage?.url != null) {
@@ -813,21 +712,35 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
     }
 
     final priceFormat = NumberFormat.currency(symbol: '₹', decimalDigits: 0);
-    final currentPrice = product.currentPrice ?? product.discountedPrice ?? product.basePrice ?? 0.0;
+    final currentPrice =
+        product.currentPrice ??
+        product.discountedPrice ??
+        product.basePrice ??
+        0.0;
     final basePrice = product.basePrice ?? 0.0;
 
-    final heroIdentifier = heroTag ?? 'product_image_${product.id ?? product.slug ?? ''}';
+    final heroIdentifier =
+        heroTag ?? 'product_image_${product.id ?? product.slug ?? ''}';
 
     return GestureDetector(
       onTap: () {
         if (listController != null) {
-          listController.navigateToProductDetail(product, heroTag: heroIdentifier);
+          listController.navigateToProductDetail(
+            product,
+            heroTag: heroIdentifier,
+          );
         } else {
           try {
-            Get.find<EcommerceHomeController>().navigateToProductDetail(product, heroTag: heroIdentifier);
+            Get.find<EcommerceHomeController>().navigateToProductDetail(
+              product,
+              heroTag: heroIdentifier,
+            );
           } catch (e) {
             // If controller not found, try to navigate directly
-            Get.toNamed('/product-detail', arguments: {'product': product, 'heroTag': heroIdentifier});
+            Get.toNamed(
+              '/product-detail',
+              arguments: {'product': product, 'heroTag': heroIdentifier},
+            );
           }
         }
       },
@@ -857,7 +770,9 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                   child: Material(
                     color: Colors.transparent,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(12.r),
+                      ),
                       child: imageUrl != null
                           ? SizedBox(
                               height: isHorizontal ? 100.h : 120.h,
@@ -873,19 +788,27 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                               width: double.infinity,
                               color: AppColors.textSecondary.withOpacity(0.1),
                               child: Center(
-                                child: Icon(Icons.image, size: 40, color: AppColors.textSecondary),
+                                child: Icon(
+                                  Icons.image,
+                                  size: 40,
+                                  color: AppColors.textSecondary,
+                                ),
                               ),
                             ),
                     ),
                   ),
                 ),
                 // Discount Badge
-                if (product.discountPercentage != null && product.discountPercentage! > 0)
+                if (product.discountPercentage != null &&
+                    product.discountPercentage! > 0)
                   Positioned(
                     top: 8,
                     left: 8,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 4.h,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.sacredRed,
                         borderRadius: BorderRadius.circular(4.r),
@@ -905,7 +828,9 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                     right: 8,
                     child: Obx(() {
                       final isUpdating = wishlistController.isUpdating.value;
-                      final isWishlisted = wishlistController.isInWishlist(product);
+                      final isWishlisted = wishlistController.isInWishlist(
+                        product,
+                      );
 
                       return Container(
                         decoration: BoxDecoration(
@@ -922,7 +847,10 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                         child: IconButton(
                           iconSize: 18.sp,
                           padding: EdgeInsets.zero,
-                          constraints: BoxConstraints(minWidth: 34.w, minHeight: 34.h),
+                          constraints: BoxConstraints(
+                            minWidth: 34.w,
+                            minHeight: 34.h,
+                          ),
                           icon: isUpdating
                               ? SizedBox(
                                   width: 16.w,
@@ -933,12 +861,17 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                                   ),
                                 )
                               : Icon(
-                                  isWishlisted ? Icons.favorite : Icons.favorite_border,
-                                  color: isWishlisted ? AppColors.saffron : AppColors.textPrimary,
+                                  isWishlisted
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: isWishlisted
+                                      ? AppColors.saffron
+                                      : AppColors.textPrimary,
                                 ),
                           onPressed: isUpdating
                               ? null
-                              : () => wishlistController.toggleWishlist(product),
+                              : () =>
+                                    wishlistController.toggleWishlist(product),
                         ),
                       );
                     }),
@@ -954,7 +887,8 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Rating - Smaller (optional, hide if no space)
-                    if (product.averageRating != null && product.averageRating! > 0)
+                    if (product.averageRating != null &&
+                        product.averageRating! > 0)
                       Padding(
                         padding: EdgeInsets.only(bottom: 2.h),
                         child: Row(
@@ -1029,8 +963,12 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                     SizedBox(
                       width: double.infinity,
                       child: Obx(() {
-                        final quantity = cartController.quantityForProduct(product);
-                        final isProcessing = cartController.isProductUpdating(product);
+                        final quantity = cartController.quantityForProduct(
+                          product,
+                        );
+                        final isProcessing = cartController.isProductUpdating(
+                          product,
+                        );
 
                         if (quantity <= 0) {
                           return ElevatedButton(
@@ -1062,7 +1000,9 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                                   )
                                 : AutoTranslateText(
                                     'Add to Cart',
-                                    style: AppTypography.label.copyWith(fontWeight: FontWeight.w600),
+                                    style: AppTypography.label.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -1089,7 +1029,8 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                           );
                         }
 
-                        final canIncrement = quantity < CartController.maxQuantity;
+                        final canIncrement =
+                            quantity < CartController.maxQuantity;
                         return Container(
                           height: 26.h,
                           decoration: BoxDecoration(
@@ -1102,7 +1043,8 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                             children: [
                               _QuantityIconButton(
                                 icon: Icons.remove,
-                                onTap: () => cartController.decrementProduct(product),
+                                onTap: () =>
+                                    cartController.decrementProduct(product),
                                 dimension: 28.w,
                               ),
                               Expanded(
@@ -1117,7 +1059,11 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                               ),
                               _QuantityIconButton(
                                 icon: Icons.add,
-                                onTap: canIncrement ? () => cartController.incrementProduct(product) : null,
+                                onTap: canIncrement
+                                    ? () => cartController.incrementProduct(
+                                        product,
+                                      )
+                                    : null,
                                 dimension: 28.w,
                                 enabled: canIncrement,
                               ),
@@ -1167,7 +1113,11 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                     : Container(
                         color: AppColors.saffron.withOpacity(0.2),
                         child: Center(
-                          child: Icon(Icons.category, size: 40, color: AppColors.saffron),
+                          child: Icon(
+                            Icons.category,
+                            size: 40,
+                            color: AppColors.saffron,
+                          ),
                         ),
                       ),
               ),
@@ -1179,10 +1129,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.6),
-                  ],
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
                 ),
               ),
             ),
@@ -1211,9 +1158,9 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
   static Widget buildProductListItem(
     BuildContext context,
     ProductModel product,
-    ProductListController? listController,
-    {String? heroTag}
-  ) {
+    ProductListController? listController, {
+    String? heroTag,
+  }) {
     ProductImage? primaryImage;
     final cartController = Get.isRegistered<CartController>()
         ? Get.find<CartController>()
@@ -1221,7 +1168,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
     final wishlistController = Get.isRegistered<WishlistController>()
         ? Get.find<WishlistController>()
         : null;
-    
+
     // Safely get primary image
     if (product.images != null && product.images!.isNotEmpty) {
       try {
@@ -1236,7 +1183,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
         }
       }
     }
-    
+
     // Get full image URL
     String? imageUrl;
     if (primaryImage?.url != null) {
@@ -1248,19 +1195,33 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
     }
 
     final priceFormat = NumberFormat.currency(symbol: '₹', decimalDigits: 0);
-    final currentPrice = product.currentPrice ?? product.discountedPrice ?? product.basePrice ?? 0.0;
+    final currentPrice =
+        product.currentPrice ??
+        product.discountedPrice ??
+        product.basePrice ??
+        0.0;
 
-    final heroIdentifier = heroTag ?? 'product_image_${product.id ?? product.slug ?? ''}';
+    final heroIdentifier =
+        heroTag ?? 'product_image_${product.id ?? product.slug ?? ''}';
 
     return GestureDetector(
       onTap: () {
         if (listController != null) {
-          listController.navigateToProductDetail(product, heroTag: heroIdentifier);
+          listController.navigateToProductDetail(
+            product,
+            heroTag: heroIdentifier,
+          );
         } else {
           try {
-            Get.find<EcommerceHomeController>().navigateToProductDetail(product, heroTag: heroIdentifier);
+            Get.find<EcommerceHomeController>().navigateToProductDetail(
+              product,
+              heroTag: heroIdentifier,
+            );
           } catch (e) {
-            Get.toNamed('/product-detail', arguments: {'product': product, 'heroTag': heroIdentifier});
+            Get.toNamed(
+              '/product-detail',
+              arguments: {'product': product, 'heroTag': heroIdentifier},
+            );
           }
         }
       },
@@ -1303,7 +1264,11 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                                 width: 90.w,
                                 color: AppColors.textSecondary.withOpacity(0.1),
                                 child: Center(
-                                  child: Icon(Icons.image, size: 30, color: AppColors.textSecondary),
+                                  child: Icon(
+                                    Icons.image,
+                                    size: 30,
+                                    color: AppColors.textSecondary,
+                                  ),
                                 ),
                               ),
                       ),
@@ -1315,7 +1280,9 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                       right: 6,
                       child: Obx(() {
                         final isUpdating = wishlistController.isUpdating.value;
-                        final isWishlisted = wishlistController.isInWishlist(product);
+                        final isWishlisted = wishlistController.isInWishlist(
+                          product,
+                        );
 
                         return Container(
                           decoration: BoxDecoration(
@@ -1332,7 +1299,10 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                           child: IconButton(
                             iconSize: 18.sp,
                             padding: EdgeInsets.zero,
-                            constraints: BoxConstraints(minWidth: 32.w, minHeight: 32.h),
+                            constraints: BoxConstraints(
+                              minWidth: 32.w,
+                              minHeight: 32.h,
+                            ),
                             icon: isUpdating
                                 ? SizedBox(
                                     width: 14.w,
@@ -1343,12 +1313,18 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                                     ),
                                   )
                                 : Icon(
-                                    isWishlisted ? Icons.favorite : Icons.favorite_border,
-                                    color: isWishlisted ? AppColors.saffron : AppColors.textPrimary,
+                                    isWishlisted
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: isWishlisted
+                                        ? AppColors.saffron
+                                        : AppColors.textPrimary,
                                   ),
                             onPressed: isUpdating
                                 ? null
-                                : () => wishlistController.toggleWishlist(product),
+                                : () => wishlistController.toggleWishlist(
+                                    product,
+                                  ),
                           ),
                         );
                       }),
@@ -1366,19 +1342,18 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                     product.name ?? '',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: "#68171E".toColor(),
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 4.h),
-                  if (product.shortDescription != null && product.shortDescription!.isNotEmpty)
+                  if (product.shortDescription != null &&
+                      product.shortDescription!.isNotEmpty)
                     AutoTranslateText(
                       product.shortDescription!,
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                      ),
-                      maxLines: 1,
+                      style: MyTextTheme.smallBCB.merge(AppTypography.label),
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   SizedBox(height: 8.h),
@@ -1402,7 +1377,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                   width: 40.w,
                   height: 40.w,
                   decoration: BoxDecoration(
-                    color: AppColors.saffron,
+                    gradient: AppColors.orangeGradient,
                     shape: BoxShape.circle,
                   ),
                   child: isProcessing
@@ -1417,9 +1392,16 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                           ),
                         )
                       : IconButton(
-                          icon: Icon(Icons.shopping_cart, color: Colors.white, size: 20),
+                          icon: Icon(
+                            Icons.shopping_cart,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                           onPressed: () async {
-                            await cartController.addItem(product: product, quantity: 1);
+                            await cartController.addItem(
+                              product: product,
+                              quantity: 1,
+                            );
                           },
                         ),
                 );
@@ -1474,7 +1456,9 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                     ),
                     _QuantityIconButton(
                       icon: Icons.add,
-                      onTap: canIncrement ? () => cartController.incrementProduct(product) : null,
+                      onTap: canIncrement
+                          ? () => cartController.incrementProduct(product)
+                          : null,
                       enabled: canIncrement,
                       dimension: 36.w,
                     ),
@@ -1516,10 +1500,11 @@ class _QuantityIconButton extends StatelessWidget {
         child: Icon(
           icon,
           size: iconSize,
-          color: enabled ? AppColors.saffron : AppColors.textSecondary.withOpacity(0.4),
+          color: enabled
+              ? AppColors.saffron
+              : AppColors.textSecondary.withOpacity(0.4),
         ),
       ),
     );
   }
 }
-

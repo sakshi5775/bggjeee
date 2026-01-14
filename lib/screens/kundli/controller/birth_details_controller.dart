@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class BirthDetailsController extends BaseController {
   // Form data

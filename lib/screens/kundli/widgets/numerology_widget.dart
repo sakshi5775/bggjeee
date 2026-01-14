@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class NumerologyWidget extends StatelessWidget {
   final PredictionsController controller;
@@ -101,8 +102,8 @@ class NumerologyWidget extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            "#ed6f30".toColor().withOpacity(0.1),
-            "#ed6f30".toColor().withOpacity(0.05),
+            "#FFFFFF".toColor(),
+            "#FFFFFF".toColor(),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -129,7 +130,10 @@ class NumerologyWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: "#ed6f30".toColor(),
+                  // color: "#ed6f30".toColor(),
+                  gradient: LinearGradient(colors: [
+                    Color(0xFFFF8C42), Color(0xFFE63946)
+                  ]),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: AutoTranslateText(
@@ -197,6 +201,7 @@ class NumerologyWidget extends StatelessWidget {
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.5),
+                border: Border.all(color: Colors.deepOrange, width: 1),
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: AutoTranslateText(
@@ -223,7 +228,8 @@ class NumerologyWidget extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.deepOrangeAccent.withOpacity(0.10),
+                border: Border.all(color: Colors.deepOrange, width: 1),
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: AutoTranslateText(

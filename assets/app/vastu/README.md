@@ -130,5 +130,3 @@ Export as separate PNG layers as specified above.
 
 
 
-
-

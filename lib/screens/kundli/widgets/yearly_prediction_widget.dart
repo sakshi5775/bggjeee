@@ -7,28 +7,24 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class YearlyPredictionWidget extends StatelessWidget {
   final PredictionsController controller;
 
-  const YearlyPredictionWidget({
-    super.key,
-    required this.controller,
-  });
+  const YearlyPredictionWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingYearly.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.yearlyPredictionData.value;
-      
+
       if (data == null || data.isEmpty) {
         return Center(
           child: Column(
@@ -87,27 +83,40 @@ class YearlyPredictionWidget extends StatelessWidget {
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    "#ed6f30".toColor(),
-                    "#ed6f30".toColor().withOpacity(0.8),
-                  ],
+                  colors: ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
                 ),
+                border: Border.all(color: Colors.deepOrange, width: 1),
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.calendar_today,
-                    color: Colors.white,
-                    size: 24.w,
+                  Container(
+                    height: 50.h,
+                    width: 50.h,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Icon(
+                      Icons.calendar_today,
+                      color: Colors.white,
+                      size: 24.w,
+                    ),
                   ),
+
                   Spacing.w(12),
                   Expanded(
                     child: AutoTranslateText(
                       'Year ${controller.selectedYear.value}',
                       style: MyTextTheme.largeBCB.copyWith(
-                        color: Colors.white,
+                        color: Color(0xFF3D0C11),
                         fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        fontFamily: 'baloo2',
                       ),
                     ),
                   ),
@@ -115,19 +124,19 @@ class YearlyPredictionWidget extends StatelessWidget {
               ),
             ),
             Spacing.h(16),
-            
+
             // Phase 1
             if (phase1 != null) _buildPhaseCard('Phase 1', phase1),
             Spacing.h(16),
-            
+
             // Phase 2
             if (phase2 != null) _buildPhaseCard('Phase 2', phase2),
             Spacing.h(16),
-            
+
             // Phase 3
             if (phase3 != null) _buildPhaseCard('Phase 3', phase3),
             Spacing.h(16),
-            
+
             // Phase 4
             if (phase4 != null) _buildPhaseCard('Phase 4', phase4),
           ],
@@ -140,7 +149,7 @@ class YearlyPredictionWidget extends StatelessWidget {
     final period = phase['period'] as String? ?? '';
     final score = phase['score'] as String? ?? '';
     final prediction = phase['prediction'] as String? ?? '';
-    
+
     // Category predictions
     final health = phase['health'] as Map<String, dynamic>?;
     final career = phase['career'] as Map<String, dynamic>?;
@@ -156,10 +165,7 @@ class YearlyPredictionWidget extends StatelessWidget {
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            "#ed6f30".toColor().withOpacity(0.1),
-            "#ed6f30".toColor().withOpacity(0.05),
-          ],
+          colors: ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -185,7 +191,10 @@ class YearlyPredictionWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: "#ed6f30".toColor(),
+                  // color: "#f38b3b".toColor(),
+                  gradient: LinearGradient(
+                    colors: [Color(0xFFF38B3B), Color(0xFFDD2914)],
+                  ),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: AutoTranslateText(
@@ -199,7 +208,10 @@ class YearlyPredictionWidget extends StatelessWidget {
               Spacing.w(12),
               if (score.isNotEmpty)
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8.r),
@@ -219,16 +231,25 @@ class YearlyPredictionWidget extends StatelessWidget {
             ],
           ),
           Spacing.h(12),
-          
+
           // Period
           if (period.isNotEmpty) ...[
             Row(
               children: [
-                Icon(
-                  Icons.calendar_today,
-                  color: "#ed6f30".toColor(),
-                  size: 16.w,
+                Container(
+                  height: 30.h,
+                  width: 30.w,
+                  decoration: BoxDecoration(
+                    color: Colors.deepOrangeAccent.withOpacity(0.10),
+                    borderRadius: BorderRadius.circular(50.r)
+                  ),
+                  child: Icon(
+                    Icons.calendar_today,
+                    color: "#ed6f30".toColor(),
+                    size: 16.w,
+                  ),
                 ),
+
                 Spacing.w(8),
                 AutoTranslateText(
                   period,
@@ -241,13 +262,14 @@ class YearlyPredictionWidget extends StatelessWidget {
             ),
             Spacing.h(12),
           ],
-          
+
           // Main Prediction
           if (prediction.isNotEmpty) ...[
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
                 color: Colors.white,
+                border: Border.all(color: Colors.deepOrange, width: 1),
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: AutoTranslateText(
@@ -260,17 +282,19 @@ class YearlyPredictionWidget extends StatelessWidget {
             ),
             Spacing.h(16),
           ],
-          
+
           // Category Predictions
           if (health != null) _buildCategoryPrediction('Health', health),
           if (career != null) _buildCategoryPrediction('Career', career),
-          if (relationship != null) _buildCategoryPrediction('Relationship', relationship),
+          if (relationship != null)
+            _buildCategoryPrediction('Relationship', relationship),
           if (travel != null) _buildCategoryPrediction('Travel', travel),
           if (family != null) _buildCategoryPrediction('Family', family),
           if (friends != null) _buildCategoryPrediction('Friends', friends),
           if (finances != null) _buildCategoryPrediction('Finances', finances),
           if (status != null) _buildCategoryPrediction('Status', status),
-          if (education != null) _buildCategoryPrediction('Education', education),
+          if (education != null)
+            _buildCategoryPrediction('Education', education),
         ],
       ),
     );
@@ -279,20 +303,15 @@ class YearlyPredictionWidget extends StatelessWidget {
   Widget _buildCategoryPrediction(String category, Map<String, dynamic> data) {
     final score = data['score'] as String? ?? '';
     final prediction = data['prediction'] as String? ?? '';
-    
+
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h),
       child: Container(
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.deepOrangeAccent.withOpacity(0.10),
           borderRadius: BorderRadius.circular(8.r),
-          border: Border(
-            left: BorderSide(
-              color: "#ed6f30".toColor(),
-              width: 4,
-            ),
-          ),
+          border: Border.all(color: Color(0xFFFF8C42), width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,7 +329,10 @@ class YearlyPredictionWidget extends StatelessWidget {
                 ),
                 if (score.isNotEmpty)
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 4.h,
+                    ),
                     decoration: BoxDecoration(
                       color: _getScoreColorFromString(score).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(6.r),
@@ -348,4 +370,3 @@ class YearlyPredictionWidget extends StatelessWidget {
     return Colors.red;
   }
 }
-

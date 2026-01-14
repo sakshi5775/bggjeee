@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/screens/astrology_services/view/astrology_serv
 import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/AnimatedChakra.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/astrology_tool_widget.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/our_services_section.dart'
     as os;
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
@@ -17,38 +18,53 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/data_model/blog_model.dart';
+import 'package:astrobharataiuser/data_model/persona_model.dart';
+import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/video_player_widget.dart';
 import 'package:astrobharataiuser/widgets/language_selector.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:gif_view/gif_view.dart';
+import 'package:video_player/video_player.dart';
 import 'dart:async';
 import 'dart:math' as math;
+
+import '../../../services/chat_call_precheck_service.dart';
+import '../../../utils/app_colors.dart';
+import '../../../utils/profile_check_helper.dart';
+import '../../ai_chat/widgets/chat_profile_dialog.dart';
+import '../widgets/astrology_report_widget.dart';
+import '../widgets/chat_video_live_astrologer_widget.dart';
+import '../widgets/our_services_section.dart';
+import '../widgets/book_pooja_carousel_widget.dart';
+import '../widgets/courses_section_widget.dart';
+import '../widgets/kids_specialist_astrologers_widget.dart';
+import '../widgets/celebrity_astrologer_widget.dart';
+import '../widgets/features_and_videos_widget.dart';
+import '../widgets/daily_astrologers_widget.dart';
 
 class UserDashboardView extends BasePage<UserDashboardController> {
   const UserDashboardView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Ensure controller is available
-    if (!Get.isRegistered<UserDashboardController>()) {
-      Get.put(UserDashboardController());
-    }
-
     return Scaffold(
-      backgroundColor: "#F7C443".toColor(), // Background gradient base
+      backgroundColor: Colors.transparent,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              "#fce5ab".toColor(), // Light yellow/cream at top (3%)
+              "#FCE5AA".toColor(), // Light yellow/cream at top (3%)
               "#FFFCF3".toColor(), // Light cream in middle (52%)
               "#FFFFFF".toColor(), // White at bottom (100%)
             ],
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            stops: const [3.0, 0.52, 1.0],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: SafeArea(
@@ -60,21 +76,35 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 color: "#6F221E".toColor(),
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  controller: controller.scrollController,
+                  child: Stack(
                     children: [
-                      // Header with menu, logo, icons and search bar
-                      _buildHeader(context),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Header with menu, logo, icons and search bar
+                          _buildHeader(context),
+                          Spacing.h(10),
 
-                      // Body with curve, gradient and all content sections
-                      _buildBodyWithCurve(),
+                          // Body with curve, gradient and all content sections
+                          _buildBodyWithCurve(context),
 
-                      // Bottom padding to prevent content from being hidden behind sticky banner
-                      Spacing.h(100),
+                          // Bottom padding to prevent content from being hidden behind sticky banner
+                          // Spacing.h(100),
+                        ],
+                      ),
+                      Positioned(
+                        top: 110,
+                        left: 25,
+                        right: 25,
+                        child: _buildSearchBar(context),
+                      ),
                     ],
                   ),
                 ),
               ),
+              // 🔥 Search bar overlay (FIX)
+
               // Circular button for AI Chat navigation at bottom - just above bottom nav
               Positioned(
                 right: 1.w,
@@ -83,11 +113,20 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 child: _buildCircularChatButton(),
               ),
               // Floating action buttons row
+              // Option 3: Container with full width white background
               Positioned(
-                left: 16.w,
-                right: 16.w,
-                bottom: 6.h,
-                child: _buildAstrologerActionsRow(),
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  color: Colors.white,
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 6.h,
+                  ),
+                  child: _buildAstrologerActionsRow(),
+                ),
               ),
             ],
           ),
@@ -97,101 +136,98 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Container(
-      child: Stack(
-        children: [
-          // Animated fullchakra background - positioned in header background
-          Positioned(
-            right: -20.w,
-            top: -15.h,
-            child: AnimatedChakra(
-              child: SvgAssets(
-                path: 'assets/app/fullchakra.svg',
-                width: 200.w,
-                height: 200.h,
+    return Stack(
+      children: [
+        // Animated fullchakra background - positioned in header background
+        Positioned(
+          right: -20.w,
+          top: -15.h,
+          child: AnimatedChakra(
+            child: SvgAssets(
+              colorFilter: ColorFilter.mode(
+                "6F221E".toColor(),
+                BlendMode.srcIn,
               ),
+              path: 'assets/app/fullchakra.svg',
+              width: 150.w,
+              height: 150.h,
             ),
           ),
-          // Header content
-          Column(
-            children: [
-              // Top section with menu, logo and icons
-              Container(
-                height: 80.h,
-                padding: AppPaddings.symmetric(h: 16, v: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        // Menu icon
-                        IconButton(
-                          onPressed: () {
-                            final scaffoldState = context
-                                .findAncestorStateOfType<ScaffoldState>();
-                            scaffoldState?.openDrawer();
-                          },
-                          icon: Icon(
-                            Icons.menu,
-                            size: 24.w,
-                            color: "#6F221E".toColor(),
+        ),
+        // Header content
+        Column(
+          children: [
+            // Top section with menu, logo and icons
+            Container(
+              height: 120.h,
+              padding: AppPaddings.symmetric(h: 16, v: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      // Menu icon
+                      IconButton(
+                        onPressed: () {
+                          final scaffoldState = context
+                              .findAncestorStateOfType<ScaffoldState>();
+                          scaffoldState?.openDrawer();
+                        },
+                        icon: Icon(
+                          Icons.menu,
+                          size: 24.w,
+                          color: "#6F221E".toColor(),
+                        ),
+                      ),
+                      Spacing.w(8),
+                      // Logo placed near drawer
+                      SvgAssets(
+                        path: 'assets/app/AstrobharatAi .svg',
+                        width: 120.w,
+                        height: 30.h,
+                      ),
+                    ],
+                  ),
+                  // Wallet, Language and Cart icons
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Get.toNamed(AppRoutes.wallet);
+                        },
+                        icon: Icon(
+                          Icons.account_balance_wallet,
+                          size: 24.w,
+                          color: "#6F221E".toColor(),
+                        ),
+                      ),
+                      // Language selector
+                      LanguageSelector(
+                        iconColor: "#6F221E".toColor(),
+                        iconSize: 24.w,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          Get.toNamed(AppRoutes.cart);
+                        },
+                        icon: SvgAssets(
+                          path: 'assets/app/cart.svg',
+                          width: 24.w,
+                          height: 24.h,
+                          colorFilter: ColorFilter.mode(
+                            "#6F221E".toColor(),
+                            BlendMode.srcIn,
                           ),
                         ),
-                        Spacing.w(8),
-                        // Logo placed near drawer
-                        SvgAssets(
-                          path: 'assets/app/AstrobharatAi .svg',
-                          width: 120.w,
-                          height: 30.h,
-                        ),
-                      ],
-                    ),
-                    // Wallet, Language and Cart icons
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            Get.toNamed(AppRoutes.wallet);
-                          },
-                          icon: Icon(
-                            Icons.account_balance_wallet,
-                            size: 24.w,
-                            color: "#6F221E".toColor(),
-                          ),
-                        ),
-                        // Language selector
-                        LanguageSelector(
-                          iconColor: "#6F221E".toColor(),
-                          iconSize: 24.w,
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            Get.toNamed(AppRoutes.cart);
-                          },
-                          icon: SvgAssets(
-                            path: 'assets/app/cart.svg',
-                            width: 24.w,
-                            height: 24.h,
-                            colorFilter: ColorFilter.mode(
-                              "#6F221E".toColor(),
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              // Search Bar inside header
-              Padding(
-                padding: AppPaddings.symmetric(h: 16, v: 0),
-                child: _buildSearchBar(context),
-              ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -201,8 +237,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       final hasQuery = controller.searchQuery.value.isNotEmpty;
 
       return Container(
-        margin: EdgeInsets.only(bottom: 16.h),
-        padding: AppPaddings.symmetric(h: 13, v: 12),
+        padding: AppPaddings.symmetric(h: 20, v: 6),
         decoration: BoxDecoration(
           color: "#FFFFFF".toColor(),
           borderRadius: BorderRadius.circular(100.r),
@@ -246,104 +281,96 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       overflow: TextOverflow.ellipsis,
                     )
                   : Obx(() {
-                      // Check if controller is still available and controller is not disposed
-                      try {
-                        if (!Get.isRegistered<UserDashboardController>()) {
-                          return const SizedBox.shrink();
-                        }
+                      final showAnimatedText =
+                          controller.searchController.text.isEmpty &&
+                          !controller.isListening.value &&
+                          controller.animatedSearchText.value.isNotEmpty;
 
-                        // Check if controller is still valid
-                        final searchText = controller.searchController.text;
-                        final showAnimatedText =
-                            searchText.isEmpty &&
-                            !controller.isListening.value &&
-                            controller.animatedSearchText.value.isNotEmpty;
-
-                        return Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            // Actual TextField (always present for input)
-                            TextField(
-                              controller: controller.searchController,
-                              style: MyTextTheme.mediumBCN
+                      return Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          // Actual TextField (always present for input)
+                          TextField(
+                            controller: controller.searchController,
+                            style: MyTextTheme.mediumBCN
+                                .copyWith(
+                                  color: "#3D0C11".toColor(),
+                                  fontWeight: FontWeight.w500,
+                                )
+                                .merge(AppTypography.body1),
+                            decoration: InputDecoration(
+                              hintText: controller.isListening.value
+                                  ? 'Listening...'
+                                  : showAnimatedText
+                                  ? controller.animatedSearchText.value
+                                  : 'Search horoscope, kundli, tarot...',
+                              hintStyle: MyTextTheme.mediumBCN
                                   .copyWith(
-                                    color: "#3D0C11".toColor(),
+                                    color: "#3D0C11".toColor().withOpacity(0.5),
+
                                     fontWeight: FontWeight.w500,
                                   )
                                   .merge(AppTypography.body1),
-                              decoration: InputDecoration(
-                                hintText: controller.isListening.value
-                                    ? 'Listening...'
-                                    : showAnimatedText
-                                    ? controller.animatedSearchText.value
-                                    : 'Search horoscope, kundli, tarot...',
-                                hintStyle: MyTextTheme.mediumBCN
-                                    .copyWith(
-                                      color: "#3D0C11".toColor().withOpacity(
-                                        0.5,
-                                      ),
-                                      fontWeight: FontWeight.w500,
-                                    )
-                                    .merge(AppTypography.body1),
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                disabledBorder: InputBorder.none,
-                                errorBorder: InputBorder.none,
-                                focusedErrorBorder: InputBorder.none,
-                                isDense: true,
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                              enabled: !controller.isListening.value,
-                              onChanged: (value) {
-                                if (value.isNotEmpty) {
-                                  controller.stopTypewriterAnimation();
-                                } else {
-                                  controller.resumeTypewriterAnimation();
-                                }
-                              },
-                              onSubmitted: (value) {
-                                if (value.trim().isNotEmpty) {
-                                  controller.processTextSearch(value);
-                                }
-                              },
-                              onTap: () {
-                                controller.stopTypewriterAnimation();
-                              },
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              focusedErrorBorder: InputBorder.none,
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
                             ),
-                          ],
-                        );
-                      } catch (e) {
-                        // Controller disposed, return empty widget
-                        return const SizedBox.shrink();
-                      }
+                            enabled: !controller.isListening.value,
+                            onChanged: (value) {
+                              if (value.isNotEmpty) {
+                                controller.stopTypewriterAnimation();
+                              } else {
+                                controller.resumeTypewriterAnimation();
+                              }
+                            },
+                            onSubmitted: (value) {
+                              if (value.trim().isNotEmpty) {
+                                controller.processTextSearch(value);
+                              }
+                            },
+                            onTap: () {
+                              controller.stopTypewriterAnimation();
+                            },
+                          ),
+                        ],
+                      );
                     }),
             ),
             Spacing.w(8),
-            GestureDetector(
-              onTap: () => controller.toggleVoiceSearch(),
-              child: Obx(
-                () => Container(
-                  padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    color: controller.isListening.value
-                        ? "#FF6B35".toColor().withOpacity(0.1)
-                        : Colors.transparent,
-                    shape: BoxShape.circle,
-                  ),
-                  child: SvgAssets(
-                    path: 'assets/app/mic.svg',
-                    width: 28.w,
-                    height: 28.h,
-                    colorFilter: ColorFilter.mode(
-                      controller.isListening.value
-                          ? "#FF6B35".toColor()
-                          : "#AAAAAA".toColor(),
-                      BlendMode.srcIn,
+            Row(
+              children: [
+                Container(height: 20.h, width: 1.w, color: "#3D0C11".toColor()),
+                GestureDetector(
+                  onTap: () => controller.toggleVoiceSearch(),
+                  child: Obx(
+                    () => Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        color: controller.isListening.value
+                            ? "#FF6B35".toColor().withOpacity(0.1)
+                            : Colors.transparent,
+                        shape: BoxShape.circle,
+                      ),
+                      child: SvgAssets(
+                        path: 'assets/app/mic.svg',
+                        width: 20.w,
+                        height: 20.h,
+                        colorFilter: ColorFilter.mode(
+                          controller.isListening.value
+                              ? "#FF6B35".toColor()
+                              : "#3D0C11".toColor(),
+                          BlendMode.srcIn,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
@@ -351,172 +378,265 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     });
   }
 
-  Widget _buildBodyWithCurve() {
+  Widget _buildBodyWithCurve(context) {
     return Container(
       decoration: BoxDecoration(
-        color: "#fef3d7".toColor(), // Solid color for curved container
+        color: "#fff8e7".toColor(),
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(61.r), // 61px from Figma
+          topLeft: Radius.circular(61.r),
           topRight: Radius.circular(0),
           bottomLeft: Radius.circular(0),
           bottomRight: Radius.circular(0),
         ),
         border: Border(top: BorderSide(color: "#DBCCA8".toColor(), width: 2)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.35),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
       ),
-      child: Padding(
-        padding: EdgeInsets.only(top: 20.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            os.OurServicesSection(),
-            Spacing.h(24),
-            // Horoscope Card with overlapping image
-            Padding(
-              // Minimal padding; overlap handled inside the card
-              padding: EdgeInsets.only(
-                top: 30.h,
-                left: 16.w,
-                right: 16.w,
-                bottom: 0,
-              ),
-              child: StreamBuilder<int>(
-                stream: Stream<int>.periodic(
-                  const Duration(seconds: 4),
-                  (c) => c,
-                ),
-                builder: (context, snapshot) {
-                  final cards = [
-                    {
-                      'title': 'Your Horoscope',
-                      'desc':
-                          '"Today emphasizes the importance of clarity and calm communication rather than rushing into conflict or reaction. You may f your words carefully."',
-                      'asset': AppConstant.horoscopeGuru,
-                      'type': 'horoscope',
-                    },
-                    {
-                      'title': 'Need a Consultation?',
-                      'buttonText': 'FREE SESSION',
-                      'asset': 'assets/app/ganeshji.png',
-                      'type': 'consultation',
-                      'bgColor': '#fff0dd', // Light peach/cream
-                    },
-                    {
-                      'title': 'Get Palm Reading',
-                      'buttonText': 'FREE SESSION',
-                      'asset': 'assets/app/palmReadingCard.png',
-                      'type': 'consultation',
-                      'bgColor': '#f1d2a4', // Light beige/cream
-                    },
-                    {
-                      'title': 'Ready To Know All About Your Kundli',
-                      'buttonText': 'FREE SESSION',
-                      'asset': 'assets/app/kundlicard.png',
-                      'type': 'consultation',
-                      'bgColor': '#fdd8a1', // Light orange-yellow
-                    },
-                    {
-                      'title': 'Get to know near by pooja',
-                      'buttonText': 'LETS SEARCH',
-                      'asset': 'assets/app/nearbypooja.png',
-                      'type': 'consultation',
-                      'bgColor': '#fee6cc', // Light peach/pale orange
-                    },
-                  ];
-                  final idx = (snapshot.data ?? 0) % cards.length;
-                  final card = cards[idx];
-                  // Fixed height wrapper prevents up/down jump when cards swap
-                  return SizedBox(
-                    height: 185.h, // match tallest card height
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 500),
-                        transitionBuilder: (child, anim) =>
-                            FadeTransition(opacity: anim, child: child),
-                        child: card['type'] == 'horoscope'
-                            ? _buildHoroscopeCard(card, idx)
-                            : _buildConsultationCard(card, idx),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Spacing.h(50),
+          // Daily Astrologers Section
+          DailyAstrologersWidget(),
+
+          Spacing.h(10),
+
+          if (controller.liveStreams.isNotEmpty) Spacing.h(24),
+
+          // Live Astrologers Section
+          Obx(() {
+            if (controller.liveStreams.isNotEmpty) {
+              return Padding(
+                padding: AppPaddings.symmetric(h: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            ShaderMask(
+                              shaderCallback: (bounds) {
+                                return AppColors.orangeGradient.createShader(
+                                  Rect.fromLTWH(
+                                    0,
+                                    0,
+                                    bounds.width,
+                                    bounds.height,
+                                  ),
+                                );
+                              },
+                              child: AutoTranslateText(
+                                'Live Astrologers',
+                                style: AppTypography.h2.copyWith(
+                                  color: Colors.white, // IMPORTANT
+                                  letterSpacing: -0.05,
+                                ),
+                              ),
+                            ),
+
+                            Spacing.w(8),
+                            FadeTransition(
+                              opacity: controller.liveVideoIconOpacity,
+                              child: ScaleTransition(
+                                scale: controller.liveVideoIconScale,
+                                child: SvgAssets(
+                                  path: 'assets/icons/video_icon_live.svg',
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Get.to(() => const ComingSoonPage());
+                          },
+                          child: AutoTranslateText(
+                            'View All',
+                            style: AppTypography.body1.copyWith(
+                              color: "#9D4807".toColor(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Spacing.h(16),
+                    SizedBox(
+                      height: 110.h,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.liveStreams.length,
+                        separatorBuilder: (context, index) =>
+                            SizedBox(width: 12.w),
+                        itemBuilder: (context, index) {
+                          return _buildLiveAstrologerProfile(index);
+                        },
                       ),
                     ),
-                  );
-                },
-              ),
+                  ],
+                ),
+              );
+            } else {
+              return SizedBox.shrink();
+            }
+          }),
+
+          Spacing.h(12),
+          _buildOurServicesPillSection(),
+          Spacing.h(24),
+          // Horoscope Card with overlapping image
+          Padding(
+            // Minimal padding; overlap handled inside the card
+            padding: EdgeInsets.only(
+              top: 30.h,
+              left: 16.w,
+              right: 16.w,
+              bottom: 0,
             ),
+            child: StreamBuilder<int>(
+              stream: Stream<int>.periodic(
+                const Duration(seconds: 4),
+                (c) => c,
+              ),
+              builder: (context, snapshot) {
+                final cards = [
+                  {
+                    'title': 'Your Horoscope',
+                    'desc':
+                        '"Today emphasizes the importance of clarity and calm communication rather than rushing into conflict or reaction. You may f your words carefully."',
+                    'asset': AppConstant.horoscopeGuru,
+                    'type': 'horoscope',
+                  },
+                  {
+                    'title': 'Need a Consultation?',
+                    'buttonText': 'FREE SESSION',
+                    'asset': 'assets/app/ganeshji.png',
+                    'type': 'consultation',
+                    'bgColor': '#fff0dd', // Light peach/cream
+                  },
+                  {
+                    'title': 'Get Palm Reading',
+                    'buttonText': 'FREE SESSION',
+                    'asset': 'assets/app/palmReadingCard.png',
+                    'type': 'consultation',
+                    'bgColor': '#f1d2a4', // Light beige/cream
+                  },
+                  {
+                    'title': 'Ready To Know All About Your Kundli',
+                    'buttonText': 'FREE SESSION',
+                    'asset': 'assets/app/kundlicard.png',
+                    'type': 'consultation',
+                    'bgColor': '#fdd8a1', // Light orange-yellow
+                  },
+                  {
+                    'title': 'Get to know near by pooja',
+                    'buttonText': 'LETS SEARCH',
+                    'asset': 'assets/app/nearbypooja.png',
+                    'type': 'consultation',
+                    'bgColor': '#fee6cc', // Light peach/pale orange
+                  },
+                ];
+                final idx = (snapshot.data ?? 0) % cards.length;
+                final card = cards[idx];
+                // Fixed height wrapper prevents up/down jump when cards swap
+                return SizedBox(
+                  height: 185.h, // match tallest card height
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      transitionBuilder: (child, anim) =>
+                          FadeTransition(opacity: anim, child: child),
+                      child: card['type'] == 'horoscope'
+                          ? _buildHoroscopeCard(card, idx)
+                          : _buildConsultationCard(card, idx),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
 
-            Spacing.h(24),
+          Spacing.h(15),
 
-            // Our Services Section (First - Square Cards)
-            _buildLiveAstrologersSection(),
-            Spacing.h(24),
+          AllAstrologerWidget(),
+          Spacing.h(12),
+          OurServicesSection(title: 'Our Services'),
+          Spacing.h(12),
+          AstrologyToolWidget(),
+          Spacing.h(12),
+          // // Talk to AI Astrologer Card
+          // _buildTalkToAIAstrologerCard(),
 
-            // Our Services Section (Second - Pill-shaped buttons)
-            _buildOurServicesPillSection(),
+          // Spacing.h(24),
 
-            Spacing.h(24),
+          // Quote of the Day Section
+          _buildQuoteOfTheDaySection(),
+          Spacing.h(12),
+          AstrologyReportWidget(),
 
-            // Talk to AI Astrologer Card
-            _buildTalkToAIAstrologerCard(),
+          Spacing.h(24),
 
-            Spacing.h(24),
+          // AI Astrologers Section
+          _buildAIAstrologersSection(context),
+          Spacing.h(24),
+          // Astro Remedy Section
+          _buildAstroRemedySection(),
+          Spacing.h(24),
+          // Book Pooja Section
+          const BookPoojaCarouselWidget(),
+          Spacing.h(24),
+          _buildVedicKundliAstrologersSection(),
+          Spacing.h(24),
 
-            // Quote of the Day Section
-            _buildQuoteOfTheDaySection(),
+          // Kundli Matching Promotional Card
+          _buildKundliMatchingCard(),
+          Spacing.h(24),
+          // Courses Section
+          CoursesSectionWidget(),
+          Spacing.h(24),
+          // kids specialist astrologers
+          const KidsSpecialistAstrologersWidget(),
 
-            Spacing.h(24),
+          // Spacing.h(24),
 
-            // Kundli Matching Promotional Card
-            _buildKundliMatchingCard(),
+          // // Live Pooja in Temples Section
+          // _buildLivePoojaSection(),
+          Spacing.h(24),
 
-            Spacing.h(24),
+          // Sacred Mandirs of Bharat Section
+          _buildSacredMandirsSection(),
 
-            // Live Pooja in Temples Section
-            _buildLivePoojaSection(),
+          Spacing.h(12),
 
-            Spacing.h(24),
+          // Celebrity Astrologer Section
+          CelebrityAstrologerWidget(),
 
-            // Sacred Mandirs of Bharat Section
-            _buildSacredMandirsSection(),
+          Spacing.h(24),
 
-            Spacing.h(24),
+          // Join Live Webinar Section
+          _buildJoinLiveWebinarSection(),
 
-            // Astro Remedy Section
-            _buildAstroRemedySection(),
+          // Spacing.h(24),
 
-            Spacing.h(24),
+          // // Prashna Kundli Astrologers Section
+          // _buildPrashnaKundliSection(),
+          Spacing.h(24),
 
-            // AI Astrologers Section
-            _buildAIAstrologersSection(),
+          // Blog Section
+          _buildBlogSection(),
 
-            Spacing.h(24),
+          Spacing.h(24),
 
-            // Join Live Webinar Section
-            _buildJoinLiveWebinarSection(),
+          // Features and Videos Section
+          FeaturesAndVideosWidget(),
 
-            Spacing.h(24),
+          Spacing.h(60),
 
-            // Prashna Kundli Astrologers Section
-            _buildPrashnaKundliSection(),
+          // // Features Section (scrollable with close button)
+          // _buildFeaturesSection(),
 
-            Spacing.h(24),
-
-            // Blog Section
-            _buildBlogSection(),
-
-            Spacing.h(24),
-
-            // Features Section (scrollable with close button)
-            _buildFeaturesSection(),
-
-            Spacing.h(24),
-          ],
-        ),
+          // Spacing.h(24),
+        ],
       ),
     );
   }
@@ -527,38 +647,38 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              AutoTranslateText(
-                'OUR SERVICES',
-                style: AppTypography.h2.copyWith(
-                  color: "#6F221E".toColor(),
-                  letterSpacing: -0.05,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Get.to(() => const ComingSoonPage());
-                },
-                child: AutoTranslateText(
-                  'View All',
-                  style: AppTypography.body1.copyWith(
-                    color: "#6F221E".toColor(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(16),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     AutoTranslateText(
+          //       'OUR SERVICES',
+          //       style: AppTypography.h2.copyWith(
+          //         color: "#6F221E".toColor(),
+          //         letterSpacing: -0.05,
+          //       ),
+          //     ),
+          //     GestureDetector(
+          //       onTap: () {
+          //         Get.to(() => const ComingSoonPage());
+          //       },
+          //       child: AutoTranslateText(
+          //         'View All',
+          //         style: AppTypography.body1.copyWith(
+          //           color: "#6F221E".toColor(),
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // Spacing.h(16),
           // Service cards in 2x2 grid
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: _buildPillServiceCard(
-                  'Digital Ecommerce',
-                  'assets/app/divine_shop.png',
+                  'Digital Shop',
+                  'assets/app/digital_shop_video_icon.gif',
                   onTap: () {
                     Get.offNamed('/user-shop', id: 1);
                   },
@@ -568,7 +688,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               Expanded(
                 child: _buildPillServiceCard(
                   'Digital Pooja',
-                  'assets/app/e_pooja.png',
+                  'assets/app/digital_pooja_video_icon.gif',
                   onTap: () {},
                 ),
               ),
@@ -580,16 +700,18 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             children: [
               Expanded(
                 child: _buildPillServiceCard(
-                  'AI-Astrologer',
-                  'assets/app/ai_astrologer.png',
-                  onTap: () {},
+                  'Consultation',
+                  'assets/app/consultation_video_icon.gif',
+                  onTap: () {
+                    Get.toNamed(AppRoutes.astrologyServices);
+                  },
                 ),
               ),
               Spacing.w(10),
               Expanded(
                 child: _buildPillServiceCard(
                   'Digital Education',
-                  'assets/app/education.png',
+                  'assets/app/digital_education_video_icon.gif',
                   onTap: () {
                     Get.toNamed(AppRoutes.courses);
                   },
@@ -818,19 +940,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Flexible(
-                                  child: AutoTranslateText(
-                                    'Start Free Chat',
-                                    style: MyTextTheme.mediumBCB
-                                        .copyWith(
-                                          color: "#222222".toColor(),
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: 'Poppins',
-                                        )
-                                        .merge(AppTypography.body1),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                                AutoTranslateText(
+                                  'Start Free Chat',
+                                  style: MyTextTheme.mediumBCB
+                                      .copyWith(
+                                        color: "#222222".toColor(),
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: 'Poppins',
+                                      )
+                                      .merge(AppTypography.body1),
                                 ),
                                 Spacing.w(10 * scale),
                                 Icon(
@@ -1130,78 +1248,31 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     String iconPath, {
     VoidCallback? onTap,
   }) {
-    // Use AutoTranslateText for the label to enable translation
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 60.34.h,
-        padding: EdgeInsets.only(
-          left: 4.02.w,
-          right: 16.09.w,
-          top: 4.02.h,
-          bottom: 4.02.h,
-        ),
+        height: 60.h,
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              "#F38B3B".toColor(), // 3rd-orange from Figma
-              "#DD2914".toColor(), // Orange gradient end
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(80.45.r),
+          gradient: AppColors.orangeGradient,
+          borderRadius: BorderRadius.circular(80.r),
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            // Circular image with white border
             Container(
-              width: 52.3.w,
-              height: 52.3.h,
+              width: 52.w,
+              height: 52.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: "#FFFFFF".toColor(), width: 1),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 16.98,
-                    offset: const Offset(0, 2.72),
-                  ),
-                ],
+                border: Border.all(color: Colors.white, width: 1.5),
               ),
-              child: ClipOval(
-                child: Image.asset(
-                  iconPath,
-                  width: 52.3.w,
-                  height: 52.3.h,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: 52.3.w,
-                      height: 52.3.h,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.2),
-                      ),
-                      child: Icon(Icons.error, size: 24.w, color: Colors.white),
-                    );
-                  },
-                ),
-              ),
+              child: ClipOval(child: GifView.asset(iconPath, fit: BoxFit.fill)),
             ),
-            Spacing.w(10),
+            SizedBox(width: 8.w),
             Expanded(
-              child: AutoTranslateText(
+              child: Text(
                 label,
-                style: MyTextTheme.smallBCN
-                    .copyWith(
-                      color: "#FFFFFF".toColor(),
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'Baloo Bhai 2',
-                      height: 1.1,
-                    )
-                    .merge(AppTypography.body2),
+                style: TextStyle(color: Colors.white, fontSize: 14.sp),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1212,370 +1283,287 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     );
   }
 
-  Widget _buildLiveAstrologersSection() {
-    return Obx(() {
-      if (controller.isLoadingLiveStreams.value &&
-          controller.liveStreams.isEmpty) {
-        return Padding(
-          padding: AppPaddings.symmetric(h: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  // Widget _buildLiveAstrologersSection() {
+  //   return Obx(() {
+  //     if (controller.isLoadingLiveStreams.value &&
+  //         controller.liveStreams.isEmpty) {
+  //       return Padding(
+  //         padding: AppPaddings.symmetric(h: 16),
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: [
+  //                 AutoTranslateText(
+  //                   'LIVE ASTROLOGERS',
+  //                   style: MyTextTheme.largeBCB
+  //                       .copyWith(
+  //                         color: "#6F221E".toColor(),
+  //                         fontWeight: FontWeight.w400,
+  //                         fontFamily: 'Baloo',
+  //                         letterSpacing: -0.05,
+  //                         height: 1.2999999788072374,
+  //                       )
+  //                       .merge(AppTypography.h2),
+  //                 ),
+  //                 InkWell(
+  //                   onTap: () {
+  //                     debugPrint(
+  //                       'View All button tapped - navigating to live astrologers',
+  //                     );
+  //                     Get.toNamed(AppRoutes.liveAstrologers);
+  //                   },
+  //                   borderRadius: BorderRadius.circular(4.r),
+  //                   child: Padding(
+  //                     padding: EdgeInsets.symmetric(
+  //                       horizontal: 8.w,
+  //                       vertical: 4.h,
+  //                     ),
+  //                     child: AutoTranslateText(
+  //                       'View All',
+  //                       style: MyTextTheme.mediumBCN
+  //                           .copyWith(
+  //                             color: "#6F221E".toColor(),
+  //                             fontWeight: FontWeight.w400,
+  //                             fontFamily: 'Poppins',
+  //                             height: 1.5,
+  //                           )
+  //                           .merge(AppTypography.body1),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //             Spacing.h(16),
+  //             SizedBox(
+  //               height: 85.h,
+  //               child: Center(
+  //                 child: CircularProgressIndicator(color: "#6F221E".toColor()),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     }
+
+  //     if (controller.liveStreams.isEmpty) {
+  //       return const SizedBox.shrink();
+  //     }
+
+  //     return Padding(
+  //       padding: AppPaddings.symmetric(h: 16),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               AutoTranslateText(
+  //                 'LIVE ASTROLOGERS',
+  //                 style: MyTextTheme.largeBCB
+  //                     .copyWith(
+  //                       color: "#6F221E".toColor(),
+  //                       fontWeight: FontWeight.w400,
+  //                       fontFamily: 'Baloo',
+  //                       letterSpacing: -0.05,
+  //                       height: 1.2999999788072374,
+  //                     )
+  //                     .merge(AppTypography.h2),
+  //               ),
+  //               InkWell(
+  //                 onTap: () {
+  //                   debugPrint(
+  //                     'View All button tapped - navigating to live astrologers',
+  //                   );
+  //                   Get.toNamed(AppRoutes.liveAstrologers);
+  //                 },
+  //                 borderRadius: BorderRadius.circular(4.r),
+  //                 child: Padding(
+  //                   padding: EdgeInsets.symmetric(
+  //                     horizontal: 8.w,
+  //                     vertical: 4.h,
+  //                   ),
+  //                   child: AutoTranslateText(
+  //                     'View All',
+  //                     style: MyTextTheme.mediumBCN
+  //                         .copyWith(
+  //                           color: "#6F221E".toColor(),
+  //                           fontWeight: FontWeight.w400,
+  //                           fontFamily: 'Poppins',
+  //                           height: 1.5,
+  //                         )
+  //                         .merge(AppTypography.body1),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //           Spacing.h(16),
+  //           SingleChildScrollView(
+  //             scrollDirection: Axis.horizontal,
+  //             child: Row(
+  //               children: controller.liveStreams.asMap().entries.map((entry) {
+  //                 final index = entry.key;
+  //                 final stream = entry.value;
+  //                 return Padding(
+  //                   padding: EdgeInsets.only(
+  //                     right: index < controller.liveStreams.length - 1
+  //                         ? 12.w
+  //                         : 0,
+  //                   ),
+  //                   child: _buildAstrologerAvatar(stream),
+  //                 );
+  //               }).toList(),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   });
+  // }
+
+  // Widget _buildAstrologerAvatar(LiveStreamModel stream) {
+  //   final controller = Get.find<UserDashboardController>();
+  //   final profilePicture = controller.getProfilePictureForAstrologer(
+  //     stream.astrologerId,
+  //   );
+  //   final astrologerName = controller.getAstrologerName(stream.astrologerId);
+
+  //   return GestureDetector(
+  //     onTap: () {
+  //       Get.to(
+  //         () => LiveStreamView(
+  //           stream: stream,
+  //           astrologerName: astrologerName,
+  //           astrologerProfilePicture: profilePicture,
+  //         ),
+  //       );
+  //     },
+  //     child: Container(
+  //       width: 85.w,
+  //       height: 85.h,
+  //       decoration: BoxDecoration(
+  //         shape: BoxShape.circle,
+  //         border: Border.all(
+  //           color: "#08A44F".toColor(), // Green
+  //           width: 3,
+  //         ),
+  //       ),
+  //       child: Stack(
+  //         children: [
+  //           ClipOval(
+  //             child: profilePicture != null && profilePicture.isNotEmpty
+  //                 ? NetworkImageWithLoader(
+  //                     url: profilePicture,
+  //                     width: 85.w,
+  //                     height: 85.h,
+  //                     isCircular: true,
+  //                   )
+  //                 : Image.asset(
+  //                     'assets/app/astrology.png',
+  //                     width: 85.w,
+  //                     height: 85.h,
+  //                     fit: BoxFit.cover,
+  //                     errorBuilder: (context, error, stackTrace) {
+  //                       return Container(
+  //                         decoration: const BoxDecoration(
+  //                           shape: BoxShape.circle,
+  //                           color: Color(0xFFE0E0E0),
+  //                         ),
+  //                       );
+  //                     },
+  //                   ),
+  //           ),
+  //           // Online indicator
+  //           Positioned(
+  //             bottom: 0,
+  //             right: 0,
+  //             child: Container(
+  //               width: 16.w,
+  //               height: 16.h,
+  //               decoration: BoxDecoration(
+  //                 shape: BoxShape.circle,
+  //                 color: "#08A44F".toColor(),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  Widget _buildKundliMatchingCard() {
+    return GestureDetector(
+      onTap: () {
+        // Navigate to Kundli Matching screen
+        Get.toNamed(AppRoutes.matchMakingForm);
+      },
+      child: Container(
+        margin: AppPaddings.symmetric(h: 16),
+        padding: AppPaddings.symmetric(h: 16, v: 26),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: "#F38B3B".toColor(), width: 1),
+        ),
+        child: Row(
+          children: [
+            // Left Side - Square Icon Container with Gradient
+            Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Image.asset(
+                'assets/app/kundli_matching_icon.png',
+                height: 40.h,
+                width: 40.w,
+
+                fit: BoxFit.cover,
+              ),
+            ),
+            Spacing.w(16),
+            // Middle Section - Text Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Title
                   AutoTranslateText(
-                    'LIVE ASTROLOGERS',
+                    'Kundli Matching',
                     style: MyTextTheme.largeBCB
                         .copyWith(
-                          color: "#6F221E".toColor(),
-                          fontWeight: FontWeight.w400,
-                          fontFamily: 'Baloo',
-                          letterSpacing: -0.05,
-                          height: 1.2999999788072374,
+                          color: "#68171E".toColor(),
+                          fontWeight: FontWeight.bold,
                         )
                         .merge(AppTypography.h2),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  InkWell(
-                    onTap: () {
-                      debugPrint(
-                        'View All button tapped - navigating to live astrologers',
-                      );
-                      Get.toNamed(AppRoutes.liveAstrologers);
-                    },
-                    borderRadius: BorderRadius.circular(4.r),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.w,
-                        vertical: 4.h,
-                      ),
-                      child: AutoTranslateText(
-                        'View All',
-                        style: MyTextTheme.mediumBCN
-                            .copyWith(
-                              color: "#6F221E".toColor(),
-                              fontWeight: FontWeight.w400,
-                              fontFamily: 'Poppins',
-                              height: 1.5,
-                            )
-                            .merge(AppTypography.body1),
-                      ),
-                    ),
+                  Spacing.h(6),
+                  // Description
+                  AutoTranslateText(
+                    'Find your perfect match with 36 Gun Milan analysis and AI-powered compatibility insights.',
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(color: "#F38B3B".toColor())
+                        .merge(AppTypography.body2),
                   ),
                 ],
               ),
-              Spacing.h(16),
-              SizedBox(
-                height: 85.h,
-                child: Center(
-                  child: CircularProgressIndicator(color: "#6F221E".toColor()),
-                ),
-              ),
-            ],
-          ),
-        );
-      }
-
-      if (controller.liveStreams.isEmpty) {
-        return const SizedBox.shrink();
-      }
-
-      return Padding(
-        padding: AppPaddings.symmetric(h: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                AutoTranslateText(
-                  'LIVE ASTROLOGERS',
-                  style: MyTextTheme.largeBCB
-                      .copyWith(
-                        color: "#6F221E".toColor(),
-                        fontWeight: FontWeight.w400,
-                        fontFamily: 'Baloo',
-                        letterSpacing: -0.05,
-                        height: 1.2999999788072374,
-                      )
-                      .merge(AppTypography.h2),
-                ),
-                InkWell(
-                  onTap: () {
-                    debugPrint(
-                      'View All button tapped - navigating to live astrologers',
-                    );
-                    Get.toNamed(AppRoutes.liveAstrologers);
-                  },
-                  borderRadius: BorderRadius.circular(4.r),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                      vertical: 4.h,
-                    ),
-                    child: AutoTranslateText(
-                      'View All',
-                      style: MyTextTheme.mediumBCN
-                          .copyWith(
-                            color: "#6F221E".toColor(),
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'Poppins',
-                            height: 1.5,
-                          )
-                          .merge(AppTypography.body1),
-                    ),
-                  ),
-                ),
-              ],
             ),
-            Spacing.h(16),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: controller.liveStreams.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final stream = entry.value;
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      right: index < controller.liveStreams.length - 1
-                          ? 12.w
-                          : 0,
-                    ),
-                    child: _buildAstrologerAvatar(stream),
-                  );
-                }).toList(),
-              ),
+            Spacing.w(12),
+            // Right Side - Navigation Arrow
+            Icon(
+              Icons.arrow_forward_ios,
+              color: AppColors.deepOrange,
+              size: 20.w,
             ),
           ],
         ),
-      );
-    });
-  }
-
-  Widget _buildAstrologerAvatar(LiveStreamModel stream) {
-    final controller = Get.find<UserDashboardController>();
-    final profilePicture = controller.getProfilePictureForAstrologer(
-      stream.astrologerId,
-    );
-    final astrologerName = controller.getAstrologerName(stream.astrologerId);
-
-    return GestureDetector(
-      onTap: () {
-        Get.to(
-          () => LiveStreamView(
-            stream: stream,
-            astrologerName: astrologerName,
-            astrologerProfilePicture: profilePicture,
-          ),
-        );
-      },
-      child: Container(
-        width: 85.w,
-        height: 85.h,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: "#08A44F".toColor(), // Green
-            width: 3,
-          ),
-        ),
-        child: Stack(
-          children: [
-            ClipOval(
-              child: profilePicture != null && profilePicture.isNotEmpty
-                  ? NetworkImageWithLoader(
-                      url: profilePicture,
-                      width: 85.w,
-                      height: 85.h,
-                      isCircular: true,
-                    )
-                  : Image.asset(
-                      'assets/app/astrology.png',
-                      width: 85.w,
-                      height: 85.h,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xFFE0E0E0),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-            // Online indicator
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Container(
-                width: 16.w,
-                height: 16.h,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: "#08A44F".toColor(),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildKundliMatchingCard() {
-    final Color bg = const Color(0xFFF6C55B);
-    final Color primaryText = const Color(0xFF7A1C32);
-    final Color accentText = const Color(0xFFD14F2F);
-    return Container(
-      margin: AppPaddings.symmetric(h: 16),
-      padding: AppPaddings.all(20),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: AppRadius.all(28),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.18),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.favorite_border, color: primaryText, size: 18.w),
-              Spacing.w(8),
-              Expanded(
-                child: AutoTranslateText(
-                  'Marriage Compatibility',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: primaryText,
-                    fontWeight: FontWeight.w200,
-                    fontFamily: 'Poppins',
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Spacing.w(10),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFF7893D), Color(0xFFF2552A)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: AppRadius.all(18),
-                ),
-                child: AutoTranslateText(
-                  'New ✨',
-                  style: MyTextTheme.smallBCN
-                      .copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Poppins',
-                      )
-                      .merge(AppTypography.label),
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(16),
-          AutoTranslateText(
-            'Kundali Matching',
-            style: MyTextTheme.largeBCB
-                .copyWith(
-                  color: primaryText,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Baloo',
-                  height: 1.2,
-                )
-                .merge(AppTypography.h3),
-          ),
-          Spacing.h(7),
-          AutoTranslateText(
-            'Find your perfect match with 36 Gun Milan analysis and AI-powered compatibility insights.',
-            style: MyTextTheme.mediumBCB
-                .copyWith(
-                  color: accentText,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Poppins',
-                  height: 1.35,
-                )
-                .merge(AppTypography.body1),
-          ),
-          Spacing.h(7),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildBulletPoint(
-                      '36 Gun Milan Score',
-                      color: primaryText,
-                      size: 14.sp,
-                    ),
-                    Spacing.h(10),
-                    _buildBulletPoint(
-                      'Manglik Dosha Check',
-                      color: primaryText,
-                      size: 14.sp,
-                    ),
-                    Spacing.h(10),
-                    _buildBulletPoint(
-                      'AI Relationship Insights',
-                      color: primaryText,
-                      size: 14.sp,
-                    ),
-                  ],
-                ),
-              ),
-              Spacing.w(12),
-              AutoTranslateText(
-                '👩‍❤️‍👨',
-                style: AppTypography.h1, // Emoji uses h1 for large size
-              ),
-            ],
-          ),
-          Spacing.h(10),
-          Container(
-            width: double.infinity,
-            height: 46.h,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF6B0F25), Color(0xFF5A0D1F)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(26.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.18),
-                  blurRadius: 16,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: Center(
-              child: AutoTranslateText(
-                'Check Compatibility Now',
-                style: MyTextTheme.mediumBCB
-                    .copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'Poppins',
-                    )
-                    .merge(AppTypography.body1),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -1863,11 +1851,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildRemedyCard(
-                  'Chanting Mala',
-                  AppConstant.chantingMala,
-                  150.w,
-                ),
+                _buildRemedyCard('Chanting Mala', AppConstant.rudraksha, 150.w),
                 Spacing.w(12),
                 _buildRemedyCard(
                   'Astro-Rudraksha',
@@ -1907,7 +1891,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       fontWeight: FontWeight.w400,
                       fontFamily: 'Baloo',
                       letterSpacing: -0.05,
-                      height: 1.5740000406901042,
                     )
                     .merge(AppTypography.h2),
               ),
@@ -1949,7 +1932,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   final blog = entry.value;
                   return Padding(
                     padding: EdgeInsets.only(
-                      right: entry.key < controller.blogs.length - 1 ? 8.w : 0,
+                      right: entry.key < controller.blogs.length - 1 ? 0.w : 0,
                     ),
                     child: _buildBlogCardFromModel(blog, 168.42.w),
                   );
@@ -2063,61 +2046,41 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     final isVideo = _isVideoUrl(blog.featuredImage ?? '');
     return GestureDetector(
       onTap: () => Get.toNamed(AppRoutes.blogDetail, arguments: blog),
-      child: Container(
+      child: SizedBox(
         width: width,
-        decoration: BoxDecoration(
-          color: "#FFFFFF".toColor().withOpacity(0.8),
-          borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: "#E3B341".toColor().withOpacity(0.1),
-            width: 0.53,
+        child: Card(
+          elevation: 4,
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(16.r),
+              bottom: Radius.circular(16.r),
+            ),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 6,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image or Video
-            ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16.r),
-                topRight: Radius.circular(16.r),
-              ),
-              child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image or Video
+              Container(
                 width: width,
                 height: 96.h,
-                color: Colors.black,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16.r),
+                    topRight: Radius.circular(16.r),
+                  ),
+                ),
                 child:
                     isVideo &&
                         blog.featuredImage != null &&
                         blog.featuredImage!.isNotEmpty
                     ? Stack(
                         children: [
-                          ClipRect(
-                            child: OverflowBox(
-                              maxWidth: width,
-                              maxHeight: 96.h,
-                              alignment: Alignment.center,
-                              child: AspectRatio(
-                                aspectRatio: 16 / 9,
-                                child: VideoPlayerWidget(
-                                  videoUrl: blog.featuredImage!,
-                                  autoPlay: false,
-                                  showControls: false,
-                                ),
-                              ),
-                            ),
+                          VideoPlayerWidget(
+                            videoUrl: blog.featuredImage!,
+                            autoPlay: false,
+                            showControls: false,
                           ),
                           Center(
                             child: Container(
@@ -2137,55 +2100,63 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       )
                     : blog.featuredImage != null &&
                           blog.featuredImage!.isNotEmpty
-                    ? NetworkImageWithLoader(
-                        url: blog.featuredImage!,
+                    ? CachedNetworkImage(
+                        imageUrl: blog.featuredImage!,
                         width: width,
                         height: 96.h,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) {
+                          return Icon(
+                            Icons.image,
+                            size: 40.w,
+                            color: Colors.grey,
+                          );
+                        },
                       )
                     : Icon(Icons.image, size: 40.w, color: Colors.grey),
               ),
-            ),
-            // Content
-            Padding(
-              padding: EdgeInsets.all(11.99.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AutoTranslateText(
-                    blog.title ?? 'Untitled',
-                    style: MyTextTheme.smallBCB.copyWith(
-                      color: "#DFB343".toColor(),
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Baloo Bhai 2',
-                      height: 1.25,
+              // Content
+              Padding(
+                padding: EdgeInsets.all(11.99.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AutoTranslateText(
+                      blog.title ?? 'Untitled',
+                      style: MyTextTheme.smallBCB.copyWith(
+                        color: "#DFB343".toColor(),
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Baloo Bhai 2',
+                        height: 1.25,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Spacing.h(3.99),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.access_time,
-                        size: 11.99.w,
-                        color: "#F38B3B".toColor(),
-                      ),
-                      Spacing.w(3.99),
-                      AutoTranslateText(
-                        '${blog.readingTime ?? 0} min',
-                        style: MyTextTheme.smallBCN.copyWith(
+                    Spacing.h(3.99),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.access_time,
+                          size: 11.99.w,
                           color: "#F38B3B".toColor(),
-                          fontWeight: FontWeight.w400,
-                          fontFamily: 'Poppins',
-                          height: 1.33,
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        Spacing.w(3.99),
+                        AutoTranslateText(
+                          '${blog.readingTime ?? 0} min',
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: "#F38B3B".toColor(),
+                            fontWeight: FontWeight.w400,
+                            fontFamily: 'Poppins',
+                            height: 1.33,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -2264,7 +2235,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           // Label at bottom
           Positioned(
             bottom: 4.h,
-            left: 4.w,
+            left: 10.w,
             right: 4.w,
             child: AutoTranslateText(
               label,
@@ -2495,6 +2466,344 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     );
   }
 
+  Widget _buildVedicKundliAstrologersSection() {
+    return Obx(() {
+      if (controller.isLoadingVedicAstrologers.value) {
+        return Padding(
+          padding: AppPaddings.symmetric(h: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AutoTranslateText(
+                    'Vedic Kundli Astrologers',
+                    style: MyTextTheme.largeBCB
+                        .copyWith(
+                          color: "#8B1925".toColor(),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Baloo',
+                          letterSpacing: -0.05,
+                          height: 1.5740000406901042,
+                        )
+                        .merge(AppTypography.h2),
+                  ),
+                  AutoTranslateText(
+                    'View all',
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(
+                          color: "#9D4807".toColor(),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Poppins',
+                          height: 1.5,
+                        )
+                        .merge(AppTypography.body1),
+                  ),
+                ],
+              ),
+              Spacing.h(16),
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20.h),
+                  child: CircularProgressIndicator(color: AppColors.deepOrange),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
+      if (controller.vedicAstrologers.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return Padding(
+        padding: AppPaddings.symmetric(h: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header Section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AutoTranslateText(
+                  'Vedic Kundli Astrologers',
+                  style: MyTextTheme.largeBCB
+                      .copyWith(
+                        color: "#8B1925".toColor(),
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Baloo',
+                        letterSpacing: -0.05,
+                        height: 1.5740000406901042,
+                      )
+                      .merge(AppTypography.h2),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    // Navigate to view all Vedic astrologers
+                    Get.toNamed(
+                      AppRoutes.allAstrologers,
+                      arguments: {'filter': 'VEDIC'},
+                    );
+                  },
+                  child: AutoTranslateText(
+                    'View all',
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(
+                          color: "#9D4807".toColor(),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Poppins',
+                          height: 1.5,
+                        )
+                        .merge(AppTypography.body1),
+                  ),
+                ),
+              ],
+            ),
+            Spacing.h(16),
+            // Horizontal Scrollable List
+            SizedBox(
+              height: 330.h,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: controller.vedicAstrologers.length >= 5
+                    ? 5
+                    : controller.vedicAstrologers.length,
+                separatorBuilder: (context, index) => Spacing.w(12),
+                itemBuilder: (context, index) {
+                  final astrologer = controller.vedicAstrologers[index];
+                  return _buildVedicAstrologerCard(astrologer);
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildVedicAstrologerCard(AstrologerModel astrologer) {
+    // Map astrologer data to display
+    final name = astrologer.displayName;
+    final experience = 'Experience: ${astrologer.experienceYears} years';
+    final languages = astrologer.languages.isNotEmpty
+        ? astrologer.languages.join('/')
+        : 'Hindi/English';
+    final voicePricePerMin = astrologer.services.voice.pricePerMinute ?? 0;
+    final videoPricePerMin = astrologer.services.video.pricePerMinute ?? 0;
+    final chatPrice = astrologer.services.chat.pricePerMinute ?? 0;
+    final voicePrice = voicePricePerMin > 0
+        ? '${voicePricePerMin.toInt()}/Min'
+        : '0';
+    final videoPrice = videoPricePerMin > 0
+        ? '${videoPricePerMin.toInt()}/Min'
+        : '0';
+    final chatPriceText = chatPrice > 0 ? '${chatPrice.toInt()}/Msg' : '0';
+
+    final videoPriceHighlight = videoPrice;
+    final voicePriceHighlight = voicePrice;
+    final chatPriceHighlight = chatPriceText;
+    final imagePath = astrologer.profilePicture ?? '';
+    return GestureDetector(
+      onTap: () {
+        Get.toNamed(
+          AppRoutes.astrologerDetail,
+          arguments: {'astrologer': astrologer},
+        );
+      },
+      child: Container(
+        width: 250.w,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.r),
+          color: Colors.white,
+          border: Border.all(color: "#F38B3B".toColor(), width: 1),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Spacing.h(16),
+            // Profile Image with Decorative Border
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                // Background image
+                Container(
+                  width: 135.w,
+                  height: 135.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: AssetImage(
+                        'assets/app/vedic_astrologer_background.png',
+                      ),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                // Decorative border with Sanskrit text (simulated with circular border)
+
+                // Profile Image
+                Container(
+                  width: 90.w,
+                  height: 90.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.deepOrange, width: 1),
+                  ),
+                  child: ClipOval(
+                    child: imagePath.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: imagePath,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: Colors.grey.withOpacity(0.3),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.deepOrange,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              color: Colors.grey.withOpacity(0.3),
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.white.withOpacity(0.5),
+                                size: 40.w,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            color: Colors.grey.withOpacity(0.3),
+                            child: Icon(
+                              Icons.person,
+                              color: Colors.white.withOpacity(0.5),
+                              size: 40.w,
+                            ),
+                          ),
+                  ),
+                ),
+              ],
+            ),
+            Spacing.h(12),
+            // Name
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: AutoTranslateText(
+                name,
+                style: MyTextTheme.mediumBCB
+                    .copyWith(
+                      color: "#361515".toColor(),
+                      fontWeight: FontWeight.bold,
+                    )
+                    .merge(AppTypography.body1),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Spacing.h(4),
+            // Experience
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: AutoTranslateText(
+                experience,
+                style: MyTextTheme.smallBCN
+                    .copyWith(color: "#909090".toColor(), fontSize: 11.sp)
+                    .merge(AppTypography.body2),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Spacing.h(8),
+            // Price
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: Wrap(
+                spacing: 8.w,
+                runSpacing: 8.h,
+                children: [
+                  Container(
+                    padding: AppPaddings.all(4),
+                    decoration: BoxDecoration(
+                      color: AppColors.deepOrange,
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: AutoTranslateText(
+                      '₹  Video: $videoPriceHighlight ',
+                      style: MyTextTheme.smallBCB
+                          .copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.body2),
+                    ),
+                  ),
+                  Container(
+                    padding: AppPaddings.all(4),
+                    decoration: BoxDecoration(
+                      color: AppColors.deepOrange,
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: AutoTranslateText(
+                      '₹  Voice: $voicePriceHighlight ',
+                      style: MyTextTheme.smallBCB
+                          .copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.body2),
+                    ),
+                  ),
+                  Container(
+                    padding: AppPaddings.all(4),
+                    decoration: BoxDecoration(
+                      color: AppColors.deepOrange,
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: AutoTranslateText(
+                      '₹  Chat: $chatPriceHighlight ',
+                      style: MyTextTheme.smallBCB
+                          .copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.body2),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Spacing.h(8),
+            // Languages with icon
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.language, size: 14.w, color: "#909090".toColor()),
+                  Spacing.w(4),
+                  Expanded(
+                    child: AutoTranslateText(
+                      ': $languages',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: MyTextTheme.smallBCN
+                          .copyWith(color: "#909090".toColor(), fontSize: 11.sp)
+                          .merge(AppTypography.body2),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Spacing.h(16),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildFeaturesSection() {
     return Obx(() {
       final showBanner = controller.showConsultationBanner.value;
@@ -2610,7 +2919,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       children: [
         Expanded(
           child: _goldPillButton(
-            icon: Icons.chat,
+            icon: 'assets/icons/chat_with_astro.png',
             label: 'Chat with Astrologer',
             onTap: () => Get.to(() => const AstrologyServicesView()),
           ),
@@ -2618,7 +2927,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         Spacing.w(12),
         Expanded(
           child: _goldPillButton(
-            icon: Icons.call,
+            icon: 'assets/icons/call_with_astro.png',
             label: 'Call with Astrologer',
             onTap: () => Get.to(() => const AstrologyServicesView()),
           ),
@@ -2628,7 +2937,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   }
 
   Widget _goldPillButton({
-    required IconData icon,
+    required String icon,
     required String label,
     required VoidCallback onTap,
   }) {
@@ -2637,25 +2946,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       child: Container(
         height: 52.h,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFF6C55B), Color(0xFFDFA532)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: "#F7C443".toColor().withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(32.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.18),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
         ),
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: "#6F221E".toColor(), size: 20.w),
+            Image.asset(icon, width: 20.w, height: 20.h),
             Spacing.w(10),
             Flexible(
               child: AutoTranslateText(
@@ -2663,11 +2961,13 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 overflow: TextOverflow.ellipsis,
                 style: MyTextTheme.mediumBCB
                     .copyWith(
-                      color: "#6F221E".toColor(),
-                      fontWeight: FontWeight.w900,
+                      color: "#820B17".toColor(),
+                      fontWeight: FontWeight.w500,
                       fontFamily: 'Poppins',
                     )
-                    .merge(AppTypography.label),
+                    .merge(
+                      AppTypography.body2.copyWith(fontWeight: FontWeight.w900),
+                    ),
               ),
             ),
           ],
@@ -2685,52 +2985,51 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         padding: AppPaddings.symmetric(h: 16),
         child: AspectRatio(
           aspectRatio: 990 / 768, // keep full parchment visible
-          child: Container(
-            padding: AppPaddings.symmetric(h: 20, v: 24),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(AppConstant.quoteBackground),
-                fit: BoxFit.contain, // show entire image without cropping
-                alignment: Alignment.center,
-              ),
-              borderRadius: AppRadius.all(0), // avoid clipping edges of artwork
-            ),
-            child: isLoading || quote == null || quote.sanskrit.text.isEmpty
-                ? Center(
-                    child: CircularProgressIndicator(
-                      color: "#6F221E".toColor(),
+          child: Stack(
+            children: [
+              Container(
+                padding: AppPaddings.symmetric(h: 20, v: 24),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(AppConstant.quoteBackground),
+                    fit: BoxFit.contain, // show entire image without cropping
+                    alignment: Alignment.center,
+                  ),
+                  borderRadius: AppRadius.all(
+                    0,
+                  ), // avoid clipping edges of artwork
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    AutoTranslateText(
+                      'Quote of the Day',
+                      style: MyTextTheme.mediumBCB
+                          .copyWith(
+                            color: "#6F221E".toColor(),
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Baloo Bhai 2',
+                          )
+                          .merge(AppTypography.h3),
+                      textAlign: TextAlign.center,
                     ),
-                  )
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      AutoTranslateText(
-                        'Quote of the Day',
-                        style: MyTextTheme.mediumBCB
-                            .copyWith(
-                              color: "#6F221E".toColor(),
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Baloo Bhai 2',
-                              height: 1.5,
-                            )
-                            .merge(AppTypography.h3),
-                        textAlign: TextAlign.center,
+
+                    AutoTranslateText(
+                      quote?.sanskrit.text ?? '',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: "#F38B3B".toColor(),
+                        fontWeight: FontWeight.w900,
+                        fontFamily: 'Poppins',
+                        height: 1.5,
                       ),
-                      Spacing.h(15),
-                      AutoTranslateText(
-                        quote.sanskrit.text,
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: "#F38B3B".toColor(),
-                          fontWeight: FontWeight.w900,
-                          fontFamily: 'Poppins',
-                          height: 1.5,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      Spacing.h(10),
-                      AutoTranslateText(
-                        quote.sanskrit.meaning,
+                      textAlign: TextAlign.center,
+                    ),
+
+                    Padding(
+                      padding: AppPaddings.symmetric(h: 30),
+                      child: AutoTranslateText(
+                        quote?.sanskrit.meaning ?? '',
                         style: MyTextTheme.mediumBCN.copyWith(
                           color: "#551F23".toColor(),
                           fontWeight: FontWeight.w500,
@@ -2738,9 +3037,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           height: 1.6,
                         ),
                         textAlign: TextAlign.center,
+
+                        maxLines: 5,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       );
@@ -2844,8 +3149,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       key: key,
       margin: EdgeInsets.only(bottom: 18.h),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFF7C443), Color(0xFFFFFCF3), Color(0xFFFFFFFF)],
+        gradient: LinearGradient(
+          colors: [
+            '#F7C443'.toColor().withOpacity(0.2),
+            "#FFFCF3".toColor(),
+            Color(0xFFFFFFFF),
+          ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -2935,506 +3244,673 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     );
   }
 
-  Widget _buildAIAstrologersSection() {
-    return Padding(
-      padding: AppPaddings.symmetric(h: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildAIAstrologersSection(context) {
+    return Obx(() {
+      if (controller.isLoadingAiAstrologers.value) {
+        return Padding(
+          padding: AppPaddings.symmetric(h: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AutoTranslateText(
-                'AI ASTROLOGERS',
-                style: MyTextTheme.largeBCB
-                    .copyWith(
-                      color: "#6F221E".toColor(),
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Baloo',
-                      letterSpacing: -0.05,
-                    )
-                    .merge(AppTypography.h2),
-              ),
-              AutoTranslateText(
-                'View All',
-                style: MyTextTheme.mediumBCN
-                    .copyWith(
-                      color: "#6F221E".toColor(),
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Poppins',
-                    )
-                    .merge(AppTypography.body1),
-              ),
-            ],
-          ),
-          Spacing.h(16),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _buildAIAstrologerCard(
-                  'Vedic AI Guru',
-                  'Vedic Astrology',
-                  ['Birth Chart', 'Dasha', 'Remedies'],
-                  AppConstant.aiGuruVedic,
-                  '♈',
-                ),
-                Spacing.w(15.99),
-                _buildAIAstrologerCard(
-                  'Tarot AI Master',
-                  'Tarot Reading',
-                  ['Card Reading', 'Future', 'Love Tarot'],
-                  AppConstant.aiTarot,
-                  '🔮',
-                ),
-                Spacing.w(15.99),
-                _buildAIAstrologerCard(
-                  'Numero AI Expert',
-                  'Numerology',
-                  ['Lucky Numbers', 'Name', 'Life Path'],
-                  AppConstant.aiNumerology,
-                  '🔢',
-                ),
-                Spacing.w(15.99),
-                _buildAIAstrologerCard(
-                  'Palm AI Reader',
-                  'Palmistry',
-                  ['Palm Reading', 'Lines', 'Future'],
-                  AppConstant.aiPalm,
-                  '🤚',
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAIAstrologerCard(
-    String title,
-    String subtitle,
-    List<String> tags,
-    String imagePath,
-    String emoji,
-  ) {
-    return Container(
-      width: 255.99.w,
-      height: 350.04.h,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            "#3D0C11".toColor(),
-            "#5D1C21".toColor(),
-            "#3D0C11".toColor(),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          stops: const [0.0, 0.5, 1.0],
-        ),
-        borderRadius: BorderRadius.circular(24.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          // Background decorative circles
-          Positioned(
-            top: 92.63.h,
-            left: 51.19.w,
-            child: Container(
-              width: 3.99.w,
-              height: 3.99.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: "#E3B341".toColor().withOpacity(0.22),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 208.57.h,
-            left: 89.59.w,
-            child: Container(
-              width: 3.99.w,
-              height: 3.99.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: "#E3B341".toColor().withOpacity(0.42),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 86.51.h,
-            left: 127.99.w,
-            child: Container(
-              width: 3.99.w,
-              height: 3.99.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: "#E3B341".toColor().withOpacity(0.33),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 214.83.h,
-            left: 166.39.w,
-            child: Container(
-              width: 3.99.w,
-              height: 3.99.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: "#E3B341".toColor().withOpacity(0.31),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 93.2.h,
-            left: 204.79.w,
-            child: Container(
-              width: 3.99.w,
-              height: 3.99.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: "#E3B341".toColor().withOpacity(0.21),
-              ),
-            ),
-          ),
-          // Content
-          Padding(
-            padding: EdgeInsets.all(15.99.w),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Image with emoji overlay - moved to top
-                  SizedBox(
-                    width: 224.w,
-                    height: 127.99.h,
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(16.r),
-                          child: Image.asset(
-                            imagePath,
-                            width: 224.w,
-                            height: 127.99.h,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: 224.w,
-                                height: 127.99.h,
-                                color: Colors.grey.withOpacity(0.3),
-                              );
-                            },
-                          ),
-                        ),
-                        // Gradient overlay
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            height: 50.h,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.black.withOpacity(0.8),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        // Emoji badge
-                        Positioned(
-                          top: 72.h,
-                          right: 72.w,
-                          child: Container(
-                            width: 48.w,
-                            height: 48.h,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  "#E3B341".toColor(),
-                                  "#C9A033".toColor(),
-                                ],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.2),
-                                width: 1.58,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Center(
-                              child: AutoTranslateText(
-                                emoji,
-                                style: TextStyle().merge(AppTypography.h1),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Spacing.h(12),
-                  // Title and subtitle
                   AutoTranslateText(
-                    title,
-                    style: MyTextTheme.mediumBCB
+                    'AI ASTROLOGERS',
+                    style: MyTextTheme.largeBCB
                         .copyWith(
-                          color: "#DFB343".toColor(),
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Baloo Bhai 2',
-                          height: 1.33,
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Baloo',
+                          letterSpacing: -0.05,
                         )
                         .merge(AppTypography.h2),
                   ),
-                  Spacing.h(4),
                   AutoTranslateText(
-                    subtitle,
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: "#FFF6C2".toColor().withOpacity(0.7),
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Poppins',
-                      height: 1.33,
-                    ),
-                  ),
-                  Spacing.h(12),
-                  // Tags
-                  Wrap(
-                    spacing: 8.w,
-                    runSpacing: 8.h,
-                    children: tags
-                        .map(
-                          (tag) => Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 8.53.w,
-                              vertical: 4.99.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: "#E3B341".toColor().withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(17722700.r),
-                              border: Border.all(
-                                color: "#E3B341".toColor().withOpacity(0.3),
-                                width: 0.53,
-                              ),
-                            ),
-                            child: AutoTranslateText(
-                              tag,
-                              style: MyTextTheme.smallBCN.copyWith(
-                                color: "#FFF6C2".toColor(),
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'Poppins',
-                                height: 1.33,
-                              ),
-                            ),
-                          ),
+                    'View All',
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Poppins',
                         )
-                        .toList(),
+                        .merge(AppTypography.body1),
                   ),
-                  Spacing.h(12),
-                  // Online status and Chat Now button
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ],
+              ),
+              Spacing.h(16),
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20.h),
+                  child: CircularProgressIndicator(color: AppColors.deepOrange),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
+      if (controller.aiAstrologersPersonas.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return Padding(
+        padding: AppPaddings.symmetric(h: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AutoTranslateText(
+                  'AI ASTROLOGERS',
+                  style: MyTextTheme.largeBCB
+                      .copyWith(
+                        color: "#6F221E".toColor(),
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Baloo',
+                        letterSpacing: -0.05,
+                      )
+                      .merge(AppTypography.h2),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Get.toNamed(AppRoutes.aichat);
+                  },
+                  child: AutoTranslateText(
+                    'View All',
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Poppins',
+                        )
+                        .merge(AppTypography.body1),
+                  ),
+                ),
+              ],
+            ),
+            Spacing.h(16),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: controller.aiAstrologersPersonas.asMap().entries.map((
+                  entry,
+                ) {
+                  final index = entry.key;
+                  final persona = entry.value;
+                  return Row(
                     children: [
-                      Row(
+                      _buildAIAstrologerCard(persona, index, context),
+                      if (index < controller.aiAstrologersPersonas.length - 1)
+                        Spacing.w(15.99),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildAIAstrologerCard(PersonaModel persona, index, context) {
+    // Map persona data to card display
+    final title = persona.displayName;
+    final subtitle = persona.category.isNotEmpty
+        ? persona.category
+        : (persona.specializations.isNotEmpty
+              ? persona.specializations.first
+              : 'AI Astrologer');
+    final tags = persona.tags.isNotEmpty
+        ? persona.tags.take(3).toList()
+        : (persona.specializations.isNotEmpty
+              ? persona.specializations.take(3).toList()
+              : ['Astrology', 'Consultation', 'Guidance']);
+    final imagePath = persona.image ?? '';
+    // Use first character of display name or category as emoji fallback
+    final emoji = _getEmojiForPersona(persona);
+    return GestureDetector(
+      onTap: () {
+        Get.toNamed(
+          AppRoutes.personaDetail,
+          arguments: {'personaId': persona.id, 'persona': persona},
+        );
+      },
+      child: Container(
+        width: 255.99.w,
+        height: 350.04.h,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              "#3D0C11".toColor(),
+              "#5D1C21".toColor(),
+              "#3D0C11".toColor(),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: const [0.0, 0.5, 1.0],
+          ),
+          borderRadius: BorderRadius.circular(24.r),
+        ),
+        child: Stack(
+          children: [
+            SvgAssets(
+              path: 'assets/icons/ai_astrologer_circle.svg',
+              width: 255.99.w,
+              height: 350.04.h,
+              colorFilter: ColorFilter.mode(
+                "#FFF6C2".toColor().withOpacity(0.1),
+                BlendMode.srcIn,
+              ),
+            ),
+            SingleChildScrollView(
+              child: SizedBox(
+                height: 350.04.h,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    // Image with emoji overlay - moved to top
+                    SizedBox(
+                      // width: 224.w,
+                      height: 150.h,
+                      child: Stack(
                         children: [
-                          Container(
-                            width: 6.w,
-                            height: 6.h,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: "#05DF72".toColor().withOpacity(0.91),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(16.r),
+                            child: imagePath.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: imagePath,
+                                    width: double.infinity,
+                                    // height: 127.99.h,
+                                    fit: BoxFit.cover,
+
+                                    errorWidget: (context, url, error) {
+                                      return Container(
+                                        width: 224.w,
+                                        height: 127.99.h,
+                                        color: Colors.grey.withOpacity(0.3),
+                                        child: Icon(
+                                          Icons.person,
+                                          color: Colors.white.withOpacity(0.5),
+                                          size: 40.w,
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Container(
+                                    width: 224.w,
+                                    height: 127.99.h,
+                                    color: Colors.grey.withOpacity(0.3),
+                                    child: Icon(
+                                      Icons.person,
+                                      color: Colors.white.withOpacity(0.5),
+                                      size: 40.w,
+                                    ),
+                                  ),
+                          ),
+                          // Gradient overlay
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              height: 50.h,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.8),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                          Spacing.w(6),
+
+                          // Emoji badge
+                          // Positioned(
+                          //   top: 72.h,
+                          //   right: 50.w,
+                          //   left: 50.w,
+                          //   child: Container(
+                          //     width: 48.w,
+                          //     height: 48.h,
+                          //     decoration: BoxDecoration(
+                          //       gradient: LinearGradient(
+                          //         colors: [
+                          //           "#E3B341".toColor(),
+                          //           "#C9A033".toColor(),
+                          //         ],
+                          //         begin: Alignment.topCenter,
+                          //         end: Alignment.bottomCenter,
+                          //       ),
+                          //       shape: BoxShape.circle,
+                          //       border: Border.all(
+                          //         color: Colors.white.withOpacity(0.2),
+                          //         width: 1.58,
+                          //       ),
+                          //       boxShadow: [
+                          //         BoxShadow(
+                          //           color: Colors.black.withOpacity(0.1),
+                          //           blurRadius: 4,
+                          //           offset: const Offset(0, 2),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //     child: Center(
+                          //       child: AutoTranslateText(
+                          //         emoji,
+                          //         style: TextStyle().merge(AppTypography.h1),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
+                    Spacing.h(12),
+                    // Title and subtitle
+                    Padding(
+                      padding: AppPaddings.symmetric(h: 10),
+                      child: AutoTranslateText(
+                        title,
+                        style: MyTextTheme.mediumBCB
+                            .copyWith(
+                              color: "#DFB343".toColor(),
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Baloo Bhai 2',
+                              height: 1.33,
+                            )
+                            .merge(AppTypography.h2),
+                      ),
+                    ),
+                    Spacing.h(4),
+                    Padding(
+                      padding: AppPaddings.symmetric(h: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
                           AutoTranslateText(
-                            'Online',
+                            subtitle,
                             style: MyTextTheme.smallBCN.copyWith(
-                              color: "#E3B341".toColor(),
+                              color: "#FFF6C2".toColor().withOpacity(0.7),
                               fontWeight: FontWeight.w400,
                               fontFamily: 'Poppins',
                               height: 1.33,
                             ),
                           ),
+
+                          Row(
+                            children: [
+                              Container(
+                                width: 6.w,
+                                height: 6.h,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: "#05DF72".toColor().withOpacity(0.91),
+                                ),
+                              ),
+                              Spacing.w(6),
+                              AutoTranslateText(
+                                'Online',
+                                style: MyTextTheme.smallBCN.copyWith(
+                                  color: "#E3B341".toColor(),
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'Poppins',
+                                  height: 1.33,
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: 6.h,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+                    ),
+                    Spacing.h(12),
+                    // Tags
+                    Padding(
+                      padding: AppPaddings.symmetric(h: 10),
+                      child: Wrap(
+                        spacing: 8.w,
+                        runSpacing: 8.h,
+                        children: tags
+                            .map(
+                              (tag) => Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8.53.w,
+                                  vertical: 4.99.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: "#E3B341".toColor().withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(
+                                    17722700.r,
+                                  ),
+                                  border: Border.all(
+                                    color: "#E3B341".toColor().withOpacity(0.3),
+                                    width: 0.53,
+                                  ),
+                                ),
+                                child: AutoTranslateText(
+                                  tag,
+                                  style: MyTextTheme.smallBCN.copyWith(
+                                    color: "#FFF6C2".toColor(),
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Poppins',
+                                    height: 1.33,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                    Spacer(),
+                    // Chat Now button
+                    Padding(
+                      padding: AppPaddings.symmetric(h: 10),
+                      child: Row(
+                        spacing: 10.w,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () async {},
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10.w,
+                                  vertical: 6.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: AppColors.orangeGradient,
+                                  borderRadius: BorderRadius.circular(20.r),
+                                ),
+                                child: Row(
+                                  children: [
+                                    SvgAssets(
+                                      path: AppConstant.chatIcon,
+                                      width: 16.w,
+                                      height: 16.h,
+                                    ),
+                                    Spacing.w(3),
+                                    AutoTranslateText(
+                                      'Chat Now',
+                                      style: MyTextTheme.smallBCN.copyWith(
+                                        color: "#FFFFFF".toColor(),
+                                        fontWeight: FontWeight.w400,
+                                        fontFamily: 'Poppins',
+                                        height: 1.67,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(10.r),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () async {},
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10.w,
+                                  vertical: 6.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: AppColors.orangeGradient,
+                                  borderRadius: BorderRadius.circular(20.r),
+                                ),
+                                child: Row(
+                                  children: [
+                                    SvgAssets(
+                                      path: AppConstant.callIcon,
+                                      width: 16.w,
+                                      height: 16.h,
+                                      colorFilter: ColorFilter.mode(
+                                        "#FFFFFF".toColor(),
+                                        BlendMode.srcIn,
+                                      ),
+                                    ),
+                                    Spacing.w(3),
+                                    AutoTranslateText(
+                                      'Call Now',
+                                      style: MyTextTheme.smallBCN.copyWith(
+                                        color: "#FFFFFF".toColor(),
+                                        fontWeight: FontWeight.w400,
+                                        fontFamily: 'Poppins',
+                                        height: 1.67,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Spacing.h(12),
+                  ],
+                ),
+              ),
+            ),
+            // FREE badge - positioned in top right of card
+            Positioned(
+              right: 12.w,
+              top: 12.h,
+              child: Container(
+                padding: EdgeInsets.only(
+                  left: 7.99.w,
+                  right: 7.99.w,
+                  top: 5.h,
+                  bottom: 5.h,
+                ),
+                decoration: BoxDecoration(
+                  color: "#05DF72".toColor(),
+                  borderRadius: BorderRadius.circular(17722700.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.auto_awesome_outlined,
+                      size: 12.w,
+                      color: "#3D0C11".toColor(),
+                    ),
+                    Spacing.w(3.99),
+                    AutoTranslateText(
+                      'FREE',
+                      style: MyTextTheme.smallBCB.copyWith(
+                        color: "#3D0C11".toColor(),
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Poppins',
+                        height: 1.33,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getEmojiForPersona(PersonaModel persona) {
+    // Map category or name to emoji
+    final category = persona.category.toLowerCase();
+    final name = persona.displayName.toLowerCase();
+
+    if (category.contains('vedic') || name.contains('vedic')) {
+      return '♈';
+    } else if (category.contains('tarot') || name.contains('tarot')) {
+      return '🔮';
+    } else if (category.contains('numerology') || name.contains('numero')) {
+      return '🔢';
+    } else if (category.contains('palm') || name.contains('palm')) {
+      return '🤚';
+    } else if (category.contains('astrology') || name.contains('astrolog')) {
+      return '⭐';
+    } else {
+      return '✨';
+    }
+  }
+
+  Widget _buildJoinLiveWebinarSection() {
+    return Stack(
+      children: [
+        Container(
+          margin: AppPaddings.symmetric(h: 16),
+          padding: AppPaddings.all(20),
+          decoration: BoxDecoration(
+            color: "#BD5E14".toColor(),
+            borderRadius: AppRadius.all(22.56),
+          ),
+          child: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 10.w,
+                            height: 10.h,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: "#FFFFFF".toColor(),
+                                width: 2,
+                              ),
+                              color: "#05DF72".toColor().withOpacity(0.91),
+                            ),
+                          ),
+                          Spacing.w(6),
+                          AutoTranslateText(
+                            'LIVE NOW',
+                            style: MyTextTheme.smallBCN
+                                .copyWith(
+                                  color: "#05DF72".toColor(),
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'Poppins',
+                                )
+                                .merge(AppTypography.body2),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AutoTranslateText(
+                        'Join Live Webinar',
+                        style: MyTextTheme.largeBCB
+                            .copyWith(
+                              color: "#FFFFFF".toColor(),
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins',
+                              height: 1.56,
+                            )
+                            .merge(AppTypography.h3),
+                      ),
+                      AutoTranslateText(
+                        '1,247 watching',
+                        style: MyTextTheme.mediumBCN
+                            .copyWith(
+                              color: "#FFFFFF".toColor(),
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Poppins',
+                            )
+                            .merge(AppTypography.body1),
+                      ),
+                    ],
+                  ),
+                  Spacing.h(8),
+                  AutoTranslateText(
+                    '"Career Guidance Using Vedic Astrology" - Starting in 30 min',
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(
+                          color: Colors.white.withOpacity(0.75),
+                          fontWeight: FontWeight.w400,
+                        )
+                        .merge(AppTypography.body2),
+                  ),
+                  Spacing.h(22.56),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: AppPaddings.symmetric(h: 11.28, v: 4.23),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: AppRadius.all(22.56),
                         ),
                         child: AutoTranslateText(
-                          'Chat Now',
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: "#FFFFFF".toColor(),
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'Poppins',
-                            height: 1.67,
-                          ),
+                          'FREE',
+                          style: MyTextTheme.smallBCN
+                              .copyWith(
+                                color: "#F38B3B".toColor(),
+                                fontWeight: FontWeight.w400,
+                              )
+                              .merge(AppTypography.body2),
+                        ),
+                      ),
+                      Container(
+                        padding: AppPaddings.symmetric(h: 11.28, v: 4.23),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: AppRadius.all(22.56),
+                        ),
+                        child: AutoTranslateText(
+                          'Join Now',
+                          style: MyTextTheme.smallBCN
+                              .copyWith(
+                                color: "#F38B3B".toColor(),
+                                fontWeight: FontWeight.w400,
+                              )
+                              .merge(AppTypography.body2),
                         ),
                       ),
                     ],
                   ),
                 ],
               ),
-            ),
-          ),
-          // FREE badge - positioned in top right of card
-          Positioned(
-            right: 12.w,
-            top: 12.h,
-            child: Container(
-              padding: EdgeInsets.only(
-                left: 7.99.w,
-                right: 7.99.w,
-                top: 0,
-                bottom: 0,
-              ),
-              decoration: BoxDecoration(
-                color: "#05DF72".toColor(),
-                borderRadius: BorderRadius.circular(17722700.r),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.star, size: 12.w, color: "#3D0C11".toColor()),
-                  Spacing.w(3.99),
-                  AutoTranslateText(
-                    'FREE',
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: "#3D0C11".toColor(),
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Poppins',
-                      height: 1.33,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildJoinLiveWebinarSection() {
-    return Container(
-      margin: AppPaddings.symmetric(h: 16),
-      padding: AppPaddings.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ["#FF6B35".toColor(), "#DD2914".toColor()],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+              // Circle badge in top right corner
+            ],
+          ),
         ),
-        borderRadius: AppRadius.all(22.56),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.25),
-            blurRadius: 23.5,
-            offset: const Offset(0, 11.28),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: AppPaddings.symmetric(h: 8, v: 4),
 
-                child: AutoTranslateText(
-                  'LIVE NOW',
-                  style: MyTextTheme.smallBCN
-                      .copyWith(
-                        color: "#05DF72".toColor(),
-                        fontWeight: FontWeight.w400,
-                        fontFamily: 'Poppins',
-                      )
-                      .merge(AppTypography.body2),
-                ),
-              ),
-            ],
+        Positioned(
+          top: -40,
+          right: -25,
+          child: Container(
+            width: 100.w,
+            height: 100.h,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: "#FFFFFF".toColor().withValues(alpha: 0.15),
+            ),
           ),
-          Spacing.h(26.32),
-          AutoTranslateText(
-            'Join Live Webinar',
-            style: MyTextTheme.largeBCB
-                .copyWith(
-                  color: "#FFFFFF".toColor(),
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Poppins',
-                  height: 1.56,
-                )
-                .merge(AppTypography.h3),
+        ),
+        Positioned(
+          bottom: -40,
+          left: -25,
+          child: Container(
+            width: 100.w,
+            height: 100.h,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: "#FFFFFF".toColor().withValues(alpha: 0.15),
+            ),
           ),
-          Spacing.h(8),
-          AutoTranslateText(
-            '"Career Guidance Using Vedic Astrology" - Starting in 30 min',
-            style: MyTextTheme.mediumBCN
-                .copyWith(
-                  color: Colors.white.withOpacity(0.75),
-                  fontWeight: FontWeight.w400,
-                )
-                .merge(AppTypography.body2),
-          ),
-          Spacing.h(22.56),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: AppPaddings.symmetric(h: 11.28, v: 4.23),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: AppRadius.all(22.56),
-                ),
-                child: AutoTranslateText(
-                  'FREE',
-                  style: MyTextTheme.smallBCN
-                      .copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w400,
-                      )
-                      .merge(AppTypography.body2),
-                ),
-              ),
-              AutoTranslateText(
-                '1,247 watching →',
-                style: MyTextTheme.mediumBCN
-                    .copyWith(color: Colors.white, fontWeight: FontWeight.w400)
-                    .merge(AppTypography.body2),
-              ),
-            ],
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -4351,6 +4827,106 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             if (trailing != null) ...[SizedBox(width: 8.w), trailing],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLiveAstrologerProfile(int index) {
+    final profilePicture = controller.getProfilePictureForAstrologer(
+      controller.liveStreams[index].astrologerId,
+    );
+    return GestureDetector(
+      onTap: () {
+        Get.to(
+          () => LiveStreamView(
+            stream: controller.liveStreams[index],
+            astrologerName: controller.liveStreams[index].astrologerName,
+            astrologerProfilePicture: profilePicture,
+          ),
+        );
+      },
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              Container(
+                width: 70.w,
+                height: 70.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: "#00C853".toColor(), width: 2.w),
+                ),
+                child: ClipOval(
+                  child: Image.network(
+                    profilePicture ?? '',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[300],
+                        child: Icon(
+                          Icons.person,
+                          size: 35.w,
+                          color: Colors.grey[600],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              Spacing.h(6),
+              SizedBox(
+                width: 70.w,
+                child: AutoTranslateText(
+                  controller.liveStreams[index].astrologerName,
+                  style: AppTypography.body2.copyWith(
+                    color: "#3D0C11".toColor(),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            bottom: 37,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                decoration: BoxDecoration(
+                  color: "#00C853".toColor(),
+                  border: Border.all(color: Colors.white, width: 2),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 4.w,
+                      height: 4.w,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    SizedBox(width: 3.w),
+                    Text(
+                      'Live',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 8.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

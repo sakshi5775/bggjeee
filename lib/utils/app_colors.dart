@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:flutter/material.dart';
 
 class AppColors {
@@ -44,6 +45,12 @@ static const Color cream = Color(0xFFFAEAAF); // Turmeric
   static const Color warning = Color(0xFFFF9800); // Orange
   static const Color error = Color(0xFFF44336); // Red
   static const Color info = Color(0xFF2196F3); // Blue
+
+  static final LinearGradient gradientBackground = LinearGradient(
+    colors: ["#FCE5AA".toColor(), "#FFFCF3".toColor(), "#FFFFFF".toColor()],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
 
   // Gradient Colors
   static const LinearGradient primaryGradient = LinearGradient(

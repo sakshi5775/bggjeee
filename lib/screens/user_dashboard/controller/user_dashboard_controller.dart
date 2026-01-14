@@ -10,17 +10,24 @@ import 'package:astrobharataiuser/data_model/daily_quote_model.dart';
 import 'package:astrobharataiuser/data_model/blog_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/live_stream_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
-import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_chat_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/daily_quote_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/dashboard_search_service.dart';
 import 'package:astrobharataiuser/services/global_free_service_manager.dart';
 import 'package:astrobharataiuser/screens/blogs/service/blog_service.dart';
+import 'package:astrobharataiuser/screens/ai_chat/services/ai_chat_service.dart';
+import 'package:astrobharataiuser/data_model/persona_model.dart';
+import 'package:astrobharataiuser/screens/courses/services/courses_service.dart';
+import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:video_player/video_player.dart';
 
-class UserDashboardController extends BaseController {
+import '../../../data_model/astrologer_model.dart';
+
+class UserDashboardController extends BaseController
+    with GetTickerProviderStateMixin {
   final RxString userName = ''.obs;
   final RxString userEmail = ''.obs;
   final RxString userPhone = ''.obs;
@@ -30,7 +37,7 @@ class UserDashboardController extends BaseController {
   // Live streams
   final LiveStreamService _liveStreamService = LiveStreamService();
   final AstrologerService _astrologerService = AstrologerService();
-  final AstrologerChatService _chatService = AstrologerChatService();
+
   final RxList<LiveStreamModel> liveStreams = <LiveStreamModel>[].obs;
   final RxBool isLoadingLiveStreams = false.obs;
 
@@ -44,6 +51,29 @@ class UserDashboardController extends BaseController {
   final Rx<DailyQuoteData?> dailyQuote = Rx<DailyQuoteData?>(null);
   final RxBool isLoadingDailyQuote = false.obs;
   String? _lastQuoteDate; // Store the date of the last fetched quote
+
+  // AI Astrologers Personas
+  final AiChatService _aiChatService = AiChatService();
+  final RxList<PersonaModel> aiAstrologersPersonas = <PersonaModel>[].obs;
+  final RxBool isLoadingAiAstrologers = false.obs;
+
+  // Vedic Kundli Astrologers
+  final RxList<AstrologerModel> vedicAstrologers = <AstrologerModel>[].obs;
+  final RxBool isLoadingVedicAstrologers = false.obs;
+
+  // Kids Specialist Astrologers
+  final RxList<AstrologerModel> kidsSpecialistAstrologers =
+      <AstrologerModel>[].obs;
+  final RxBool isLoadingKidsSpecialistAstrologers = false.obs;
+
+  // Celebrity Astrologers
+  final RxList<AstrologerModel> celebrityAstrologers = <AstrologerModel>[].obs;
+  final RxBool isLoadingCelebrityAstrologers = false.obs;
+
+  // Courses
+  final CoursesService _coursesService = CoursesService();
+  final RxList<CourseModel> courses = <CourseModel>[].obs;
+  final RxBool isLoadingCourses = false.obs;
 
   // Blogs
   final BlogService _blogService = BlogService();
@@ -73,18 +103,97 @@ class UserDashboardController extends BaseController {
   int _currentPromptIndex = 0;
   bool _isAnimating = false;
   bool _shouldAnimate = true;
+  final ScrollController scrollController = ScrollController();
+
+  final RxBool isExpanded = false.obs;
+
+  // Book Pooja Carousel
+  final Rx<PageController> bookPoojaPageController = PageController().obs;
+  final RxInt bookPoojaCurrentPage = 0.obs;
+  Timer? _bookPoojaTimer;
+
+  // Static data for pooja cards
+  final RxList<Map<String, dynamic>> poojaCards = <Map<String, dynamic>>[
+    {
+      'title': 'Namkaran Pooja',
+      'description': 'Divine blessings of Lord Shiva',
+      'price': '₹610',
+      'duration': '45 mins',
+      'icon': Icons.auto_awesome,
+    },
+    {
+      'title': 'Griha Pravesh Pooja',
+      'description': 'Sacred house warming ceremony',
+      'price': '₹850',
+      'duration': '60 mins',
+      'icon': Icons.home,
+    },
+    {
+      'title': 'Satyanarayan Pooja',
+      'description': 'Blessings for prosperity and peace',
+      'price': '₹750',
+      'duration': '90 mins',
+      'icon': Icons.stars,
+    },
+    {
+      'title': 'Lakshmi Pooja',
+      'description': 'Invoke Goddess Lakshmi\'s blessings',
+      'price': '₹900',
+      'duration': '60 mins',
+      'icon': Icons.celebration,
+    },
+  ].obs;
+
+  void toggleView() {
+    final offset = scrollController.offset;
+
+    isExpanded.toggle();
+
+    // Restore scroll position AFTER layout rebuild
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      scrollController.jumpTo(offset);
+    });
+  }
+
+  int visibleItemCount(int total) {
+    if (isExpanded.value) return total;
+    return total >= 4 ? 4 : total;
+  }
+
+  String get viewText => isExpanded.value ? 'View Less' : 'View All';
 
   AuthService get _authService => Get.find<AuthService>();
   bool get _isGuest => LoginGuard.isGuest;
 
+  late AnimationController liveVideoIconController;
+  late Animation<double> liveVideoIconOpacity;
+  late Animation<double> liveVideoIconScale;
+
   @override
   void onInit() {
     super.onInit();
+    liveVideoIconController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat(reverse: true);
+
+    liveVideoIconOpacity = Tween<double>(begin: 0.4, end: 1.0).animate(
+      CurvedAnimation(parent: liveVideoIconController, curve: Curves.easeInOut),
+    );
+
+    liveVideoIconScale = Tween<double>(begin: 0.95, end: 1.05).animate(
+      CurvedAnimation(parent: liveVideoIconController, curve: Curves.easeInOut),
+    );
     final requireAuth = !_isGuest;
     _loadUserData();
     loadLiveStreams();
     loadDailyQuote(requireAuth: requireAuth);
     loadBlogs(requireAuth: requireAuth);
+    loadAiAstrologers();
+    loadVedicAstrologers();
+    loadKidsSpecialistAstrologers();
+    loadCelebrityAstrologers();
+    loadCourses();
     _initializeSTT();
     // Start global free service manager after dashboard loads
     if (requireAuth) {
@@ -98,14 +207,29 @@ class UserDashboardController extends BaseController {
     if (requireAuth && !Get.isRegistered<WalletController>()) {
       Get.put(WalletController());
     }
+    // Start Book Pooja carousel auto-slide
+    _startBookPoojaAutoSlide();
+  }
 
-    if (requireAuth) {
-      checkForActiveSessions();
-      // Periodic check every 30s as per requirement
-      Timer.periodic(const Duration(seconds: 30), (_) {
-        if (!_isGuest) checkForActiveSessions();
-      });
-    }
+  /// Start Book Pooja carousel auto-slide
+  void _startBookPoojaAutoSlide() {
+    _bookPoojaTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      if (bookPoojaPageController.value.hasClients) {
+        int next = (bookPoojaCurrentPage.value + 1) % poojaCards.length;
+        bookPoojaCurrentPage.value = next;
+        bookPoojaPageController.value.animateToPage(
+          next,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  /// Stop Book Pooja carousel auto-slide
+  void _stopBookPoojaAutoSlide() {
+    _bookPoojaTimer?.cancel();
+    _bookPoojaTimer = null;
   }
 
   /// Start the global free service manager (only after dashboard loads)
@@ -123,8 +247,10 @@ class UserDashboardController extends BaseController {
   void onClose() {
     _shouldAnimate = false;
     _isAnimating = false;
-    searchController.dispose();
+    // searchController.dispose();
     _speechToText.stop();
+    _stopBookPoojaAutoSlide();
+    bookPoojaPageController.value.dispose();
     super.onClose();
   }
 
@@ -148,6 +274,8 @@ class UserDashboardController extends BaseController {
     }
   }
 
+  final RxList<AstrologerModel> allAstrologer = <AstrologerModel>[].obs;
+
   Future<void> _loadAstrologerDetails(List<LiveStreamModel> streams) async {
     // Fetch astrologers to get profile pictures and names
     try {
@@ -170,6 +298,7 @@ class UserDashboardController extends BaseController {
 
           nameMap[astrologer.astrologerId] = name;
           nameMap[astrologer.id] = name; // Also map by _id
+          allAstrologer.add(astrologer);
         }
         // Update the reactive maps
         astrologerProfilePictures.value = profileMap;
@@ -258,6 +387,111 @@ class UserDashboardController extends BaseController {
   }
 
   /// Load blogs for dashboard (limit to 5 for preview)
+  // Load AI Astrologers Personas
+  Future<void> loadAiAstrologers() async {
+    try {
+      isLoadingAiAstrologers.value = true;
+      final response = await _aiChatService.getPersonas(
+        page: 1,
+        limit: 10, // Load 10 personas for the AI Astrologers section
+        sortBy: 'rating',
+      );
+
+      if (response != null && response.personas.isNotEmpty) {
+        aiAstrologersPersonas.value = response.personas;
+      }
+    } catch (e) {
+      print("Error loading AI Astrologers: $e");
+    } finally {
+      isLoadingAiAstrologers.value = false;
+    }
+  }
+
+  // Load Vedic Kundli Astrologers
+  Future<void> loadVedicAstrologers() async {
+    try {
+      isLoadingVedicAstrologers.value = true;
+      final response = await _astrologerService.getAstrologers(
+        page: 1,
+        limit: 5, // Load only 5 astrologers for the dashboard
+        specialization: 'VEDIC', // Filter by VEDIC specialization
+        sortBy: 'rating',
+      );
+
+      if (response != null && response.astrologers.isNotEmpty) {
+        vedicAstrologers.value = response.astrologers;
+      }
+    } catch (e) {
+      print("Error loading Vedic Astrologers: $e");
+    } finally {
+      isLoadingVedicAstrologers.value = false;
+    }
+  }
+
+  // Load Kids Specialist Astrologers
+  Future<void> loadKidsSpecialistAstrologers() async {
+    try {
+      isLoadingKidsSpecialistAstrologers.value = true;
+      final response = await _astrologerService.getAstrologers(
+        page: 1,
+        limit: 5, // Load only 5 astrologers for the dashboard
+        astrologerCategory:
+            'KID_ASTROLOGER', // Filter by KID_ASTROLOGER category
+        sortBy: 'rating',
+      );
+
+      if (response != null && response.astrologers.isNotEmpty) {
+        kidsSpecialistAstrologers.value = response.astrologers;
+      }
+    } catch (e) {
+      print("Error loading Kids Specialist Astrologers: $e");
+    } finally {
+      isLoadingKidsSpecialistAstrologers.value = false;
+    }
+  }
+
+  // Load Celebrity Astrologers
+  Future<void> loadCelebrityAstrologers() async {
+    try {
+      isLoadingCelebrityAstrologers.value = true;
+      final response = await _astrologerService.getAstrologers(
+        page: 1,
+        limit: 5, // Load only 5 astrologers for the dashboard
+        astrologerCategory:
+            'CELEBRITY_ASTROLOGER', // Filter by CELEBRITY_ASTROLOGER category
+        sortBy: 'rating',
+      );
+
+      if (response != null && response.astrologers.isNotEmpty) {
+        celebrityAstrologers.value = response.astrologers;
+      }
+    } catch (e) {
+      print("Error loading Celebrity Astrologers: $e");
+    } finally {
+      isLoadingCelebrityAstrologers.value = false;
+    }
+  }
+
+  // Load Courses
+  Future<void> loadCourses() async {
+    try {
+      isLoadingCourses.value = true;
+      final response = await _coursesService.getCourses(
+        page: 1,
+        limit: 5, // Load only 5 courses for the dashboard
+        isPublished: true, // Only show published courses
+      );
+
+      if (response != null && response.courses.isNotEmpty) {
+        courses.value = response.courses;
+      }
+    } catch (e) {
+      print("Error loading Courses: $e");
+    } finally {
+      isLoadingCourses.value = false;
+    }
+  }
+
   Future<void> loadBlogs({bool requireAuth = true}) async {
     isLoadingBlogs.value = true;
     try {
@@ -283,6 +517,26 @@ class UserDashboardController extends BaseController {
     }
   }
 
+  // Get filtered personas (for search)
+  List<PersonaModel> get filteredPersonas {
+    if (searchQuery.value.isEmpty) {
+      return List.from(aiAstrologersPersonas);
+    }
+
+    final query = searchQuery.value.toLowerCase();
+    return aiAstrologersPersonas
+        .where(
+          (persona) =>
+              persona.displayName.toLowerCase().contains(query) ||
+              persona.description.toLowerCase().contains(query) ||
+              persona.tags.any((tag) => tag.toLowerCase().contains(query)) ||
+              persona.specializations.any(
+                (spec) => spec.toLowerCase().contains(query),
+              ),
+        )
+        .toList();
+  }
+
   /// Pull-to-refresh handler for dashboard content
   Future<void> refreshDashboard() async {
     _loadUserData(); // Ensure user data stays up to date
@@ -294,67 +548,11 @@ class UserDashboardController extends BaseController {
     await loadBlogs(
       requireAuth: requireAuth,
     ); // Refresh blogs on pull-to-refresh
-    if (requireAuth) await checkForActiveSessions();
-  }
-
-  Future<void> checkForActiveSessions() async {
-    try {
-      final activeSessions = await _chatService.getActiveSessions();
-      if (activeSessions.isNotEmpty) {
-        final session =
-            activeSessions.first; // Latest session as per backend order
-
-        // Find astrologer details for this session
-        final astrologerResponse = await _astrologerService.getAstrologers(
-          limit: 1,
-          search: session.astrologerId,
-        );
-        final astrologer = astrologerResponse?.astrologers.firstWhereOrNull(
-          (a) =>
-              a.astrologerId == session.astrologerId ||
-              a.id == session.astrologerId,
-        );
-
-        if (astrologer != null) {
-          Get.dialog(
-            barrierDismissible: false,
-            AlertDialog(
-              title: const Text('Ongoing Chat'),
-              content: Text(
-                'You have an ongoing chat session with ${astrologer.displayName}. Would you like to resume?',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Get.back(),
-                  child: const Text('Later'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Get.back(); // close dialog
-                    Get.toNamed(
-                      '/astrologer-chat',
-                      arguments: {
-                        'astrologer': astrologer,
-                        'chatId': session.chatId,
-                      },
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.indigo,
-                  ),
-                  child: const Text(
-                    'Resume Now',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      debugPrint('Error checking active sessions: $e');
-    }
+    await loadVedicAstrologers();
+    await loadKidsSpecialistAstrologers();
+    await loadCelebrityAstrologers();
+    await loadAiAstrologers();
+    await loadCourses();
   }
 
   /// Initialize Speech-to-AutoTranslateText
@@ -593,5 +791,152 @@ class UserDashboardController extends BaseController {
       _shouldAnimate = true;
       _startTypewriterAnimation();
     }
+  }
+}
+
+class VideoIconController extends GetxController {
+  final String assetPath;
+  VideoPlayerController? videoController;
+  RxBool isInitialized = false.obs;
+  int _retryCount = 0;
+  static const int _maxRetries = 3;
+
+  // Static counter to ensure sequential initialization
+  static int _initCounter = 0;
+  static final Map<String, int> _videoDelays = {};
+
+  VideoIconController({required this.assetPath});
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Small delay to ensure controller is fully registered
+    Future.microtask(() => _initializeVideo());
+  }
+
+  Future<void> _initializeVideo({bool isRetry = false}) async {
+    // Only apply delay on first attempt, not on retries
+    if (!isRetry) {
+      // Assign delay based on order of creation - ensure sequential initialization
+      int delayMs;
+      if (!_videoDelays.containsKey(assetPath)) {
+        delayMs =
+            _initCounter *
+            600; // 600ms between each video (0, 600, 1200, 1800ms)
+        _videoDelays[assetPath] = delayMs;
+        _initCounter++;
+
+        // Reset counter if too many videos
+        if (_initCounter > 10) {
+          _initCounter = 0;
+        }
+      } else {
+        delayMs = _videoDelays[assetPath]!;
+      }
+
+      print(
+        "Video ($assetPath) - Starting initialization with delay: ${delayMs}ms",
+      );
+
+      // Wait for our assigned delay
+      await Future.delayed(Duration(milliseconds: delayMs));
+    } else {
+      print(
+        "Video ($assetPath) - Retrying initialization (attempt $_retryCount)",
+      );
+    }
+
+    // Check if controller was disposed during delay
+    if (isClosed) {
+      print("Video ($assetPath) - Controller closed during delay");
+      return;
+    }
+
+    try {
+      print("Video ($assetPath) - Creating VideoPlayerController");
+      videoController = VideoPlayerController.asset(assetPath);
+
+      print("Video ($assetPath) - Initializing...");
+      await videoController!.initialize();
+      print(
+        "Video ($assetPath) - Initialized: ${videoController!.value.isInitialized}",
+      );
+
+      // Double-check controller is still valid
+      if (isClosed) {
+        print("Video ($assetPath) - Controller closed after initialization");
+        videoController?.dispose();
+        return;
+      }
+
+      if (videoController == null || !videoController!.value.isInitialized) {
+        print("Video ($assetPath) - Controller not properly initialized");
+        videoController?.dispose();
+        videoController = null;
+        isInitialized.value = false;
+        return;
+      }
+
+      print("Video ($assetPath) - Setting looping and volume");
+      await videoController!.setLooping(true);
+      await videoController!.setVolume(0.0);
+
+      // Mark as initialized BEFORE calling play - this allows UI to render immediately
+      // The video will start playing once the VideoPlayer widget is rendered
+      if (!isClosed &&
+          videoController != null &&
+          videoController!.value.isInitialized) {
+        print("Video ($assetPath) - Marking as initialized");
+        isInitialized.value = true;
+      }
+
+      print("Video ($assetPath) - Starting playback");
+      // Call play() but don't wait for it - let it play asynchronously
+      videoController!.play().catchError((error) {
+        print("Video ($assetPath) - Error during play: $error");
+        // Retry play after a delay
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (!isClosed && videoController != null) {
+            videoController!.play();
+          }
+        });
+      });
+
+      // Verify it's playing after a short delay (non-blocking)
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (!isClosed && videoController != null) {
+          if (!videoController!.value.isPlaying) {
+            print("Video ($assetPath) - Not playing after delay, retrying...");
+            videoController!.play();
+          } else {
+            print("Video ($assetPath) - Successfully playing");
+          }
+        }
+      });
+    } catch (e, stackTrace) {
+      print("Video Error ($assetPath): $e");
+      print("Stack trace: $stackTrace");
+      videoController?.dispose();
+      videoController = null;
+
+      // Retry on error if we haven't exceeded max retries
+      if (_retryCount < _maxRetries && !isClosed) {
+        _retryCount++;
+        await Future.delayed(Duration(milliseconds: 500 * _retryCount));
+        if (!isClosed) {
+          await _initializeVideo(isRetry: true);
+        }
+      } else {
+        isInitialized.value = false;
+      }
+    }
+  }
+
+  @override
+  void onClose() {
+    videoController?.pause();
+    videoController?.dispose();
+    videoController = null;
+    super.onClose();
   }
 }

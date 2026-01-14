@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.d
 import 'package:astrobharataiuser/screens/ecommerce/controller/product_list_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class ProductListBinding extends Bindings {
   @override

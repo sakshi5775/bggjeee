@@ -12,6 +12,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class DoshView extends BasePage<DoshController> {
   const DoshView({super.key});
@@ -19,8 +20,17 @@ class DoshView extends BasePage<DoshController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
+      // backgroundColor: '#FFF8E1'.toColor(),
+      body:Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFFF6C2), Color(0xFFFFE8A3), Color(0xFFFFD580),
+            ],
+          ),
+        ),
+      child: SafeArea(
         child: Column(
           children: [
             // Header
@@ -51,6 +61,7 @@ class DoshView extends BasePage<DoshController> {
           ],
         ),
       ),
+    ),
     );
   }
 
@@ -61,16 +72,17 @@ class DoshView extends BasePage<DoshController> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            '#FF6B35'.toColor(),
-            '#FF8C42'.toColor(),
-          ],
+          colors: [Color(0xFF3D0C11), Color(0xFF5D1C21)],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(24.r),
+          bottomRight: Radius.circular(24.r),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -78,7 +90,7 @@ class DoshView extends BasePage<DoshController> {
         children: [
           // Back button
           IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
+            icon: Icon(Icons.arrow_back, color: Color(0xFFF7C443), size: 24.w),
             onPressed: () => Get.back(),
           ),
           
@@ -89,7 +101,7 @@ class DoshView extends BasePage<DoshController> {
             child: AutoTranslateText(
               'Dosh',
               style: MyTextTheme.largeBCB.copyWith(
-                color: Colors.white,
+                color: Color(0xFFF7C443),
                 fontWeight: FontWeight.bold,
               ).merge(AppTypography.h2),
             ),
@@ -142,6 +154,10 @@ class DoshView extends BasePage<DoshController> {
                 width: 3,
               ),
             ),
+            // gradient: LinearGradient(colors: [
+            //   Color(0xFFFF8C42),
+            //   Color(0xFFE63946)
+            // ],)
           ),
           child: AutoTranslateText(
             title,
