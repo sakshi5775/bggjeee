@@ -1,9 +1,10 @@
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/controllers/persona_voice_history_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,33 +16,31 @@ class PersonaVoiceHistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(PersonaVoiceHistoryController(personaId: personaId));
+    final controller = Get.put(
+      PersonaVoiceHistoryController(personaId: personaId),
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.load();
     });
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF5F2221)),
-          onPressed: () => Get.back(),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header using CommonHeader
+              CommonHeader(
+                title: 'Voice Call History',
+                titleColor: AppColors.templeGold,
+              ),
+              // Filters
+              _filters(controller),
+              // List
+              Expanded(child: _list(controller)),
+            ],
+          ),
         ),
-        title: AutoTranslateText(
-          'Voice Call History',
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: const Color(0xFF5F2221),
-            fontWeight: FontWeight.bold,
-          ).merge(AppTypography.h2),
-        ),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          _filters(controller),
-          Expanded(child: _list(controller)),
-        ],
       ),
     );
   }
@@ -57,39 +56,122 @@ class PersonaVoiceHistoryView extends StatelessWidget {
       'CANCELLED',
     ];
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      decoration: BoxDecoration(color: Colors.white),
       child: Row(
         children: [
           Expanded(
-            child: Obx(() => DropdownButtonFormField<String>(
-                  value: c.status.value,
-                  items: statuses
-                      .map((s) => DropdownMenuItem(
-                            value: s,
-                            child: AutoTranslateText(s.isEmpty ? 'All Status' : s),
-                          ))
-                      .toList(),
-                  onChanged: (v) => c.updateStatus(v ?? ''),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
+            child: Obx(
+              () => DropdownButtonFormField<String>(
+                value: c.status.value,
+                items: statuses
+                    .map(
+                      (s) => DropdownMenuItem(
+                        value: s,
+                        child: AutoTranslateText(s.isEmpty ? 'All Status' : s),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (v) => c.updateStatus(v ?? ''),
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 10.h,
                   ),
-                )),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(
+                      color: '#68171E'.toColor(),
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(
+                      color: '#68171E'.toColor(),
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(
+                      color: '#68171E'.toColor(),
+                      width: 1,
+                    ),
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(
+                      color: '#68171E'.toColor(),
+                      width: 1,
+                    ),
+                  ),
+                ),
+                dropdownColor: Colors.white,
+                borderRadius: BorderRadius.circular(12.r),
+                style: MyTextTheme.smallBCB.copyWith(
+                  color: '#68171E'.toColor(),
+                ),
+              ),
+            ),
           ),
           SizedBox(width: 12.w),
           Expanded(
-            child: Obx(() => DropdownButtonFormField<String>(
-                  value: c.sortOrder.value,
-                  items: const [
-                    DropdownMenuItem(value: 'desc', child: AutoTranslateText('Newest')),
-                    DropdownMenuItem(value: 'asc', child: AutoTranslateText('Oldest')),
-                  ],
-                  onChanged: (v) => c.updateSortOrder(v ?? 'desc'),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
+            child: Obx(
+              () => DropdownButtonFormField<String>(
+                value: c.sortOrder.value,
+                items: const [
+                  DropdownMenuItem(
+                    value: 'desc',
+                    child: AutoTranslateText('Newest'),
                   ),
-                )),
+                  DropdownMenuItem(
+                    value: 'asc',
+                    child: AutoTranslateText('Oldest'),
+                  ),
+                ],
+                onChanged: (v) => c.updateSortOrder(v ?? 'desc'),
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 10.h,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(
+                      color: '#68171E'.toColor(),
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(
+                      color: '#68171E'.toColor(),
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(
+                      color: '#68171E'.toColor(),
+                      width: 1,
+                    ),
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(
+                      color: '#68171E'.toColor(),
+                      width: 1,
+                    ),
+                  ),
+                ),
+                dropdownColor: Colors.white,
+                borderRadius: BorderRadius.circular(12.r),
+                style: MyTextTheme.smallBCB.copyWith(
+                  color: '#68171E'.toColor(),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -99,13 +181,19 @@ class PersonaVoiceHistoryView extends StatelessWidget {
   Widget _list(PersonaVoiceHistoryController c) {
     return Obx(() {
       if (c.isLoading.value && c.calls.isEmpty) {
-        return const Center(child: CircularProgressIndicator(color: AppColors.saffron));
+        return Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.deepOrange),
+          ),
+        );
       }
       if (c.calls.isEmpty) {
         return Center(
           child: AutoTranslateText(
             'No calls yet',
-            style: MyTextTheme.smallBCN.copyWith(color: const Color(0xFF999999)),
+            style: MyTextTheme.smallBCN.copyWith(
+              color: const Color(0xFF999999),
+            ),
           ),
         );
       }
@@ -124,12 +212,30 @@ class PersonaVoiceHistoryView extends StatelessWidget {
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(color: const Color(0xFFE0E0E0)),
               boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2)),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
               ],
             ),
             child: Row(
               children: [
-                Icon(Icons.phone, color: AppColors.saffron),
+                Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.orangeGradient,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: '#F38B3B'.toColor().withOpacity(0.3),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Icon(Icons.phone, color: Colors.white, size: 20.w),
+                ),
                 SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
@@ -137,18 +243,24 @@ class PersonaVoiceHistoryView extends StatelessWidget {
                     children: [
                       AutoTranslateText(
                         status,
-                        style: MyTextTheme.smallBCB.copyWith(color: const Color(0xFF333333)),
+                        style: MyTextTheme.smallBCB.copyWith(
+                          color: const Color(0xFF333333),
+                        ),
                       ),
                       SizedBox(height: 2.h),
                       AutoTranslateText(
                         'Created: $createdAt • Duration: ${duration}s',
-                        style: MyTextTheme.smallBCN.copyWith(color: const Color(0xFF777777)),
+                        style: MyTextTheme.smallBCN.copyWith(
+                          color: const Color(0xFF777777),
+                        ),
                       ),
                       if (remaining.isNotEmpty) ...[
                         SizedBox(height: 4.h),
                         AutoTranslateText(
                           'Remaining: $remaining',
-                          style: MyTextTheme.smallBCB.copyWith(color: Colors.redAccent),
+                          style: MyTextTheme.smallBCB.copyWith(
+                            color: Colors.redAccent,
+                          ),
                         ),
                       ],
                     ],
@@ -164,9 +276,3 @@ class PersonaVoiceHistoryView extends StatelessWidget {
     });
   }
 }
-
-
-
-
-
-

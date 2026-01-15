@@ -9,7 +9,6 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 import '../widgets/my_widget/time_info_widget.dart';
 
@@ -814,7 +813,7 @@ class KundliFormView extends BasePage<KundliFormController> {
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country) {
+          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
             controller.selectCity(city, state, country);
             Get.back();
           },

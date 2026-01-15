@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -29,7 +30,7 @@ class KundliChartWidget extends StatelessWidget {
         AutoTranslateText(
           'Kundli Charts',
           style: MyTextTheme.largeBCB.copyWith(
-            color: "#6F221E".toColor(),
+            color: '#68171E'.toColor(),
             fontWeight: FontWeight.bold,
           ).merge(AppTypography.h2),
         ),
@@ -145,15 +146,15 @@ class KundliChartWidget extends StatelessWidget {
                           return Container(
                             width: 50.w,
                             height: 50.w,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: "#DFB343".toColor().withOpacity(0.2),
-                            ),
-                            child: Icon(
-                              Icons.person,
-                              size: 25.w,
-                              color: "#6F221E".toColor(),
-                            ),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColors.deepOrange.withOpacity(0.2),
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            size: 25.w,
+                            color: '#68171E'.toColor(),
+                          ),
                           );
                         },
                       ),
@@ -306,7 +307,7 @@ class KundliChartWidget extends StatelessWidget {
           AutoTranslateText(
             '$degreeText°',
             style: TextStyle(
-              color: "#6F221E".toColor(),
+              color: '#68171E'.toColor(),
               fontWeight: FontWeight.w500,
               height: 1.0,
             ).merge(AppTypography.label),
@@ -314,7 +315,7 @@ class KundliChartWidget extends StatelessWidget {
           AutoTranslateText(
             planetSymbol,
             style: TextStyle(
-              color: "#6F221E".toColor(),
+              color: '#68171E'.toColor(),
               fontWeight: FontWeight.bold,
               height: 1.0,
             ).merge(AppTypography.label),

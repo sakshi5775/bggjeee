@@ -24,3 +24,4 @@ class CarrotAstrologyColors {
   static Color get orangeColorDark => "#DD2914".toColor();
 }
 
+

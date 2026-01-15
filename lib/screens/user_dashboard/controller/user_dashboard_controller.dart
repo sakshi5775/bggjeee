@@ -17,7 +17,9 @@ import 'package:astrobharataiuser/screens/blogs/service/blog_service.dart';
 import 'package:astrobharataiuser/screens/ai_chat/services/ai_chat_service.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/courses/services/courses_service.dart';
+import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
 import 'package:astrobharataiuser/data_model/course_model.dart';
+import 'package:astrobharataiuser/data_model/webinar_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -52,6 +54,70 @@ class UserDashboardController extends BaseController
   final RxBool isLoadingDailyQuote = false.obs;
   String? _lastQuoteDate; // Store the date of the last fetched quote
 
+  // Fallback quotes when API doesn't return data
+  static final List<DailyQuoteData> _fallbackQuotes = [
+    DailyQuoteData(
+      quoteDate: '',
+      sanskrit: SanskritQuote(
+        text: 'उद्यमेन हि सिद्ध्यन्ति कार्याणि न मनोरथैः।\nन हि सुप्तस्य सिंहस्य प्रविशन्ति मुखे मृगाः॥',
+        transliteration: 'Udyamena hi siddhyanti karyani na manorathaih.\nNa hi suptasya simhasya pravishanti mukhe mrigah.',
+        meaning: 'Success comes by effort, not by wishes. A sleeping lion does not get food.',
+        source: 'Traditional Sanskrit Quote',
+        category: 'Motivation',
+      ),
+      availableTranslations: [],
+      isFallback: true,
+    ),
+    DailyQuoteData(
+      quoteDate: '',
+      sanskrit: SanskritQuote(
+        text: 'विद्या ददाति विनयं विनयाद् याति पात्रताम्।\nपात्रत्वात् धनमाप्नोति धनात् धर्मं ततः सुखम्॥',
+        transliteration: 'Vidya dadati vinayam vinayad yati patratam.\nPatratvat dhanamapnoti dhanat dharmam tatah sukham.',
+        meaning: 'Knowledge gives humility, humility gives worthiness, worthiness brings wealth, wealth leads to righteousness, and righteousness brings happiness.',
+        source: 'Traditional Sanskrit Quote',
+        category: 'Education',
+      ),
+      availableTranslations: [],
+      isFallback: true,
+    ),
+    DailyQuoteData(
+      quoteDate: '',
+      sanskrit: SanskritQuote(
+        text: 'न हि ज्ञानेन सदृशं पवित्रमिह विद्यते।',
+        transliteration: 'Na hi jnanena sadrisham pavitramiha vidyate.',
+        meaning: 'Nothing in this world is as pure as true knowledge.',
+        source: 'Bhagavad Gita',
+        category: 'Knowledge',
+      ),
+      availableTranslations: [],
+      isFallback: true,
+    ),
+    DailyQuoteData(
+      quoteDate: '',
+      sanskrit: SanskritQuote(
+        text: 'सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः।\nसर्वे भद्राणि पश्यन्तु मा कश्चिद् दुःखभाग्भवेत्॥',
+        transliteration: 'Sarve bhavantu sukhinah sarve santu niraamayah.\nSarve bhadrani pashyantu ma kashchid duhkhabhagbhavet.',
+        meaning: 'May all be happy, healthy, see goodness, and may no one suffer.',
+        source: 'Traditional Sanskrit Prayer',
+        category: 'Blessing',
+      ),
+      availableTranslations: [],
+      isFallback: true,
+    ),
+    DailyQuoteData(
+      quoteDate: '',
+      sanskrit: SanskritQuote(
+        text: 'यत्र नार्यस्तु पूज्यन्ते रमन्ते तत्र देवताः।',
+        transliteration: 'Yatra naryastu pujyante ramante tatra devatah.',
+        meaning: 'Where women are respected, divinity resides.',
+        source: 'Manusmriti',
+        category: 'Respect',
+      ),
+      availableTranslations: [],
+      isFallback: true,
+    ),
+  ];
+
   // AI Astrologers Personas
   final AiChatService _aiChatService = AiChatService();
   final RxList<PersonaModel> aiAstrologersPersonas = <PersonaModel>[].obs;
@@ -74,6 +140,11 @@ class UserDashboardController extends BaseController
   final CoursesService _coursesService = CoursesService();
   final RxList<CourseModel> courses = <CourseModel>[].obs;
   final RxBool isLoadingCourses = false.obs;
+
+  // Live Webinar for enrolled courses
+  final WebinarService _webinarService = WebinarService();
+  final Rx<WebinarModel?> liveWebinarForEnrolledCourse = Rx<WebinarModel?>(null);
+  final RxBool hasLiveWebinarForEnrolledCourse = false.obs;
 
   // Blogs
   final BlogService _blogService = BlogService();
@@ -194,6 +265,9 @@ class UserDashboardController extends BaseController
     loadKidsSpecialistAstrologers();
     loadCelebrityAstrologers();
     loadCourses();
+    if (requireAuth) {
+      checkForLiveWebinarFromEnrolledCourses();
+    }
     _initializeSTT();
     // Start global free service manager after dashboard loads
     if (requireAuth) {
@@ -375,15 +449,40 @@ class UserDashboardController extends BaseController
         useAuthHeader: requireAuth,
       );
       if (response != null && response.success && response.data != null) {
+        // API returned data, use it
         dailyQuote.value = response.data;
         _lastQuoteDate = response.data!.quoteDate;
+      } else {
+        // API didn't return data, use fallback quote
+        _setFallbackQuote(today);
       }
     } catch (e) {
       debugPrint('Error loading daily quote: $e');
-      // Handle error silently - fallback to static quote will be used in view
+      // On error, use fallback quote
+      _setFallbackQuote(today);
     } finally {
       isLoadingDailyQuote.value = false;
     }
+  }
+
+  /// Set a fallback quote when API doesn't return data
+  void _setFallbackQuote(String date) {
+    // Select a quote based on day of year to ensure variety
+    final dayOfYear = DateTime.now().difference(
+      DateTime(DateTime.now().year, 1, 1),
+    ).inDays;
+    final quoteIndex = dayOfYear % _fallbackQuotes.length;
+    final selectedQuote = _fallbackQuotes[quoteIndex];
+    
+    // Create a new DailyQuoteData with today's date
+    dailyQuote.value = DailyQuoteData(
+      quoteDate: date,
+      sanskrit: selectedQuote.sanskrit,
+      availableTranslations: selectedQuote.availableTranslations,
+      isFallback: true,
+      generatedAt: DateTime.now().toIso8601String(),
+    );
+    _lastQuoteDate = date;
   }
 
   /// Load blogs for dashboard (limit to 5 for preview)
@@ -492,6 +591,101 @@ class UserDashboardController extends BaseController
     }
   }
 
+  // Check for live webinars from enrolled courses
+  Future<void> checkForLiveWebinarFromEnrolledCourses() async {
+    try {
+      // Get enrolled courses - try progress overview first, then enrollments API
+      final progressOverview = await _coursesService.getProgressOverview();
+      List<dynamic>? coursesList;
+      
+      if (progressOverview != null && progressOverview['courses'] != null) {
+        // Format from progress overview
+        coursesList = progressOverview['courses'] as List<dynamic>?;
+      } else {
+        // Fallback: Get enrollments directly
+        final enrollmentsData = await _coursesService.getEnrollments(page: 1);
+        if (enrollmentsData != null) {
+          // Check both possible response formats
+          coursesList = enrollmentsData['courses'] as List<dynamic>? ?? 
+                       enrollmentsData['data'] as List<dynamic>?;
+        }
+      }
+
+      if (coursesList == null || coursesList.isEmpty) {
+        debugPrint("No enrolled courses found");
+        liveWebinarForEnrolledCourse.value = null;
+        hasLiveWebinarForEnrolledCourse.value = false;
+        return;
+      }
+
+      // Extract enrolled course IDs - handle both response formats
+      final enrolledCourseIds = <String>{};
+      for (var courseJson in coursesList) {
+        final courseMap = courseJson as Map<String, dynamic>;
+        
+        // Try different possible field names for course ID
+        String? courseId = courseMap['courseId'] as String?;
+        if (courseId == null) {
+          // Check if course is an object with _id
+          final courseObj = courseMap['course'] as Map<String, dynamic>?;
+          if (courseObj != null) {
+            courseId = courseObj['_id'] as String? ?? courseObj['id'] as String?;
+          } else {
+            // Direct _id or id
+            courseId = courseMap['_id'] as String? ?? courseMap['id'] as String?;
+          }
+        }
+        
+        if (courseId != null && courseId.isNotEmpty) {
+          enrolledCourseIds.add(courseId);
+        }
+      }
+
+      debugPrint("Found ${enrolledCourseIds.length} enrolled course IDs: $enrolledCourseIds");
+
+      if (enrolledCourseIds.isEmpty) {
+        liveWebinarForEnrolledCourse.value = null;
+        hasLiveWebinarForEnrolledCourse.value = false;
+        return;
+      }
+
+      // Get live webinars
+      final liveWebinars = await _webinarService.getLiveWebinars();
+      debugPrint("Found ${liveWebinars.length} live webinars");
+      
+      if (liveWebinars.isEmpty) {
+        liveWebinarForEnrolledCourse.value = null;
+        hasLiveWebinarForEnrolledCourse.value = false;
+        return;
+      }
+
+      // Find if any live webinar belongs to an enrolled course
+      for (var webinar in liveWebinars) {
+        final webinarCourseId = webinar.courseId?.sId ?? 
+                               webinar.courseId?.id;
+        
+        debugPrint("Checking webinar: ${webinar.title}, courseId: $webinarCourseId");
+        
+        if (webinarCourseId != null && enrolledCourseIds.contains(webinarCourseId)) {
+          debugPrint("Match found! Live webinar for enrolled course: ${webinar.title}");
+          liveWebinarForEnrolledCourse.value = webinar;
+          hasLiveWebinarForEnrolledCourse.value = true;
+          return;
+        }
+      }
+
+      debugPrint("No live webinar found for enrolled courses");
+      // No live webinar found for enrolled courses
+      liveWebinarForEnrolledCourse.value = null;
+      hasLiveWebinarForEnrolledCourse.value = false;
+    } catch (e, stackTrace) {
+      debugPrint("Error checking for live webinar from enrolled courses: $e");
+      debugPrint("Stack trace: $stackTrace");
+      liveWebinarForEnrolledCourse.value = null;
+      hasLiveWebinarForEnrolledCourse.value = false;
+    }
+  }
+
   Future<void> loadBlogs({bool requireAuth = true}) async {
     isLoadingBlogs.value = true;
     try {
@@ -548,6 +742,9 @@ class UserDashboardController extends BaseController
     await loadBlogs(
       requireAuth: requireAuth,
     ); // Refresh blogs on pull-to-refresh
+    if (requireAuth) {
+      await checkForLiveWebinarFromEnrolledCourses(); // Refresh live webinar status
+    }
     await loadVedicAstrologers();
     await loadKidsSpecialistAstrologers();
     await loadCelebrityAstrologers();

@@ -660,7 +660,7 @@ class RahukaalView extends BasePage<RahukaalController> {
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country) {
+          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
             Get.back();
           },
           selectedCity: controller.selectedLocation.value,

@@ -477,7 +477,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country) {
+          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
             controller.selectCity(city, state, country);
             Get.back();
           },

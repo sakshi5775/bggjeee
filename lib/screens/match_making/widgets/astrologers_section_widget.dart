@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,7 +15,8 @@ class AstrologersSectionWidget extends StatefulWidget {
   const AstrologersSectionWidget({super.key});
 
   @override
-  State<AstrologersSectionWidget> createState() => _AstrologersSectionWidgetState();
+  State<AstrologersSectionWidget> createState() =>
+      _AstrologersSectionWidgetState();
 }
 
 class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
@@ -39,13 +41,14 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
       if (response != null && mounted) {
         // Filter for matchmaking or take top rated astrologers
         final filtered = response.astrologers.where((astro) {
-          return astro.specializations.any((spec) => 
-            spec.toUpperCase().contains('MATCH') || 
-            spec.toUpperCase().contains('MARRIAGE') ||
-            spec.toUpperCase().contains('KUNDALI')
+          return astro.specializations.any(
+            (spec) =>
+                spec.toUpperCase().contains('MATCH') ||
+                spec.toUpperCase().contains('MARRIAGE') ||
+                spec.toUpperCase().contains('KUNDALI'),
           );
         }).toList();
-        astrologers.value = filtered.isNotEmpty 
+        astrologers.value = filtered.isNotEmpty
             ? filtered.take(10).toList()
             : response.astrologers.take(10).toList();
       }
@@ -68,10 +71,12 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: AutoTranslateText(
             'Top Astrologers For Matchmaking',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: "#DFB343".toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
+            style: MyTextTheme.largeBCB
+                .copyWith(
+                  color: '#68171E'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h2),
           ),
         ),
         Spacing.h(16),
@@ -79,7 +84,13 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
           if (isLoading.value) {
             return SizedBox(
               height: 200.h,
-              child: const Center(child: CircularProgressIndicator()),
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppColors.deepOrange,
+                  ),
+                ),
+              ),
             );
           }
           if (astrologers.isEmpty) {
@@ -88,9 +99,7 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
               child: Center(
                 child: AutoTranslateText(
                   'No astrologers available',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: Colors.grey,
-                  ),
+                  style: MyTextTheme.mediumBCN.copyWith(color: Colors.grey),
                 ),
               ),
             );
@@ -115,15 +124,15 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
             width: double.infinity,
             height: 50.h,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  "#DFB343".toColor(),
-                  "#DFB343".toColor().withOpacity(0.8),
-                ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
+              gradient: AppColors.orangeGradient,
               borderRadius: BorderRadius.circular(25.r),
+              boxShadow: [
+                BoxShadow(
+                  color: '#F38B3B'.toColor().withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: ElevatedButton(
               onPressed: () {
@@ -150,10 +159,12 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
                   Spacing.w(8),
                   AutoTranslateText(
                     'Give Feedback',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ).merge(AppTypography.h3),
+                    style: MyTextTheme.mediumBCB
+                        .copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        )
+                        .merge(AppTypography.h3),
                   ),
                 ],
               ),
@@ -223,17 +234,20 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
                   decoration: BoxDecoration(
-                    color: "#DFB343".toColor(),
+                    gradient: AppColors.orangeGradient,
                     borderRadius: BorderRadius.circular(4.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: '#F38B3B'.toColor().withOpacity(0.3),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.star,
-                        color: Colors.white,
-                        size: 11.w,
-                      ),
+                      Icon(Icons.star, color: Colors.white, size: 11.w),
                       Spacing.w(2),
                       AutoTranslateText(
                         astrologer.rating.toStringAsFixed(1),
@@ -257,27 +271,29 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
                 children: [
                   AutoTranslateText(
                     astrologer.displayName,
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: "#6F221E".toColor(),
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.body2),
+                    style: MyTextTheme.mediumBCB
+                        .copyWith(
+                          color: '#68171E'.toColor(),
+                          fontWeight: FontWeight.bold,
+                        )
+                        .merge(AppTypography.body2),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   Spacing.h(3),
                   AutoTranslateText(
                     '${astrologer.experienceYears} yrs exp',
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: "#6F221E".toColor().withOpacity(0.7),
-                    ).merge(AppTypography.label),
+                    style: MyTextTheme.smallBCN
+                        .copyWith(color: '#68171E'.toColor().withOpacity(0.7))
+                        .merge(AppTypography.label),
                   ),
                   Spacing.h(3),
                   Flexible(
                     child: AutoTranslateText(
                       astrologer.languages.join(', '),
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: "#6F221E".toColor().withOpacity(0.7),
-                      ).merge(AppTypography.label),
+                      style: MyTextTheme.smallBCN
+                          .copyWith(color: '#68171E'.toColor().withOpacity(0.7))
+                          .merge(AppTypography.label),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -291,21 +307,40 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
                         // Navigate to consult astrologer
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: "#6F221E".toColor(),
+                        backgroundColor: Colors.transparent,
                         foregroundColor: Colors.white,
+                        padding: EdgeInsets.zero,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.r),
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                         elevation: 0,
                       ),
-                      child: AutoTranslateText(
-                        'Consult',
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ).merge(AppTypography.body2),
-                        textAlign: TextAlign.center,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 8.h,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.orangeGradient,
+                          borderRadius: BorderRadius.circular(12.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: '#F38B3B'.toColor().withOpacity(0.3),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: AutoTranslateText(
+                          'Consult',
+                          style: MyTextTheme.smallBCB
+                              .copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              )
+                              .merge(AppTypography.body2),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),
@@ -318,4 +353,3 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
     );
   }
 }
-

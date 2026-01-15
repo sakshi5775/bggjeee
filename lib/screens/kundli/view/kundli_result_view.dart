@@ -23,7 +23,6 @@ import 'package:astrobharataiuser/screens/kundli/widgets/varshphal_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class KundliResultView extends BasePage<KundliResultController> {
   const KundliResultView({super.key});
@@ -216,7 +215,7 @@ class KundliResultView extends BasePage<KundliResultController> {
                 itemCount: controller.tabs.length,
                 separatorBuilder: (context, index) => SizedBox(width: 10.w),
                 itemBuilder: (context, index) {
-                  // return _buildTabIndicator(index);
+                  return const SizedBox.shrink();
                 },
               ),
             ),

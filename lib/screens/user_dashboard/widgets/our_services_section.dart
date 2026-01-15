@@ -22,22 +22,37 @@ class OurServicesSection extends BasePage<UserDashboardController> {
 
   final List<(String, String)> _items = const [
     ('Consult Astrologer', AppConstant.serviceConsult),
-    ('Generate\nKundli', AppConstant.serviceGenerateKundali),
-    // ('Everything About 2025', AppConstant.service2025),
+    ('Generate Kundli', AppConstant.serviceGenerateKundali),
+   //  ('Everything About 2026', AppConstant.service2025),
     ('Match making', AppConstant.serviceMatchMaking),
-    // ('Numerology', AppConstant.serviceNumerology),
-    // ('Panchang', AppConstant.servicePanchang),
-    // ('Check Horoscope', AppConstant.horoscope),
-    // ('Tarot reading', AppConstant.tarot),
+     ('Numerology', AppConstant.serviceNumerology),
+     ('Panchang', AppConstant.servicePanchang),
+     ('Check Horoscope', AppConstant.horoscope),
+     ('Tarot reading', AppConstant.tarot),
     ('Carrot Astrology', AppConstant.carrotAstrology),
     ('Writing Astrology', AppConstant.writingAstrology),
-    ('Prshan Kundli', AppConstant.writingAstrology),
+    ('Prashna Kundli', AppConstant.prashnaKundali),
 
-    // ('Face reading', AppConstant.serviceFaceReading),
-    // ('Palm Reading', AppConstant.servicePalmReading),
+     ('Face reading', AppConstant.serviceFaceReading),
+     ('Palm Reading', AppConstant.servicePalmReading),
 
-    // ('Ramal Shastra', AppConstant.ramalShastra),
-    // ('Vastu Reading', AppConstant.vastu),
+    ('Ramal Shastra', AppConstant.ramalShastra),
+    ('Vastu Reading', AppConstant.vastu),
+    
+
+
+
+
+
+     ('Life Predictions', AppConstant.lifePredictions),
+    
+
+     ('Dosh', AppConstant.dosh),
+     ('Dasha', AppConstant.dasha),
+
+    ('KP Astrology', AppConstant.kPAstrology),
+    ('Lal Kitab', AppConstant.lalKitab),
+
   ];
 
   @override
@@ -102,7 +117,7 @@ class OurServicesSection extends BasePage<UserDashboardController> {
     );
   }
 
-  Widget _serviceButton(String label, String iconPath, {double? width}) {
+  Widget _serviceButton(String label, String iconPath) {
     Future<void> _requireLogin(
       Future<void> Function() action, {
       String? message,
@@ -189,6 +204,19 @@ class OurServicesSection extends BasePage<UserDashboardController> {
             _requireLogin(
               () async => Get.toNamed(AppRoutes.vastuDashboard),
               message: 'Login to explore Vastu services.',
+            );
+            break;
+          case 'prashna kundli':
+          case 'prashna kundali':
+            _requireLogin(
+              () async => Get.toNamed(AppRoutes.prashnaKundali),
+              message: 'Login to use Prashna Kundli.',
+            );
+            break;
+          case 'ramal shastra':
+            _requireLogin(
+              () async => Get.toNamed(AppRoutes.ramalShastra),
+              message: 'Login to explore Ramal Shastra.',
             );
             break;
           default:

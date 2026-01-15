@@ -7,6 +7,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../app_manager/ext/hex_color_ext.dart';
+
 class PersonaListCard extends StatelessWidget {
   final PersonaModel persona;
   final VoidCallback onTap;
@@ -29,10 +31,7 @@ class PersonaListCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(
-            color: const Color(0xFFE0E0E0),
-            width: 1,
-          ),
+          border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -69,7 +68,8 @@ class PersonaListCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        errorWidget: (context, url, error) => _buildPlaceholderImage(),
+                        errorWidget: (context, url, error) =>
+                            _buildPlaceholderImage(),
                       )
                     : _buildPlaceholderImage(),
               ),
@@ -85,10 +85,12 @@ class PersonaListCard extends StatelessWidget {
                     // Name
                     AutoTranslateText(
                       persona.displayName,
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: const Color(0xFF5F2221),
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h3),
+                      style: MyTextTheme.mediumBCB
+                          .copyWith(
+                            color: const Color(0xFF5F2221),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h3),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -97,12 +99,14 @@ class PersonaListCard extends StatelessWidget {
                     AutoTranslateText(
                       persona.specializations.isNotEmpty
                           ? persona.specializations
-                              .map((s) => s.replaceAll('_', ' ').toLowerCase())
-                              .join(', ')
+                                .map(
+                                  (s) => s.replaceAll('_', ' ').toLowerCase(),
+                                )
+                                .join(', ')
                           : 'Vedic astrology',
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: const Color(0xFF666666),
-                      ).merge(AppTypography.body2),
+                      style: MyTextTheme.smallBCN
+                          .copyWith(color: const Color(0xFF666666))
+                          .merge(AppTypography.body2),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -112,9 +116,9 @@ class PersonaListCard extends StatelessWidget {
                       persona.languages.isNotEmpty
                           ? persona.languages.take(2).join(', ')
                           : 'English, Hindi',
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: const Color(0xFF666666),
-                      ).merge(AppTypography.body2),
+                      style: MyTextTheme.smallBCN
+                          .copyWith(color: const Color(0xFF666666))
+                          .merge(AppTypography.body2),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -137,9 +141,9 @@ class PersonaListCard extends StatelessWidget {
                               persona.rating != null
                                   ? '${persona.rating!.toStringAsFixed(1)}(${persona.totalRatings})'
                                   : '0.0(0)',
-                              style: MyTextTheme.smallBCN.copyWith(
-                                color: const Color(0xFF333333),
-                              ).merge(AppTypography.body2),
+                              style: MyTextTheme.smallBCN
+                                  .copyWith(color: const Color(0xFF333333))
+                                  .merge(AppTypography.body2),
                             ),
                           ],
                         ),
@@ -149,13 +153,15 @@ class PersonaListCard extends StatelessWidget {
                               ? '₹${persona.price!.toStringAsFixed(0)}/min'
                               : 'Coming soon',
                           style: persona.price != null
-                              ? MyTextTheme.smallBCB.copyWith(
-                                  color: AppColors.saffron,
-                                  fontWeight: FontWeight.bold,
-                                ).merge(AppTypography.body1)
-                              : MyTextTheme.smallBCN.copyWith(
-                                  color: const Color(0xFF999999),
-                                ).merge(AppTypography.body2),
+                              ? MyTextTheme.smallBCB
+                                    .copyWith(
+                                      color: AppColors.saffron,
+                                      fontWeight: FontWeight.bold,
+                                    )
+                                    .merge(AppTypography.body1)
+                              : MyTextTheme.smallBCN
+                                    .copyWith(color: const Color(0xFF999999))
+                                    .merge(AppTypography.body2),
                         ),
                       ],
                     ),
@@ -167,7 +173,7 @@ class PersonaListCard extends StatelessWidget {
                           child: _buildActionButton(
                             label: 'Call',
                             onTap: onCallTap ?? () {},
-                            backgroundColor: AppColors.saffron,
+                            useGradient: true,
                             textColor: Colors.white,
                           ),
                         ),
@@ -176,7 +182,7 @@ class PersonaListCard extends StatelessWidget {
                           child: _buildActionButton(
                             label: 'Chat',
                             onTap: onChatTap ?? onTap,
-                            backgroundColor: AppColors.saffron,
+                            useGradient: true,
                             textColor: Colors.white,
                           ),
                         ),
@@ -219,33 +225,37 @@ class PersonaListCard extends StatelessWidget {
   Widget _buildActionButton({
     required String label,
     required VoidCallback onTap,
-    required Color backgroundColor,
+    Color? backgroundColor,
     required Color textColor,
+    bool useGradient = false,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 8.h),
         decoration: BoxDecoration(
-          color: backgroundColor,
+          gradient: useGradient ? AppColors.orangeGradient : null,
+          color: useGradient ? null : backgroundColor,
           borderRadius: BorderRadius.circular(8.r),
+          boxShadow: useGradient
+              ? [
+                  BoxShadow(
+                    color: '#F38B3B'.toColor().withOpacity(0.3),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
         child: Center(
           child: AutoTranslateText(
             label,
-            style: MyTextTheme.smallBCB.copyWith(
-              color: textColor,
-              fontWeight: FontWeight.w600,
-            ).merge(AppTypography.body2),
+            style: MyTextTheme.smallBCB
+                .copyWith(color: textColor, fontWeight: FontWeight.w600)
+                .merge(AppTypography.body2),
           ),
         ),
       ),
     );
   }
 }
-
-
-
-
-
-

@@ -6,7 +6,6 @@ import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_form_co
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -14,27 +13,58 @@ import 'package:get/get.dart';
 class HoroscopeFormView extends BasePage<HoroscopeFormController> {
   const HoroscopeFormView({super.key});
 
+  // Gradient definitions
+  static final LinearGradient gradientBackground = LinearGradient(
+    colors: ["#FCE5AA".toColor(), "#FFFCF3".toColor(), "#FFFFFF".toColor()],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+
+  static final LinearGradient primaryGradient = LinearGradient(
+    colors: ["#820B17".toColor(), "#68171E".toColor(), "#5D1C21".toColor()],
+  );
+
+  static LinearGradient orangeGradient = LinearGradient(
+    colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
+  );
+
+  // Helper method to apply gradient to icons
+  Widget _buildGradientIcon(IconData icon, double size) {
+    return ShaderMask(
+      shaderCallback: (bounds) => orangeGradient.createShader(bounds),
+      child: Icon(
+        icon,
+        color: Colors.white,
+        size: size,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Header
-              _buildHeader(),
-              
-              // Location Selector
-              _buildLocationSelector(),
-              
-              Spacing.h(20),
-              
-              // Form Section
-              _buildFormSection(),
-              
-              Spacing.h(20),
-            ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: gradientBackground,
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Header
+                _buildHeader(),
+                
+                // Location Selector
+                _buildLocationSelector(),
+                
+                Spacing.h(20),
+                
+                // Form Section
+                _buildFormSection(),
+                
+                Spacing.h(20),
+              ],
+            ),
           ),
         ),
       ),
@@ -44,7 +74,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
   Widget _buildHeader() {
     return Container(
       decoration: BoxDecoration(
-        color: "#6F221E".toColor(),
+        gradient: primaryGradient,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(24.r),
           bottomRight: Radius.circular(24.r),
@@ -91,50 +121,50 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
-              color: const Color(0xFFDFB343),
+              color: Colors.transparent,
               width: 1.5,
             ),
+            gradient: orangeGradient,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
             ],
           ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.location_on,
-                color: const Color(0xFFDFB343),
-                size: 24.w,
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: Obx(() => AutoTranslateText(
-                  controller.selectedLocation.value,
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: "#6F221E".toColor(),
-                  ).merge(AppTypography.body1),
-                )),
-              ),
-              Obx(() => controller.isFetchingLocation.value
-                  ? SizedBox(
-                      width: 20.w,
-                      height: 20.w,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          const Color(0xFFDFB343),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            child: Row(
+              children: [
+                _buildGradientIcon(Icons.location_on, 24.w),
+                Spacing.w(12),
+                Expanded(
+                  child: Obx(() => AutoTranslateText(
+                    controller.selectedLocation.value,
+                    style: MyTextTheme.mediumBCN.copyWith(
+                      color: "#6F221E".toColor(),
+                    ).merge(AppTypography.body1),
+                  )),
+                ),
+                Obx(() => controller.isFetchingLocation.value
+                    ? SizedBox(
+                        width: 20.w,
+                        height: 20.w,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            const Color(0xFFDFB343),
+                          ),
                         ),
-                      ),
-                    )
-                  : Icon(
-                      Icons.arrow_forward_ios,
-                      color: const Color(0xFFDFB343),
-                      size: 16.w,
-                    )),
-            ],
+                      )
+                    : _buildGradientIcon(Icons.arrow_forward_ios, 16.w)),
+              ],
+            ),
           ),
         ),
       ),
@@ -174,33 +204,6 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
           ),
           Spacing.h(12),
           
-          // Latitude field
-          _buildTextField(
-            controller: controller.latitudeController,
-            label: 'Latitude',
-            icon: Icons.location_on,
-            readOnly: true,
-          ),
-          Spacing.h(12),
-          
-          // Longitude field
-          _buildTextField(
-            controller: controller.longitudeController,
-            label: 'Longitude',
-            icon: Icons.location_on,
-            readOnly: true,
-          ),
-          Spacing.h(12),
-          
-          // Timezone field
-          _buildTextField(
-            controller: controller.timezoneController,
-            label: 'Timezone offset',
-            icon: Icons.access_time,
-            readOnly: true,
-          ),
-          Spacing.h(12),
-          
           // Language dropdown
           _buildLanguageField(),
           Spacing.h(20),
@@ -221,8 +224,8 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
+        gradient: orangeGradient,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -231,33 +234,40 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
           ),
         ],
       ),
-      child: TextFormField(
-        controller: controller,
-        readOnly: readOnly,
-        onTap: onTap,
-        style: MyTextTheme.mediumBCN.copyWith(
-          color: "#6F221E".toColor(),
-        ).merge(AppTypography.body1),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: MyTextTheme.smallBCN.copyWith(
-            color: "#6F221E".toColor().withOpacity(0.6),
-          ).merge(AppTypography.body2),
-          prefixIcon: Icon(icon, color: const Color(0xFFDFB343), size: 20.w),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(color: "#DFB343".toColor(), width: 1),
+      padding: EdgeInsets.all(1.5),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.5.r),
+        ),
+        child: TextFormField(
+          controller: controller,
+          readOnly: readOnly,
+          onTap: onTap,
+          style: MyTextTheme.mediumBCN.copyWith(
+            color: "#6F221E".toColor(),
+          ).merge(AppTypography.body1),
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: MyTextTheme.smallBCN.copyWith(
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
+            ).merge(AppTypography.body2),
+            prefixIcon: _buildGradientIcon(icon, 20.w),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.5.r),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.5.r),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.5.r),
+              borderSide: BorderSide.none,
+            ),
+            filled: true,
+            fillColor: Colors.white,
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(color: "#DFB343".toColor().withOpacity(0.5), width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(color: "#DFB343".toColor(), width: 2),
-          ),
-          filled: true,
-          fillColor: Colors.white,
         ),
       ),
     );
@@ -266,8 +276,8 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
   Widget _buildLanguageField() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
+        gradient: orangeGradient,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -276,29 +286,35 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
           ),
         ],
       ),
-      child: Obx(() => DropdownButtonFormField<String>(
-        value: controller.selectedLanguage.value,
-        decoration: InputDecoration(
-          labelText: 'Language',
-          labelStyle: MyTextTheme.smallBCN.copyWith(
-            color: "#6F221E".toColor().withOpacity(0.6),
-          ).merge(AppTypography.body2),
-          prefixIcon: Icon(Icons.language, color: const Color(0xFFDFB343), size: 20.w),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(color: "#DFB343".toColor(), width: 1),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(color: "#DFB343".toColor().withOpacity(0.5), width: 1),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(color: "#DFB343".toColor(), width: 2),
-          ),
-          filled: true,
-          fillColor: Colors.white,
+      padding: EdgeInsets.all(1.5),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.5.r),
         ),
+        child: Obx(() => DropdownButtonFormField<String>(
+          value: controller.selectedLanguage.value,
+          decoration: InputDecoration(
+            labelText: 'Language',
+            labelStyle: MyTextTheme.smallBCN.copyWith(
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
+            ).merge(AppTypography.body2),
+            prefixIcon: _buildGradientIcon(Icons.language, 20.w),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.5.r),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.5.r),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.5.r),
+              borderSide: BorderSide.none,
+            ),
+            filled: true,
+            fillColor: Colors.white,
+          ),
         items: controller.languages.entries.map((entry) {
           return DropdownMenuItem<String>(
             value: entry.key,
@@ -316,22 +332,36 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
           }
         },
       )),
+      ),
     );
   }
 
   Widget _buildSubmitButton() {
     return Obx(() => SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        onPressed: controller.isLoading.value ? null : controller.submitForm,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFDFB343),
-          padding: EdgeInsets.symmetric(vertical: 16.h),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          elevation: 4,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: orangeGradient,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
+        child: ElevatedButton(
+          onPressed: controller.isLoading.value ? null : controller.submitForm,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            padding: EdgeInsets.symmetric(vertical: 16.h),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            elevation: 0,
+          ),
         child: controller.isLoading.value
             ? SizedBox(
                 height: 20.h,
@@ -348,6 +378,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
                   fontWeight: FontWeight.bold,
                 ).merge(AppTypography.h3),
               ),
+        ),
       ),
     ));
   }
@@ -364,8 +395,15 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country) {
-            controller.fetchLocationFromCity(city, state: state, country: country);
+          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
+            controller.fetchLocationFromCity(
+              city,
+              state: state,
+              country: country,
+              latitude: latitude,
+              longitude: longitude,
+              timezone: timezone,
+            );
             Get.back();
           },
           selectedCity: controller.selectedLocation.value,

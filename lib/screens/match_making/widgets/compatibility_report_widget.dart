@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -44,7 +45,7 @@ class CompatibilityReportWidget extends StatelessWidget {
       // Fallback to data itself
       response = data;
     }
-    
+
     final score = response['score'] as num? ?? 0.0;
     final baseTotal = (matchScoreTotalOverride ?? 36).toDouble();
     final effectiveTotal = rawTotal != null ? rawTotal!.toDouble() : baseTotal;
@@ -53,9 +54,14 @@ class CompatibilityReportWidget extends StatelessWidget {
         ? score.round()
         : (effectiveTotal > 0 ? ((score / effectiveTotal) * 100).round() : 0);
     final int finalPercent = percentValue;
-    final matchStatus = finalPercent >= 75 ? 'Good Match' : finalPercent >= 50 ? 'Moderate Match' : 'Poor Match';
-    final showSeparateTotal = showTotalSeparately || (rawTotal != null && score > effectiveTotal);
-    
+    final matchStatus = finalPercent >= 75
+        ? 'Good Match'
+        : finalPercent >= 50
+        ? 'Moderate Match'
+        : 'Poor Match';
+    final showSeparateTotal =
+        showTotalSeparately || (rawTotal != null && score > effectiveTotal);
+
     // Extract kootas
     final tara = response['tara'] as Map<String, dynamic>?;
     final gana = response['gana'] as Map<String, dynamic>?;
@@ -65,11 +71,13 @@ class CompatibilityReportWidget extends StatelessWidget {
     final vasya = response['vasya'] as Map<String, dynamic>?;
     final nadi = response['nadi'] as Map<String, dynamic>?;
     final varna = response['varna'] as Map<String, dynamic>?;
-    
+
     // Extract astro details
-    final boyAstroDetails = response['boy_astro_details'] as Map<String, dynamic>?;
-    final girlAstroDetails = response['girl_astro_details'] as Map<String, dynamic>?;
-    
+    final boyAstroDetails =
+        response['boy_astro_details'] as Map<String, dynamic>?;
+    final girlAstroDetails =
+        response['girl_astro_details'] as Map<String, dynamic>?;
+
     // Extract bot response
     final botResponse = response['bot_response'] as String? ?? '';
 
@@ -81,24 +89,30 @@ class CompatibilityReportWidget extends StatelessWidget {
           _buildProfileSection(boyAstroDetails, girlAstroDetails, response),
           Spacing.h(20),
         ],
-        
+
         // Match Score
         if (showMatchScore) ...[
-          Center(child: _buildMatchScore(score, effectiveTotal, finalPercent, matchStatus, showSeparateTotal, rawTotal)),
+          Center(
+            child: _buildMatchScore(
+              score,
+              effectiveTotal,
+              finalPercent,
+              matchStatus,
+              showSeparateTotal,
+              rawTotal,
+            ),
+          ),
           Spacing.h(20),
         ],
 
         // Kundli Charts (if provided from parent)
-        if (kundliSection != null) ...[
-          kundliSection!,
-          Spacing.h(20),
-        ],
-        
+        if (kundliSection != null) ...[kundliSection!, Spacing.h(20)],
+
         // Strengths and Areas of Attention
         _buildStrengthsAndAttention(response),
-        
+
         Spacing.h(20),
-        
+
         // 36 Gun Milan Details
         if (showGunMilan) ...[
           _buildGunMilanDetails(
@@ -111,18 +125,17 @@ class CompatibilityReportWidget extends StatelessWidget {
             nadi: nadi,
             varna: varna,
           ),
-          
+
           Spacing.h(20),
         ],
-        
+
         // Manglik Dosha Analysis
         _buildManglikDosha(response),
-        
+
         Spacing.h(20),
-        
+
         // AstroBharat AI Conclusion
-        if (botResponse.isNotEmpty)
-          _buildAIConclusion(botResponse),
+        if (botResponse.isNotEmpty) _buildAIConclusion(botResponse),
       ],
     );
   }
@@ -133,18 +146,32 @@ class CompatibilityReportWidget extends StatelessWidget {
     Map<String, dynamic> response,
   ) {
     // Get full response data for planetary details
-    final boyPlanetaryDetails = response['boy_planetary_details'] as Map<String, dynamic>?;
-    final girlPlanetaryDetails = response['girl_planetary_details'] as Map<String, dynamic>?;
+    final boyPlanetaryDetails =
+        response['boy_planetary_details'] as Map<String, dynamic>?;
+    final girlPlanetaryDetails =
+        response['girl_planetary_details'] as Map<String, dynamic>?;
     // Extract data from API response - no static fallbacks
     final boyName = boyDetails?['name'] as String? ?? '';
-    final boyDob = boyDetails?['dob'] as String? ?? boyDetails?['birth_dasa_time'] as String? ?? '';
+    final boyDob =
+        boyDetails?['dob'] as String? ??
+        boyDetails?['birth_dasa_time'] as String? ??
+        '';
     final boyRasi = boyDetails?['rasi'] as String? ?? '';
-    final boyAscendant = boyDetails?['ascendant_sign'] as String? ?? boyDetails?['ascendant'] as String? ?? '';
-    
+    final boyAscendant =
+        boyDetails?['ascendant_sign'] as String? ??
+        boyDetails?['ascendant'] as String? ??
+        '';
+
     final girlName = girlDetails?['name'] as String? ?? '';
-    final girlDob = girlDetails?['dob'] as String? ?? girlDetails?['birth_dasa_time'] as String? ?? '';
+    final girlDob =
+        girlDetails?['dob'] as String? ??
+        girlDetails?['birth_dasa_time'] as String? ??
+        '';
     final girlRasi = girlDetails?['rasi'] as String? ?? '';
-    final girlAscendant = girlDetails?['ascendant_sign'] as String? ?? girlDetails?['ascendant'] as String? ?? '';
+    final girlAscendant =
+        girlDetails?['ascendant_sign'] as String? ??
+        girlDetails?['ascendant'] as String? ??
+        '';
 
     return Container(
       padding: EdgeInsets.all(20.w),
@@ -178,12 +205,12 @@ class CompatibilityReportWidget extends StatelessWidget {
                         height: 70.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: "#DFB343".toColor().withOpacity(0.2),
+                          color: AppColors.deepOrange.withOpacity(0.2),
                         ),
                         child: Icon(
                           Icons.person,
                           size: 40.w,
-                          color: "#6F221E".toColor(),
+                          color: '#68171E'.toColor(),
                         ),
                       );
                     },
@@ -241,7 +268,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                   child: AutoTranslateText(
                     'View Full Kundli',
                     style: MyTextTheme.smallBCB.copyWith(
-                      color: "#DFB343".toColor(),
+                      color: AppColors.deepOrange,
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -249,7 +276,7 @@ class CompatibilityReportWidget extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Heart Icon (Center)
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -266,14 +293,10 @@ class CompatibilityReportWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(
-                Icons.favorite,
-                color: Colors.orange,
-                size: 32.w,
-              ),
+              child: Icon(Icons.favorite, color: Colors.orange, size: 32.w),
             ),
           ),
-          
+
           // Boy Profile (Right)
           Expanded(
             child: Column(
@@ -290,12 +313,12 @@ class CompatibilityReportWidget extends StatelessWidget {
                         height: 70.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: "#DFB343".toColor().withOpacity(0.2),
+                          color: AppColors.deepOrange.withOpacity(0.2),
                         ),
                         child: Icon(
                           Icons.person,
                           size: 40.w,
-                          color: "#6F221E".toColor(),
+                          color: '#68171E'.toColor(),
                         ),
                       );
                     },
@@ -353,7 +376,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                   child: AutoTranslateText(
                     'View Full Kundli',
                     style: MyTextTheme.smallBCB.copyWith(
-                      color: "#DFB343".toColor(),
+                      color: AppColors.deepOrange,
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -382,11 +405,11 @@ class CompatibilityReportWidget extends StatelessWidget {
       'aquarius': '♒',
       'pisces': '♓',
     };
-    
+
     // Convert to lowercase for lookup
     final signLower = sign.toLowerCase();
     final icon = zodiacIcons[signLower] ?? '⭐';
-    
+
     return Container(
       width: 24.w,
       height: 24.w,
@@ -394,12 +417,7 @@ class CompatibilityReportWidget extends StatelessWidget {
         color: "#DFB343".toColor().withOpacity(0.2),
         shape: BoxShape.circle,
       ),
-      child: Center(
-        child: AutoTranslateText(
-          icon,
-          style: AppTypography.h3,
-        ),
-      ),
+      child: Center(child: AutoTranslateText(icon, style: AppTypography.h3)),
     );
   }
 
@@ -413,7 +431,9 @@ class CompatibilityReportWidget extends StatelessWidget {
   ) {
     final displayScore = score.toStringAsFixed(0);
     final displayTotal = rawTotal?.toString() ?? totalScore.toStringAsFixed(0);
-    final progressValue = totalScore > 0 ? (score / totalScore).clamp(0, 1).toDouble() : 0.0;
+    final progressValue = totalScore > 0
+        ? (score / totalScore).clamp(0, 1).toDouble()
+        : 0.0;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -432,11 +452,11 @@ class CompatibilityReportWidget extends StatelessWidget {
                   strokeWidth: 14,
                   backgroundColor: Colors.grey.withOpacity(0.2),
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    percentage >= 75 
-                        ? Colors.green 
-                        : percentage >= 50 
-                            ? Colors.orange 
-                            : Colors.red,
+                    percentage >= 75
+                        ? Colors.green
+                        : percentage >= 50
+                        ? Colors.orange
+                        : Colors.red,
                   ),
                 ),
               ),
@@ -444,7 +464,9 @@ class CompatibilityReportWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   AutoTranslateText(
-                    showSeparateTotal ? displayScore : '${score.toStringAsFixed(0)}/${totalScore.toInt()}',
+                    showSeparateTotal
+                        ? displayScore
+                        : '${score.toStringAsFixed(0)}/${totalScore.toInt()}',
                     style: MyTextTheme.largeBCB.copyWith(
                       color: "#6F221E".toColor(),
                       fontWeight: FontWeight.bold,
@@ -466,22 +488,22 @@ class CompatibilityReportWidget extends StatelessWidget {
         AutoTranslateText(
           '$percentage%',
           style: AppTypography.h1.copyWith(
-            color: percentage >= 75 
-                ? Colors.purple 
-                : percentage >= 50 
-                    ? Colors.orange 
-                    : Colors.red,
+            color: percentage >= 75
+                ? Colors.purple
+                : percentage >= 50
+                ? Colors.orange
+                : Colors.red,
           ),
         ),
         Spacing.h(4),
         AutoTranslateText(
           matchStatus,
           style: MyTextTheme.mediumBCB.copyWith(
-            color: percentage >= 75 
-                ? Colors.purple 
-                : percentage >= 50 
-                    ? Colors.orange 
-                    : Colors.red,
+            color: percentage >= 75
+                ? Colors.purple
+                : percentage >= 50
+                ? Colors.orange
+                : Colors.red,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -492,13 +514,11 @@ class CompatibilityReportWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFFFDF3E6),
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: "#DFB343".toColor().withOpacity(0.4)),
+              border: Border.all(color: AppColors.deepOrange.withOpacity(0.3)),
             ),
             child: AutoTranslateText(
               'Total: $displayTotal',
-              style: MyTextTheme.smallBCB.copyWith(
-                color: "#6F221E".toColor(),
-              ),
+              style: MyTextTheme.smallBCB.copyWith(color: "#6F221E".toColor()),
             ),
           ),
         ],
@@ -517,78 +537,88 @@ class CompatibilityReportWidget extends StatelessWidget {
     Map<String, dynamic>? varna,
   }) {
     final kootas = [
-      if (varna != null) _KootaData(
-        name: 'Varna',
-        displayName: 'Varna',
-        score: (varna['varna'] as num? ?? 0).toDouble(),
-        fullScore: (varna['full_score'] as num? ?? 1).toDouble(),
-        description: varna['description'] as String? ?? '',
-        boyInfo: (varna['boy_varna'] ?? '').toString(),
-        girlInfo: (varna['girl_varna'] ?? '').toString(),
-      ),
-      if (vasya != null) _KootaData(
-        name: 'Vasya',
-        displayName: 'Vashya',
-        score: (vasya['vasya'] as num? ?? 0).toDouble(),
-        fullScore: (vasya['full_score'] as num? ?? 2).toDouble(),
-        description: vasya['description'] as String? ?? '',
-        boyInfo: (vasya['boy_vasya'] ?? '').toString(),
-        girlInfo: (vasya['girl_vasya'] ?? '').toString(),
-      ),
-      if (tara != null) _KootaData(
-        name: 'Tara',
-        displayName: 'Tara',
-        score: (tara['tara'] as num? ?? 0).toDouble(),
-        fullScore: (tara['full_score'] as num? ?? 3).toDouble(),
-        description: tara['description'] as String? ?? '',
-        boyInfo: (tara['boy_tara'] ?? '').toString(),
-        girlInfo: (tara['girl_tara'] ?? '').toString(),
-      ),
-      if (yoni != null) _KootaData(
-        name: 'Yoni',
-        displayName: 'Yoni',
-        score: (yoni['yoni'] as num? ?? 0).toDouble(),
-        fullScore: (yoni['full_score'] as num? ?? 4).toDouble(),
-        description: yoni['description'] as String? ?? '',
-        boyInfo: (yoni['boy_yoni'] ?? '').toString(),
-        girlInfo: (yoni['girl_yoni'] ?? '').toString(),
-      ),
-      if (grahamaitri != null) _KootaData(
-        name: 'Grahamaitri',
-        displayName: 'Graha Maitri',
-        score: (grahamaitri['grahamaitri'] as num? ?? 0).toDouble(),
-        fullScore: (grahamaitri['full_score'] as num? ?? 5).toDouble(),
-        description: grahamaitri['description'] as String? ?? '',
-        boyInfo: (grahamaitri['boy_lord'] ?? '').toString(),
-        girlInfo: (grahamaitri['girl_lord'] ?? '').toString(),
-      ),
-      if (gana != null) _KootaData(
-        name: 'Gana',
-        displayName: 'Gana',
-        score: (gana['gana'] as num? ?? 0).toDouble(),
-        fullScore: (gana['full_score'] as num? ?? 6).toDouble(),
-        description: gana['description'] as String? ?? '',
-        boyInfo: (gana['boy_gana'] ?? '').toString(),
-        girlInfo: (gana['girl_gana'] ?? '').toString(),
-      ),
-      if (bhakoot != null) _KootaData(
-        name: 'Bhakoot',
-        displayName: 'Bhakoot',
-        score: (bhakoot['bhakoot'] as num? ?? 0).toDouble(),
-        fullScore: (bhakoot['full_score'] as num? ?? 7).toDouble(),
-        description: bhakoot['description'] as String? ?? '',
-        boyInfo: (bhakoot['boy_rasi_name'] ?? bhakoot['boy_rasi'] ?? '').toString(),
-        girlInfo: (bhakoot['girl_rasi_name'] ?? bhakoot['girl_rasi'] ?? '').toString(),
-      ),
-      if (nadi != null) _KootaData(
-        name: 'Nadi',
-        displayName: 'Nadi',
-        score: (nadi['nadi'] as num? ?? 0).toDouble(),
-        fullScore: (nadi['full_score'] as num? ?? 8).toDouble(),
-        description: nadi['description'] as String? ?? '',
-        boyInfo: (nadi['boy_nadi'] ?? '').toString(),
-        girlInfo: (nadi['girl_nadi'] ?? '').toString(),
-      ),
+      if (varna != null)
+        _KootaData(
+          name: 'Varna',
+          displayName: 'Varna',
+          score: (varna['varna'] as num? ?? 0).toDouble(),
+          fullScore: (varna['full_score'] as num? ?? 1).toDouble(),
+          description: varna['description'] as String? ?? '',
+          boyInfo: (varna['boy_varna'] ?? '').toString(),
+          girlInfo: (varna['girl_varna'] ?? '').toString(),
+        ),
+      if (vasya != null)
+        _KootaData(
+          name: 'Vasya',
+          displayName: 'Vashya',
+          score: (vasya['vasya'] as num? ?? 0).toDouble(),
+          fullScore: (vasya['full_score'] as num? ?? 2).toDouble(),
+          description: vasya['description'] as String? ?? '',
+          boyInfo: (vasya['boy_vasya'] ?? '').toString(),
+          girlInfo: (vasya['girl_vasya'] ?? '').toString(),
+        ),
+      if (tara != null)
+        _KootaData(
+          name: 'Tara',
+          displayName: 'Tara',
+          score: (tara['tara'] as num? ?? 0).toDouble(),
+          fullScore: (tara['full_score'] as num? ?? 3).toDouble(),
+          description: tara['description'] as String? ?? '',
+          boyInfo: (tara['boy_tara'] ?? '').toString(),
+          girlInfo: (tara['girl_tara'] ?? '').toString(),
+        ),
+      if (yoni != null)
+        _KootaData(
+          name: 'Yoni',
+          displayName: 'Yoni',
+          score: (yoni['yoni'] as num? ?? 0).toDouble(),
+          fullScore: (yoni['full_score'] as num? ?? 4).toDouble(),
+          description: yoni['description'] as String? ?? '',
+          boyInfo: (yoni['boy_yoni'] ?? '').toString(),
+          girlInfo: (yoni['girl_yoni'] ?? '').toString(),
+        ),
+      if (grahamaitri != null)
+        _KootaData(
+          name: 'Grahamaitri',
+          displayName: 'Graha Maitri',
+          score: (grahamaitri['grahamaitri'] as num? ?? 0).toDouble(),
+          fullScore: (grahamaitri['full_score'] as num? ?? 5).toDouble(),
+          description: grahamaitri['description'] as String? ?? '',
+          boyInfo: (grahamaitri['boy_lord'] ?? '').toString(),
+          girlInfo: (grahamaitri['girl_lord'] ?? '').toString(),
+        ),
+      if (gana != null)
+        _KootaData(
+          name: 'Gana',
+          displayName: 'Gana',
+          score: (gana['gana'] as num? ?? 0).toDouble(),
+          fullScore: (gana['full_score'] as num? ?? 6).toDouble(),
+          description: gana['description'] as String? ?? '',
+          boyInfo: (gana['boy_gana'] ?? '').toString(),
+          girlInfo: (gana['girl_gana'] ?? '').toString(),
+        ),
+      if (bhakoot != null)
+        _KootaData(
+          name: 'Bhakoot',
+          displayName: 'Bhakoot',
+          score: (bhakoot['bhakoot'] as num? ?? 0).toDouble(),
+          fullScore: (bhakoot['full_score'] as num? ?? 7).toDouble(),
+          description: bhakoot['description'] as String? ?? '',
+          boyInfo: (bhakoot['boy_rasi_name'] ?? bhakoot['boy_rasi'] ?? '')
+              .toString(),
+          girlInfo: (bhakoot['girl_rasi_name'] ?? bhakoot['girl_rasi'] ?? '')
+              .toString(),
+        ),
+      if (nadi != null)
+        _KootaData(
+          name: 'Nadi',
+          displayName: 'Nadi',
+          score: (nadi['nadi'] as num? ?? 0).toDouble(),
+          fullScore: (nadi['full_score'] as num? ?? 8).toDouble(),
+          description: nadi['description'] as String? ?? '',
+          boyInfo: (nadi['boy_nadi'] ?? '').toString(),
+          girlInfo: (nadi['girl_nadi'] ?? '').toString(),
+        ),
     ];
 
     return _ExpandableSection(
@@ -608,7 +638,7 @@ class CompatibilityReportWidget extends StatelessWidget {
   Widget _buildKootaRow(_KootaData koota) {
     final isComplete = koota.score >= koota.fullScore;
     final isPartial = koota.score > 0 && koota.score < koota.fullScore;
-    
+
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
       child: Container(
@@ -627,16 +657,16 @@ class CompatibilityReportWidget extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  isComplete 
-                      ? Icons.check_circle 
-                      : isPartial 
-                          ? Icons.warning 
-                          : Icons.cancel,
-                  color: isComplete 
-                      ? Colors.green 
-                      : isPartial 
-                          ? Colors.orange 
-                          : Colors.red,
+                  isComplete
+                      ? Icons.check_circle
+                      : isPartial
+                      ? Icons.warning
+                      : Icons.cancel,
+                  color: isComplete
+                      ? Colors.green
+                      : isPartial
+                      ? Colors.orange
+                      : Colors.red,
                   size: 20.w,
                 ),
                 Spacing.w(12),
@@ -651,11 +681,11 @@ class CompatibilityReportWidget extends StatelessWidget {
                 AutoTranslateText(
                   '${koota.score.toInt()}/${koota.fullScore.toInt()}',
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: isComplete 
-                        ? Colors.green 
-                        : isPartial 
-                            ? Colors.orange 
-                            : Colors.red,
+                    color: isComplete
+                        ? Colors.green
+                        : isPartial
+                        ? Colors.orange
+                        : Colors.red,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -672,13 +702,9 @@ class CompatibilityReportWidget extends StatelessWidget {
             Spacing.h(8),
             Row(
               children: [
-                Expanded(
-                  child: _buildKootaInfoTile('Boy', koota.boyInfo),
-                ),
+                Expanded(child: _buildKootaInfoTile('Boy', koota.boyInfo)),
                 Spacing.w(8),
-                Expanded(
-                  child: _buildKootaInfoTile('Girl', koota.girlInfo),
-                ),
+                Expanded(child: _buildKootaInfoTile('Girl', koota.girlInfo)),
               ],
             ),
           ],
@@ -694,16 +720,14 @@ class CompatibilityReportWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFFDF3E6),
         borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: "#DFB343".toColor().withOpacity(0.2)),
+        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AutoTranslateText(
             label,
-            style: MyTextTheme.smallBCB.copyWith(
-              color: "#6F221E".toColor(),
-            ),
+            style: MyTextTheme.smallBCB.copyWith(color: "#6F221E".toColor()),
           ),
           Spacing.h(4),
           AutoTranslateText(
@@ -720,13 +744,13 @@ class CompatibilityReportWidget extends StatelessWidget {
   Widget _buildStrengthsAndAttention(Map<String, dynamic> response) {
     final strengths = <String>[];
     final attention = <String>[];
-    
+
     // Analyze kootas for strengths and attention areas
     final gana = response['gana'] as Map<String, dynamic>?;
     final nadi = response['nadi'] as Map<String, dynamic>?;
     final bhakoot = response['bhakoot'] as Map<String, dynamic>?;
     final tara = response['tara'] as Map<String, dynamic>?;
-    
+
     if (bhakoot != null && (bhakoot['bhakoot'] as num? ?? 0) > 0) {
       strengths.add('Favorable destiny and health aspects');
       strengths.add('Good Bhakoot alignment for prosperity');
@@ -734,7 +758,7 @@ class CompatibilityReportWidget extends StatelessWidget {
     if (tara != null && (tara['tara'] as num? ?? 0) > 0) {
       strengths.add('Strong spiritual and mental compatibility');
     }
-    
+
     if (gana != null && (gana['gana'] as num? ?? 0) == 0) {
       attention.add('Gana mismatch requires understanding');
     }
@@ -766,44 +790,50 @@ class CompatibilityReportWidget extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.thumb_up, color: "#DFB343".toColor(), size: 20.w),
+                    Icon(
+                      Icons.thumb_up,
+                      color: AppColors.deepOrange,
+                      size: 20.w,
+                    ),
                     Spacing.w(8),
                     AutoTranslateText(
                       'Strengths',
                       style: MyTextTheme.mediumBCB.copyWith(
-                        color: "#6F221E".toColor(),
+                        color: '#68171E'.toColor(),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
                 Spacing.h(12),
-                ...strengths.map((strength) => Padding(
-                  padding: EdgeInsets.only(bottom: 8.h),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 6.w,
-                        height: 6.w,
-                        margin: EdgeInsets.only(top: 6.h, right: 12.w),
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      Expanded(
-                        child: AutoTranslateText(
-                          strength,
-                          style: MyTextTheme.smallBCN.copyWith(
+                ...strengths.map(
+                  (strength) => Padding(
+                    padding: EdgeInsets.only(bottom: 8.h),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 6.w,
+                          height: 6.w,
+                          margin: EdgeInsets.only(top: 6.h, right: 12.w),
+                          decoration: BoxDecoration(
                             color: Colors.green,
-                            height: 1.4,
+                            shape: BoxShape.circle,
                           ),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: AutoTranslateText(
+                            strength,
+                            style: MyTextTheme.smallBCN.copyWith(
+                              color: Colors.green,
+                              height: 1.4,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                )),
+                ),
               ],
             ),
           ),
@@ -837,32 +867,34 @@ class CompatibilityReportWidget extends StatelessWidget {
                   ],
                 ),
                 Spacing.h(12),
-                ...attention.map((item) => Padding(
-                  padding: EdgeInsets.only(bottom: 8.h),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 6.w,
-                        height: 6.w,
-                        margin: EdgeInsets.only(top: 6.h, right: 12.w),
-                        decoration: BoxDecoration(
-                          color: Colors.orange,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      Expanded(
-                        child: AutoTranslateText(
-                          item,
-                          style: MyTextTheme.smallBCN.copyWith(
+                ...attention.map(
+                  (item) => Padding(
+                    padding: EdgeInsets.only(bottom: 8.h),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 6.w,
+                          height: 6.w,
+                          margin: EdgeInsets.only(top: 6.h, right: 12.w),
+                          decoration: BoxDecoration(
                             color: Colors.orange,
-                            height: 1.4,
+                            shape: BoxShape.circle,
                           ),
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          child: AutoTranslateText(
+                            item,
+                            style: MyTextTheme.smallBCN.copyWith(
+                              color: Colors.orange,
+                              height: 1.4,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                )),
+                ),
               ],
             ),
           ),
@@ -873,26 +905,36 @@ class CompatibilityReportWidget extends StatelessWidget {
 
   Widget _buildManglikDosha(Map<String, dynamic> response) {
     // Check for Manglik Dosha in planetary details from API
-    final boyPlanetaryDetails = response['boy_planetary_details'] as Map<String, dynamic>?;
-    final girlPlanetaryDetails = response['girl_planetary_details'] as Map<String, dynamic>?;
-    
+    final boyPlanetaryDetails =
+        response['boy_planetary_details'] as Map<String, dynamic>?;
+    final girlPlanetaryDetails =
+        response['girl_planetary_details'] as Map<String, dynamic>?;
+
     bool boyHasDosh = false;
     bool girlHasDosh = false;
     String boyDoshText = 'Non-Manglik';
     String girlDoshText = 'Non-Manglik';
-    String boyDoshDescription = 'Mars is favorably placed. No Manglik Dosha detected.';
-    String girlDoshDescription = 'Mars is favorably placed. No Manglik Dosha detected.';
-    
+    String boyDoshDescription =
+        'Mars is favorably placed. No Manglik Dosha detected.';
+    String girlDoshDescription =
+        'Mars is favorably placed. No Manglik Dosha detected.';
+
     // Check boy's Mars placement
     if (boyPlanetaryDetails != null) {
       final mars = boyPlanetaryDetails['3'] as Map<String, dynamic>?;
       if (mars != null) {
         final house = mars['house'] as int?;
-        if (house != null && (house == 1 || house == 4 || house == 7 || house == 8 || house == 12)) {
+        if (house != null &&
+            (house == 1 ||
+                house == 4 ||
+                house == 7 ||
+                house == 8 ||
+                house == 12)) {
           boyHasDosh = true;
           if (house == 7) {
             boyDoshText = 'Groom Kundli Dosh';
-            boyDoshDescription = 'Mars in 7th house. Partial Manglik Dosha present.';
+            boyDoshDescription =
+                'Mars in 7th house. Partial Manglik Dosha present.';
           } else {
             boyDoshText = 'Groom Kundli Dosh';
             boyDoshDescription = 'Mars in $house house. Manglik Dosha present.';
@@ -900,20 +942,27 @@ class CompatibilityReportWidget extends StatelessWidget {
         }
       }
     }
-    
+
     // Check girl's Mars placement
     if (girlPlanetaryDetails != null) {
       final mars = girlPlanetaryDetails['3'] as Map<String, dynamic>?;
       if (mars != null) {
         final house = mars['house'] as int?;
-        if (house != null && (house == 1 || house == 4 || house == 7 || house == 8 || house == 12)) {
+        if (house != null &&
+            (house == 1 ||
+                house == 4 ||
+                house == 7 ||
+                house == 8 ||
+                house == 12)) {
           girlHasDosh = true;
           if (house == 7) {
             girlDoshText = 'Bride Kundli Dosh';
-            girlDoshDescription = 'Mars in 7th house. Partial Manglik Dosha present.';
+            girlDoshDescription =
+                'Mars in 7th house. Partial Manglik Dosha present.';
           } else {
             girlDoshText = 'Bride Kundli Dosh';
-            girlDoshDescription = 'Mars in $house house. Manglik Dosha present.';
+            girlDoshDescription =
+                'Mars in $house house. Manglik Dosha present.';
           }
         }
       }
@@ -925,7 +974,7 @@ class CompatibilityReportWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: "#DFB343".toColor().withOpacity(0.3),
+          color: '#68171E'.toColor().withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -935,7 +984,11 @@ class CompatibilityReportWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.local_fire_department, color: "#DFB343".toColor(), size: 20.w),
+              Icon(
+                Icons.local_fire_department,
+                color: AppColors.deepOrange,
+                size: 20.w,
+              ),
               Spacing.w(8),
               AutoTranslateText(
                 'Manglik Dosha Analysis',
@@ -961,12 +1014,12 @@ class CompatibilityReportWidget extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(16.w),
                   decoration: BoxDecoration(
-                    color: !boyHasDosh 
+                    color: !boyHasDosh
                         ? const Color(0xFFE8F5E9) // Light green background
                         : const Color(0xFFFFF3E0), // Light orange background
                     borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(
-                      color: !boyHasDosh 
+                      color: !boyHasDosh
                           ? Colors.green.withOpacity(0.3)
                           : Colors.orange.withOpacity(0.3),
                       width: 1,
@@ -987,7 +1040,7 @@ class CompatibilityReportWidget extends StatelessWidget {
                       AutoTranslateText(
                         boyDoshDescription,
                         style: MyTextTheme.smallBCN.copyWith(
-                          color: "#6F221E".toColor(),
+                          color: '#68171E'.toColor(),
                         ),
                       ),
                     ],
@@ -998,76 +1051,79 @@ class CompatibilityReportWidget extends StatelessWidget {
               Icon(Icons.favorite, color: Colors.red, size: 24.w),
               Spacing.w(12),
               Expanded(
-              child: Container(
-                padding: EdgeInsets.all(16.w),
-                decoration: BoxDecoration(
-                  color: !girlHasDosh 
-                      ? const Color(0xFFE8F5E9) // Light green background
-                      : const Color(0xFFFFF3E0), // Light orange background
-                  borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(
-                    color: !girlHasDosh 
-                        ? Colors.green.withOpacity(0.3)
-                        : Colors.orange.withOpacity(0.3),
-                    width: 1,
+                child: Container(
+                  padding: EdgeInsets.all(16.w),
+                  decoration: BoxDecoration(
+                    color: !girlHasDosh
+                        ? const Color(0xFFE8F5E9) // Light green background
+                        : const Color(0xFFFFF3E0), // Light orange background
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(
+                      color: !girlHasDosh
+                          ? Colors.green.withOpacity(0.3)
+                          : Colors.orange.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AutoTranslateText(
+                        girlDoshText,
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: !girlHasDosh ? Colors.green : Colors.orange,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Spacing.h(8),
+                      AutoTranslateText(
+                        girlDoshDescription,
+                        style: MyTextTheme.smallBCN.copyWith(
+                          color: '#68171E'.toColor(),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AutoTranslateText(
-                      girlDoshText,
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: !girlHasDosh ? Colors.green : Colors.orange,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Spacing.h(8),
-                    AutoTranslateText(
-                      girlDoshDescription,
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: "#6F221E".toColor(),
-                      ),
-                    ),
-                  ],
+              ),
+            ],
+          ),
+          Spacing.h(16),
+          SizedBox(
+            width: double.infinity,
+            height: 45.h,
+            child: OutlinedButton(
+              onPressed: () {
+                // Navigate to remedies page
+                Get.toNamed(
+                  AppRoutes.dosh,
+                  arguments: {
+                    'source': 'matchMakingRemedies',
+                    'response': response,
+                  },
+                );
+              },
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: AppColors.deepOrange, width: 1.5),
+                backgroundColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               ),
-            ),
-          ],
-        ),
-        Spacing.h(16),
-        SizedBox(
-          width: double.infinity,
-          height: 45.h,
-          child: OutlinedButton(
-            onPressed: () {
-              // Navigate to remedies page
-              Get.toNamed(AppRoutes.dosh, arguments: {'source': 'matchMakingRemedies', 'response': response});
-            },
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(
-                color: "#DFB343".toColor(),
-                width: 1.5,
+              child: AutoTranslateText(
+                'View Recommended Remedies',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: AppColors.deepOrange,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
               ),
-              backgroundColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-            ),
-            child: AutoTranslateText(
-              'View Recommended Remedies',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: "#DFB343".toColor(),
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
             ),
           ),
-        ),
-      ],
-    ),
+        ],
+      ),
     );
   }
 
@@ -1078,7 +1134,7 @@ class CompatibilityReportWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: "#DFB343".toColor().withOpacity(0.3),
+          color: '#68171E'.toColor().withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -1087,7 +1143,7 @@ class CompatibilityReportWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.star, color: "#DFB343".toColor(), size: 20.w),
+              Icon(Icons.star, color: AppColors.deepOrange, size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 'AstroBharat AI Conclusion',
@@ -1102,7 +1158,7 @@ class CompatibilityReportWidget extends StatelessWidget {
           AutoTranslateText(
             botResponse,
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor(),
+              color: '#68171E'.toColor(),
               height: 1.5,
             ),
           ),
@@ -1113,40 +1169,57 @@ class CompatibilityReportWidget extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {
                 // Navigate to astrologers list for marriage expert chat
-                Get.toNamed(AppRoutes.allAstrologers, arguments: {'source': 'matchMakingChat'});
+                Get.toNamed(
+                  AppRoutes.allAstrologers,
+                  arguments: {'source': 'matchMakingChat'},
+                );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: "#6F221E".toColor(),
+                backgroundColor: Colors.transparent,
                 foregroundColor: Colors.white,
+                padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 elevation: 0,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: AutoTranslateText(
-                      'Chat with Marriage expert Astrologer',
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
+                  borderRadius: BorderRadius.circular(12.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: '#F38B3B'.toColor().withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
                     ),
-                  ),
-                  Spacing.w(8),
-                  Icon(
-                    Icons.chat_bubble_outline,
-                    color: Colors.white,
-                    size: 20.w,
-                  ),
-                ],
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: AutoTranslateText(
+                        'Chat with Marriage expert Astrologer',
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Spacing.w(8),
+                    Icon(
+                      Icons.chat_bubble_outline,
+                      color: Colors.white,
+                      size: 20.w,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1162,19 +1235,12 @@ class CompatibilityReportWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: Colors.red.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.red.withOpacity(0.3), width: 1),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 48.w,
-            color: Colors.red,
-          ),
+          Icon(Icons.error_outline, size: 48.w, color: Colors.red),
           Spacing.h(16),
           AutoTranslateText(
             'Error',
@@ -1187,9 +1253,7 @@ class CompatibilityReportWidget extends StatelessWidget {
           AutoTranslateText(
             errorMessage,
             textAlign: TextAlign.center,
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: Colors.black87,
-            ),
+            style: MyTextTheme.mediumBCN.copyWith(color: Colors.black87),
           ),
         ],
       ),
@@ -1245,7 +1309,7 @@ class _ExpandableSectionState extends State<_ExpandableSection> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: "#DFB343".toColor().withOpacity(0.3),
+          color: '#68171E'.toColor().withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -1261,7 +1325,7 @@ class _ExpandableSectionState extends State<_ExpandableSection> {
             },
             child: Row(
               children: [
-                Icon(widget.icon, color: "#DFB343".toColor(), size: 20.w),
+                Icon(widget.icon, color: AppColors.deepOrange, size: 20.w),
                 Spacing.w(8),
                 Expanded(
                   child: Column(
@@ -1271,7 +1335,7 @@ class _ExpandableSectionState extends State<_ExpandableSection> {
                       AutoTranslateText(
                         widget.title,
                         style: MyTextTheme.largeBCB.copyWith(
-                          color: "#6F221E".toColor(),
+                          color: '#68171E'.toColor(),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -1286,7 +1350,9 @@ class _ExpandableSectionState extends State<_ExpandableSection> {
                   ),
                 ),
                 Icon(
-                  _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                  _isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
                   color: "#6F221E".toColor(),
                   size: 24.w,
                 ),
@@ -1299,4 +1365,3 @@ class _ExpandableSectionState extends State<_ExpandableSection> {
     );
   }
 }
-

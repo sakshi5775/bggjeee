@@ -44,7 +44,7 @@ class AppConstant {
   static const String poojaAbhishek = 'assets/app/pooja_abhishek.png';
   static const String chantingMala = 'assets/app/chanting_mala.png';
   static const String rudraksha = 'assets/app/rudraksha.png';
-  static const String gemstone = 'assets/app/gemstone-24690a.png';
+  static const String gemstone = 'assets/app/gemstone.png';
   static const String ePoojaRemedy = 'assets/app/e_pooja_remedy.png';
   static const String videoJupiter = 'assets/app/video_jupiter.png';
   static const String blogVedic = 'assets/app/blog_vedic.png';
@@ -117,7 +117,7 @@ class AppConstant {
   static const String vastu = 'assets/app/Vastu.png';
   static const String writingAstrology = 'assets/app/writingAstrology.png';
   static const String ramalShastra = 'assets/app/ramalShastra.png';
-  static const String carrotAstrology = 'assets/app/carrotAstrology.png';
+  static const String carrotAstrology = 'assets/app/carrotAstrology.svg';
 
   // Panchang Icons
   static const String panchangBackButton = 'assets/icons/close-icon.svg';
@@ -176,6 +176,29 @@ class AppConstant {
 
 
    static const String prashnaKundali =
-      'assets/icons/prashnakundali.svg';
-      
+      'assets/app/prashnakundali.svg';
+
+      static const String lifePredictions =
+      'assets/app/predictions.png';
+
+      static const String dosh =
+      'assets/app/dosh.svg';
+
+      static const String dasha =
+      'assets/app/dasha.png';
+
+      static const String kPAstrology =
+      'assets/app/kp_astrology.png';
+
+      static const String lalKitab =
+      'assets/app/lal_kitab.png';
+
+       static const String gemstone2 =
+      'assets/app/gemstone2.png';
+       static const String pendent =
+      'assets/app/pendent.png';
+       static const String pendent2 =
+      'assets/app/pendent2.png';
+
+      static const String astroBharatLogo = 'assets/app/AstrobharatAi .svg';
 }

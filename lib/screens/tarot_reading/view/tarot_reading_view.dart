@@ -3,7 +3,6 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/models/app_language_model.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/controller/tarot_controller.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_breakup_widget.dart';
@@ -19,6 +18,9 @@ import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_shuffle_bu
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_selection_progress_widget.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_yes_no_popup.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_card_unsuitable_widget.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -36,23 +38,26 @@ class TarotReadingView extends BasePage<TarotController> {
           controller.closeReading();
         }
       },
-      child: Scaffold(
-        backgroundColor: '#ede7c8'.toColor(), // Cream background
-        body: SafeArea(
-          child: Stack(
-            children: [
-              SingleChildScrollView(child: _buildMainContent()),
-              // Reading overlays
-              const TarotYesNoPopup(),
-              const TarotCareerWidget(),
-              const TarotLoveWidget(),
-              const TarotDailyWidget(),
-              const TarotBreakupWidget(isRomantic: true),
-              const TarotBreakupWidget(isRomantic: false),
-              const TarotFortuneCookieWidget(),
-              // Card unsuitable message overlay (should be on top)
-              _buildUnsuitableCardMessage(),
-            ],
+      child: Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SafeArea(
+            child: Stack(
+              children: [
+                SingleChildScrollView(child: _buildMainContent()),
+                // Reading overlays
+                const TarotYesNoPopup(),
+                const TarotCareerWidget(),
+                const TarotLoveWidget(),
+                const TarotDailyWidget(),
+                const TarotBreakupWidget(isRomantic: true),
+                const TarotBreakupWidget(isRomantic: false),
+                const TarotFortuneCookieWidget(),
+                // Card unsuitable message overlay (should be on top)
+                _buildUnsuitableCardMessage(),
+              ],
+            ),
           ),
         ),
       ),
@@ -64,8 +69,13 @@ class TarotReadingView extends BasePage<TarotController> {
       builder: (controller) {
         return Column(
           children: [
-            // Header section with dark red background
+            // Header using CommonHeader
             _buildHeaderSection(),
+
+            Spacing.h(16),
+
+            // Consultation Card
+            _buildConsultationCard(),
 
             Spacing.h(16),
 
@@ -107,7 +117,7 @@ class TarotReadingView extends BasePage<TarotController> {
                       ? 'Tap a card to reveal your reading'
                       : 'Tap the deck to begin your reading',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: '#820B17'.toColor().withOpacity(0.7),
+                    color: '#68171E'.toColor().withOpacity(0.7),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -121,148 +131,226 @@ class TarotReadingView extends BasePage<TarotController> {
     );
   }
 
-  Widget _buildHeaderSection() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#820B17'.toColor(), '#820B17'.toColor().withOpacity(0.9)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      padding: EdgeInsets.only(
-        top: 16.h,
-        bottom: 32.h,
-        left: 16.w,
-        right: 16.w,
-      ),
-      child: Column(
-        children: [
-          // Back button and title row with language selector
-          Row(
-            children: [
-              IconButton(
-                onPressed: () => Get.back(),
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: '#ede7c8'.toColor(),
-                  size: 24.w,
-                ),
+  Widget _buildConsultationCard() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: GestureDetector(
+        onTap: () => Get.toNamed(AppRoutes.astrologyServices),
+        child: Container(
+          padding: EdgeInsets.all(20.w),
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+            borderRadius: BorderRadius.circular(20.r),
+            boxShadow: [
+              BoxShadow(
+                color: '#68171E'.toColor().withOpacity(0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+                spreadRadius: 0,
               ),
-              Spacing.w(8),
-              Expanded(
-                child: AutoTranslateText(
-                  'CARD READING',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: '#ede7c8'.toColor(),
-                    // Using h2 (18px) as closest match
-                    letterSpacing: 0.8, // Reduced from 1.2
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              // Language selector
-              GetBuilder<TarotController>(
-                builder: (controller) {
-                  return FutureBuilder<List<dynamic>>(
-                    future: _loadLanguages(),
-                    builder: (context, snapshot) {
-                      final languages =
-                          snapshot.data ??
-                          [
-                            {'code': 'en', 'name': 'English'},
-                            {'code': 'hi', 'name': 'Hindi'},
-                            {'code': 'bn', 'name': 'Bengali'},
-                            {'code': 'te', 'name': 'Telugu'},
-                            {'code': 'mr', 'name': 'Marathi'},
-                            {'code': 'ta', 'name': 'Tamil'},
-                            {'code': 'gu', 'name': 'Gujarati'},
-                          ];
-
-                      return PopupMenuButton<String>(
-                        icon: Icon(
-                          Icons.language,
-                          color: '#ede7c8'.toColor(),
-                          size: 22.w, // Reduced from 24.w to prevent overflow
-                        ),
-                        constraints: BoxConstraints(
-                          maxWidth: 200.w, // Constrain popup width
-                        ),
-                        color: '#ede7c8'.toColor(),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        itemBuilder: (context) => languages.map((lang) {
-                          final code = lang['code'] as String;
-                          final name = lang['name'] as String;
-                          final isSelected =
-                              controller.selectedLanguage.value == code;
-                          return PopupMenuItem(
-                            value: code,
-                            child: Row(
-                              children: [
-                                if (isSelected)
-                                  Icon(
-                                    Icons.check,
-                                    color: '#ee7532'.toColor(),
-                                    size: 18.w,
-                                  )
-                                else
-                                  SizedBox(width: 18.w),
-                                Spacing.w(8),
-                                Expanded(
-                                  child: AutoTranslateText(
-                                    name,
-                                    style: TextStyle(
-                                      color: '#820B17'.toColor(),
-                                      fontWeight: isSelected
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                        onSelected: (value) async {
-                          if (controller.selectedLanguage.value != value) {
-                            controller.selectedLanguage.value = value;
-                            // If cards are already loaded, reshuffle with new language
-                            if (controller.cards.isNotEmpty) {
-                              await controller.shuffleCards();
-                            }
-                          }
-                        },
-                      );
-                    },
-                  );
-                },
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+                spreadRadius: 0,
               ),
             ],
           ),
-
-          Spacing.h(20),
-
-          // Golden icon
-          Container(
-            width: 80.w,
-            height: 80.w,
-            decoration: BoxDecoration(
-              color: '#ee7532'.toColor(),
-              borderRadius: BorderRadius.circular(16.r),
-            ),
-            child: Icon(
-              Icons.auto_awesome,
-              color: '#ede7c8'.toColor(),
-              size: 50.w,
-            ),
+          child: Row(
+            children: [
+              // Icon Container
+              Container(
+                width: 60.w,
+                height: 60.w,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.25),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.templeGold.withOpacity(0.3),
+                    width: 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.psychology,
+                  color: AppColors.templeGold,
+                  size: 32.w,
+                ),
+              ),
+              SizedBox(width: 16.w),
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AutoTranslateText(
+                      'Need Expert Consultation?',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                    SizedBox(height: 6.h),
+                    AutoTranslateText(
+                      'Connect with our experienced astrologers for personalized guidance',
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 12.sp,
+                        height: 1.3,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 10.h),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 6.h,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.orangeGradient,
+                        borderRadius: BorderRadius.circular(8.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: '#F38B3B'.toColor().withOpacity(0.4),
+                            blurRadius: 6,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AutoTranslateText(
+                            'Book Now',
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                          SizedBox(width: 6.w),
+                          Icon(
+                            Icons.arrow_forward,
+                            color: Colors.white,
+                            size: 14.w,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-
-          Spacing.h(20),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildHeaderSection() {
+    return GetBuilder<TarotController>(
+      builder: (controller) {
+        return CommonHeader(
+          title: 'CARD READING',
+          titleColor: AppColors.templeGold,
+          actions: [
+            // Language selector
+            FutureBuilder<List<dynamic>>(
+              future: _loadLanguages(),
+              builder: (context, snapshot) {
+                final languages =
+                    snapshot.data ??
+                    [
+                      {'code': 'en', 'name': 'English'},
+                      {'code': 'hi', 'name': 'Hindi'},
+                      {'code': 'bn', 'name': 'Bengali'},
+                      {'code': 'te', 'name': 'Telugu'},
+                      {'code': 'mr', 'name': 'Marathi'},
+                      {'code': 'ta', 'name': 'Tamil'},
+                      {'code': 'gu', 'name': 'Gujarati'},
+                    ];
+
+                return PopupMenuButton<String>(
+                  icon: Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.orangeGradient,
+                      borderRadius: BorderRadius.circular(8.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: '#F38B3B'.toColor().withOpacity(0.3),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      Icons.language,
+                      color: Colors.white,
+                      size: 20.w,
+                    ),
+                  ),
+                  constraints: BoxConstraints(maxWidth: 200.w),
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  itemBuilder: (context) => languages.map((lang) {
+                    final code = lang['code'] as String;
+                    final name = lang['name'] as String;
+                    final isSelected =
+                        controller.selectedLanguage.value == code;
+                    return PopupMenuItem(
+                      value: code,
+                      child: Row(
+                        children: [
+                          if (isSelected)
+                            Icon(
+                              Icons.check,
+                              color: AppColors.deepOrange,
+                              size: 18.w,
+                            )
+                          else
+                            SizedBox(width: 18.w),
+                          SizedBox(width: 8.w),
+                          Expanded(
+                            child: AutoTranslateText(
+                              name,
+                              style: TextStyle(
+                                color: '#68171E'.toColor(),
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  onSelected: (value) async {
+                    if (controller.selectedLanguage.value != value) {
+                      controller.selectedLanguage.value = value;
+                      // If cards are already loaded, reshuffle with new language
+                      if (controller.cards.isNotEmpty) {
+                        await controller.shuffleCards();
+                      }
+                    }
+                  },
+                );
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -301,7 +389,9 @@ class TarotReadingView extends BasePage<TarotController> {
                 if (isLoading && !isShuffling && !showCards)
                   Center(
                     child: CircularProgressIndicator(
-                      color: '#ee7532'.toColor(),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.deepOrange,
+                      ),
                     ),
                   ),
 
@@ -388,14 +478,10 @@ class TarotReadingView extends BasePage<TarotController> {
         height: 240.h,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.r),
-          gradient: LinearGradient(
-            colors: ['#ee7532'.toColor(), '#820B17'.toColor()],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          gradient: AppColors.orangeGradient,
           boxShadow: [
             BoxShadow(
-              color: '#ee7532'.toColor().withOpacity(0.4),
+              color: '#F38B3B'.toColor().withOpacity(0.4),
               blurRadius: 20,
               spreadRadius: 2,
               offset: const Offset(0, 8),
@@ -411,19 +497,17 @@ class TarotReadingView extends BasePage<TarotController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.auto_awesome, color: '#ede7c8'.toColor(), size: 70.w),
+              Icon(Icons.auto_awesome, color: Colors.white, size: 70.w),
               Spacing.h(12),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  color: '#ede7c8'.toColor().withOpacity(0.2),
+                  color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: AutoTranslateText(
                   'Tap to Shuffle',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: '#ede7c8'.toColor(),
-                  ),
+                  style: MyTextTheme.smallBCN.copyWith(color: Colors.white),
                 ),
               ),
             ],
@@ -443,12 +527,12 @@ class TarotReadingView extends BasePage<TarotController> {
           // Card Theme Selector
           Row(
             children: [
-              Icon(Icons.palette, color: '#820B17'.toColor(), size: 20.w),
+              Icon(Icons.palette, color: '#68171E'.toColor(), size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Card Theme',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#820B17'.toColor(),
+                  color: '#68171E'.toColor(),
                 ),
               ),
             ],
@@ -469,21 +553,31 @@ class TarotReadingView extends BasePage<TarotController> {
                         vertical: 8.h,
                       ),
                       decoration: BoxDecoration(
-                        color: isSelected ? '#ee7532'.toColor() : Colors.white,
+                        gradient: isSelected ? AppColors.orangeGradient : null,
+                        color: isSelected ? null : Colors.white,
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
                           color: isSelected
-                              ? '#ee7532'.toColor()
-                              : '#820B17'.toColor().withOpacity(0.3),
+                              ? Colors.transparent
+                              : '#68171E'.toColor().withOpacity(0.3),
                           width: 1.5,
                         ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: '#F38B3B'.toColor().withOpacity(0.3),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : null,
                       ),
                       child: AutoTranslateText(
                         theme.toUpperCase(),
                         style: MyTextTheme.smallBCN.copyWith(
                           color: isSelected
                               ? Colors.white
-                              : '#820B17'.toColor(),
+                              : '#68171E'.toColor(),
                           fontWeight: isSelected
                               ? FontWeight.bold
                               : FontWeight.normal,
@@ -502,12 +596,12 @@ class TarotReadingView extends BasePage<TarotController> {
           // Card Back Selector
           Row(
             children: [
-              Icon(Icons.style, color: '#820B17'.toColor(), size: 20.w),
+              Icon(Icons.style, color: '#68171E'.toColor(), size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Card Back',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#820B17'.toColor(),
+                  color: '#68171E'.toColor(),
                 ),
               ),
             ],
@@ -538,21 +632,31 @@ class TarotReadingView extends BasePage<TarotController> {
                         vertical: 8.h,
                       ),
                       decoration: BoxDecoration(
-                        color: isSelected ? '#ee7532'.toColor() : Colors.white,
+                        gradient: isSelected ? AppColors.orangeGradient : null,
+                        color: isSelected ? null : Colors.white,
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
                           color: isSelected
-                              ? '#ee7532'.toColor()
-                              : '#820B17'.toColor().withOpacity(0.3),
+                              ? Colors.transparent
+                              : '#68171E'.toColor().withOpacity(0.3),
                           width: 1.5,
                         ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: '#F38B3B'.toColor().withOpacity(0.3),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : null,
                       ),
                       child: AutoTranslateText(
                         backType.replaceAll('_', ' ').toUpperCase(),
                         style: MyTextTheme.smallBCN.copyWith(
                           color: isSelected
                               ? Colors.white
-                              : '#820B17'.toColor(),
+                              : '#68171E'.toColor(),
                           fontWeight: isSelected
                               ? FontWeight.bold
                               : FontWeight.normal,

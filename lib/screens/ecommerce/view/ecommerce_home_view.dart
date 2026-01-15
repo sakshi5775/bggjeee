@@ -79,6 +79,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                   products: controller.recommendedProducts,
                   isLoading: controller.isLoadingRecommendations.value,
                 ),
+              SliverToBoxAdapter(child: Spacing.h(15.h)),
 
               // Recently viewed
               if (controller.recentlyViewedProducts.isNotEmpty)
@@ -971,8 +972,8 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                         );
 
                         if (quantity <= 0) {
-                          return ElevatedButton(
-                            onPressed: isProcessing
+                          return GestureDetector(
+                            onTap: isProcessing
                                 ? null
                                 : () async {
                                     await cartController.addItem(
@@ -980,32 +981,37 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                                       quantity: 1,
                                     );
                                   },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.saffron,
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(vertical: 3.h),
-                              shape: RoundedRectangleBorder(
+                            child: Container(
+                              width: double.infinity,
+                              height: 24.h,
+                              decoration: BoxDecoration(
+                                gradient: isProcessing
+                                    ? null
+                                    : AppColors.orangeGradient,
+                                color: isProcessing ? Colors.grey[300] : null,
                                 borderRadius: BorderRadius.circular(6.r),
                               ),
-                              minimumSize: Size(0, 24.h),
+                              padding: EdgeInsets.symmetric(vertical: 3.h),
+                              alignment: Alignment.center,
+                              child: isProcessing
+                                  ? SizedBox(
+                                      width: 16.w,
+                                      height: 16.h,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : AutoTranslateText(
+                                      'Add to Cart',
+                                      style: AppTypography.label.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                             ),
-                            child: isProcessing
-                                ? SizedBox(
-                                    width: 16.w,
-                                    height: 16.h,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : AutoTranslateText(
-                                    'Add to Cart',
-                                    style: AppTypography.label.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
                           );
                         }
 

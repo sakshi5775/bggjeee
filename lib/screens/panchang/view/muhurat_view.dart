@@ -783,7 +783,7 @@ class MuhuratView extends BasePage<MuhuratController> {
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country) {
+          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
             // Handle city selection if needed
             Get.back();
           },

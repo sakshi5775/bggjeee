@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../app_manager/ext/hex_color_ext.dart';
-import '../../../app_manager/svg_assets.dart';
 import '../../../core/routes/app_routes.dart';
+import '../../../core/services/login_guard.dart';
 import '../../../core/value/dimension.dart';
 import '../../../theme/app_typography.dart';
 import '../../../utils/app_constant.dart';
@@ -75,6 +74,18 @@ class AstrologyToolWidget extends StatelessWidget {
   }
 
   Widget _buildAstrologyTools({required String title, required String image}) {
+    Future<void> _requireLogin(
+      Future<void> Function() action, {
+      String? message,
+    }) async {
+      final ok = await LoginGuard.ensureLoggedIn(
+        message: message ?? 'Please login to continue.',
+      );
+      if (ok) {
+        await action();
+      }
+    }
+
     return Column(
       spacing: 5,
       children: [
@@ -82,28 +93,51 @@ class AstrologyToolWidget extends StatelessWidget {
           onTap: () {
             switch (title) {
               case 'Face\nReading':
-                Get.toNamed(AppRoutes.faceReading);
+                _requireLogin(
+                  () async => Get.toNamed(AppRoutes.faceReading),
+                  message: 'Login to start face reading.',
+                );
                 break;
               case 'Palm\nReading':
-                Get.toNamed(AppRoutes.palmReading);
+                _requireLogin(
+                  () async => Get.toNamed(AppRoutes.palmReading),
+                  message: 'Login to start palm reading.',
+                );
                 break;
               case 'Vastu\nMatching':
-                Get.toNamed(AppRoutes.vastuReading);
+                _requireLogin(
+                  () async => Get.toNamed(AppRoutes.vastuDashboard),
+                  message: 'Login to explore Vastu services.',
+                );
                 break;
               case 'Ramal\nShastra':
-                Get.toNamed(AppRoutes.comingSoon);
+                _requireLogin(
+                  () async => Get.toNamed(AppRoutes.ramalShastra),
+                  message: 'Login to explore Ramal Shastra.',
+                );
                 break;
               case 'Writing\nAstrology':
-                Get.toNamed(AppRoutes.handwritingAstrology);
+                _requireLogin(
+                  () async => Get.toNamed(AppRoutes.handwritingAstrology),
+                  message: 'Login to use handwriting astrology.',
+                );
                 break;
               case 'Prshan\nKundli':
-                Get.toNamed(AppRoutes.comingSoon);
+                _requireLogin(
+                  () async => Get.toNamed(AppRoutes.prashnaKundali),
+                  message: 'Login to use Prashna Kundli.',
+                );
                 break;
               case 'Tarot\nReading':
-                Get.toNamed(AppRoutes.tarotReading);
+                _requireLogin(
+                  () async => Get.toNamed(AppRoutes.tarotReading),
+                  message: 'Login to explore tarot reading.',
+                );
                 break;
               default:
-                Get.toNamed(AppRoutes.comingSoon);
+                _requireLogin(
+                  () async => Get.toNamed(AppRoutes.comingSoon),
+                );
                 break;
             }
           },

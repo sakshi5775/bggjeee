@@ -16,19 +16,15 @@ import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.da
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
-import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/data_model/blog_model.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
-import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/video_player_widget.dart';
 import 'package:astrobharataiuser/widgets/language_selector.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:gif_view/gif_view.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:async';
@@ -47,6 +43,8 @@ import '../widgets/kids_specialist_astrologers_widget.dart';
 import '../widgets/celebrity_astrologer_widget.dart';
 import '../widgets/features_and_videos_widget.dart';
 import '../widgets/daily_astrologers_widget.dart';
+import '../widgets/quote_of_the_day_widget.dart';
+import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
 
 class UserDashboardView extends BasePage<UserDashboardController> {
   const UserDashboardView({super.key});
@@ -570,7 +568,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           // Spacing.h(24),
 
           // Quote of the Day Section
-          _buildQuoteOfTheDaySection(),
+          const QuoteOfTheDayWidget(),
           Spacing.h(12),
           AstrologyReportWidget(),
 
@@ -613,8 +611,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
           Spacing.h(24),
 
-          // Join Live Webinar Section
-          _buildJoinLiveWebinarSection(),
+          // Join Live Webinar Section (only if user has enrolled course with live webinar)
+          Obx(() => controller.hasLiveWebinarForEnrolledCourse.value
+              ? _buildJoinLiveWebinarSection()
+              : const SizedBox.shrink()),
 
           // Spacing.h(24),
 
@@ -1854,8 +1854,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 _buildRemedyCard('Chanting Mala', AppConstant.rudraksha, 150.w),
                 Spacing.w(12),
                 _buildRemedyCard(
-                  'Astro-Rudraksha',
-                  AppConstant.rudraksha,
+                  'Gemstone Consultation',
+                  AppConstant.gemstone2,
                   150.w,
                 ),
                 Spacing.w(12),
@@ -1865,7 +1865,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   150.w,
                 ),
                 Spacing.w(12),
-                _buildRemedyCard('E-Pooja', AppConstant.ePoojaRemedy, 150.w),
+                _buildRemedyCard('Pendent', AppConstant.pendent, 150.w),
+                 Spacing.w(12),
+                _buildRemedyCard('Pendent', AppConstant.pendent2, 150.w),
               ],
             ),
           ),
@@ -2976,81 +2978,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     );
   }
 
-  Widget _buildQuoteOfTheDaySection() {
-    return Obx(() {
-      final quote = controller.dailyQuote.value;
-      final isLoading = controller.isLoadingDailyQuote.value;
-
-      return Padding(
-        padding: AppPaddings.symmetric(h: 16),
-        child: AspectRatio(
-          aspectRatio: 990 / 768, // keep full parchment visible
-          child: Stack(
-            children: [
-              Container(
-                padding: AppPaddings.symmetric(h: 20, v: 24),
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(AppConstant.quoteBackground),
-                    fit: BoxFit.contain, // show entire image without cropping
-                    alignment: Alignment.center,
-                  ),
-                  borderRadius: AppRadius.all(
-                    0,
-                  ), // avoid clipping edges of artwork
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    AutoTranslateText(
-                      'Quote of the Day',
-                      style: MyTextTheme.mediumBCB
-                          .copyWith(
-                            color: "#6F221E".toColor(),
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Baloo Bhai 2',
-                          )
-                          .merge(AppTypography.h3),
-                      textAlign: TextAlign.center,
-                    ),
-
-                    AutoTranslateText(
-                      quote?.sanskrit.text ?? '',
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: "#F38B3B".toColor(),
-                        fontWeight: FontWeight.w900,
-                        fontFamily: 'Poppins',
-                        height: 1.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-
-                    Padding(
-                      padding: AppPaddings.symmetric(h: 30),
-                      child: AutoTranslateText(
-                        quote?.sanskrit.meaning ?? '',
-                        style: MyTextTheme.mediumBCN.copyWith(
-                          color: "#551F23".toColor(),
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Poppins',
-                          height: 1.6,
-                        ),
-                        textAlign: TextAlign.center,
-
-                        maxLines: 5,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    });
-  }
 
   Widget _buildSacredMandirsSection() {
     return Padding(
@@ -3759,159 +3686,239 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   }
 
   Widget _buildJoinLiveWebinarSection() {
-    return Stack(
-      children: [
-        Container(
-          margin: AppPaddings.symmetric(h: 16),
-          padding: AppPaddings.all(20),
-          decoration: BoxDecoration(
-            color: "#BD5E14".toColor(),
-            borderRadius: AppRadius.all(22.56),
-          ),
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Obx(() {
+      final webinar = controller.liveWebinarForEnrolledCourse.value;
+      if (webinar == null) return const SizedBox.shrink();
+
+      // Calculate time status
+      String timeStatus = "Live Now";
+      if (webinar.scheduling?.scheduledStartTime != null) {
+        final now = DateTime.now();
+        final start = webinar.scheduling!.scheduledStartTime!;
+        final difference = start.difference(now);
+        final minutes = difference.inMinutes;
+
+        if (minutes > 0) {
+          timeStatus = "Starting in $minutes min";
+        } else if (minutes < 0) {
+          timeStatus = "Started ${minutes.abs()} min ago";
+        } else {
+          timeStatus = "Live Now";
+        }
+      } else if (webinar.status == 'LIVE') {
+        timeStatus = "Live Now";
+      }
+
+      // Get viewer count
+      final viewerCount = webinar.viewerStats?.currentViewers ?? 0;
+      final viewerText = viewerCount > 0
+          ? '${viewerCount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')} watching'
+          : 'Live Now';
+
+      // Get webinar title
+      final webinarTitle = webinar.title ?? 'Live Webinar';
+      final courseTitle = webinar.courseId?.title ?? '';
+      final displayTitle = courseTitle.isNotEmpty
+          ? '"$courseTitle" - $timeStatus'
+          : '"$webinarTitle" - $timeStatus';
+
+      return GestureDetector(
+        onTap: () async {
+              // Navigate to live webinar session
+              if (webinar.webinarId != null && webinar.webinarId!.isNotEmpty) {
+                try {
+                  final webinarService = WebinarService();
+                  final response = await webinarService.joinWebinar(webinar.webinarId!);
+                  if (response != null) {
+                    Get.toNamed(
+                      '/live-webinar-session',
+                      arguments: {
+                        'webinarId': webinar.webinarId!,
+                        'courseId': webinar.courseId?.id ?? '',
+                        'joinResponse': response,
+                        'webinar': webinar,
+                      },
+                    );
+                  } else {
+                    // If join fails, still try to navigate (user might already be in session)
+                    Get.toNamed(
+                      '/live-webinar-session',
+                      arguments: {
+                        'webinarId': webinar.webinarId!,
+                        'courseId': webinar.courseId?.id ?? '',
+                        'webinar': webinar,
+                      },
+                    );
+                  }
+                } catch (e) {
+                  debugPrint('Error joining webinar: $e');
+                  // On error, still try to navigate
+                  Get.toNamed(
+                    '/live-webinar-session',
+                    arguments: {
+                      'webinarId': webinar.webinarId!,
+                      'courseId': webinar.courseId?.id ?? '',
+                      'webinar': webinar,
+                    },
+                  );
+                }
+              }
+        },
+        child: Stack(
+          children: [
+            Container(
+              margin: AppPaddings.symmetric(h: 16),
+              padding: AppPaddings.all(20),
+              decoration: BoxDecoration(
+                color: "#BD5E14".toColor(),
+                borderRadius: AppRadius.all(22.56),
+              ),
+              child: Stack(
                 children: [
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Container(
-                            width: 10.w,
-                            height: 10.h,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: "#FFFFFF".toColor(),
-                                width: 2,
+                          Row(
+                            children: [
+                              Container(
+                                width: 10.w,
+                                height: 10.h,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: "#FFFFFF".toColor(),
+                                    width: 2,
+                                  ),
+                                  color: "#05DF72".toColor().withOpacity(0.91),
+                                ),
                               ),
-                              color: "#05DF72".toColor().withOpacity(0.91),
-                            ),
+                              Spacing.w(6),
+                              AutoTranslateText(
+                                'LIVE NOW',
+                                style: MyTextTheme.smallBCN
+                                    .copyWith(
+                                      color: "#05DF72".toColor(),
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Poppins',
+                                    )
+                                    .merge(AppTypography.body2),
+                              ),
+                            ],
                           ),
-                          Spacing.w(6),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
                           AutoTranslateText(
-                            'LIVE NOW',
-                            style: MyTextTheme.smallBCN
+                            'Join Live Webinar',
+                            style: MyTextTheme.largeBCB
                                 .copyWith(
-                                  color: "#05DF72".toColor(),
+                                  color: "#FFFFFF".toColor(),
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Poppins',
+                                  height: 1.56,
+                                )
+                                .merge(AppTypography.h3),
+                          ),
+                          AutoTranslateText(
+                            viewerText,
+                            style: MyTextTheme.mediumBCN
+                                .copyWith(
+                                  color: "#FFFFFF".toColor(),
                                   fontWeight: FontWeight.w400,
                                   fontFamily: 'Poppins',
                                 )
-                                .merge(AppTypography.body2),
+                                .merge(AppTypography.body1),
+                          ),
+                        ],
+                      ),
+                      Spacing.h(8),
+                      AutoTranslateText(
+                        displayTitle,
+                        style: MyTextTheme.mediumBCN
+                            .copyWith(
+                              color: Colors.white.withOpacity(0.75),
+                              fontWeight: FontWeight.w400,
+                            )
+                            .merge(AppTypography.body2),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Spacing.h(22.56),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: AppPaddings.symmetric(h: 11.28, v: 4.23),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: AppRadius.all(22.56),
+                            ),
+                            child: AutoTranslateText(
+                              'FREE',
+                              style: MyTextTheme.smallBCN
+                                  .copyWith(
+                                    color: "#F38B3B".toColor(),
+                                    fontWeight: FontWeight.w400,
+                                  )
+                                  .merge(AppTypography.body2),
+                            ),
+                          ),
+                          Container(
+                            padding: AppPaddings.symmetric(h: 11.28, v: 4.23),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: AppRadius.all(22.56),
+                            ),
+                            child: AutoTranslateText(
+                              'Join Now',
+                              style: MyTextTheme.smallBCN
+                                  .copyWith(
+                                    color: "#F38B3B".toColor(),
+                                    fontWeight: FontWeight.w400,
+                                  )
+                                  .merge(AppTypography.body2),
+                            ),
                           ),
                         ],
                       ),
                     ],
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      AutoTranslateText(
-                        'Join Live Webinar',
-                        style: MyTextTheme.largeBCB
-                            .copyWith(
-                              color: "#FFFFFF".toColor(),
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Poppins',
-                              height: 1.56,
-                            )
-                            .merge(AppTypography.h3),
-                      ),
-                      AutoTranslateText(
-                        '1,247 watching',
-                        style: MyTextTheme.mediumBCN
-                            .copyWith(
-                              color: "#FFFFFF".toColor(),
-                              fontWeight: FontWeight.w400,
-                              fontFamily: 'Poppins',
-                            )
-                            .merge(AppTypography.body1),
-                      ),
-                    ],
-                  ),
-                  Spacing.h(8),
-                  AutoTranslateText(
-                    '"Career Guidance Using Vedic Astrology" - Starting in 30 min',
-                    style: MyTextTheme.mediumBCN
-                        .copyWith(
-                          color: Colors.white.withOpacity(0.75),
-                          fontWeight: FontWeight.w400,
-                        )
-                        .merge(AppTypography.body2),
-                  ),
-                  Spacing.h(22.56),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: AppPaddings.symmetric(h: 11.28, v: 4.23),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: AppRadius.all(22.56),
-                        ),
-                        child: AutoTranslateText(
-                          'FREE',
-                          style: MyTextTheme.smallBCN
-                              .copyWith(
-                                color: "#F38B3B".toColor(),
-                                fontWeight: FontWeight.w400,
-                              )
-                              .merge(AppTypography.body2),
-                        ),
-                      ),
-                      Container(
-                        padding: AppPaddings.symmetric(h: 11.28, v: 4.23),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: AppRadius.all(22.56),
-                        ),
-                        child: AutoTranslateText(
-                          'Join Now',
-                          style: MyTextTheme.smallBCN
-                              .copyWith(
-                                color: "#F38B3B".toColor(),
-                                fontWeight: FontWeight.w400,
-                              )
-                              .merge(AppTypography.body2),
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
-
-              // Circle badge in top right corner
-            ],
-          ),
-        ),
-
-        Positioned(
-          top: -40,
-          right: -25,
-          child: Container(
-            width: 100.w,
-            height: 100.h,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: "#FFFFFF".toColor().withValues(alpha: 0.15),
             ),
-          ),
-        ),
-        Positioned(
-          bottom: -40,
-          left: -25,
-          child: Container(
-            width: 100.w,
-            height: 100.h,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: "#FFFFFF".toColor().withValues(alpha: 0.15),
+
+            Positioned(
+              top: -40,
+              right: -25,
+              child: Container(
+                width: 100.w,
+                height: 100.h,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: "#FFFFFF".toColor().withValues(alpha: 0.15),
+                ),
+              ),
             ),
-          ),
+            Positioned(
+              bottom: -40,
+              left: -25,
+              child: Container(
+                width: 100.w,
+                height: 100.h,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: "#FFFFFF".toColor().withValues(alpha: 0.15),
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
-    );
+      );
+    });
   }
 
   Widget _buildVideosSection() {

@@ -78,43 +78,81 @@ class ShopByCategoryWidget extends StatelessWidget {
             ),
           ),
           Spacing.h(12),
-          SizedBox(
-            height: 143.h,
-            child: Obx(() {
-              if (controller.isLoadingCategories.value) {
-                return Center(
+          Obx(() {
+            if (controller.isLoadingCategories.value) {
+              return SizedBox(
+                height: 143.h,
+                child: Center(
                   child: Padding(
                     padding: EdgeInsets.all(20.h),
                     child: CircularProgressIndicator(),
                   ),
-                );
-              }
-
-              final categories = controller.categoryTree
-                  .where((cat) => cat.isFeatured == true && cat.parent == null)
-                  .take(6)
-                  .toList();
-
-              if (categories.isEmpty) {
-                return SizedBox.shrink();
-              }
-
-              return ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.only(
-                  left: 16.w,
-                  right: 16.w,
-                  bottom: 4.h, // Add bottom padding for shadow
                 ),
-                itemCount: categories.length,
-                separatorBuilder: (context, index) => Spacing.w(12.w),
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  return _buildCategoryCard(category);
-                },
               );
-            }),
-          ),
+            }
+
+            final categories = controller.categoryTree
+                .where((cat) => cat.isFeatured == true && cat.parent == null)
+                .take(6)
+                .toList();
+
+            if (categories.isEmpty) {
+              return SizedBox.shrink();
+            }
+
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                // Use MediaQuery to get screen height for responsive calculation
+                final screenHeight = MediaQuery.of(context).size.height;
+
+                // Calculate card height based on actual card components
+                // Image: 90.h, padding: 10.h (5 top + 5 bottom), spacing: ~13.h (7.36 + 5.52)
+                // Text area: ~30.h (category name ~15.h + item count ~15.h with buffers)
+                // Shadow padding: 8.h
+                final double baseCardHeight = 90.h + 10.h + 13.h + 30.h + 8.h;
+
+                // Alternative: Use percentage of screen height as fallback
+                // This ensures it scales properly on all devices
+                final double screenBasedHeight =
+                    screenHeight * 0.18; // ~18% of screen height
+
+                // Use the larger of the two to prevent overflow
+                final double calculatedHeight =
+                    baseCardHeight > screenBasedHeight
+                    ? baseCardHeight
+                    : screenBasedHeight;
+
+                // Clamp to reasonable bounds (minimum 150.h, maximum 220.h)
+                // These bounds ensure it works on both small and large screens
+                final double minHeight = 150.h;
+                final double maxHeight = 220.h;
+                final double dynamicHeight = calculatedHeight.clamp(
+                  minHeight,
+                  maxHeight,
+                );
+
+                return SizedBox(
+                  height: dynamicHeight,
+                  child: ClipRect(
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: EdgeInsets.only(
+                        left: 16.w,
+                        right: 16.w,
+                        bottom: 8.h, // Padding for shadow
+                      ),
+                      itemCount: categories.length,
+                      separatorBuilder: (context, index) => Spacing.w(12.w),
+                      itemBuilder: (context, index) {
+                        final category = categories[index];
+                        return _buildCategoryCard(category);
+                      },
+                    ),
+                  ),
+                );
+              },
+            );
+          }),
         ],
       ),
     );
@@ -127,7 +165,6 @@ class ShopByCategoryWidget extends StatelessWidget {
       },
       child: Container(
         width: 102.w,
-
         padding: EdgeInsets.only(top: 5.h, bottom: 5.h),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -142,6 +179,8 @@ class ShopByCategoryWidget extends StatelessWidget {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               width: 90.w,
@@ -177,6 +216,8 @@ class ShopByCategoryWidget extends StatelessWidget {
             Spacing.h(7.36),
             Column(
               mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 AutoTranslateText(
                   category.name ?? '',
@@ -202,6 +243,8 @@ class ShopByCategoryWidget extends StatelessWidget {
                     height: 1.0,
                   ),
                   textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

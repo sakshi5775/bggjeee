@@ -240,6 +240,40 @@ class _WishlistItemCard extends StatelessWidget {
                               ),
                       ),
                     ),
+                    // Discount Badge
+                    if (hasDiscount)
+                      Positioned(
+                        top: 8.h,
+                        left: 8.w,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 6.w,
+                            vertical: 2.h,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: AppColors.orangeGradient,
+                            borderRadius: BorderRadius.circular(6.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: '#F38B3B'.toColor().withOpacity(0.3),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: AutoTranslateText(
+                            '${((originalPrice - price) / originalPrice * 100).toStringAsFixed(0)}% OFF',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w700,
+                              fontSize: 10.sp,
+                              color: Colors.white,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
                     // Favorite Icon Badge
                     Positioned(
                       top: 8.h,
@@ -288,46 +322,36 @@ class _WishlistItemCard extends StatelessWidget {
                       SizedBox(height: 8.h),
                       // Price
                       Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          AutoTranslateText(
-                            currencyFormat.format(price),
-                            style: TextStyle(
-                              fontFamily: 'Baloo 2',
-                              fontWeight: FontWeight.w700,
-                              fontSize: 20.sp,
-                              color: '#68171E'.toColor(),
+                          Flexible(
+                            child: AutoTranslateText(
+                              currencyFormat.format(price),
+                              style: TextStyle(
+                                fontFamily: 'Baloo 2',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 20.sp,
+                                color: '#68171E'.toColor(),
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           if (hasDiscount) ...[
                             SizedBox(width: 8.w),
-                            AutoTranslateText(
-                              currencyFormat.format(originalPrice),
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14.sp,
-                                color: AppColors.textSecondary,
-                                decoration: TextDecoration.lineThrough,
-                              ),
-                            ),
-                            SizedBox(width: 6.w),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 6.w,
-                                vertical: 2.h,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: AppColors.orangeGradient,
-                                borderRadius: BorderRadius.circular(6.r),
-                              ),
+                            Flexible(
                               child: AutoTranslateText(
-                                '${((originalPrice - price) / originalPrice * 100).toStringAsFixed(0)}% OFF',
+                                currencyFormat.format(originalPrice),
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 10.sp,
-                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14.sp,
+                                  color: AppColors.textSecondary,
+                                  decoration: TextDecoration.lineThrough,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],

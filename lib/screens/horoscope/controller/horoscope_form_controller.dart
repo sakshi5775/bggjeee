@@ -3,7 +3,6 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -32,6 +31,7 @@ class HoroscopeFormController extends BaseController {
   };
 
   // State
+  @override
   final isLoading = false.obs;
   final isFetchingLocation = false.obs;
   final selectedDate = DateTime.now().obs;
@@ -111,7 +111,9 @@ class HoroscopeFormController extends BaseController {
 
       // Get current position
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.medium,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.medium,
+        ),
       );
 
       // Check again if controller is disposed before using it
@@ -212,44 +214,66 @@ class HoroscopeFormController extends BaseController {
   }
 
   /// Fetch location from city name
-  Future<void> fetchLocationFromCity(String city, {String? state, String? country = 'India'}) async {
+  /// Can be called with lat/long/timezone from location bottom sheet, or will fetch them if not provided
+  Future<void> fetchLocationFromCity(String city, {String? state, String? country, double? latitude, double? longitude, double? timezone}) async {
     try {
       isFetchingLocation.value = true;
-      
-      final result = await AddressHelper.fetchCoordinatesFromCity(
-        city: city,
-        state: state ?? '',
-        country: country ?? 'India',
-      );
 
       if (_isDisposed) return;
 
-      if (result != null) {
-        final lat = result['latitude'] as double?;
-        final lon = result['longitude'] as double?;
-        final tz = result['timezone'] as String?;
+      // If lat/long/timezone are provided (from location bottom sheet), use them directly
+      if (latitude != null && longitude != null) {
+        latitudeController.text = latitude.toStringAsFixed(6);
+        longitudeController.text = longitude.toStringAsFixed(6);
+        
+        selectedLocation.value = state != null && state.isNotEmpty 
+            ? '$city, $state' 
+            : city;
 
-        if (lat != null && lon != null) {
-          latitudeController.text = lat.toStringAsFixed(6);
-          longitudeController.text = lon.toStringAsFixed(6);
-          
-          selectedLocation.value = state != null && state.isNotEmpty 
-              ? '$city, $state' 
-              : city;
-
-          // Update timezone
-          if (tz != null) {
-            final offset = double.tryParse(tz) ?? 5.5;
-            timezoneController.text = offset.toString();
-          } else {
-            final offset = await _getTimezoneOffsetFromCoordinates(lat, lon);
-            timezoneController.text = offset.toString();
-          }
+        // Use provided timezone or fetch it
+        if (timezone != null) {
+          timezoneController.text = timezone.toString();
         } else {
-          showErrorMessage(title: 'Error', message: 'Could not fetch coordinates for $city');
+          final offset = await _getTimezoneOffsetFromCoordinates(latitude, longitude);
+          timezoneController.text = offset.toString();
         }
       } else {
-        showErrorMessage(title: 'Error', message: 'Location not found. Please try again.');
+        // Fallback: fetch coordinates from city name (for backward compatibility)
+        final result = await AddressHelper.fetchCoordinatesFromCity(
+          city: city,
+          state: state ?? '',
+          country: country ?? 'India',
+        );
+
+        if (_isDisposed) return;
+
+        if (result != null) {
+          final lat = result['latitude'] as double?;
+          final lon = result['longitude'] as double?;
+          final tz = result['timezone'] as String?;
+
+          if (lat != null && lon != null) {
+            latitudeController.text = lat.toStringAsFixed(6);
+            longitudeController.text = lon.toStringAsFixed(6);
+            
+            selectedLocation.value = state != null && state.isNotEmpty 
+                ? '$city, $state' 
+                : city;
+
+            // Update timezone
+            if (tz != null) {
+              final offset = double.tryParse(tz) ?? 5.5;
+              timezoneController.text = offset.toString();
+            } else {
+              final offset = await _getTimezoneOffsetFromCoordinates(lat, lon);
+              timezoneController.text = offset.toString();
+            }
+          } else {
+            showErrorMessage(title: 'Error', message: 'Could not fetch coordinates for $city');
+          }
+        } else {
+          showErrorMessage(title: 'Error', message: 'Location not found. Please try again.');
+        }
       }
     } catch (e) {
       debugPrint('Error fetching location: $e');
@@ -293,7 +317,9 @@ class HoroscopeFormController extends BaseController {
 
       // Get current position
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
 
       if (_isDisposed) return;

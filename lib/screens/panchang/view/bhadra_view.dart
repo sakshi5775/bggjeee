@@ -630,7 +630,7 @@ class BhadraView extends BasePage<BhadraController> {
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country) {
+          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
             Get.back();
           },
           selectedCity: controller.selectedLocation.value,

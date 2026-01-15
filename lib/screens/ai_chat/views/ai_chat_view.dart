@@ -13,6 +13,7 @@ import 'package:astrobharataiuser/screens/ai_chat/widgets/persona_card.dart';
 import 'package:astrobharataiuser/screens/ai_chat/widgets/persona_list_card.dart';
 import 'package:astrobharataiuser/services/chat_call_precheck_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/profile_check_helper.dart';
@@ -26,70 +27,76 @@ class AiChatView extends BasePage<AiChatController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(),
-            
-            // Category Filter Chips
-            SizedBox(height: 16.h),
-            const CategoryFilterChips(),
-            
-            SizedBox(height: 16.h),
-            
-            // Personas Grid
-            Expanded(
-              child: Obx(() {
-                final filteredList = controller.filteredPersonas;
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              _buildHeader(),
 
-                if (controller.isLoading.value && controller.personas.isEmpty) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.saffron ,
-                    ),
-                  );
-                }
+              // Category Filter Chips
+              SizedBox(height: 16.h),
+              const CategoryFilterChips(),
 
-                if (filteredList.isEmpty) {
-                  return EmptyStateWidget(
-                    isEmpty: controller.personas.isEmpty,
-                    hasFilter:
-                        controller.selectedCategory.value != null ||
-                        controller.searchQuery.value.isNotEmpty,
-                    onClearFilter: () {
-                      controller.clearFilter();
-                      controller.searchQuery.value = '';
-                      controller.searchController.clear();
-                    },
-                  );
-                }
+              SizedBox(height: 16.h),
 
-                return RefreshIndicator(
-                  onRefresh: controller.refresh,
-                  color: AppColors.saffron,
-                  child: Obx(
-                    () => NotificationListener<ScrollNotification>(
-                      onNotification: (ScrollNotification scrollInfo) {
-                        if (!controller.isLoadingMore.value &&
-                            controller.hasMoreData.value &&
-                            scrollInfo.metrics.pixels ==
-                                scrollInfo.metrics.maxScrollExtent) {
-                          controller.loadMore();
-                        }
-                        return false;
+              // Personas Grid
+              Expanded(
+                child: Obx(() {
+                  final filteredList = controller.filteredPersonas;
+
+                  if (controller.isLoading.value &&
+                      controller.personas.isEmpty) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.deepOrange,
+                        ),
+                      ),
+                    );
+                  }
+
+                  if (filteredList.isEmpty) {
+                    return EmptyStateWidget(
+                      isEmpty: controller.personas.isEmpty,
+                      hasFilter:
+                          controller.selectedCategory.value != null ||
+                          controller.searchQuery.value.isNotEmpty,
+                      onClearFilter: () {
+                        controller.clearFilter();
+                        controller.searchQuery.value = '';
+                        controller.searchController.clear();
                       },
-                      child: controller.isGridView.value
-                          ? _buildGridView(context, filteredList, controller)
-                          : _buildListView(context, filteredList, controller),
+                    );
+                  }
+
+                  return RefreshIndicator(
+                    onRefresh: controller.refresh,
+                    color: AppColors.deepOrange,
+                    child: Obx(
+                      () => NotificationListener<ScrollNotification>(
+                        onNotification: (ScrollNotification scrollInfo) {
+                          if (!controller.isLoadingMore.value &&
+                              controller.hasMoreData.value &&
+                              scrollInfo.metrics.pixels ==
+                                  scrollInfo.metrics.maxScrollExtent) {
+                            controller.loadMore();
+                          }
+                          return false;
+                        },
+                        child: controller.isGridView.value
+                            ? _buildGridView(context, filteredList, controller)
+                            : _buildListView(context, filteredList, controller),
+                      ),
                     ),
-                  ),
-                );
-              }),
-            ),
-          ],
+                  );
+                }),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -132,7 +139,8 @@ class AiChatView extends BasePage<AiChatController> {
                         } else {
                           // At root of chats tab, navigate to home tab directly
                           try {
-                            final mainController = Get.find<UserMainController>();
+                            final mainController =
+                                Get.find<UserMainController>();
                             mainController.selectedIndex.value = 0;
                             Get.offNamed('/user-home', id: 1);
                           } catch (e) {
@@ -145,11 +153,11 @@ class AiChatView extends BasePage<AiChatController> {
                         width: 40.w,
                         height: 40.w,
                         decoration: BoxDecoration(
-                          color: '#ffffff'.toColor(),
+                          gradient: AppColors.primaryGradient,
                           borderRadius: BorderRadius.circular(8.r),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: '#68171E'.toColor().withOpacity(0.2),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
@@ -157,22 +165,16 @@ class AiChatView extends BasePage<AiChatController> {
                         ),
                         child: Icon(
                           Icons.arrow_back,
-                          color: '#3E2723'.toColor(),
+                          color: Colors.white,
                           size: 20.w,
                         ),
                       ),
                     ),
                     SizedBox(width: 12.w),
-                    Expanded(
-                      child: AutoTranslateText(
-                        'AstroBharatAI',
-                        style: MyTextTheme.largeBCB.copyWith(
-                          color: const Color(0xFF5F2221),
-                          fontWeight: FontWeight.bold,
-                        ).merge(AppTypography.h2),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    SvgAssets(
+                      path: AppConstant.astroBharatLogo,
+                      width: 150.w,
+                      height: 30.h,
                     ),
                   ],
                 ),
@@ -184,20 +186,14 @@ class AiChatView extends BasePage<AiChatController> {
                   // Wallet
                   _buildHeaderIcon(
                     icon: Icons.account_balance_wallet,
-                   
+
                     onTap: () {
                       Get.toNamed(AppRoutes.wallet);
                     },
                   ),
                   SizedBox(width: 8.w),
                   // Headphone
-                 
-                 
-                 
-                 
-                 
-                 
-              
+
                   // Bell
                   // Search
                   _buildHeaderIcon(
@@ -228,8 +224,15 @@ class AiChatView extends BasePage<AiChatController> {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFF8F0),
+            gradient: AppColors.orangeGradient,
             borderRadius: BorderRadius.circular(8.r),
+            boxShadow: [
+              BoxShadow(
+                color: '#F38B3B'.toColor().withOpacity(0.3),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -237,15 +240,14 @@ class AiChatView extends BasePage<AiChatController> {
               Icon(
                 icon ?? Icons.account_balance_wallet,
                 size: 20.w,
-                color: const Color(0xFF5F2221),
+                color: Colors.white,
               ),
               SizedBox(width: 4.w),
               AutoTranslateText(
                 label,
-                style: MyTextTheme.smallBCB.copyWith(
-                  color: const Color(0xFF5F2221),
-                  fontWeight: FontWeight.w600,
-                ).merge(AppTypography.body2),
+                style: MyTextTheme.smallBCB
+                    .copyWith(color: Colors.white, fontWeight: FontWeight.w600)
+                    .merge(AppTypography.body2),
               ),
             ],
           ),
@@ -259,15 +261,19 @@ class AiChatView extends BasePage<AiChatController> {
         width: 40.w,
         height: 40.h,
         decoration: BoxDecoration(
-          color: const Color(0xFFFFF8F0),
+          gradient: AppColors.orangeGradient,
           borderRadius: BorderRadius.circular(8.r),
-        ),
-        child: child ??
-            Icon(
-              icon ?? Icons.search,
-              size: 20.w,
-              color: const Color(0xFF5F2221),
+          boxShadow: [
+            BoxShadow(
+              color: '#F38B3B'.toColor().withOpacity(0.3),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
+          ],
+        ),
+        child:
+            child ??
+            Icon(icon ?? Icons.search, size: 20.w, color: Colors.white),
       ),
     );
   }
@@ -291,11 +297,13 @@ class AiChatView extends BasePage<AiChatController> {
           // Load more indicator
           return Obx(
             () => controller.isLoadingMore.value
-                ? const Center(
+                ? Center(
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
                       child: CircularProgressIndicator(
-                        color: AppColors.saffron,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.deepOrange,
+                        ),
                       ),
                     ),
                   )
@@ -306,10 +314,13 @@ class AiChatView extends BasePage<AiChatController> {
         return PersonaCard(
           persona: filteredList[index],
           onTap: () {
-            Get.toNamed(AppRoutes.personaDetail, arguments: {
-              'personaId': filteredList[index].id,
-              'persona': filteredList[index],
-            });
+            Get.toNamed(
+              AppRoutes.personaDetail,
+              arguments: {
+                'personaId': filteredList[index].id,
+                'persona': filteredList[index],
+              },
+            );
           },
           onCallTap: () async {
             final persona = filteredList[index];
@@ -320,10 +331,10 @@ class AiChatView extends BasePage<AiChatController> {
               estimatedMinutes: 15,
             );
             if (canProceed) {
-              Get.toNamed(AppRoutes.personaVoiceCall, arguments: {
-                'personaId': persona.id,
-                'persona': persona,
-              });
+              Get.toNamed(
+                AppRoutes.personaVoiceCall,
+                arguments: {'personaId': persona.id, 'persona': persona},
+              );
             }
           },
           onChatTap: () async {
@@ -347,11 +358,13 @@ class AiChatView extends BasePage<AiChatController> {
           // Load more indicator
           return Obx(
             () => controller.isLoadingMore.value
-                ? const Center(
+                ? Center(
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
                       child: CircularProgressIndicator(
-                        color: AppColors.saffron,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.deepOrange,
+                        ),
                       ),
                     ),
                   )
@@ -364,10 +377,13 @@ class AiChatView extends BasePage<AiChatController> {
           child: PersonaListCard(
             persona: filteredList[index],
             onTap: () {
-              Get.toNamed(AppRoutes.personaDetail, arguments: {
-                'personaId': filteredList[index].id,
-                'persona': filteredList[index],
-              });
+              Get.toNamed(
+                AppRoutes.personaDetail,
+                arguments: {
+                  'personaId': filteredList[index].id,
+                  'persona': filteredList[index],
+                },
+              );
             },
             onCallTap: () async {
               final persona = filteredList[index];
@@ -378,10 +394,10 @@ class AiChatView extends BasePage<AiChatController> {
                 estimatedMinutes: 15,
               );
               if (canProceed) {
-                Get.toNamed(AppRoutes.personaVoiceCall, arguments: {
-                  'personaId': persona.id,
-                  'persona': persona,
-                });
+                Get.toNamed(
+                  AppRoutes.personaVoiceCall,
+                  arguments: {'personaId': persona.id, 'persona': persona},
+                );
               }
             },
             onChatTap: () async {
@@ -393,7 +409,10 @@ class AiChatView extends BasePage<AiChatController> {
     );
   }
 
-  Future<void> _startChatWithPersona(BuildContext context, PersonaModel persona) async {
+  Future<void> _startChatWithPersona(
+    BuildContext context,
+    PersonaModel persona,
+  ) async {
     final precheckService = ChatCallPrecheckService();
     final canProceed = await precheckService.checkBeforeProceeding(
       persona: persona,
@@ -404,14 +423,20 @@ class AiChatView extends BasePage<AiChatController> {
 
     final profileHelper = ProfileCheckHelper();
     final existingProfile = await profileHelper.getUserProfile();
-    final profileResult = await showPersonaChatProfileDialog(context, existingProfile);
+    final profileResult = await showPersonaChatProfileDialog(
+      context,
+      existingProfile,
+    );
     if (profileResult == null) return;
 
-    Get.toNamed(AppRoutes.personaChat, arguments: {
-      'persona': persona,
-      'chatProfile': profileResult.profile,
-      'languageCode': profileResult.languageCode,
-    });
+    Get.toNamed(
+      AppRoutes.personaChat,
+      arguments: {
+        'persona': persona,
+        'chatProfile': profileResult.profile,
+        'languageCode': profileResult.languageCode,
+      },
+    );
   }
 }
 
@@ -451,10 +476,7 @@ class _AnimatedChakraState extends State<_AnimatedChakra>
       builder: (context, child) {
         return Transform.rotate(
           angle: _controller.value * 2 * math.pi,
-          child: Opacity(
-            opacity: 0.15,
-            child: widget.child,
-          ),
+          child: Opacity(opacity: 0.15, child: widget.child),
         );
       },
     );

@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/address_autocomplete_field.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,148 +17,118 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header using CommonHeader
+              CommonHeader(
+                title: 'Match Making',
+                titleColor: AppColors.templeGold,
+              ),
 
-            // Form Content
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title
-                    AutoTranslateText(
-                      'Enter Details',
-                      style: MyTextTheme.largeBCB
-                          .copyWith(
-                            color: "#6F221E".toColor(),
-                            fontWeight: FontWeight.bold,
-                          )
-                          .merge(AppTypography.h2),
-                    ),
-                    Spacing.h(20),
+              // Form Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 20.h,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title
+                      AutoTranslateText(
+                        'Enter Details',
+                        style: MyTextTheme.largeBCB
+                            .copyWith(
+                              color: '#68171E'.toColor(),
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.h2),
+                      ),
+                      Spacing.h(20),
 
-                    // Person 1 Section
-                    _buildPersonSection(
-                      label: 'Person 1',
-                      subLabel: 'Groom Details',
-                      nameController: controller.person1NameController,
-                      dateController: controller.person1DateController,
-                      timeController: controller.person1TimeController,
-                      placeController: controller.person1PlaceController,
-                      onDateTap: () => _showDatePicker(context, true),
-                      onTimeTap: () => _showTimePicker(context, true),
-                      onPlaceSelected: (place) =>
-                          controller.setPerson1LocationFromAutocomplete(place),
-                      isPerson1: true,
-                    ),
+                      // Person 1 Section
+                      _buildPersonSection(
+                        label: 'Person 1',
+                        subLabel: 'Groom Details',
+                        nameController: controller.person1NameController,
+                        dateController: controller.person1DateController,
+                        timeController: controller.person1TimeController,
+                        placeController: controller.person1PlaceController,
+                        onDateTap: () => _showDatePicker(context, true),
+                        onTimeTap: () => _showTimePicker(context, true),
+                        onPlaceSelected: (place) => controller
+                            .setPerson1LocationFromAutocomplete(place),
+                        isPerson1: true,
+                      ),
 
-                    Spacing.h(16),
+                      Spacing.h(16),
 
-                    // Swap Icon
-                    Center(
-                      child: GestureDetector(
-                        onTap: () => controller.swapPersons(),
-                        child: Container(
-                          padding: EdgeInsets.all(8.w),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.swap_vert,
-                            color: "#DFB343".toColor(),
-                            size: 24.w,
+                      // Swap Icon
+                      Center(
+                        child: GestureDetector(
+                          onTap: () => controller.swapPersons(),
+                          child: Container(
+                            padding: EdgeInsets.all(8.w),
+                            decoration: BoxDecoration(
+                              gradient: AppColors.orangeGradient,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: '#F38B3B'.toColor().withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.swap_vert,
+                              color: Colors.white,
+                              size: 24.w,
+                            ),
                           ),
                         ),
                       ),
-                    ),
 
-                    Spacing.h(16),
+                      Spacing.h(16),
 
-                    // Person 2 Section
-                    _buildPersonSection(
-                      label: 'Person 2',
-                      subLabel: 'Bride',
-                      nameController: controller.person2NameController,
-                      dateController: controller.person2DateController,
-                      timeController: controller.person2TimeController,
-                      placeController: controller.person2PlaceController,
-                      onDateTap: () => _showDatePicker(context, false),
-                      onTimeTap: () => _showTimePicker(context, false),
-                      onPlaceSelected: (place) =>
-                          controller.setPerson2LocationFromAutocomplete(place),
-                      isPerson1: false,
-                    ),
+                      // Person 2 Section
+                      _buildPersonSection(
+                        label: 'Person 2',
+                        subLabel: 'Bride',
+                        nameController: controller.person2NameController,
+                        dateController: controller.person2DateController,
+                        timeController: controller.person2TimeController,
+                        placeController: controller.person2PlaceController,
+                        onDateTap: () => _showDatePicker(context, false),
+                        onTimeTap: () => _showTimePicker(context, false),
+                        onPlaceSelected: (place) => controller
+                            .setPerson2LocationFromAutocomplete(place),
+                        isPerson1: false,
+                      ),
 
-                    Spacing.h(20),
+                      Spacing.h(20),
 
-                    // Language Dropdown
-                    _buildLanguageDropdown(),
+                      // Language Dropdown
+                      _buildLanguageDropdown(),
 
-                    Spacing.h(30),
+                      Spacing.h(30),
 
-                    // Compare Kundlis Button
-                    _buildCompareButton(),
+                      // Compare Kundlis Button
+                      _buildCompareButton(),
 
-                    Spacing.h(20),
-                  ],
+                      Spacing.h(20),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      decoration: BoxDecoration(
-        color: "#6F221E".toColor(),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
-        ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: Icon(
-                Icons.arrow_back,
-                color: const Color(0xFFDFB343),
-                size: 24.w,
-              ),
-            ),
-            Spacing.w(16),
-            Expanded(
-              child: AutoTranslateText(
-                'Match Making',
-                style: MyTextTheme.largeBCB
-                    .copyWith(
-                      color: const Color(0xFFDFB343),
-                      fontWeight: FontWeight.bold,
-                    )
-                    .merge(AppTypography.h2),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -181,9 +152,16 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: "#DFB343".toColor().withOpacity(0.3),
+          color: '#68171E'.toColor().withOpacity(0.2),
           width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +172,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
               AutoTranslateText(
                 label,
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: '#68171E'.toColor(),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -202,7 +180,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
               AutoTranslateText(
                 subLabel,
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: '#68171E'.toColor().withOpacity(0.7),
                 ),
               ),
             ],
@@ -246,11 +224,11 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
               labelText: 'Birth Place',
               hintText: 'Enter birth place',
               labelStyle: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.6),
+                color: '#68171E'.toColor().withOpacity(0.6),
               ),
               prefixIcon: Icon(
                 Icons.location_on,
-                color: "#DFB343".toColor(),
+                color: AppColors.deepOrange,
                 size: 20.w,
               ),
               border: InputBorder.none,
@@ -261,13 +239,13 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.r),
                 borderSide: BorderSide(
-                  color: "#DFB343".toColor().withOpacity(0.3),
+                  color: '#68171E'.toColor().withOpacity(0.2),
                   width: 1,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.r),
-                borderSide: BorderSide(color: "#DFB343".toColor(), width: 1),
+                borderSide: BorderSide(color: AppColors.deepOrange, width: 1.5),
               ),
             ),
           ),
@@ -277,7 +255,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
           AutoTranslateText(
             'Exact time improves accuracy',
             style: MyTextTheme.smallBCN
-                .copyWith(color: "#6F221E".toColor().withOpacity(0.6))
+                .copyWith(color: '#68171E'.toColor().withOpacity(0.6))
                 .merge(AppTypography.label),
           ),
         ],
@@ -296,22 +274,18 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(
-          color: "#DFB343".toColor().withOpacity(0.3),
-          width: 1,
-        ),
       ),
       child: TextFormField(
         controller: controller,
         readOnly: readOnly,
         onTap: onTap,
-        style: MyTextTheme.mediumBCN.copyWith(color: "#6F221E".toColor()),
+        style: MyTextTheme.mediumBCN.copyWith(color: '#68171E'.toColor()),
         decoration: InputDecoration(
           labelText: label,
           labelStyle: MyTextTheme.smallBCN.copyWith(
-            color: "#6F221E".toColor().withOpacity(0.6),
+            color: '#68171E'.toColor().withOpacity(0.6),
           ),
-          prefixIcon: Icon(icon, color: "#DFB343".toColor(), size: 20.w),
+          prefixIcon: Icon(icon, color: AppColors.deepOrange, size: 20.w),
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(
             horizontal: 12.w,
@@ -328,7 +302,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
-          color: "#DFB343".toColor().withOpacity(0.3),
+          color: '#68171E'.toColor().withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -338,11 +312,11 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
           decoration: InputDecoration(
             labelText: 'Language',
             labelStyle: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: '#68171E'.toColor().withOpacity(0.6),
             ),
             prefixIcon: Icon(
               Icons.language,
-              color: "#DFB343".toColor(),
+              color: AppColors.deepOrange,
               size: 20.w,
             ),
             border: InputBorder.none,
@@ -357,7 +331,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
               child: AutoTranslateText(
                 entry.value,
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: '#68171E'.toColor(),
                 ),
               ),
             );
@@ -382,10 +356,20 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
           width: double.infinity,
           padding: EdgeInsets.symmetric(vertical: 16.h),
           decoration: BoxDecoration(
-            color: controller.isLoading.value
-                ? "#DFB343".toColor().withOpacity(0.6)
-                : "#DFB343".toColor(),
+            gradient: controller.isLoading.value
+                ? null
+                : AppColors.orangeGradient,
+            color: controller.isLoading.value ? Colors.grey[300] : null,
             borderRadius: BorderRadius.circular(12.r),
+            boxShadow: controller.isLoading.value
+                ? null
+                : [
+                    BoxShadow(
+                      color: '#F38B3B'.toColor().withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -429,10 +413,10 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: "#DFB343".toColor(),
+              primary: AppColors.deepOrange,
               onPrimary: Colors.white,
               surface: Colors.white,
-              onSurface: "#6F221E".toColor(),
+              onSurface: '#68171E'.toColor(),
             ),
           ),
           child: child!,
@@ -459,10 +443,10 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: "#DFB343".toColor(),
+              primary: AppColors.deepOrange,
               onPrimary: Colors.white,
               surface: Colors.white,
-              onSurface: "#6F221E".toColor(),
+              onSurface: '#68171E'.toColor(),
             ),
           ),
           child: child!,

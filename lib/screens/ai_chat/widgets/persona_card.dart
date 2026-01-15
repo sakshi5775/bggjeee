@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
+import '../../../app_manager/ext/hex_color_ext.dart';
+
 class PersonaCard extends StatelessWidget {
   final PersonaModel persona;
   final VoidCallback onTap;
@@ -27,38 +29,47 @@ class PersonaCard extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           // Calculate responsive dimensions based on available space
-          final availableHeight = constraints.maxHeight.isFinite 
-              ? constraints.maxHeight 
+          final availableHeight = constraints.maxHeight.isFinite
+              ? constraints.maxHeight
               : 400.h; // Fallback for unbounded constraints
-          
+
           // Dynamically adjust image height (40-45% of available height)
           // Ensure image doesn't take more than 45% and leaves enough space for content
-          final maxImageHeight = ((availableHeight * 0.45).clamp(0, availableHeight * 0.5)).toDouble();
-          final minImageHeight = ((availableHeight * 0.35).clamp(70.h, 90.h)).toDouble();
-          final imageHeight = ((availableHeight * 0.42).clamp(minImageHeight, maxImageHeight)).toDouble();
-          
+          final maxImageHeight = ((availableHeight * 0.45).clamp(
+            0,
+            availableHeight * 0.5,
+          )).toDouble();
+          final minImageHeight = ((availableHeight * 0.35).clamp(
+            70.h,
+            90.h,
+          )).toDouble();
+          final imageHeight = ((availableHeight * 0.42).clamp(
+            minImageHeight,
+            maxImageHeight,
+          )).toDouble();
+
           // Calculate remaining space for content (ensure at least minimum)
-          final contentHeight = ((availableHeight - imageHeight).clamp(100.h, availableHeight)).toDouble();
-          
+          final contentHeight = ((availableHeight - imageHeight).clamp(
+            100.h,
+            availableHeight,
+          )).toDouble();
+
           // Adjust padding based on available space
           final horizontalPadding = (8.w).clamp(6.w, 10.w);
-          final verticalPadding = contentHeight > 120.h 
-              ? 6.h 
+          final verticalPadding = contentHeight > 120.h
+              ? 6.h
               : (contentHeight > 100.h ? 4.h : 2.h);
-          
+
           // Adjust spacing between elements
           final textSpacing = contentHeight > 120.h ? 2.h : 1.h;
           final sectionSpacing = contentHeight > 120.h ? 4.h : 2.h;
           final buttonSpacing = contentHeight > 120.h ? 6.h : 4.h;
-          
+
           return Container(
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(
-                color: const Color(0xFFE0E0E0),
-                width: 1,
-              ),
+              border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
@@ -96,7 +107,8 @@ class PersonaCard extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            errorWidget: (context, url, error) => _buildPlaceholderImage(height: imageHeight),
+                            errorWidget: (context, url, error) =>
+                                _buildPlaceholderImage(height: imageHeight),
                           )
                         : _buildPlaceholderImage(height: imageHeight),
                   ),
@@ -128,8 +140,11 @@ class PersonaCard extends StatelessWidget {
                         AutoTranslateText(
                           persona.specializations.isNotEmpty
                               ? persona.specializations
-                                  .map((s) => s.replaceAll('_', ' ').toLowerCase())
-                                  .join(', ')
+                                    .map(
+                                      (s) =>
+                                          s.replaceAll('_', ' ').toLowerCase(),
+                                    )
+                                    .join(', ')
                               : 'Vedic astrology',
                           style: MyTextTheme.smallBCN.copyWith(
                             color: const Color(0xFF666666),
@@ -218,7 +233,7 @@ class PersonaCard extends StatelessWidget {
                               child: _buildActionButton(
                                 label: 'Call',
                                 onTap: onCallTap ?? () {},
-                                backgroundColor: AppColors.saffron,
+                                useGradient: true,
                                 textColor: Colors.white,
                                 maxHeight: contentHeight > 100.h ? 32.h : 28.h,
                               ),
@@ -228,7 +243,7 @@ class PersonaCard extends StatelessWidget {
                               child: _buildActionButton(
                                 label: 'Chat',
                                 onTap: onChatTap ?? onTap,
-                                backgroundColor: AppColors.saffron,
+                                useGradient: true,
                                 textColor: Colors.white,
                                 maxHeight: contentHeight > 100.h ? 32.h : 28.h,
                               ),
@@ -275,9 +290,10 @@ class PersonaCard extends StatelessWidget {
   Widget _buildActionButton({
     required String label,
     required VoidCallback onTap,
-    required Color backgroundColor,
+    Color? backgroundColor,
     required Color textColor,
     double? maxHeight,
+    bool useGradient = false,
   }) {
     final buttonHeight = maxHeight ?? (32.h).clamp(26.h, 36.h);
     return GestureDetector(
@@ -286,8 +302,18 @@ class PersonaCard extends StatelessWidget {
         height: buttonHeight,
         padding: EdgeInsets.symmetric(horizontal: (4.w).clamp(2.w, 6.w)),
         decoration: BoxDecoration(
-          color: backgroundColor,
+          gradient: useGradient ? AppColors.orangeGradient : null,
+          color: useGradient ? null : backgroundColor,
           borderRadius: BorderRadius.circular(6.r),
+          boxShadow: useGradient
+              ? [
+                  BoxShadow(
+                    color: '#F38B3B'.toColor().withOpacity(0.3),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
         child: Center(
           child: AutoTranslateText(
