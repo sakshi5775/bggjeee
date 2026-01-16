@@ -6,8 +6,7 @@ import 'package:http/http.dart' as http;
 
 class NumerologyService {
   /// Base URL for numerology API (port 8010)
-  static const String _numerologyBaseUrl =
-      'http://3.109.91.254:8000/api/numerology/api';
+  static const String _numerologyBaseUrl = 'http://3.109.91.254:8010/api';
 
   /// Get Lo Shu Grid data
   Future<Map<String, dynamic>?> getLoShuGrid({
@@ -24,30 +23,28 @@ class NumerologyService {
       };
 
       // Build URI with query parameters
-      final uri = Uri.parse(
-        '$_numerologyBaseUrl/numerology/loshu-grid',
-      ).replace(queryParameters: queryParams);
+      final uri = Uri.parse('$_numerologyBaseUrl/numerology/loshu-grid').replace(
+        queryParameters: queryParams,
+      );
 
       // Get authorization token
       final currentToken = UserData().accessToken?.trim();
-
+      
       // Make HTTP GET request
-      final response = await http
-          .get(
-            uri,
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': '*/*',
-              if (currentToken != null && currentToken.isNotEmpty)
-                'Authorization': 'Bearer $currentToken',
-            },
-          )
-          .timeout(
-            const Duration(seconds: 30),
-            onTimeout: () {
-              throw Exception('Request timeout');
-            },
-          );
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+          if (currentToken != null && currentToken.isNotEmpty)
+            'Authorization': 'Bearer $currentToken',
+        },
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw Exception('Request timeout');
+        },
+      );
 
       if (kDebugMode) {
         debugPrint('Lo Shu Grid API URL: ${uri.toString()}');
@@ -56,17 +53,14 @@ class NumerologyService {
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final responseData =
-            json.decode(response.body) as Map<String, dynamic>?;
+        final responseData = json.decode(response.body) as Map<String, dynamic>?;
         if (responseData?['success'] == true) {
           return responseData?['data'] as Map<String, dynamic>?;
         } else {
           debugPrint('Lo Shu Grid API error: ${responseData?['message']}');
         }
       } else {
-        debugPrint(
-          'Lo Shu Grid API error: Status ${response.statusCode}, Body: ${response.body}',
-        );
+        debugPrint('Lo Shu Grid API error: Status ${response.statusCode}, Body: ${response.body}');
       }
       return null;
     } catch (e) {
@@ -90,30 +84,28 @@ class NumerologyService {
       };
 
       // Build URI with query parameters
-      final uri = Uri.parse(
-        '$_numerologyBaseUrl/numerology/plane-details',
-      ).replace(queryParameters: queryParams);
+      final uri = Uri.parse('$_numerologyBaseUrl/numerology/plane-details').replace(
+        queryParameters: queryParams,
+      );
 
       // Get authorization token
       final currentToken = UserData().accessToken?.trim();
-
+      
       // Make HTTP GET request
-      final response = await http
-          .get(
-            uri,
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': '*/*',
-              if (currentToken != null && currentToken.isNotEmpty)
-                'Authorization': 'Bearer $currentToken',
-            },
-          )
-          .timeout(
-            const Duration(seconds: 30),
-            onTimeout: () {
-              throw Exception('Request timeout');
-            },
-          );
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+          if (currentToken != null && currentToken.isNotEmpty)
+            'Authorization': 'Bearer $currentToken',
+        },
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw Exception('Request timeout');
+        },
+      );
 
       if (kDebugMode) {
         debugPrint('Plane Details API URL: ${uri.toString()}');
@@ -122,17 +114,14 @@ class NumerologyService {
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final responseData =
-            json.decode(response.body) as Map<String, dynamic>?;
+        final responseData = json.decode(response.body) as Map<String, dynamic>?;
         if (responseData?['success'] == true) {
           return responseData?['data'] as Map<String, dynamic>?;
         } else {
           debugPrint('Plane Details API error: ${responseData?['message']}');
         }
       } else {
-        debugPrint(
-          'Plane Details API error: Status ${response.statusCode}, Body: ${response.body}',
-        );
+        debugPrint('Plane Details API error: Status ${response.statusCode}, Body: ${response.body}');
       }
       return null;
     } catch (e) {
@@ -147,28 +136,26 @@ class NumerologyService {
     Map<String, String> queryParams,
   ) async {
     try {
-      final uri = Uri.parse(
-        '$_numerologyBaseUrl/$endpoint',
-      ).replace(queryParameters: queryParams);
+      final uri = Uri.parse('$_numerologyBaseUrl/$endpoint').replace(
+        queryParameters: queryParams,
+      );
 
       final currentToken = UserData().accessToken?.trim();
-
-      final response = await http
-          .get(
-            uri,
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': '*/*',
-              if (currentToken != null && currentToken.isNotEmpty)
-                'Authorization': 'Bearer $currentToken',
-            },
-          )
-          .timeout(
-            const Duration(seconds: 30),
-            onTimeout: () {
-              throw Exception('Request timeout');
-            },
-          );
+      
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+          if (currentToken != null && currentToken.isNotEmpty)
+            'Authorization': 'Bearer $currentToken',
+        },
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw Exception('Request timeout');
+        },
+      );
 
       if (kDebugMode) {
         debugPrint('$endpoint API URL: ${uri.toString()}');
@@ -177,17 +164,14 @@ class NumerologyService {
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final responseData =
-            json.decode(response.body) as Map<String, dynamic>?;
+        final responseData = json.decode(response.body) as Map<String, dynamic>?;
         if (responseData?['success'] == true) {
           return responseData?['data'] as Map<String, dynamic>?;
         } else {
           debugPrint('$endpoint API error: ${responseData?['message']}');
         }
       } else {
-        debugPrint(
-          '$endpoint API error: Status ${response.statusCode}, Body: ${response.body}',
-        );
+        debugPrint('$endpoint API error: Status ${response.statusCode}, Body: ${response.body}');
       }
       return null;
     } catch (e) {
@@ -203,12 +187,15 @@ class NumerologyService {
     required String phone,
     String lang = 'en',
   }) async {
-    return _makeNumerologyApiCall(EndPoints.numberAnalysis, {
-      'name': name,
-      'date': date,
-      'phone': phone,
-      'lang': lang,
-    });
+    return _makeNumerologyApiCall(
+      EndPoints.numberAnalysis,
+      {
+        'name': name,
+        'date': date,
+        'phone': phone,
+        'lang': lang,
+      },
+    );
   }
 
   /// Missing Numbers
@@ -217,11 +204,14 @@ class NumerologyService {
     required String gender,
     String lang = 'en',
   }) async {
-    return _makeNumerologyApiCall(EndPoints.missingNumbers, {
-      'date': date,
-      'gender': gender,
-      'lang': lang,
-    });
+    return _makeNumerologyApiCall(
+      EndPoints.missingNumbers,
+      {
+        'date': date,
+        'gender': gender,
+        'lang': lang,
+      },
+    );
   }
 
   /// Available Numbers
@@ -230,11 +220,14 @@ class NumerologyService {
     required String gender,
     String lang = 'en',
   }) async {
-    return _makeNumerologyApiCall(EndPoints.availableNumbers, {
-      'date': date,
-      'gender': gender,
-      'lang': lang,
-    });
+    return _makeNumerologyApiCall(
+      EndPoints.availableNumbers,
+      {
+        'date': date,
+        'gender': gender,
+        'lang': lang,
+      },
+    );
   }
 
   /// Mobile Analysis
@@ -242,10 +235,13 @@ class NumerologyService {
     required String phone,
     String lang = 'en',
   }) async {
-    return _makeNumerologyApiCall(EndPoints.mobileAnalysis, {
-      'phone': phone,
-      'lang': lang,
-    });
+    return _makeNumerologyApiCall(
+      EndPoints.mobileAnalysis,
+      {
+        'phone': phone,
+        'lang': lang,
+      },
+    );
   }
 
   /// Numerology Suggestion
@@ -253,10 +249,13 @@ class NumerologyService {
     required String date,
     String lang = 'en',
   }) async {
-    return _makeNumerologyApiCall(EndPoints.numerologySuggestion, {
-      'date': date,
-      'lang': lang,
-    });
+    return _makeNumerologyApiCall(
+      EndPoints.numerologySuggestion,
+      {
+        'date': date,
+        'lang': lang,
+      },
+    );
   }
 
   /// Name Analysis
@@ -266,12 +265,15 @@ class NumerologyService {
     required String gender,
     String lang = 'en',
   }) async {
-    return _makeNumerologyApiCall(EndPoints.nameAnalysis, {
-      'name': name,
-      'date': date,
-      'gender': gender,
-      'lang': lang,
-    });
+    return _makeNumerologyApiCall(
+      EndPoints.nameAnalysis,
+      {
+        'name': name,
+        'date': date,
+        'gender': gender,
+        'lang': lang,
+      },
+    );
   }
 
   /// Vehicle Analysis
@@ -279,10 +281,13 @@ class NumerologyService {
     required String vehicle,
     String lang = 'en',
   }) async {
-    return _makeNumerologyApiCall(EndPoints.vehicleAnalysis, {
-      'vehicle': vehicle,
-      'lang': lang,
-    });
+    return _makeNumerologyApiCall(
+      EndPoints.vehicleAnalysis,
+      {
+        'vehicle': vehicle,
+        'lang': lang,
+      },
+    );
   }
 
   /// Lucky Things
@@ -291,11 +296,14 @@ class NumerologyService {
     required String gender,
     String lang = 'en',
   }) async {
-    return _makeNumerologyApiCall(EndPoints.luckyThings, {
-      'date': date,
-      'gender': gender,
-      'lang': lang,
-    });
+    return _makeNumerologyApiCall(
+      EndPoints.luckyThings,
+      {
+        'date': date,
+        'gender': gender,
+        'lang': lang,
+      },
+    );
   }
 
   /// Personal Year
@@ -304,11 +312,14 @@ class NumerologyService {
     required String gender,
     String lang = 'en',
   }) async {
-    return _makeNumerologyApiCall(EndPoints.personalYear, {
-      'date': date,
-      'gender': gender,
-      'lang': lang,
-    });
+    return _makeNumerologyApiCall(
+      EndPoints.personalYear,
+      {
+        'date': date,
+        'gender': gender,
+        'lang': lang,
+      },
+    );
   }
 
   /// Karmic Number
@@ -316,10 +327,13 @@ class NumerologyService {
     required String date,
     String lang = 'en',
   }) async {
-    return _makeNumerologyApiCall(EndPoints.karmicNumber, {
-      'date': date,
-      'lang': lang,
-    });
+    return _makeNumerologyApiCall(
+      EndPoints.karmicNumber,
+      {
+        'date': date,
+        'lang': lang,
+      },
+    );
   }
 
   /// Master Numbers
@@ -327,10 +341,13 @@ class NumerologyService {
     required String date,
     String lang = 'en',
   }) async {
-    return _makeNumerologyApiCall(EndPoints.masterNumbers, {
-      'date': date,
-      'lang': lang,
-    });
+    return _makeNumerologyApiCall(
+      EndPoints.masterNumbers,
+      {
+        'date': date,
+        'lang': lang,
+      },
+    );
   }
 
   /// Get Reports List
@@ -339,30 +356,31 @@ class NumerologyService {
     int limit = 10,
   }) async {
     try {
-      final queryParams = {'page': page.toString(), 'limit': limit.toString()};
+      final queryParams = {
+        'page': page.toString(),
+        'limit': limit.toString(),
+      };
 
-      final uri = Uri.parse(
-        '$_numerologyBaseUrl/numerology/reports',
-      ).replace(queryParameters: queryParams);
+      final uri = Uri.parse('$_numerologyBaseUrl/numerology/reports').replace(
+        queryParameters: queryParams,
+      );
 
       final currentToken = UserData().accessToken?.trim();
-
-      final response = await http
-          .get(
-            uri,
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': '*/*',
-              if (currentToken != null && currentToken.isNotEmpty)
-                'Authorization': 'Bearer $currentToken',
-            },
-          )
-          .timeout(
-            const Duration(seconds: 30),
-            onTimeout: () {
-              throw Exception('Request timeout');
-            },
-          );
+      
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+          if (currentToken != null && currentToken.isNotEmpty)
+            'Authorization': 'Bearer $currentToken',
+        },
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw Exception('Request timeout');
+        },
+      );
 
       if (kDebugMode) {
         debugPrint('numerology/reports API URL: ${uri.toString()}');
@@ -371,8 +389,7 @@ class NumerologyService {
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final responseData =
-            json.decode(response.body) as Map<String, dynamic>?;
+        final responseData = json.decode(response.body) as Map<String, dynamic>?;
         if (responseData?['success'] == true) {
           // API returns: {success: true, data: [...], pagination: {...}}
           // Return the whole responseData so controller can access both data and pagination
@@ -381,9 +398,7 @@ class NumerologyService {
           debugPrint('Reports API error: ${responseData?['message']}');
         }
       } else {
-        debugPrint(
-          'Reports API error: Status ${response.statusCode}, Body: ${response.body}',
-        );
+        debugPrint('Reports API error: Status ${response.statusCode}, Body: ${response.body}');
       }
       return null;
     } catch (e) {
@@ -394,6 +409,11 @@ class NumerologyService {
 
   /// Get Report by ID
   Future<Map<String, dynamic>?> getReportById(String reportId) async {
-    return _makeNumerologyApiCall(EndPoints.numerologyReportById(reportId), {});
+    return _makeNumerologyApiCall(
+      EndPoints.numerologyReportById(reportId),
+      {},
+    );
   }
 }
+
+

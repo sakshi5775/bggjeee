@@ -6,9 +6,10 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/auth_service.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
+import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
-import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
+
 import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:flutter/foundation.dart';

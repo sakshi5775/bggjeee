@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class PlanetsView extends BasePage<PlanetsController> {
   const PlanetsView({super.key});
@@ -17,10 +18,9 @@ class PlanetsView extends BasePage<PlanetsController> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [
-          Color(0xFFFFF6C2),
-          Color(0xFFFFF9E5)
-        ])
+        gradient: LinearGradient(
+          colors: ["#FFF6C2".toColor(), "#FFF9E5".toColor()],
+        ),
       ),
       child: Scaffold(
         body: SafeArea(
@@ -28,7 +28,7 @@ class PlanetsView extends BasePage<PlanetsController> {
             children: [
               // Header
               _buildHeader(),
-              
+
               // Content
               Expanded(
                 child: Obx(() {
@@ -37,9 +37,7 @@ class PlanetsView extends BasePage<PlanetsController> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CircularProgressIndicator(
-                            color: '#FF6B35'.toColor(),
-                          ),
+                          CircularProgressIndicator(color: '#FF6B35'.toColor()),
                           Spacing.h(16),
                           AutoTranslateText(
                             'Loading planet details...',
@@ -51,7 +49,7 @@ class PlanetsView extends BasePage<PlanetsController> {
                       ),
                     );
                   }
-                  
+
                   if (controller.planetDetailsData.value == null) {
                     return Center(
                       child: Column(
@@ -82,7 +80,7 @@ class PlanetsView extends BasePage<PlanetsController> {
                       ),
                     );
                   }
-                  
+
                   return PlanetsWidget(controller: controller);
                 }),
               ),
@@ -100,10 +98,7 @@ class PlanetsView extends BasePage<PlanetsController> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            '#3D0C11'.toColor(),
-            '#5D1C21'.toColor(),
-          ],
+          colors: ['#3D0C11'.toColor(), '#5D1C21'.toColor()],
         ),
         boxShadow: [
           BoxShadow(
@@ -112,9 +107,10 @@ class PlanetsView extends BasePage<PlanetsController> {
             offset: const Offset(0, 2),
           ),
         ],
-        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(24),
-        bottomRight: Radius.circular(24)
-        )
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(24),
+          bottomRight: Radius.circular(24),
+        ),
       ),
       child: Row(
         children: [
@@ -123,17 +119,19 @@ class PlanetsView extends BasePage<PlanetsController> {
             icon: Icon(Icons.arrow_back, color: Color(0xFFE3B341), size: 24.w),
             onPressed: () => Get.back(),
           ),
-          
+
           Spacing.w(8),
-          
+
           // Title
           Expanded(
             child: AutoTranslateText(
               'Planets',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: Color(0xFFE3B341),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
+              style: MyTextTheme.largeBCB
+                  .copyWith(
+                    color: Color(0xFFE3B341),
+                    fontWeight: FontWeight.bold,
+                  )
+                  .merge(AppTypography.h2),
             ),
           ),
         ],
@@ -141,13 +139,3 @@ class PlanetsView extends BasePage<PlanetsController> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-

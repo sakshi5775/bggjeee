@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -140,7 +140,7 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: '#ee7532'.toColor().withOpacity(0.3 * progress),
+                      color: AppColors.deepOrange.withOpacity(0.3 * progress),
                       width: 3,
                     ),
                   ),
@@ -156,13 +156,13 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        '#ee7532'.toColor().withOpacity(0.9 * progress),
+                        AppColors.deepOrange.withOpacity(0.9 * progress),
                         '#820B17'.toColor().withOpacity(0.7 * progress),
                       ],
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: '#ee7532'.toColor().withOpacity(0.6 * progress),
+                        color: AppColors.deepOrange.withOpacity(0.6 * progress),
                         blurRadius: 25,
                         spreadRadius: 8,
                       ),

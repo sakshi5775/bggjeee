@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/vastu/model/vastu_room_config.dart';
 import 'package:flutter/material.dart';
@@ -136,7 +137,7 @@ class HomeVastuListView extends StatelessWidget {
                 ),
                 child: Icon(
                   _getRoomIcon(room.roomType),
-                  color: '#FF6B35'.toColor(),
+                  color: AppColors.deepOrange,
                   size: 24.w,
                 ),
               ),

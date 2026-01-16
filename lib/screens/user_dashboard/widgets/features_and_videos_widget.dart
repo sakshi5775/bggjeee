@@ -10,9 +10,6 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/video_player_widget.dart';
-import 'package:get/get.dart';
-
-import '../../../core/routes/app_routes.dart';
 
 class FeaturesAndVideosWidget extends BasePage<UserDashboardController> {
   const FeaturesAndVideosWidget({super.key});
@@ -128,7 +125,7 @@ class FeaturesAndVideosWidget extends BasePage<UserDashboardController> {
               height: 32.h,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: ["#E63946".toColor(), "#FF8C42".toColor()],
+                  colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),

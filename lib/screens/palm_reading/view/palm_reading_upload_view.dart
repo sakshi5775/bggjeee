@@ -143,7 +143,7 @@ class PalmReadingUploadView extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(
-                    color: '#FF6B35'.toColor(),
+                    color: AppColors.deepOrange,
                     width: 2,
                   ),
                 ),
@@ -248,7 +248,7 @@ class PalmReadingUploadView extends StatelessWidget {
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: isPrimary
-              ? '#FF6B35'.toColor()
+              ? AppColors.deepOrange
               : Colors.white,
           foregroundColor: isPrimary
               ? Colors.white
@@ -326,7 +326,7 @@ class PalmReadingUploadView extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: '#FF6B35'.toColor(),
+            color: AppColors.deepOrange,
             size: 24.w,
           ),
           Spacing.w(12),
@@ -352,8 +352,8 @@ class PalmReadingUploadView extends StatelessWidget {
             : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: controller.selectedPalmImage.value != null
-              ? '#FF6B35'.toColor()
-              : '#FF6B35'.toColor().withOpacity(0.5),
+              ? AppColors.deepOrange
+              : AppColors.deepOrange.withOpacity(0.5),
           foregroundColor: Colors.white,
           padding: AppPaddings.symmetric(v: 16, h: 24),
           shape: RoundedRectangleBorder(
@@ -406,7 +406,7 @@ class PalmReadingUploadView extends StatelessWidget {
             AutoTranslateText(
               'We read your destiny with 95% accuracy!',
               style: MyTextTheme.mediumBCB.copyWith(
-                color: '#FF6B35'.toColor(),
+                color: AppColors.deepOrange,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
@@ -594,7 +594,7 @@ class HandDiagramPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = '#FF6B35'.toColor()
+      ..color = AppColors.deepOrange
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3;
 

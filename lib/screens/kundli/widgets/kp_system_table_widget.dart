@@ -10,10 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class KpSystemTableWidget extends StatelessWidget {
   final KpSystemController controller;
 
-  const KpSystemTableWidget({
-    super.key,
-    required this.controller,
-  });
+  const KpSystemTableWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +24,7 @@ class KpSystemTableWidget extends StatelessWidget {
             final rightText = row['right'] as String? ?? '';
             final hasApiLeft = row['hasApi'] as bool? ?? false;
             final hasApiRight = row['hasApiRight'] as bool? ?? false;
-            
+
             return Padding(
               padding: EdgeInsets.only(bottom: 12.h),
               child: Row(
@@ -37,7 +34,9 @@ class KpSystemTableWidget extends StatelessWidget {
                     child: _buildCard(
                       leftText,
                       hasApiLeft,
-                      leftText.isNotEmpty ? () => controller.navigateToTab(leftText) : null,
+                      leftText.isNotEmpty
+                          ? () => controller.navigateToTab(leftText)
+                          : null,
                     ),
                   ),
                   if (rightText.isNotEmpty) ...[
@@ -68,20 +67,12 @@ class KpSystemTableWidget extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: hasApi
-                ? [
-                    "#FF8C42".toColor(),
-                    "#E63946".toColor(),
-                  ]
-                : [
-                    
-                    
-                    "#3D0C11".toColor(),
-                    "#5D1C21".toColor(),
-                  ],
+                ? ["#FF8C42".toColor(), "#E63946".toColor()]
+                : ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          border: Border.all(color: Colors.deepOrange, width: 1),
+          // border: Border.all(color: "#5D1C21".toColor(), width: 1),
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
@@ -97,19 +88,25 @@ class KpSystemTableWidget extends StatelessWidget {
             AutoTranslateText(
               title,
               textAlign: TextAlign.center,
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: Color(0xFFFFFFFF),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.body1),
+              style: MyTextTheme.mediumBCB
+                  .copyWith(
+                    color: hasApi ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.sp,
+                  )
+                  .merge(AppTypography.body1),
             ),
             if (!hasApi) ...[
               Spacing.h(4),
               AutoTranslateText(
                 'Coming Soon',
                 textAlign: TextAlign.center,
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: Colors.white.withOpacity(0.8),
-                ).merge(AppTypography.label),
+                style: MyTextTheme.smallBCN
+                    .copyWith(
+                      color: hasApi ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.w500,
+                    )
+                    .merge(AppTypography.label),
               ),
             ],
           ],
@@ -118,4 +115,3 @@ class KpSystemTableWidget extends StatelessWidget {
     );
   }
 }
-

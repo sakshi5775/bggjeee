@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:flutter/material.dart';
@@ -106,14 +107,14 @@ class RamalShastraQuestionView extends StatelessWidget {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: '#FF6B35'.toColor(),
+                              backgroundColor: AppColors.deepOrange,
                               foregroundColor: '#ffffff'.toColor(),
                               padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               elevation: 6,
-                              shadowColor: '#FF6B35'.toColor().withOpacity(0.35),
+                              shadowColor: AppColors.deepOrange.withOpacity(0.35),
                             ),
                             child: AutoTranslateText(
                               'Proceed to Casting',
@@ -200,7 +201,7 @@ class RamalShastraQuestionView extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
+              borderSide: BorderSide(color: AppColors.deepOrange, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
@@ -255,7 +256,7 @@ class RamalShastraQuestionView extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
+              borderSide: BorderSide(color: AppColors.deepOrange, width: 2),
             ),
             contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
           ),
@@ -307,7 +308,7 @@ class RamalShastraQuestionView extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
+              borderSide: BorderSide(color: AppColors.deepOrange, width: 2),
             ),
             contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
           ),
@@ -362,7 +363,7 @@ class RamalShastraQuestionView extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
+              borderSide: BorderSide(color: AppColors.deepOrange, width: 2),
             ),
             contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
           ),
@@ -427,7 +428,7 @@ class RamalShastraQuestionView extends StatelessWidget {
                 ),
                 Icon(
                   Icons.calendar_today,
-                  color: '#FF6B35'.toColor(),
+                  color: AppColors.deepOrange,
                   size: 20.w,
                 ),
               ],

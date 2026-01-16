@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/vastu/model/vastu_room_config.dart';
 import 'package:astrobharataiuser/screens/vastu/controller/vastu_reading_controller.dart';
@@ -224,7 +225,7 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView> with Wi
                   width: 40.w,
                   height: 40.w,
                   decoration: BoxDecoration(
-                    color: '#FF6B35'.toColor(),
+                    color: AppColors.deepOrange,
                     borderRadius: BorderRadius.circular(8.r),
                     boxShadow: [
                       BoxShadow(

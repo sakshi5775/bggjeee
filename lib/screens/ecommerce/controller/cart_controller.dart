@@ -9,7 +9,6 @@ import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.da
 import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class CartController extends BaseController {
   static const int maxQuantity = 50;

@@ -92,26 +92,29 @@ class DashaTableWidget extends StatelessWidget {
                       height: 50.h,
                       width: 50.h,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: [
-                          Color(0xFFFF8C42), Color(0xFFE63946)
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter
+                        gradient: LinearGradient(
+                          colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
                         ),
-                        borderRadius: BorderRadius.circular(12.r)
+                        borderRadius: BorderRadius.circular(12.r),
                       ),
-                      child: Icon(Icons.access_time, color: Colors.white, size: 24,),
+                      child: Icon(
+                        Icons.access_time,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                     ),
                   ),
                   Spacing.w(12),
                   AutoTranslateText(
                     "Runing Dasha",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'baloo2'
+                      fontFamily: 'baloo2',
                     ),
-                  )
+                  ),
                 ],
               ),
               ...controller.dashaTableData.asMap().entries.map((entry) {

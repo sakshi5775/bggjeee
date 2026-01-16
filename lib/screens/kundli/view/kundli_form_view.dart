@@ -23,20 +23,18 @@ class KundliFormView extends BasePage<KundliFormController> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFFFF6C2), Color(0xFFFFE8A3), Color(0xFFFFD580),
-            ],
+            colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
           ),
         ),
         child: SingleChildScrollView(
           child: Column(
             children: [
-
               SafeArea(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
                       // Header
-                                  _buildHeader(),
+                      _buildHeader(),
 
                       Spacing.h(12),
                       // Form Section
@@ -88,7 +86,8 @@ class KundliFormView extends BasePage<KundliFormController> {
                 style: MyTextTheme.largeBCB
                     .copyWith(
                       color: Color(0xFFF7C443),
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 12,
                     )
                     .merge(AppTypography.h1),
               ),

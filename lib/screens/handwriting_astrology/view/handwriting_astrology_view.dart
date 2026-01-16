@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -188,14 +189,14 @@ class HandwritingAstrologyView extends StatelessWidget {
               children: [
                 Icon(
                   Icons.auto_awesome,
-                  color: '#FF6B35'.toColor(),
+                  color: AppColors.deepOrange,
                   size: 20.w,
                 ),
                 Spacing.w(8),
                 AutoTranslateText(
                   'Start Your Analysis',
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: '#FF6B35'.toColor(),
+                    color: AppColors.deepOrange,
                     fontWeight: FontWeight.bold,
                   ).merge(AppTypography.h3),
                 ),
@@ -226,14 +227,14 @@ class HandwritingAstrologyView extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () => Get.toNamed(AppRoutes.handwritingAstrologyUpload),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: '#FF6B35'.toColor(),
+                  backgroundColor: AppColors.deepOrange,
                   foregroundColor: '#ffffff'.toColor(),
                   padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   elevation: 6,
-                  shadowColor: '#FF6B35'.toColor().withOpacity(0.35),
+                  shadowColor: AppColors.deepOrange.withOpacity(0.35),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -562,8 +563,8 @@ class HandwritingAstrologyView extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              '#FF6B35'.toColor(),
-              '#FF8C42'.toColor(),
+              AppColors.deepOrange,
+              AppColors.deepOrangemix,
             ],
           ),
           borderRadius: BorderRadius.circular(16.r),
@@ -586,7 +587,7 @@ class HandwritingAstrologyView extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: ['#FF8C42'.toColor().withOpacity(0.35), '#FF6B35'.toColor().withOpacity(0.15)],
+                    colors: [AppColors.deepOrangemix.withOpacity(0.35), AppColors.deepOrange.withOpacity(0.15)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),

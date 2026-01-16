@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 
 /// Direction overlay widget with smooth animations
 class DirectionOverlay extends StatefulWidget {
@@ -27,7 +28,7 @@ class _DirectionOverlayState extends State<DirectionOverlay> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: '#FF6B35'.toColor().withOpacity(0.9),
+        color: AppColors.deepOrange.withOpacity(0.9),
         borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(

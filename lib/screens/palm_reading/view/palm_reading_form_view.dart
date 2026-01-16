@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -154,7 +155,7 @@ class PalmReadingFormView extends StatelessWidget {
             hintStyle: MyTextTheme.mediumBCN.copyWith(
               color: Colors.grey[600],
             ),
-            prefixIcon: Icon(icon, color: '#FF6B35'.toColor(), size: 24.w),
+            prefixIcon: Icon(icon, color: AppColors.deepOrange, size: 24.w),
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(
@@ -174,7 +175,7 @@ class PalmReadingFormView extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide(
-                color: '#FF6B35'.toColor(),
+                color: AppColors.deepOrange,
                 width: 2,
               ),
             ),
@@ -217,7 +218,7 @@ class PalmReadingFormView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today, color: '#FF6B35'.toColor(), size: 24.w),
+                Icon(Icons.calendar_today, color: AppColors.deepOrange, size: 24.w),
                 Spacing.w(12),
                 Expanded(
                   child: Obx(() => AutoTranslateText(
@@ -272,7 +273,7 @@ class PalmReadingFormView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.language, color: '#FF6B35'.toColor(), size: 24.w),
+                Icon(Icons.language, color: AppColors.deepOrange, size: 24.w),
                 Spacing.w(12),
                 Expanded(
                   child: Obx(() => AutoTranslateText(
@@ -303,14 +304,14 @@ class PalmReadingFormView extends StatelessWidget {
         child: ElevatedButton(
           onPressed: () => controller.onContinueFromForm(),
           style: ElevatedButton.styleFrom(
-            backgroundColor: '#FF6B35'.toColor(),
+            backgroundColor: AppColors.deepOrange,
             foregroundColor: Colors.white,
             padding: AppPaddings.symmetric(v: 16, h: 24),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.r),
             ),
             elevation: 6,
-            shadowColor: '#FF6B35'.toColor().withOpacity(0.35),
+            shadowColor: AppColors.deepOrange.withOpacity(0.35),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -338,7 +339,7 @@ class PalmReadingFormView extends StatelessWidget {
         child: AutoTranslateText(
           'Skip',
           style: MyTextTheme.mediumBCB.copyWith(
-            color: '#FF6B35'.toColor(),
+            color: AppColors.deepOrange,
             fontWeight: FontWeight.w600,
           ),
         ),

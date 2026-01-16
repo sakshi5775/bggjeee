@@ -13,10 +13,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 class DivisionalChartWidget extends StatelessWidget {
   final KundliResultController controller;
 
-  const DivisionalChartWidget({
-    super.key,
-    required this.controller,
-  });
+  const DivisionalChartWidget({super.key, required this.controller});
 
   // Available divisional chart types with descriptions
   static const List<Map<String, String>> divisions = [
@@ -56,15 +53,15 @@ class DivisionalChartWidget extends StatelessWidget {
             // Enhanced Title Section
             _buildTitleSection(),
             Spacing.h(20),
-            
+
             // Enhanced Note Card
             _buildNoteCard(),
             Spacing.h(20),
-            
+
             // Enhanced Division Selection
             _buildDivisionSelection(selectedDivision),
             Spacing.h(24),
-            
+
             // Loading indicator or data table
             if (controller.isLoadingDivisionalChart.value)
               _buildLoadingState(selectedDivision)
@@ -82,14 +79,16 @@ class DivisionalChartWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            "#6F221E".toColor(),
-            "#6F221E".toColor().withOpacity(0.8),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        // gradient: LinearGradient(
+        //   colors: [
+        //     "#6F221E".toColor(),
+        //     "#6F221E".toColor().withOpacity(0.8),
+        //   ],
+        //   begin: Alignment.topLeft,
+        //   end: Alignment.bottomRight,
+        // ),
+        color: "#FFFFFF".toColor(),
+        border: Border.all(color: "#F38B3B".toColor(), width: 1.5),
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -104,12 +103,17 @@ class DivisionalChartWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              // color: Colors.white.withOpacity(0.2),
+              gradient: LinearGradient(
+                colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
               Icons.table_chart_rounded,
-              color: Colors.white,
+              color: "#FFFFFF".toColor(),
               size: 28.w,
             ),
           ),
@@ -121,15 +125,17 @@ class DivisionalChartWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Divisional Chart',
                   style: MyTextTheme.largeBCB.copyWith(
-                    color: Colors.white,
+                    color: "#6F221E".toColor(),
                     fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    fontFamily: 'baloo2',
                   ),
                 ),
                 Spacing.h(4),
                 AutoTranslateText(
                   'Select a division to view planetary positions',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                    color: "#6F221E".toColor(),
                   ),
                 ),
               ],
@@ -189,6 +195,8 @@ class DivisionalChartWidget extends StatelessWidget {
                   style: MyTextTheme.mediumBCB.copyWith(
                     color: "#6F221E".toColor(),
                     fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    fontFamily: 'baloo2',
                   ),
                 ),
                 Spacing.h(4),
@@ -208,99 +216,153 @@ class DivisionalChartWidget extends StatelessWidget {
   }
 
   Widget _buildDivisionSelection(String? selectedDivision) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AutoTranslateText(
-          'Available Divisions',
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: "#6F221E".toColor(),
-            fontWeight: FontWeight.bold,
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
+      decoration: BoxDecoration(
+        // gradient: LinearGradient(
+        //   colors: [
+        //     "#6F221E".toColor(),
+        //     "#6F221E".toColor().withOpacity(0.8),
+        //   ],
+        //   begin: Alignment.topLeft,
+        //   end: Alignment.bottomRight,
+        // ),
+        color: "#FFFFFF".toColor(),
+        border: Border.all(color: "#F38B3B".toColor(), width: 1.5),
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: "#6F221E".toColor().withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-        ),
-        Spacing.h(12),
-        Wrap(
-          spacing: 10.w,
-          runSpacing: 10.h,
-          children: divisions.map((division) {
-            final code = division['code']!;
-            final name = division['name']!;
-            final desc = division['desc']!;
-            final isSelected = selectedDivision == code;
-            
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOut,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () => controller.fetchDivisionalChartData(code),
-                  borderRadius: BorderRadius.circular(16.r),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
-                    decoration: BoxDecoration(
-                      gradient: isSelected
-                          ? LinearGradient(
-                              colors: [
-                                "#ed6f30".toColor(),
-                                "#ed6f30".toColor().withOpacity(0.8),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            )
-                          : null,
-                      color: isSelected ? null : Colors.white,
-                      borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(
-                        color: isSelected
-                            ? "#ed6f30".toColor()
-                            : "#DFB343".toColor().withOpacity(0.4),
-                        width: isSelected ? 2 : 1.5,
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(
+                  // color: "#F38B3B".toColor().withOpacity(0.2),
+                  gradient: LinearGradient(
+                    colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: "#FFFFFF".toColor(),
+                  size: 24.w,
+                ),
+              ),
+              Spacing.w(12),
+              AutoTranslateText(
+                'Available Divisions',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: "#6F221E".toColor(),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  fontFamily: 'baloo2',
+                ),
+              ),
+            ],
+          ),
+
+          Spacing.h(12),
+          Wrap(
+            spacing: 10.w,
+            runSpacing: 10.h,
+            children: divisions.map((division) {
+              final code = division['code']!;
+              final name = division['name']!;
+              final desc = division['desc']!;
+              final isSelected = selectedDivision == code;
+
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => controller.fetchDivisionalChartData(code),
+                    borderRadius: BorderRadius.circular(16.r),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 18.w,
+                        vertical: 14.h,
                       ),
-                      boxShadow: isSelected
-                          ? [
-                              BoxShadow(
-                                color: "#ed6f30".toColor().withOpacity(0.4),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ]
-                          : [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AutoTranslateText(
-                          name,
-                          style: MyTextTheme.mediumBCB.copyWith(
-                            color: isSelected ? Colors.white : "#6F221E".toColor(),
-                            fontWeight: FontWeight.bold,
-                          ),
+                      decoration: BoxDecoration(
+                        gradient: isSelected
+                            ? LinearGradient(
+                                colors: [
+                                  "#F38B3B".toColor(),
+                                  "#DD2914".toColor().withOpacity(0.8),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              )
+                            : null,
+                        color: isSelected ? null : Colors.white,
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(
+                          color: isSelected
+                              ? "#ed6f30".toColor()
+                              : "#DFB343".toColor().withOpacity(0.4),
+                          width: isSelected ? 2 : 1.5,
                         ),
-                        Spacing.h(4),
-                        AutoTranslateText(
-                          desc,
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: isSelected
-                                ? Colors.white.withOpacity(0.9)
-                                : "#6F221E".toColor().withOpacity(0.6),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: "#ed6f30".toColor().withOpacity(0.4),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ]
+                            : [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AutoTranslateText(
+                            name,
+                            style: MyTextTheme.mediumBCB.copyWith(
+                              color: isSelected
+                                  ? Colors.white
+                                  : "#6F221E".toColor(),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                      ],
+                          Spacing.h(4),
+                          AutoTranslateText(
+                            desc,
+                            style: MyTextTheme.smallBCN.copyWith(
+                              color: isSelected
+                                  ? Colors.white.withOpacity(0.9)
+                                  : "#6F221E".toColor().withOpacity(0.6),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
+              );
+            }).toList(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -321,10 +383,7 @@ class DivisionalChartWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-            strokeWidth: 3,
-          ),
+          CircularProgressIndicator(color: "#ed6f30".toColor(), strokeWidth: 3),
           Spacing.h(20),
           AutoTranslateText(
             'Loading ${selectedDivision ?? 'chart'} data...',
@@ -391,7 +450,11 @@ class DivisionalChartWidget extends StatelessWidget {
     final zodiacNo = data['zodiac_no'] as Map<String, dynamic>? ?? {};
     final divisionInfo = divisions.firstWhere(
       (d) => d['code'] == selectedDivision,
-      orElse: () => {'code': selectedDivision, 'name': selectedDivision, 'desc': ''},
+      orElse: () => {
+        'code': selectedDivision,
+        'name': selectedDivision,
+        'desc': '',
+      },
     );
 
     return Column(
@@ -401,15 +464,17 @@ class DivisionalChartWidget extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(20.w),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                "#ed6f30".toColor(),
-                "#ed6f30".toColor().withOpacity(0.8),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            // gradient: LinearGradient(
+            //   colors: [
+            //     "#ed6f30".toColor(),
+            //     "#ed6f30".toColor().withOpacity(0.8),
+            //   ],
+            //   begin: Alignment.topLeft,
+            //   end: Alignment.bottomRight,
+            // ),
+            color: "#FFFFFF".toColor(),
             borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(color: "#DFB343".toColor(), width: 1.5),
             boxShadow: [
               BoxShadow(
                 color: "#ed6f30".toColor().withOpacity(0.3),
@@ -423,7 +488,15 @@ class DivisionalChartWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  // color: Colors.white.withOpacity(0.2),
+                  gradient: LinearGradient(
+                    colors: [
+                      "#F38B3B".toColor(),
+                      "#DD2914".toColor().withOpacity(0.8),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Icon(
@@ -440,8 +513,10 @@ class DivisionalChartWidget extends StatelessWidget {
                     AutoTranslateText(
                       '$selectedDivision Chart',
                       style: MyTextTheme.largeBCB.copyWith(
-                        color: Colors.white,
+                        color: "#6F221E".toColor(),
                         fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        fontFamily: 'baloo2',
                       ),
                     ),
                     if (divisionInfo['desc']?.isNotEmpty ?? false) ...[
@@ -449,7 +524,7 @@ class DivisionalChartWidget extends StatelessWidget {
                       AutoTranslateText(
                         divisionInfo['desc']!,
                         style: MyTextTheme.smallBCN.copyWith(
-                          color: Colors.white.withOpacity(0.9),
+                          color: "#6F221E".toColor(),
                         ),
                       ),
                     ],
@@ -460,45 +535,68 @@ class DivisionalChartWidget extends StatelessWidget {
           ),
         ),
         Spacing.h(24),
-        
+
         // House Number Table
         _buildHouseTable(houseNo, 'House Number', Icons.home_outlined),
         Spacing.h(24),
-        
+
         // Zodiac Number Table
         _buildZodiacTable(zodiacNo, 'Zodiac Number', Icons.star_outline),
       ],
     );
   }
 
-  Widget _buildHouseTable(Map<String, dynamic> houseNo, String title, IconData icon) {
+  Widget _buildHouseTable(
+    Map<String, dynamic> houseNo,
+    String title,
+    IconData icon,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                color: "#6F221E".toColor().withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8.r),
+        Container(
+          padding: EdgeInsets.all(12.w),
+          decoration: BoxDecoration(
+            color: "#FFFFFF".toColor(),
+            border: Border.all(color: "#E8E8E8".toColor(), width: 1.5),
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      // color: "#6F221E".toColor().withOpacity(0.1),
+                      gradient: LinearGradient(
+                        colors: [
+                          "#F38B3B".toColor(),
+                          "#DD2914".toColor().withOpacity(0.8),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Icon(icon, color: "#FFFFFF".toColor(), size: 20.w),
+                  ),
+                  Spacing.w(12),
+                  AutoTranslateText(
+                    title,
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      fontFamily: 'baloo2',
+                    ),
+                  ),
+                ],
               ),
-              child: Icon(
-                icon,
-                color: "#6F221E".toColor(),
-                size: 20.w,
-              ),
-            ),
-            Spacing.w(12),
-            AutoTranslateText(
-              title,
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
+
         Spacing.h(16),
         Container(
           decoration: BoxDecoration(
@@ -517,9 +615,15 @@ class DivisionalChartWidget extends StatelessWidget {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final screenWidth = MediaQuery.of(context).size.width;
-                final houseColumnWidth = (screenWidth * 0.25).clamp(70.0, 100.0);
-                final planetsColumnWidth = (screenWidth * 0.65).clamp(200.0, 350.0);
-                
+                final houseColumnWidth = (screenWidth * 0.25).clamp(
+                  70.0,
+                  100.0,
+                );
+                final planetsColumnWidth = (screenWidth * 0.65).clamp(
+                  200.0,
+                  350.0,
+                );
+
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: SingleChildScrollView(
@@ -574,8 +678,9 @@ class DivisionalChartWidget extends StatelessWidget {
                         // Data rows for each house (1-12)
                         ...List.generate(12, (houseIndex) {
                           final houseKey = (houseIndex + 1).toString();
-                          final planets = houseNo[houseKey] as List<dynamic>? ?? [];
-                          
+                          final planets =
+                              houseNo[houseKey] as List<dynamic>? ?? [];
+
                           return TableRow(
                             decoration: BoxDecoration(
                               color: houseIndex % 2 == 0
@@ -600,34 +705,52 @@ class DivisionalChartWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildZodiacTable(Map<String, dynamic> zodiacNo, String title, IconData icon) {
+  Widget _buildZodiacTable(
+    Map<String, dynamic> zodiacNo,
+    String title,
+    IconData icon,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                color: "#6F221E".toColor().withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8.r),
+        Container(
+          padding: EdgeInsets.all(12.w),
+          decoration: BoxDecoration(
+            color: "#FFFFFF".toColor(),
+            border: Border.all(color: "#E8E8E8".toColor(), width: 1.5),
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      // color: "#6F221E".toColor().withOpacity(0.1),
+                      gradient: LinearGradient(
+                        colors: ["#FF8C42".toColor(), "#E63946".toColor()],
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Icon(icon, color: "#6F221E".toColor(), size: 20.w),
+                  ),
+                  Spacing.w(12),
+                  AutoTranslateText(
+                    title,
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      fontFamily: 'baloo2',
+                    ),
+                  ),
+                ],
               ),
-              child: Icon(
-                icon,
-                color: "#6F221E".toColor(),
-                size: 20.w,
-              ),
-            ),
-            Spacing.w(12),
-            AutoTranslateText(
-              title,
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
+
         Spacing.h(16),
         Container(
           decoration: BoxDecoration(
@@ -646,9 +769,15 @@ class DivisionalChartWidget extends StatelessWidget {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final screenWidth = MediaQuery.of(context).size.width;
-                final zodiacColumnWidth = (screenWidth * 0.25).clamp(70.0, 100.0);
-                final planetsColumnWidth = (screenWidth * 0.65).clamp(200.0, 350.0);
-                
+                final zodiacColumnWidth = (screenWidth * 0.25).clamp(
+                  70.0,
+                  100.0,
+                );
+                final planetsColumnWidth = (screenWidth * 0.65).clamp(
+                  200.0,
+                  350.0,
+                );
+
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: SingleChildScrollView(
@@ -703,8 +832,9 @@ class DivisionalChartWidget extends StatelessWidget {
                         // Data rows for each zodiac (1-12)
                         ...List.generate(12, (zodiacIndex) {
                           final zodiacKey = (zodiacIndex + 1).toString();
-                          final planets = zodiacNo[zodiacKey] as List<dynamic>? ?? [];
-                          
+                          final planets =
+                              zodiacNo[zodiacKey] as List<dynamic>? ?? [];
+
                           return TableRow(
                             decoration: BoxDecoration(
                               color: zodiacIndex % 2 == 0
@@ -783,9 +913,7 @@ class DivisionalChartWidget extends StatelessWidget {
                   color: "#6F221E".toColor(),
                   fontWeight: FontWeight.bold,
                 )
-              : MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor(),
-                ),
+              : MyTextTheme.smallBCN.copyWith(color: "#6F221E".toColor()),
         ),
       ),
     );
@@ -826,15 +954,13 @@ class DivisionalChartWidget extends StatelessWidget {
           final fullName = planetData['full_name']?.toString() ?? '';
           final zodiac = planetData['zodiac']?.toString() ?? '';
           final retro = planetData['retro'] as bool? ?? false;
-          
+
           return LayoutBuilder(
             builder: (context, constraints) {
               final maxWidth = (constraints.maxWidth * 0.45).clamp(80.0, 130.0);
-              
+
               return ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: maxWidth,
-                ),
+                constraints: BoxConstraints(maxWidth: maxWidth),
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
                   decoration: BoxDecoration(
@@ -862,7 +988,9 @@ class DivisionalChartWidget extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               style: MyTextTheme.smallBCB.copyWith(
-                                color: retro ? "#ed6f30".toColor() : "#6F221E".toColor(),
+                                color: retro
+                                    ? "#ed6f30".toColor()
+                                    : "#6F221E".toColor(),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -870,7 +998,10 @@ class DivisionalChartWidget extends StatelessWidget {
                           if (retro) ...[
                             SizedBox(width: 3.w),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 4.w,
+                                vertical: 1.h,
+                              ),
                               decoration: BoxDecoration(
                                 color: "#ed6f30".toColor(),
                                 borderRadius: BorderRadius.circular(3.r),
@@ -893,8 +1024,8 @@ class DivisionalChartWidget extends StatelessWidget {
                             fullName.isNotEmpty && zodiac.isNotEmpty
                                 ? '$fullName, $zodiac'
                                 : fullName.isNotEmpty
-                                    ? fullName
-                                    : zodiac,
+                                ? fullName
+                                : zodiac,
                             style: MyTextTheme.smallBCN.copyWith(
                               color: "#6F221E".toColor().withOpacity(0.6),
                             ),

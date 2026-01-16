@@ -104,7 +104,7 @@ class PalmReadingController extends GetxController {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFFFF6B35),
+              primary: Color(0xFFF38B3B),
               onPrimary: Colors.white,
               surface: Colors.white,
               onSurface: Color(0xFF5F2221),

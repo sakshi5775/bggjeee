@@ -3,7 +3,6 @@ import 'package:astrobharataiuser/data_model/coupon_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class CouponsController extends BaseController {
   final EcommerceService _service = EcommerceService();

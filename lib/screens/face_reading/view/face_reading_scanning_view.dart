@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/screens/face_reading/widgets/dynamic_mesh_pain
 import 'package:astrobharataiuser/screens/face_reading/widgets/face_reading_loading_widget.dart';
 import 'package:astrobharataiuser/screens/face_reading/widgets/scanner_overlay.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -223,7 +224,7 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
               return shouldShowScanner
                   ? ScannerOverlay(
                       isScanning: controller.isScanning.value,
-                      scannerColor: '#EA632B'.toColor(),
+                      scannerColor: AppColors.deepOrange,
                     )
                   : const SizedBox.shrink();
             }),
@@ -237,7 +238,7 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
     if (_uiImage == null || _imageSize == null || !_isImageLoaded.value) {
       return Center(
         child: CircularProgressIndicator(
-          color: '#EA632B'.toColor(),
+          color: AppColors.deepOrange,
         ),
       );
     }
@@ -272,7 +273,7 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
               ElevatedButton(
                 onPressed: () => Get.back(),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: '#EA632B'.toColor(),
+                  backgroundColor: AppColors.deepOrange,
                   foregroundColor: Colors.white,
                 ),
                 child: AutoTranslateText('Try Another Photo'),
@@ -288,7 +289,7 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(
-                color: '#EA632B'.toColor(),
+                color: AppColors.deepOrange,
               ),
               Spacing.h(16),
               AutoTranslateText(
@@ -367,8 +368,8 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                               face: face,
                               imageSize: _imageSize!,
                               canvasSize: displayedSize,
-                              dotColor: '#EA632B'.toColor(),
-                              lineColor: '#EA632B'.toColor(),
+                              dotColor: AppColors.deepOrange,
+                              lineColor: AppColors.deepOrange,
                               showGlow: true,
                               opacity: _fadeAnimation.value,
                             ),
@@ -488,7 +489,7 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                             });
                           },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: '#EA632B'.toColor(),
+                        backgroundColor: AppColors.deepOrange,
                         foregroundColor: Colors.white,
                         padding: EdgeInsets.symmetric(vertical: 16.h),
                         shape: RoundedRectangleBorder(

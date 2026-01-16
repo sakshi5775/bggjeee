@@ -13,10 +13,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 class AshtakvargaWidget extends StatelessWidget {
   final KundliResultController controller;
 
-  const AshtakvargaWidget({
-    super.key,
-    required this.controller,
-  });
+  const AshtakvargaWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +24,7 @@ class AshtakvargaWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                color: "#ed6f30".toColor(),
-              ),
+              CircularProgressIndicator(color: "#ed6f30".toColor()),
               Spacing.h(16),
               AutoTranslateText(
                 'Loading Ashtakvarga data...',
@@ -62,24 +57,78 @@ class AshtakvargaWidget extends StatelessWidget {
       debugPrint('Ashtakvarga Order: $order');
       debugPrint('Ashtakvarga Points: $points');
       debugPrint('Ashtakvarga Totals: $totals');
-      debugPrint('Order length: ${order.length}, Points length: ${points.length}, Totals length: ${totals.length}');
+      debugPrint(
+        'Order length: ${order.length}, Points length: ${points.length}, Totals length: ${totals.length}',
+      );
 
       return SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
-            AutoTranslateText(
-              'Ashtakvarga',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.bold,
+            // Ashtakvarga Container
+            Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: "#E63946".toColor(), width: 1),
+                borderRadius: BorderRadius.circular(12.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        height: 50.h,
+                        width: 50.w,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child: Icon(
+                          Icons.table_chart,
+                          color: Colors.white,
+                          size: 24.w,
+                        ),
+                      ),
+                      Spacing.w(16),
+                      AutoTranslateText(
+                        'Ashtakvarga',
+                        style: MyTextTheme.largeBCB.copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          fontFamily: 'baloo2',
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            
+
+            // Title
+            // AutoTranslateText(
+            //   'Ashtakvarga',
+            //   style: MyTextTheme.largeBCB.copyWith(
+            //     color: "#6F221E".toColor(),
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
             Spacing.h(16),
-            
+
             // Ashtakvarga Table Card
             Container(
               padding: EdgeInsets.all(16.w),
@@ -108,7 +157,11 @@ class AshtakvargaWidget extends StatelessWidget {
     });
   }
 
-  Widget _buildTable(List<dynamic> order, List<dynamic> points, List<dynamic> totals) {
+  Widget _buildTable(
+    List<dynamic> order,
+    List<dynamic> points,
+    List<dynamic> totals,
+  ) {
     return LayoutBuilder(
       builder: (context, constraints) {
         // Always use horizontal scroll to ensure all columns are visible
@@ -123,13 +176,19 @@ class AshtakvargaWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTableContent(List<dynamic> order, List<dynamic> points, List<dynamic> totals) {
+  Widget _buildTableContent(
+    List<dynamic> order,
+    List<dynamic> points,
+    List<dynamic> totals,
+  ) {
     // Ensure we have valid data
     final planetCount = order.length;
     final pointsCount = points.length;
-    
-    debugPrint('Building table with $planetCount planets and $pointsCount point rows');
-    
+
+    debugPrint(
+      'Building table with $planetCount planets and $pointsCount point rows',
+    );
+
     return Table(
       border: TableBorder.all(
         color: "#6F221E".toColor().withOpacity(0.2),
@@ -158,15 +217,19 @@ class AshtakvargaWidget extends StatelessWidget {
         ...List.generate(12, (houseIndex) {
           return TableRow(
             decoration: BoxDecoration(
-              color: houseIndex % 2 == 0 
-                  ? Colors.white 
+              color: houseIndex % 2 == 0
+                  ? Colors.white
                   : "#DFB343".toColor().withOpacity(0.05),
             ),
             children: [
               // House number
               _buildHouseCell('H${houseIndex + 1}'),
               // Points for each planet in this house
-              for (int planetIndex = 0; planetIndex < planetCount; planetIndex++)
+              for (
+                int planetIndex = 0;
+                planetIndex < planetCount;
+                planetIndex++
+              )
                 _buildDataCell(
                   _getPointForHouse(planetIndex, houseIndex, points),
                 ),
@@ -182,8 +245,12 @@ class AshtakvargaWidget extends StatelessWidget {
       ],
     );
   }
-  
-  String _getPointForHouse(int planetIndex, int houseIndex, List<dynamic> points) {
+
+  String _getPointForHouse(
+    int planetIndex,
+    int houseIndex,
+    List<dynamic> points,
+  ) {
     if (planetIndex < points.length && points[planetIndex] is List) {
       final planetPoints = points[planetIndex] as List;
       if (houseIndex < planetPoints.length) {
@@ -227,9 +294,7 @@ class AshtakvargaWidget extends StatelessWidget {
       child: AutoTranslateText(
         text,
         textAlign: TextAlign.center,
-        style: MyTextTheme.smallBCN.copyWith(
-          color: "#6F221E".toColor(),
-        ),
+        style: MyTextTheme.smallBCN.copyWith(color: "#6F221E".toColor()),
       ),
     );
   }
@@ -248,4 +313,3 @@ class AshtakvargaWidget extends StatelessWidget {
     );
   }
 }
-

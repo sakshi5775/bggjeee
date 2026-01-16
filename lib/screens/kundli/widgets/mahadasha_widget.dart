@@ -13,24 +13,19 @@ import 'package:intl/intl.dart';
 class MahadashaWidget extends StatelessWidget {
   final DashaController controller;
 
-  const MahadashaWidget({
-    super.key,
-    required this.controller,
-  });
+  const MahadashaWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingMahadasha.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.mahadashaData.value;
-      
+
       if (data == null || data.isEmpty) {
         return Center(
           child: AutoTranslateText(
@@ -55,70 +50,92 @@ class MahadashaWidget extends StatelessWidget {
       }
 
       final mahadashaList = response['mahadasha'] as List<dynamic>? ?? [];
-      final mahadashaOrder = response['mahadasha_order'] as List<dynamic>? ?? [];
+      final mahadashaOrder =
+          response['mahadasha_order'] as List<dynamic>? ?? [];
       final startYear = response['start_year'] as int?;
       final dashaStartDate = response['dasha_start_date'] as String? ?? '';
-      final dashaRemaining = response['dasha_remaining_at_birth'] as String? ?? '';
+      final dashaRemaining =
+          response['dasha_remaining_at_birth'] as String? ?? '';
 
       return SingleChildScrollView(
         padding: EdgeInsets.all(08.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-              Row(
-                children: [
-                  Container(
-                    height: 50.h,
-                    width: 50.w,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xFFFF8C42),
-                          Color(0xFFE63946),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(16.r),
-                    ),
-                    child: Icon(
-                      Icons.calendar_month,
-                      color: Colors.white,
-                      size: 24.w,
-                    ),
-                  ),
-                  Spacing.w(16),
-                  AutoTranslateText(
-                    'Mahadasha',
-                    style: MyTextTheme.largeBCB.copyWith(
-                      color: "#6F221E".toColor(),
-                      fontWeight: FontWeight.bold,
-                    ),
+            Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: "#FFFFFF".toColor(),
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: "#ed6f30".toColor(), width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
-            
-            // Title
-            // AutoTranslateText(
-            //   'Mahadasha',
-            //   style: MyTextTheme.largeBCB.copyWith(
-            //     color: "#6F221E".toColor(),
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
-            
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        height: 50.h,
+                        width: 50.w,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                          ),
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child: Icon(
+                          Icons.calendar_month,
+                          color: Colors.white,
+                          size: 24.w,
+                        ),
+                      ),
+                      Spacing.w(16),
+                      AutoTranslateText(
+                        'Mahadasha',
+                        style: MyTextTheme.largeBCB.copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          fontFamily: 'baloo2',
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Title
+                  // AutoTranslateText(
+                  //   'Mahadasha',
+                  //   style: MyTextTheme.largeBCB.copyWith(
+                  //     color: "#6F221E".toColor(),
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  // ),
+                  Spacing.h(16),
+
+                  // Info Cards
+                  if (startYear != null)
+                    _buildInfoCard('Start Year', startYear.toString()),
+
+                  if (dashaStartDate.isNotEmpty)
+                    _buildInfoCard(
+                      'Dasha Start Date',
+                      _formatDate(dashaStartDate),
+                    ),
+
+                  if (dashaRemaining.isNotEmpty)
+                    _buildInfoCard('Dasha Remaining at Birth', dashaRemaining),
+                ],
+              ),
+            ),
+
             Spacing.h(16),
-            
-            // Info Cards
-            if (startYear != null)
-              _buildInfoCard('Start Year', startYear.toString()),
-            
-            if (dashaStartDate.isNotEmpty)
-              _buildInfoCard('Dasha Start Date', _formatDate(dashaStartDate)),
-            
-            if (dashaRemaining.isNotEmpty)
-              _buildInfoCard('Dasha Remaining at Birth', dashaRemaining),
-            
-            Spacing.h(16),
-            
+
             // Mahadasha List
             Container(
               decoration: BoxDecoration(
@@ -170,19 +187,23 @@ class MahadashaWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   // List Items
                   ...List.generate(mahadashaList.length, (index) {
                     final isLast = index == mahadashaList.length - 1;
                     final planet = mahadashaList[index].toString();
-                    final endDate = index < mahadashaOrder.length ? mahadashaOrder[index].toString() : '';
-                    
+                    final endDate = index < mahadashaOrder.length
+                        ? mahadashaOrder[index].toString()
+                        : '';
+
                     return Container(
                       padding: EdgeInsets.all(16.w),
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
-                            color: isLast ? Colors.transparent : "#ed6f30".toColor().withOpacity(0.1),
+                            color: isLast
+                                ? Colors.transparent
+                                : "#ed6f30".toColor().withOpacity(0.1),
                             width: 1,
                           ),
                         ),
@@ -229,10 +250,7 @@ class MahadashaWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: "#FFFFFF".toColor(),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: "#ed6f30".toColor(),
-          width: 1,
-        ),
+        border: Border.all(color: "#ed6f30".toColor(), width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
@@ -280,7 +298,7 @@ class MahadashaWidget extends StatelessWidget {
         'MMM dd yyyy',
         'dd/MM/yyyy',
       ];
-      
+
       for (final format in formats) {
         try {
           final date = DateFormat(format).parse(dateStr);
@@ -289,7 +307,7 @@ class MahadashaWidget extends StatelessWidget {
           continue;
         }
       }
-      
+
       return dateStr;
     } catch (e) {
       return dateStr;

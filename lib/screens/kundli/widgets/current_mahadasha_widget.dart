@@ -13,24 +13,19 @@ import 'package:intl/intl.dart';
 class CurrentMahadashaWidget extends StatelessWidget {
   final DashaController controller;
 
-  const CurrentMahadashaWidget({
-    super.key,
-    required this.controller,
-  });
+  const CurrentMahadashaWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingCurrentMahadasha.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.currentMahadashaData.value;
-      
+
       if (data == null || data.isEmpty) {
         return Center(
           child: AutoTranslateText(
@@ -59,76 +54,150 @@ class CurrentMahadashaWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-              height: 50.h,
-              width: 50.w,
+            Container(
+              padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                      Color(0xFFFF8C42),
-                      Color(0xFFE63946),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: "#FFFFFF".toColor(),
                 borderRadius: BorderRadius.circular(16.r),
+                border: Border.all(color: "#E3B341".toColor(), width: 1),
               ),
-              child: Icon(
-                Icons.alarm_add_outlined,
-                color: Colors.white,
-                size: 24.w,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        height: 50.h,
+                        width: 50.w,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child: Icon(
+                          Icons.alarm_add_outlined,
+                          color: Colors.white,
+                          size: 24.w,
+                        ),
+                      ),
+                      Spacing.w(16),
+                      // Title
+                      // Current Dashas Section
+                      AutoTranslateText(
+                        'Current Mahadasha',
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          fontFamily: 'baloo2',
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            Spacing.w(16),
-  // Title
-            // Title
-            AutoTranslateText(
-              'Current Mahadasha',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-              ],
-            ),
-            
-            
+
             Spacing.h(20),
-            
+
             // Order of Dashas Section
             if (response['order_of_dashas'] != null)
-              _buildOrderOfDashasSection(response['order_of_dashas'] as Map<String, dynamic>),
-            
+              _buildOrderOfDashasSection(
+                response['order_of_dashas'] as Map<String, dynamic>,
+              ),
+
             Spacing.h(20),
-            
-            // Current Dashas Section
-            AutoTranslateText(
-              'Current Dashas',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.bold,
+
+            Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: "#FFFFFF".toColor(),
+                borderRadius: BorderRadius.circular(16.r),
+                border: Border.all(
+                  color: "#ed6f30".toColor().withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        height: 50.h,
+                        width: 50.w,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child: Icon(
+                          Icons.alarm_add_outlined,
+                          color: Colors.white,
+                          size: 24.w,
+                        ),
+                      ),
+                      Spacing.w(16),
+                      // Title
+                      // Current Dashas Section
+                      AutoTranslateText(
+                        'Current Dashas',
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          fontFamily: 'baloo2',
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            
+
             Spacing.h(12),
-            
+
             // Individual Dashas
             if (response['mahadasha'] != null)
-              _buildDashaCard('Mahadasha', response['mahadasha'] as Map<String, dynamic>, Icons.star),
-            
+              _buildDashaCard(
+                'Mahadasha',
+                response['mahadasha'] as Map<String, dynamic>,
+                Icons.star,
+              ),
+
             if (response['antardasha'] != null)
-              _buildDashaCard('Antar Dasha', response['antardasha'] as Map<String, dynamic>, Icons.star_border),
-            
+              _buildDashaCard(
+                'Antar Dasha',
+                response['antardasha'] as Map<String, dynamic>,
+                Icons.star_border,
+              ),
+
             if (response['paryantardasha'] != null)
-              _buildDashaCard('Paryantar Dasha', response['paryantardasha'] as Map<String, dynamic>, Icons.star_half),
-            
+              _buildDashaCard(
+                'Paryantar Dasha',
+                response['paryantardasha'] as Map<String, dynamic>,
+                Icons.star_half,
+              ),
+
             if (response['Shookshamadasha'] != null)
-              _buildDashaCard('Shooksham Dasha', response['Shookshamadasha'] as Map<String, dynamic>, Icons.star_outline),
-            
+              _buildDashaCard(
+                'Shooksham Dasha',
+                response['Shookshamadasha'] as Map<String, dynamic>,
+                Icons.star_outline,
+              ),
+
             if (response['Pranadasha'] != null)
-              _buildDashaCard('Pran Dasha', response['Pranadasha'] as Map<String, dynamic>, Icons.auto_awesome),
+              _buildDashaCard(
+                'Pran Dasha',
+                response['Pranadasha'] as Map<String, dynamic>,
+                Icons.auto_awesome,
+              ),
           ],
         ),
       );
@@ -158,11 +227,20 @@ class CurrentMahadashaWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.timeline,
-                color: "#ed6f30".toColor(),
-                size: 20.w,
+              Container(
+                height: 30.h,
+                width: 30.w,
+                decoration: BoxDecoration(
+                  color: "#FFFFFF".toColor().withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                child: Icon(
+                  Icons.timeline,
+                  color: "#ed6f30".toColor(),
+                  size: 20.w,
+                ),
               ),
+
               Spacing.w(8),
               AutoTranslateText(
                 'Order of Dashas',
@@ -175,15 +253,35 @@ class CurrentMahadashaWidget extends StatelessWidget {
           ),
           Spacing.h(16),
           if (orderOfDashas['major'] != null)
-            _buildOrderCard('Major', orderOfDashas['major'] as Map<String, dynamic>, 0),
+            _buildOrderCard(
+              'Major',
+              orderOfDashas['major'] as Map<String, dynamic>,
+              0,
+            ),
           if (orderOfDashas['minor'] != null)
-            _buildOrderCard('Minor', orderOfDashas['minor'] as Map<String, dynamic>, 1),
+            _buildOrderCard(
+              'Minor',
+              orderOfDashas['minor'] as Map<String, dynamic>,
+              1,
+            ),
           if (orderOfDashas['sub_minor'] != null)
-            _buildOrderCard('Sub Minor', orderOfDashas['sub_minor'] as Map<String, dynamic>, 2),
+            _buildOrderCard(
+              'Sub Minor',
+              orderOfDashas['sub_minor'] as Map<String, dynamic>,
+              2,
+            ),
           if (orderOfDashas['sub_sub_minor'] != null)
-            _buildOrderCard('Sub Sub Minor', orderOfDashas['sub_sub_minor'] as Map<String, dynamic>, 3),
+            _buildOrderCard(
+              'Sub Sub Minor',
+              orderOfDashas['sub_sub_minor'] as Map<String, dynamic>,
+              3,
+            ),
           if (orderOfDashas['sub_sub_sub_minor'] != null)
-            _buildOrderCard('Sub Sub Sub Minor', orderOfDashas['sub_sub_sub_minor'] as Map<String, dynamic>, 4),
+            _buildOrderCard(
+              'Sub Sub Sub Minor',
+              orderOfDashas['sub_sub_sub_minor'] as Map<String, dynamic>,
+              4,
+            ),
         ],
       ),
     );
@@ -193,19 +291,14 @@ class CurrentMahadashaWidget extends StatelessWidget {
     final name = item['name'] as String? ?? '';
     final start = item['start'] as String? ?? '';
     final end = item['end'] as String? ?? '';
-    
+
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border(
-          left: BorderSide(
-            color: "#ed6f30".toColor(),
-            width: 3,
-          ),
-        ),
+        border: Border(left: BorderSide(color: "#ed6f30".toColor(), width: 3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,11 +391,15 @@ class CurrentMahadashaWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDashaCard(String title, Map<String, dynamic> item, IconData icon) {
+  Widget _buildDashaCard(
+    String title,
+    Map<String, dynamic> item,
+    IconData icon,
+  ) {
     final name = item['name'] as String? ?? '';
     final start = item['start'] as String? ?? '';
     final end = item['end'] as String? ?? '';
-    
+
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       decoration: BoxDecoration(
@@ -341,21 +438,14 @@ class CurrentMahadashaWidget extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                      Color(0xFFFF8C42),
-                      Color(0xFFE63946),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(16.r),
-              ),
-                  child: Icon(
-                    icon,
-                    color: Color(0x0FFFFFFFFF),
-                    size: 20.w,
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16.r),
                   ),
+                  child: Icon(icon, color: Color(0x0FFFFFFFFF), size: 20.w),
                 ),
                 Spacing.w(12),
                 Expanded(
@@ -383,7 +473,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Content
           Padding(
             padding: EdgeInsets.all(16.w),
@@ -455,7 +545,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
         'MMM dd yyyy',
         'dd/MM/yyyy',
       ];
-      
+
       for (final format in formats) {
         try {
           final date = DateFormat(format).parse(dateStr);
@@ -464,7 +554,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
           continue;
         }
       }
-      
+
       return dateStr;
     } catch (e) {
       return dateStr;

@@ -17,7 +17,7 @@ class TransitChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<KundliResultController>();
-    
+
     return Obx(() {
       final svgData = controller.transitSvgData.value;
       if (svgData == null || svgData.isEmpty) {
@@ -25,9 +25,7 @@ class TransitChartWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                color: const Color(0xFFDFB343),
-              ),
+              CircularProgressIndicator(color: const Color(0xFFDFB343)),
               Spacing.h(16),
               AutoTranslateText(
                 'Loading chart...',
@@ -66,11 +64,23 @@ class TransitChartWidget extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.info_outline,
-                    color: "#ed6f30".toColor(),
-                    size: 20.w,
+                  Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      color: "#ed6f30".toColor().withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Icon(
+                      Icons.info_outline,
+                      color: "#ed6f30".toColor(),
+                      size: 20.w,
+                    ),
                   ),
+                  // Icon(
+                  //   Icons.info_outline,
+                  //   color: "#ed6f30".toColor(),
+                  //   size: 20.w,
+                  // ),
                   Spacing.w(8),
                   Expanded(
                     child: Column(
@@ -96,7 +106,7 @@ class TransitChartWidget extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Chart Container
             Container(
               width: double.infinity,
@@ -149,15 +159,11 @@ class TransitChartWidget extends StatelessWidget {
                 },
               ),
             ),
-            
+
             Spacing.h(16),
-            
           ],
         ),
       );
     });
   }
-
-  
 }
-

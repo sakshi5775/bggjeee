@@ -108,7 +108,7 @@ class LiveAstrologersView extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 12.h),
                 decoration: BoxDecoration(
                   color: controller.selectedTab.value == 0
-                      ? const Color(0xFFFF6B35) // Orange-red when selected
+                      ? const Color(0xFFF38B3B) // Orange-red when selected
                       : Colors.white,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(controller.selectedTab.value == 0 ? 8.r : 0),
@@ -135,7 +135,7 @@ class LiveAstrologersView extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 12.h),
                 decoration: BoxDecoration(
                   color: controller.selectedTab.value == 1
-                      ? const Color(0xFFFF6B35) // Orange-red when selected
+                      ? const Color(0xFFF38B3B) // Orange-red when selected
                       : Colors.white,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(controller.selectedTab.value == 1 ? 8.r : 0),

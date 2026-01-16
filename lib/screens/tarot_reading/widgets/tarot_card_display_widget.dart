@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/controller/tarot_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +73,7 @@ class TarotCardDisplayWidget extends StatelessWidget {
                   width: 20.w,
                   height: 20.w,
                   child: CircularProgressIndicator(
-                    color: '#ee7532'.toColor(),
+                    color: AppColors.deepOrange,
                     strokeWidth: 2,
                   ),
                 ),
@@ -160,7 +160,7 @@ class TarotCardBackDisplayWidget extends StatelessWidget {
                   width: 20.w,
                   height: 20.w,
                   child: CircularProgressIndicator(
-                    color: '#ee7532'.toColor(),
+                    color: AppColors.deepOrange,
                     strokeWidth: 2,
                   ),
                 ),
@@ -202,12 +202,12 @@ class TarotCardThemeSelector extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
                   color: isSelected 
-                      ? '#ee7532'.toColor() 
+                      ? AppColors.deepOrange 
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
                     color: isSelected 
-                        ? '#ee7532'.toColor() 
+                        ? AppColors.deepOrange 
                         : '#ede7c8'.toColor().withOpacity(0.5),
                     width: 1.5,
                   ),
@@ -260,12 +260,12 @@ class TarotCardBackSelector extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
                   color: isSelected 
-                      ? '#ee7532'.toColor() 
+                      ? AppColors.deepOrange 
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
                     color: isSelected 
-                        ? '#ee7532'.toColor() 
+                        ? AppColors.deepOrange 
                         : '#ede7c8'.toColor().withOpacity(0.5),
                     width: 1.5,
                   ),

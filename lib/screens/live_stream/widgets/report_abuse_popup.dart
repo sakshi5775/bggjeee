@@ -157,7 +157,7 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
                     onTap: () => Get.back(),
                     child: Icon(
                       Icons.close,
-                      color: const Color(0xFFFF6B35), // Orange/red color
+                      color: const Color(0xFFF38B3B), // Orange/red color
                       size: 28.sp,
                     ),
                   ),
@@ -183,12 +183,12 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: _selectedCategory == category['value']
-                                    ? const Color(0xFFFF6B35)
-                                    : const Color(0xFFFF6B35).withOpacity(0.6),
+                                    ? const Color(0xFFF38B3B)
+                                    : const Color(0xFFF38B3B).withOpacity(0.6),
                                 width: 2,
                               ),
                               color: _selectedCategory == category['value']
-                                  ? const Color(0xFFFF6B35)
+                                  ? const Color(0xFFF38B3B)
                                   : Colors.transparent,
                             ),
                             child: _selectedCategory == category['value']
@@ -241,7 +241,7 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
                         end: Alignment.centerRight,
                         colors: [
                           Color(0xFF8B2635), // Dark red/maroon
-                          Color(0xFFFF6B35), // Orange-red
+                          Color(0xFFF38B3B), // Orange-red
                         ],
                       ),
                       borderRadius: BorderRadius.circular(30.r),

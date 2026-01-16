@@ -5,8 +5,8 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/face_reading_model.dart';
 import 'package:astrobharataiuser/screens/face_reading/service/face_reading_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -244,7 +244,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
     if (_isLoading && _readings.isEmpty) {
       return Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>('#EA632B'.toColor()),
+          valueColor: AlwaysStoppedAnimation<Color>(AppColors.deepOrange),
         ),
       );
     }
@@ -278,7 +278,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.history, size: 64.w, color: '#EA632B'.toColor()),
+            Icon(Icons.history, size: 64.w, color: AppColors.deepOrange),
             Spacing.h(16),
             AutoTranslateText(
               'No reading history',
@@ -300,7 +300,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
 
     return RefreshIndicator(
       onRefresh: () => _loadHistory(refresh: true),
-      color: '#EA632B'.toColor(),
+      color: AppColors.deepOrange,
       child: ListView.builder(
         padding: EdgeInsets.all(16.w),
         itemCount: _readings.length + (_hasMore ? 1 : 0),
@@ -312,7 +312,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
               child: Padding(
                 padding: EdgeInsets.all(16.w),
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>('#EA632B'.toColor()),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.deepOrange),
                 ),
               ),
             );
@@ -359,7 +359,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                 height: 80.w,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: '#EA632B'.toColor(), width: 2),
+                  border: Border.all(color: AppColors.deepOrange, width: 2),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.r),
@@ -372,7 +372,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                             child: Icon(
                               Icons.person,
                               size: 40.w,
-                              color: '#EA632B'.toColor(),
+                              color: AppColors.deepOrange,
                             ),
                           ),
                         )
@@ -381,7 +381,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                           child: Icon(
                             Icons.person,
                             size: 40.w,
-                            color: '#EA632B'.toColor(),
+                            color: AppColors.deepOrange,
                           ),
                         ),
                 ),
@@ -431,12 +431,12 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                     Row(
                       children: [
                         if (isCompleted) ...[
-                          Icon(Icons.star, color: '#EA632B'.toColor(), size: 16.w),
+                          Icon(Icons.star, color: AppColors.deepOrange, size: 16.w),
                           Spacing.w(4),
                           AutoTranslateText(
                             '$score/100',
                             style: MyTextTheme.mediumBCB.copyWith(
-                              color: '#EA632B'.toColor(),
+                              color: AppColors.deepOrange,
                               fontWeight: FontWeight.bold,
                             ).merge(AppTypography.body1),
                           ),
@@ -468,13 +468,13 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.1),
+                          color: AppColors.deepOrange.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: AutoTranslateText(
                           reading.errorMessage ?? 'Failed',
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: Colors.orange,
+                            color: AppColors.deepOrange,
                           ).merge(AppTypography.label),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

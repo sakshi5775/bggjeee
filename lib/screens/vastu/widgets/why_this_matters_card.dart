@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/screens/vastu/model/vastu_room_config.dart';
 
 /// Expandable "Why This Matters" card
@@ -113,7 +114,7 @@ class _WhyThisMattersCardState extends State<WhyThisMattersCard>
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
-                    color: '#FF6B35'.toColor(),
+                    color: AppColors.deepOrange,
                     size: 20.w,
                   ),
                   Spacing.w(12),

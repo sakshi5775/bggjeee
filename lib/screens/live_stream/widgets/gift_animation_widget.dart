@@ -161,7 +161,7 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                       colors: [
                         const Color(0xFFFFD700).withOpacity(0.95),
                         const Color(0xFFFFA500).withOpacity(0.95),
-                        const Color(0xFFFF8C42).withOpacity(0.95),
+                        const Color(0xFFF38B3B).withOpacity(0.95),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(24.r),

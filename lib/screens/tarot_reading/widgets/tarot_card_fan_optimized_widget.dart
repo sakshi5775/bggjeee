@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/tarot_card_model.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/controller/tarot_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -239,7 +240,7 @@ class _OptimizedTarotCardWidget extends StatelessWidget {
           ),
           if (isRevealed)
             BoxShadow(
-              color: '#ee7532'.toColor().withOpacity(0.7),
+              color: AppColors.deepOrange.withOpacity(0.7),
               blurRadius: 25,
               spreadRadius: 8,
             ),
@@ -279,7 +280,7 @@ class _OptimizedTarotCardWidget extends StatelessWidget {
                       width: 20.w,
                       height: 20.w,
                       child: CircularProgressIndicator(
-                        color: '#ee7532'.toColor(),
+                        color: AppColors.deepOrange,
                         strokeWidth: 2,
                       ),
                     ),
@@ -354,7 +355,7 @@ class _OptimizedTarotCardWidget extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       '#820B17'.toColor(),
-                      '#ee7532'.toColor(),
+                      AppColors.deepOrange,
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -378,7 +379,7 @@ class _OptimizedTarotCardWidget extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       '#820B17'.toColor(),
-                      '#ee7532'.toColor(),
+                      AppColors.deepOrange,
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,

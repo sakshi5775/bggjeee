@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/app_manager/myButton.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/numerology/service/numerology_service.dart';
@@ -7,7 +8,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
+
+import '../../../app_manager/my_text_theme.dart';
+import '../../../utils/app_colors.dart';
 
 class NumerologyFormController extends BaseController {
   final NumerologyService _numerologyService = NumerologyService();
@@ -155,7 +160,7 @@ class NumerologyFormController extends BaseController {
     final tab = tabs.firstWhere((t) => t['key'] == tabKey);
     final required = tab['requires'];
     final missing = <String>[];
-    
+
     // Safely convert to List<String>
     List<String> requiredFields = [];
     if (required != null) {
@@ -266,7 +271,9 @@ class NumerologyFormController extends BaseController {
 
     // If optional fields are missing but needed, show form popup
     if (missingOptionalFields.isNotEmpty) {
-      debugPrint('Showing dialog for missing optional fields: $missingOptionalFields');
+      debugPrint(
+        'Showing dialog for missing optional fields: $missingOptionalFields',
+      );
       await _showOptionalFieldsDialog(missingOptionalFields, tabKey);
       return;
     }
@@ -301,7 +308,7 @@ class NumerologyFormController extends BaseController {
     final tab = tabs.firstWhere((t) => t['key'] == tabKey);
     final required = tab['requires'];
     final missing = <String>[];
-    
+
     List<String> requiredFields = [];
     if (required != null) {
       if (required is List) {
@@ -318,7 +325,7 @@ class NumerologyFormController extends BaseController {
       if (field == 'date' || field == 'gender' || field == 'lang') {
         continue;
       }
-      
+
       switch (field) {
         case 'name':
           if (nameController.text.trim().isEmpty) {
@@ -337,10 +344,17 @@ class NumerologyFormController extends BaseController {
   }
 
   // Show dialog for missing optional fields
-  Future<void> _showOptionalFieldsDialog(List<String> missingFields, String tabKey) async {
-    final nameController = TextEditingController(text: this.nameController.text);
-    final phoneController = TextEditingController(text: this.phoneController.text);
-    
+  Future<void> _showOptionalFieldsDialog(
+    List<String> missingFields,
+    String tabKey,
+  ) async {
+    final nameController = TextEditingController(
+      text: this.nameController.text,
+    );
+    final phoneController = TextEditingController(
+      text: this.phoneController.text,
+    );
+
     await Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -371,7 +385,13 @@ class NumerologyFormController extends BaseController {
                           controller: nameController,
                           decoration: InputDecoration(
                             labelText: 'Name *',
+                            labelStyle: MyTextTheme.smallBCB.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
                             hintText: 'Enter your name',
+                            hintStyle: MyTextTheme.smallBCN.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.r),
                             ),
@@ -383,7 +403,14 @@ class NumerologyFormController extends BaseController {
                         TextField(
                           controller: phoneController,
                           keyboardType: TextInputType.phone,
+
                           decoration: InputDecoration(
+                            labelStyle: MyTextTheme.smallBCB.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                            hintStyle: MyTextTheme.smallBCN.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
                             labelText: 'Phone Number *',
                             hintText: 'Enter your phone number',
                             border: OutlineInputBorder(
@@ -402,15 +429,23 @@ class NumerologyFormController extends BaseController {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25.r),
+                        side: BorderSide(color: AppColors.saffron),
+                      ),
+                    ),
                     onPressed: () => Get.back(),
                     child: AutoTranslateText('Cancel'),
                   ),
                   Spacing.w(8),
-                  ElevatedButton(
-                    onPressed: () {
+                  GestureDetector(
+                    onTap: () {
                       // Validate fields
                       bool isValid = true;
-                      if (missingFields.contains('name') && nameController.text.trim().isEmpty) {
+                      if (missingFields.contains('name') &&
+                          nameController.text.trim().isEmpty) {
                         isValid = false;
                         Get.snackbar(
                           'Validation Error',
@@ -421,7 +456,8 @@ class NumerologyFormController extends BaseController {
                         );
                         return;
                       }
-                      if (missingFields.contains('phone') && phoneController.text.trim().isEmpty) {
+                      if (missingFields.contains('phone') &&
+                          phoneController.text.trim().isEmpty) {
                         isValid = false;
                         Get.snackbar(
                           'Validation Error',
@@ -432,27 +468,43 @@ class NumerologyFormController extends BaseController {
                         );
                         return;
                       }
-                      
+
                       if (isValid) {
                         // Update form data
                         if (missingFields.contains('name')) {
                           this.nameController.text = nameController.text.trim();
                         }
                         if (missingFields.contains('phone')) {
-                          this.phoneController.text = phoneController.text.trim();
+                          this.phoneController.text = phoneController.text
+                              .trim();
                         }
                         Get.back();
                         // Retry the tab selection
-                        final tabIndex = tabs.indexWhere((t) => t['key'] == tabKey);
+                        final tabIndex = tabs.indexWhere(
+                          (t) => t['key'] == tabKey,
+                        );
                         if (tabIndex >= 0) {
                           onTabSelected(tabIndex);
                         }
                       }
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFDFB343),
+
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 10.h,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.orangeGradient,
+                        borderRadius: BorderRadius.circular(25.r),
+                      ),
+                      child: AutoTranslateText(
+                        'Submit',
+                        style: MyTextTheme.mediumWCB.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                    child: AutoTranslateText('Submit'),
                   ),
                 ],
               ),
@@ -487,10 +539,13 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed('/numerology-result', arguments: {
-              'type': 'number_analysis',
-              'data': response['response'],
-            });
+            Get.toNamed(
+              '/numerology-result',
+              arguments: {
+                'type': 'number_analysis',
+                'data': response['response'],
+              },
+            );
           }
           break;
 
@@ -501,10 +556,13 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed('/numerology-result', arguments: {
-              'type': 'missing_numbers',
-              'data': response['response'],
-            });
+            Get.toNamed(
+              '/numerology-result',
+              arguments: {
+                'type': 'missing_numbers',
+                'data': response['response'],
+              },
+            );
           }
           break;
 
@@ -515,10 +573,13 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed('/numerology-result', arguments: {
-              'type': 'available_numbers',
-              'data': response['response'],
-            });
+            Get.toNamed(
+              '/numerology-result',
+              arguments: {
+                'type': 'available_numbers',
+                'data': response['response'],
+              },
+            );
           }
           break;
 
@@ -528,10 +589,13 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed('/numerology-result', arguments: {
-              'type': 'mobile_analysis',
-              'data': response['response'],
-            });
+            Get.toNamed(
+              '/numerology-result',
+              arguments: {
+                'type': 'mobile_analysis',
+                'data': response['response'],
+              },
+            );
           }
           break;
 
@@ -541,10 +605,13 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed('/numerology-result', arguments: {
-              'type': 'numerology_suggestion',
-              'data': response['response'],
-            });
+            Get.toNamed(
+              '/numerology-result',
+              arguments: {
+                'type': 'numerology_suggestion',
+                'data': response['response'],
+              },
+            );
           }
           break;
 
@@ -556,10 +623,13 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed('/numerology-result', arguments: {
-              'type': 'name_analysis',
-              'data': response['response'],
-            });
+            Get.toNamed(
+              '/numerology-result',
+              arguments: {
+                'type': 'name_analysis',
+                'data': response['response'],
+              },
+            );
           }
           break;
 
@@ -570,10 +640,10 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed('/numerology-result', arguments: {
-              'type': 'lucky_things',
-              'data': response['response'],
-            });
+            Get.toNamed(
+              '/numerology-result',
+              arguments: {'type': 'lucky_things', 'data': response['response']},
+            );
           }
           break;
 
@@ -584,10 +654,13 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed('/numerology-result', arguments: {
-              'type': 'personal_year',
-              'data': response['response'],
-            });
+            Get.toNamed(
+              '/numerology-result',
+              arguments: {
+                'type': 'personal_year',
+                'data': response['response'],
+              },
+            );
           }
           break;
 
@@ -597,10 +670,13 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed('/numerology-result', arguments: {
-              'type': 'karmic_number',
-              'data': response['response'],
-            });
+            Get.toNamed(
+              '/numerology-result',
+              arguments: {
+                'type': 'karmic_number',
+                'data': response['response'],
+              },
+            );
           }
           break;
 
@@ -610,10 +686,13 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed('/numerology-result', arguments: {
-              'type': 'master_numbers',
-              'data': response['response'],
-            });
+            Get.toNamed(
+              '/numerology-result',
+              arguments: {
+                'type': 'master_numbers',
+                'data': response['response'],
+              },
+            );
           }
           break;
 
@@ -624,14 +703,13 @@ class NumerologyFormController extends BaseController {
             lang: lang,
           );
           if (response != null) {
-            Get.toNamed('/loshu-grid-result', arguments: {
-              ...response['response'],
-              '_formData': {
-                'date': dateStr,
-                'gender': gender,
-                'lang': lang,
+            Get.toNamed(
+              '/loshu-grid-result',
+              arguments: {
+                ...response['response'],
+                '_formData': {'date': dateStr, 'gender': gender, 'lang': lang},
               },
-            });
+            );
           }
           break;
       }
@@ -660,7 +738,7 @@ class NumerologyFormController extends BaseController {
 
   void _showVehicleNumberDialog() {
     final vehicleController = TextEditingController();
-    
+
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -683,6 +761,12 @@ class NumerologyFormController extends BaseController {
               TextField(
                 controller: vehicleController,
                 decoration: InputDecoration(
+                  labelStyle: MyTextTheme.smallBCB.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                  hintStyle: MyTextTheme.smallBCN.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                   labelText: 'Vehicle Number (Last 4 digits)',
                   hintText: 'Enter last 4 digits',
                   border: OutlineInputBorder(
@@ -697,27 +781,45 @@ class NumerologyFormController extends BaseController {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25.r),
+                        side: BorderSide(color: AppColors.saffron),
+                      ),
+                    ),
                     onPressed: () => Get.back(),
                     child: AutoTranslateText('Cancel'),
                   ),
                   Spacing.w(8),
-                  ElevatedButton(
-                    onPressed: () async {
+                  GestureDetector(
+                    onTap: () async {
                       if (vehicleController.text.trim().length == 4) {
                         Get.back();
-                        await _callVehicleAnalysis(vehicleController.text.trim());
-                      } else {
-                        Get.snackbar(
-                          'Error',
-                          'Please enter 4 digits',
-                          snackPosition: SnackPosition.BOTTOM,
+                        await _callVehicleAnalysis(
+                          vehicleController.text.trim(),
                         );
+                      } else {
+                        showErrorMessage(message: 'Please enter 4 digits');
+                        return;
                       }
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFDFB343),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 10.h,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.orangeGradient,
+                        borderRadius: BorderRadius.circular(25.r),
+                      ),
+                      child: AutoTranslateText(
+                        'Submit',
+                        style: MyTextTheme.mediumWCB.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                    child: AutoTranslateText('Submit'),
                   ),
                 ],
               ),
@@ -738,10 +840,10 @@ class NumerologyFormController extends BaseController {
       );
 
       if (response != null) {
-        Get.toNamed('/numerology-result', arguments: {
-          'type': 'vehicle_analysis',
-          'data': response['response'],
-        });
+        Get.toNamed(
+          '/numerology-result',
+          arguments: {'type': 'vehicle_analysis', 'data': response['response']},
+        );
       } else {
         Get.snackbar(
           'Error',
@@ -801,14 +903,8 @@ class NumerologyFormController extends BaseController {
           lang: lang,
         ),
         if (phone.isNotEmpty)
-          _numerologyService.getMobileAnalysis(
-            phone: phone,
-            lang: lang,
-          ),
-        _numerologyService.getNumerologySuggestion(
-          date: dateStr,
-          lang: lang,
-        ),
+          _numerologyService.getMobileAnalysis(phone: phone, lang: lang),
+        _numerologyService.getNumerologySuggestion(date: dateStr, lang: lang),
         if (name.isNotEmpty)
           _numerologyService.getNameAnalysis(
             name: name,
@@ -826,30 +922,26 @@ class NumerologyFormController extends BaseController {
           gender: gender,
           lang: lang,
         ),
-        _numerologyService.getKarmicNumber(
-          date: dateStr,
-          lang: lang,
-        ),
-        _numerologyService.getMasterNumbers(
-          date: dateStr,
-          lang: lang,
-        ),
+        _numerologyService.getKarmicNumber(date: dateStr, lang: lang),
+        _numerologyService.getMasterNumbers(date: dateStr, lang: lang),
       ]);
 
       // Combine all data
       final combinedData = <String, dynamic>{};
-      
+
       int resultIndex = 0;
-      
+
       // Number Analysis
       if (name.isNotEmpty && phone.isNotEmpty && results[resultIndex] != null) {
         final numberAnalysis = results[resultIndex] as Map<String, dynamic>;
         if (numberAnalysis['response'] != null) {
-          combinedData.addAll(numberAnalysis['response'] as Map<String, dynamic>);
+          combinedData.addAll(
+            numberAnalysis['response'] as Map<String, dynamic>,
+          );
         }
         resultIndex++;
       }
-      
+
       // Missing Numbers
       if (results[resultIndex] != null) {
         final missingNumbers = results[resultIndex] as Map<String, dynamic>;
@@ -858,7 +950,7 @@ class NumerologyFormController extends BaseController {
         }
         resultIndex++;
       }
-      
+
       // Available Numbers
       if (results[resultIndex] != null) {
         final availableNumbers = results[resultIndex] as Map<String, dynamic>;
@@ -867,7 +959,7 @@ class NumerologyFormController extends BaseController {
         }
         resultIndex++;
       }
-      
+
       // Mobile Analysis
       if (phone.isNotEmpty && results[resultIndex] != null) {
         final mobileAnalysis = results[resultIndex] as Map<String, dynamic>;
@@ -876,16 +968,18 @@ class NumerologyFormController extends BaseController {
         }
         resultIndex++;
       }
-      
+
       // Numerology Suggestion
       if (results[resultIndex] != null) {
-        final numerologySuggestion = results[resultIndex] as Map<String, dynamic>;
+        final numerologySuggestion =
+            results[resultIndex] as Map<String, dynamic>;
         if (numerologySuggestion['response'] != null) {
-          combinedData['numerologySuggestionData'] = numerologySuggestion['response'];
+          combinedData['numerologySuggestionData'] =
+              numerologySuggestion['response'];
         }
         resultIndex++;
       }
-      
+
       // Name Analysis
       if (name.isNotEmpty && results[resultIndex] != null) {
         final nameAnalysis = results[resultIndex] as Map<String, dynamic>;
@@ -894,7 +988,7 @@ class NumerologyFormController extends BaseController {
         }
         resultIndex++;
       }
-      
+
       // Lucky Things
       if (results[resultIndex] != null) {
         final luckyThings = results[resultIndex] as Map<String, dynamic>;
@@ -903,7 +997,7 @@ class NumerologyFormController extends BaseController {
         }
         resultIndex++;
       }
-      
+
       // Personal Year
       if (results[resultIndex] != null) {
         final personalYear = results[resultIndex] as Map<String, dynamic>;
@@ -912,7 +1006,7 @@ class NumerologyFormController extends BaseController {
         }
         resultIndex++;
       }
-      
+
       // Karmic Number
       if (results[resultIndex] != null) {
         final karmicNumber = results[resultIndex] as Map<String, dynamic>;
@@ -921,7 +1015,7 @@ class NumerologyFormController extends BaseController {
         }
         resultIndex++;
       }
-      
+
       // Master Numbers
       if (results[resultIndex] != null) {
         final masterNumbers = results[resultIndex] as Map<String, dynamic>;
@@ -940,10 +1034,10 @@ class NumerologyFormController extends BaseController {
       };
 
       // Navigate to result view with combined data
-      Get.toNamed('/numerology-result', arguments: {
-        'type': 'key_points',
-        'data': combinedData,
-      });
+      Get.toNamed(
+        '/numerology-result',
+        arguments: {'type': 'key_points', 'data': combinedData},
+      );
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -964,4 +1058,3 @@ class NumerologyFormController extends BaseController {
     super.onClose();
   }
 }
-

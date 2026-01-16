@@ -14,26 +14,21 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 class AshtakvargaChartWidget extends StatelessWidget {
   final KundliResultController controller;
 
-  const AshtakvargaChartWidget({
-    super.key,
-    required this.controller,
-  });
+  const AshtakvargaChartWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       final isLoading = controller.isLoadingAshtakvargaChart.value;
       final svgData = controller.ashtakvargaChartSvg.value;
-      
+
       // Show loading if fetching data
       if (isLoading) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                color: "#ed6f30".toColor(),
-              ),
+              CircularProgressIndicator(color: "#ed6f30".toColor()),
               Spacing.h(16),
               AutoTranslateText(
                 'Loading Ashtakvarga Chart...',
@@ -79,11 +74,12 @@ class AshtakvargaChartWidget extends StatelessWidget {
               'Ashtakvarga Chart',
               style: MyTextTheme.largeBCB.copyWith(
                 color: "#6F221E".toColor(),
+                fontSize: 18.sp,
               ),
             ),
-            
+
             Spacing.h(16),
-            
+
             // Chart Container
             Container(
               width: double.infinity,
@@ -165,4 +161,3 @@ class AshtakvargaChartWidget extends StatelessWidget {
     });
   }
 }
-

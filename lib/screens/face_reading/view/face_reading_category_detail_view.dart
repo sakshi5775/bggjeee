@@ -188,7 +188,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
               color: '#FFF2E8'.toColor(),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: '#EA632B'.toColor(), size: 32.w),
+            child: Icon(icon, color: AppColors.deepOrange, size: 32.w),
           ),
           Spacing.w(16),
           Expanded(
@@ -205,11 +205,11 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
                 Spacing.h(8),
                 Row(
                   children: [
-                    Icon(Icons.star, color: '#EA632B'.toColor(), size: 24.w),
+                    Icon(Icons.star, color: AppColors.deepOrange, size: 24.w),
                     AutoTranslateText(
                       '${category.score ?? 0}/100',
                       style: MyTextTheme.largeBCB.copyWith(
-                        color: '#EA632B'.toColor(),
+                        color: AppColors.deepOrange,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -243,7 +243,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.auto_awesome, color: '#EA632B'.toColor(), size: 20.w),
+              Icon(Icons.auto_awesome, color: AppColors.deepOrange, size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Key Insight',
@@ -298,7 +298,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.star, color: '#EA632B'.toColor(), size: 20.w),
+              Icon(Icons.star, color: AppColors.deepOrange, size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 coreTitle,
@@ -322,7 +322,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
                       width: 6.w,
                       height: 6.w,
                       decoration: BoxDecoration(
-                        color: '#EA632B'.toColor(),
+                        color: AppColors.deepOrange,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -387,7 +387,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
                     width: 6.w,
                     height: 6.w,
                     decoration: BoxDecoration(
-                      color: '#EA632B'.toColor(),
+                      color: AppColors.deepOrange,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -429,7 +429,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.trending_up, color: '#EA632B'.toColor(), size: 20.w),
+              Icon(Icons.trending_up, color: AppColors.deepOrange, size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Areas For Growth',
@@ -452,7 +452,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
                     width: 6.w,
                     height: 6.w,
                     decoration: BoxDecoration(
-                      color: '#EA632B'.toColor(),
+                      color: AppColors.deepOrange,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -494,7 +494,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.diamond, color: '#EA632B'.toColor(), size: 20.w),
+              Icon(Icons.diamond, color: AppColors.deepOrange, size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Social Traits',
@@ -517,7 +517,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
                     width: 6.w,
                     height: 6.w,
                     decoration: BoxDecoration(
-                      color: '#EA632B'.toColor(),
+                      color: AppColors.deepOrange,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -559,7 +559,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.lightbulb, color: '#EA632B'.toColor(), size: 20.w),
+              Icon(Icons.lightbulb, color: AppColors.deepOrange, size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Recommendations',
@@ -584,7 +584,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
                     width: 24.w,
                     height: 24.w,
                     decoration: BoxDecoration(
-                      color: '#EA632B'.toColor(),
+                      color: AppColors.deepOrange,
                       shape: BoxShape.circle,
                     ),
                     child: Center(
@@ -620,15 +620,11 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#EA632B'.toColor(), '#FF6B35'.toColor()],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: AppColors.orangeGradient,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: '#EA632B'.toColor().withOpacity(0.3),
+            color: AppColors.deepOrange.withOpacity(0.3),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -660,7 +656,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
-              foregroundColor: '#EA632B'.toColor(),
+              foregroundColor: AppColors.deepOrange,
               padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25.r),
@@ -670,7 +666,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
             child: AutoTranslateText(
               'Chat With Expert',
               style: MyTextTheme.mediumBCB.copyWith(
-                color: '#EA632B'.toColor(),
+                color: AppColors.deepOrange,
                 fontWeight: FontWeight.bold,
               ),
             ),

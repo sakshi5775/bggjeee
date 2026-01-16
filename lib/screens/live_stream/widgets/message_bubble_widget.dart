@@ -26,8 +26,8 @@ class MessageBubbleWidget extends StatelessWidget {
 
   Color _getColorFromName(String name) {
     final colors = [
-      const Color(0xFFFF6B35),
-      const Color(0xFFFF8C42),
+      const Color(0xFFF38B3B),
+      const Color(0xFFDD2914),
       const Color(0xFFFFD700),
       const Color(0xFF4ECDC4),
       const Color(0xFF45B7D1),
@@ -202,9 +202,9 @@ class MessageBubbleWidget extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                const Color(0xFFFF6B35).withOpacity(0.95),
-                const Color(0xFFFF8C42).withOpacity(0.95),
-                const Color(0xFFFF6B35).withOpacity(0.9),
+                const Color(0xFFF38B3B).withOpacity(0.95),
+                const Color(0xFFDD2914).withOpacity(0.95),
+                const Color(0xFFF38B3B).withOpacity(0.9),
               ],
             ),
             borderRadius: BorderRadius.circular(20.r),
@@ -214,7 +214,7 @@ class MessageBubbleWidget extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFFF6B35).withOpacity(0.5),
+                color: const Color(0xFFF38B3B).withOpacity(0.5),
                 blurRadius: 15,
                 spreadRadius: 2,
                 offset: const Offset(0, 4),

@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/prashna_kundali/controller/prashna_kundali_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -100,7 +101,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
           GestureDetector(
             onTap: () async {
               final ok = await LoginGuard.ensureLoggedIn(
-                message: 'Login to view your Prashna Kundali history.',
+                message: 'Login to view your Prashna kundli history.',
               );
               if (ok) {
                 Get.toNamed(AppRoutes.prashnaKundaliHistory);
@@ -149,7 +150,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
 
   Widget _buildTitle() {
     return AutoTranslateText(
-      'Prashna Kundali',
+      'Prashna kundli',
       style: MyTextTheme.veryLargeBCB
           .copyWith(color: '#3E2723'.toColor(), fontWeight: FontWeight.bold)
           .merge(AppTypography.h1),
@@ -193,14 +194,14 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
               children: [
                 Icon(
                   Icons.auto_awesome,
-                  color: '#FF6B35'.toColor(),
+                  color: AppColors.deepOrange,
                   size: 20.w,
                 ),
                 Spacing.w(8),
                 AutoTranslateText(
                   'Start Your Reading',
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: '#FF6B35'.toColor(),
+                    color: AppColors.deepOrange,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -264,7 +265,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
               child: Padding(
                 padding: EdgeInsets.all(16.h),
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation('#FF6B35'.toColor()),
+                  valueColor: AlwaysStoppedAnimation(AppColors.deepOrange),
                 ),
               ),
             );
@@ -286,7 +287,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
                 ),
                 icon: Icon(
                   Icons.keyboard_arrow_down,
-                  color: '#FF6B35'.toColor(),
+                  color: AppColors.deepOrange,
                 ),
                 items: controller.questions.map((q) {
                   return DropdownMenuItem<int>(
@@ -336,7 +337,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
             ),
             child: Icon(
               Icons.location_on,
-              color: '#FF6B35'.toColor(),
+              color: AppColors.deepOrange,
               size: 18.w,
             ),
           ),
@@ -369,7 +370,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
           TextButton(
             onPressed: () => controller.onInit(),
             style: TextButton.styleFrom(
-              foregroundColor: '#FF6B35'.toColor(),
+              foregroundColor: AppColors.deepOrange,
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
             ),
             child: AutoTranslateText(
@@ -391,14 +392,14 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
               ? null
               : () => controller.analyzeQuestion(),
           style: ElevatedButton.styleFrom(
-            backgroundColor: '#FF6B35'.toColor(),
+            backgroundColor: AppColors.deepOrange,
             foregroundColor: '#ffffff'.toColor(),
             padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.r),
             ),
             elevation: 6,
-            shadowColor: '#FF6B35'.toColor().withOpacity(0.35),
+            shadowColor: AppColors.deepOrange.withOpacity(0.35),
             disabledBackgroundColor: '#CCCCCC'.toColor(),
           ),
           child: Row(
@@ -437,7 +438,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AutoTranslateText(
-            'How Prashna Kundali Works',
+            'How Prashna kundli Works',
             style: MyTextTheme.largeBCB
                 .copyWith(
                   color: '#3E2723'.toColor(),
@@ -506,7 +507,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
               color: '#FFF2E8'.toColor(),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: '#FF6B35'.toColor(), size: 22.w),
+            child: Icon(icon, color: AppColors.deepOrange, size: 22.w),
           ),
           Spacing.h(10),
           AutoTranslateText(
@@ -635,7 +636,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
               color: '#FFF2E8'.toColor(),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.star, color: '#FF6B35'.toColor(), size: 18.w),
+            child: Icon(Icons.star, color: AppColors.deepOrange, size: 18.w),
           ),
           Spacing.h(8),
           AutoTranslateText(
@@ -665,11 +666,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
       child: Container(
         padding: EdgeInsets.all(20.w),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: ['#FF6B35'.toColor(), '#FF8C42'.toColor()],
-          ),
+          gradient: AppColors.orangeGradient,
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
@@ -691,8 +688,8 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      '#FF8C42'.toColor().withOpacity(0.35),
-                      '#FF6B35'.toColor().withOpacity(0.15),
+                      AppColors.deepOrangemix.withOpacity(0.35),
+                      AppColors.deepOrange.withOpacity(0.15),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -712,7 +709,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
                     ),
                     Spacing.w(8),
                     AutoTranslateText(
-                      'About Prashna Kundali',
+                      'About Prashna kundli',
                       style: MyTextTheme.mediumBCB.copyWith(
                         color: '#ffffff'.toColor(),
                         fontWeight: FontWeight.bold,
@@ -722,7 +719,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
                 ),
                 Spacing.h(12),
                 AutoTranslateText(
-                  'Prashna Kundali (Horary Astrology) is an ancient Vedic technique where a birth chart is created for the exact moment a question is asked. This method reveals divine answers through planetary positions at that precise time, making it a powerful tool for instant guidance on any specific question.',
+                  'Prashna kundli (Horary Astrology) is an ancient Vedic technique where a birth chart is created for the exact moment a question is asked. This method reveals divine answers through planetary positions at that precise time, making it a powerful tool for instant guidance on any specific question.',
                   style: MyTextTheme.mediumBCN.copyWith(
                     color: '#ffffff'.toColor(),
                     height: 1.5,

@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/screens/numerology/service/numerology_service.
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class LoShuGridResultController extends BaseController {
   final NumerologyService _numerologyService = NumerologyService();

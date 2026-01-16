@@ -4,7 +4,6 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/astrology_services/widgets/astrology_header_widget.dart';
 import 'package:astrobharataiuser/screens/numerology/controller/loshu_grid_result_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +54,12 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
 
   Widget _buildHeader() {
     return AstrologyHeaderWidget(
-      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 24.h, bottom: 20.h),
+      padding: EdgeInsets.only(
+        left: 16.w,
+        right: 16.w,
+        top: 24.h,
+        bottom: 20.h,
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -74,7 +78,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
               Expanded(
                 child: AutoTranslateText(
                   'Lo Shu Grid',
-                  style: MyTextTheme.largeBCB.copyWith(
+                  style: MyTextTheme.veryLarge20.copyWith(
                     color: const Color(0xFFDFB343),
                     fontWeight: FontWeight.bold,
                   ),
@@ -103,29 +107,6 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
       ),
       child: Column(
         children: [
-          // Grid Icon
-          Container(
-            width: 80.w,
-            height: 80.w,
-            decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.grid_view,
-              color: Colors.blue,
-              size: 40.w,
-            ),
-          ),
-          Spacing.h(16),
-          AutoTranslateText(
-            'Lo Shu Grid',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Spacing.h(24),
           // 3x3 Grid
           _buildGrid(),
         ],
@@ -136,16 +117,23 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
   Widget _buildGrid() {
     // Fixed Lo Shu Grid layout: 4|9|2, 3|5|7, 8|1|6
     final gridOrder = [4, 9, 2, 3, 5, 7, 8, 1, 6];
+    // Beautiful, modern color palette matching the app's design system
+    // Using harmonious colors that flow together and match the spiritual/astrological theme
     final colors = [
-      Colors.purple,
-      Colors.red,
-      Colors.pink,
-      Colors.green,
-      Colors.orange,
-      Colors.grey,
-      Colors.blue,
-      Colors.teal,
-      Colors.brown,
+      AppColors
+          .spiritualPurple, // Position 4 - Royal purple - mystical and spiritual
+      "#E91E63"
+          .toColor(), // Position 9 - Vibrant pink/magenta - creativity and passion
+      AppColors.peacockBlue, // Position 2 - Krishna blue - divine and calming
+      AppColors
+          .deepOrange, // Position 3 - Temple orange - vibrant and energetic
+      AppColors
+          .templeGold, // Position 5 (Center) - Golden - prosperity and wisdom
+      AppColors.sacredRed, // Position 7 - Kumkum red - sacred and powerful
+      "#00B8A9"
+          .toColor(), // Position 8 - Modern teal/cyan - balance and harmony
+      AppColors.green, // Position 1 - Success and growth
+      AppColors.turmericYellow, // Position 6 - Turmeric - warmth and tradition
     ];
 
     return Column(
@@ -204,9 +192,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
             : color.withOpacity(0.2),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: isMissing
-              ? Colors.grey.withOpacity(0.3)
-              : color,
+          color: isMissing ? Colors.grey.withOpacity(0.3) : color,
           width: isMissing ? 1 : 2,
           style: isMissing ? BorderStyle.solid : BorderStyle.solid,
         ),
@@ -215,17 +201,11 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
           ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.close,
-                  color: Colors.grey,
-                  size: 24.w,
-                ),
+                Icon(Icons.close, color: Colors.grey, size: 24.w),
                 Spacing.h(4),
                 AutoTranslateText(
                   'is missing',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: Colors.grey,
-                  ),
+                  style: MyTextTheme.smallBCN.copyWith(color: Colors.grey),
                 ),
               ],
             )
@@ -238,10 +218,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: color,
-                      width: 2,
-                    ),
+                    border: Border.all(color: color, width: 2),
                   ),
                   child: Center(
                     child: AutoTranslateText(
@@ -285,22 +262,28 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
           ),
           Spacing.h(20),
           // Available Numbers
-          Obx(() => _buildInterpretationItem(
-            icon: Icons.check_circle,
-            iconColor: Colors.green,
-            title: 'Available Numbers',
-            value: controller.availableNumbers.value,
-            description: 'These numbers represent your strengths and natural abilities.',
-          )),
+          Obx(
+            () => _buildInterpretationItem(
+              icon: Icons.check_circle,
+              iconColor: Colors.green,
+              title: 'Available Numbers',
+              value: controller.availableNumbers.value,
+              description:
+                  'These numbers represent your strengths and natural abilities.',
+            ),
+          ),
           Spacing.h(16),
           // Missing Numbers
-          Obx(() => _buildInterpretationItem(
-            icon: Icons.cancel,
-            iconColor: Colors.red,
-            title: 'Missing Numbers',
-            value: controller.missingNumbers.value,
-            description: 'Missing numbers indicate areas where conscious effort and growth are required.',
-          )),
+          Obx(
+            () => _buildInterpretationItem(
+              icon: Icons.cancel,
+              iconColor: Colors.red,
+              title: 'Missing Numbers',
+              value: controller.missingNumbers.value,
+              description:
+                  'Missing numbers indicate areas where conscious effort and growth are required.',
+            ),
+          ),
           Spacing.h(16),
           // Repeated Numbers
           Obx(() {
@@ -311,7 +294,8 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
               iconColor: Colors.orange,
               title: 'Repeated Numbers',
               value: repeated.isEmpty ? 'None' : repeated.join(', '),
-              description: 'Repeated numbers show dominant energies and personality traits.',
+              description:
+                  'Repeated numbers show dominant energies and personality traits.',
             );
           }),
         ],
@@ -395,144 +379,174 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
             ),
           ),
           Spacing.h(20),
-          Obx(() => Column(
-            children: controller.planePercentages.entries.map((entry) {
-              final percentage = entry.value;
-              final strength = controller.getPlaneStrength(percentage);
-              final color = controller.getPlaneStrengthColor(percentage);
-              final planeName = _getPlaneDisplayName(entry.key);
-              final isExpanded = controller.isPlaneExpanded(entry.key);
-              
-              return Padding(
-                padding: EdgeInsets.only(bottom: 16.h),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(
-                      color: isExpanded ? color.withOpacity(0.3) : Colors.grey.withOpacity(0.2),
-                      width: isExpanded ? 1.5 : 1,
+          Obx(
+            () => Column(
+              children: controller.planePercentages.entries.map((entry) {
+                final percentage = entry.value;
+                final strength = controller.getPlaneStrength(percentage);
+                final color = controller.getPlaneStrengthColor(percentage);
+                final planeName = _getPlaneDisplayName(entry.key);
+                final isExpanded = controller.isPlaneExpanded(entry.key);
+
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 16.h),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(
+                        color: isExpanded
+                            ? color.withOpacity(0.3)
+                            : Colors.grey.withOpacity(0.2),
+                        width: isExpanded ? 1.5 : 1,
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header with expand/collapse
-                      InkWell(
-                        onTap: () => controller.togglePlane(entry.key),
-                        child: Padding(
-                          padding: EdgeInsets.all(16.w),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: AutoTranslateText(
-                                  planeName,
-                                  style: MyTextTheme.mediumBCB.copyWith(
-                                    color: "#6F221E".toColor(),
-                                    fontWeight: FontWeight.w600,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header with expand/collapse
+                        InkWell(
+                          onTap: () => controller.togglePlane(entry.key),
+                          child: Padding(
+                            padding: EdgeInsets.all(16.w),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: AutoTranslateText(
+                                    planeName,
+                                    style: MyTextTheme.mediumBCB.copyWith(
+                                      color: "#6F221E".toColor(),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w,
+                                        vertical: 4.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: color.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(
+                                          6.r,
+                                        ),
+                                      ),
+                                      child: AutoTranslateText(
+                                        '$percentage% - $strength',
+                                        style: MyTextTheme.smallBCB.copyWith(
+                                          color: color,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                    Spacing.w(8),
+                                    Icon(
+                                      isExpanded
+                                          ? Icons.expand_less
+                                          : Icons.expand_more,
+                                      color: "#6F221E".toColor(),
+                                      size: 24.w,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Progress bar
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(4.r),
+                            child: LinearProgressIndicator(
+                              value: percentage / 100,
+                              backgroundColor: Colors.grey.withOpacity(0.2),
+                              valueColor: AlwaysStoppedAnimation<Color>(color),
+                              minHeight: 8.h,
+                            ),
+                          ),
+                        ),
+                        // Display plane numbers
+                        Obx(() {
+                          final planeNums =
+                              controller.planeNumbers[entry.key] ?? '';
+                          if (planeNums.isNotEmpty &&
+                              planeNums.trim().isNotEmpty) {
+                            return Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                16.w,
+                                8.h,
+                                16.w,
+                                8.h,
+                              ),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10.w,
+                                  vertical: 6.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: color.withOpacity(0.05),
+                                  borderRadius: BorderRadius.circular(6.r),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.numbers,
+                                      size: 14.w,
+                                      color: color,
+                                    ),
+                                    Spacing.w(6),
+                                    Flexible(
+                                      child: AutoTranslateText(
+                                        'Numbers: $planeNums',
+                                        style: MyTextTheme.smallBCN.copyWith(
+                                          color: "#6F221E"
+                                              .toColor()
+                                              .withOpacity(0.8),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                          return SizedBox.shrink();
+                        }),
+                        // Expanded content with details
+                        Obx(() {
+                          final isExpandedValue = controller.isPlaneExpanded(
+                            entry.key,
+                          );
+                          if (!isExpandedValue) {
+                            return SizedBox.shrink();
+                          }
+
+                          final isLoadingValue = controller.isPlaneLoading(
+                            entry.key,
+                          );
+                          if (isLoadingValue) {
+                            return Padding(
+                              padding: EdgeInsets.all(16.w),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    color,
                                   ),
                                 ),
                               ),
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                                    decoration: BoxDecoration(
-                                      color: color.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(6.r),
-                                    ),
-                                    child: AutoTranslateText(
-                                      '$percentage% - $strength',
-                                      style: MyTextTheme.smallBCB.copyWith(
-                                        color: color,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                  Spacing.w(8),
-                                  Icon(
-                                    isExpanded ? Icons.expand_less : Icons.expand_more,
-                                    color: "#6F221E".toColor(),
-                                    size: 24.w,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Progress bar
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(4.r),
-                          child: LinearProgressIndicator(
-                            value: percentage / 100,
-                            backgroundColor: Colors.grey.withOpacity(0.2),
-                            valueColor: AlwaysStoppedAnimation<Color>(color),
-                            minHeight: 8.h,
-                          ),
-                        ),
-                      ),
-                      // Display plane numbers
-                      Obx(() {
-                        final planeNums = controller.planeNumbers[entry.key] ?? '';
-                        if (planeNums.isNotEmpty && planeNums.trim().isNotEmpty) {
-                          return Padding(
-                            padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 8.h),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-                              decoration: BoxDecoration(
-                                color: color.withOpacity(0.05),
-                                borderRadius: BorderRadius.circular(6.r),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.numbers,
-                                    size: 14.w,
-                                    color: color,
-                                  ),
-                                  Spacing.w(6),
-                                  Flexible(
-                                    child: AutoTranslateText(
-                                      'Numbers: $planeNums',
-                                      style: MyTextTheme.smallBCN.copyWith(
-                                        color: "#6F221E".toColor().withOpacity(0.8),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-                        return SizedBox.shrink();
-                      }),
-                      // Expanded content with details
-                      Obx(() {
-                        final isExpandedValue = controller.isPlaneExpanded(entry.key);
-                        if (!isExpandedValue) {
-                          return SizedBox.shrink();
-                        }
+                            );
+                          }
 
-                        final isLoadingValue = controller.isPlaneLoading(entry.key);
-                        if (isLoadingValue) {
-                          return Padding(
-                            padding: EdgeInsets.all(16.w),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(color),
-                              ),
-                            ),
+                          final planeDetail = controller.getPlaneDetail(
+                            entry.key,
                           );
-                        }
-
-                        final planeDetail = controller.getPlaneDetail(entry.key);
-                        if (planeDetail == null) {
-                          return SizedBox.shrink();
-                        }
+                          if (planeDetail == null) {
+                            return SizedBox.shrink();
+                          }
 
                           return Padding(
                             padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
@@ -549,7 +563,8 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 8.h),
                                     child: AutoTranslateText(
-                                      planeDetail['planeName']?.toString() ?? '',
+                                      planeDetail['planeName']?.toString() ??
+                                          '',
                                       style: MyTextTheme.mediumBCB.copyWith(
                                         color: "#6F221E".toColor(),
                                         fontWeight: FontWeight.bold,
@@ -564,10 +579,13 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                                       padding: EdgeInsets.all(12.w),
                                       decoration: BoxDecoration(
                                         color: color.withOpacity(0.08),
-                                        borderRadius: BorderRadius.circular(8.r),
+                                        borderRadius: BorderRadius.circular(
+                                          8.r,
+                                        ),
                                       ),
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Icon(
                                             Icons.info_outline,
@@ -577,11 +595,14 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                                           Spacing.w(8),
                                           Expanded(
                                             child: AutoTranslateText(
-                                              planeDetail['planeNumber']?.toString() ?? '',
-                                              style: MyTextTheme.smallBCN.copyWith(
-                                                color: "#6F221E".toColor(),
-                                                height: 1.4,
-                                              ),
+                                              planeDetail['planeNumber']
+                                                      ?.toString() ??
+                                                  '',
+                                              style: MyTextTheme.smallBCN
+                                                  .copyWith(
+                                                    color: "#6F221E".toColor(),
+                                                    height: 1.4,
+                                                  ),
                                             ),
                                           ),
                                         ],
@@ -593,9 +614,12 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 12.h),
                                     child: AutoTranslateText(
-                                      planeDetail['description']?.toString() ?? '',
+                                      planeDetail['description']?.toString() ??
+                                          '',
                                       style: MyTextTheme.smallBCN.copyWith(
-                                        color: "#6F221E".toColor().withOpacity(0.8),
+                                        color: "#6F221E".toColor().withOpacity(
+                                          0.8,
+                                        ),
                                         height: 1.5,
                                       ),
                                     ),
@@ -608,7 +632,9 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                                       padding: EdgeInsets.all(12.w),
                                       decoration: BoxDecoration(
                                         color: color.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(8.r),
+                                        borderRadius: BorderRadius.circular(
+                                          8.r,
+                                        ),
                                         border: Border.all(
                                           color: color.withOpacity(0.3),
                                         ),
@@ -623,11 +649,14 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                                           Spacing.w(8),
                                           Expanded(
                                             child: AutoTranslateText(
-                                              planeDetail['weightage']?.toString() ?? '',
-                                              style: MyTextTheme.smallBCB.copyWith(
-                                                color: "#6F221E".toColor(),
-                                                fontWeight: FontWeight.w600,
-                                              ),
+                                              planeDetail['weightage']
+                                                      ?.toString() ??
+                                                  '',
+                                              style: MyTextTheme.smallBCB
+                                                  .copyWith(
+                                                    color: "#6F221E".toColor(),
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
                                             ),
                                           ),
                                         ],
@@ -635,17 +664,21 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                                     ),
                                   ),
                                 // Percentage Description
-                                if (planeDetail['percentageDescription'] != null)
+                                if (planeDetail['percentageDescription'] !=
+                                    null)
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 8.h),
                                     child: Container(
                                       padding: EdgeInsets.all(12.w),
                                       decoration: BoxDecoration(
                                         color: Colors.blue.withOpacity(0.05),
-                                        borderRadius: BorderRadius.circular(8.r),
+                                        borderRadius: BorderRadius.circular(
+                                          8.r,
+                                        ),
                                       ),
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Icon(
                                             Icons.lightbulb_outline,
@@ -655,12 +688,15 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                                           Spacing.w(8),
                                           Expanded(
                                             child: AutoTranslateText(
-                                              planeDetail['percentageDescription']?.toString() ?? '',
-                                              style: MyTextTheme.smallBCN.copyWith(
-                                                color: "#6F221E".toColor(),
-                                                height: 1.4,
-                                                fontStyle: FontStyle.italic,
-                                              ),
+                                              planeDetail['percentageDescription']
+                                                      ?.toString() ??
+                                                  '',
+                                              style: MyTextTheme.smallBCN
+                                                  .copyWith(
+                                                    color: "#6F221E".toColor(),
+                                                    height: 1.4,
+                                                    fontStyle: FontStyle.italic,
+                                                  ),
                                             ),
                                           ),
                                         ],
@@ -671,12 +707,13 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                             ),
                           );
                         }),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }).toList(),
-          )),
+                );
+              }).toList(),
+            ),
+          ),
         ],
       ),
     );
@@ -721,22 +758,42 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
             ),
           ),
           Spacing.h(20),
-          Obx(() => GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            crossAxisSpacing: 12.w,
-            mainAxisSpacing: 12.h,
-            childAspectRatio: 2.2,
-            children: [
-              _buildSummaryCard('Radical Number', controller.radicalNumber.value.toString()),
-              _buildSummaryCard('Destiny Number', controller.destinyNumber.value.toString()),
-              _buildSummaryCard('Life Path Number', controller.lifePathNumber.value.toString()),
-              _buildSummaryCard('Kua Number', controller.kuaNumber.value.toString()),
-              _buildSummaryCard('Psychic Number', controller.psychicNumber.value.toString()),
-              _buildSummaryCard('Luck Factor', '${controller.luckFactor.value}%'),
-            ],
-          )),
+          Obx(
+            () => GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              crossAxisSpacing: 12.w,
+              mainAxisSpacing: 12.h,
+              childAspectRatio: 2.2,
+              children: [
+                _buildSummaryCard(
+                  'Radical Number',
+                  controller.radicalNumber.value.toString(),
+                ),
+                _buildSummaryCard(
+                  'Destiny Number',
+                  controller.destinyNumber.value.toString(),
+                ),
+                _buildSummaryCard(
+                  'Life Path Number',
+                  controller.lifePathNumber.value.toString(),
+                ),
+                _buildSummaryCard(
+                  'Kua Number',
+                  controller.kuaNumber.value.toString(),
+                ),
+                _buildSummaryCard(
+                  'Psychic Number',
+                  controller.psychicNumber.value.toString(),
+                ),
+                _buildSummaryCard(
+                  'Luck Factor',
+                  '${controller.luckFactor.value}%',
+                ),
+              ],
+            ),
+          ),
           // Real Digits Section
           Obx(() {
             if (controller.realDigits.isEmpty) return SizedBox.shrink();
@@ -744,18 +801,11 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Spacing.h(24),
-                Divider(
-                  color: Colors.grey.withOpacity(0.2),
-                  thickness: 1,
-                ),
+                Divider(color: Colors.grey.withOpacity(0.2), thickness: 1),
                 Spacing.h(16),
                 Row(
                   children: [
-                    Icon(
-                      Icons.numbers,
-                      color: "#DFB343".toColor(),
-                      size: 20.w,
-                    ),
+                    Icon(Icons.numbers, color: '#68171E'.toColor(), size: 20.w),
                     Spacing.w(8),
                     AutoTranslateText(
                       'Real Digits',
@@ -775,17 +825,14 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
                       width: 40.w,
                       height: 40.w,
                       decoration: BoxDecoration(
-                        color: "#DFB343".toColor().withOpacity(0.1),
+                        gradient: AppColors.orangeGradient,
                         borderRadius: BorderRadius.circular(8.r),
-                        border: Border.all(
-                          color: "#DFB343".toColor().withOpacity(0.3),
-                        ),
                       ),
                       child: Center(
                         child: AutoTranslateText(
                           digit.toString(),
                           style: MyTextTheme.mediumBCB.copyWith(
-                            color: "#6F221E".toColor(),
+                            color: AppColors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -805,11 +852,8 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: "#DFB343".toColor().withOpacity(0.1),
+        gradient: AppColors.orangeGradient,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: "#DFB343".toColor().withOpacity(0.3),
-        ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -819,9 +863,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
           Flexible(
             child: AutoTranslateText(
               label,
-              style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
-              ),
+              style: MyTextTheme.smallBCN.copyWith(color: AppColors.white),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -830,7 +872,7 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
           AutoTranslateText(
             value,
             style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
+              color: AppColors.white,
               fontWeight: FontWeight.bold,
             ),
             maxLines: 1,
@@ -841,4 +883,3 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
     );
   }
 }
-

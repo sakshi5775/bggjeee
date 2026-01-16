@@ -65,14 +65,14 @@ class LanguageDetector {
       // Astrology-related terms (common in this app)
       // NOTE: Don't include English words like 'horoscope', 'tarot', 'astrologer' etc.
       // as they are used in both English and Hindi contexts
-      'kundli', 'kundali', 'rashifal', 'rashi',
+      'kundli', 'kundli', 'rashifal', 'rashi',
       'jyotish', 'jyotishi',
       'upay', 'upaye',
       'panchang', 'panchangam',
       'ank jyotish',
       'hast rekha',
       'samudrik shastra',
-      'kundali milan',
+      'kundli milan',
       'varshaphal',
       
       // Question words and common patterns

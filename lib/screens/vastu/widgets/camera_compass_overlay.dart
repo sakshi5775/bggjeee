@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/screens/vastu/widgets/royal_vastu_compass.dart';
 import 'package:astrobharataiuser/screens/vastu/widgets/direction_overlay.dart';
 import 'package:astrobharataiuser/screens/vastu/widgets/ar_direction_overlay.dart';
@@ -141,7 +141,7 @@ class _CameraCompassOverlayState extends State<CameraCompassOverlay>
               color: Colors.black,
               child: Center(
                 child: CircularProgressIndicator(
-                  color: '#FF6B35'.toColor(),
+                  color: AppColors.deepOrange,
                 ),
               ),
             ),

@@ -12,6 +12,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class DoshView extends BasePage<DoshController> {
   const DoshView({super.key});
@@ -20,47 +21,46 @@ class DoshView extends BasePage<DoshController> {
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: '#FFF8E1'.toColor(),
-      body:Container(
+      body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFFFF6C2), Color(0xFFFFE8A3), Color(0xFFFFD580),
+            colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              _buildHeader(),
+
+              // Tabs (always visible)
+              _buildTabs(),
+
+              // Content
+              Expanded(
+                child: Obx(() {
+                  // Show table view if selectedTabIndex is -1
+                  if (controller.selectedTabIndex.value == -1) {
+                    return DoshTableWidget(controller: controller);
+                  }
+                  // Otherwise show swipeable PageView for tabs
+                  return PageView(
+                    controller: controller.pageController,
+                    onPageChanged: controller.onPageChanged,
+                    children: [
+                      MangalDoshWidget(controller: controller),
+                      KaalsarpDoshWidget(controller: controller),
+                      PitraDoshWidget(controller: controller),
+                    ],
+                  );
+                }),
+              ),
             ],
           ),
         ),
-      child: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(),
-            
-            // Tabs (always visible)
-            _buildTabs(),
-            
-            // Content
-            Expanded(
-              child: Obx(() {
-                // Show table view if selectedTabIndex is -1
-                if (controller.selectedTabIndex.value == -1) {
-                  return DoshTableWidget(controller: controller);
-                }
-                // Otherwise show swipeable PageView for tabs
-                return PageView(
-                  controller: controller.pageController,
-                  onPageChanged: controller.onPageChanged,
-                  children: [
-                    MangalDoshWidget(controller: controller),
-                    KaalsarpDoshWidget(controller: controller),
-                    PitraDoshWidget(controller: controller),
-                  ],
-                );
-              }),
-            ),
-          ],
-        ),
       ),
-    ),
     );
   }
 
@@ -92,17 +92,19 @@ class DoshView extends BasePage<DoshController> {
             icon: Icon(Icons.arrow_back, color: Color(0xFFF7C443), size: 24.w),
             onPressed: () => Get.back(),
           ),
-          
+
           Spacing.w(8),
-          
+
           // Title
           Expanded(
             child: AutoTranslateText(
               'Dosh',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: Color(0xFFF7C443),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
+              style: MyTextTheme.largeBCB
+                  .copyWith(
+                    color: Color(0xFFF7C443),
+                    fontWeight: FontWeight.bold,
+                  )
+                  .merge(AppTypography.h2),
             ),
           ),
         ],
@@ -112,6 +114,7 @@ class DoshView extends BasePage<DoshController> {
 
   Widget _buildTabs() {
     return Container(
+      height: 50.h,
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -138,18 +141,21 @@ class DoshView extends BasePage<DoshController> {
   Widget _buildTab(String title, int index) {
     return Obx(() {
       final isSelected = controller.selectedTabIndex.value == index;
-      
+
       return GestureDetector(
         onTap: () {
           controller.onTabSelected(index);
         },
         child: Container(
+          // width: 150.w, // Fixed width for better touch targets
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
           decoration: BoxDecoration(
-            color: isSelected ? '#FF6B35'.toColor().withOpacity(0.1) : Colors.transparent,
-                    border: Border(
-                      bottom: BorderSide(
-                        color: isSelected ? '#FF6B35'.toColor() : Colors.transparent,
+            color: isSelected
+                ? '#FF6B35'.toColor().withOpacity(0.1)
+                : Colors.transparent,
+            border: Border(
+              bottom: BorderSide(
+                color: isSelected ? '#FF6B35'.toColor() : Colors.transparent,
                 width: 3,
               ),
             ),
@@ -160,14 +166,18 @@ class DoshView extends BasePage<DoshController> {
           ),
           child: AutoTranslateText(
             title,
-            style: MyTextTheme.mediumBCB.copyWith(
-                      color: isSelected ? '#FF6B35'.toColor() : '#3E2723'.toColor().withOpacity(0.6),
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            ).merge(AppTypography.body1),
+            style: MyTextTheme.mediumBCB
+                .copyWith(
+                  color: isSelected
+                      ? '#FF6B35'.toColor()
+                      : '#3E2723'.toColor().withOpacity(0.6),
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                )
+                .merge(AppTypography.body1),
+            textAlign: TextAlign.center,
           ),
         ),
       );
     });
   }
 }
-

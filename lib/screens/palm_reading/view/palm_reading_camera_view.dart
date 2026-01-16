@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -228,7 +229,7 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                   child: AutoTranslateText(
                     'Place your $handText in the center of the screen',
                     style: MyTextTheme.veryLargeBCB.copyWith(
-                      color: '#FF6B35'.toColor(), // Match Face Reading theme
+                      color: AppColors.deepOrange, // Match Face Reading theme
                       fontWeight: FontWeight.bold,
                     ).merge(AppTypography.h2),
                     textAlign: TextAlign.center,
@@ -267,7 +268,7 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                         widthFactor: _scanProgress,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: '#FF6B35'.toColor(), // Match Face Reading theme
+                          color: AppColors.deepOrange, // Match Face Reading theme
                           borderRadius: BorderRadius.circular(2.r),
                         ),
                       ),
@@ -289,7 +290,7 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                     child: AutoTranslateText(
                       'Skip',
                       style: MyTextTheme.mediumBCN.copyWith(
-                        color: '#FF6B35'.toColor(),
+                        color: AppColors.deepOrange,
                         decoration: TextDecoration.underline,
                       ).merge(AppTypography.h3),
                     ),
@@ -406,7 +407,7 @@ class HandOverlayPainter extends CustomPainter {
 
     // Draw hand outline border
     final borderPaint = Paint()
-      ..color = '#FF6B35'.toColor() // Match Face Reading theme
+      ..color = AppColors.deepOrange // Match Face Reading theme
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4;
     canvas.drawRRect(handRect, borderPaint);

@@ -23,6 +23,7 @@ import 'package:astrobharataiuser/screens/kundli/widgets/varshphal_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class KundliResultView extends BasePage<KundliResultController> {
   const KundliResultView({super.key});
@@ -32,7 +33,7 @@ class KundliResultView extends BasePage<KundliResultController> {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFFFFF6C2), Color(0xFFFFE8A3), Color(0xFFFFD580)],
+          colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -40,7 +41,14 @@ class KundliResultView extends BasePage<KundliResultController> {
       child: Scaffold(
         // backgroundColor: AppColors.lightBackground,
         body: Container(
-          decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+          // decoration: BoxDecoration(gradient: AppColors.appBackground),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
           child: SafeArea(
             child: Column(
               children: [
@@ -215,7 +223,7 @@ class KundliResultView extends BasePage<KundliResultController> {
                 itemCount: controller.tabs.length,
                 separatorBuilder: (context, index) => SizedBox(width: 10.w),
                 itemBuilder: (context, index) {
-                  return const SizedBox.shrink();
+                  // return _buildTabIndicator(index);
                 },
               ),
             ),

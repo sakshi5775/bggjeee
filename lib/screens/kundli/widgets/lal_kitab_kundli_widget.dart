@@ -12,24 +12,19 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 class LalKitabKundliWidget extends StatelessWidget {
   final LalKitabController controller;
 
-  const LalKitabKundliWidget({
-    super.key,
-    required this.controller,
-  });
+  const LalKitabKundliWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingLalKitabHoroscope.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.lalKitabHoroscopeData.value;
-      
+
       if (data == null || data.isEmpty) {
         return Center(
           child: AutoTranslateText(
@@ -81,18 +76,12 @@ class LalKitabKundliWidget extends StatelessWidget {
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            "#FFFFFF".toColor(),
-            "#FFFFFF".toColor(),
-          ],
+          colors: ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.2),
-          width: 1,
-        ),
+        border: Border.all(color: "#ed6f30".toColor(), width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
@@ -111,25 +100,25 @@ class LalKitabKundliWidget extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
                   // color: "#ed6f30".toColor(),
-                  gradient: LinearGradient(colors: 
-                  [
-                     "#FF8C42".toColor(),
-                     "#E63946".toColor(),
-                  ]),
+                  gradient: LinearGradient(
+                    colors: ["#FF8C42".toColor(), "#E63946".toColor()],
+                  ),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: AutoTranslateText(
                   'Sign $signNumber: $signName',
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h3),
+                  style: MyTextTheme.mediumBCB
+                      .copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.h3),
                 ),
               ),
             ],
           ),
           Spacing.h(12),
-          
+
           // Planets
           if (planets.isNotEmpty)
             Wrap(
@@ -138,12 +127,15 @@ class LalKitabKundliWidget extends StatelessWidget {
               children: planets.asMap().entries.map((entry) {
                 final index = entry.key;
                 final planet = entry.value.toString();
-                final planetShort = index < planetSmall.length 
-                    ? planetSmall[index].toString() 
+                final planetShort = index < planetSmall.length
+                    ? planetSmall[index].toString()
                     : planet.substring(0, 2);
-                
+
                 return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 8.h,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10.r),
@@ -164,17 +156,19 @@ class LalKitabKundliWidget extends StatelessWidget {
                     children: [
                       AutoTranslateText(
                         planetShort,
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: "#ed6f30".toColor(),
-                          fontWeight: FontWeight.bold,
-                        ).merge(AppTypography.body1),
+                        style: MyTextTheme.smallBCB
+                            .copyWith(
+                              color: "#ed6f30".toColor(),
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.body1),
                       ),
                       Spacing.h(2),
                       AutoTranslateText(
                         planet,
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: "#6F221E".toColor(),
-                        ).merge(AppTypography.label),
+                        style: MyTextTheme.smallBCN
+                            .copyWith(color: "#6F221E".toColor())
+                            .merge(AppTypography.label),
                       ),
                     ],
                   ),
@@ -199,9 +193,9 @@ class LalKitabKundliWidget extends StatelessWidget {
                   Spacing.w(8),
                   AutoTranslateText(
                     'No planets',
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: "#6F221E".toColor().withOpacity(0.5),
-                    ).merge(AppTypography.body2),
+                    style: MyTextTheme.smallBCN
+                        .copyWith(color: "#6F221E".toColor().withOpacity(0.5))
+                        .merge(AppTypography.body2),
                   ),
                 ],
               ),
@@ -211,4 +205,3 @@ class LalKitabKundliWidget extends StatelessWidget {
     );
   }
 }
-

@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/tarot_card_model.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/controller/tarot_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -167,8 +168,8 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                         borderRadius: BorderRadius.circular(14.r),
                         gradient: RadialGradient(
                           colors: [
-                            '#ee7532'.toColor().withOpacity(0.0),
-                            '#ee7532'.toColor().withOpacity(0.2), // Reduced from 0.4
+                            AppColors.deepOrange.withOpacity(0.0),
+                            AppColors.deepOrange.withOpacity(0.2), // Reduced from 0.4
                             '#820B17'.toColor().withOpacity(0.0),
                           ],
                         ),
@@ -207,7 +208,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                           boxShadow: [
                             // Reduced glow effect
                             BoxShadow(
-                              color: '#ee7532'.toColor().withOpacity(0.3 * _glowAnimation.value), // Reduced from 0.8
+                              color: AppColors.deepOrange.withOpacity(0.3 * _glowAnimation.value), // Reduced from 0.8
                               blurRadius: 20 * _glowAnimation.value, // Reduced from 30
                               spreadRadius: 5 * _glowAnimation.value, // Reduced from 10
                             ),
@@ -272,7 +273,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
         color: '#ede7c8'.toColor(),
         child: Center(
           child: CircularProgressIndicator(
-            color: '#ee7532'.toColor(),
+            color: AppColors.deepOrange,
           ),
         ),
       ),
@@ -322,7 +323,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                 gradient: LinearGradient(
                   colors: [
                     '#820B17'.toColor(),
-                    '#ee7532'.toColor(),
+                    AppColors.deepOrange,
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -342,7 +343,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                 gradient: LinearGradient(
                   colors: [
                     '#820B17'.toColor(),
-                    '#ee7532'.toColor(),
+                    AppColors.deepOrange,
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -359,14 +360,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
             width: widget.isOpen ? 180.w : 200.w,
             height: widget.isOpen ? 270.h : 300.h,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  '#820B17'.toColor(),
-                  '#ee7532'.toColor(),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              gradient: AppColors.orangeGradient,
             ),
             child: Icon(
               Icons.auto_awesome,

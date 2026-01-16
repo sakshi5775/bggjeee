@@ -15,28 +15,28 @@ class DoshController extends BaseController {
 
   // Form data
   final formData = Rxn<Map<String, dynamic>>();
-  
+
   // Current tab index: -1 = TABLE VIEW, 0 = MANGAL/MANGLIK DOSH, 1 = KAALSARP DOSH, 2 = PITRA DOSH
   final selectedTabIndex = (-1).obs;
-  
+
   // PageController for swipeable tabs
   late PageController pageController;
-  
+
   // Mangal/Manglik Dosh sub-tab: 0 = Classical Vedic Astrology, 1 = Extended/Modern Manglik Analysis
   final selectedMangalSubTab = 0.obs;
-  
+
   // API data
   final mangalDoshData = Rxn<Map<String, dynamic>>();
   final manglikDoshData = Rxn<Map<String, dynamic>>();
   final kaalsarpDoshData = Rxn<Map<String, dynamic>>();
   final pitraDoshData = Rxn<Map<String, dynamic>>();
-  
+
   // Loading states
   final isLoadingMangalDosh = false.obs;
   final isLoadingManglikDosh = false.obs;
   final isLoadingKaalsarpDosh = false.obs;
   final isLoadingPitraDosh = false.obs;
-  
+
   // Service
   final _kundliService = KundliService();
 
@@ -46,14 +46,24 @@ class DoshController extends BaseController {
     // Initialize PageController with 3 tabs (excluding table view)
     pageController = PageController(initialPage: 0);
     _loadData();
+    // Listen to tab changes to sync with PageView
+    ever(selectedTabIndex, (int tabIndex) {
+      if (tabIndex >= 0 && pageController.hasClients) {
+        pageController.animateToPage(
+          tabIndex,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
-  
+
   @override
   void onClose() {
     pageController.dispose();
     super.onClose();
   }
-  
+
   // Handle page change from swipe
   void onPageChanged(int index) {
     // Map PageView index to tab index (0, 1, 2)
@@ -67,15 +77,27 @@ class DoshController extends BaseController {
       navigateToPitraDoshTab();
     }
   }
-  
+
   // Navigate to specific tab (called from tab tap)
   void onTabSelected(int index) {
+    // Map PageView index to tab index (0, 1, 2)
+    selectedTabIndex.value = index;
+
     if (pageController.hasClients) {
       pageController.animateToPage(
         index,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
+    }
+
+    // Trigger navigation based on index
+    if (index == 0) {
+      navigateToMangalDoshTab();
+    } else if (index == 1) {
+      navigateToKaalsarpDoshTab();
+    } else if (index == 2) {
+      navigateToPitraDoshTab();
     }
   }
 
@@ -147,7 +169,7 @@ class DoshController extends BaseController {
 
     try {
       isLoadingMangalDosh.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -156,7 +178,11 @@ class DoshController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Mangal Dosh');
         isLoadingMangalDosh.value = false;
         return;
@@ -194,7 +220,7 @@ class DoshController extends BaseController {
 
     try {
       isLoadingManglikDosh.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -203,7 +229,11 @@ class DoshController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Manglik Dosh');
         isLoadingManglikDosh.value = false;
         return;
@@ -241,7 +271,7 @@ class DoshController extends BaseController {
 
     try {
       isLoadingKaalsarpDosh.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -250,7 +280,11 @@ class DoshController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Kaalsarp Dosh');
         isLoadingKaalsarpDosh.value = false;
         return;
@@ -288,7 +322,7 @@ class DoshController extends BaseController {
 
     try {
       isLoadingPitraDosh.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -297,7 +331,11 @@ class DoshController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Pitra Dosh');
         isLoadingPitraDosh.value = false;
         return;
@@ -326,4 +364,3 @@ class DoshController extends BaseController {
     }
   }
 }
-

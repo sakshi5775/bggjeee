@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class YogView extends BasePage<YogController> {
   const YogView({super.key});
@@ -16,18 +17,25 @@ class YogView extends BasePage<YogController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(),
-            
-            // Content
-            Expanded(
-              child: YogWidget(controller: controller),
-            ),
-          ],
+      // backgroundColor: '#FFF8E1'.toColor(),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              _buildHeader(),
+
+              // Content
+              Expanded(child: YogWidget(controller: controller)),
+            ],
+          ),
         ),
       ),
     );
@@ -61,17 +69,21 @@ class YogView extends BasePage<YogController> {
             icon: Icon(Icons.arrow_back, color: Color(0xFFF7C443), size: 24.w),
             onPressed: () => Get.back(),
           ),
-          
+
           Spacing.w(8),
-          
+
           // Title
           Expanded(
             child: AutoTranslateText(
               'Yog',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: Color(0xFFF7C443),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
+              style: MyTextTheme.largeBCB
+                  .copyWith(
+                    color: Color(0xFFF7C443),
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'baloo2',
+                    fontSize: 18,
+                  )
+                  .merge(AppTypography.h2),
             ),
           ),
         ],
@@ -79,4 +91,3 @@ class YogView extends BasePage<YogController> {
     );
   }
 }
-

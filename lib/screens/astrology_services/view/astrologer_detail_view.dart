@@ -15,7 +15,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 
-
 class AstrologerDetailView extends StatelessWidget {
   const AstrologerDetailView({Key? key}) : super(key: key);
 
@@ -1018,23 +1017,33 @@ class AstrologerDetailView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Consultation Rate
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AutoTranslateText(
-                  'Consultation Rate: ',
-                  style: MyTextTheme.smallBCN
-                      .copyWith(color: const Color(0xFF666666))
-                      .merge(AppTypography.body2),
-                ),
-                AutoTranslateText(
-                  '₹${controller.getPrice()}',
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: const Color(0xFFDFB343),
-                    fontWeight: FontWeight.bold,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AutoTranslateText(
+                    'Consultation Rate: ',
+                    style: MyTextTheme.smallBCN
+                        .copyWith(color: const Color(0xFF666666))
+                        .merge(AppTypography.body2),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                  Flexible(
+                    child: AutoTranslateText(
+                      controller.getPrice(),
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: const Color(0xFFDFB343),
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Spacing.h(12),
             // Action Buttons

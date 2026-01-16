@@ -149,9 +149,9 @@ class AdvancedElementPainter extends CustomPainter {
     switch (element) {
       case VastuElement.fire:
         return {
-          'color': const Color(0xFFFF6B35),
+          'color': const Color(0xFFF38B3B),
           'symbol': '🔥',
-          'gradient': [const Color(0xFFFF6B35), const Color(0xFFFF8A65)],
+          'gradient': [const Color(0xFFF38B3B), const Color(0xFFDD2914)],
         };
       case VastuElement.water:
         return {

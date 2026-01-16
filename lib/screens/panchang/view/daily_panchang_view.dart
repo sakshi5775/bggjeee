@@ -802,7 +802,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                   ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: ["#FF8C42".toColor(), "#E63946".toColor()],
+                      colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
                     ),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
@@ -1469,7 +1469,7 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
                     padding: EdgeInsets.all(8.w),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: ["#FF8C42".toColor(), "#E63946".toColor()],
+                        colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
                       ),
                       shape: BoxShape.circle,
                     ),

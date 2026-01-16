@@ -1,4 +1,3 @@
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/ConsultationSliderController.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';

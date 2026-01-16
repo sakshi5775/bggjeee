@@ -1,10 +1,10 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/controller/tarot_controller.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_confetti_widget.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_card_display_widget.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -165,7 +165,7 @@ class TarotYesNoPopup extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       color: response.direction!.toLowerCase() == 'upright'
                                           ? Colors.green.withOpacity(0.2)
-                                          : Colors.orange.withOpacity(0.2),
+                                          : AppColors.deepOrange.withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(4.r),
                                     ),
                                     child: AutoTranslateText(
@@ -173,7 +173,7 @@ class TarotYesNoPopup extends StatelessWidget {
                                       style: MyTextTheme.smallBCN.copyWith(
                                         color: response.direction!.toLowerCase() == 'upright'
                                             ? Colors.green
-                                            : Colors.orange,
+                                            : AppColors.deepOrange,
                                       ),
                                     ),
                                   ),
@@ -208,7 +208,7 @@ class TarotYesNoPopup extends StatelessWidget {
                             ElevatedButton(
                               onPressed: () => controller.closeReading(),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: '#ee7532'.toColor(),
+                                backgroundColor: AppColors.deepOrange,
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 32.w,
                                   vertical: 12.h,

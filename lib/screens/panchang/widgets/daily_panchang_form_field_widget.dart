@@ -1,5 +1,4 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

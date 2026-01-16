@@ -12,10 +12,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 class BinnashtakvargaWidget extends StatelessWidget {
   final KundliResultController controller;
 
-  const BinnashtakvargaWidget({
-    super.key,
-    required this.controller,
-  });
+  const BinnashtakvargaWidget({super.key, required this.controller});
 
   // Available planets
   static const List<String> planets = [
@@ -36,17 +33,58 @@ class BinnashtakvargaWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
-            AutoTranslateText(
-              'Binnashtakvarga',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.bold,
+            Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: "#FFFFFF".toColor(),
+                border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          // color: "#FF8C42".toColor(),
+                          gradient: LinearGradient(
+                            colors: ["#FF8C42".toColor(), "#FF4B2B".toColor()],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        padding: EdgeInsets.all(8.w),
+                        child: Icon(
+                          Icons.info_outline,
+                          color: "#FFFFFF".toColor(),
+                        ),
+                      ),
+                      Spacing.w(12),
+                      AutoTranslateText(
+                        'Binnashtakvarga',
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            
+
+            // Title
+            // AutoTranslateText(
+            //   'Binnashtakvarga',
+            //   style: MyTextTheme.largeBCB.copyWith(
+            //     color: "#6F221E".toColor(),
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
             Spacing.h(16),
-            
+
             // Note Card
             Container(
               padding: EdgeInsets.all(16.w),
@@ -77,115 +115,136 @@ class BinnashtakvargaWidget extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             Spacing.h(20),
-            
-            // Planet Selection Grid
-            AutoTranslateText(
-              'Select Planet',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.bold,
+
+            Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: "#FFFFFF".toColor(),
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: "#DFB343".toColor(), width: 1),
+              ),
+              child: Column(
+                children: [
+                  // Planet Selection Grid
+                  AutoTranslateText(
+                    'Select Planet',
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: "#6F221E".toColor(),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.sp,
+                    ),
+                  ),
+
+                  Spacing.h(12),
+
+                  // Planet Grid
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final crossAxisCount = constraints.maxWidth > 600 ? 4 : 3;
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
+                          childAspectRatio: 1.2,
+                          crossAxisSpacing: 12.w,
+                          mainAxisSpacing: 12.h,
+                        ),
+                        itemCount: planets.length,
+                        itemBuilder: (context, index) {
+                          final planet = planets[index];
+                          final isSelected =
+                              controller
+                                  .selectedPlanetForBinnashtakvarga
+                                  .value ==
+                              planet;
+                          final isLoading =
+                              controller.isLoadingBinnashtakvarga.value &&
+                              isSelected;
+
+                          return GestureDetector(
+                            onTap: isLoading
+                                ? null
+                                : () {
+                                    controller.fetchBinnashtakvargaData(planet);
+                                  },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? "#ed6f30".toColor()
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(12.r),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? "#ed6f30".toColor()
+                                      : "#DFB343".toColor(),
+                                  width: isSelected ? 2 : 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.08),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  if (isLoading)
+                                    SizedBox(
+                                      width: 24.w,
+                                      height: 24.w,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
+                                      ),
+                                    )
+                                  else
+                                    Icon(
+                                      Icons.star,
+                                      color: isSelected
+                                          ? Colors.white
+                                          : "#DFB343".toColor(),
+                                      size: 32.w,
+                                    ),
+                                  Spacing.h(8),
+                                  AutoTranslateText(
+                                    planet,
+                                    textAlign: TextAlign.center,
+                                    style: MyTextTheme.smallBCB.copyWith(
+                                      color: isSelected
+                                          ? Colors.white
+                                          : "#6F221E".toColor(),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
-            
-            Spacing.h(12),
-            
-            // Planet Grid
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final crossAxisCount = constraints.maxWidth > 600 ? 4 : 3;
-                return GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: crossAxisCount,
-                    childAspectRatio: 1.2,
-                    crossAxisSpacing: 12.w,
-                    mainAxisSpacing: 12.h,
-                  ),
-                  itemCount: planets.length,
-                  itemBuilder: (context, index) {
-                    final planet = planets[index];
-                    final isSelected = controller.selectedPlanetForBinnashtakvarga.value == planet;
-                    final isLoading = controller.isLoadingBinnashtakvarga.value && isSelected;
-                    
-                    return GestureDetector(
-                      onTap: isLoading ? null : () {
-                        controller.fetchBinnashtakvargaData(planet);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isSelected 
-                              ? "#ed6f30".toColor()
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(12.r),
-                          border: Border.all(
-                            color: isSelected
-                                ? "#ed6f30".toColor()
-                                : "#DFB343".toColor().withOpacity(0.3),
-                            width: isSelected ? 2 : 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (isLoading)
-                              SizedBox(
-                                width: 24.w,
-                                height: 24.w,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
-                                  ),
-                                ),
-                              )
-                            else
-                              Icon(
-                                Icons.star,
-                                color: isSelected 
-                                    ? Colors.white
-                                    : "#DFB343".toColor(),
-                                size: 32.w,
-                              ),
-                            Spacing.h(8),
-                            AutoTranslateText(
-                              planet,
-                              textAlign: TextAlign.center,
-                              style: MyTextTheme.smallBCB.copyWith(
-                                color: isSelected 
-                                    ? Colors.white
-                                    : "#6F221E".toColor(),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-            
+
             Spacing.h(24),
-            
+
             // Data Display
-            if (controller.isLoadingBinnashtakvarga.value && controller.selectedPlanetForBinnashtakvarga.value != null)
+            if (controller.isLoadingBinnashtakvarga.value &&
+                controller.selectedPlanetForBinnashtakvarga.value != null)
               Center(
                 child: Column(
                   children: [
-                    CircularProgressIndicator(
-                      color: "#ed6f30".toColor(),
-                    ),
+                    CircularProgressIndicator(color: "#ed6f30".toColor()),
                     Spacing.h(16),
                     AutoTranslateText(
                       'Loading Binnashtakvarga data for ${controller.selectedPlanetForBinnashtakvarga.value}...',
@@ -206,10 +265,18 @@ class BinnashtakvargaWidget extends StatelessWidget {
 
   Widget _buildDataTable(Map<String, dynamic> data) {
     // Get all planet data
-    final planetKeys = ['sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn'];
+    final planetKeys = [
+      'sun',
+      'moon',
+      'mars',
+      'mercury',
+      'jupiter',
+      'venus',
+      'saturn',
+    ];
     final ascendant = data['ascendant'] as List<dynamic>?;
     final total = data['Total'] as List<dynamic>?;
-    
+
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -237,7 +304,7 @@ class BinnashtakvargaWidget extends StatelessWidget {
             ),
             Spacing.h(16),
           ],
-          
+
           // Table
           LayoutBuilder(
             builder: (context, constraints) {
@@ -282,7 +349,9 @@ class BinnashtakvargaWidget extends StatelessWidget {
           children: [
             _buildHeaderCell('House'),
             for (String planet in planetKeys)
-              _buildHeaderCell(planet.substring(0, 1).toUpperCase() + planet.substring(1)),
+              _buildHeaderCell(
+                planet.substring(0, 1).toUpperCase() + planet.substring(1),
+              ),
             _buildHeaderCell('Asc'),
             _buildHeaderCell('Total'),
           ],
@@ -291,8 +360,8 @@ class BinnashtakvargaWidget extends StatelessWidget {
         ...List.generate(12, (houseIndex) {
           return TableRow(
             decoration: BoxDecoration(
-              color: houseIndex % 2 == 0 
-                  ? Colors.white 
+              color: houseIndex % 2 == 0
+                  ? Colors.white
                   : "#DFB343".toColor().withOpacity(0.05),
             ),
             children: [
@@ -300,12 +369,15 @@ class BinnashtakvargaWidget extends StatelessWidget {
               _buildHouseCell('H${houseIndex + 1}'),
               // Points for each planet in this house
               for (String planetKey in planetKeys)
-                _buildDataCell(
-                  _getPointForHouse(planetKey, houseIndex, data),
-                ),
+                _buildDataCell(_getPointForHouse(planetKey, houseIndex, data)),
               // Ascendant point
               _buildDataCell(
-                _getPointForHouse('ascendant', houseIndex, data, ascendant: ascendant),
+                _getPointForHouse(
+                  'ascendant',
+                  houseIndex,
+                  data,
+                  ascendant: ascendant,
+                ),
               ),
               // Total for this house
               _buildTotalCell(
@@ -320,14 +392,19 @@ class BinnashtakvargaWidget extends StatelessWidget {
     );
   }
 
-  String _getPointForHouse(String planetKey, int houseIndex, Map<String, dynamic> data, {List<dynamic>? ascendant}) {
+  String _getPointForHouse(
+    String planetKey,
+    int houseIndex,
+    Map<String, dynamic> data, {
+    List<dynamic>? ascendant,
+  }) {
     if (planetKey == 'ascendant') {
       if (ascendant != null && houseIndex < ascendant.length) {
         return ascendant[houseIndex]?.toString() ?? '--';
       }
       return '--';
     }
-    
+
     final planetData = data[planetKey] as List<dynamic>?;
     if (planetData != null && houseIndex < planetData.length) {
       return planetData[houseIndex]?.toString() ?? '--';
@@ -369,9 +446,7 @@ class BinnashtakvargaWidget extends StatelessWidget {
       child: AutoTranslateText(
         text,
         textAlign: TextAlign.center,
-        style: MyTextTheme.smallBCN.copyWith(
-          color: "#6F221E".toColor(),
-        ),
+        style: MyTextTheme.smallBCN.copyWith(color: "#6F221E".toColor()),
       ),
     );
   }
@@ -390,4 +465,3 @@ class BinnashtakvargaWidget extends StatelessWidget {
     );
   }
 }
-

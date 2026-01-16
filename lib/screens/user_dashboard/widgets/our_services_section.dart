@@ -152,6 +152,7 @@ class OurServicesSection extends BasePage<UserDashboardController> {
             );
             break;
           case 'consult':
+          case 'consult astrologer':
             _requireLogin(
               () async => Get.to(() => const AstrologyServicesView()),
               message: 'Login to consult with astrologers.',
@@ -207,7 +208,6 @@ class OurServicesSection extends BasePage<UserDashboardController> {
             );
             break;
           case 'prashna kundli':
-          case 'prashna kundali':
             _requireLogin(
               () async => Get.toNamed(AppRoutes.prashnaKundali),
               message: 'Login to use Prashna Kundli.',
@@ -217,6 +217,61 @@ class OurServicesSection extends BasePage<UserDashboardController> {
             _requireLogin(
               () async => Get.toNamed(AppRoutes.ramalShastra),
               message: 'Login to explore Ramal Shastra.',
+            );
+            break;
+          case 'life predictions':
+            _requireLogin(
+              () async {
+                // Navigate to kundli form with target route for predictions
+                Get.toNamed(AppRoutes.kundliForm, arguments: {
+                  'targetRoute': AppRoutes.predictions,
+                });
+              },
+              message: 'Login to view Life Predictions.',
+            );
+            break;
+          case 'dosh':
+            _requireLogin(
+              () async {
+                // Navigate to kundli form with target route for dosh
+                Get.toNamed(AppRoutes.kundliForm, arguments: {
+                  'targetRoute': AppRoutes.dosh,
+                });
+              },
+              message: 'Login to check Dosh.',
+            );
+            break;
+          case 'dasha':
+            _requireLogin(
+              () async {
+                // Navigate to kundli form with target route for dasha
+                Get.toNamed(AppRoutes.kundliForm, arguments: {
+                  'targetRoute': AppRoutes.dasha,
+                });
+              },
+              message: 'Login to view Dasha.',
+            );
+            break;
+          case 'kp astrology':
+            _requireLogin(
+              () async {
+                // Navigate to kundli form with target route for kp system
+                Get.toNamed(AppRoutes.kundliForm, arguments: {
+                  'targetRoute': AppRoutes.kpSystem,
+                });
+              },
+              message: 'Login to use KP Astrology.',
+            );
+            break;
+          case 'lal kitab':
+            _requireLogin(
+              () async {
+                // Navigate to kundli form with target route for lal kitab
+                Get.toNamed(AppRoutes.kundliForm, arguments: {
+                  'targetRoute': AppRoutes.lalKitab,
+                });
+              },
+              message: 'Login to use Lal Kitab.',
             );
             break;
           default:

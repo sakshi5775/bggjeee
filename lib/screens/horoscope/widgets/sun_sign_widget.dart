@@ -2,7 +2,6 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_main_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,6 +15,21 @@ class SunSignWidget extends StatelessWidget {
     required this.controller,
   });
 
+  // Gradient definitions
+  static final LinearGradient gradientBackground = LinearGradient(
+    colors: ["#FCE5AA".toColor(), "#FFFCF3".toColor(), "#FFFFFF".toColor()],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+
+  static final LinearGradient primaryGradient = LinearGradient(
+    colors: ["#820B17".toColor(), "#68171E".toColor(), "#5D1C21".toColor()],
+  );
+
+  static LinearGradient orangeGradient = LinearGradient(
+    colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
+  );
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -25,13 +39,13 @@ class SunSignWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(
-                color: "#ed6f30".toColor(),
+                valueColor: AlwaysStoppedAnimation<Color>(orangeGradient.colors.first),
               ),
               Spacing.h(16),
               AutoTranslateText(
                 'Loading Sun Sign...',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: primaryGradient.colors.first.withOpacity(0.7),
                 ),
               ),
             ],
@@ -45,7 +59,7 @@ class SunSignWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No Sun Sign data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: primaryGradient.colors.first.withOpacity(0.7),
             ),
           ),
         );
@@ -55,9 +69,13 @@ class SunSignWidget extends StatelessWidget {
       final botResponse = data['bot_response']?.toString() ?? '';
       final prediction = data['prediction']?.toString() ?? '';
 
-      return SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Column(
+      return Container(
+        decoration: BoxDecoration(
+          gradient: gradientBackground,
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildTitleSection(sunSign),
@@ -67,6 +85,7 @@ class SunSignWidget extends StatelessWidget {
             if (prediction.isNotEmpty) _buildPredictionCard(prediction),
           ],
         ),
+        ),
       );
     });
   }
@@ -75,18 +94,11 @@ class SunSignWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            "#6F221E".toColor(),
-            "#6F221E".toColor().withOpacity(0.8),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: primaryGradient,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: "#6F221E".toColor().withOpacity(0.3),
+            color: primaryGradient.colors.first.withOpacity(0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -102,7 +114,7 @@ class SunSignWidget extends StatelessWidget {
             ),
             child: Icon(
               Icons.wb_sunny_rounded,
-              color: Colors.white,
+              color: const Color(0xFFDFB343),
               size: 28.w,
             ),
           ),
@@ -114,7 +126,7 @@ class SunSignWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Sun Sign',
                   style: MyTextTheme.largeBCB.copyWith(
-                    color: Colors.white,
+                    color: const Color(0xFFDFB343),
                   ),
                 ),
                 Spacing.h(4),
@@ -151,16 +163,23 @@ class SunSignWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.chat_bubble_outline_rounded,
-                color: "#ed6f30".toColor(),
-                size: 24.w,
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  gradient: primaryGradient,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Icon(
+                  Icons.chat_bubble_outline_rounded,
+                  color: const Color(0xFFDFB343),
+                  size: 20.w,
+                ),
               ),
               Spacing.w(12),
               AutoTranslateText(
                 'Response',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: primaryGradient.colors.first,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -170,7 +189,7 @@ class SunSignWidget extends StatelessWidget {
           AutoTranslateText(
             botResponse,
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.8),
+              color: primaryGradient.colors.first.withOpacity(0.8),
               height: 1.6,
             ),
           ),
@@ -198,16 +217,23 @@ class SunSignWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.auto_awesome_rounded,
-                color: "#ed6f30".toColor(),
-                size: 24.w,
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  gradient: primaryGradient,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Icon(
+                  Icons.auto_awesome_rounded,
+                  color: const Color(0xFFDFB343),
+                  size: 20.w,
+                ),
               ),
               Spacing.w(12),
               AutoTranslateText(
                 'Prediction',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: primaryGradient.colors.first,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -217,7 +243,7 @@ class SunSignWidget extends StatelessWidget {
           AutoTranslateText(
             prediction,
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.8),
+              color: primaryGradient.colors.first.withOpacity(0.8),
               height: 1.6,
             ),
           ),

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:camera/camera.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/screens/vastu/controller/ar_controller.dart';
 import 'package:astrobharataiuser/screens/vastu/controller/vastu_reading_controller.dart';
 import 'package:astrobharataiuser/screens/vastu/model/vastu_room_config.dart';
@@ -137,7 +138,7 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CircularProgressIndicator(
-                              color: '#FF6B35'.toColor(),
+                              color: AppColors.deepOrange,
                             ),
                             SizedBox(height: 16.h),
                             AutoTranslateText(
@@ -311,7 +312,7 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
         height: 44.w,
         decoration: BoxDecoration(
           color: isActive
-              ? '#FF6B35'.toColor()
+              ? AppColors.deepOrange
               : Colors.black.withOpacity(0.6),
           shape: BoxShape.circle,
           border: Border.all(
@@ -323,7 +324,7 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: '#FF6B35'.toColor().withOpacity(0.4),
+                    color: AppColors.deepOrange.withOpacity(0.4),
                     blurRadius: 8,
                     spreadRadius: 1,
                   ),

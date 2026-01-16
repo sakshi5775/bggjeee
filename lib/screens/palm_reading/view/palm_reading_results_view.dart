@@ -172,7 +172,7 @@ class PalmReadingResultsView extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: '#FF6B35'.toColor(),
+            color: AppColors.deepOrange,
             width: 2,
           ),
         ),
@@ -265,7 +265,7 @@ class PalmReadingResultsView extends StatelessWidget {
           Icon(
             Icons.warning_amber_rounded,
             size: 64.w,
-            color: Colors.orange,
+            color: AppColors.deepOrange,
           ),
           Spacing.h(16),
           AutoTranslateText(
@@ -333,7 +333,7 @@ class PalmReadingResultsView extends StatelessWidget {
       
       // Head Line
       if (categories.contains('HEAD_LINE')) {
-        buttonList.add(_buildLineButton('Head line', Colors.orange));
+        buttonList.add(_buildLineButton('Head line', AppColors.deepOrange));
       }
       
       // Fate Line
@@ -408,14 +408,7 @@ class PalmReadingResultsView extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.deepOrange,
-            AppColors.saffron,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: AppColors.orangeGradient,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -121,12 +122,12 @@ class _FaceReadingLoadingWidgetState extends State<FaceReadingLoadingWidget>
                           width: 50.w,
                           height: 50.w,
                           decoration: BoxDecoration(
-                            color: '#EA632B'.toColor().withOpacity(0.1),
+                            color: AppColors.deepOrange.withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.face,
-                            color: '#EA632B'.toColor(),
+                            color: AppColors.deepOrange,
                             size: 30.w,
                           ),
                         ),
@@ -145,9 +146,9 @@ class _FaceReadingLoadingWidgetState extends State<FaceReadingLoadingWidget>
                   shaderCallback: (bounds) {
                     return LinearGradient(
                       colors: [
-                        '#EA632B'.toColor(),
-                        '#EA632B'.toColor().withOpacity(0.5),
-                        '#EA632B'.toColor(),
+                        AppColors.deepOrange,
+                        AppColors.deepOrange.withOpacity(0.5),
+                        AppColors.deepOrange,
                       ],
                       stops: [
                         (_waveAnimation.value - 0.3).clamp(0.0, 1.0),
@@ -191,7 +192,7 @@ class _FaceReadingLoadingWidgetState extends State<FaceReadingLoadingWidget>
                       width: 8.w,
                       height: 8.w,
                       decoration: BoxDecoration(
-                        color: '#EA632B'.toColor().withOpacity(0.3 + opacity * 0.7),
+                        color: AppColors.deepOrange.withOpacity(0.3 + opacity * 0.7),
                         shape: BoxShape.circle,
                       ),
                     );
@@ -215,7 +216,7 @@ class _FaceReadingLoaderPainter extends CustomPainter {
 
     // Draw multiple arcs with different colors matching face reading theme
     final arcs = [
-      {'color': '#EA632B', 'start': 0.0, 'sweep': 0.4},
+      {'color': '#F38B3B', 'start': 0.0, 'sweep': 0.4},
       {'color': '#FF8C5A', 'start': 0.4, 'sweep': 0.3},
       {'color': '#FFB08A', 'start': 0.7, 'sweep': 0.2},
       {'color': '#FFD4BA', 'start': 0.9, 'sweep': 0.1},

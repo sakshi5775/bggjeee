@@ -4,7 +4,6 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/app_manager/svg_assets.dart';
@@ -102,7 +101,7 @@ class DailyAstrologersWidget extends BasePage<UserDashboardController> {
             Get.toNamed(AppRoutes.panchang);
             break;
           case "Today's Numerology":
-            Get.toNamed(AppRoutes.numerology);
+            Get.toNamed(AppRoutes.numerologyForm);
         }
       },
       child: Container(

@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:flutter/material.dart';
@@ -114,7 +115,7 @@ class _RamalShastraCastingDiceViewState extends State<RamalShastraCastingDiceVie
                 ElevatedButton(
                   onPressed: _rollDice,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: '#FF6B35'.toColor(),
+                    backgroundColor: AppColors.deepOrange,
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 14.h),
                     shape: RoundedRectangleBorder(
@@ -210,7 +211,7 @@ class _RamalShastraCastingDiceViewState extends State<RamalShastraCastingDiceVie
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: value > 0 ? '#FF6B35'.toColor() : '#F5D7B8'.toColor(),
+          color: value > 0 ? AppColors.deepOrange : '#F5D7B8'.toColor(),
           width: 2,
         ),
         boxShadow: [
@@ -226,7 +227,7 @@ class _RamalShastraCastingDiceViewState extends State<RamalShastraCastingDiceVie
             ? Text(
                 '$value',
                 style: MyTextTheme.largeBCB.copyWith(
-                  color: '#FF6B35'.toColor(),
+                  color: AppColors.deepOrange,
                   fontWeight: FontWeight.bold,
                   fontSize: 28.sp,
                 ),

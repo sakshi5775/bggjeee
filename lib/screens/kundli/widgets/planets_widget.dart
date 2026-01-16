@@ -12,10 +12,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 class PlanetsWidget extends StatelessWidget {
   final PlanetsController controller;
 
-  const PlanetsWidget({
-    super.key,
-    required this.controller,
-  });
+  const PlanetsWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -39,34 +36,36 @@ class PlanetsWidget extends StatelessWidget {
           children: [
             // Planets Section
             _buildPlanetsSection(data),
-            
+
             Spacing.h(20),
-            
+
             // Lucky Things Section
             _buildLuckyThingsSection(data),
-            
+
             Spacing.h(20),
-            
+
             // Birth Details Section
             _buildBirthDetailsSection(data),
-            
+
             Spacing.h(20),
-            
+
             // Panchang Section
             if (data['panchang'] != null)
               _buildPanchangSection(data['panchang'] as Map<String, dynamic>),
-            
+
             if (data['panchang'] != null) Spacing.h(20),
-            
+
             // Ghatka Chakra Section
             if (data['ghatka_chakra'] != null)
-              _buildGhatkaChakraSection(data['ghatka_chakra'] as Map<String, dynamic>),
-            
+              _buildGhatkaChakraSection(
+                data['ghatka_chakra'] as Map<String, dynamic>,
+              ),
+
             if (data['ghatka_chakra'] != null) Spacing.h(20),
-            
+
             // Dasa Section
             _buildDasaSection(data),
-            
+
             Spacing.h(20),
           ],
         ),
@@ -76,7 +75,7 @@ class PlanetsWidget extends StatelessWidget {
 
   Widget _buildPlanetsSection(Map<String, dynamic> data) {
     final planets = <String, Map<String, dynamic>>{};
-    
+
     // Extract planets (0-9)
     for (int i = 0; i <= 9; i++) {
       final planetKey = i.toString();
@@ -88,22 +87,38 @@ class PlanetsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Container(
-              height: 50.h,
-              width: 50.w,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-                  Color(0xFFFF8C42), Color(0xFFE63946)
-                ]),
-                borderRadius: BorderRadius.circular(12.r)
+        Container(
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            color: "#FFFFFF".toColor(),
+            border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    height: 50.h,
+                    width: 50.w,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                      ),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Icon(
+                      Icons.star_outline_outlined,
+                      color: "#FFFFFF".toColor(),
+                      size: 24.w,
+                    ),
+                  ),
+                  Spacing.w(12),
+                  _buildSectionTitle('Planetary Positions'),
+                ],
               ),
-              child: Icon(Icons.star_outline_outlined),
-            ),
-            Spacing.w(12),
-                    _buildSectionTitle('Planetary Positions'),
-          ],
+            ],
+          ),
         ),
 
         Spacing.h(12),
@@ -138,9 +153,12 @@ class PlanetsWidget extends StatelessWidget {
           Row(
             children: [
               AutoTranslateText(
-                planet['full_name']?.toString() ?? planet['name']?.toString() ?? 'Unknown',
+                planet['full_name']?.toString() ??
+                    planet['name']?.toString() ??
+                    'Unknown',
                 style: MyTextTheme.mediumBCB.copyWith(
                   color: "#6F221E".toColor(),
+                  fontSize: 14.sp,
                 ),
               ),
               Spacing.w(8),
@@ -161,7 +179,7 @@ class PlanetsWidget extends StatelessWidget {
             ],
           ),
           Spacing.h(12),
-          
+
           // Planet Details Grid
           LayoutBuilder(
             builder: (context, constraints) {
@@ -174,22 +192,61 @@ class PlanetsWidget extends StatelessWidget {
                 crossAxisSpacing: 8.w,
                 mainAxisSpacing: 8.h,
                 children: [
-                  _buildDetailItem('Zodiac', planet['zodiac']?.toString() ?? '-'),
+                  _buildDetailItem(
+                    'Zodiac',
+                    planet['zodiac']?.toString() ?? '-',
+                  ),
                   _buildDetailItem('House', planet['house']?.toString() ?? '-'),
-                  _buildDetailItem('Nakshatra', planet['nakshatra']?.toString() ?? '-'),
-                  _buildDetailItem('Nakshatra Lord', planet['nakshatra_lord']?.toString() ?? '-'),
-                  _buildDetailItem('Nakshatra Pada', planet['nakshatra_pada']?.toString() ?? '-'),
-                  _buildDetailItem('Zodiac Lord', planet['zodiac_lord']?.toString() ?? '-'),
-                  _buildDetailItem('Local Degree', _formatDegree(planet['local_degree'])),
-                  _buildDetailItem('Global Degree', _formatDegree(planet['global_degree'])),
-                  _buildDetailItem('Progress', '${_formatPercentage(planet['progress_in_percentage'])}%'),
-                  if (planet['basic_avastha'] != null && planet['basic_avastha'].toString().trim().isNotEmpty)
-                    _buildDetailItem('Basic Avastha', planet['basic_avastha']?.toString() ?? '-'),
-                  if (planet['lord_status'] != null && planet['lord_status'].toString().trim().isNotEmpty)
-                    _buildDetailItem('Lord Status', planet['lord_status']?.toString() ?? '-'),
-                  _buildDetailItem('Is Planet Set', planet['is_planet_set']?.toString() ?? '-'),
-                  if (planet['is_combust'] != null && planet['is_combust'] != '-')
-                    _buildDetailItem('Is Combust', planet['is_combust']?.toString() ?? '-'),
+                  _buildDetailItem(
+                    'Nakshatra',
+                    planet['nakshatra']?.toString() ?? '-',
+                  ),
+                  _buildDetailItem(
+                    'Nakshatra Lord',
+                    planet['nakshatra_lord']?.toString() ?? '-',
+                  ),
+                  _buildDetailItem(
+                    'Nakshatra Pada',
+                    planet['nakshatra_pada']?.toString() ?? '-',
+                  ),
+                  _buildDetailItem(
+                    'Zodiac Lord',
+                    planet['zodiac_lord']?.toString() ?? '-',
+                  ),
+                  _buildDetailItem(
+                    'Local Degree',
+                    _formatDegree(planet['local_degree']),
+                  ),
+                  _buildDetailItem(
+                    'Global Degree',
+                    _formatDegree(planet['global_degree']),
+                  ),
+                  _buildDetailItem(
+                    'Progress',
+                    '${_formatPercentage(planet['progress_in_percentage'])}%',
+                  ),
+                  if (planet['basic_avastha'] != null &&
+                      planet['basic_avastha'].toString().trim().isNotEmpty)
+                    _buildDetailItem(
+                      'Basic Avastha',
+                      planet['basic_avastha']?.toString() ?? '-',
+                    ),
+                  if (planet['lord_status'] != null &&
+                      planet['lord_status'].toString().trim().isNotEmpty)
+                    _buildDetailItem(
+                      'Lord Status',
+                      planet['lord_status']?.toString() ?? '-',
+                    ),
+                  _buildDetailItem(
+                    'Is Planet Set',
+                    planet['is_planet_set']?.toString() ?? '-',
+                  ),
+                  if (planet['is_combust'] != null &&
+                      planet['is_combust'] != '-')
+                    _buildDetailItem(
+                      'Is Combust',
+                      planet['is_combust']?.toString() ?? '-',
+                    ),
                 ],
               );
             },
@@ -203,7 +260,8 @@ class PlanetsWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(8.w),
       decoration: BoxDecoration(
-        color: "#6F221E".toColor().withOpacity(0.05),
+        color: "#FF8C42".toColor().withOpacity(0.05),
+        border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Column(
@@ -235,23 +293,40 @@ class PlanetsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Container(
-              height: 50.h,
-              width: 50.w,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-                  Color(0xFFFF8C42), Color(0xFFE63946)
-                ]),
-                borderRadius: BorderRadius.circular(12.r)
+        Container(
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            color: "#FFFFFF".toColor(),
+            border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    height: 50.h,
+                    width: 50.w,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                      ),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Icon(
+                      Icons.star_outline_outlined,
+                      color: "#FFFFFF".toColor(),
+                      size: 24.w,
+                    ),
+                  ),
+                  Spacing.w(12),
+                  _buildSectionTitle('Lucky Things'),
+                ],
               ),
-              child: Icon(Icons.star_outline_outlined),
-            ),
-            Spacing.w(12),
-                     _buildSectionTitle('Lucky Things'),
-          ],
+            ],
+          ),
         ),
+
         // _buildSectionTitle('Lucky Things'),
         Spacing.h(12),
         Container(
@@ -313,9 +388,7 @@ class PlanetsWidget extends StatelessWidget {
           Expanded(
             child: AutoTranslateText(
               displayValue,
-              style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor(),
-              ),
+              style: MyTextTheme.smallBCN.copyWith(color: "#6F221E".toColor()),
             ),
           ),
         ],
@@ -327,24 +400,40 @@ class PlanetsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Container(
-              height: 50.h,
-              width: 50.w,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-                  Color(0xFFFF8C42), Color(0xFFE63946)
-                ]),
-                borderRadius: BorderRadius.circular(12.r)
+        Container(
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            color: "#FFFFFF".toColor(),
+            border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    height: 50.h,
+                    width: 50.w,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                      ),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Icon(
+                      Icons.info_outline,
+                      color: "#FFFFFF".toColor(),
+                      size: 24.w,
+                    ),
+                  ),
+                  Spacing.w(12),
+                  _buildSectionTitle('Birth Details'),
+                ],
               ),
-              child: Icon(Icons.info_outline),
-            ),
-            Spacing.w(12),
-                     _buildSectionTitle('Birth Details'),
-          ],
+            ],
+          ),
         ),
-        
+
         Spacing.h(12),
         Container(
           padding: EdgeInsets.all(16.w),
@@ -367,7 +456,10 @@ class PlanetsWidget extends StatelessWidget {
               if (data['nakshatra'] != null)
                 _buildDetailRow('Nakshatra', data['nakshatra'].toString()),
               if (data['nakshatra_pada'] != null)
-                _buildDetailRow('Nakshatra Pada', data['nakshatra_pada'].toString()),
+                _buildDetailRow(
+                  'Nakshatra Pada',
+                  data['nakshatra_pada'].toString(),
+                ),
             ],
           ),
         ),
@@ -379,24 +471,40 @@ class PlanetsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Container(
-              height: 50.h,
-              width: 50.w,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-                  Color(0xFFFF8C42), Color(0xFFE63946)
-                ]),
-                borderRadius: BorderRadius.circular(12.r)
+        Container(
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            color: "#FFFFFF".toColor(),
+            border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    height: 50.h,
+                    width: 50.w,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                      ),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Icon(
+                      Icons.star_outline_outlined,
+                      color: "#FFFFFF".toColor(),
+                      size: 24.w,
+                    ),
+                  ),
+                  Spacing.w(12),
+                  _buildSectionTitle('Panchang'),
+                ],
               ),
-              child: Icon(Icons.star_outline_outlined),
-            ),
-            Spacing.w(12),
-                     _buildSectionTitle('Panchang'),
-          ],
+            ],
+          ),
         ),
-       
+
         Spacing.h(12),
         Container(
           padding: EdgeInsets.all(16.w),
@@ -415,15 +523,24 @@ class PlanetsWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (panchang['day_of_birth'] != null)
-                _buildDetailRow('Day of Birth', panchang['day_of_birth'].toString()),
+                _buildDetailRow(
+                  'Day of Birth',
+                  panchang['day_of_birth'].toString(),
+                ),
               if (panchang['day_lord'] != null)
                 _buildDetailRow('Day Lord', panchang['day_lord'].toString()),
               if (panchang['hora_lord'] != null)
                 _buildDetailRow('Hora Lord', panchang['hora_lord'].toString()),
               if (panchang['sunrise_at_birth'] != null)
-                _buildDetailRow('Sunrise at Birth', panchang['sunrise_at_birth'].toString()),
+                _buildDetailRow(
+                  'Sunrise at Birth',
+                  panchang['sunrise_at_birth'].toString(),
+                ),
               if (panchang['sunset_at_birth'] != null)
-                _buildDetailRow('Sunset at Birth', panchang['sunset_at_birth'].toString()),
+                _buildDetailRow(
+                  'Sunset at Birth',
+                  panchang['sunset_at_birth'].toString(),
+                ),
               if (panchang['karana'] != null)
                 _buildDetailRow('Karana', panchang['karana'].toString()),
               if (panchang['yoga'] != null)
@@ -433,7 +550,10 @@ class PlanetsWidget extends StatelessWidget {
               if (panchang['ayanamsa'] != null)
                 _buildDetailRow('Ayanamsa', panchang['ayanamsa'].toString()),
               if (panchang['ayanamsa_name'] != null)
-                _buildDetailRow('Ayanamsa Name', panchang['ayanamsa_name'].toString()),
+                _buildDetailRow(
+                  'Ayanamsa Name',
+                  panchang['ayanamsa_name'].toString(),
+                ),
             ],
           ),
         ),
@@ -445,24 +565,40 @@ class PlanetsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Container(
-              height: 50.h,
-              width: 50.w,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-                  Color(0xFFFF8C42), Color(0xFFE63946)
-                ]),
-                borderRadius: BorderRadius.circular(12.r)
+        Container(
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            color: "#FFFFFF".toColor(),
+            border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    height: 50.h,
+                    width: 50.w,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                      ),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Icon(
+                      Icons.description,
+                      color: "#FFFFFF".toColor(),
+                      size: 24.w,
+                    ),
+                  ),
+                  Spacing.w(12),
+                  _buildSectionTitle('Ghatka Chakra'),
+                ],
               ),
-              child: Icon(Icons.description),
-            ),
-            Spacing.w(12),
-                     _buildSectionTitle('Ghatka Chakra'),
-          ],
+            ],
+          ),
         ),
-        
+
         Spacing.h(12),
         Container(
           padding: EdgeInsets.all(16.w),
@@ -497,15 +633,24 @@ class PlanetsWidget extends StatelessWidget {
               if (ghatkaChakra['day'] != null)
                 _buildDetailRow('Day', ghatkaChakra['day'].toString()),
               if (ghatkaChakra['nakshatra'] != null)
-                _buildDetailRow('Nakshatra', ghatkaChakra['nakshatra'].toString()),
+                _buildDetailRow(
+                  'Nakshatra',
+                  ghatkaChakra['nakshatra'].toString(),
+                ),
               if (ghatkaChakra['tatva'] != null)
                 _buildDetailRow('Tatva', ghatkaChakra['tatva'].toString()),
               if (ghatkaChakra['lord'] != null)
                 _buildDetailRow('Lord', ghatkaChakra['lord'].toString()),
               if (ghatkaChakra['same_sex_lagna'] != null)
-                _buildDetailRow('Same Sex Lagna', ghatkaChakra['same_sex_lagna'].toString()),
+                _buildDetailRow(
+                  'Same Sex Lagna',
+                  ghatkaChakra['same_sex_lagna'].toString(),
+                ),
               if (ghatkaChakra['opposite_sex_lagna'] != null)
-                _buildDetailRow('Opposite Sex Lagna', ghatkaChakra['opposite_sex_lagna'].toString()),
+                _buildDetailRow(
+                  'Opposite Sex Lagna',
+                  ghatkaChakra['opposite_sex_lagna'].toString(),
+                ),
             ],
           ),
         ),
@@ -517,24 +662,40 @@ class PlanetsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Container(
-              height: 50.h,
-              width: 50.w,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-                  Color(0xFFFF8C42), Color(0xFFE63946)
-                ]),
-                borderRadius: BorderRadius.circular(12.r)
+        Container(
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            color: "#FFFFFF".toColor(),
+            border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    height: 50.h,
+                    width: 50.w,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                      ),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Icon(
+                      Icons.star_outline_outlined,
+                      color: "#FFFFFF".toColor(),
+                      size: 24.w,
+                    ),
+                  ),
+                  Spacing.w(12),
+                  _buildSectionTitle('Dasa'),
+                ],
               ),
-              child: Icon(Icons.star_outline_outlined),
-            ),
-            Spacing.w(12),
-                     _buildSectionTitle('Dasa'),
-          ],
+            ],
+          ),
         ),
-        
+
         Spacing.h(12),
         Container(
           padding: EdgeInsets.all(16.w),
@@ -555,11 +716,20 @@ class PlanetsWidget extends StatelessWidget {
               if (data['birth_dasa'] != null)
                 _buildDetailRow('Birth Dasa', data['birth_dasa'].toString()),
               if (data['current_dasa'] != null)
-                _buildDetailRow('Current Dasa', data['current_dasa'].toString()),
+                _buildDetailRow(
+                  'Current Dasa',
+                  data['current_dasa'].toString(),
+                ),
               if (data['birth_dasa_time'] != null)
-                _buildDetailRow('Birth Dasa Time', data['birth_dasa_time'].toString()),
+                _buildDetailRow(
+                  'Birth Dasa Time',
+                  data['birth_dasa_time'].toString(),
+                ),
               if (data['current_dasa_time'] != null)
-                _buildDetailRow('Current Dasa Time', data['current_dasa_time'].toString()),
+                _buildDetailRow(
+                  'Current Dasa Time',
+                  data['current_dasa_time'].toString(),
+                ),
             ],
           ),
         ),
@@ -573,6 +743,7 @@ class PlanetsWidget extends StatelessWidget {
       style: MyTextTheme.mediumBCB.copyWith(
         color: "#6F221E".toColor(),
         fontWeight: FontWeight.bold,
+        fontSize: 16.sp,
       ),
     );
   }
@@ -596,9 +767,7 @@ class PlanetsWidget extends StatelessWidget {
           Expanded(
             child: AutoTranslateText(
               value,
-              style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor(),
-              ),
+              style: MyTextTheme.smallBCN.copyWith(color: "#6F221E".toColor()),
             ),
           ),
         ],
@@ -622,4 +791,3 @@ class PlanetsWidget extends StatelessWidget {
     return percentage.toString();
   }
 }
-

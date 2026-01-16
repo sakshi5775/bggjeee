@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
 class NumerologyFormView extends BasePage<NumerologyFormController> {
@@ -19,7 +20,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: "#FEF6C3".toColor(),
       body: SafeArea(
         child: Column(
           children: [
@@ -48,16 +49,20 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
   }
 
   Widget _buildHeader() {
-    final walletController = Get.put(WalletController());
-    
     return AstrologyHeaderWidget(
-      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 24.h, bottom: 20.h),
+      padding: EdgeInsets.only(
+        left: 16.w,
+        right: 16.w,
+        top: 24.h,
+        bottom: 20.h,
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Spacing.h(8),
+          // Spacing.h(8),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            spacing: 20.w,
             children: [
               GestureDetector(
                 onTap: () => Get.back(),
@@ -67,45 +72,51 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
                   size: 24.w,
                 ),
               ),
-              Expanded(
-                child: AutoTranslateText(
-                  'Numerology',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: const Color(0xFFDFB343),
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
-                  textAlign: TextAlign.center,
-                ),
+              AutoTranslateText(
+                'Numerology',
+                style: MyTextTheme.largeBCB
+                    .copyWith(
+                      color: const Color(0xFFDFB343),
+                      fontWeight: FontWeight.bold,
+                    )
+                    .merge(AppTypography.h2),
+                textAlign: TextAlign.center,
               ),
-              Obx(() => GestureDetector(
-                onTap: () => Get.toNamed('/wallet'),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                  margin: EdgeInsets.only(right: 4.w),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFDFB343).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.account_balance_wallet,
-                        color: const Color(0xFFDFB343),
-                        size: 18.w,
-                      ),
-                      Spacing.w(4),
-                      AutoTranslateText(
-                        '₹${walletController.walletBalance.value.toStringAsFixed(0)}',
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: const Color(0xFFDFB343),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )),
+
+              // Obx(
+              //   () => GestureDetector(
+              //     onTap: () => Get.toNamed('/wallet'),
+              //     child: Container(
+              //       padding: EdgeInsets.symmetric(
+              //         horizontal: 8.w,
+              //         vertical: 4.h,
+              //       ),
+              //       margin: EdgeInsets.only(right: 4.w),
+              //       decoration: BoxDecoration(
+              //         color: const Color(0xFFDFB343).withOpacity(0.1),
+              //         borderRadius: BorderRadius.circular(8.r),
+              //       ),
+              //       child: Row(
+              //         mainAxisSize: MainAxisSize.min,
+              //         children: [
+              //           Icon(
+              //             Icons.account_balance_wallet,
+              //             color: const Color(0xFFDFB343),
+              //             size: 18.w,
+              //           ),
+              //           Spacing.w(4),
+              //           AutoTranslateText(
+              //             '₹${walletController.walletBalance.value.toStringAsFixed(0)}',
+              //             style: MyTextTheme.smallBCB.copyWith(
+              //               color: const Color(0xFFDFB343),
+              //               fontWeight: FontWeight.w600,
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ],
@@ -166,7 +177,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
       children: [
         Row(
           children: [
-            Icon(Icons.person, size: 18.w, color: "#DFB343".toColor()),
+            Icon(Icons.person, size: 18.w, color: "#6F221E".toColor()),
             Spacing.w(8),
             AutoTranslateText(
               'Name (Optional)',
@@ -192,7 +203,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
-              borderSide: BorderSide(color: "#DFB343".toColor(), width: 2),
+              borderSide: BorderSide(color: "#6F221E".toColor(), width: 2),
             ),
             filled: true,
             fillColor: Colors.grey.withOpacity(0.05),
@@ -208,7 +219,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
       children: [
         Row(
           children: [
-            Icon(Icons.phone, size: 18.w, color: "#DFB343".toColor()),
+            Icon(Icons.phone, size: 18.w, color: "#6F221E".toColor()),
             Spacing.w(8),
             AutoTranslateText(
               'Phone Number (Optional)',
@@ -235,7 +246,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
-              borderSide: BorderSide(color: "#DFB343".toColor(), width: 2),
+              borderSide: BorderSide(color: "#6F221E".toColor(), width: 2),
             ),
             filled: true,
             fillColor: Colors.grey.withOpacity(0.05),
@@ -251,7 +262,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
       children: [
         Row(
           children: [
-            Icon(Icons.calendar_today, size: 18.w, color: "#DFB343".toColor()),
+            Icon(Icons.calendar_today, size: 18.w, color: "#6F221E".toColor()),
             Spacing.w(8),
             AutoTranslateText(
               'Date of Birth *',
@@ -263,42 +274,46 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
           ],
         ),
         Spacing.h(8),
-        Obx(() => GestureDetector(
-          onTap: () => _showDatePicker(),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-            decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(8.r),
-              border: Border.all(
-                color: controller.selectedDate.value != null
-                    ? "#DFB343".toColor()
-                    : Colors.grey.withOpacity(0.3),
-                width: controller.selectedDate.value != null ? 2 : 1,
+        Obx(
+          () => GestureDetector(
+            onTap: () => _showDatePicker(),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+              decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(
+                  color: controller.selectedDate.value != null
+                      ? "#6F221E".toColor()
+                      : Colors.grey.withOpacity(0.3),
+                  width: controller.selectedDate.value != null ? 2 : 1,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AutoTranslateText(
+                    controller.selectedDate.value != null
+                        ? DateFormat(
+                            'dd/MM/yyyy',
+                          ).format(controller.selectedDate.value!)
+                        : 'Select date of birth',
+                    style: MyTextTheme.mediumBCN.copyWith(
+                      color: controller.selectedDate.value != null
+                          ? "#6F221E".toColor()
+                          : Colors.grey,
+                    ),
+                  ),
+                  Icon(
+                    Icons.calendar_today,
+                    size: 20.w,
+                    color: "#6F221E".toColor(),
+                  ),
+                ],
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                AutoTranslateText(
-                  controller.selectedDate.value != null
-                      ? DateFormat('dd/MM/yyyy').format(controller.selectedDate.value!)
-                      : 'Select date of birth',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: controller.selectedDate.value != null
-                        ? "#6F221E".toColor()
-                        : Colors.grey,
-                  ),
-                ),
-                Icon(
-                  Icons.calendar_today,
-                  size: 20.w,
-                  color: "#DFB343".toColor(),
-                ),
-              ],
-            ),
           ),
-        )),
+        ),
       ],
     );
   }
@@ -309,7 +324,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
       children: [
         Row(
           children: [
-            Icon(Icons.person_outline, size: 18.w, color: "#DFB343".toColor()),
+            Icon(Icons.person_outline, size: 18.w, color: "#6F221E".toColor()),
             Spacing.w(8),
             AutoTranslateText(
               'Gender *',
@@ -321,44 +336,51 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
           ],
         ),
         Spacing.h(8),
-        Obx(() => Row(
-          children: controller.genders.map((gender) {
-            final isSelected = controller.selectedGender.value == gender['value'];
-            return Expanded(
-              child: GestureDetector(
-                onTap: () => controller.selectGender(gender['value']!),
-                child: Container(
-                  margin: EdgeInsets.only(
-                    right: gender != controller.genders.last ? 8.w : 0,
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 12.h),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? "#DFB343".toColor().withOpacity(0.2)
-                        : Colors.grey.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(
+        Obx(
+          () => Row(
+            children: controller.genders.map((gender) {
+              final isSelected =
+                  controller.selectedGender.value == gender['value'];
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () => controller.selectGender(gender['value']!),
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      right: gender != controller.genders.last ? 8.w : 0,
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    decoration: BoxDecoration(
                       color: isSelected
-                          ? "#DFB343".toColor()
-                          : Colors.grey.withOpacity(0.3),
-                      width: isSelected ? 2 : 1,
+                          ? "#6F221E".toColor().withOpacity(0.2)
+                          : Colors.grey.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(
+                        color: isSelected
+                            ? "#6F221E".toColor()
+                            : Colors.grey.withOpacity(0.3),
+                        width: isSelected ? 2 : 1,
+                      ),
+                    ),
+                    child: AutoTranslateText(
+                      gender['label']!,
+                      textAlign: TextAlign.center,
+                      style: MyTextTheme.mediumBCB
+                          .copyWith(
+                            color: isSelected
+                                ? "#6F221E".toColor()
+                                : Colors.grey,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                          )
+                          .merge(AppTypography.body2),
                     ),
                   ),
-                  child: AutoTranslateText(
-                    gender['label']!,
-                    textAlign: TextAlign.center,
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: isSelected
-                          ? "#6F221E".toColor()
-                          : Colors.grey,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                    ).merge(AppTypography.body2),
-                  ),
                 ),
-              ),
-            );
-          }).toList(),
-        )),
+              );
+            }).toList(),
+          ),
+        ),
       ],
     );
   }
@@ -369,7 +391,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
       children: [
         Row(
           children: [
-            Icon(Icons.language, size: 18.w, color: "#DFB343".toColor()),
+            Icon(Icons.language, size: 18.w, color: "#6F221E".toColor()),
             Spacing.w(8),
             AutoTranslateText(
               'Language *',
@@ -381,39 +403,41 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
           ],
         ),
         Spacing.h(8),
-        Obx(() => DropdownButtonFormField<String>(
-          value: controller.selectedLanguage.value.isEmpty
-              ? null
-              : controller.selectedLanguage.value,
-          decoration: InputDecoration(
-            hintText: 'Select language',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.r),
-              borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+        Obx(
+          () => DropdownButtonFormField<String>(
+            value: controller.selectedLanguage.value.isEmpty
+                ? null
+                : controller.selectedLanguage.value,
+            decoration: InputDecoration(
+              hintText: 'Select language',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.r),
+                borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.r),
+                borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.r),
+                borderSide: BorderSide(color: "#6F221E".toColor(), width: 2),
+              ),
+              filled: true,
+              fillColor: Colors.grey.withOpacity(0.05),
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.r),
-              borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.r),
-              borderSide: BorderSide(color: "#DFB343".toColor(), width: 2),
-            ),
-            filled: true,
-            fillColor: Colors.grey.withOpacity(0.05),
+            items: controller.languages.entries.map((entry) {
+              return DropdownMenuItem(
+                value: entry.key,
+                child: AutoTranslateText(entry.value),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                controller.selectLanguage(value);
+              }
+            },
           ),
-          items: controller.languages.entries.map((entry) {
-            return DropdownMenuItem(
-              value: entry.key,
-              child: AutoTranslateText(entry.value),
-            );
-          }).toList(),
-          onChanged: (value) {
-            if (value != null) {
-              controller.selectLanguage(value);
-            }
-          },
-        )),
+        ),
       ],
     );
   }
@@ -421,62 +445,64 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
   Widget _buildSubmitButton() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Obx(() => Container(
-        width: double.infinity,
-        height: 50.h,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              "#DFB343".toColor(),
-              "#DFB343".toColor().withOpacity(0.8),
+      child: Obx(
+        () => Container(
+          width: double.infinity,
+          height: 50.h,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                "#F38B3B".toColor(),
+                "#DD2914".toColor().withOpacity(0.8),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12.r),
+            boxShadow: [
+              BoxShadow(
+                color: "#DFB343".toColor().withOpacity(0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
             ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(12.r),
-          boxShadow: [
-            BoxShadow(
-              color: "#DFB343".toColor().withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+          child: ElevatedButton(
+            onPressed: controller.isLoading.value
+                ? null
+                : () => controller.submitForm(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
             ),
-          ],
-        ),
-        child: ElevatedButton(
-          onPressed: controller.isLoading.value
-              ? null
-              : () => controller.submitForm(),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-          ),
-          child: controller.isLoading.value
-              ? CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AutoTranslateText(
-                      'Continue to Features',
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+            child: controller.isLoading.value
+                ? CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AutoTranslateText(
+                        'Continue to Features',
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    Spacing.w(8),
-                    Icon(
-                      Icons.arrow_forward,
-                      color: Colors.white,
-                      size: 20.w,
-                    ),
-                  ],
-                ),
+                      Spacing.w(8),
+                      Icon(
+                        Icons.arrow_forward,
+                        color: Colors.white,
+                        size: 20.w,
+                      ),
+                    ],
+                  ),
+          ),
         ),
-      )),
+      ),
     );
   }
 
@@ -504,4 +530,3 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
     }
   }
 }
-

@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:flutter/material.dart';
@@ -180,7 +181,7 @@ class _RamalShastraCastingCardsViewState extends State<RamalShastraCastingCardsV
               borderRadius: BorderRadius.circular(8.r),
               border: Border.all(
                 color: index == currentIndex 
-                    ? '#FF6B35'.toColor() 
+                    ? AppColors.deepOrange 
                     : Colors.transparent,
                 width: 2,
               ),

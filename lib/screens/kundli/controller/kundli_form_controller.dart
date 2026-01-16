@@ -17,6 +17,9 @@ class KundliFormController extends BaseController {
   final KundliService _kundliService = KundliService();
   final UserProfileService _userProfileService = UserProfileService();
 
+  // Target route to navigate to after form submission (if provided)
+  String? targetRoute;
+
   // Form controllers
   final nameController = TextEditingController();
   final dateController = TextEditingController();
@@ -62,6 +65,11 @@ class KundliFormController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    // Load target route from arguments if provided
+    final arguments = Get.arguments as Map<String, dynamic>?;
+    if (arguments != null && arguments['targetRoute'] != null) {
+      targetRoute = arguments['targetRoute'] as String;
+    }
     _initializeForm();
     _loadUserProfileName();
   }
@@ -500,27 +508,37 @@ class KundliFormController extends BaseController {
       );
 
       if (data != null) {
-        // Navigate to result page with data
-        // Note: name and gender are included in formData but NOT sent to API
-        Get.toNamed(AppRoutes.kundliResult, arguments: {
-          'kundliData': data,
-          'formData': {
-            'name': nameController.text.trim().isNotEmpty ? nameController.text.trim() : null,
-            'gender': selectedGender.value,
-            'date': dateController.text,
-            'time': timeController.text,
-            'latitude': latitude,
-            'longitude': longitude,
-            'timezone': tz,
-            'language': selectedLanguage.value,
-            'style': selectedStyle.value,
-            'coloredPlanets': coloredPlanets.value,
-            'color': colorHex,
-            'selectedLocation': selectedLocation.value,
-            'place': selectedLocation.value,
-            'city': selectedLocation.value,
-          },
-        });
+        // Prepare formData to pass to next screen
+        final formDataMap = {
+          'name': nameController.text.trim().isNotEmpty ? nameController.text.trim() : null,
+          'gender': selectedGender.value,
+          'date': dateController.text,
+          'time': timeController.text,
+          'latitude': latitude,
+          'longitude': longitude,
+          'timezone': tz,
+          'language': selectedLanguage.value,
+          'style': selectedStyle.value,
+          'coloredPlanets': coloredPlanets.value,
+          'color': colorHex,
+          'selectedLocation': selectedLocation.value,
+          'place': selectedLocation.value,
+          'city': selectedLocation.value,
+        };
+
+        // If targetRoute is provided, navigate to that route instead of kundliResult
+        if (targetRoute != null && targetRoute!.isNotEmpty) {
+          Get.toNamed(targetRoute!, arguments: {
+            'formData': formDataMap,
+          });
+        } else {
+          // Navigate to result page with data (default behavior)
+          // Note: name and gender are included in formData but NOT sent to API
+          Get.toNamed(AppRoutes.kundliResult, arguments: {
+            'kundliData': data,
+            'formData': formDataMap,
+          });
+        }
       } else {
         showErrorMessage(title: 'Error', message: 'Failed to generate kundli');
       }

@@ -20,6 +20,10 @@ import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/views/persona_voice_call_view.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/views/persona_voice_history_view.dart';
 import 'package:astrobharataiuser/screens/login/login/view/login_view.dart';
+import 'package:astrobharataiuser/screens/match_making/match_making/view/match_making_form_view.dart';
+import 'package:astrobharataiuser/screens/match_making/match_making/view/match_making_full_kundli_view.dart';
+import 'package:astrobharataiuser/screens/match_making/match_making/view/match_making_gif_view.dart';
+import 'package:astrobharataiuser/screens/match_making/match_making/view/match_making_result_view.dart';
 import 'package:astrobharataiuser/screens/prashna_kundali/binding/prashna_kundali_binding.dart';
 import 'package:astrobharataiuser/screens/prashna_kundali/view/prashna_kundali_history_view.dart';
 import 'package:astrobharataiuser/screens/prashna_kundali/view/prashna_kundali_results_view.dart';
@@ -210,10 +214,7 @@ import 'package:astrobharataiuser/screens/carrot_astrology/view/carrot_astrology
 import 'package:astrobharataiuser/screens/carrot_astrology/view/carrot_astrology_results_view.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/view/carrot_astrology_history_view.dart';
 import 'package:astrobharataiuser/screens/live_stream/widgets/stream_reports_view.dart';
-import 'package:astrobharataiuser/screens/match_making/view/match_making_gif_view.dart';
-import 'package:astrobharataiuser/screens/match_making/view/match_making_form_view.dart';
-import 'package:astrobharataiuser/screens/match_making/view/match_making_result_view.dart';
-import 'package:astrobharataiuser/screens/match_making/view/match_making_full_kundli_view.dart';
+
 import 'package:astrobharataiuser/binding/match_making_binding/match_making_form_binding.dart';
 import 'package:astrobharataiuser/screens/ai_guider/view/ai_guider_view.dart';
 import 'package:astrobharataiuser/binding/ai_guider_binding/ai_guider_binding.dart';

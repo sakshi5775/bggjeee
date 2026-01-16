@@ -164,7 +164,7 @@ class FaceReadingResultsView extends StatelessWidget {
             height: 100.w,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: '#EA632B'.toColor(), width: 2),
+              border: Border.all(color: AppColors.deepOrange, width: 2),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
@@ -184,7 +184,7 @@ class FaceReadingResultsView extends StatelessWidget {
                         child: Icon(
                           Icons.person,
                           size: 50.w,
-                          color: '#EA632B'.toColor(),
+                          color: AppColors.deepOrange,
                         ),
                       ),
                     )
@@ -193,7 +193,7 @@ class FaceReadingResultsView extends StatelessWidget {
                       child: Icon(
                         Icons.person,
                         size: 50.w,
-                        color: '#EA632B'.toColor(),
+                        color: AppColors.deepOrange,
                       ),
                     ),
             ),
@@ -214,12 +214,12 @@ class FaceReadingResultsView extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(Icons.star, color: '#EA632B'.toColor(), size: 32.w),
+                    Icon(Icons.star, color: AppColors.deepOrange, size: 32.w),
                     Spacing.w(4),
                     AutoTranslateText(
                       '$score/100',
                       style: MyTextTheme.largeBCB.copyWith(
-                        color: '#EA632B'.toColor(),
+                        color: AppColors.deepOrange,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -233,7 +233,7 @@ class FaceReadingResultsView extends StatelessWidget {
                     value: score / 100,
                     backgroundColor: '#E8E8E8'.toColor(),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      '#EA632B'.toColor(),
+                      AppColors.deepOrange,
                     ),
                     minHeight: 10.h,
                   ),
@@ -249,12 +249,12 @@ class FaceReadingResultsView extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: '#FFF2E8'.toColor(),
                         borderRadius: BorderRadius.circular(25.r),
-                        border: Border.all(color: '#EA632B'.toColor().withOpacity(0.2), width: 1),
+                        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2), width: 1),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.star, size: 16.w, color: '#EA632B'.toColor()),
+                          Icon(Icons.star, size: 16.w, color: AppColors.deepOrange),
                           Spacing.w(6),
                           AutoTranslateText(
                             tag,
@@ -287,7 +287,7 @@ class FaceReadingResultsView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.star, color: '#EA632B'.toColor(), size: 20.w),
+              Icon(Icons.star, color: AppColors.deepOrange, size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Detailed Analysis',
@@ -393,7 +393,7 @@ class FaceReadingResultsView extends StatelessWidget {
                 color: '#FFF2E8'.toColor(),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: '#EA632B'.toColor(), size: 24.w),
+              child: Icon(icon, color: AppColors.deepOrange, size: 24.w),
             ),
             Spacing.w(16),
             Expanded(
@@ -445,11 +445,11 @@ class FaceReadingResultsView extends StatelessWidget {
                 AutoTranslateText(
                   '${category.score ?? 0}',
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: '#EA632B'.toColor(),
+                    color: AppColors.deepOrange,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios, size: 16.w, color: '#EA632B'.toColor()),
+                Icon(Icons.arrow_forward_ios, size: 16.w, color: AppColors.deepOrange),
               ],
             ),
           ],
@@ -468,7 +468,7 @@ class FaceReadingResultsView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.visibility, color: '#EA632B'.toColor(), size: 20.w),
+              Icon(Icons.visibility, color: AppColors.deepOrange, size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Facial Features',
@@ -604,18 +604,18 @@ class FaceReadingResultsView extends StatelessWidget {
                     ),
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios, size: 14.w, color: '#EA632B'.toColor()),
+                Icon(Icons.arrow_forward_ios, size: 14.w, color: AppColors.deepOrange),
               ],
             ),
             Spacing.h(4),
             Row(
               children: [
-                Icon(Icons.star, size: 14.w, color: '#EA632B'.toColor()),
+                Icon(Icons.star, size: 14.w, color: AppColors.deepOrange),
                 Spacing.w(4),
                 AutoTranslateText(
                   rating,
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: '#EA632B'.toColor(),
+                    color: AppColors.deepOrange,
                   ),
                 ),
               ],
@@ -640,15 +640,11 @@ class FaceReadingResultsView extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#EA632B'.toColor(), '#FF6B35'.toColor()],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: AppColors.orangeGradient,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: '#EA632B'.toColor().withOpacity(0.3),
+            color: AppColors.deepOrange.withOpacity(0.3),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -680,7 +676,7 @@ class FaceReadingResultsView extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
-              foregroundColor: '#EA632B'.toColor(),
+              foregroundColor: AppColors.deepOrange,
               padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25.r),
@@ -690,7 +686,7 @@ class FaceReadingResultsView extends StatelessWidget {
             child: AutoTranslateText(
               'Chat With Expert',
               style: MyTextTheme.mediumBCB.copyWith(
-                color: '#EA632B'.toColor(),
+                color: AppColors.deepOrange,
                 fontWeight: FontWeight.bold,
               ),
             ),

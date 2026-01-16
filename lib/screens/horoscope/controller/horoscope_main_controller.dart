@@ -30,6 +30,12 @@ class HoroscopeMainController extends BaseController {
   // Selected tab index
   final selectedTabIndex = 0.obs;
   
+  // PageController for swipeable tabs
+  late final PageController pageController;
+  
+  // ScrollController for tab slider
+  final ScrollController tabScrollController = ScrollController();
+  
   // Daily prediction day selection (today, tomorrow, yesterday)
   final selectedDay = 'today'.obs;
   final List<String> dayOptions = ['yesterday', 'today', 'tomorrow'];
@@ -84,6 +90,7 @@ class HoroscopeMainController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    pageController = PageController(initialPage: 0);
     final arguments = Get.arguments as Map<String, dynamic>?;
     if (arguments != null) {
       selectedSign.value = arguments['selectedSign'] as String?;
@@ -133,6 +140,8 @@ class HoroscopeMainController extends BaseController {
 
   @override
   void onClose() {
+    pageController.dispose();
+    tabScrollController.dispose();
     dateController.dispose();
     timeController.dispose();
     placeController.dispose();
@@ -205,7 +214,35 @@ class HoroscopeMainController extends BaseController {
 
   void onTabChanged(int index) {
     selectedTabIndex.value = index;
+    pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+    _scrollToTab(index);
     _loadTabData(index);
+  }
+  
+  void onPageChanged(int index) {
+    selectedTabIndex.value = index;
+    _scrollToTab(index);
+    _loadTabData(index);
+  }
+  
+  void _scrollToTab(int index) {
+    if (!tabScrollController.hasClients) return;
+    
+    // Calculate approximate position for the tab
+    // Each tab is approximately 100-120 pixels wide with margins
+    final double tabWidth = 120.0;
+    final double screenWidth = tabScrollController.position.viewportDimension;
+    final double targetOffset = (index * tabWidth) - (screenWidth / 2) + (tabWidth / 2);
+    
+    tabScrollController.animateTo(
+      targetOffset.clamp(0.0, tabScrollController.position.maxScrollExtent),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   void _loadTabData(int index) {

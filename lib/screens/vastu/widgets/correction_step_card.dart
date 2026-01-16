@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 
 /// Correction Step Card
@@ -57,7 +58,7 @@ class CorrectionStepCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: isCompleted
                   ? '#4CAF50'.toColor()
-                  : '#FF6B35'.toColor(),
+                  : AppColors.deepOrange,
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -85,7 +86,7 @@ class CorrectionStepCard extends StatelessWidget {
                   children: [
                     Icon(
                       icon,
-                      color: '#FF6B35'.toColor(),
+                      color: AppColors.deepOrange,
                       size: 20.w,
                     ),
                     Spacing.w(8),

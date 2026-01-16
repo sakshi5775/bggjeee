@@ -210,7 +210,7 @@ class PalmReadingAnalysisView extends StatelessWidget {
             ),
             Spacing.w(12),
             Expanded(
-              child: _buildLineButton('Head line', Colors.orange),
+              child: _buildLineButton('Head line', AppColors.deepOrange),
             ),
           ],
         ),
@@ -390,7 +390,7 @@ class HandDiagramPainter extends CustomPainter {
     canvas.drawPath(lifeLine, linePaint);
     
     // Head line (horizontal middle)
-    linePaint.color = Colors.orange;
+    linePaint.color = AppColors.deepOrange;
     canvas.drawLine(
       Offset(size.width * 0.2, size.height * 0.4),
       Offset(size.width * 0.8, size.height * 0.4),

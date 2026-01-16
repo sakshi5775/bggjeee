@@ -10,8 +10,6 @@ import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/AnimatedChakra.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/astrology_tool_widget.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/widgets/our_services_section.dart'
-    as os;
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -19,6 +17,8 @@ import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/data_model/blog_model.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
+import 'package:astrobharataiuser/data_model/category_model.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/video_player_widget.dart';
 import 'package:astrobharataiuser/widgets/language_selector.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -26,14 +26,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gif_view/gif_view.dart';
-import 'package:video_player/video_player.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
-import '../../../services/chat_call_precheck_service.dart';
 import '../../../utils/app_colors.dart';
-import '../../../utils/profile_check_helper.dart';
-import '../../ai_chat/widgets/chat_profile_dialog.dart';
 import '../widgets/astrology_report_widget.dart';
 import '../widgets/chat_video_live_astrologer_widget.dart';
 import '../widgets/our_services_section.dart';
@@ -241,7 +237,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           borderRadius: BorderRadius.circular(100.r),
           border: Border.all(
             color: controller.isListening.value
-                ? "#FF6B35".toColor()
+                ? "#F38B3B".toColor()
                 : "#FFFFFF".toColor().withOpacity(0.2),
             width: controller.isListening.value ? 2.0 : 1.1,
           ),
@@ -350,7 +346,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       padding: EdgeInsets.all(8.w),
                       decoration: BoxDecoration(
                         color: controller.isListening.value
-                            ? "#FF6B35".toColor().withOpacity(0.1)
+                            ? "#F38B3B".toColor().withOpacity(0.1)
                             : Colors.transparent,
                         shape: BoxShape.circle,
                       ),
@@ -360,7 +356,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         height: 20.h,
                         colorFilter: ColorFilter.mode(
                           controller.isListening.value
-                              ? "#FF6B35".toColor()
+                              ? "#F38B3B".toColor()
                               : "#3D0C11".toColor(),
                           BlendMode.srcIn,
                         ),
@@ -1171,7 +1167,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         color: "#FFFFFF".toColor(),
                         borderRadius: BorderRadius.circular(25.r),
                         border: Border.all(
-                          color: "#FF8C42".toColor().withOpacity(0.5),
+                          color: "#F38B3B".toColor().withOpacity(0.5),
                           width: 1.5,
                         ),
                       ),
@@ -1194,7 +1190,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                   ' SEARCH',
                                   style: MyTextTheme.mediumBCB
                                       .copyWith(
-                                        color: "#FF8C42".toColor(), // Orange
+                                        color: "#F38B3B".toColor(), // Orange
                                         fontWeight: FontWeight.w700,
                                         fontFamily: 'Baloo',
                                       )
@@ -1815,65 +1811,115 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   }
 
   Widget _buildAstroRemedySection() {
-    return Padding(
-      padding: AppPaddings.symmetric(h: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Obx(() {
+      if (controller.isLoadingRemedyCategories.value &&
+          controller.remedyCategories.isEmpty) {
+        return Padding(
+          padding: AppPaddings.symmetric(h: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AutoTranslateText(
-                'ASTRO REMEDY',
-                style: MyTextTheme.largeBCB
-                    .copyWith(
-                      color: "#6F221E".toColor(),
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Baloo',
-                      letterSpacing: -0.05,
-                    )
-                    .merge(AppTypography.h2),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AutoTranslateText(
+                    'ASTRO REMEDY',
+                    style: MyTextTheme.largeBCB
+                        .copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Baloo',
+                          letterSpacing: -0.05,
+                        )
+                        .merge(AppTypography.h2),
+                  ),
+                  AutoTranslateText(
+                    'View All',
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Poppins',
+                        )
+                        .merge(AppTypography.body1),
+                  ),
+                ],
               ),
-              AutoTranslateText(
-                'View All',
-                style: MyTextTheme.mediumBCN
-                    .copyWith(
-                      color: "#6F221E".toColor(),
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Poppins',
-                    )
-                    .merge(AppTypography.body1),
+              Spacing.h(16),
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20.h),
+                  child: CircularProgressIndicator(
+                    color: AppColors.deepOrange,
+                  ),
+                ),
               ),
             ],
           ),
-          Spacing.h(16),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
+        );
+      }
+
+      if (controller.remedyCategories.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return Padding(
+        padding: AppPaddings.symmetric(h: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildRemedyCard('Chanting Mala', AppConstant.rudraksha, 150.w),
-                Spacing.w(12),
-                _buildRemedyCard(
-                  'Gemstone Consultation',
-                  AppConstant.gemstone2,
-                  150.w,
+                AutoTranslateText(
+                  'ASTRO REMEDY',
+                  style: MyTextTheme.largeBCB
+                      .copyWith(
+                        color: "#6F221E".toColor(),
+                        fontWeight: FontWeight.w400,
+                        fontFamily: 'Baloo',
+                        letterSpacing: -0.05,
+                      )
+                      .merge(AppTypography.h2),
                 ),
-                Spacing.w(12),
-                _buildRemedyCard(
-                  'Gemstone Consultation',
-                  AppConstant.gemstone,
-                  150.w,
+                GestureDetector(
+                  onTap: () {
+                    Get.offNamed('/user-shop', id: 1);
+                  },
+                  child: AutoTranslateText(
+                    'View All',
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Poppins',
+                        )
+                        .merge(AppTypography.body1),
+                  ),
                 ),
-                Spacing.w(12),
-                _buildRemedyCard('Pendent', AppConstant.pendent, 150.w),
-                 Spacing.w(12),
-                _buildRemedyCard('Pendent', AppConstant.pendent2, 150.w),
               ],
             ),
-          ),
-        ],
-      ),
-    );
+            Spacing.h(16),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: controller.remedyCategories.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final category = entry.value;
+                  return Row(
+                    children: [
+                      _buildRemedyCard(category, 150.w),
+                      if (index < controller.remedyCategories.length - 1)
+                        Spacing.w(12),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildBlogSection() {
@@ -2176,86 +2222,100 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         lowerUrl.contains('video');
   }
 
-  Widget _buildRemedyCard(String label, String imagePath, double width) {
-    return Container(
-      width: width,
-      height: 150.h,
-      decoration: BoxDecoration(
-        color: "#E9F6FE".toColor(),
-        borderRadius: BorderRadius.circular(15.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.14),
-            blurRadius: 18.93,
-            offset: const Offset(3.15, 3.15),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          // Background image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(15.r),
-            child: Image.asset(
-              imagePath,
-              width: width,
-              height: 150.h,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  width: width,
-                  height: 150.h,
-                  color: "#E9F6FE".toColor(),
-                  child: Icon(Icons.image, size: 40.w, color: Colors.grey),
-                );
-              },
+  Widget _buildRemedyCard(CategoryModel category, double width) {
+    return GestureDetector(
+      onTap: () {
+        // Navigate to product list with category filter
+        if (category.id != null) {
+          Get.toNamed(
+            '/product-list',
+            arguments: {'category': category},
+          );
+        } else if (category.slug != null) {
+          Get.toNamed(
+            '/product-list',
+            arguments: {'categorySlug': category.slug},
+          );
+        }
+      },
+      child: Container(
+        width: width,
+        height: 150.h,
+        decoration: BoxDecoration(
+          color: "#E9F6FE".toColor(),
+          borderRadius: BorderRadius.circular(15.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.14),
+              blurRadius: 18.93,
+              offset: const Offset(3.15, 3.15),
             ),
-          ),
-          // Gradient overlay at bottom
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 50.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(15.r),
-                  bottomRight: Radius.circular(15.r),
-                ),
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    "#6F221E".toColor().withOpacity(0.6),
-                  ],
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Background image - Network image from category
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15.r),
+              child: category.image != null && category.image!.isNotEmpty
+                  ? NetworkImageWithLoader(
+                      url: category.image!,
+                      width: width,
+                      height: 150.h,
+                    )
+                  : Container(
+                      width: width,
+                      height: 150.h,
+                      color: "#E9F6FE".toColor(),
+                      child: Icon(Icons.category, size: 40.w, color: Colors.grey),
+                    ),
+            ),
+            // Gradient overlay at bottom
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 50.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(15.r),
+                    bottomRight: Radius.circular(15.r),
+                  ),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      "#6F221E".toColor().withOpacity(0.6),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          // Label at bottom
-          Positioned(
-            bottom: 4.h,
-            left: 10.w,
-            right: 4.w,
-            child: AutoTranslateText(
-              label,
-              style: MyTextTheme.smallBCN
-                  .copyWith(
-                    color: "#FFFFFF".toColor(),
-                    fontWeight: FontWeight.w400,
-                    fontFamily: 'Poppins',
-                    letterSpacing: -0.04,
-                    height: 1.5,
-                  )
-                  .merge(AppTypography.body2),
-              textAlign: TextAlign.left,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            // Label at bottom
+            Positioned(
+              bottom: 4.h,
+              left: 10.w,
+              right: 4.w,
+              child: AutoTranslateText(
+                category.name ?? 'Category',
+                style: MyTextTheme.smallBCN
+                    .copyWith(
+                      color: "#FFFFFF".toColor(),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Poppins',
+                      letterSpacing: -0.04,
+                      height: 1.5,
+                    )
+                    .merge(AppTypography.body2),
+                textAlign: TextAlign.left,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -3950,7 +4010,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         height: 32.h,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: ["#E63946".toColor(), "#FF8C42".toColor()],
+                            colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                           ),
@@ -4444,7 +4504,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           width: 50.w,
                           height: 50.h,
                           decoration: BoxDecoration(
-                            color: "#FF6B35".toColor(), // Orange
+                            color: "#F38B3B".toColor(), // Orange
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -4672,7 +4732,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         trailing: AutoTranslateText(
                           walletController?.formatCurrency(balance) ?? '₹0',
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: "#FF6B35".toColor(), // Orange
+                            color: "#F38B3B".toColor(), // Orange
                           ),
                         ),
                         onTap: () {
@@ -4688,7 +4748,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       trailing: Container(
                         padding: AppPaddings.symmetric(h: 8, v: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFF6B35), // Orange
+                          color: const Color(0xFFF38B3B), // Orange
                           shape: BoxShape.circle,
                         ),
                         child: AutoTranslateText(
@@ -4710,7 +4770,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       trailing: Container(
                         padding: AppPaddings.symmetric(h: 8, v: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFF6B35), // Orange
+                          color: const Color(0xFFF38B3B), // Orange
                           shape: BoxShape.circle,
                         ),
                         child: AutoTranslateText(

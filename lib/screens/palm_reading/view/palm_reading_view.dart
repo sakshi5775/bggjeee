@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -199,7 +200,7 @@ class PalmReadingView extends StatelessWidget {
               Expanded(
                 child: _buildFeatureCard(
                   icon: Icons.remove_red_eye,
-                  iconColor: '#FF6B35'.toColor(),
+                  iconColor: AppColors.deepOrange,
                   title: 'AI Detection',
                   subtitle: 'Smart line analysis',
                 ),
@@ -208,7 +209,7 @@ class PalmReadingView extends StatelessWidget {
               Expanded(
                 child: _buildFeatureCard(
                   icon: Icons.gps_fixed,
-                  iconColor: '#FF6B35'.toColor(),
+                  iconColor: AppColors.deepOrange,
                   title: 'Accurate',
                   subtitle: 'Precise predictions',
                 ),
@@ -221,7 +222,7 @@ class PalmReadingView extends StatelessWidget {
               Expanded(
                 child: _buildFeatureCard(
                   icon: Icons.flash_on,
-                  iconColor: '#FF6B35'.toColor(),
+                  iconColor: AppColors.deepOrange,
                   title: 'Instant',
                   subtitle: 'Results in seconds',
                 ),
@@ -230,7 +231,7 @@ class PalmReadingView extends StatelessWidget {
               Expanded(
                 child: _buildFeatureCard(
                   icon: Icons.bar_chart,
-                  iconColor: '#FF6B35'.toColor(),
+                  iconColor: AppColors.deepOrange,
                   title: 'Detailed',
                   subtitle: 'Complete report',
                 ),
@@ -337,7 +338,7 @@ class PalmReadingView extends StatelessWidget {
           children: [
               Icon(
                 Icons.check_circle,
-                color: '#FF6B35'.toColor(),
+                color: AppColors.deepOrange,
                 size: 20.w,
               ),
             Spacing.w(12),
@@ -364,14 +365,14 @@ class PalmReadingView extends StatelessWidget {
         child: ElevatedButton(
           onPressed: () => Get.toNamed(AppRoutes.palmReadingForm),
           style: ElevatedButton.styleFrom(
-            backgroundColor: '#FF6B35'.toColor(), // Match face reading color
+            backgroundColor: AppColors.deepOrange, // Match face reading color
             foregroundColor: Colors.white,
             padding: AppPaddings.symmetric(v: 16, h: 24),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.r),
             ),
             elevation: 6,
-            shadowColor: '#FF6B35'.toColor().withOpacity(0.35),
+            shadowColor: AppColors.deepOrange.withOpacity(0.35),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

@@ -506,31 +506,46 @@ class LagnaChartWidget extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                height: 50.h,
-                width: 50.w,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [
-                    Color(0xFFFF8C42),
-                    Color(0xFFE63946)
-                  ],),
-                  borderRadius: BorderRadius.circular(12.r)
-                  ),
-                  child: Icon(Icons.ac_unit, color: Colors.white),
+          Container(
+            padding: EdgeInsets.all(16.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color: const Color(0xFFDFB343).withOpacity(0.3),
+                width: 1,
               ),
-              Spacing.w(12),
-              AutoTranslateText(
-            'Planetary Positions',
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.bold,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      height: 50.h,
+                      width: 50.w,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                        ),
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Icon(Icons.ac_unit, color: Colors.white),
+                    ),
+                    Spacing.w(12),
+                    AutoTranslateText(
+                      'Planetary Positions',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: "#6F221E".toColor(),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-            ],
-          ),
-          
+
           Spacing.h(12),
           Container(
             padding: EdgeInsets.all(16.w),
@@ -551,15 +566,14 @@ class LagnaChartWidget extends StatelessWidget {
             ),
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final isWide = constraints.maxWidth > 600;
+                // final isWide = constraints.maxWidth > 400;
                 return GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: isWide ? 2 : 1,
-                    childAspectRatio: isWide ? 3.5 : 2.8,
-                    crossAxisSpacing: 12.w,
-                    mainAxisSpacing: 12.h,
+                    crossAxisCount: 1,
+                    childAspectRatio: 5.5, // 🔥 height reduce
+                    mainAxisSpacing: 6.h,
                   ),
                   itemCount: planets.length,
                   itemBuilder: (context, index) {
@@ -576,88 +590,181 @@ class LagnaChartWidget extends StatelessWidget {
     });
   }
 
+  // Widget _buildPlanetPositionCard(Map<String, dynamic> planet) {
+  //   return Container(
+  //     padding: EdgeInsets.all(12.w),
+  //     decoration: BoxDecoration(
+  //       color: "#6F221E".toColor().withOpacity(0.05),
+  //       borderRadius: BorderRadius.circular(8.r),
+  //       border: Border.all(
+  //         color: "#ed6f30".toColor().withOpacity(0.2),
+  //         width: 1,
+  //       ),
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         // Planet Name Row
+  //         Row(
+  //           children: [
+  //             Expanded(
+  //               child: AutoTranslateText(
+  //                 planet['full_name']?.toString() ??
+  //                     planet['name']?.toString() ??
+  //                     'Unknown',
+  //                 style: MyTextTheme.smallBCB.copyWith(
+  //                   color: "#6F221E".toColor(),
+  //                   fontWeight: FontWeight.bold,
+  //                 ),
+  //               ),
+  //             ),
+  //             if (planet['name'] != null)
+  //               Container(
+  //                 padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+  //                 decoration: BoxDecoration(
+  //                   color: "#ed6f30".toColor().withOpacity(0.2),
+  //                   borderRadius: BorderRadius.circular(4.r),
+  //                 ),
+  //                 child: AutoTranslateText(
+  //                   planet['name'].toString(),
+  //                   style: MyTextTheme.smallBCB.copyWith(
+  //                     color: "#ed6f30".toColor(),
+  //                   ),
+  //                 ),
+  //               ),
+  //           ],
+  //         ),
+  //         Spacing.h(8),
+  //         // Details Row
+  //         Row(
+  //           children: [
+  //             Expanded(
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   _buildPlanetDetail(
+  //                     'Zodiac',
+  //                     planet['zodiac']?.toString() ?? '-',
+  //                   ),
+  //                   Spacing.h(4),
+  //                   _buildPlanetDetail(
+  //                     'House',
+  //                     planet['house']?.toString() ?? '-',
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //             Spacing.w(8),
+  //             Expanded(
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   _buildPlanetDetail(
+  //                     'Degree',
+  //                     _formatDegree(planet['local_degree']),
+  //                   ),
+  //                   Spacing.h(4),
+  //                   _buildPlanetDetail(
+  //                     'Nakshatra',
+  //                     planet['nakshatra']?.toString() ?? '-',
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildPlanetDetail(String label, String value) {
+  //   return Row(
+  //     children: [
+  //       SizedBox(
+  //         width: 60.w,
+  //         child: AutoTranslateText(
+  //           label,
+  //           style: MyTextTheme.smallBCN.copyWith(
+  //             color: "#6F221E".toColor().withOpacity(0.6),
+  //           ),
+  //         ),
+  //       ),
+  //       Expanded(
+  //         child: AutoTranslateText(
+  //           value,
+  //           style: MyTextTheme.smallBCB.copyWith(
+  //             color: "#6F221E".toColor(),
+  //             fontWeight: FontWeight.w600,
+  //           ),
+  //           maxLines: 1,
+  //           overflow: TextOverflow.ellipsis,
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
   Widget _buildPlanetPositionCard(Map<String, dynamic> planet) {
     return Container(
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: "#6F221E".toColor().withOpacity(0.05),
+        color: "#F38B3B".toColor().withOpacity(0.05),
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.2),
-          width: 1,
-        ),
+        border: Border.all(color: "#F38B3B".toColor(), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Planet Name Row
+          /// 🌍 Planet Name Row
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       child: AutoTranslateText(
+          //         planet['full_name']?.toString() ??
+          //             planet['name']?.toString() ??
+          //             'Unknown',
+          //         style: MyTextTheme.smallBCB.copyWith(
+          //           color: "#6F221E".toColor(),
+          //           fontWeight: FontWeight.bold,
+          //         ),
+          //       ),
+          //     ),
+          //     if (planet['name'] != null)
+          //       Container(
+          //         padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+          //         decoration: BoxDecoration(
+          //           color: "#ed6f30".toColor().withOpacity(0.2),
+          //           borderRadius: BorderRadius.circular(4.r),
+          //         ),
+          //         child: AutoTranslateText(
+          //           planet['name'].toString(),
+          //           style: MyTextTheme.smallBCB.copyWith(
+          //             color: "#ed6f30".toColor(),
+          //           ),
+          //         ),
+          //       ),
+          //   ],
+          // ),
+          Spacing.h(2),
+
+          /// 📊 All Values in One Row
           Row(
             children: [
-              Expanded(
-                child: AutoTranslateText(
-                  planet['full_name']?.toString() ??
-                      planet['name']?.toString() ??
-                      'Unknown',
-                  style: MyTextTheme.smallBCB.copyWith(
-                    color: "#6F221E".toColor(),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              if (planet['name'] != null)
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-                  decoration: BoxDecoration(
-                    color: "#ed6f30".toColor().withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(4.r),
-                  ),
-                  child: AutoTranslateText(
-                    planet['name'].toString(),
-                    style: MyTextTheme.smallBCB.copyWith(
-                      color: "#ed6f30".toColor(),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          Spacing.h(8),
-          // Details Row
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildPlanetDetail(
-                      'Zodiac',
-                      planet['zodiac']?.toString() ?? '-',
-                    ),
-                    Spacing.h(4),
-                    _buildPlanetDetail(
-                      'House',
-                      planet['house']?.toString() ?? '-',
-                    ),
-                  ],
-                ),
-              ),
-              Spacing.w(8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildPlanetDetail(
-                      'Degree',
-                      _formatDegree(planet['local_degree']),
-                    ),
-                    Spacing.h(4),
-                    _buildPlanetDetail(
-                      'Nakshatra',
-                      planet['nakshatra']?.toString() ?? '-',
-                    ),
-                  ],
-                ),
-              ),
+              _buildValueChip(planet['full_name']),
+              // _divider(),
+              _buildValueChip(planet['name']),
+              // _divider(),
+              _buildValueChip(planet['zodiac']),
+
+              // _divider(),
+              _buildValueChip(_formatDegree(planet['local_degree'])),
+              // _divider(),
+              _buildValueChip(planet['nakshatra']),
+              // _divider(),
+              _buildValueChip(planet['house']),
             ],
           ),
         ],
@@ -665,30 +772,27 @@ class LagnaChartWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildPlanetDetail(String label, String value) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 60.w,
-          child: AutoTranslateText(
-            label,
-            style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
-            ),
-          ),
+  Widget _divider() {
+    return Container(
+      width: 1,
+      height: 14.h,
+      margin: EdgeInsets.symmetric(horizontal: 6.w),
+      color: "#6F221E".toColor().withOpacity(0.3),
+    );
+  }
+
+  Widget _buildValueChip(dynamic value) {
+    return Expanded(
+      child: AutoTranslateText(
+        value?.toString() ?? '-',
+        style: MyTextTheme.smallBCB.copyWith(
+          color: "#6F221E".toColor(),
+          fontWeight: FontWeight.w600,
         ),
-        Expanded(
-          child: AutoTranslateText(
-            value,
-            style: MyTextTheme.smallBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.w600,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.center,
+      ),
     );
   }
 

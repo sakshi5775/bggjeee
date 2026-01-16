@@ -601,7 +601,7 @@ class LiveStreamView extends StatelessWidget {
                     gradient: isFollowing
                         ? null
                         : const LinearGradient(
-                            colors: [Color(0xFFFF6B35), Color(0xFFFF8C42)],
+                            colors: [Color(0xFFF38B3B), Color(0xFFDD2914)],
                           ),
                     color: isFollowing ? Colors.grey[300] : null,
                     borderRadius: BorderRadius.circular(20.r),
@@ -875,7 +875,7 @@ class LiveStreamView extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25.r),
                   border: Border.all(
-                    color: const Color(0xFFFF6B35).withOpacity(0.5),
+                    color: const Color(0xFFF38B3B).withOpacity(0.5),
                     width: 1,
                   ),
                 ),
@@ -910,7 +910,7 @@ class LiveStreamView extends StatelessWidget {
                 width: 44.w,
                 height: 44.w,
                 decoration: const BoxDecoration(
-                  color: Color(0xFFFF6B35),
+                  color: Color(0xFFF38B3B),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.send, color: Colors.white, size: 20),
@@ -924,7 +924,7 @@ class LiveStreamView extends StatelessWidget {
                 width: 44.w,
                 height: 44.w,
                 decoration: const BoxDecoration(
-                  color: Color(0xFFFF6B35),
+                  color: Color(0xFFF38B3B),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.card_giftcard, color: Colors.white, size: 20),
@@ -1325,7 +1325,7 @@ class LiveStreamView extends StatelessWidget {
                         if (controller.isLoadingOtherStreams.value) {
                           return Padding(
                             padding: EdgeInsets.symmetric(vertical: 40.h),
-                            child: CircularProgressIndicator(color: const Color(0xFFFF6B35)),
+                            child: CircularProgressIndicator(color: const Color(0xFFF38B3B)),
                           );
                         }
 
@@ -1477,7 +1477,7 @@ class LiveStreamView extends StatelessWidget {
                                       color: const Color(0xFFFFFCF3), // Light yellow/cream
                                       borderRadius: BorderRadius.circular(25.r),
                                       border: Border.all(
-                                        color: const Color(0xFFFF6B35), // Orange
+                                        color: const Color(0xFFF38B3B), // Orange
                                         width: 2,
                                       ),
                                     ),
@@ -1502,7 +1502,7 @@ class LiveStreamView extends StatelessWidget {
                                       padding: EdgeInsets.symmetric(vertical: 14.h),
                                       decoration: BoxDecoration(
                                         gradient: const LinearGradient(
-                                          colors: [Color(0xFFFF6B35), Color(0xFFFF8C42)],
+                                          colors: [Color(0xFFF38B3B), Color(0xFFDD2914)],
                                         ),
                                         borderRadius: BorderRadius.circular(25.r),
                                       ),

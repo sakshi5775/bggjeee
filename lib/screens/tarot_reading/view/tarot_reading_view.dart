@@ -219,7 +219,7 @@ class TarotReadingView extends BasePage<TarotController> {
                         borderRadius: BorderRadius.circular(8.r),
                         boxShadow: [
                           BoxShadow(
-                            color: '#F38B3B'.toColor().withOpacity(0.4),
+                            color: AppColors.deepOrange.withOpacity(0.4),
                             blurRadius: 6,
                             offset: const Offset(0, 3),
                           ),
@@ -286,7 +286,7 @@ class TarotReadingView extends BasePage<TarotController> {
                       borderRadius: BorderRadius.circular(8.r),
                       boxShadow: [
                         BoxShadow(
-                          color: '#F38B3B'.toColor().withOpacity(0.3),
+                          color: AppColors.deepOrange.withOpacity(0.3),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -481,7 +481,7 @@ class TarotReadingView extends BasePage<TarotController> {
           gradient: AppColors.orangeGradient,
           boxShadow: [
             BoxShadow(
-              color: '#F38B3B'.toColor().withOpacity(0.4),
+              color: AppColors.deepOrange.withOpacity(0.4),
               blurRadius: 20,
               spreadRadius: 2,
               offset: const Offset(0, 8),
@@ -565,7 +565,7 @@ class TarotReadingView extends BasePage<TarotController> {
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: '#F38B3B'.toColor().withOpacity(0.3),
+                                  color: AppColors.deepOrange.withOpacity(0.3),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -644,7 +644,7 @@ class TarotReadingView extends BasePage<TarotController> {
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: '#F38B3B'.toColor().withOpacity(0.3),
+                                  color: AppColors.deepOrange.withOpacity(0.3),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),

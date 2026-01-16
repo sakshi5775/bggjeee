@@ -20,6 +20,8 @@ import 'package:astrobharataiuser/screens/courses/services/courses_service.dart'
 import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
 import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/data_model/webinar_model.dart';
+import 'package:astrobharataiuser/data_model/category_model.dart';
+import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -151,6 +153,11 @@ class UserDashboardController extends BaseController
   final RxList<Blog> blogs = <Blog>[].obs;
   final RxBool isLoadingBlogs = false.obs;
 
+  // Ecommerce Categories for Astro Remedy Section
+  final EcommerceService _ecommerceService = EcommerceService();
+  final RxList<CategoryModel> remedyCategories = <CategoryModel>[].obs;
+  final RxBool isLoadingRemedyCategories = false.obs;
+
   // Search functionality
   final DashboardSearchService _searchService = DashboardSearchService();
   final stt.SpeechToText _speechToText = stt.SpeechToText();
@@ -265,6 +272,7 @@ class UserDashboardController extends BaseController
     loadKidsSpecialistAstrologers();
     loadCelebrityAstrologers();
     loadCourses();
+    loadRemedyCategories(); // Load remedy categories for Astro Remedy section
     if (requireAuth) {
       checkForLiveWebinarFromEnrolledCourses();
     }
@@ -731,6 +739,43 @@ class UserDashboardController extends BaseController
         .toList();
   }
 
+  /// Load remedy categories for Astro Remedy section
+  Future<void> loadRemedyCategories() async {
+    try {
+      isLoadingRemedyCategories.value = true;
+      // Load featured categories for remedy section
+      final categoryData = await _ecommerceService.getCategories(
+        page: 1,
+        limit: 10,
+        isActive: true,
+        isFeatured: true,
+      );
+
+      if (categoryData != null &&
+          categoryData.items != null &&
+          categoryData.items!.isNotEmpty) {
+        // Filter to only top-level categories (no parent) and limit to 6
+        remedyCategories.value = categoryData.items!
+            .where((cat) => cat.parent == null)
+            .take(6)
+            .toList();
+      } else {
+        // Fallback: try category tree
+        final treeResult = await _ecommerceService.getCategoryTree();
+        if (treeResult != null && treeResult.isNotEmpty) {
+          remedyCategories.value = treeResult
+              .where((cat) => cat.isFeatured == true && cat.parent == null)
+              .take(6)
+              .toList();
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading remedy categories: $e');
+    } finally {
+      isLoadingRemedyCategories.value = false;
+    }
+  }
+
   /// Pull-to-refresh handler for dashboard content
   Future<void> refreshDashboard() async {
     _loadUserData(); // Ensure user data stays up to date
@@ -750,6 +795,7 @@ class UserDashboardController extends BaseController
     await loadCelebrityAstrologers();
     await loadAiAstrologers();
     await loadCourses();
+    await loadRemedyCategories(); // Load remedy categories
   }
 
   /// Initialize Speech-to-AutoTranslateText

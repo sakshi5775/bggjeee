@@ -18,46 +18,62 @@ class PredictionsTableWidget extends StatelessWidget {
       padding: EdgeInsets.all(16),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          // color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: 50.h,
-                    width: 50.h,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+            Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: 50.h,
+                          width: 50.h,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Icon(
+                            Icons.traffic,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Icon(Icons.traffic, color: Colors.white, size: 24),
+                      Spacing.w(12),
+                      // Life Predictions Header
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 12.h),
+                        child: AutoTranslateText(
+                          'Life Predictions',
+                          style: MyTextTheme.largeBCB.copyWith(
+                            color: "#6F221E".toColor(),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            fontFamily: 'baloo2',
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Spacing.w(12),
-                // Life Predictions Header
-                Padding(
-                  padding: EdgeInsets.only(bottom: 12.h),
-                  child: AutoTranslateText(
-                    'Life Predictions',
-                    style: MyTextTheme.largeBCB.copyWith(
-                      color: "#6F221E".toColor(),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      fontFamily: 'baloo2',
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
+            SizedBox(height: 16.h),
 
             // First 6 rows (Life Predictions)
             ...controller.predictionsTableData.take(6).map((row) {
@@ -98,40 +114,56 @@ class PredictionsTableWidget extends StatelessWidget {
 
             Spacing.h(24),
 
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: 50.h,
-                    width: 50.h,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+            Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: 50.h,
+                          width: 50.h,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Icon(
+                            Icons.traffic,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Icon(Icons.traffic, color: Colors.white, size: 24),
+                      Spacing.w(12),
+                      // Monthly Predictions Header
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 12.h),
+                        child: AutoTranslateText(
+                          'Monthly Predictions',
+                          style: MyTextTheme.largeBCB.copyWith(
+                            color: "#6F221E".toColor(),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            fontFamily: 'baloo2',
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Spacing.w(12),
-                // Monthly Predictions Header
-                Padding(
-                  padding: EdgeInsets.only(bottom: 12.h),
-                  child: AutoTranslateText(
-                    'Monthly Predictions',
-                    style: MyTextTheme.largeBCB.copyWith(
-                      color: "#6F221E".toColor(),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      fontFamily: 'baloo2'
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
+            SizedBox(height: 16.h),
 
             // Remaining rows (Monthly Predictions)
             ...controller.predictionsTableData.skip(6).map((row) {
@@ -225,17 +257,17 @@ class PredictionsTableWidget extends StatelessWidget {
       //   ),
       // ),
       child: Container(
-        height: 100.h,
+        // height: 100.h,
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: hasApi
                 ? ["#FF8C42".toColor(), "#E63946".toColor()]
-                : ["#3D0C11".toColor(), "#5D1C21".toColor()],
+                : ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          border: Border.all(color: Colors.deepOrange, width: 1),
+          // border: Border.all(color: Colors.deepOrange, width: 1),
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
@@ -254,7 +286,8 @@ class PredictionsTableWidget extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: MyTextTheme.mediumBCB.copyWith(
-                color: Colors.white,
+                color: hasApi ? Colors.white : Colors.black,
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -263,13 +296,13 @@ class PredictionsTableWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: "#FFFFFF".toColor(),
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: AutoTranslateText(
                   'Coming Soon',
                   style: AppTypography.label.copyWith(
-                    color: Colors.white,
+                    color: hasApi ? Colors.white : Colors.black,
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w500,
                   ),

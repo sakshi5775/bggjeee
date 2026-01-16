@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,7 +28,7 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
       'subtitle': 'Room-wise Vastu guidance',
       'icon': Icons.home,
       'route': AppRoutes.homeVastuList,
-      'color': '#FF6B35',
+      'color': '#F38B3B',
     },
     {
       'title': 'Office Vastu',
@@ -215,7 +216,7 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
           'assets/app/Vastu.png',
           fit: BoxFit.cover,
           errorBuilder: (_, __, ___) => Container(
-            color: '#FF6B35'.toColor(),
+            color: AppColors.deepOrange,
             child: Icon(
               Icons.explore,
               size: 60.w,

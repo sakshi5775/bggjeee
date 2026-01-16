@@ -3,7 +3,6 @@ import 'package:astrobharataiuser/data_model/payment_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class PaymentsController extends BaseController {
   final EcommerceService _service = EcommerceService();

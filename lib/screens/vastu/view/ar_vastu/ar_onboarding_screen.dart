@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
@@ -32,7 +33,7 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
       'title': 'Accurate Compass',
       'description': 'Our intelligent compass uses multiple sensors for precise direction detection. Calibrate by moving your device in a figure-8 motion.',
       'icon': Icons.explore,
-      'color': '#FF6B35',
+      'color': '#F38B3B',
     },
     {
       'title': 'Room-Aware Intelligence',
@@ -115,7 +116,7 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
                   margin: EdgeInsets.symmetric(horizontal: 4.w),
                   decoration: BoxDecoration(
                     color: _currentPage == index
-                        ? '#FF6B35'.toColor()
+                        ? AppColors.deepOrange
                         : Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(4.r),
                   ),
@@ -142,7 +143,7 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: '#FF6B35'.toColor(),
+                    backgroundColor: AppColors.deepOrange,
                     foregroundColor: '#ffffff'.toColor(),
                     padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
                     shape: RoundedRectangleBorder(

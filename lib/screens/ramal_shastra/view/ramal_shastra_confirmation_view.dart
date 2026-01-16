@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/widgets/ramal_shastra_loading_widget.dart';
@@ -87,14 +88,14 @@ class RamalShastraConfirmationView extends StatelessWidget {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: '#FF6B35'.toColor(),
+                          backgroundColor: AppColors.deepOrange,
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(vertical: 14.h),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                           elevation: 6,
-                          shadowColor: '#FF6B35'.toColor().withOpacity(0.35),
+                          shadowColor: AppColors.deepOrange.withOpacity(0.35),
                         ),
                         child: AutoTranslateText(
                           'Confirm & Analyze',
@@ -191,7 +192,7 @@ class RamalShastraConfirmationView extends StatelessWidget {
                 height: 60.w,
                 margin: EdgeInsets.all(4.w),
                 decoration: BoxDecoration(
-                  color: value == 1 ? '#FF6B35'.toColor() : Colors.grey[300],
+                  color: value == 1 ? AppColors.deepOrange : Colors.grey[300],
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
                     color: value == 1 ? '#E85C0D'.toColor() : Colors.grey[400]!,

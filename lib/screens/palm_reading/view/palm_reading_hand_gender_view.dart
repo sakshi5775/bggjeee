@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -142,7 +143,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
               color: isSelected
-                  ? '#FF6B35'.toColor()
+                  ? AppColors.deepOrange
                   : Colors.grey.withOpacity(0.3),
               width: isSelected ? 2 : 1,
             ),
@@ -170,8 +171,8 @@ class PalmReadingHandGenderView extends StatelessWidget {
                       Icons.pan_tool,
                       size: 48.w,
                       color: isSelected 
-                          ? '#FF6B35'.toColor()
-                          : '#FF6B35'.toColor().withOpacity(0.5),
+                          ? AppColors.deepOrange
+                          : AppColors.deepOrange.withOpacity(0.5),
                     ),
                   );
                 },
@@ -257,7 +258,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
               color: isSelected
-                  ? '#FF6B35'.toColor()
+                  ? AppColors.deepOrange
                   : Colors.grey.withOpacity(0.3),
               width: isSelected ? 2 : 1,
             ),
@@ -297,14 +298,14 @@ class PalmReadingHandGenderView extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () => controller.onContinueFromHandGender(),
         style: ElevatedButton.styleFrom(
-          backgroundColor: '#FF6B35'.toColor(),
+          backgroundColor: AppColors.deepOrange,
           foregroundColor: Colors.white,
           padding: AppPaddings.symmetric(v: 16, h: 24),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.r),
           ),
           elevation: 6,
-          shadowColor: '#FF6B35'.toColor().withOpacity(0.35),
+          shadowColor: AppColors.deepOrange.withOpacity(0.35),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -336,7 +337,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
         child: AutoTranslateText(
           'Skip',
           style: MyTextTheme.mediumBCB.copyWith(
-            color: '#FF6B35'.toColor(),
+            color: AppColors.deepOrange,
             fontWeight: FontWeight.w600,
           ),
         ),

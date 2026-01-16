@@ -2,7 +2,6 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_main_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,6 +15,21 @@ class GemSuggestionWidget extends StatelessWidget {
     required this.controller,
   });
 
+  // Gradient definitions
+  static final LinearGradient gradientBackground = LinearGradient(
+    colors: ["#FCE5AA".toColor(), "#FFFCF3".toColor(), "#FFFFFF".toColor()],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+
+  static final LinearGradient primaryGradient = LinearGradient(
+    colors: ["#820B17".toColor(), "#68171E".toColor(), "#5D1C21".toColor()],
+  );
+
+  static LinearGradient orangeGradient = LinearGradient(
+    colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
+  );
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -25,13 +39,13 @@ class GemSuggestionWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(
-                color: "#ed6f30".toColor(),
+                valueColor: AlwaysStoppedAnimation<Color>(orangeGradient.colors.first),
               ),
               Spacing.h(16),
               AutoTranslateText(
                 'Loading Gem Suggestion...',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: primaryGradient.colors.first.withOpacity(0.7),
                 ),
               ),
             ],
@@ -45,15 +59,19 @@ class GemSuggestionWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No Gem Suggestion data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: primaryGradient.colors.first.withOpacity(0.7),
             ),
           ),
         );
       }
 
-      return SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Column(
+      return Container(
+        decoration: BoxDecoration(
+          gradient: gradientBackground,
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildTitleSection(data),
@@ -73,6 +91,7 @@ class GemSuggestionWidget extends StatelessWidget {
             _buildOtherStonesCard(data),
           ],
         ),
+        ),
       );
     });
   }
@@ -84,18 +103,11 @@ class GemSuggestionWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            "#6F221E".toColor(),
-            "#6F221E".toColor().withOpacity(0.8),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: primaryGradient,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: "#6F221E".toColor().withOpacity(0.3),
+            color: primaryGradient.colors.first.withOpacity(0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -111,7 +123,7 @@ class GemSuggestionWidget extends StatelessWidget {
             ),
             child: Icon(
               Icons.diamond_rounded,
-              color: Colors.white,
+              color: const Color(0xFFDFB343),
               size: 28.w,
             ),
           ),
@@ -123,7 +135,7 @@ class GemSuggestionWidget extends StatelessWidget {
                 AutoTranslateText(
                   name,
                   style: MyTextTheme.largeBCB.copyWith(
-                    color: Colors.white,
+                    color: const Color(0xFFDFB343),
                   ),
                 ),
                 Spacing.h(4),
@@ -168,16 +180,23 @@ class GemSuggestionWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.info_outline_rounded,
-                color: "#ed6f30".toColor(),
-                size: 24.w,
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  gradient: primaryGradient,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Icon(
+                  Icons.info_outline_rounded,
+                  color: const Color(0xFFDFB343),
+                  size: 20.w,
+                ),
               ),
               Spacing.w(12),
               AutoTranslateText(
                 'Basic Information',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: primaryGradient.colors.first,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -226,16 +245,23 @@ class GemSuggestionWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.access_time_rounded,
-                color: "#ed6f30".toColor(),
-                size: 24.w,
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  gradient: orangeGradient,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Icon(
+                  Icons.access_time_rounded,
+                  color: Colors.white,
+                  size: 20.w,
+                ),
               ),
               Spacing.w(12),
               AutoTranslateText(
                 'Wearing Information',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: primaryGradient.colors.first,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -283,16 +309,23 @@ class GemSuggestionWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.description_rounded,
-                color: "#ed6f30".toColor(),
-                size: 24.w,
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  gradient: primaryGradient,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Icon(
+                  Icons.description_rounded,
+                  color: const Color(0xFFDFB343),
+                  size: 20.w,
+                ),
               ),
               Spacing.w(12),
               AutoTranslateText(
                 'Description',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: primaryGradient.colors.first,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -302,7 +335,7 @@ class GemSuggestionWidget extends StatelessWidget {
           AutoTranslateText(
             description,
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.8),
+              color: primaryGradient.colors.first.withOpacity(0.8),
               height: 1.6,
             ),
           ),
@@ -342,7 +375,7 @@ class GemSuggestionWidget extends StatelessWidget {
               AutoTranslateText(
                 'Good Results',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: primaryGradient.colors.first,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -408,7 +441,7 @@ class GemSuggestionWidget extends StatelessWidget {
               AutoTranslateText(
                 'Diseases Cure',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: primaryGradient.colors.first,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -474,7 +507,7 @@ class GemSuggestionWidget extends StatelessWidget {
               AutoTranslateText(
                 'Flaw Results',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: primaryGradient.colors.first,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -512,7 +545,7 @@ class GemSuggestionWidget extends StatelessWidget {
                     AutoTranslateText(
                       flawEffects,
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: "#6F221E".toColor().withOpacity(0.8),
+                        color: primaryGradient.colors.first.withOpacity(0.8),
                       ),
                     ),
                   ],
@@ -554,16 +587,23 @@ class GemSuggestionWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.stars_rounded,
-                color: "#ed6f30".toColor(),
-                size: 24.w,
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  gradient: orangeGradient,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Icon(
+                  Icons.stars_rounded,
+                  color: Colors.white,
+                  size: 20.w,
+                ),
               ),
               Spacing.w(12),
               AutoTranslateText(
                 'Other Stones',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: primaryGradient.colors.first,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -604,7 +644,7 @@ class GemSuggestionWidget extends StatelessWidget {
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCB.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: primaryGradient.colors.first.withOpacity(0.7),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -615,7 +655,7 @@ class GemSuggestionWidget extends StatelessWidget {
             child: AutoTranslateText(
               value,
               style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor(),
+                color: primaryGradient.colors.first,
               ),
             ),
           ),
@@ -633,7 +673,7 @@ class GemSuggestionWidget extends StatelessWidget {
           AutoTranslateText(
             label,
             style: MyTextTheme.smallBCB.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: primaryGradient.colors.first.withOpacity(0.7),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -641,7 +681,7 @@ class GemSuggestionWidget extends StatelessWidget {
           AutoTranslateText(
             text,
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor(),
+                  color: primaryGradient.colors.first,
               height: 1.6,
             ),
           ),
@@ -659,7 +699,7 @@ class GemSuggestionWidget extends StatelessWidget {
           AutoTranslateText(
             label,
             style: MyTextTheme.smallBCB.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: primaryGradient.colors.first.withOpacity(0.7),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -671,17 +711,17 @@ class GemSuggestionWidget extends StatelessWidget {
               return Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: "#ed6f30".toColor().withOpacity(0.1),
+                  color: orangeGradient.colors.first.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: "#ed6f30".toColor().withOpacity(0.3),
+                    color: orangeGradient.colors.first.withOpacity(0.3),
                     width: 1,
                   ),
                 ),
                 child: AutoTranslateText(
                   item,
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: "#6F221E".toColor(),
+                    color: primaryGradient.colors.first,
                   ),
                 ),
               );
@@ -696,7 +736,7 @@ class GemSuggestionWidget extends StatelessWidget {
     return Divider(
       height: 1,
       thickness: 1,
-      color: "#6F221E".toColor().withOpacity(0.1),
+      color: primaryGradient.colors.first.withOpacity(0.1),
     );
   }
 }

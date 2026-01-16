@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 
 /// Calibration hint widget with animated figure-8 motion
@@ -67,7 +68,7 @@ class _CalibrationHintState extends State<CalibrationHint>
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
             decoration: BoxDecoration(
-              color: '#FF6B35'.toColor().withOpacity(0.9),
+              color: AppColors.deepOrange.withOpacity(0.9),
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(

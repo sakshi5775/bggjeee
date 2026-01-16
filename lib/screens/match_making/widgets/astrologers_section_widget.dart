@@ -45,7 +45,7 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
             (spec) =>
                 spec.toUpperCase().contains('MATCH') ||
                 spec.toUpperCase().contains('MARRIAGE') ||
-                spec.toUpperCase().contains('KUNDALI'),
+                spec.toUpperCase().contains('kundli'),
           );
         }).toList();
         astrologers.value = filtered.isNotEmpty

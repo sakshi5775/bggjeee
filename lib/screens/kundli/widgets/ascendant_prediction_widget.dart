@@ -12,24 +12,19 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 class AscendantPredictionWidget extends StatelessWidget {
   final PredictionsController controller;
 
-  const AscendantPredictionWidget({
-    super.key,
-    required this.controller,
-  });
+  const AscendantPredictionWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingAscendant.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.ascendantPredictionData.value;
-      
+
       if (data == null || data.isEmpty) {
         return Center(
           child: Column(
@@ -97,11 +92,7 @@ class AscendantPredictionWidget extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.star,
-                    color: Colors.white,
-                    size: 24.w,
-                  ),
+                  Icon(Icons.star, color: Colors.white, size: 24.w),
                   Spacing.w(12),
                   Expanded(
                     child: AutoTranslateText(
@@ -116,7 +107,7 @@ class AscendantPredictionWidget extends StatelessWidget {
               ),
             ),
             Spacing.h(16),
-            
+
             // Explanation
             if (explanation.isNotEmpty) ...[
               Container(
@@ -164,19 +155,19 @@ class AscendantPredictionWidget extends StatelessWidget {
               ),
               Spacing.h(16),
             ],
-            
+
             // Health
             if (health.isNotEmpty) ...[
               _buildSectionCard('Health', health, Icons.favorite),
               Spacing.h(16),
             ],
-            
+
             // Temperament
             if (temp.isNotEmpty) ...[
               _buildSectionCard('Temperament', temp, Icons.psychology),
               Spacing.h(16),
             ],
-            
+
             // Physical
             if (physical.isNotEmpty) ...[
               _buildSectionCard('Physical Appearance', physical, Icons.person),
@@ -217,17 +208,11 @@ class AscendantPredictionWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                icon,
-                color: "#ed6f30".toColor(),
-                size: 20.w,
-              ),
+              Icon(icon, color: "#ed6f30".toColor(), size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 title,
-                style: AppTypography.h2.copyWith(
-                  color: "#6F221E".toColor(),
-                ),
+                style: AppTypography.h2.copyWith(color: "#6F221E".toColor()),
               ),
             ],
           ),
@@ -244,4 +229,3 @@ class AscendantPredictionWidget extends StatelessWidget {
     );
   }
 }
-

@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:flutter/material.dart';
@@ -192,7 +193,7 @@ class RamalShastraMethodView extends StatelessWidget {
             ),
             Icon(
               Icons.arrow_forward_ios,
-              color: '#FF6B35'.toColor(),
+              color: AppColors.deepOrange,
               size: 20.w,
             ),
           ],

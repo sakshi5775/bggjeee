@@ -201,4 +201,18 @@ class AppConstant {
       'assets/app/pendent2.png';
 
       static const String astroBharatLogo = 'assets/app/AstrobharatAi .svg';
+
+      // Zodiac Sign Images
+      static const String zodiacAries = 'assets/app/ZodiacSigns/ARIES.png';
+      static const String zodiacTaurus = 'assets/app/ZodiacSigns/Taurus.png';
+      static const String zodiacGemini = 'assets/app/ZodiacSigns/Gemini.png';
+      static const String zodiacCancer = 'assets/app/ZodiacSigns/Cancer.png';
+      static const String zodiacLeo = 'assets/app/ZodiacSigns/LEO.png';
+      static const String zodiacVirgo = 'assets/app/ZodiacSigns/Virgo.png';
+      static const String zodiacLibra = 'assets/app/ZodiacSigns/LIBRA.png';
+      static const String zodiacScorpio = 'assets/app/ZodiacSigns/Scorpio.png';
+      static const String zodiacSagittarius = 'assets/app/ZodiacSigns/Sagitarius.png';
+      static const String zodiacCapricorn = 'assets/app/ZodiacSigns/Capricornus.png';
+      static const String zodiacAquarius = 'assets/app/ZodiacSigns/Aquarius.png';
+      static const String zodiacPisces = 'assets/app/ZodiacSigns/Pisces.png';
 }

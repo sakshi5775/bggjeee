@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 
 /// Direction Confidence Meter Widget
@@ -30,7 +31,7 @@ class ConfidenceMeter extends StatelessWidget {
       meterColor = Colors.green;
       statusText = 'High Accuracy';
     } else if (confidence >= 0.5) {
-      meterColor = Colors.orange;
+      meterColor = AppColors.deepOrange;
       statusText = 'Moderate Accuracy';
     } else {
       meterColor = Colors.red;

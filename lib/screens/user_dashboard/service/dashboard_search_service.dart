@@ -81,7 +81,7 @@ class DashboardSearchService {
 
     // Match Making
     if (lowerQuery.contains('match') || 
-        lowerQuery.contains('kundali') ||
+        lowerQuery.contains('kundli') ||
         lowerQuery.contains('compatibility') ||
         lowerQuery.contains('मिलान') ||
         lowerQuery.contains('कुंडली मिलान')) {

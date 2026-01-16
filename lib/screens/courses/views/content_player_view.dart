@@ -1,7 +1,6 @@
 import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/screens/courses/services/courses_service.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/pdf_progress.dart';
-import 'package:astrobharataiuser/screens/courses/widgets/pdf_viewer_widget.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/video_player_widget.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';

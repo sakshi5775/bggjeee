@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
 /// Confetti Animation Widget for Positive Results
@@ -50,7 +51,7 @@ class _TarotConfettiWidgetState extends State<TarotConfettiWidget>
 
   Color _getRandomColor(math.Random random) {
     final colors = [
-      '#ee7532'.toColor(), // Orange
+      AppColors.deepOrange, // Orange
       '#820B17'.toColor(), // Dark red
       Colors.yellow,
       Colors.green,

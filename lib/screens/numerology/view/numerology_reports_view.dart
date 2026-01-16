@@ -9,6 +9,9 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+
+import '../../../app_manager/ext/hex_color_ext.dart';
 
 class NumerologyReportsView extends BasePage<NumerologyReportsController> {
   const NumerologyReportsView({super.key});
@@ -46,16 +49,16 @@ class NumerologyReportsView extends BasePage<NumerologyReportsController> {
                         Spacing.h(16),
                         AutoTranslateText(
                           'No Reports Found',
-                          style: MyTextTheme.mediumBCB.copyWith(
-                            color: Colors.grey,
-                          ).merge(AppTypography.h3),
+                          style: MyTextTheme.mediumBCB
+                              .copyWith(color: Colors.grey)
+                              .merge(AppTypography.h3),
                         ),
                         Spacing.h(8),
                         AutoTranslateText(
                           'Your numerology reports will appear here',
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: Colors.grey,
-                          ).merge(AppTypography.body1),
+                          style: MyTextTheme.smallBCN
+                              .copyWith(color: Colors.grey)
+                              .merge(AppTypography.body1),
                         ),
                       ],
                     ),
@@ -69,14 +72,17 @@ class NumerologyReportsView extends BasePage<NumerologyReportsController> {
                     onNotification: (ScrollNotification scrollInfo) {
                       if (!controller.isLoadingMore.value &&
                           controller.hasMore.value &&
-                          scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                          scrollInfo.metrics.pixels ==
+                              scrollInfo.metrics.maxScrollExtent) {
                         controller.loadMore();
                       }
                       return false;
                     },
                     child: ListView.builder(
                       padding: EdgeInsets.all(16.w),
-                      itemCount: controller.reports.length + (controller.hasMore.value ? 1 : 0),
+                      itemCount:
+                          controller.reports.length +
+                          (controller.hasMore.value ? 1 : 0),
                       itemBuilder: (context, index) {
                         if (index == controller.reports.length) {
                           // Load more indicator
@@ -111,7 +117,12 @@ class NumerologyReportsView extends BasePage<NumerologyReportsController> {
 
   Widget _buildHeader() {
     return AstrologyHeaderWidget(
-      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 24.h, bottom: 20.h),
+      padding: EdgeInsets.only(
+        left: 16.w,
+        right: 16.w,
+        top: 24.h,
+        bottom: 20.h,
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -130,10 +141,12 @@ class NumerologyReportsView extends BasePage<NumerologyReportsController> {
               Expanded(
                 child: AutoTranslateText(
                   'My Reports',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: const Color(0xFFDFB343),
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
+                  style: MyTextTheme.largeBCB
+                      .copyWith(
+                        color: const Color(0xFFDFB343),
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.h2),
                 ),
               ),
             ],
@@ -157,13 +170,6 @@ class NumerologyReportsView extends BasePage<NumerologyReportsController> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,12 +179,12 @@ class NumerologyReportsView extends BasePage<NumerologyReportsController> {
                 Container(
                   padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFDFB343).withOpacity(0.1),
+                    gradient: AppColors.orangeGradient,
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Icon(
                     _getReportIcon(reportType),
-                    color: const Color(0xFFDFB343),
+                    color: AppColors.white,
                     size: 20.w,
                   ),
                 ),
@@ -189,34 +195,33 @@ class NumerologyReportsView extends BasePage<NumerologyReportsController> {
                     children: [
                       AutoTranslateText(
                         controller.getReportTypeDisplayName(reportType),
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: const Color(0xFF6F221E),
-                          fontWeight: FontWeight.bold,
-                        ).merge(AppTypography.h3),
+                        style: MyTextTheme.mediumBCB
+                            .copyWith(
+                              color: const Color(0xFF6F221E),
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.h3),
                       ),
                       Spacing.h(4),
                       AutoTranslateText(
                         createdAt,
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: Colors.grey,
-                        ).merge(AppTypography.body2),
+                        style: MyTextTheme.smallBCN
+                            .copyWith(color: Colors.grey)
+                            .merge(AppTypography.body2),
                       ),
                     ],
                   ),
                 ),
                 Icon(
                   Icons.chevron_right,
-                  color: Colors.grey,
+                  color: '#68171E'.toColor(),
                   size: 24.w,
                 ),
               ],
             ),
             if (inputData != null) ...[
               Spacing.h(12),
-              Divider(
-                color: Colors.grey.withOpacity(0.2),
-                height: 1,
-              ),
+              Divider(color: Colors.grey.withOpacity(0.2), height: 1),
               Spacing.h(12),
               Wrap(
                 spacing: 8.w,
@@ -224,16 +229,19 @@ class NumerologyReportsView extends BasePage<NumerologyReportsController> {
                 children: inputData.entries.map((entry) {
                   if (entry.key == 'lang') return SizedBox.shrink();
                   return Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 10.h,
+                    ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFDFB343).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(6.r),
+                      gradient: AppColors.orangeGradient,
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: AutoTranslateText(
                       '${entry.key}: ${entry.value}',
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: const Color(0xFF6F221E),
-                      ).merge(AppTypography.label),
+                      style: MyTextTheme.smallBCN
+                          .copyWith(color: AppColors.white)
+                          .merge(AppTypography.label),
                     ),
                   );
                 }).toList(),
@@ -263,4 +271,3 @@ class NumerologyReportsView extends BasePage<NumerologyReportsController> {
     return icons[reportType] ?? Icons.description;
   }
 }
-

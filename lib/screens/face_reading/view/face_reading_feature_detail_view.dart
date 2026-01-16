@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/face_reading_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -121,7 +122,7 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.visibility, color: '#EA632B'.toColor(), size: 32.w),
+              Icon(Icons.visibility, color: AppColors.deepOrange, size: 32.w),
               Spacing.w(16),
               Expanded(
                 child: Column(
@@ -137,12 +138,12 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
                     Spacing.h(8),
                     Row(
                       children: [
-                        Icon(Icons.star, color: '#EA632B'.toColor(), size: 24.w),
+                        Icon(Icons.star, color: AppColors.deepOrange, size: 24.w),
                         Spacing.w(8),
                         AutoTranslateText(
                           rating,
                           style: MyTextTheme.largeBCB.copyWith(
-                            color: '#EA632B'.toColor(),
+                            color: AppColors.deepOrange,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -194,7 +195,7 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.auto_awesome, color: '#EA632B'.toColor(), size: 20.w),
+              Icon(Icons.auto_awesome, color: AppColors.deepOrange, size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Detailed Interpretation',
@@ -241,7 +242,7 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.orange.withOpacity(0.3), width: 1),
+        border: Border.all(color: AppColors.deepOrange.withOpacity(0.3), width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -255,7 +256,7 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 20.w),
+              Icon(Icons.warning_amber_rounded, color: AppColors.deepOrange, size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Areas of Concern',
@@ -329,15 +330,11 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#EA632B'.toColor(), '#FF6B35'.toColor()],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: AppColors.orangeGradient,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: '#EA632B'.toColor().withOpacity(0.3),
+            color: AppColors.deepOrange.withOpacity(0.3),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -369,7 +366,7 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
-              foregroundColor: '#EA632B'.toColor(),
+              foregroundColor: AppColors.deepOrange,
               padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25.r),
@@ -379,7 +376,7 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
             child: AutoTranslateText(
               'Chat With Expert',
               style: MyTextTheme.mediumBCB.copyWith(
-                color: '#EA632B'.toColor(),
+                color: AppColors.deepOrange,
                 fontWeight: FontWeight.bold,
               ),
             ),

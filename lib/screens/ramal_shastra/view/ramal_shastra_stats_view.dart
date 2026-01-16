@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/ramal_shastra_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:flutter/material.dart';
@@ -53,8 +54,8 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            '#FF6B35'.toColor(),
-            '#FF8C42'.toColor(),
+            AppColors.deepOrange,
+            AppColors.deepOrangemix,
           ],
         ),
         borderRadius: BorderRadius.only(
@@ -243,7 +244,7 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
             final colors = [
               Colors.blue,
               Colors.green,
-              Colors.orange,
+              AppColors.deepOrange,
               Colors.red,
               Colors.purple,
               Colors.teal,
@@ -311,7 +312,7 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
             final index = judgments.indexOf(judgment);
             final colors = [
               Colors.green,
-              Colors.orange,
+              AppColors.deepOrange,
               Colors.red,
               Colors.blue,
             ];

@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/ramal_shastra_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/service/ramal_shastra_service.dart';
@@ -134,8 +135,8 @@ class RamalShastraResultsView extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            '#FF6B35'.toColor(),
-            '#FF8C42'.toColor(),
+            AppColors.deepOrange,
+            AppColors.deepOrangemix,
           ],
         ),
         borderRadius: BorderRadius.only(
@@ -292,7 +293,7 @@ class RamalShastraResultsView extends StatelessWidget {
                     child: AutoTranslateText(
                       result?.readingId ?? '',
                       style: MyTextTheme.smallBCB.copyWith(
-                        color: '#FF6B35'.toColor(),
+                        color: AppColors.deepOrange,
                         fontSize: 10.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -392,9 +393,7 @@ class RamalShastraResultsView extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#FF6B35'.toColor(), '#FF8C42'.toColor()],
-        ),
+        gradient: AppColors.orangeGradient,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -685,9 +684,7 @@ class RamalShastraResultsView extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#FF6B35'.toColor(), '#FF8C42'.toColor()],
-        ),
+        gradient: AppColors.orangeGradient,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -826,7 +823,7 @@ class RamalShastraResultsView extends StatelessWidget {
                             width: 40.w,
                             height: 40.w,
                             decoration: BoxDecoration(
-                              color: value == 1 ? '#FF6B35'.toColor() : Colors.grey[300],
+                              color: value == 1 ? AppColors.deepOrange : Colors.grey[300],
                               borderRadius: BorderRadius.circular(4.r),
                             ),
                             child: Center(
@@ -934,7 +931,7 @@ class RamalShastraResultsView extends StatelessWidget {
                                     val == 1 ? '●' : '○',
                                     style: TextStyle(
                                       fontSize: 12.sp,
-                                      color: val == 1 ? '#FF6B35'.toColor() : Colors.grey[600],
+                                      color: val == 1 ? AppColors.deepOrange : Colors.grey[600],
                                     ),
                                   ),
                                 );
@@ -1125,7 +1122,7 @@ class RamalShastraResultsView extends StatelessWidget {
 
   Color _getStrengthColor(int strength) {
     if (strength >= 3) return Colors.green;
-    if (strength == 2) return Colors.orange;
+    if (strength == 2) return AppColors.deepOrange;
     return Colors.red;
   }
 
@@ -1206,7 +1203,7 @@ class RamalShastraResultsView extends StatelessWidget {
                             width: 40.w,
                             height: 40.w,
                             decoration: BoxDecoration(
-                              color: val == 1 ? '#FF6B35'.toColor() : Colors.grey[300],
+                              color: val == 1 ? AppColors.deepOrange : Colors.grey[300],
                               borderRadius: BorderRadius.circular(8.r),
                             ),
                             child: Center(
@@ -1576,9 +1573,9 @@ class RamalShastraResultsView extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.orange[50],
+        color: AppColors.deepOrange.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.orange[300]!, width: 1),
+        border: Border.all(color: AppColors.deepOrange.withOpacity(0.3), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1586,7 +1583,7 @@ class RamalShastraResultsView extends StatelessWidget {
           AutoTranslateText(
             'Challenges',
             style: MyTextTheme.mediumBCB.copyWith(
-              color: Colors.orange[800],
+              color: AppColors.deepOrangemix,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -1596,7 +1593,7 @@ class RamalShastraResultsView extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.warning, size: 16.w, color: Colors.orange[700]),
+                Icon(Icons.warning, size: 16.w, color: AppColors.deepOrange),
                 Spacing.w(8),
                 Expanded(
                   child: AutoTranslateText(
@@ -1922,7 +1919,7 @@ class RamalShastraResultsView extends StatelessWidget {
             _buildRelationshipSection(
               'Neutral Houses',
               relationships.neutralHouses!,
-              Colors.orange,
+              AppColors.deepOrange,
               Icons.remove,
             ),
           ],
@@ -2021,8 +2018,8 @@ class RamalShastraResultsView extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            '#FF6B35'.toColor().withOpacity(0.1),
-            '#FF8C42'.toColor().withOpacity(0.05),
+            AppColors.deepOrange.withOpacity(0.1),
+            AppColors.deepOrangemix.withOpacity(0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(16.r),

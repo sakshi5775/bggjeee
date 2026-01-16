@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:astrobharataiuser/data_model/palm_reading_model.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class PalmReadingAnimatedLinesView extends StatefulWidget {
@@ -331,7 +332,7 @@ class AnimatedPalmLinesPainter extends CustomPainter {
 
     // Draw Head Line (orange) - middle horizontal, across the palm
     if (headLineProgress > 0) {
-      linePaint.color = Colors.orange.withOpacity(0.9);
+      linePaint.color = AppColors.deepOrange.withOpacity(0.9);
       linePaint.maskFilter = MaskFilter.blur(BlurStyle.normal, 2);
       
       final headStartX = handLeft + handWidth * 0.2;

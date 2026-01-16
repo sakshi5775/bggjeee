@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/face_reading/controller/face_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -114,11 +115,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: ['#FFA14A'.toColor(), '#E5451D'.toColor()],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          gradient: AppColors.orangeGradient,
           borderRadius: BorderRadius.circular(18.r),
           boxShadow: [
             BoxShadow(
@@ -143,7 +140,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
                 child: Icon(
                   Icons.cloud_upload,
                   size: 40.w,
-                  color: '#E5451D'.toColor(),
+                  color: AppColors.deepOrangemix,
                 ),
               ),
               Spacing.h(14),
@@ -334,7 +331,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
           color: '#ffffff'.toColor(),
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: '#FF6B35'.toColor(),
+            color: AppColors.deepOrange,
             width: 1.5,
           ),
           boxShadow: [
@@ -628,11 +625,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: ['#FFA14A'.toColor(), '#E5451D'.toColor()],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          gradient: AppColors.orangeGradient,
           borderRadius: BorderRadius.circular(18.r),
           boxShadow: [
             BoxShadow(

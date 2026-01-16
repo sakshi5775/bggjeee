@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/numerology/service/numerology_service.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class NumerologyReportsController extends BaseController {
   final NumerologyService _numerologyService = NumerologyService();

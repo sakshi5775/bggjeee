@@ -1,7 +1,4 @@
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/live_stream/controller/stream_reports_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -68,7 +65,7 @@ class StreamReportsView extends StatelessWidget {
                       if (controller.isLoading.value && controller.reports.isEmpty) {
                         return const Center(
                           child: CircularProgressIndicator(
-                            color: Color(0xFFFF6B35),
+                            color: Color(0xFFF38B3B),
                           ),
                         );
                       }
@@ -79,7 +76,7 @@ class StreamReportsView extends StatelessWidget {
 
                       return RefreshIndicator(
                         onRefresh: () => controller.loadReports(reset: true),
-                        color: const Color(0xFFFF6B35),
+                        color: const Color(0xFFF38B3B),
                         child: ListView.builder(
                           padding: EdgeInsets.all(16.w),
                           itemCount: controller.reports.length +
@@ -113,7 +110,7 @@ class StreamReportsView extends StatelessWidget {
           Icon(
             Icons.report_problem_outlined,
             size: 64.sp,
-            color: const Color(0xFFFF6B35).withOpacity(0.5),
+            color: const Color(0xFFF38B3B).withOpacity(0.5),
           ),
           SizedBox(height: 16.h),
           AutoTranslateText(
@@ -145,7 +142,7 @@ class StreamReportsView extends StatelessWidget {
             'Load More',
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              color: const Color(0xFFFF6B35),
+              color: const Color(0xFFF38B3B),
             ),
           ),
         ),

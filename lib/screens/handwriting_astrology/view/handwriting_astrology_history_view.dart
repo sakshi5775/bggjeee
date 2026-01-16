@@ -285,7 +285,7 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
           'Error',
           'This reading is no longer available. It may have been deleted.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orange,
+          backgroundColor: AppColors.deepOrange,
           colorText: Colors.white,
         );
       } else {
@@ -595,13 +595,13 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.1),
+                          color: AppColors.deepOrange.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: AutoTranslateText(
                           reading.errorMessage ?? 'Failed',
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: Colors.orange,
+                            color: AppColors.deepOrange,
                           ).merge(AppTypography.label),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

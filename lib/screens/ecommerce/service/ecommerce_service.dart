@@ -11,7 +11,6 @@ import 'package:astrobharataiuser/data_model/wishlist_model.dart';
 import 'package:astrobharataiuser/data_model/coupon_model.dart';
 import 'package:astrobharataiuser/data_model/search_model.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class EcommerceService with ApiHelperMixin {
   final ApiRepository _apiRepository = Get.find();

@@ -161,7 +161,7 @@ class AiGuiderService extends GetxService {
       page = 'FACE_READING';
       reply = _getNavigationResponse(baseLang, 'face');
     } else if (lowerQuery.contains('match') || 
-               lowerQuery.contains('kundali') ||
+               lowerQuery.contains('kundli') ||
                lowerQuery.contains('मिलान') || // Hindi: match
                lowerQuery.contains('कुंडली मिलान')) { // Hindi: kundli matching
       intent = 'OPEN_PAGE';

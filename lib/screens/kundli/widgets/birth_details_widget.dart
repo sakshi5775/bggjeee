@@ -12,23 +12,19 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 class BirthDetailsWidget extends StatelessWidget {
   final KundliResultController controller;
 
-  const BirthDetailsWidget({
-    super.key,
-    required this.controller,
-  });
+  const BirthDetailsWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       // Show loading if fetching data
-      if (controller.isLoadingPlanetDetails.value || controller.isLoadingMangalDosh.value) {
+      if (controller.isLoadingPlanetDetails.value ||
+          controller.isLoadingMangalDosh.value) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                color: "#ed6f30".toColor(),
-              ),
+              CircularProgressIndicator(color: "#ed6f30".toColor()),
               Spacing.h(16),
               AutoTranslateText(
                 'Loading birth details...',
@@ -46,16 +42,61 @@ class BirthDetailsWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
-            AutoTranslateText(
-              'Birth Details',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: "#6F221E".toColor(),
+            Container(
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: "#E63946".toColor(), width: 1),
+                borderRadius: BorderRadius.circular(12.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        height: 50.h,
+                        width: 50.w,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child: Icon(
+                          Icons.description_outlined,
+                          color: Colors.white,
+                          size: 24.w,
+                        ),
+                      ),
+                      Spacing.w(16),
+                      // Title
+                      AutoTranslateText(
+                        'Birth Details',
+                        style: MyTextTheme.largeBCB.copyWith(
+                          color: "#6F221E".toColor(),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          fontFamily: 'baloo2',
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            
+
             Spacing.h(16),
-            
+
             // Birth Details Card
             Container(
               padding: EdgeInsets.all(16.w),
@@ -119,16 +160,14 @@ class BirthDetailsWidget extends StatelessWidget {
               ),
             ),
           ),
-          
+
           Spacing.w(16),
-          
+
           // Value
           Expanded(
             child: AutoTranslateText(
               value,
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: "#6F221E".toColor(),
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: "#6F221E".toColor()),
               textAlign: TextAlign.right,
             ),
           ),

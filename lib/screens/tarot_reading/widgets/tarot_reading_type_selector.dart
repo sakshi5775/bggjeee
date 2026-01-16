@@ -1,8 +1,8 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/controller/tarot_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,7 +28,7 @@ class TarotReadingTypeSelector extends StatelessWidget {
           color: '#ede7c8'.toColor(),
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: '#ee7532'.toColor().withOpacity(0.3),
+            color: AppColors.deepOrange.withOpacity(0.3),
             width: 2,
           ),
           boxShadow: [
@@ -46,7 +46,7 @@ class TarotReadingTypeSelector extends StatelessWidget {
               children: [
                 Icon(
                   Icons.auto_awesome,
-                  color: '#ee7532'.toColor(),
+                  color: AppColors.deepOrange,
                   size: 24.w,
                 ),
                 Spacing.w(8),
@@ -70,7 +70,7 @@ class TarotReadingTypeSelector extends StatelessWidget {
                     type: 'yesno',
                     icon: Icons.check_circle,
                     label: 'Yes/No',
-                    color: '#ee7532'.toColor(),
+                    color: AppColors.deepOrange,
                     onTap: () => controller.getYesNoReading(),
                   ),
                   _buildReadingButton(
@@ -110,7 +110,7 @@ class TarotReadingTypeSelector extends StatelessWidget {
                     type: 'business-breakup',
                     icon: Icons.business_center,
                     label: 'Business Breakup',
-                    color: Colors.orange,
+                    color: AppColors.deepOrange,
                     onTap: () => controller.getBusinessBreakupReading(),
                   ),
                   _buildReadingButton(

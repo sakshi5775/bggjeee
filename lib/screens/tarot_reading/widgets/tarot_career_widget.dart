@@ -1,9 +1,9 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/controller/tarot_controller.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_card_display_widget.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -120,7 +120,7 @@ class TarotCareerWidget extends StatelessWidget {
                                     AutoTranslateText(
                                       response.name ?? controller.selectedCard?.name ?? 'Unknown Card',
                                       style: MyTextTheme.mediumBCN.copyWith(
-                                        color: '#ee7532'.toColor(),
+                                        color: AppColors.deepOrange,
                                       ),
                                     ),
                                     if (response.direction != null) ...[
@@ -133,7 +133,7 @@ class TarotCareerWidget extends StatelessWidget {
                                         decoration: BoxDecoration(
                                           color: response.direction!.toLowerCase() == 'upright'
                                               ? Colors.green.withOpacity(0.2)
-                                              : Colors.orange.withOpacity(0.2),
+                                              : AppColors.deepOrange.withOpacity(0.2),
                                           borderRadius: BorderRadius.circular(4.r),
                                         ),
                                         child: AutoTranslateText(
@@ -141,7 +141,7 @@ class TarotCareerWidget extends StatelessWidget {
                                           style: MyTextTheme.smallBCN.copyWith(
                                             color: response.direction!.toLowerCase() == 'upright'
                                                 ? Colors.green
-                                                : Colors.orange,
+                                                : AppColors.deepOrange,
                                           ),
                                         ),
                                       ),
@@ -187,17 +187,17 @@ class TarotCareerWidget extends StatelessWidget {
                                     margin: EdgeInsets.only(bottom: 8.h),
                                     padding: EdgeInsets.all(12.w),
                                     decoration: BoxDecoration(
-                                      color: '#ee7532'.toColor().withOpacity(0.1),
+                                      color: AppColors.deepOrange.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(8.r),
                                       border: Border.all(
-                                        color: '#ee7532'.toColor().withOpacity(0.3),
+                                        color: AppColors.deepOrange.withOpacity(0.3),
                                       ),
                                     ),
                                     child: Row(
                                       children: [
                                         Icon(
                                           Icons.arrow_forward,
-                                          color: '#ee7532'.toColor(),
+                                          color: AppColors.deepOrange,
                                           size: 20.w,
                                         ),
                                         Spacing.w(8),
@@ -217,7 +217,7 @@ class TarotCareerWidget extends StatelessWidget {
                                 ElevatedButton(
                                   onPressed: () => controller.closeReading(),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: '#ee7532'.toColor(),
+                                    backgroundColor: AppColors.deepOrange,
                                     padding: EdgeInsets.symmetric(
                                       horizontal: 32.w,
                                       vertical: 12.h,

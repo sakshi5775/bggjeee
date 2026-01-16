@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/palm_reading_model.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,7 +23,7 @@ class PalmReadingDetailView extends StatelessWidget {
     return Scaffold(
       backgroundColor: '#FFF8E1'.toColor(), // Match Face Reading background
       appBar: AppBar(
-        backgroundColor: '#FF6B35'.toColor(), // Match Face Reading theme
+        backgroundColor: AppColors.deepOrange, // Match Face Reading theme
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
           onPressed: () => Get.back(),
@@ -113,8 +114,8 @@ class PalmReadingDetailView extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            '#FF6B35'.toColor(),
-            '#FF8C42'.toColor(),
+            AppColors.deepOrange,
+            AppColors.deepOrangemix,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -122,7 +123,7 @@ class PalmReadingDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: '#FF6B35'.toColor().withOpacity(0.3),
+            color: AppColors.deepOrange.withOpacity(0.3),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -161,11 +162,11 @@ class PalmReadingDetailView extends StatelessWidget {
               onPressed: () {
                 Get.toNamed(AppRoutes.astrologyServices);
               },
-              icon: Icon(Icons.chat_bubble_outline, color: '#FF6B35'.toColor(), size: 20.w),
+              icon: Icon(Icons.chat_bubble_outline, color: AppColors.deepOrange, size: 20.w),
               label: AutoTranslateText(
                 'Consult Expert',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: '#FF6B35'.toColor(),
+                  color: AppColors.deepOrange,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -221,7 +222,7 @@ class PalmReadingDetailView extends StatelessWidget {
               case 'HEAD_LINE':
                 title = 'Head Line';
                 icon = Icons.psychology;
-                iconColor = Colors.orange;
+                iconColor = AppColors.deepOrange;
                 break;
               case 'LIFE_LINE':
                 title = 'Life Line';
@@ -241,7 +242,7 @@ class PalmReadingDetailView extends StatelessWidget {
               default:
                 title = reading.category;
                 icon = Icons.linear_scale;
-                iconColor = '#FF6B35'.toColor();
+                iconColor = AppColors.deepOrange;
             }
             
             return Padding(

@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/face_reading/widgets/scanner_overlay.d
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/screens/palm_reading/widgets/palm_reading_loading_widget.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -252,7 +253,7 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
                     }
                     return ScannerOverlay(
                       isScanning: controller.isScanning.value,
-                      scannerColor: '#FF6B35'.toColor(),
+                      scannerColor: AppColors.deepOrange,
                     );
                   } catch (e) {
                     debugPrint('Error in scanner Obx: $e');
@@ -288,7 +289,7 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
                 ElevatedButton(
                   onPressed: () => Get.back(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: '#FF6B35'.toColor(),
+                    backgroundColor: AppColors.deepOrange,
                     foregroundColor: Colors.white,
                   ),
                   child: const AutoTranslateText('Go Back'),
@@ -305,7 +306,7 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
     if (_uiImage == null || _imageSize == null || !_isImageLoaded) {
       return Center(
         child: CircularProgressIndicator(
-          color: '#FF6B35'.toColor(),
+          color: AppColors.deepOrange,
         ),
       );
     }
@@ -466,7 +467,7 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: '#FF6B35'.toColor(),
+                      backgroundColor: AppColors.deepOrange,
                       foregroundColor: Colors.white,
                     ),
                     child: const AutoTranslateText('Reupload'),

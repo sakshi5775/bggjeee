@@ -3,7 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/controller/tarot_controller.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_card_display_widget.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -121,7 +121,7 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
                                 AutoTranslateText(
                                   response.name ?? controller.selectedCard?.name ?? 'Unknown Card',
                                   style: MyTextTheme.mediumBCN.copyWith(
-                                    color: '#ee7532'.toColor(),
+                                    color: AppColors.deepOrange,
                                   ),
                                 ),
                                 
@@ -161,7 +161,7 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
                                 ElevatedButton(
                                   onPressed: () => controller.closeReading(),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: '#ee7532'.toColor(),
+                                    backgroundColor: AppColors.deepOrange,
                                     padding: EdgeInsets.symmetric(
                                       horizontal: 32.w,
                                       vertical: 12.h,

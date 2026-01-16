@@ -10,10 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class LalKitabTableWidget extends StatelessWidget {
   final LalKitabController controller;
 
-  const LalKitabTableWidget({
-    super.key,
-    required this.controller,
-  });
+  const LalKitabTableWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +24,7 @@ class LalKitabTableWidget extends StatelessWidget {
             final rightText = row['right'] as String? ?? '';
             final hasApiLeft = row['hasApi'] as bool? ?? false;
             final hasApiRight = row['hasApiRight'] as bool? ?? false;
-            
+
             return Padding(
               padding: EdgeInsets.only(bottom: 12.h),
               child: Row(
@@ -37,7 +34,9 @@ class LalKitabTableWidget extends StatelessWidget {
                     child: _buildCard(
                       leftText,
                       hasApiLeft,
-                      leftText.isNotEmpty ? () => controller.navigateToTab(leftText) : null,
+                      leftText.isNotEmpty
+                          ? () => controller.navigateToTab(leftText)
+                          : null,
                     ),
                   ),
                   if (rightText.isNotEmpty) ...[
@@ -68,14 +67,8 @@ class LalKitabTableWidget extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: hasApi
-                ? [
-                    "#FF8C42".toColor().withOpacity(0.9),
-                    "#E63946".toColor().withOpacity(0.7),
-                  ]
-                : [
-                    "#3D0C11".toColor(),
-                    "#5D1C21".toColor(),
-                  ],
+                ? ["#FF8C42".toColor(), "#E63946".toColor()]
+                : ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -94,19 +87,21 @@ class LalKitabTableWidget extends StatelessWidget {
             AutoTranslateText(
               title,
               textAlign: TextAlign.center,
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: Color(0xFFFFFFFF),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.body1),
+              style: MyTextTheme.mediumBCB
+                  .copyWith(
+                    color: hasApi ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.bold,
+                  )
+                  .merge(AppTypography.body1),
             ),
             if (!hasApi) ...[
               Spacing.h(4),
               AutoTranslateText(
                 'Coming Soon',
                 textAlign: TextAlign.center,
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: Color(0xFFFFFFFF),
-                ).merge(AppTypography.label),
+                style: MyTextTheme.smallBCN
+                    .copyWith(color: hasApi ? Colors.white : Colors.black)
+                    .merge(AppTypography.label),
               ),
             ],
           ],
@@ -115,4 +110,3 @@ class LalKitabTableWidget extends StatelessWidget {
     );
   }
 }
-

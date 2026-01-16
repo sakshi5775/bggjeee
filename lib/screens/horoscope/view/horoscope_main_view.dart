@@ -23,52 +23,110 @@ import 'package:get/get.dart';
 class HoroscopeMainView extends StatelessWidget {
   const HoroscopeMainView({super.key});
 
+  // Gradient definitions
+  static final LinearGradient gradientBackground = LinearGradient(
+    colors: ["#FCE5AA".toColor(), "#FFFCF3".toColor(), "#FFFFFF".toColor()],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+
+  static final LinearGradient primaryGradient = LinearGradient(
+    colors: ["#820B17".toColor(), "#68171E".toColor(), "#5D1C21".toColor()],
+  );
+
+  static LinearGradient orangeGradient = LinearGradient(
+    colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
+  );
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(HoroscopeMainController());
     
     return Scaffold(
-      backgroundColor: "#FFFCF3".toColor(),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: "#6F221E".toColor(),
-            size: 24.w,
-          ),
-          onPressed: () => Get.back(),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: gradientBackground,
         ),
-        title: Obx(() => AutoTranslateText(
-          controller.selectedSign.value ?? 'Horoscope',
-          style: MyTextTheme.largeBCB.copyWith(
-            color: "#6F221E".toColor(),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Header with gradient
+              Container(
+                decoration: BoxDecoration(
+                  gradient: primaryGradient,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(24.r),
+                    bottomRight: Radius.circular(24.r),
+                  ),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                  child: Row(
+                    children: [
+                      // Back button
+                      IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: const Color(0xFFDFB343),
+                          size: 24.w,
+                        ),
+                        onPressed: () => Get.back(),
+                      ),
+                      // Title
+                      Expanded(
+                        child: Obx(() => AutoTranslateText(
+                          controller.selectedSign.value ?? 'Horoscope',
+                          style: MyTextTheme.largeBCB.copyWith(
+                            color: const Color(0xFFDFB343),
+                            fontWeight: FontWeight.bold,
+                          ).merge(AppTypography.h2),
+                          textAlign: TextAlign.center,
+                        )),
+                      ),
+                      // Spacer to balance the back button
+                      SizedBox(width: 48.w),
+                    ],
+                  ),
+                ),
+              ),
+              // Tab Slider
+              _buildTabSlider(controller),
+              
+              // Tab Content with PageView for swipe
+              Expanded(
+                child: PageView.builder(
+                  controller: controller.pageController,
+                  onPageChanged: controller.onPageChanged,
+                  itemCount: controller.tabs.length,
+                  itemBuilder: (context, index) {
+                    return _buildTabContent(controller, index);
+                  },
+                ),
+              ),
+            ],
           ),
-        )),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          // Tab Slider
-          _buildTabSlider(controller),
-          
-          // Tab Content
-          Expanded(
-            child: Obx(() => _buildTabContent(controller)),
-          ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildTabSlider(HoroscopeMainController controller) {
     return Container(
-      height: 50.h,
-      color: Colors.white,
+      height: 60.h,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: ListView.builder(
+        controller: controller.tabScrollController,
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
         itemCount: controller.tabs.length,
         itemBuilder: (context, index) {
           return Obx(() {
@@ -76,25 +134,27 @@ class HoroscopeMainView extends StatelessWidget {
             return GestureDetector(
               onTap: () => controller.onTabChanged(index),
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                margin: EdgeInsets.symmetric(horizontal: 4.w),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
                 decoration: BoxDecoration(
-                  gradient: isSelected
-                      ? LinearGradient(
-                          colors: [
-                            "#ed6f30".toColor(),
-                            "#ed6f30".toColor().withOpacity(0.8),
-                          ],
-                        )
-                      : null,
+                  gradient: isSelected ? orangeGradient : null,
                   color: isSelected ? null : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20.r),
+                  borderRadius: BorderRadius.circular(25.r),
                   border: Border.all(
                     color: isSelected
-                        ? "#ed6f30".toColor()
+                        ? Colors.transparent
                         : "#6F221E".toColor().withOpacity(0.2),
-                    width: 1,
+                    width: 1.5,
                   ),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: "#F38B3B".toColor().withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
                 ),
                 child: Center(
                   child: AutoTranslateText(
@@ -103,6 +163,7 @@ class HoroscopeMainView extends StatelessWidget {
                       color: isSelected
                           ? Colors.white
                           : "#6F221E".toColor().withOpacity(0.7),
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                     ),
                   ),
                 ),
@@ -114,9 +175,7 @@ class HoroscopeMainView extends StatelessWidget {
     );
   }
 
-  Widget _buildTabContent(HoroscopeMainController controller) {
-    final index = controller.selectedTabIndex.value;
-    
+  Widget _buildTabContent(HoroscopeMainController controller, int index) {
     switch (index) {
       case 0:
         return KeyPointsWidget(controller: controller);

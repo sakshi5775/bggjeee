@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -155,7 +156,7 @@ class _VastuReadingViewState extends State<VastuReadingView> with WidgetsBinding
                   height: 40.w,
                   decoration: BoxDecoration(
                     color: controller.isCameraMode 
-                        ? '#FF6B35'.toColor() 
+                        ? AppColors.deepOrange 
                         : '#ffffff'.toColor(),
                     borderRadius: BorderRadius.circular(8.r),
                     boxShadow: [
@@ -240,14 +241,14 @@ class _VastuReadingViewState extends State<VastuReadingView> with WidgetsBinding
             child: ElevatedButton(
               onPressed: () => controller.showVastuInfo(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: '#FF6B35'.toColor(),
+                backgroundColor: AppColors.deepOrange,
                 foregroundColor: '#ffffff'.toColor(),
                 padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 elevation: 6,
-                shadowColor: '#FF6B35'.toColor().withOpacity(0.35),
+                shadowColor: AppColors.deepOrange.withOpacity(0.35),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

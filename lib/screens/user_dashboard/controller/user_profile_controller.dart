@@ -7,7 +7,6 @@ import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_se
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
 class UserProfileController extends BaseController {

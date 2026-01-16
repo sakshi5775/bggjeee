@@ -139,6 +139,7 @@ flutter:
   assets:
     - assets/
     - assets/app/
+    - assets/app/ZodiacSigns/
     - assets/app/splash_video.mp4
     - assets/images/
     - assets/icons/

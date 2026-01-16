@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -133,7 +134,7 @@ class FreeServiceDialog extends StatelessWidget {
                   style: MyTextTheme.veryLargeBCB.copyWith(
                     fontSize: AppTypography.h1.fontSize?.sp,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFFF6B35), // Orange color
+                    color: AppColors.deepOrange,
                     height: 1.2,
                   ),
                 ),
@@ -142,7 +143,7 @@ class FreeServiceDialog extends StatelessWidget {
                   style: MyTextTheme.veryLargeBCB.copyWith(
                     fontSize: AppTypography.h1.fontSize?.sp,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFFF6B35), // Orange color
+                    color: AppColors.deepOrange,
                   ),
                 ),
               ],
@@ -156,18 +157,11 @@ class FreeServiceDialog extends StatelessWidget {
             width: double.infinity,
             height: 56.h,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFFFF6B35), // Orange
-                  Color(0xFFFF3D00), // Red-orange
-                ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
+              gradient: AppColors.orangeGradient,
               borderRadius: BorderRadius.circular(16.r),
               boxShadow: [
                 BoxShadow(
-                  color: Color(0xFFFF6B35).withOpacity(0.3),
+                  color: AppColors.deepOrange.withOpacity(0.3),
                   blurRadius: 12,
                   offset: Offset(0, 4),
                 ),

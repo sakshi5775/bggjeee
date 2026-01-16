@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrology_services_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/widgets/astrology_header_widget.dart';
+import 'package:astrobharataiuser/screens/astrology_services/widgets/remedies_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -13,7 +14,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../utils/app_colors.dart';
-import '../../../utils/app_constant.dart';
 
 class AstrologyServicesView extends StatelessWidget {
   const AstrologyServicesView({Key? key}) : super(key: key);
@@ -390,7 +390,7 @@ class AstrologyServicesView extends StatelessWidget {
             itemCount: controller.categories.length,
             itemBuilder: (context, index) {
               final category = controller.categories[index];
-              return _buildCategoryCard(category);
+              return _buildCategoryCard(category, context, controller);
             },
           ),
         ),
@@ -398,40 +398,84 @@ class AstrologyServicesView extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryCard(Map<String, dynamic> category) {
-    return Container(
-      width: 80.w,
-      // margin: EdgeInsets.only(right: 8.w),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: AppPaddings.symmetric(h: 20, v: 20),
-            decoration: BoxDecoration(
-              gradient: AppColors.orangeGradient,
-              borderRadius: BorderRadius.circular(15.r),
-            ),
-            child: Image.asset(
-              category['icon'] as String,
-              height: 20.h,
-              width: 20.w,
-            ),
-          ),
-          Spacing.h(6),
-          Flexible(
-            child: AutoTranslateText(
-              category['name'] as String,
-              style: MyTextTheme.smallBCN.copyWith(
-                color: const Color(0xFF5F2221),
+  Widget _buildCategoryCard(
+    Map<String, dynamic> category,
+    BuildContext context,
+    AstrologyServicesController controller,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        _navigateToCategory(
+          category['name'] as String,
+          context,
+          controller,
+        );
+      },
+      child: Container(
+        width: 80.w,
+        // margin: EdgeInsets.only(right: 8.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: AppPaddings.symmetric(h: 20, v: 20),
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(15.r),
               ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+              child: Image.asset(
+                category['icon'] as String,
+                height: 20.h,
+                width: 20.w,
+              ),
             ),
-          ),
-        ],
+            Spacing.h(6),
+            Flexible(
+              child: AutoTranslateText(
+                category['name'] as String,
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: const Color(0xFF5F2221),
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void _navigateToCategory(
+    String categoryName,
+    BuildContext context,
+    AstrologyServicesController controller,
+  ) {
+    switch (categoryName.toLowerCase()) {
+      case 'daily horoscope':
+        Get.toNamed(AppRoutes.horoscopeForm);
+        break;
+      case 'kundli analysis':
+        Get.toNamed(AppRoutes.kundliForm);
+        break;
+      case 'compatibility':
+        Get.toNamed(AppRoutes.matchMakingGif);
+        break;
+      case 'tarot reading':
+        Get.toNamed(AppRoutes.tarotReading);
+        break;
+      case 'numerology':
+        Get.toNamed(AppRoutes.numerologyForm);
+        break;
+      case 'remedies':
+        // Show remedies bottom sheet with ecommerce categories
+        _showRemediesBottomSheet(context, controller);
+        break;
+      default:
+        // Default: stay on the same page or show all astrologers
+        break;
+    }
   }
 
   Widget _buildFilteredResultsSection(
@@ -1749,5 +1793,19 @@ class AstrologyServicesView extends StatelessWidget {
       return '₹${astrologerModel.chatPrice!.toStringAsFixed(0)}/msg';
     }
     return 'N/A';
+  }
+
+  void _showRemediesBottomSheet(
+    BuildContext context,
+    AstrologyServicesController controller,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => RemediesBottomSheetWidget(
+        controller: controller,
+      ),
+    );
   }
 }

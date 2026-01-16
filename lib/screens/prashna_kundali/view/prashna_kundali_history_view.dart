@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/prashna_kundali/controller/prashna_kundali_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,7 +31,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                     controller.historyReadings.isEmpty) {
                   return Center(
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation('#FF6B35'.toColor()),
+                      valueColor: AlwaysStoppedAnimation(AppColors.deepOrange),
                     ),
                   );
                 }
@@ -41,7 +42,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
 
                 return RefreshIndicator(
                   onRefresh: () => controller.fetchHistory(page: 1),
-                  color: '#FF6B35'.toColor(),
+                  color: AppColors.deepOrange,
                   child: ListView.builder(
                     padding: EdgeInsets.symmetric(
                       horizontal: 16.w,
@@ -110,7 +111,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                 ),
                 Spacing.h(2),
                 AutoTranslateText(
-                  'Your past Prashna Kundali readings',
+                  'Your past Prashna kundli readings',
                   style: MyTextTheme.smallBCN.copyWith(
                     color: '#666666'.toColor(),
                   ),
@@ -141,7 +142,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
               child: Icon(
                 Icons.history_edu,
                 size: 60.w,
-                color: '#FF6B35'.toColor().withOpacity(0.6),
+                color: AppColors.deepOrange.withOpacity(0.6),
               ),
             ),
             Spacing.h(24),
@@ -157,7 +158,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
             ),
             Spacing.h(12),
             AutoTranslateText(
-              "Your Prashna Kundali readings will appear here.\nStart by asking your first question!",
+              "Your Prashna kundli readings will appear here.\nStart by asking your first question!",
               style: MyTextTheme.mediumBCN.copyWith(
                 color: '#666666'.toColor(),
                 height: 1.5,
@@ -168,14 +169,14 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
             ElevatedButton(
               onPressed: () => Get.back(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: '#FF6B35'.toColor(),
+                backgroundColor: AppColors.deepOrange,
                 foregroundColor: '#ffffff'.toColor(),
                 padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 32.w),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 elevation: 4,
-                shadowColor: '#FF6B35'.toColor().withOpacity(0.35),
+                shadowColor: AppColors.deepOrange.withOpacity(0.35),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -236,15 +237,11 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                       width: 44.w,
                       height: 44.w,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: ['#FF6B35'.toColor(), '#FF8C42'.toColor()],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        gradient: AppColors.orangeGradient,
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: '#FF6B35'.toColor().withOpacity(0.3),
+                            color: AppColors.deepOrange.withOpacity(0.3),
                             blurRadius: 8,
                             offset: Offset(0, 2),
                           ),
@@ -293,14 +290,14 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                         color: '#FFF2E8'.toColor(),
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                          color: '#FF6B35'.toColor().withOpacity(0.3),
+                          color: AppColors.deepOrange.withOpacity(0.3),
                           width: 1,
                         ),
                       ),
                       child: AutoTranslateText(
                         "Reading #${controller.historyReadings.length - index}",
                         style: MyTextTheme.smallBCN.copyWith(
-                          color: '#FF6B35'.toColor(),
+                          color: AppColors.deepOrange,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -324,7 +321,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                       Icon(
                         Icons.help_outline,
                         size: 16.sp,
-                        color: '#FF6B35'.toColor(),
+                        color: AppColors.deepOrange,
                       ),
                       Spacing.w(8),
                       Expanded(
@@ -364,7 +361,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                     Icon(
                       Icons.lightbulb_outline,
                       size: 16.sp,
-                      color: '#FF8C42'.toColor(),
+                      color: AppColors.deepOrangemix,
                     ),
                     Spacing.w(8),
                     Expanded(
@@ -384,7 +381,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: MyTextTheme.mediumBCB.copyWith(
-                              color: '#FF6B35'.toColor(),
+                              color: AppColors.deepOrange,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -408,7 +405,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                         );
                       },
                       style: TextButton.styleFrom(
-                        foregroundColor: '#FF6B35'.toColor(),
+                        foregroundColor: AppColors.deepOrange,
                         padding: EdgeInsets.symmetric(
                           horizontal: 16.w,
                           vertical: 8.h,
@@ -423,7 +420,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                           AutoTranslateText(
                             "View Full Reading",
                             style: MyTextTheme.mediumBCB.copyWith(
-                              color: '#FF6B35'.toColor(),
+                              color: AppColors.deepOrange,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -431,7 +428,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                           Icon(
                             Icons.arrow_forward,
                             size: 16.sp,
-                            color: '#FF6B35'.toColor(),
+                            color: AppColors.deepOrange,
                           ),
                         ],
                       ),

@@ -3,7 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/controller/tarot_controller.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_card_display_widget.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -178,7 +178,7 @@ class TarotBreakupWidget extends StatelessWidget {
                                       vertical: 12.h,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: '#ee7532'.toColor(),
+                                      color: AppColors.deepOrange,
                                       borderRadius: BorderRadius.circular(12.r),
                                     ),
                                     alignment: Alignment.center,

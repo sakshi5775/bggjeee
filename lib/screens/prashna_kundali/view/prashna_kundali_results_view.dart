@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/prashna_kundali_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -120,7 +121,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.r),
                 border: Border.all(color: '#F5D7B8'.toColor(), width: 1),
               ),
-              child: Icon(Icons.share, color: '#FF6B35'.toColor(), size: 20.w),
+              child: Icon(Icons.share, color: AppColors.deepOrange, size: 20.w),
             ),
           ),
         ],
@@ -134,14 +135,14 @@ class PrashnaKundaliResultsView extends StatelessWidget {
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: ['#FF6B35'.toColor(), '#FF8C42'.toColor()],
+          colors: [AppColors.deepOrange, AppColors.deepOrangemix],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(18.r),
         boxShadow: [
           BoxShadow(
-            color: '#FF6B35'.toColor().withOpacity(0.35),
+            color: AppColors.deepOrange.withOpacity(0.35),
             blurRadius: 16,
             offset: Offset(0, 6),
           ),
@@ -159,8 +160,8 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: [
-                    '#FF8C42'.toColor().withOpacity(0.35),
-                    '#FF6B35'.toColor().withOpacity(0.15),
+                    AppColors.deepOrangemix.withOpacity(0.35),
+                    AppColors.deepOrange.withOpacity(0.15),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -312,12 +313,12 @@ class PrashnaKundaliResultsView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.auto_awesome, color: '#FF6B35'.toColor(), size: 20.w),
+              Icon(Icons.auto_awesome, color: AppColors.deepOrange, size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Divine Answer',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: '#FF6B35'.toColor(),
+                  color: AppColors.deepOrange,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -336,7 +337,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
-                color: '#FF6B35'.toColor().withOpacity(0.3),
+                color: AppColors.deepOrange.withOpacity(0.3),
                 width: 1.5,
               ),
             ),
@@ -347,7 +348,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                   result.answerToQuestion,
                   style: MyTextTheme.largeBCB
                       .copyWith(
-                        color: '#FF6B35'.toColor(),
+                        color: AppColors.deepOrange,
                         fontWeight: FontWeight.bold,
                       )
                       .merge(AppTypography.h2),
@@ -372,7 +373,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                 color: '#FFF2E8'.toColor(),
                 borderRadius: BorderRadius.circular(10.r),
                 border: Border.all(
-                  color: '#FF8C42'.toColor().withOpacity(0.3),
+                  color: AppColors.deepOrangemix.withOpacity(0.3),
                   width: 1,
                 ),
               ),
@@ -381,13 +382,13 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(8.w),
                     decoration: BoxDecoration(
-                      color: '#FF6B35'.toColor().withOpacity(0.1),
+                      color: AppColors.deepOrange.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.timer_outlined,
                       size: 18.sp,
-                      color: '#FF6B35'.toColor(),
+                      color: AppColors.deepOrange,
                     ),
                   ),
                   Spacing.w(12),
@@ -494,11 +495,11 @@ class PrashnaKundaliResultsView extends StatelessWidget {
               ),
               shape: BoxShape.circle,
               border: Border.all(
-                color: '#FF6B35'.toColor().withOpacity(0.2),
+                color: AppColors.deepOrange.withOpacity(0.2),
                 width: 1,
               ),
             ),
-            child: Icon(icon, size: 18.sp, color: '#FF6B35'.toColor()),
+            child: Icon(icon, size: 18.sp, color: AppColors.deepOrange),
           ),
           Spacing.w(12),
           Expanded(
@@ -551,8 +552,8 @@ class PrashnaKundaliResultsView extends StatelessWidget {
 
   Widget _buildInterpretationCard(PrashnaInterpretation reading, int index) {
     final colors = [
-      ('#FF6B35', '#FFF2E8'),
-      ('#FF8C42', '#FFFAF0'),
+      ('#F38B3B', '#FFF2E8'),
+      ('#DD2914', '#FFFAF0'),
       ('#FFA500', '#FFF8E1'),
     ];
     final colorPair = colors[index % colors.length];
@@ -676,7 +677,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: '#FF6B35'.toColor(),
+                color: AppColors.deepOrange,
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: Colors.white, size: 16.sp),
@@ -685,7 +686,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
             AutoTranslateText(
               category,
               style: MyTextTheme.mediumBCB.copyWith(
-                color: '#FF6B35'.toColor(),
+                color: AppColors.deepOrange,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -703,7 +704,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                   width: 6.w,
                   height: 6.w,
                   decoration: BoxDecoration(
-                    color: '#FF8C42'.toColor(),
+                    color: AppColors.deepOrangemix,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -739,7 +740,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: ['#FF6B35'.toColor(), '#FF8C42'.toColor()],
+                colors: [AppColors.deepOrange, AppColors.deepOrangemix],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -784,14 +785,14 @@ class PrashnaKundaliResultsView extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () => Get.toNamed(AppRoutes.astrologyServices),
             style: ElevatedButton.styleFrom(
-              backgroundColor: '#FF6B35'.toColor(),
+              backgroundColor: AppColors.deepOrange,
               foregroundColor: '#ffffff'.toColor(),
               padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.r),
               ),
               elevation: 6,
-              shadowColor: '#FF6B35'.toColor().withOpacity(0.35),
+              shadowColor: AppColors.deepOrange.withOpacity(0.35),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -815,8 +816,8 @@ class PrashnaKundaliResultsView extends StatelessWidget {
           child: OutlinedButton(
             onPressed: () => Get.back(),
             style: OutlinedButton.styleFrom(
-              foregroundColor: '#FF6B35'.toColor(),
-              side: BorderSide(color: '#FF6B35'.toColor(), width: 1.5),
+              foregroundColor: AppColors.deepOrange,
+              side: BorderSide(color: AppColors.deepOrange, width: 1.5),
               padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.r),
@@ -830,7 +831,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                 AutoTranslateText(
                   "Ask Another Question",
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: '#FF6B35'.toColor(),
+                    color: AppColors.deepOrange,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

@@ -17,6 +17,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class KpSystemView extends BasePage<KpSystemController> {
   const KpSystemView({super.key});
@@ -25,21 +26,20 @@ class KpSystemView extends BasePage<KpSystemController> {
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: '#FFF8E1'.toColor(),
-
-    body: Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [Color(0xFFFFF6C2), Color(0xFFFFE8A3), Color(0xFFFFD580) ],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
-        
-      ),
-      child: SafeArea(
+        child: SafeArea(
           child: Column(
             children: [
               // Header
               _buildHeader(),
-              
+
               // Tabs (always visible when not in table view)
               Obx(() {
                 if (controller.selectedTabIndex.value == -1) {
@@ -47,7 +47,7 @@ class KpSystemView extends BasePage<KpSystemController> {
                 }
                 return _buildTabs();
               }),
-              
+
               // Content
               Expanded(
                 child: Obx(() {
@@ -66,7 +66,9 @@ class KpSystemView extends BasePage<KpSystemController> {
                       KpCuspsWidget(controller: controller),
                       KpPlanetSignificationWidget(controller: controller),
                       KpHouseSignificatorsWidget(controller: controller),
-                      KpPlanetSignificationLevelWiseWidget(controller: controller),
+                      KpPlanetSignificationLevelWiseWidget(
+                        controller: controller,
+                      ),
                       KpComingSoonWidget(title: 'Nakshatra Nadi'),
                     ],
                   );
@@ -75,7 +77,7 @@ class KpSystemView extends BasePage<KpSystemController> {
             ],
           ),
         ),
-    ),
+      ),
     );
   }
 
@@ -107,17 +109,19 @@ class KpSystemView extends BasePage<KpSystemController> {
             icon: Icon(Icons.arrow_back, color: Color(0xFFF7C443), size: 24.w),
             onPressed: () => Get.back(),
           ),
-          
+
           Spacing.w(8),
-          
+
           // Title
           Expanded(
             child: AutoTranslateText(
               'KP System',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: Color(0xFFF7C443),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
+              style: MyTextTheme.largeBCB
+                  .copyWith(
+                    color: Color(0xFFF7C443),
+                    fontWeight: FontWeight.bold,
+                  )
+                  .merge(AppTypography.h2),
             ),
           ),
         ],
@@ -158,7 +162,7 @@ class KpSystemView extends BasePage<KpSystemController> {
   Widget _buildTab(String title, int index) {
     return Obx(() {
       final isSelected = controller.selectedTabIndex.value == index;
-      
+
       return GestureDetector(
         onTap: () {
           controller.onTabSelected(index);
@@ -166,26 +170,30 @@ class KpSystemView extends BasePage<KpSystemController> {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
           decoration: BoxDecoration(
-            color: isSelected ? '#FF6B35'.toColor().withOpacity(0.1) : Colors.transparent,
-            
-                    border: Border(
-                      bottom: BorderSide(
-                        color: isSelected ? '#FF6B35'.toColor() : Colors.transparent,
+            color: isSelected
+                ? '#FF6B35'.toColor().withOpacity(0.1)
+                : Colors.transparent,
+
+            border: Border(
+              bottom: BorderSide(
+                color: isSelected ? '#FF6B35'.toColor() : Colors.transparent,
                 width: 3,
               ),
             ),
-            
           ),
           child: AutoTranslateText(
             title,
-            style: MyTextTheme.mediumBCB.copyWith(
-                      color: isSelected ? '#FF6B35'.toColor() : '#3E2723'.toColor().withOpacity(0.6),
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            ).merge(AppTypography.body2),
+            style: MyTextTheme.mediumBCB
+                .copyWith(
+                  color: isSelected
+                      ? '#FF6B35'.toColor()
+                      : '#3E2723'.toColor().withOpacity(0.6),
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                )
+                .merge(AppTypography.body2),
           ),
         ),
       );
     });
   }
 }
-

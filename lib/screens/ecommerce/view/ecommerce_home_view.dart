@@ -1,5 +1,4 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
-import 'package:astrobharataiuser/app_manager/my_text_field.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
@@ -18,7 +17,6 @@ import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widg
 import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/shop_by_category_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/shop_by_purpose_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/why_shop_with_us_widget.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';

@@ -18,6 +18,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class PredictionsView extends BasePage<PredictionsController> {
   const PredictionsView({super.key});
@@ -31,53 +32,52 @@ class PredictionsView extends BasePage<PredictionsController> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFFFF6C2), Color(0xFFFFE8A3), Color(0xFFFFD580),
+            colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              _buildHeader(),
+
+              // Tabs (always visible when not in table view)
+              Obx(() {
+                if (controller.selectedTabIndex.value == -1) {
+                  return SizedBox.shrink();
+                }
+                return _buildTabs();
+              }),
+
+              // Content
+              Expanded(
+                child: Obx(() {
+                  // Show table view if selectedTabIndex is -1
+                  if (controller.selectedTabIndex.value == -1) {
+                    return PredictionsTableWidget(controller: controller);
+                  }
+                  // Otherwise show swipeable PageView for tabs
+                  return PageView(
+                    controller: controller.pageController,
+                    onPageChanged: controller.onPageChanged,
+                    children: [
+                      NumerologyWidget(controller: controller),
+                      DailyPredictionWidget(controller: controller),
+                      WeeklyPredictionWidget(controller: controller),
+                      MonthlyPredictionWidget(controller: controller),
+                      YearlyPredictionWidget(controller: controller),
+                      AscendantPredictionWidget(controller: controller),
+                      MoonSignPredictionWidget(controller: controller),
+                      NakshatraPredictionWidget(controller: controller),
+                      PanchangPredictionWidget(controller: controller),
+                    ],
+                  );
+                }),
+              ),
             ],
           ),
         ),
-      child: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(),
-            
-            // Tabs (always visible when not in table view)
-            Obx(() {
-              if (controller.selectedTabIndex.value == -1) {
-                return SizedBox.shrink();
-              }
-              return _buildTabs();
-            }),
-            
-            // Content
-            Expanded(
-              child: Obx(() {
-                // Show table view if selectedTabIndex is -1
-                if (controller.selectedTabIndex.value == -1) {
-                  return PredictionsTableWidget(controller: controller);
-                }
-                // Otherwise show swipeable PageView for tabs
-                return PageView(
-                  controller: controller.pageController,
-                  onPageChanged: controller.onPageChanged,
-                  children: [
-                    NumerologyWidget(controller: controller),
-                    DailyPredictionWidget(controller: controller),
-                    WeeklyPredictionWidget(controller: controller),
-                    MonthlyPredictionWidget(controller: controller),
-                    YearlyPredictionWidget(controller: controller),
-                    AscendantPredictionWidget(controller: controller),
-                    MoonSignPredictionWidget(controller: controller),
-                    NakshatraPredictionWidget(controller: controller),
-                    PanchangPredictionWidget(controller: controller),
-                  ],
-                );
-              }),
-            ),
-          ],
-        ),
       ),
-    ),
     );
   }
 
@@ -109,17 +109,19 @@ class PredictionsView extends BasePage<PredictionsController> {
             icon: Icon(Icons.arrow_back, color: Color(0xFFF7C443), size: 24.w),
             onPressed: () => Get.back(),
           ),
-          
+
           Spacing.w(8),
-          
+
           // Title
           Expanded(
             child: AutoTranslateText(
               'Predictions',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: Color(0xFFF7C443),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
+              style: MyTextTheme.largeBCB
+                  .copyWith(
+                    color: Color(0xFFF7C443),
+                    fontWeight: FontWeight.bold,
+                  )
+                  .merge(AppTypography.h2),
             ),
           ),
         ],
@@ -161,7 +163,7 @@ class PredictionsView extends BasePage<PredictionsController> {
   Widget _buildTab(String title, int index) {
     return Obx(() {
       final isSelected = controller.selectedTabIndex.value == index;
-      
+
       return GestureDetector(
         onTap: () {
           controller.onTabSelected(index);
@@ -169,24 +171,29 @@ class PredictionsView extends BasePage<PredictionsController> {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
           decoration: BoxDecoration(
-            color: isSelected ? '#FF6B35'.toColor().withOpacity(0.1) : Colors.transparent,
-                    border: Border(
-                      bottom: BorderSide(
-                        color: isSelected ? '#FF6B35'.toColor() : Colors.transparent,
+            color: isSelected
+                ? '#FF6B35'.toColor().withOpacity(0.1)
+                : Colors.transparent,
+            border: Border(
+              bottom: BorderSide(
+                color: isSelected ? '#FF6B35'.toColor() : Colors.transparent,
                 width: 3,
               ),
             ),
           ),
           child: AutoTranslateText(
             title,
-            style: MyTextTheme.mediumBCB.copyWith(
-                      color: isSelected ? '#FF6B35'.toColor() : '#3E2723'.toColor().withOpacity(0.6),
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            ).merge(AppTypography.body2),
+            style: MyTextTheme.mediumBCB
+                .copyWith(
+                  color: isSelected
+                      ? '#FF6B35'.toColor()
+                      : '#3E2723'.toColor().withOpacity(0.6),
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                )
+                .merge(AppTypography.body2),
           ),
         ),
       );
     });
   }
 }
-

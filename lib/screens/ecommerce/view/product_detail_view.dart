@@ -9,7 +9,6 @@ import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/product_detail_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.dart';
-import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';

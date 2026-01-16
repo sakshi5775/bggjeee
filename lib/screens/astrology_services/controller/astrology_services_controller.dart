@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
+import 'package:astrobharataiuser/data_model/category_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/live_stream_service.dart';
+import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,6 +12,7 @@ import 'package:get/get.dart';
 class AstrologyServicesController extends GetxController {
   final AstrologerService _astrologerService = AstrologerService();
   final LiveStreamService _liveStreamService = LiveStreamService();
+  final EcommerceService _ecommerceService = EcommerceService();
 // Categories data - matching the image exactly
   final List<Map<String, dynamic>> categories = [
     {
@@ -76,6 +79,10 @@ class AstrologyServicesController extends GetxController {
   // Live streams
   final RxList<LiveStreamModel> liveStreams = <LiveStreamModel>[].obs;
   final RxBool isLoadingLiveStreams = false.obs;
+
+  // Ecommerce Categories for Remedies
+  final RxList<CategoryModel> remedyCategories = <CategoryModel>[].obs;
+  final RxBool isLoadingRemedyCategories = false.obs;
 
   List<Map<String, dynamic>> get liveAstrologers {
     // Convert live streams to astrologer format for compatibility
@@ -198,6 +205,42 @@ class AstrologyServicesController extends GetxController {
     super.onInit();
     loadAstrologers();
     loadLiveStreams();
+    loadRemedyCategories();
+  }
+
+  /// Load remedy categories for Remedies section
+  Future<void> loadRemedyCategories() async {
+    try {
+      isLoadingRemedyCategories.value = true;
+      // Load featured categories for remedy section
+      final categoryData = await _ecommerceService.getCategories(
+        page: 1,
+        limit: 20,
+        isActive: true,
+        isFeatured: true,
+      );
+
+      if (categoryData != null &&
+          categoryData.items != null &&
+          categoryData.items!.isNotEmpty) {
+        // Filter to only top-level categories (no parent)
+        remedyCategories.value = categoryData.items!
+            .where((cat) => cat.parent == null)
+            .toList();
+      } else {
+        // Fallback: try category tree
+        final treeResult = await _ecommerceService.getCategoryTree();
+        if (treeResult != null && treeResult.isNotEmpty) {
+          remedyCategories.value = treeResult
+              .where((cat) => cat.isFeatured == true && cat.parent == null)
+              .toList();
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading remedy categories: $e');
+    } finally {
+      isLoadingRemedyCategories.value = false;
+    }
   }
   
   Future<void> loadLiveStreams() async {

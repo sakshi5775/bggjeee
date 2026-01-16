@@ -1,4 +1,3 @@
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_profile_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -342,7 +341,7 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
                         color: const Color(0xFFFFF8F0),
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                          color: const Color(0xFFFF6B35),
+                          color: const Color(0xFFF38B3B),
                           width: 1,
                         ),
                       ),
