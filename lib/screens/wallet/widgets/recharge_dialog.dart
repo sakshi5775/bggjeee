@@ -77,56 +77,14 @@ class _RechargeDialogState extends State<RechargeDialog> {
     );
 
     try {
-      // Initiate recharge
-      final rechargeData = await _controller.initiateRecharge(amount: amount);
-
-      if (rechargeData != null) {
-        Get.back(); // Close loading dialog
-
-        // For mock payment, auto-verify immediately
-        if (rechargeData.paymentProvider == 'mock') {
-          // Show processing dialog
-          Get.dialog(
-            const Center(child: CircularProgressIndicator()),
-            barrierDismissible: false,
-          );
-
-          // Verify recharge
-          final verified = await _controller.verifyRecharge(
-            rechargeId: rechargeData.rechargeId,
-            transactionId: 'TXN_mock_success',
-          );
-
-          Get.back(); // Close processing dialog
-
-          if (verified) {
-            Get.back(); // Close recharge dialog
-            Get.showSnackbar(
-              GetSnackBar(
-                message: 'Wallet recharged successfully!',
-                duration: const Duration(seconds: 2),
-                backgroundColor: Colors.green,
-              ),
-            );
-          } else {
-            Get.showSnackbar(
-              GetSnackBar(
-                message: 'Recharge verification failed. Please try again.',
-                duration: const Duration(seconds: 2),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-        } else {
-          // For real payment gateway, show payment instructions
-          Get.back(); // Close loading dialog
-          _showPaymentInstructions(rechargeData);
-        }
-      } else {
-        Get.back(); // Close loading dialog
-      }
-    } catch (e) {
       Get.back(); // Close loading dialog
+      
+      // For Razorpay, use startRazorpayRecharge which will open checkout
+      await _controller.startRazorpayRecharge(amount);
+      
+      // Note: Razorpay will open checkout and handle payment callback
+      // The dialog will close after successful payment in _handlePaymentSuccess
+    } catch (e) {
       Get.showSnackbar(
         GetSnackBar(
           message: 'Failed to initiate recharge: ${e.toString()}',

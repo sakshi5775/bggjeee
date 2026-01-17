@@ -228,7 +228,7 @@ class _HomeVastuCompassViewState extends State<HomeVastuCompassView> with Widget
               width: 40.w,
               height: 40.w,
               decoration: BoxDecoration(
-                color: AppColors.deepOrange,
+                color: "#F38B3B".toColor(),
                 borderRadius: BorderRadius.circular(8.r),
                 boxShadow: [
                   BoxShadow(
@@ -325,7 +325,7 @@ class _HomeVastuCompassViewState extends State<HomeVastuCompassView> with Widget
                           ? '#4CAF50'.toColor()
                           : isAvoid
                               ? '#F44336'.toColor()
-                              : AppColors.deepOrange,
+                              : "#F38B3B".toColor(),
                       size: 24.w,
                     ),
                     Spacing.w(8),
@@ -388,29 +388,42 @@ class _HomeVastuCompassViewState extends State<HomeVastuCompassView> with Widget
           Row(
             children: [
               Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () => controller.showRoomVastuInfo(roomConfig),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.deepOrange,
-                    foregroundColor: '#ffffff'.toColor(),
-                    padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    elevation: 6,
-                    shadowColor: AppColors.deepOrange.withOpacity(0.35),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: AppColors.orangeGradient,
+                    borderRadius: BorderRadius.circular(12.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: "#F38B3B".toColor().withOpacity(0.35),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
+                  child: ElevatedButton.icon(
+                    onPressed: () => controller.showRoomVastuInfo(roomConfig),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: '#ffffff'.toColor(),
+                      padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      elevation: 0,
+                      shadowColor: Colors.transparent,
+                    ),
                   icon: Icon(
                     Icons.info_outline,
                     size: 18.w,
                     color: '#ffffff'.toColor(),
                   ),
-                  label: AutoTranslateText(
-                    'Guide',
-                    style: MyTextTheme.smallBCB.copyWith(
-                      color: '#ffffff'.toColor(),
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.body2),
+                    label: AutoTranslateText(
+                      'Guide',
+                      style: MyTextTheme.smallBCB.copyWith(
+                        color: '#ffffff'.toColor(),
+                        fontWeight: FontWeight.bold,
+                      ).merge(AppTypography.body2),
+                    ),
                   ),
                 ),
               ),
@@ -422,9 +435,9 @@ class _HomeVastuCompassViewState extends State<HomeVastuCompassView> with Widget
           //       roomName: roomConfig.displayName,
           //     ),
           //     style: OutlinedButton.styleFrom(
-          //       foregroundColor: AppColors.deepOrange,
+          //       foregroundColor: "#F38B3B".toColor(),
           //       padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
-          //       side: BorderSide(color: AppColors.deepOrange, width: 1.5),
+          //       side: BorderSide(color: "#F38B3B".toColor(), width: 1.5),
           //       shape: RoundedRectangleBorder(
           //         borderRadius: BorderRadius.circular(12.r),
           //       ),
@@ -432,12 +445,12 @@ class _HomeVastuCompassViewState extends State<HomeVastuCompassView> with Widget
           //     icon: Icon(
           //       Icons.bookmark_border,
           //       size: 18.w,
-          //       color: AppColors.deepOrange,
+          //       color: "#F38B3B".toColor(),
           //     ),
           //     label: AutoTranslateText(
           //       'Save',
           //       style: MyTextTheme.smallBCB.copyWith(
-          //         color: AppColors.deepOrange,
+          //         color: "#F38B3B".toColor(),
           //         fontWeight: FontWeight.bold,
           //       ).merge(AppTypography.body2),
           //     ),

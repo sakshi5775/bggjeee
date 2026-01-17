@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/data_model/astrologer_chat_model.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_chat_service.dart';
+import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -429,6 +430,23 @@ class AstrologerChatController extends BaseController
     }
   }
 
+  /// Update global WalletController balance if registered
+  void _updateGlobalWalletBalance(double newBalance) {
+    try {
+      if (Get.isRegistered<WalletController>()) {
+        final walletController = Get.find<WalletController>();
+        walletController.walletBalance.value = newBalance;
+        if (kDebugMode) {
+          print('💰 Updated global WalletController balance: ₹$newBalance');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('⚠️ Could not update global WalletController: $e');
+      }
+    }
+  }
+
   Future<void> _connectSocket() async {
     try {
       final token = UserData().accessToken ?? '';
@@ -578,10 +596,14 @@ class AstrologerChatController extends BaseController
         if (data['totalAmount'] != null)
           totalCost.value = (data['totalAmount'] as num).toDouble();
         if (data['remainingBalance'] != null) {
-          walletBalance.value = (data['remainingBalance'] as num).toDouble();
+          final newBalance = (data['remainingBalance'] as num).toDouble();
+          walletBalance.value = newBalance;
 
           // Authority update - anchor sync will only trigger if money actually changed
           _syncMoneyAnchor(walletBalance.value, pricePerMinute.value);
+          
+          // Update global WalletController if registered
+          _updateGlobalWalletBalance(newBalance);
         }
       });
 
@@ -589,7 +611,9 @@ class AstrologerChatController extends BaseController
         // Expected: { balance: 25, minutesRemaining: 1, message: "..." }
         showLowBalanceWarning.value = true;
         if (data['balance'] != null) {
-          walletBalance.value = (data['balance'] as num).toDouble();
+          final newBalance = (data['balance'] as num).toDouble();
+          walletBalance.value = newBalance;
+          _updateGlobalWalletBalance(newBalance);
         }
         if (data['minutesRemaining'] != null) {
           availableMinutes.value = data['minutesRemaining'];
@@ -615,7 +639,9 @@ class AstrologerChatController extends BaseController
 
         sessionStatus.value = 'COMPLETED';
         if (data['balance'] != null) {
-          walletBalance.value = (data['balance'] as num).toDouble();
+          final newBalance = (data['balance'] as num).toDouble();
+          walletBalance.value = newBalance;
+          _updateGlobalWalletBalance(newBalance);
         }
         availableMinutes.value = 0;
         visualSecondsRemaining.value = 0;

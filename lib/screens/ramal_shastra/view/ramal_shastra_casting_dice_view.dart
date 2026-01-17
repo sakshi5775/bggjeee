@@ -112,21 +112,29 @@ class _RamalShastraCastingDiceViewState extends State<RamalShastraCastingDiceVie
               Spacing.h(32),
               // Roll Button
               if (currentRoundValues.any((v) => v == 0))
-                ElevatedButton(
-                  onPressed: _rollDice,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.deepOrange,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 14.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: AppColors.orangeGradient,
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
-                  child: AutoTranslateText(
-                    isRolling ? 'Rolling...' : 'Roll Dice',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                  child: ElevatedButton(
+                    onPressed: _rollDice,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 14.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      elevation: 0,
+                      shadowColor: Colors.transparent,
+                    ),
+                    child: AutoTranslateText(
+                      isRolling ? 'Rolling...' : 'Roll Dice',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 )
@@ -211,7 +219,7 @@ class _RamalShastraCastingDiceViewState extends State<RamalShastraCastingDiceVie
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: value > 0 ? AppColors.deepOrange : '#F5D7B8'.toColor(),
+          color: value > 0 ? "#F38B3B".toColor() : '#F5D7B8'.toColor(),
           width: 2,
         ),
         boxShadow: [
@@ -227,7 +235,7 @@ class _RamalShastraCastingDiceViewState extends State<RamalShastraCastingDiceVie
             ? Text(
                 '$value',
                 style: MyTextTheme.largeBCB.copyWith(
-                  color: AppColors.deepOrange,
+                  color: "#F38B3B".toColor(),
                   fontWeight: FontWeight.bold,
                   fontSize: 28.sp,
                 ),

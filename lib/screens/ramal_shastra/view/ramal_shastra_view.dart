@@ -191,14 +191,14 @@ class RamalShastraView extends StatelessWidget {
               children: [
                 Icon(
                   Icons.auto_awesome,
-                  color: AppColors.deepOrange,
+                  color: "#F38B3B".toColor(),
                   size: 20.w,
                 ),
                 Spacing.w(8),
                 AutoTranslateText(
                   'Start Your Reading',
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: AppColors.deepOrange,
+                    color: "#F38B3B".toColor(),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -226,25 +226,37 @@ class RamalShastraView extends StatelessWidget {
             // Start Reading button
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                  final ok = await LoginGuard.ensureLoggedIn(
-                    message: 'Please login to continue with Ramal Shastra reading.',
-                  );
-                  if (ok) {
-                    Get.toNamed(AppRoutes.ramalShastraQuestion);
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.deepOrange,
-                  foregroundColor: '#ffffff'.toColor(),
-                  padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  elevation: 6,
-                  shadowColor: AppColors.deepOrange.withOpacity(0.35),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
+                  borderRadius: BorderRadius.circular(12.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: "#F38B3B".toColor().withOpacity(0.35),
+                      blurRadius: 6,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final ok = await LoginGuard.ensureLoggedIn(
+                      message: 'Please login to continue with Ramal Shastra reading.',
+                    );
+                    if (ok) {
+                      Get.toNamed(AppRoutes.ramalShastraQuestion);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: '#ffffff'.toColor(),
+                    padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
+                  ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -262,6 +274,7 @@ class RamalShastraView extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
                 ),
               ),
             ),
@@ -416,14 +429,7 @@ class RamalShastraView extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(20.w),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColors.deepOrange,
-              AppColors.deepOrangemix,
-            ],
-          ),
+          gradient: AppColors.orangeGradient,
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
@@ -444,7 +450,7 @@ class RamalShastraView extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: [AppColors.deepOrangemix.withOpacity(0.35), AppColors.deepOrange.withOpacity(0.15)],
+                    colors: ["#DD2914".toColor().withOpacity(0.35), "#F38B3B".toColor().withOpacity(0.15)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),

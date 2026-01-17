@@ -23,7 +23,11 @@ class PalmReadingDetailView extends StatelessWidget {
     return Scaffold(
       backgroundColor: '#FFF8E1'.toColor(), // Match Face Reading background
       appBar: AppBar(
-        backgroundColor: AppColors.deepOrange, // Match Face Reading theme
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.orangeGradient,
+          ),
+        ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
           onPressed: () => Get.back(),
@@ -114,8 +118,8 @@ class PalmReadingDetailView extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.deepOrange,
-            AppColors.deepOrangemix,
+            "#F38B3B".toColor(),
+            "#F38B3B".toColor(),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -123,7 +127,7 @@ class PalmReadingDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.3),
+            color: "#F38B3B".toColor().withOpacity(0.3),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -162,11 +166,11 @@ class PalmReadingDetailView extends StatelessWidget {
               onPressed: () {
                 Get.toNamed(AppRoutes.astrologyServices);
               },
-              icon: Icon(Icons.chat_bubble_outline, color: AppColors.deepOrange, size: 20.w),
+              icon: Icon(Icons.chat_bubble_outline, color: "#F38B3B".toColor(), size: 20.w),
               label: AutoTranslateText(
                 'Consult Expert',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: AppColors.deepOrange,
+                  color: "#F38B3B".toColor(),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -222,7 +226,7 @@ class PalmReadingDetailView extends StatelessWidget {
               case 'HEAD_LINE':
                 title = 'Head Line';
                 icon = Icons.psychology;
-                iconColor = AppColors.deepOrange;
+                iconColor = "#F38B3B".toColor();
                 break;
               case 'LIFE_LINE':
                 title = 'Life Line';
@@ -242,7 +246,7 @@ class PalmReadingDetailView extends StatelessWidget {
               default:
                 title = reading.category;
                 icon = Icons.linear_scale;
-                iconColor = AppColors.deepOrange;
+                iconColor = "#F38B3B".toColor();
             }
             
             return Padding(

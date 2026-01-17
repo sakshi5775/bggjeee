@@ -244,7 +244,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
     if (_isLoading && _readings.isEmpty) {
       return Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppColors.deepOrange),
+          valueColor: AlwaysStoppedAnimation<Color>("#F38B3B".toColor()),
         ),
       );
     }
@@ -278,7 +278,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.history, size: 64.w, color: AppColors.deepOrange),
+            Icon(Icons.history, size: 64.w, color: "#F38B3B".toColor()),
             Spacing.h(16),
             AutoTranslateText(
               'No reading history',
@@ -300,7 +300,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
 
     return RefreshIndicator(
       onRefresh: () => _loadHistory(refresh: true),
-      color: AppColors.deepOrange,
+      color: "#F38B3B".toColor(),
       child: ListView.builder(
         padding: EdgeInsets.all(16.w),
         itemCount: _readings.length + (_hasMore ? 1 : 0),
@@ -312,7 +312,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
               child: Padding(
                 padding: EdgeInsets.all(16.w),
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.deepOrange),
+                  valueColor: AlwaysStoppedAnimation<Color>("#F38B3B".toColor()),
                 ),
               ),
             );
@@ -359,7 +359,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                 height: 80.w,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: AppColors.deepOrange, width: 2),
+                  border: Border.all(color: "#F38B3B".toColor(), width: 2),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.r),
@@ -372,7 +372,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                             child: Icon(
                               Icons.person,
                               size: 40.w,
-                              color: AppColors.deepOrange,
+                              color: "#F38B3B".toColor(),
                             ),
                           ),
                         )
@@ -381,7 +381,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                           child: Icon(
                             Icons.person,
                             size: 40.w,
-                            color: AppColors.deepOrange,
+                            color: "#F38B3B".toColor(),
                           ),
                         ),
                 ),
@@ -431,12 +431,12 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                     Row(
                       children: [
                         if (isCompleted) ...[
-                          Icon(Icons.star, color: AppColors.deepOrange, size: 16.w),
+                          Icon(Icons.star, color: "#F38B3B".toColor(), size: 16.w),
                           Spacing.w(4),
                           AutoTranslateText(
                             '$score/100',
                             style: MyTextTheme.mediumBCB.copyWith(
-                              color: AppColors.deepOrange,
+                              color: "#F38B3B".toColor(),
                               fontWeight: FontWeight.bold,
                             ).merge(AppTypography.body1),
                           ),
@@ -468,13 +468,13 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                         decoration: BoxDecoration(
-                          color: AppColors.deepOrange.withOpacity(0.1),
+                          color: "#F38B3B".toColor().withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: AutoTranslateText(
                           reading.errorMessage ?? 'Failed',
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: AppColors.deepOrange,
+                            color: "#F38B3B".toColor(),
                           ).merge(AppTypography.label),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

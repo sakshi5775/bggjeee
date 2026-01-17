@@ -121,7 +121,7 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
                                 AutoTranslateText(
                                   response.name ?? controller.selectedCard?.name ?? 'Unknown Card',
                                   style: MyTextTheme.mediumBCN.copyWith(
-                                    color: AppColors.deepOrange,
+                                    color: "#F38B3B".toColor(),
                                   ),
                                 ),
                                 
@@ -158,22 +158,30 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
                                   Colors.green,
                                 ),
                                 Spacing.h(24),
-                                ElevatedButton(
-                                  onPressed: () => controller.closeReading(),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.deepOrange,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 32.w,
-                                      vertical: 12.h,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12.r),
-                                    ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    gradient: AppColors.orangeGradient,
+                                    borderRadius: BorderRadius.circular(12.r),
                                   ),
-                                  child: AutoTranslateText(
-                                    'Close',
-                                    style: MyTextTheme.smallBCN.copyWith(
-                                      color: Colors.white,
+                                  child: ElevatedButton(
+                                    onPressed: () => controller.closeReading(),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.transparent,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 32.w,
+                                        vertical: 12.h,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12.r),
+                                      ),
+                                      elevation: 0,
+                                      shadowColor: Colors.transparent,
+                                    ),
+                                    child: AutoTranslateText(
+                                      'Close',
+                                      style: MyTextTheme.smallBCN.copyWith(
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                 ),

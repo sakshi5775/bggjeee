@@ -165,7 +165,7 @@ class TarotYesNoPopup extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       color: response.direction!.toLowerCase() == 'upright'
                                           ? Colors.green.withOpacity(0.2)
-                                          : AppColors.deepOrange.withOpacity(0.2),
+                                          : "#F38B3B".toColor().withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(4.r),
                                     ),
                                     child: AutoTranslateText(
@@ -173,7 +173,7 @@ class TarotYesNoPopup extends StatelessWidget {
                                       style: MyTextTheme.smallBCN.copyWith(
                                         color: response.direction!.toLowerCase() == 'upright'
                                             ? Colors.green
-                                            : AppColors.deepOrange,
+                                            : "#F38B3B".toColor(),
                                       ),
                                     ),
                                   ),
@@ -205,31 +205,39 @@ class TarotYesNoPopup extends StatelessWidget {
                             Spacing.h(16),
                             
                             // Close button
-                            ElevatedButton(
-                              onPressed: () => controller.closeReading(),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.deepOrange,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 32.w,
-                                  vertical: 12.h,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: AppColors.orangeGradient,
+                                borderRadius: BorderRadius.circular(12.r),
                               ),
-                              child: AutoTranslateText(
-                                'Close',
-                                style: MyTextTheme.smallBCN.copyWith(
-                                  color: Colors.white,
+                              child: ElevatedButton(
+                                onPressed: () => controller.closeReading(),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 32.w,
+                                    vertical: 12.h,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  elevation: 0,
+                                  shadowColor: Colors.transparent,
+                                ),
+                                child: AutoTranslateText(
+                                  'Close',
+                                  style: MyTextTheme.smallBCN.copyWith(
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
                           ],
-                            ),
-                          ),
                         ),
                       ),
                     ),
+                  ),
+                ),
                   );
                 },
                   ),

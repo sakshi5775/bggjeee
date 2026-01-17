@@ -1394,20 +1394,24 @@ class EcommerceService with ApiHelperMixin {
     }
   }
 
-  Future<Map<String, dynamic>?> initiatePayment({
+  Future<EcommercePaymentInitiateResponse?> initiatePayment({
     required String orderId,
-    required double amount,
     required String paymentMethod,
   }) async {
     try {
+      // Determine payment provider based on payment method
+      final paymentProvider = paymentMethod == 'online' || paymentMethod == 'razorpay' 
+          ? 'razorpay' 
+          : paymentMethod;
+      
       final body = {
         'orderId': orderId,
-        'amount': amount,
         'paymentMethod': paymentMethod,
+        'paymentProvider': paymentProvider,
       };
       final response = await _apiRepository.postApi(EndPoints.ecommercePaymentsInitiate, body);
-      if (response.body['success'] == true && response.body['data'] is Map<String, dynamic>) {
-        return Map<String, dynamic>.from(response.body['data'] as Map);
+      if (response.body['success'] == true) {
+        return EcommercePaymentInitiateResponse.fromJson(response.body);
       } else {
         showErrorMessage(
           title: "Error",
@@ -1421,18 +1425,22 @@ class EcommerceService with ApiHelperMixin {
     }
   }
 
-  Future<Map<String, dynamic>?> verifyPayment({
+  Future<EcommercePaymentVerifyResponse?> verifyPayment({
     required String paymentId,
-    required String transactionId,
+    String? razorpayOrderId,
+    String? razorpayPaymentId,
+    String? razorpaySignature,
   }) async {
     try {
-      final body = {
+      final body = <String, dynamic>{
         'paymentId': paymentId,
-        'transactionId': transactionId,
+        if (razorpayOrderId != null) 'razorpay_order_id': razorpayOrderId,
+        if (razorpayPaymentId != null) 'razorpay_payment_id': razorpayPaymentId,
+        if (razorpaySignature != null) 'razorpay_signature': razorpaySignature,
       };
       final response = await _apiRepository.postApi(EndPoints.ecommercePaymentsVerify, body);
-      if (response.body['success'] == true && response.body['data'] is Map<String, dynamic>) {
-        return Map<String, dynamic>.from(response.body['data'] as Map);
+      if (response.body['success'] == true) {
+        return EcommercePaymentVerifyResponse.fromJson(response.body);
       } else {
         showErrorMessage(
           title: "Error",

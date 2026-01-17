@@ -200,7 +200,7 @@ class PalmReadingView extends StatelessWidget {
               Expanded(
                 child: _buildFeatureCard(
                   icon: Icons.remove_red_eye,
-                  iconColor: AppColors.deepOrange,
+                  iconColor: "#F38B3B".toColor(),
                   title: 'AI Detection',
                   subtitle: 'Smart line analysis',
                 ),
@@ -209,7 +209,7 @@ class PalmReadingView extends StatelessWidget {
               Expanded(
                 child: _buildFeatureCard(
                   icon: Icons.gps_fixed,
-                  iconColor: AppColors.deepOrange,
+                  iconColor: "#F38B3B".toColor(),
                   title: 'Accurate',
                   subtitle: 'Precise predictions',
                 ),
@@ -222,7 +222,7 @@ class PalmReadingView extends StatelessWidget {
               Expanded(
                 child: _buildFeatureCard(
                   icon: Icons.flash_on,
-                  iconColor: AppColors.deepOrange,
+                  iconColor: "#F38B3B".toColor(),
                   title: 'Instant',
                   subtitle: 'Results in seconds',
                 ),
@@ -231,7 +231,7 @@ class PalmReadingView extends StatelessWidget {
               Expanded(
                 child: _buildFeatureCard(
                   icon: Icons.bar_chart,
-                  iconColor: AppColors.deepOrange,
+                  iconColor: "#F38B3B".toColor(),
                   title: 'Detailed',
                   subtitle: 'Complete report',
                 ),
@@ -338,7 +338,7 @@ class PalmReadingView extends StatelessWidget {
           children: [
               Icon(
                 Icons.check_circle,
-                color: AppColors.deepOrange,
+                color: "#F38B3B".toColor(),
                 size: 20.w,
               ),
             Spacing.w(12),
@@ -362,18 +362,30 @@ class PalmReadingView extends StatelessWidget {
       padding: AppPaddings.symmetric(h: 16),
       child: SizedBox(
         width: double.infinity,
-        child: ElevatedButton(
-          onPressed: () => Get.toNamed(AppRoutes.palmReadingForm),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.deepOrange, // Match face reading color
-            foregroundColor: Colors.white,
-            padding: AppPaddings.symmetric(v: 16, h: 24),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            elevation: 6,
-            shadowColor: AppColors.deepOrange.withOpacity(0.35),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.orangeGradient,
+            borderRadius: BorderRadius.circular(12.r),
+            boxShadow: [
+              BoxShadow(
+                color: "#F38B3B".toColor().withOpacity(0.35),
+                blurRadius: 6,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
+          child: ElevatedButton(
+            onPressed: () => Get.toNamed(AppRoutes.palmReadingForm),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.white,
+              padding: AppPaddings.symmetric(v: 16, h: 24),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              elevation: 0,
+              shadowColor: Colors.transparent,
+            ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -391,6 +403,7 @@ class PalmReadingView extends StatelessWidget {
                 ).merge(AppTypography.h3),
               ),
             ],
+          ),
           ),
         ),
       ),

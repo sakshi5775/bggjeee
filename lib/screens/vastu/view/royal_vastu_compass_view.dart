@@ -320,31 +320,45 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
           Row(
             children: [
               Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    // Navigate to AR mode for full remedy experience
-                    if (roomConfig != null) {
-                      Get.toNamed(
-                        AppRoutes.arVastu,
-                        arguments: {'roomConfig': roomConfig},
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.deepOrange,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(vertical: 14.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    elevation: 6,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: AppColors.orangeGradient,
+                    borderRadius: BorderRadius.circular(12.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: "#F38B3B".toColor().withOpacity(0.35),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
-                  icon: Icon(Icons.lightbulb_outline, size: 18.w),
-                  label: AutoTranslateText(
-                    'Remedies',
-                    style: MyTextTheme.smallBCB.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.body2),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      // Navigate to AR mode for full remedy experience
+                      if (roomConfig != null) {
+                        Get.toNamed(
+                          AppRoutes.arVastu,
+                          arguments: {'roomConfig': roomConfig},
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 14.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      elevation: 0,
+                      shadowColor: Colors.transparent,
+                    ),
+                    icon: Icon(Icons.lightbulb_outline, size: 18.w),
+                    label: AutoTranslateText(
+                      'Remedies',
+                      style: MyTextTheme.smallBCB.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ).merge(AppTypography.body2),
+                    ),
                   ),
                 ),
               ),

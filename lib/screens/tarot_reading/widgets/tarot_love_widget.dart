@@ -315,7 +315,7 @@ class TarotLoveWidget extends StatelessWidget {
           AutoTranslateText(
             cardName,
             style: MyTextTheme.mediumBCN.copyWith(
-              color: AppColors.deepOrange,
+              color: "#F38B3B".toColor(),
             ),
           ),
           

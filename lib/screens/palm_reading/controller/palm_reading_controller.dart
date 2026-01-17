@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/models/app_language_model.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/palm_reading_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/error_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -168,12 +168,12 @@ class PalmReadingController extends GetxController {
                       title: AutoTranslateText(
                         language.nameEn,
                         style: TextStyle(
-                          color: isSelected ? AppColors.deepOrange : const Color(0xFF5F2221),
+                          color: isSelected ? "#F38B3B".toColor() : const Color(0xFF5F2221),
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
                       trailing: isSelected
-                          ? Icon(Icons.check, color: AppColors.deepOrange)
+                          ? Icon(Icons.check, color: "#F38B3B".toColor())
                           : null,
                       onTap: () {
                         _selectedLanguageModel = language;

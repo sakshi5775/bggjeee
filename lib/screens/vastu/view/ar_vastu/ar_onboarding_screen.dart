@@ -116,7 +116,7 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
                   margin: EdgeInsets.symmetric(horizontal: 4.w),
                   decoration: BoxDecoration(
                     color: _currentPage == index
-                        ? AppColors.deepOrange
+                        ? "#F38B3B".toColor()
                         : Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(4.r),
                   ),
@@ -131,32 +131,46 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
               padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
               child: SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_currentPage < _pages.length - 1) {
-                      _pageController.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    } else {
-                      _completeOnboarding();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.deepOrange,
-                    foregroundColor: '#ffffff'.toColor(),
-                    padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    elevation: 6,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: AppColors.orangeGradient,
+                    borderRadius: BorderRadius.circular(12.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: "#F38B3B".toColor().withOpacity(0.35),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
-                  child: AutoTranslateText(
-                    _currentPage < _pages.length - 1 ? 'Next' : 'Get Started',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: '#ffffff'.toColor(),
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.body1),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_currentPage < _pages.length - 1) {
+                        _pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      } else {
+                        _completeOnboarding();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: '#ffffff'.toColor(),
+                      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      elevation: 0,
+                      shadowColor: Colors.transparent,
+                    ),
+                    child: AutoTranslateText(
+                      _currentPage < _pages.length - 1 ? 'Next' : 'Get Started',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: '#ffffff'.toColor(),
+                        fontWeight: FontWeight.bold,
+                      ).merge(AppTypography.body1),
+                    ),
                   ),
                 ),
               ),

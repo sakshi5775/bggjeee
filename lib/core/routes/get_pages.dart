@@ -42,6 +42,7 @@ import 'package:astrobharataiuser/screens/ramal_shastra/view/ramal_shastra_stats
 import 'package:astrobharataiuser/screens/ramal_shastra/view/ramal_shastra_detail_view.dart';
 import 'package:astrobharataiuser/screens/waiting_screen/waiting_screen/view/waiting_screen_view.dart';
 import 'package:astrobharataiuser/screens/onboarding/view/onboarding_view.dart';
+import 'package:astrobharataiuser/screens/e_mandir/namaste_home_screen.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart'
     show AutoTranslateText;
 import 'package:flutter/material.dart';
@@ -1301,6 +1302,13 @@ class PageRoutes {
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
       binding: RamalShastraBinding(),
+    ),
+    // E-Mandir Routes
+    GetPage(
+      name: AppRoutes.namasteHome,
+      page: () => const NamasteHomeScreen(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
     ),
   ];
 }

@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -126,14 +127,14 @@ class _TarotCardUnsuitableWidgetState extends State<TarotCardUnsuitableWidget>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppColors.deepOrange,
-                  AppColors.deepOrangemix,
+                  "#F38B3B".toColor(),
+                  "#DD2914".toColor(),
                 ],
               ),
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.deepOrange.withOpacity(0.4),
+                  color: "#F38B3B".toColor().withOpacity(0.4),
                   blurRadius: 15,
                   spreadRadius: 2,
                   offset: const Offset(0, 6),

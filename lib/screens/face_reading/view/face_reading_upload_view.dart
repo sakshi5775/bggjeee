@@ -140,7 +140,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
                 child: Icon(
                   Icons.cloud_upload,
                   size: 40.w,
-                  color: AppColors.deepOrangemix,
+                  color: "#F38B3B".toColor(),
                 ),
               ),
               Spacing.h(14),
@@ -331,7 +331,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
           color: '#ffffff'.toColor(),
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: AppColors.deepOrange,
+            color: "#F38B3B".toColor(),
             width: 1.5,
           ),
           boxShadow: [

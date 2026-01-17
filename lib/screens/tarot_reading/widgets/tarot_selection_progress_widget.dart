@@ -170,12 +170,12 @@ class TarotSelectionProgressWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: (isRomantic ? Colors.red : AppColors.deepOrange).withOpacity(0.3),
+          color: (isRomantic ? Colors.red : "#F38B3B".toColor()).withOpacity(0.3),
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: (isRomantic ? Colors.red : AppColors.deepOrange).withOpacity(0.2),
+            color: (isRomantic ? Colors.red : "#F38B3B".toColor()).withOpacity(0.2),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -188,7 +188,7 @@ class TarotSelectionProgressWidget extends StatelessWidget {
             children: [
               Icon(
                 isRomantic ? Icons.favorite_border : Icons.business_center,
-                color: isRomantic ? Colors.red : AppColors.deepOrange,
+                color: isRomantic ? Colors.red : "#F38B3B".toColor(),
                 size: 24.w,
               ),
               Spacing.w(8),
@@ -238,12 +238,12 @@ class TarotSelectionProgressWidget extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () => controller.skipBreakupCard(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: (isRomantic ? Colors.red : AppColors.deepOrange).withOpacity(0.1),
+                backgroundColor: (isRomantic ? Colors.red : AppColors.orangeGradient.colors.first).withOpacity(0.1),
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.r),
                   side: BorderSide(
-                    color: isRomantic ? Colors.red : AppColors.deepOrange,
+                    color: isRomantic ? Colors.red : AppColors.orangeGradient.colors.first,
                     width: 1,
                   ),
                 ),
@@ -251,7 +251,7 @@ class TarotSelectionProgressWidget extends StatelessWidget {
               child: AutoTranslateText(
                 'Skip (Auto-select)',
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: isRomantic ? Colors.red : AppColors.deepOrange,
+                  color: isRomantic ? Colors.red : "#F38B3B".toColor(),
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Poppins',
                 ),
@@ -272,12 +272,12 @@ class TarotSelectionProgressWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: AppColors.deepOrange.withOpacity(0.3),
+          color: "#F38B3B".toColor().withOpacity(0.3),
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.2),
+            color: "#F38B3B".toColor().withOpacity(0.2),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -290,7 +290,7 @@ class TarotSelectionProgressWidget extends StatelessWidget {
             children: [
               Icon(
                 Icons.compass_calibration,
-                color: AppColors.deepOrange,
+                color: "#F38B3B".toColor(),
                 size: 24.w,
               ),
               Spacing.w(8),
@@ -337,17 +337,17 @@ class TarotSelectionProgressWidget extends StatelessWidget {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.deepOrange.withOpacity(0.1),
+                backgroundColor: AppColors.orangeGradient.colors.first.withOpacity(0.1),
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.r),
-                  side: BorderSide(color: AppColors.deepOrange, width: 1),
+                  side: BorderSide(color: AppColors.orangeGradient.colors.first, width: 1),
                 ),
               ),
               child: AutoTranslateText(
                 'Skip Direction (Auto-select)',
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: AppColors.deepOrange,
+                  color: "#F38B3B".toColor(),
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Poppins',
                 ),
@@ -402,7 +402,7 @@ class TarotSelectionProgressWidget extends StatelessWidget {
                       color: '#ede7c8'.toColor(),
                       child: Center(
                         child: CircularProgressIndicator(
-                          color: AppColors.deepOrange,
+                          color: "#F38B3B".toColor(),
                           strokeWidth: 2,
                         ),
                       ),
@@ -480,18 +480,18 @@ class TarotSelectionProgressWidget extends StatelessWidget {
         width: 120.w,
         padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.deepOrange : Colors.white,
+          color: isSelected ? "#F38B3B".toColor() : Colors.white,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
             color: isSelected
-                ? AppColors.deepOrange
-                : AppColors.deepOrange.withOpacity(0.5),
+                ? "#F38B3B".toColor()
+                : "#F38B3B".toColor().withOpacity(0.5),
             width: 2,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.deepOrange.withOpacity(0.3),
+                    color: "#F38B3B".toColor().withOpacity(0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -502,7 +502,7 @@ class TarotSelectionProgressWidget extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected ? Colors.white : AppColors.deepOrange,
+              color: isSelected ? Colors.white : "#F38B3B".toColor(),
               size: 32.w,
             ),
             Spacing.h(8),

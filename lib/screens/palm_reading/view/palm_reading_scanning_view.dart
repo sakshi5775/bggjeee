@@ -253,7 +253,7 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
                     }
                     return ScannerOverlay(
                       isScanning: controller.isScanning.value,
-                      scannerColor: AppColors.deepOrange,
+                      scannerColor: "#F38B3B".toColor(),
                     );
                   } catch (e) {
                     debugPrint('Error in scanner Obx: $e');
@@ -286,13 +286,21 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
                   ),
                 ),
                 Spacing.h(24),
-                ElevatedButton(
-                  onPressed: () => Get.back(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.deepOrange,
-                    foregroundColor: Colors.white,
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: AppColors.orangeGradient,
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
-                  child: const AutoTranslateText('Go Back'),
+                  child: ElevatedButton(
+                    onPressed: () => Get.back(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shadowColor: Colors.transparent,
+                    ),
+                    child: const AutoTranslateText('Go Back'),
+                  ),
                 ),
               ],
             ),
@@ -306,7 +314,7 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
     if (_uiImage == null || _imageSize == null || !_isImageLoaded) {
       return Center(
         child: CircularProgressIndicator(
-          color: AppColors.deepOrange,
+          color: "#F38B3B".toColor(),
         ),
       );
     }
@@ -457,20 +465,28 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
                     textAlign: TextAlign.center,
                   ),
                   Spacing.h(16),
-                  ElevatedButton(
-                    onPressed: () {
-                      try {
-                        controller.selectedPalmImage.value = null;
-                        Get.back();
-                      } catch (e) {
-                        debugPrint('Error in reupload button: $e');
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.deepOrange,
-                      foregroundColor: Colors.white,
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: AppColors.orangeGradient,
+                      borderRadius: BorderRadius.circular(8.r),
                     ),
-                    child: const AutoTranslateText('Reupload'),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        try {
+                          controller.selectedPalmImage.value = null;
+                          Get.back();
+                        } catch (e) {
+                          debugPrint('Error in reupload button: $e');
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shadowColor: Colors.transparent,
+                      ),
+                      child: const AutoTranslateText('Reupload'),
+                    ),
                   ),
                 ],
               ),

@@ -193,7 +193,7 @@ class RamalShastraMethodView extends StatelessWidget {
             ),
             Icon(
               Icons.arrow_forward_ios,
-              color: AppColors.deepOrange,
+              color: "#F38B3B".toColor(),
               size: 20.w,
             ),
           ],

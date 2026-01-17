@@ -73,7 +73,7 @@ class TarotCardDisplayWidget extends StatelessWidget {
                   width: 20.w,
                   height: 20.w,
                   child: CircularProgressIndicator(
-                    color: AppColors.deepOrange,
+                    color: "#F38B3B".toColor(),
                     strokeWidth: 2,
                   ),
                 ),
@@ -160,7 +160,7 @@ class TarotCardBackDisplayWidget extends StatelessWidget {
                   width: 20.w,
                   height: 20.w,
                   child: CircularProgressIndicator(
-                    color: AppColors.deepOrange,
+                    color: "#F38B3B".toColor(),
                     strokeWidth: 2,
                   ),
                 ),
@@ -202,12 +202,12 @@ class TarotCardThemeSelector extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
                   color: isSelected 
-                      ? AppColors.deepOrange 
+                      ? "#F38B3B".toColor() 
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
                     color: isSelected 
-                        ? AppColors.deepOrange 
+                        ? "#F38B3B".toColor() 
                         : '#ede7c8'.toColor().withOpacity(0.5),
                     width: 1.5,
                   ),
@@ -260,12 +260,12 @@ class TarotCardBackSelector extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
                   color: isSelected 
-                      ? AppColors.deepOrange 
+                      ? "#F38B3B".toColor() 
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
                     color: isSelected 
-                        ? AppColors.deepOrange 
+                        ? "#F38B3B".toColor() 
                         : '#ede7c8'.toColor().withOpacity(0.5),
                     width: 1.5,
                   ),

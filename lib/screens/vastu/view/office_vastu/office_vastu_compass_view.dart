@@ -225,7 +225,7 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView> with Wi
                   width: 40.w,
                   height: 40.w,
                   decoration: BoxDecoration(
-                    color: AppColors.deepOrange,
+                    color: "#F38B3B".toColor(),
                     borderRadius: BorderRadius.circular(8.r),
                     boxShadow: [
                       BoxShadow(

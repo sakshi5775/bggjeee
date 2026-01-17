@@ -224,7 +224,7 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
               return shouldShowScanner
                   ? ScannerOverlay(
                       isScanning: controller.isScanning.value,
-                      scannerColor: AppColors.deepOrange,
+                      scannerColor: "#F38B3B".toColor(),
                     )
                   : const SizedBox.shrink();
             }),
@@ -238,7 +238,7 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
     if (_uiImage == null || _imageSize == null || !_isImageLoaded.value) {
       return Center(
         child: CircularProgressIndicator(
-          color: AppColors.deepOrange,
+          color: "#F38B3B".toColor(),
         ),
       );
     }
@@ -270,13 +270,21 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                 ),
               ),
               Spacing.h(24),
-              ElevatedButton(
-                onPressed: () => Get.back(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.deepOrange,
-                  foregroundColor: Colors.white,
+              Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
+                  borderRadius: BorderRadius.circular(8.r),
                 ),
-                child: AutoTranslateText('Try Another Photo'),
+                child: ElevatedButton(
+                  onPressed: () => Get.back(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
+                  ),
+                  child: AutoTranslateText('Try Another Photo'),
+                ),
               ),
             ],
           ),
@@ -289,7 +297,7 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(
-                color: AppColors.deepOrange,
+                color: "#F38B3B".toColor(),
               ),
               Spacing.h(16),
               AutoTranslateText(
@@ -368,8 +376,8 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                               face: face,
                               imageSize: _imageSize!,
                               canvasSize: displayedSize,
-                              dotColor: AppColors.deepOrange,
-                              lineColor: AppColors.deepOrange,
+                              dotColor: "#F38B3B".toColor(),
+                              lineColor: "#F38B3B".toColor(),
                               showGlow: true,
                               opacity: _fadeAnimation.value,
                             ),
@@ -437,10 +445,22 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                   Spacing.h(24),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: isAnalyzing
-                          ? null
-                          : () {
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: AppColors.orangeGradient,
+                        borderRadius: BorderRadius.circular(12.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: "#F38B3B".toColor().withOpacity(0.35),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton(
+                        onPressed: isAnalyzing
+                            ? null
+                            : () {
                             // Cancel any existing timer
                             _loaderTimer?.cancel();
                             
@@ -488,16 +508,17 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                               }
                             });
                           },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.deepOrange,
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 16.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          elevation: 0,
+                          shadowColor: Colors.transparent,
                         ),
-                        elevation: 4,
-                      ),
-                      child: isAnalyzing
+                        child: isAnalyzing
                           ? SizedBox(
                               height: 20.h,
                               width: 20.w,
@@ -515,8 +536,9 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                                 fontWeight: FontWeight.bold,
                               ).merge(AppTypography.h3),
                             ),
+                        ),
+                      ),
                     ),
-                  ),
                 ],
               ),
             Spacing.h(16),

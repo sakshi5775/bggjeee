@@ -31,7 +31,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                     controller.historyReadings.isEmpty) {
                   return Center(
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation(AppColors.deepOrange),
+                      valueColor: AlwaysStoppedAnimation("#F38B3B".toColor()),
                     ),
                   );
                 }
@@ -42,7 +42,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
 
                 return RefreshIndicator(
                   onRefresh: () => controller.fetchHistory(page: 1),
-                  color: AppColors.deepOrange,
+                  color: "#F38B3B".toColor(),
                   child: ListView.builder(
                     padding: EdgeInsets.symmetric(
                       horizontal: 16.w,
@@ -142,7 +142,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
               child: Icon(
                 Icons.history_edu,
                 size: 60.w,
-                color: AppColors.deepOrange.withOpacity(0.6),
+                color: "#F38B3B".toColor().withOpacity(0.6),
               ),
             ),
             Spacing.h(24),
@@ -166,19 +166,31 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
               textAlign: TextAlign.center,
             ),
             Spacing.h(32),
-            ElevatedButton(
-              onPressed: () => Get.back(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.deepOrange,
-                foregroundColor: '#ffffff'.toColor(),
-                padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 32.w),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                elevation: 4,
-                shadowColor: AppColors.deepOrange.withOpacity(0.35),
+            Container(
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(12.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: "#F38B3B".toColor().withOpacity(0.35),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              child: Row(
+              child: ElevatedButton(
+                onPressed: () => Get.back(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: '#ffffff'.toColor(),
+                  padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 32.w),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  elevation: 0,
+                  shadowColor: Colors.transparent,
+                ),
+                child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.psychology_alt, size: 18.w),
@@ -191,6 +203,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                     ),
                   ),
                 ],
+                ),
               ),
             ),
           ],
@@ -241,7 +254,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.deepOrange.withOpacity(0.3),
+                            color: "#F38B3B".toColor().withOpacity(0.3),
                             blurRadius: 8,
                             offset: Offset(0, 2),
                           ),
@@ -290,14 +303,14 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                         color: '#FFF2E8'.toColor(),
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                          color: AppColors.deepOrange.withOpacity(0.3),
+                          color: "#F38B3B".toColor().withOpacity(0.3),
                           width: 1,
                         ),
                       ),
                       child: AutoTranslateText(
                         "Reading #${controller.historyReadings.length - index}",
                         style: MyTextTheme.smallBCN.copyWith(
-                          color: AppColors.deepOrange,
+                          color: "#F38B3B".toColor(),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -321,7 +334,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                       Icon(
                         Icons.help_outline,
                         size: 16.sp,
-                        color: AppColors.deepOrange,
+                        color: "#F38B3B".toColor(),
                       ),
                       Spacing.w(8),
                       Expanded(
@@ -361,7 +374,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                     Icon(
                       Icons.lightbulb_outline,
                       size: 16.sp,
-                      color: AppColors.deepOrangemix,
+                      color: "#F38B3B".toColor(),
                     ),
                     Spacing.w(8),
                     Expanded(
@@ -381,7 +394,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: MyTextTheme.mediumBCB.copyWith(
-                              color: AppColors.deepOrange,
+                              color: "#F38B3B".toColor(),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -405,7 +418,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                         );
                       },
                       style: TextButton.styleFrom(
-                        foregroundColor: AppColors.deepOrange,
+                        foregroundColor: "#F38B3B".toColor(),
                         padding: EdgeInsets.symmetric(
                           horizontal: 16.w,
                           vertical: 8.h,
@@ -420,7 +433,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                           AutoTranslateText(
                             "View Full Reading",
                             style: MyTextTheme.mediumBCB.copyWith(
-                              color: AppColors.deepOrange,
+                              color: "#F38B3B".toColor(),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -428,7 +441,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                           Icon(
                             Icons.arrow_forward,
                             size: 16.sp,
-                            color: AppColors.deepOrange,
+                            color: "#F38B3B".toColor(),
                           ),
                         ],
                       ),

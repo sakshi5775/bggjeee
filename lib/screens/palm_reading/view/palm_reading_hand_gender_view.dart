@@ -143,7 +143,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
               color: isSelected
-                  ? AppColors.deepOrange
+                  ? "#F38B3B".toColor()
                   : Colors.grey.withOpacity(0.3),
               width: isSelected ? 2 : 1,
             ),
@@ -171,8 +171,8 @@ class PalmReadingHandGenderView extends StatelessWidget {
                       Icons.pan_tool,
                       size: 48.w,
                       color: isSelected 
-                          ? AppColors.deepOrange
-                          : AppColors.deepOrange.withOpacity(0.5),
+                          ? "#F38B3B".toColor()
+                          : "#F38B3B".toColor().withOpacity(0.5),
                     ),
                   );
                 },
@@ -258,7 +258,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
               color: isSelected
-                  ? AppColors.deepOrange
+                  ? "#F38B3B".toColor()
                   : Colors.grey.withOpacity(0.3),
               width: isSelected ? 2 : 1,
             ),
@@ -295,35 +295,48 @@ class PalmReadingHandGenderView extends StatelessWidget {
   Widget _buildContinueButton(PalmReadingController controller) {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () => controller.onContinueFromHandGender(),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.deepOrange,
-          foregroundColor: Colors.white,
-          padding: AppPaddings.symmetric(v: 16, h: 24),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          elevation: 6,
-          shadowColor: AppColors.deepOrange.withOpacity(0.35),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AutoTranslateText(
-              'Continue',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Spacing.w(8),
-            Icon(
-              Icons.arrow_forward,
-              color: Colors.white,
-              size: 20.w,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.orangeGradient,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: "#F38B3B".toColor().withOpacity(0.35),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
             ),
           ],
+        ),
+        child: ElevatedButton(
+          onPressed: () => controller.onContinueFromHandGender(),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            foregroundColor: Colors.white,
+            padding: AppPaddings.symmetric(v: 16, h: 24),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            elevation: 0,
+            shadowColor: Colors.transparent,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AutoTranslateText(
+                'Continue',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Spacing.w(8),
+              Icon(
+                Icons.arrow_forward,
+                color: Colors.white,
+                size: 20.w,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -337,7 +350,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
         child: AutoTranslateText(
           'Skip',
           style: MyTextTheme.mediumBCB.copyWith(
-            color: AppColors.deepOrange,
+            color: "#F38B3B".toColor(),
             fontWeight: FontWeight.w600,
           ),
         ),

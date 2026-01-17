@@ -58,10 +58,8 @@ static const Color cream = Color(0xFFFAEAAF); // Turmeric
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
- static const LinearGradient orangeGradient = LinearGradient(
-   colors: [deepOrange, deepOrangemix],
-   begin: Alignment.topLeft,
-   end: Alignment.bottomRight,
+ static LinearGradient orangeGradient = LinearGradient(
+   colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
  );
   static const LinearGradient goldenGradient = LinearGradient(
     colors: [ templeGold, turmericYellow],

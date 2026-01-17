@@ -155,7 +155,7 @@ class PalmReadingFormView extends StatelessWidget {
             hintStyle: MyTextTheme.mediumBCN.copyWith(
               color: Colors.grey[600],
             ),
-            prefixIcon: Icon(icon, color: AppColors.deepOrange, size: 24.w),
+            prefixIcon: Icon(icon, color: "#F38B3B".toColor(), size: 24.w),
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(
@@ -175,7 +175,7 @@ class PalmReadingFormView extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide(
-                color: AppColors.deepOrange,
+                color: "#F38B3B".toColor(),
                 width: 2,
               ),
             ),
@@ -218,7 +218,7 @@ class PalmReadingFormView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today, color: AppColors.deepOrange, size: 24.w),
+                Icon(Icons.calendar_today, color: "#F38B3B".toColor(), size: 24.w),
                 Spacing.w(12),
                 Expanded(
                   child: Obx(() => AutoTranslateText(
@@ -273,7 +273,7 @@ class PalmReadingFormView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.language, color: AppColors.deepOrange, size: 24.w),
+                Icon(Icons.language, color: "#F38B3B".toColor(), size: 24.w),
                 Spacing.w(12),
                 Expanded(
                   child: Obx(() => AutoTranslateText(
@@ -301,30 +301,43 @@ class PalmReadingFormView extends StatelessWidget {
       padding: AppPaddings.symmetric(h: 16),
       child: SizedBox(
         width: double.infinity,
-        child: ElevatedButton(
-          onPressed: () => controller.onContinueFromForm(),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.deepOrange,
-            foregroundColor: Colors.white,
-            padding: AppPaddings.symmetric(v: 16, h: 24),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            elevation: 6,
-            shadowColor: AppColors.deepOrange.withOpacity(0.35),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AutoTranslateText(
-                'CONTINUE',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1,
-                ),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.orangeGradient,
+            borderRadius: BorderRadius.circular(12.r),
+            boxShadow: [
+              BoxShadow(
+                color: "#F38B3B".toColor().withOpacity(0.35),
+                blurRadius: 6,
+                offset: const Offset(0, 3),
               ),
             ],
+          ),
+          child: ElevatedButton(
+            onPressed: () => controller.onContinueFromForm(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.white,
+              padding: AppPaddings.symmetric(v: 16, h: 24),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              elevation: 0,
+              shadowColor: Colors.transparent,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AutoTranslateText(
+                  'CONTINUE',
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -339,7 +352,7 @@ class PalmReadingFormView extends StatelessWidget {
         child: AutoTranslateText(
           'Skip',
           style: MyTextTheme.mediumBCB.copyWith(
-            color: AppColors.deepOrange,
+            color: "#F38B3B".toColor(),
             fontWeight: FontWeight.w600,
           ),
         ),

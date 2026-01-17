@@ -181,7 +181,7 @@ class _RamalShastraCastingCardsViewState extends State<RamalShastraCastingCardsV
               borderRadius: BorderRadius.circular(8.r),
               border: Border.all(
                 color: index == currentIndex 
-                    ? AppColors.deepOrange 
+                    ? "#F38B3B".toColor() 
                     : Colors.transparent,
                 width: 2,
               ),

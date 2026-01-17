@@ -40,6 +40,7 @@ import '../widgets/celebrity_astrologer_widget.dart';
 import '../widgets/features_and_videos_widget.dart';
 import '../widgets/daily_astrologers_widget.dart';
 import '../widgets/quote_of_the_day_widget.dart';
+import '../widgets/digital_services_animated_widget.dart';
 import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
 
 class UserDashboardView extends BasePage<UserDashboardController> {
@@ -477,78 +478,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           Spacing.h(12),
           _buildOurServicesPillSection(),
           Spacing.h(24),
-          // Horoscope Card with overlapping image
-          Padding(
-            // Minimal padding; overlap handled inside the card
-            padding: EdgeInsets.only(
-              top: 30.h,
-              left: 16.w,
-              right: 16.w,
-              bottom: 0,
-            ),
-            child: StreamBuilder<int>(
-              stream: Stream<int>.periodic(
-                const Duration(seconds: 4),
-                (c) => c,
-              ),
-              builder: (context, snapshot) {
-                final cards = [
-                  {
-                    'title': 'Your Horoscope',
-                    'desc':
-                        '"Today emphasizes the importance of clarity and calm communication rather than rushing into conflict or reaction. You may f your words carefully."',
-                    'asset': AppConstant.horoscopeGuru,
-                    'type': 'horoscope',
-                  },
-                  {
-                    'title': 'Need a Consultation?',
-                    'buttonText': 'FREE SESSION',
-                    'asset': 'assets/app/ganeshji.png',
-                    'type': 'consultation',
-                    'bgColor': '#fff0dd', // Light peach/cream
-                  },
-                  {
-                    'title': 'Get Palm Reading',
-                    'buttonText': 'FREE SESSION',
-                    'asset': 'assets/app/palmReadingCard.png',
-                    'type': 'consultation',
-                    'bgColor': '#f1d2a4', // Light beige/cream
-                  },
-                  {
-                    'title': 'Ready To Know All About Your Kundli',
-                    'buttonText': 'FREE SESSION',
-                    'asset': 'assets/app/kundlicard.png',
-                    'type': 'consultation',
-                    'bgColor': '#fdd8a1', // Light orange-yellow
-                  },
-                  {
-                    'title': 'Get to know near by pooja',
-                    'buttonText': 'LETS SEARCH',
-                    'asset': 'assets/app/nearbypooja.png',
-                    'type': 'consultation',
-                    'bgColor': '#fee6cc', // Light peach/pale orange
-                  },
-                ];
-                final idx = (snapshot.data ?? 0) % cards.length;
-                final card = cards[idx];
-                // Fixed height wrapper prevents up/down jump when cards swap
-                return SizedBox(
-                  height: 185.h, // match tallest card height
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 500),
-                      transitionBuilder: (child, anim) =>
-                          FadeTransition(opacity: anim, child: child),
-                      child: card['type'] == 'horoscope'
-                          ? _buildHoroscopeCard(card, idx)
-                          : _buildConsultationCard(card, idx),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+          // Digital Services Animated Widget
+          const DigitalServicesAnimatedWidget(),
 
           Spacing.h(15),
 
@@ -643,31 +574,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     AutoTranslateText(
-          //       'OUR SERVICES',
-          //       style: AppTypography.h2.copyWith(
-          //         color: "#6F221E".toColor(),
-          //         letterSpacing: -0.05,
-          //       ),
-          //     ),
-          //     GestureDetector(
-          //       onTap: () {
-          //         Get.to(() => const ComingSoonPage());
-          //       },
-          //       child: AutoTranslateText(
-          //         'View All',
-          //         style: AppTypography.body1.copyWith(
-          //           color: "#6F221E".toColor(),
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ),
-          // Spacing.h(16),
-          // Service cards in 2x2 grid
+        
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -685,7 +592,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 child: _buildPillServiceCard(
                   'Digital Pooja',
                   'assets/app/digital_pooja_video_icon.gif',
-                  onTap: () {},
+                  onTap: () {
+                    Get.toNamed(AppRoutes.namasteHome);
+                  },
                 ),
               ),
             ],
@@ -1247,8 +1156,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 60.h,
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+        constraints: BoxConstraints(
+          minHeight: 60.h,
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
         decoration: BoxDecoration(
           gradient: AppColors.orangeGradient,
           borderRadius: BorderRadius.circular(80.r),
@@ -1268,9 +1179,16 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             Expanded(
               child: Text(
                 label,
-                style: TextStyle(color: Colors.white, fontSize: 14.sp),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w500,
+                  height: 1.2,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.clip,
+                textAlign: TextAlign.left,
+                softWrap: true,
               ),
             ),
           ],
@@ -3006,26 +2924,34 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 52.h,
+        constraints: BoxConstraints(
+          minHeight: 52.h,
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         decoration: BoxDecoration(
           color: "#F7C443".toColor().withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(32.r),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset(icon, width: 20.w, height: 20.h),
-            Spacing.w(10),
+            Spacing.w(8),
             Flexible(
               child: AutoTranslateText(
                 label,
-                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.clip,
+                softWrap: true,
                 style: MyTextTheme.mediumBCB
                     .copyWith(
                       color: "#820B17".toColor(),
                       fontWeight: FontWeight.w500,
                       fontFamily: 'Poppins',
+                      fontSize: 12.sp,
+                      height: 1.2,
                     )
                     .merge(
                       AppTypography.body2.copyWith(fontWeight: FontWeight.w900),

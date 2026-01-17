@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -122,12 +121,12 @@ class _PalmReadingLoadingWidgetState extends State<PalmReadingLoadingWidget>
                           width: 50.w,
                           height: 50.w,
                           decoration: BoxDecoration(
-                            color: AppColors.deepOrange.withOpacity(0.1),
+                            color: "#F38B3B".toColor().withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.pan_tool,
-                            color: AppColors.deepOrange,
+                            color: "#F38B3B".toColor(),
                             size: 30.w,
                           ),
                         ),
@@ -146,9 +145,9 @@ class _PalmReadingLoadingWidgetState extends State<PalmReadingLoadingWidget>
                   shaderCallback: (bounds) {
                     return LinearGradient(
                       colors: [
-                        AppColors.deepOrange,
-                        AppColors.deepOrange.withOpacity(0.5),
-                        AppColors.deepOrange,
+                        "#F38B3B".toColor(),
+                        "#F38B3B".toColor().withOpacity(0.5),
+                        "#F38B3B".toColor(),
                       ],
                       stops: [
                         (_waveAnimation.value - 0.3).clamp(0.0, 1.0),
@@ -192,7 +191,7 @@ class _PalmReadingLoadingWidgetState extends State<PalmReadingLoadingWidget>
                       width: 8.w,
                       height: 8.w,
                       decoration: BoxDecoration(
-                        color: AppColors.deepOrange.withOpacity(0.3 + opacity * 0.7),
+                        color: "#F38B3B".toColor().withOpacity(0.3 + opacity * 0.7),
                         shape: BoxShape.circle,
                       ),
                     );

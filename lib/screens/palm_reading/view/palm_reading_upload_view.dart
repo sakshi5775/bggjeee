@@ -4,7 +4,6 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -143,7 +142,7 @@ class PalmReadingUploadView extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(
-                    color: AppColors.deepOrange,
+                    color: "#F38B3B".toColor(),
                     width: 2,
                   ),
                 ),
@@ -248,7 +247,7 @@ class PalmReadingUploadView extends StatelessWidget {
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: isPrimary
-              ? AppColors.deepOrange
+              ? "#F38B3B".toColor()
               : Colors.white,
           foregroundColor: isPrimary
               ? Colors.white
@@ -326,7 +325,7 @@ class PalmReadingUploadView extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: AppColors.deepOrange,
+            color: "#F38B3B".toColor(),
             size: 24.w,
           ),
           Spacing.w(12),
@@ -352,8 +351,8 @@ class PalmReadingUploadView extends StatelessWidget {
             : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: controller.selectedPalmImage.value != null
-              ? AppColors.deepOrange
-              : AppColors.deepOrange.withOpacity(0.5),
+              ? "#F38B3B".toColor()
+              : "#F38B3B".toColor().withOpacity(0.5),
           foregroundColor: Colors.white,
           padding: AppPaddings.symmetric(v: 16, h: 24),
           shape: RoundedRectangleBorder(
@@ -406,7 +405,7 @@ class PalmReadingUploadView extends StatelessWidget {
             AutoTranslateText(
               'We read your destiny with 95% accuracy!',
               style: MyTextTheme.mediumBCB.copyWith(
-                color: AppColors.deepOrange,
+                color: "#F38B3B".toColor(),
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
@@ -594,7 +593,7 @@ class HandDiagramPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.deepOrange
+      ..color = "#F38B3B".toColor()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3;
 

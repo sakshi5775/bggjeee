@@ -69,8 +69,8 @@ class _RotatingLogoState extends State<RotatingLogo>
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        width: 160,
-        height: 160,
+        width: 140,
+        height: 140,
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -78,14 +78,14 @@ class _RotatingLogoState extends State<RotatingLogo>
             RotationTransition(
               turns: _controller,
               child: Image.asset(
-                "assets/images/Astrobharat-Ai.png", // circular image
-                width: 140,
-                height: 140,
+                "assets/app/Astrobharat-Ai.png", // circular image
+                width: 120,
+                height: 120,
               ),
             ),
 
             /// 🎯 Center Logo (Static)
-            Image.asset("assets/images/union_bharat.png", width: 30, height: 30),
+            Image.asset("assets/app/union_bharat.png", width: 28, height: 28),
           ],
         ),
       ),

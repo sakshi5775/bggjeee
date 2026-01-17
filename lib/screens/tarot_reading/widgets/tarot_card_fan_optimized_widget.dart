@@ -240,7 +240,7 @@ class _OptimizedTarotCardWidget extends StatelessWidget {
           ),
           if (isRevealed)
             BoxShadow(
-              color: AppColors.deepOrange.withOpacity(0.7),
+              color: "#F38B3B".toColor().withOpacity(0.7),
               blurRadius: 25,
               spreadRadius: 8,
             ),
@@ -280,7 +280,7 @@ class _OptimizedTarotCardWidget extends StatelessWidget {
                       width: 20.w,
                       height: 20.w,
                       child: CircularProgressIndicator(
-                        color: AppColors.deepOrange,
+                        color: "#F38B3B".toColor(),
                         strokeWidth: 2,
                       ),
                     ),
@@ -355,7 +355,7 @@ class _OptimizedTarotCardWidget extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       '#820B17'.toColor(),
-                      AppColors.deepOrange,
+                      "#F38B3B".toColor(),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -379,7 +379,7 @@ class _OptimizedTarotCardWidget extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       '#820B17'.toColor(),
-                      AppColors.deepOrange,
+                      "#F38B3B".toColor(),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,

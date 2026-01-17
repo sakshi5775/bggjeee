@@ -137,7 +137,7 @@ class HomeVastuListView extends StatelessWidget {
                 ),
                 child: Icon(
                   _getRoomIcon(room.roomType),
-                  color: AppColors.deepOrange,
+                  color: "#F38B3B".toColor(),
                   size: 24.w,
                 ),
               ),

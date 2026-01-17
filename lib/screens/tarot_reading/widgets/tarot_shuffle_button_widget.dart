@@ -102,7 +102,7 @@ class TarotShuffleButtonWidget extends StatelessWidget {
           gradient: isActive
               ? LinearGradient(
                   colors: [
-                    AppColors.deepOrange,
+                    "#F38B3B".toColor(),
                     '#820B17'.toColor(),
                   ],
                   begin: Alignment.topLeft,

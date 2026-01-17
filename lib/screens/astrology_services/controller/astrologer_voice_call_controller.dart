@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/data_model/call_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/agora_call_manager.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/call_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/call_service.dart' show ServiceNotEnabledException;
+import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/profile_check_helper.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -253,6 +254,7 @@ class AstrologerVoiceCallController extends GetxController {
         final balance = (data['balance'] as num).toDouble();
         walletBalance.value = balance;
         _walletBalance = balance;
+        _updateGlobalWalletBalance(balance);
       }
       
       showLowBalanceWarning.value = true;
@@ -271,8 +273,10 @@ class AstrologerVoiceCallController extends GetxController {
       if (kDebugMode) print('🛑 Call Force Ended (Voice Call): $data');
 
       if (data['balance'] != null) {
-        walletBalance.value = (data['balance'] as num).toDouble();
-        _walletBalance = walletBalance.value;
+        final newBalance = (data['balance'] as num).toDouble();
+        walletBalance.value = newBalance;
+        _walletBalance = newBalance;
+        _updateGlobalWalletBalance(newBalance);
       }
       
       _availableMinutes = 0;
@@ -322,6 +326,9 @@ class AstrologerVoiceCallController extends GetxController {
       walletBalance.value = newBalance;
       _walletBalance = newBalance;
       
+      // Update global WalletController if registered
+      _updateGlobalWalletBalance(newBalance);
+      
       // Update available minutes and countdown
       if (pricePerMinute.value > 0) {
         final newAvailableMinutes = (walletBalance.value / pricePerMinute.value).floor();
@@ -337,6 +344,23 @@ class AstrologerVoiceCallController extends GetxController {
         print('💰 Updated wallet balance: ₹${walletBalance.value}');
         print('💰 Total cost so far: ₹${totalCost.value}');
         print('💰 Minutes billed: ${totalMinutesBilled.value}');
+      }
+    }
+  }
+
+  /// Update global WalletController balance if registered
+  void _updateGlobalWalletBalance(double newBalance) {
+    try {
+      if (Get.isRegistered<WalletController>()) {
+        final walletController = Get.find<WalletController>();
+        walletController.walletBalance.value = newBalance;
+        if (kDebugMode) {
+          print('💰 Updated global WalletController balance: ₹$newBalance');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('⚠️ Could not update global WalletController: $e');
       }
     }
   }

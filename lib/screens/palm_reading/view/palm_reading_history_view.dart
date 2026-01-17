@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/palm_reading_model.dart';
@@ -225,12 +226,12 @@ class PalmReadingHistoryView extends StatelessWidget {
                       icon: Icon(
                         Icons.clear_all,
                         size: 18.w,
-                        color: AppColors.deepOrange,
+                        color: "#F38B3B".toColor(),
                       ),
                       label: AutoTranslateText(
                         'Clear',
                         style: MyTextTheme.mediumBCB.copyWith(
-                          color: AppColors.deepOrange,
+                          color: "#F38B3B".toColor(),
                         ),
                       ),
                       style: TextButton.styleFrom(
@@ -286,23 +287,31 @@ class PalmReadingHistoryView extends StatelessWidget {
             ),
             if (hasFilters) ...[
               Spacing.h(16),
-              ElevatedButton(
-                onPressed: controller.clearFilters,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.deepOrange,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 24.w,
-                    vertical: 12.h,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
+                  borderRadius: BorderRadius.circular(8.r),
                 ),
-                child: AutoTranslateText(
-                  'Clear Filters',
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: Colors.white,
+                child: ElevatedButton(
+                  onPressed: controller.clearFilters,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24.w,
+                      vertical: 12.h,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
+                  ),
+                  child: AutoTranslateText(
+                    'Clear Filters',
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -402,7 +411,7 @@ class PalmReadingHistoryView extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: isFailed 
                               ? Colors.red.withOpacity(0.1)
-                              : AppColors.deepOrange.withOpacity(0.1),
+                              : "#F38B3B".toColor().withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4.r),
                         ),
                         child: AutoTranslateText(
@@ -410,7 +419,7 @@ class PalmReadingHistoryView extends StatelessWidget {
                           style: MyTextTheme.smallBCN.copyWith(
                             color: isFailed 
                                 ? Colors.red
-                                : AppColors.deepOrange,
+                                : "#F38B3B".toColor(),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -522,18 +531,24 @@ class PalmReadingHistoryView extends StatelessWidget {
                   ),
                 ),
               ),
-            ElevatedButton(
-              onPressed: controller.loadMore,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.deepOrange,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                elevation: 2,
+            Container(
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(8.r),
               ),
-              child: Row(
+              child: ElevatedButton(
+                onPressed: controller.loadMore,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  elevation: 0,
+                  shadowColor: Colors.transparent,
+                ),
+                child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   AutoTranslateText(
@@ -550,6 +565,7 @@ class PalmReadingHistoryView extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ],
+                ),
               ),
             ),
           ],

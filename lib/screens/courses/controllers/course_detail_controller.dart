@@ -1,8 +1,13 @@
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/screens/courses/services/courses_service.dart';
 import 'package:astrobharataiuser/screens/courses/services/razorpay_payment_service.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class CourseDetailController extends BaseController {
@@ -160,17 +165,15 @@ class CourseDetailController extends BaseController {
           isEnrolled.value = enrolled;
         }
         
-        Get.snackbar(
-          'Success',
-          paymentData.message.isNotEmpty ? paymentData.message : 'Course purchased successfully! You can now access all content.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 3),
-        );
-        
         debugPrint('✅ Payment successful - Enrollment active, course unlocked');
         debugPrint('✅ isEnrolled.value set to: ${isEnrolled.value}');
+        
+        // Show success modal
+        _showPaymentSuccessModal(
+          message: paymentData.message.isNotEmpty 
+              ? paymentData.message 
+              : 'Course purchased successfully! You can now access all content.',
+        );
       } else {
         showErrorMessage(
           title: "Enrollment Issue",
@@ -217,6 +220,118 @@ class CourseDetailController extends BaseController {
     );
     _pendingOrderId = null;
     _pendingGatewayOrderId = null;
+  }
+
+  void _showPaymentSuccessModal({String message = 'Course purchased successfully! You can now access all content.'}) {
+    Get.dialog(
+      PopScope(
+        canPop: false, // Prevent back button from closing
+        child: Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.white, AppColors.cream],
+              ),
+              borderRadius: BorderRadius.circular(30.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header with gradient
+                Container(
+                  padding: EdgeInsets.all(24.w),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: AutoTranslateText(
+                          'Payment Successful',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 24.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Content
+                Padding(
+                  padding: EdgeInsets.all(32.w),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Success Icon
+                      Container(
+                        width: 80.w,
+                        height: 80.w,
+                        decoration: BoxDecoration(
+                          color: AppColors.success.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.check_circle,
+                          color: AppColors.success,
+                          size: 50.w,
+                        ),
+                      ),
+                      Spacing.h(24),
+                      // Success Message
+                      AutoTranslateText(
+                        'Course Purchased Successfully!',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: '#68171E'.toColor(),
+                        ),
+                      ),
+                      Spacing.h(12),
+                      AutoTranslateText(
+                        message,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 14.sp,
+                          color: Colors.grey[600],
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+
+    // Auto-close after 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      if (Get.isDialogOpen == true) {
+        Get.back(); // Close success modal
+      }
+    });
   }
 
   @override

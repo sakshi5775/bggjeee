@@ -159,7 +159,7 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
                 child: Icon(
                   Icons.cloud_upload,
                   size: 40.w,
-                  color: AppColors.deepOrangemix,
+                  color: "#F38B3B".toColor(),
                 ),
               ),
               Spacing.h(14),
@@ -597,43 +597,56 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
           padding: EdgeInsets.symmetric(horizontal: 12.w),
           child: SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: controller.isAnalyzing.value
-                  ? null
-                  : () {
-                      if (controller.selectedImages.isEmpty) {
-                        Get.snackbar(
-                          'Error',
-                          'Please select at least one handwriting image',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.red,
-                          colorText: Colors.white,
-                        );
-                        return;
-                      }
-                      controller.analyzeHandwriting();
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.deepOrange,
-                foregroundColor: '#ffffff'.toColor(),
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                elevation: 6,
-                shadowColor: AppColors.deepOrange.withOpacity(0.35),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(12.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: "#F38B3B".toColor().withOpacity(0.35),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
-              child: controller.isAnalyzing.value
-                  ? CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    )
-                  : AutoTranslateText(
-                      'Analyze Handwriting',
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: '#ffffff'.toColor(),
-                        fontWeight: FontWeight.bold,
+              child: ElevatedButton(
+                onPressed: controller.isAnalyzing.value
+                    ? null
+                    : () {
+                        if (controller.selectedImages.isEmpty) {
+                          Get.snackbar(
+                            'Error',
+                            'Please select at least one handwriting image',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                          return;
+                        }
+                        controller.analyzeHandwriting();
+                      },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: '#ffffff'.toColor(),
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  elevation: 0,
+                  shadowColor: Colors.transparent,
+                ),
+                child: controller.isAnalyzing.value
+                    ? CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      )
+                    : AutoTranslateText(
+                        'Analyze Handwriting',
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: '#ffffff'.toColor(),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
+              ),
             ),
           ),
         ));

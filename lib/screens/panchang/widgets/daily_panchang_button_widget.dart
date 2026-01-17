@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:flutter/material.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 
 class DailyPanchangButtonWidget extends StatelessWidget {
   final String text;
@@ -29,14 +30,7 @@ class DailyPanchangButtonWidget extends StatelessWidget {
         width: double.infinity,
         height: 53.97.h,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              "#F38B3B".toColor(), // rgba(243, 139, 59, 1)
-              "#DD2914".toColor(), // rgba(221, 41, 20, 1)
-            ],
-          ),
+          gradient: AppColors.orangeGradient,
           borderRadius: BorderRadius.circular(10.98.r),
         ),
         child: Material(
@@ -80,14 +74,7 @@ class DailyPanchangButtonWidget extends StatelessWidget {
           color: "#FFFFFF".toColor(),
           borderRadius: BorderRadius.circular(10.98.r),
           border: Border.all(
-            color: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                "#F38B3B".toColor(),
-                "#DD2914".toColor(),
-              ],
-            ).colors.first,
+            color: AppColors.orangeGradient.colors.first,
             width: 1,
           ),
         ),

@@ -98,122 +98,125 @@ class OnboardingView extends BasePage<OnboardingController> {
               children: [
                 /// BACK ICON
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(12),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: InkWell(
-                      child: const Icon(Icons.arrow_back, color: Colors.white),
+                      child: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
                       onTap: () => controller.back(),
                     ),
                   ),
                 ),
 
-                // const Spacer(),
-                SizedBox(height: 30),
+                SizedBox(height: 12),
 
                 /// LOGO + SLOGAN
-                Column(
-                  children: [
-                    const RotatingLogo(),
-                    const SizedBox(height: 25),
+                Flexible(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const RotatingLogo(),
+                      const SizedBox(height: 16),
 
-                    ClipRRect(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
+                      ClipRRect(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 6,
+                          ),
 
-                        // overlay for text visibility
-                        child: const Text(
-                          "Get Instant Divine Guidance",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: 'poppins',
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                          // overlay for text visibility
+                          child: const Text(
+                            "Get Instant Divine Guidance",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'poppins',
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
-                    ),
 
-                    const SizedBox(height: 20),
+                      const SizedBox(height: 12),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(width: 60, height: 2, color: Colors.white),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: Icon(
-                            Icons.star,
-                            size: 18,
-                            color: Colors.white,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(width: 60, height: 2, color: Colors.white),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: Icon(
+                              Icons.star,
+                              size: 18,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        Container(width: 60, height: 2, color: Colors.white),
-                      ],
-                    ),
+                          Container(width: 60, height: 2, color: Colors.white),
+                        ],
+                      ),
 
-                    const SizedBox(height: 12),
+                      const SizedBox(height: 8),
 
-                    Obx(() {
-                      // Har page ke liye description
-                      final descriptions = [
-                        "Chat with our AI astrologer 24/7 or connect with verified expert pandits through video calls and live chat.",
-                        "Chat with our AI astrologer 24/7 or connect with verified expert pandits through video calls and live chat.",
-                        "Chat with our AI astrologer 24/7 or connect with verified expert pandits through video calls and live chat.",
-                      ];
+                      Obx(() {
+                        // Har page ke liye description
+                        final descriptions = [
+                          "Chat with our AI astrologer 24/7 or connect with verified expert pandits through video calls and live chat.",
+                          "Chat with our AI astrologer 24/7 or connect with verified expert pandits through video calls and live chat.",
+                          "Chat with our AI astrologer 24/7 or connect with verified expert pandits through video calls and live chat.",
+                        ];
 
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32),
-                        child: Text(
-                          descriptions[controller.currentPage.value],
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontFamily: 'poppins',
-                            fontSize: 14,
-                            height: 1.5,
-                            color: Colors.white,
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32),
+                          child: Text(
+                            descriptions[controller.currentPage.value],
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontFamily: 'poppins',
+                              fontSize: 13,
+                              height: 1.4,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                      );
-                    }),
-
-                    const SizedBox(height: 22),
-
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Obx(() {
-                        final pageIndex = controller.currentPage.value;
-
-                        return Column(
-                          children: List.generate(3, (i) {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: StaggeredSlideFade(
-                                index: i,
-                                currentPage: pageIndex,
-                                child: GlassMenuButton(
-                                  title: controller.pageButtons[pageIndex][i],
-                                  icon: i == 0
-                                      ? Icons.chat_bubble_outline
-                                      : i == 1
-                                      ? Icons.video_call_outlined
-                                      : Icons.person_outline,
-                                  onTap: () {},
-                                ),
-                              ),
-                            );
-                          }),
                         );
                       }),
-                    ),
-                  ],
+
+                      const SizedBox(height: 12),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+                        child: Obx(() {
+                          final pageIndex = controller.currentPage.value;
+
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List.generate(3, (i) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: StaggeredSlideFade(
+                                  index: i,
+                                  currentPage: pageIndex,
+                                  child: GlassMenuButton(
+                                    title: controller.pageButtons[pageIndex][i],
+                                    icon: i == 0
+                                        ? Icons.chat_bubble_outline
+                                        : i == 1
+                                        ? Icons.video_call_outlined
+                                        : Icons.person_outline,
+                                    onTap: () {},
+                                  ),
+                                ),
+                              );
+                            }),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 8),
 
                 /// CIRCLE PAGE INDICATOR (ABOVE BUTTONS)
                 Obx(
@@ -237,7 +240,7 @@ class OnboardingView extends BasePage<OnboardingController> {
                   ),
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 /// BUTTONS
                 Padding(
@@ -271,17 +274,17 @@ class OnboardingView extends BasePage<OnboardingController> {
                   ),
                 ),
 
-                const SizedBox(height: 25),
+                const SizedBox(height: 12),
 
                 /// PAGE INDICATOR TEXT
                 Obx(
                   () => Text(
                     "${controller.currentPage.value + 1} of 3",
-                    style: const TextStyle(color: Colors.white70),
+                    style: const TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ),
 
-                const SizedBox(height: 14),
+                const SizedBox(height: 8),
               ],
             ),
           ),

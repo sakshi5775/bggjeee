@@ -14,8 +14,6 @@ class CarrotAstrologyColors {
   // Orange gradient
   static final LinearGradient orangeGradient = LinearGradient(
     colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
   );
 
   // Individual colors from gradients for use in non-gradient contexts

@@ -65,43 +65,56 @@ class RamalShastraConfirmationView extends StatelessWidget {
                     ),
                     Spacing.w(16),
                     Expanded(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          // Show loading widget
-                          Get.dialog(
-                            RamalShastraLoadingWidget(
-                              message: 'Ramal Shastra is analyzing your question...',
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: AppColors.orangeGradient,
+                          borderRadius: BorderRadius.circular(12.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: "#F38B3B".toColor().withOpacity(0.35),
+                              blurRadius: 6,
+                              offset: const Offset(0, 3),
                             ),
-                            barrierDismissible: false,
-                          );
-                          
-                          try {
-                            await controller.analyzeRamal();
-                            // Dialog will be closed by navigation in controller
-                            // If navigation happens, dialog auto-closes
-                          } catch (e) {
-                            // Close loading dialog on error
-                            if (Get.isDialogOpen ?? false) {
-                              Get.back();
-                            }
-                            // Error is already shown in controller's analyzeRamal method
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.deepOrange,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 14.h),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          elevation: 6,
-                          shadowColor: AppColors.deepOrange.withOpacity(0.35),
+                          ],
                         ),
-                        child: AutoTranslateText(
-                          'Confirm & Analyze',
-                          style: MyTextTheme.mediumBCB.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            // Show loading widget
+                            Get.dialog(
+                              RamalShastraLoadingWidget(
+                                message: 'Ramal Shastra is analyzing your question...',
+                              ),
+                              barrierDismissible: false,
+                            );
+                            
+                            try {
+                              await controller.analyzeRamal();
+                              // Dialog will be closed by navigation in controller
+                              // If navigation happens, dialog auto-closes
+                            } catch (e) {
+                              // Close loading dialog on error
+                              if (Get.isDialogOpen ?? false) {
+                                Get.back();
+                              }
+                              // Error is already shown in controller's analyzeRamal method
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 14.h),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            elevation: 0,
+                            shadowColor: Colors.transparent,
+                          ),
+                          child: AutoTranslateText(
+                            'Confirm & Analyze',
+                            style: MyTextTheme.mediumBCB.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
@@ -192,7 +205,7 @@ class RamalShastraConfirmationView extends StatelessWidget {
                 height: 60.w,
                 margin: EdgeInsets.all(4.w),
                 decoration: BoxDecoration(
-                  color: value == 1 ? AppColors.deepOrange : Colors.grey[300],
+                  color: value == 1 ? "#F38B3B".toColor() : Colors.grey[300],
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
                     color: value == 1 ? '#E85C0D'.toColor() : Colors.grey[400]!,

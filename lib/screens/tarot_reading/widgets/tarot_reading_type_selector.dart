@@ -28,7 +28,7 @@ class TarotReadingTypeSelector extends StatelessWidget {
           color: '#ede7c8'.toColor(),
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: AppColors.deepOrange.withOpacity(0.3),
+            color: "#F38B3B".toColor().withOpacity(0.3),
             width: 2,
           ),
           boxShadow: [
@@ -46,7 +46,7 @@ class TarotReadingTypeSelector extends StatelessWidget {
               children: [
                 Icon(
                   Icons.auto_awesome,
-                  color: AppColors.deepOrange,
+                  color: "#F38B3B".toColor(),
                   size: 24.w,
                 ),
                 Spacing.w(8),
@@ -70,7 +70,7 @@ class TarotReadingTypeSelector extends StatelessWidget {
                     type: 'yesno',
                     icon: Icons.check_circle,
                     label: 'Yes/No',
-                    color: AppColors.deepOrange,
+                    color: "#F38B3B".toColor(),
                     onTap: () => controller.getYesNoReading(),
                   ),
                   _buildReadingButton(
@@ -110,7 +110,7 @@ class TarotReadingTypeSelector extends StatelessWidget {
                     type: 'business-breakup',
                     icon: Icons.business_center,
                     label: 'Business Breakup',
-                    color: AppColors.deepOrange,
+                    color: "#F38B3B".toColor(),
                     onTap: () => controller.getBusinessBreakupReading(),
                   ),
                   _buildReadingButton(

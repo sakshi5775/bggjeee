@@ -1,14 +1,18 @@
-import 'dart:math';
-
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/address_model.dart';
 import 'package:astrobharataiuser/data_model/cart_model.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/data_model/wishlist_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_razorpay_service.dart';
 
 class CartController extends BaseController {
   static const int maxQuantity = 50;
@@ -32,18 +36,206 @@ class CartController extends BaseController {
   final couponController = TextEditingController();
   final _pendingProducts = <String, bool>{}.obs;
 
+  // Payment Method
+  final RxString selectedPaymentMethod = 'online'.obs; // Default to online
+
+  final EcommerceRazorpayService _razorpayService = EcommerceRazorpayService();
+
   @override
   void onInit() {
     super.onInit();
     loadCart();
     loadAddresses();
+    _initializeRazorpay();
   }
 
   @override
   void onClose() {
     couponController.dispose();
+    _razorpayService.dispose();
     super.onClose();
   }
+
+  void _initializeRazorpay() {
+    _razorpayService.initialize(
+      onSuccess: (data) {
+        _handlePaymentSuccess(data);
+      },
+      onError: (message) {
+        isPlacingOrder.value = false;
+        showErrorMessage(title: 'Payment Failed', message: message);
+      },
+      onFailure: (response) {
+        isPlacingOrder.value = false;
+        showErrorMessage(
+          title: 'Payment Failed',
+          message: '${response.code}: ${response.message}',
+        );
+      },
+    );
+  }
+
+  Future<void> _handlePaymentSuccess(Map<String, dynamic> data) async {
+    try {
+      final paymentId = data['paymentId']?.toString() ?? '';
+      final orderId = data['orderId']?.toString() ?? '';
+      final signature = data['signature']?.toString() ?? '';
+
+      // We need the original payment ID (database ID) from initiation
+      // Since we can't easily pass state through Razorpay callbacks without local storage,
+      // we can rely on the fact that verifyPayment needs 'paymentId' (our DB id) which we have available in the scope if we were inside placeOrder.
+      // BUT callbacks are async.
+      // A common pattern is to store the Pending Payment ID in a variable.
+
+      if (_pendingPaymentId == null) {
+        showErrorMessage(
+          title: "Error",
+          message: "Payment session lost. Please contact support.",
+        );
+        isPlacingOrder.value = false;
+        return;
+      }
+
+      await _service.verifyPayment(
+        paymentId: _pendingPaymentId!,
+        razorpayOrderId: orderId,
+        razorpayPaymentId: paymentId,
+        razorpaySignature: signature,
+      );
+
+      // Clear cart and reload before showing success modal
+      await clearCart();
+      await loadCart();
+
+      // Show success modal that auto-closes after 3 seconds
+      _showPaymentSuccessModal();
+
+    } catch (e) {
+      showErrorMessage(title: 'Error', message: 'Verification failed: $e');
+    } finally {
+      isPlacingOrder.value = false;
+      _pendingPaymentId = null;
+    }
+  }
+
+  void _showPaymentSuccessModal() {
+    Get.dialog(
+      PopScope(
+        canPop: false, // Prevent back button from closing
+        child: Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.white, AppColors.cream],
+              ),
+              borderRadius: BorderRadius.circular(30.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header with gradient
+                Container(
+                  padding: EdgeInsets.all(24.w),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: AutoTranslateText(
+                          'Payment Successful',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 24.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Content
+                Padding(
+                  padding: EdgeInsets.all(32.w),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Success Icon
+                      Container(
+                        width: 80.w,
+                        height: 80.w,
+                        decoration: BoxDecoration(
+                          color: AppColors.success.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.check_circle,
+                          color: AppColors.success,
+                          size: 50.w,
+                        ),
+                      ),
+                      Spacing.h(24),
+                      // Success Message
+                      AutoTranslateText(
+                        'Order Placed Successfully!',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: '#68171E'.toColor(),
+                        ),
+                      ),
+                      Spacing.h(12),
+                      AutoTranslateText(
+                        'Your order has been placed successfully. You will receive an order confirmation shortly.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 14.sp,
+                          color: Colors.grey[600],
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+
+    // Auto-close after 3 seconds
+    Future.delayed(const Duration(seconds: 3), () {
+      if (Get.isDialogOpen == true) {
+        Get.back(); // Close success modal
+        // Navigate back to previous screen (cart or ecommerce home)
+        if (Get.currentRoute.contains('/cart')) {
+          Get.back(); // Close cart screen
+        }
+      }
+    });
+  }
+
+  // Temporary storage for payment verification
+  String? _pendingPaymentId;
 
   Future<void> loadCart() async {
     try {
@@ -683,10 +875,16 @@ class CartController extends BaseController {
     }
   }
 
-  Future<void> placeOrder({String paymentMethod = 'cod'}) async {
+  Future<void> placeOrder() async {
+    final paymentMethod = selectedPaymentMethod.value;
+    print('Placing order with payment method: $paymentMethod'); // Debug log
+
     final currentCart = cart.value;
     if (currentCart == null || (currentCart.items?.isEmpty ?? true)) {
-      showErrorMessage(title: 'Cart empty', message: 'Please add items to cart first.');
+      showErrorMessage(
+        title: 'Cart empty',
+        message: 'Please add items to cart first.',
+      );
       return;
     }
     final address = selectedAddress.value;
@@ -711,45 +909,63 @@ class CartController extends BaseController {
 
       if (orderData == null) return;
 
-      final orderId = orderData['orderId']?.toString() ??
+      print('Order Data received: $orderData'); // Debugging
+
+      // Extract Display ID (e.g., ORD12345) for UI
+      final displayOrderId =
+          orderData['orderId']?.toString() ??
           orderData['order']?['orderId']?.toString() ??
           '';
-      final pricingMap = orderData['pricing'] is Map<String, dynamic>
-          ? Map<String, dynamic>.from(orderData['pricing'] as Map)
-          : orderData['order'] is Map && orderData['order']['pricing'] is Map
-              ? Map<String, dynamic>.from(orderData['order']['pricing'] as Map)
-              : null;
-      final totalAmount = pricingMap?['total'] is num
-          ? (pricingMap!['total'] as num).toDouble()
-          : total;
 
-      if (paymentMethod != 'cod' && orderId.isNotEmpty) {
+      // Extract Internal ID (MongoDB _id) for Payment API
+      // If _id or id is missing, fallback to displayOrderId (though likely wrong)
+      final paymentOrderId =
+          orderData['_id']?.toString() ??
+          orderData['id']?.toString() ??
+          orderData['order']?['_id']?.toString() ??
+          orderData['order']?['id']?.toString() ??
+          displayOrderId;
+
+      print('Payment Order ID: $paymentOrderId');
+      print('Display Order ID: $displayOrderId');
+
+      if (paymentMethod != 'cod' && paymentOrderId.isNotEmpty) {
         final paymentInit = await _service.initiatePayment(
-          orderId: orderId,
-          amount: totalAmount,
-          paymentMethod: paymentMethod,
+          orderId: paymentOrderId,
+          paymentMethod: paymentMethod, // removed amount
         );
 
-        if (paymentInit != null && paymentInit['paymentId'] != null) {
-          final paymentId = paymentInit['paymentId'].toString();
-          final transactionId = 'TXN_${DateTime.now().millisecondsSinceEpoch}_${Random().nextInt(9999)}';
-          await _service.verifyPayment(
-            paymentId: paymentId,
-            transactionId: transactionId,
+        if (paymentInit != null &&
+            paymentInit.success &&
+            paymentInit.data?.razorpay != null) {
+          _pendingPaymentId = paymentInit.data!.paymentId;
+
+          _razorpayService.openCheckout(
+            razorpayData: paymentInit.data!.razorpay!,
+          );
+          // Wait for callback
+        } else {
+          isPlacingOrder.value = false;
+          showErrorMessage(
+            title: "Payment Error",
+            message: "Failed to initiate payment parameters.",
           );
         }
+      } else {
+        // COD or other sync success
+        showSuccessMessage(
+          title: 'Order placed',
+          message: displayOrderId.isNotEmpty
+              ? 'Order #$displayOrderId has been placed successfully.'
+              : 'Your order has been placed successfully.',
+        );
+        await clearCart();
+        await loadCart();
+        isPlacingOrder.value = false;
       }
-
-      showSuccessMessage(
-        title: 'Order placed',
-        message: orderId.isNotEmpty
-            ? 'Order #$orderId has been placed successfully.'
-            : 'Your order has been placed successfully.',
-      );
-      await clearCart();
-      await loadCart();
-    } finally {
+    } catch (e) {
       isPlacingOrder.value = false;
+      showErrorMessage(title: 'Error', message: e.toString());
     }
   }
 }

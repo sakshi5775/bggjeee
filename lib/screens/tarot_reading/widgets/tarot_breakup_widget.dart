@@ -178,7 +178,7 @@ class TarotBreakupWidget extends StatelessWidget {
                                       vertical: 12.h,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: AppColors.deepOrange,
+                                      color: "#F38B3B".toColor(),
                                       borderRadius: BorderRadius.circular(12.r),
                                     ),
                                     alignment: Alignment.center,

@@ -138,7 +138,7 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CircularProgressIndicator(
-                              color: AppColors.deepOrange,
+                              color: "#F38B3B".toColor(),
                             ),
                             SizedBox(height: 16.h),
                             AutoTranslateText(
@@ -312,7 +312,7 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
         height: 44.w,
         decoration: BoxDecoration(
           color: isActive
-              ? AppColors.deepOrange
+              ? "#F38B3B".toColor()
               : Colors.black.withOpacity(0.6),
           shape: BoxShape.circle,
           border: Border.all(
@@ -324,7 +324,7 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: AppColors.deepOrange.withOpacity(0.4),
+                    color: "#F38B3B".toColor().withOpacity(0.4),
                     blurRadius: 8,
                     spreadRadius: 1,
                   ),

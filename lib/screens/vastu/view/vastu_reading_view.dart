@@ -156,7 +156,7 @@ class _VastuReadingViewState extends State<VastuReadingView> with WidgetsBinding
                   height: 40.w,
                   decoration: BoxDecoration(
                     color: controller.isCameraMode 
-                        ? AppColors.deepOrange 
+                        ? "#F38B3B".toColor() 
                         : '#ffffff'.toColor(),
                     borderRadius: BorderRadius.circular(8.r),
                     boxShadow: [
@@ -238,19 +238,31 @@ class _VastuReadingViewState extends State<VastuReadingView> with WidgetsBinding
           // Vastu info button
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () => controller.showVastuInfo(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.deepOrange,
-                foregroundColor: '#ffffff'.toColor(),
-                padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                elevation: 6,
-                shadowColor: AppColors.deepOrange.withOpacity(0.35),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(12.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: "#F38B3B".toColor().withOpacity(0.35),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
-              child: Row(
+              child: ElevatedButton(
+                onPressed: () => controller.showVastuInfo(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  foregroundColor: '#ffffff'.toColor(),
+                  padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  elevation: 0,
+                  shadowColor: Colors.transparent,
+                ),
+                child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
@@ -267,6 +279,7 @@ class _VastuReadingViewState extends State<VastuReadingView> with WidgetsBinding
                     ).merge(AppTypography.body1),
                   ),
                 ],
+                ),
               ),
             ),
           ),

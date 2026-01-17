@@ -31,7 +31,7 @@ class ConfidenceMeter extends StatelessWidget {
       meterColor = Colors.green;
       statusText = 'High Accuracy';
     } else if (confidence >= 0.5) {
-      meterColor = AppColors.deepOrange;
+      meterColor = "#F38B3B".toColor();
       statusText = 'Moderate Accuracy';
     } else {
       meterColor = Colors.red;

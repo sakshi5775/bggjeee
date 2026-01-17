@@ -54,8 +54,8 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.deepOrange,
-            AppColors.deepOrangemix,
+            "#F38B3B".toColor(),
+            "#DD2914".toColor(),
           ],
         ),
         borderRadius: BorderRadius.only(
@@ -244,7 +244,7 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
             final colors = [
               Colors.blue,
               Colors.green,
-              AppColors.deepOrange,
+              "#F38B3B".toColor(),
               Colors.red,
               Colors.purple,
               Colors.teal,
@@ -312,7 +312,7 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
             final index = judgments.indexOf(judgment);
             final colors = [
               Colors.green,
-              AppColors.deepOrange,
+              "#F38B3B".toColor(),
               Colors.red,
               Colors.blue,
             ];

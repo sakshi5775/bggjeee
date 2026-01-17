@@ -114,7 +114,7 @@ class _WhyThisMattersCardState extends State<WhyThisMattersCard>
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
-                    color: AppColors.deepOrange,
+                    color: "#F38B3B".toColor(),
                     size: 20.w,
                   ),
                   Spacing.w(12),

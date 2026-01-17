@@ -7,7 +7,6 @@ import 'package:astrobharataiuser/screens/login/login/widgets/login_form_widget.
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
-import '../widgets/smokeContainer.dart';
 
 class LoginView extends BasePage<LoginController> {
   const LoginView({super.key});
@@ -48,20 +47,13 @@ class LoginView extends BasePage<LoginController> {
                   children: [
                     /// 🔹 Main Image
                     Image.asset(
-                      'assets/images/ganeshji_u.jpg',
+                      'assets/app/ganeshji_u.png',
                       width: double.infinity,
                       // height: 300,
                       fit: BoxFit.cover,
                     ),
 
-                    /// 🔹 Bottom Blur (30%)
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      height: 60, // 30% height
-                      child: smokeContainer(),
-                    ),
+                  
                   ],
                 ),
               ),

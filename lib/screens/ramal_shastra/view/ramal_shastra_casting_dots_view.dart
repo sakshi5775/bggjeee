@@ -97,7 +97,7 @@ class _RamalShastraCastingDotsViewState extends State<RamalShastraCastingDotsVie
                         Icon(
                           Icons.brightness_1,
                           size: 80.w,
-                          color: AppColors.deepOrange,
+                          color: "#F38B3B".toColor(),
                         ),
                         Spacing.h(16),
                         AutoTranslateText(
@@ -210,14 +210,14 @@ class _RamalShastraCastingDotsViewState extends State<RamalShastraCastingDotsVie
         return Container(
           decoration: BoxDecoration(
             color: isCurrent 
-                ? AppColors.deepOrange.withOpacity(0.2)
+                ? "#F38B3B".toColor().withOpacity(0.2)
                 : isCompleted
                     ? '#4CAF50'.toColor().withOpacity(0.2)
                     : Colors.grey[200],
             borderRadius: BorderRadius.circular(4.r),
             border: Border.all(
               color: isCurrent 
-                  ? AppColors.deepOrange
+                  ? "#F38B3B".toColor()
                   : Colors.transparent,
               width: 2,
             ),

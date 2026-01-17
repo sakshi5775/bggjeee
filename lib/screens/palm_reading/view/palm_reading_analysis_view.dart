@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
@@ -210,7 +211,7 @@ class PalmReadingAnalysisView extends StatelessWidget {
             ),
             Spacing.w(12),
             Expanded(
-              child: _buildLineButton('Head line', AppColors.deepOrange),
+              child: _buildLineButton('Head line', "#F38B3B".toColor()),
             ),
           ],
         ),
@@ -251,30 +252,44 @@ class PalmReadingAnalysisView extends StatelessWidget {
   Widget _buildContinueButton() {
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () {
-          // TODO: Navigate to results screen
-          Get.snackbar(
-            'Success',
-            'Palm reading analysis complete!',
-            snackPosition: SnackPosition.BOTTOM,
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.deepOrange,
-          foregroundColor: Colors.white,
-          padding: AppPaddings.symmetric(v: 16, h: 24),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          elevation: 4,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: AppColors.orangeGradient,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: "#F38B3B".toColor().withOpacity(0.35),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        child: AutoTranslateText(
-          'Continue',
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ).merge(AppTypography.h3),
+        child: ElevatedButton(
+          onPressed: () {
+            // TODO: Navigate to results screen
+            Get.snackbar(
+              'Success',
+              'Palm reading analysis complete!',
+              snackPosition: SnackPosition.BOTTOM,
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            foregroundColor: Colors.white,
+            padding: AppPaddings.symmetric(v: 16, h: 24),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            elevation: 0,
+            shadowColor: Colors.transparent,
+          ),
+          child: AutoTranslateText(
+            'Continue',
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ).merge(AppTypography.h3),
+          ),
         ),
       ),
     );
@@ -390,7 +405,7 @@ class HandDiagramPainter extends CustomPainter {
     canvas.drawPath(lifeLine, linePaint);
     
     // Head line (horizontal middle)
-    linePaint.color = AppColors.deepOrange;
+    linePaint.color = "#F38B3B".toColor();
     canvas.drawLine(
       Offset(size.width * 0.2, size.height * 0.4),
       Offset(size.width * 0.8, size.height * 0.4),

@@ -124,7 +124,7 @@ class FaceReadingView extends StatelessWidget {
               ),
               child: Icon(
                 Icons.history,
-                color: AppColors.deepOrange,
+                color: "#F38B3B".toColor(),
                 size: 20.w,
               ),
             ),
@@ -205,14 +205,14 @@ class FaceReadingView extends StatelessWidget {
               children: [
                 Icon(
                   Icons.auto_awesome,
-                  color: AppColors.deepOrange,
+                  color: "#F38B3B".toColor(),
                   size: 20.w,
                 ),
                 Spacing.w(8),
                 AutoTranslateText(
                   'Start Your Analysis',
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: AppColors.deepOrange,
+                    color: "#F38B3B".toColor(),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -240,7 +240,19 @@ class FaceReadingView extends StatelessWidget {
             // Upload button
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
+                  borderRadius: BorderRadius.circular(12.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: "#F38B3B".toColor().withOpacity(0.35),
+                      blurRadius: 6,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton(
                   onPressed: () async {
                     final ok = await LoginGuard.ensureLoggedIn(
                       message: 'Please login to continue with face reading.',
@@ -249,33 +261,34 @@ class FaceReadingView extends StatelessWidget {
                       Get.toNamed(AppRoutes.faceReadingUpload);
                     }
                   },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.deepOrange,
-                  foregroundColor: '#ffffff'.toColor(),
-                  padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: '#ffffff'.toColor(),
+                    padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
                   ),
-                  elevation: 6,
-                  shadowColor: AppColors.deepOrange.withOpacity(0.35),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.camera_alt,
-                      size: 20.w,
-                      color: '#ffffff'.toColor(),
-                    ),
-                    Spacing.w(8),
-                    AutoTranslateText(
-                      'Upload Photo & Analyze',
-                      style: MyTextTheme.mediumBCB.copyWith(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.camera_alt,
+                        size: 20.w,
                         color: '#ffffff'.toColor(),
-                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                  ],
+                      Spacing.w(8),
+                      AutoTranslateText(
+                        'Upload Photo & Analyze',
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: '#ffffff'.toColor(),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -394,7 +407,7 @@ class FaceReadingView extends StatelessWidget {
               ),
               child: Icon(
                 icon,
-                color: AppColors.deepOrange,
+                color: "#F38B3B".toColor(),
                 size: 22.w,
               ),
             ),
@@ -569,7 +582,7 @@ class FaceReadingView extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: [AppColors.deepOrangemix.withOpacity(0.35), AppColors.deepOrange.withOpacity(0.15)],
+                    colors: ["#DD2914".toColor().withOpacity(0.35), "#F38B3B".toColor().withOpacity(0.15)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),

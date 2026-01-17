@@ -194,14 +194,14 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
               children: [
                 Icon(
                   Icons.auto_awesome,
-                  color: AppColors.deepOrange,
+                  color: "#F38B3B".toColor(),
                   size: 20.w,
                 ),
                 Spacing.w(8),
                 AutoTranslateText(
                   'Start Your Reading',
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: AppColors.deepOrange,
+                    color: "#F38B3B".toColor(),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -265,7 +265,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
               child: Padding(
                 padding: EdgeInsets.all(16.h),
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(AppColors.deepOrange),
+                  valueColor: AlwaysStoppedAnimation("#F38B3B".toColor()),
                 ),
               ),
             );
@@ -287,7 +287,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
                 ),
                 icon: Icon(
                   Icons.keyboard_arrow_down,
-                  color: AppColors.deepOrange,
+                  color: "#F38B3B".toColor(),
                 ),
                 items: controller.questions.map((q) {
                   return DropdownMenuItem<int>(
@@ -337,7 +337,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
             ),
             child: Icon(
               Icons.location_on,
-              color: AppColors.deepOrange,
+              color: "#F38B3B".toColor(),
               size: 18.w,
             ),
           ),
@@ -370,7 +370,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
           TextButton(
             onPressed: () => controller.onInit(),
             style: TextButton.styleFrom(
-              foregroundColor: AppColors.deepOrange,
+              foregroundColor: "#F38B3B".toColor(),
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
             ),
             child: AutoTranslateText(
@@ -387,44 +387,58 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
     return Obx(
       () => SizedBox(
         width: double.infinity,
-        child: ElevatedButton(
-          onPressed: controller.isAnalyzing.value
-              ? null
-              : () => controller.analyzeQuestion(),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.deepOrange,
-            foregroundColor: '#ffffff'.toColor(),
-            padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            elevation: 6,
-            shadowColor: AppColors.deepOrange.withOpacity(0.35),
-            disabledBackgroundColor: '#CCCCCC'.toColor(),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (controller.isAnalyzing.value)
-                SizedBox(
-                  width: 16.w,
-                  height: 16.w,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation(Colors.white),
-                  ),
-                )
-              else
-                Icon(Icons.psychology_alt, size: 18.w),
-              Spacing.w(8),
-              AutoTranslateText(
-                controller.isAnalyzing.value ? "Analyzing..." : "Get Reading",
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: controller.isAnalyzing.value ? null : AppColors.orangeGradient,
+            color: controller.isAnalyzing.value ? '#CCCCCC'.toColor() : null,
+            borderRadius: BorderRadius.circular(12.r),
+            boxShadow: controller.isAnalyzing.value ? null : [
+              BoxShadow(
+                color: "#F38B3B".toColor().withOpacity(0.35),
+                blurRadius: 6,
+                offset: const Offset(0, 3),
               ),
             ],
+          ),
+          child: ElevatedButton(
+            onPressed: controller.isAnalyzing.value
+                ? null
+                : () => controller.analyzeQuestion(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              foregroundColor: '#ffffff'.toColor(),
+              padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              elevation: 0,
+              shadowColor: Colors.transparent,
+              disabledBackgroundColor: Colors.transparent,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (controller.isAnalyzing.value)
+                  SizedBox(
+                    width: 16.w,
+                    height: 16.w,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation(Colors.white),
+                    ),
+                  )
+                else
+                  Icon(Icons.psychology_alt, size: 18.w),
+                Spacing.w(8),
+                AutoTranslateText(
+                  controller.isAnalyzing.value ? "Analyzing..." : "Get Reading",
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -507,7 +521,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
               color: '#FFF2E8'.toColor(),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: AppColors.deepOrange, size: 22.w),
+            child: Icon(icon, color: "#F38B3B".toColor(), size: 22.w),
           ),
           Spacing.h(10),
           AutoTranslateText(
@@ -636,7 +650,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
               color: '#FFF2E8'.toColor(),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.star, color: AppColors.deepOrange, size: 18.w),
+            child: Icon(Icons.star, color: "#F38B3B".toColor(), size: 18.w),
           ),
           Spacing.h(8),
           AutoTranslateText(
@@ -688,8 +702,8 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.deepOrangemix.withOpacity(0.35),
-                      AppColors.deepOrange.withOpacity(0.15),
+                      "#DD2914".toColor().withOpacity(0.35),
+                      "#F38B3B".toColor().withOpacity(0.15),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,

@@ -58,7 +58,7 @@ class CorrectionStepCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: isCompleted
                   ? '#4CAF50'.toColor()
-                  : AppColors.deepOrange,
+                  : "#F38B3B".toColor(),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -86,7 +86,7 @@ class CorrectionStepCard extends StatelessWidget {
                   children: [
                     Icon(
                       icon,
-                      color: AppColors.deepOrange,
+                      color: "#F38B3B".toColor(),
                       size: 20.w,
                     ),
                     Spacing.w(8),

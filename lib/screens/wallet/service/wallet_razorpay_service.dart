@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:astrobharataiuser/data_model/wallet_model.dart';
 
@@ -9,6 +10,7 @@ class WalletRazorpayService {
   Function(String)? onError;
   Function(PaymentFailureResponse)? onFailure;
 
+  // Guard to prevent multiple success callbacks (Razorpay can fire multiple times)
   bool _paymentSuccessHandled = false;
 
   void initialize({
@@ -32,13 +34,14 @@ class WalletRazorpayService {
     required RazorpayData razorpayData,
     Map<String, dynamic>? notes,
   }) {
-    print('Razorpay: openCheckout called');
+    debugPrint('Razorpay: openCheckout called');
     if (_razorpay == null) {
-      print('Razorpay: _razorpay is null');
+      debugPrint('Razorpay: _razorpay is null');
       onError?.call('Razorpay not initialized');
       return;
     }
 
+    // CRITICAL: Reset success handler flag when opening new checkout
     _paymentSuccessHandled = false;
 
     final options = {
@@ -62,22 +65,25 @@ class WalletRazorpayService {
       'theme': {'color': '#eb662c'},
     };
 
-    print('Razorpay options: $options');
+    debugPrint('Razorpay options: $options');
 
     try {
       _razorpay!.open(options);
-      print('Razorpay: open() called successfully');
+      debugPrint('Razorpay: open() called successfully');
     } catch (e) {
-      print('Razorpay: open() failed: $e');
+      debugPrint('Razorpay: open() failed: $e');
       onError?.call('Failed to open Razorpay: $e');
     }
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    // CRITICAL: Prevent multiple callbacks (Razorpay can fire EVENT_PAYMENT_SUCCESS multiple times)
     if (_paymentSuccessHandled) {
+      debugPrint('⚠️ Payment success already handled — ignoring duplicate Razorpay callback');
       return;
     }
     _paymentSuccessHandled = true;
+    debugPrint('Payment Success: ${response.paymentId}');
     onSuccess?.call({
       'paymentId': response.paymentId,
       'orderId': response.orderId,
@@ -86,12 +92,14 @@ class WalletRazorpayService {
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
+    debugPrint('Payment Error: ${response.code} - ${response.message}');
     onFailure?.call(response);
     onError?.call('Payment failed: ${response.message}');
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    // Handle external wallet
+    debugPrint('External Wallet: ${response.walletName}');
+    // Handle external wallet if needed
   }
 
   void dispose() {

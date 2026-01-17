@@ -140,7 +140,7 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppColors.deepOrange.withOpacity(0.3 * progress),
+                      color: "#F38B3B".toColor().withOpacity(0.3 * progress),
                       width: 3,
                     ),
                   ),
@@ -156,13 +156,13 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        AppColors.deepOrange.withOpacity(0.9 * progress),
+                        "#F38B3B".toColor().withOpacity(0.9 * progress),
                         '#820B17'.toColor().withOpacity(0.7 * progress),
                       ],
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.deepOrange.withOpacity(0.6 * progress),
+                        color: "#F38B3B".toColor().withOpacity(0.6 * progress),
                         blurRadius: 25,
                         spreadRadius: 8,
                       ),

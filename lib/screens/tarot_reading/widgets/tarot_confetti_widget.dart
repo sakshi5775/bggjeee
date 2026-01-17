@@ -51,7 +51,7 @@ class _TarotConfettiWidgetState extends State<TarotConfettiWidget>
 
   Color _getRandomColor(math.Random random) {
     final colors = [
-      AppColors.deepOrange, // Orange
+      "#F38B3B".toColor(), // Orange
       '#820B17'.toColor(), // Dark red
       Colors.yellow,
       Colors.green,

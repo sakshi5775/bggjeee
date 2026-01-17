@@ -204,4 +204,7 @@ class AppRoutes {
   static const String ramalShastraHistory = '/ramal-shastra-history';
   static const String ramalShastraStats = '/ramal-shastra-stats';
   static const String ramalShastraDetail = '/ramal-shastra-detail';
+
+  // E-Mandir Routes
+  static const String namasteHome = '/namaste-home';
 }

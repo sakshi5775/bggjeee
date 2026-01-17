@@ -55,6 +55,7 @@ class ProfileView extends GetView<ProfileController> {
                           _buildRecentOrders(),
                           SizedBox(height: 32.h),
                           _buildHelpSection(),
+                          SizedBox(height: 32.h),
                         ],
                       ),
                     ),
@@ -73,7 +74,6 @@ class ProfileView extends GetView<ProfileController> {
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Row(
         children: [
-       
           SizedBox(width: 16.w),
           // Title and Subtitle
           Expanded(
@@ -98,7 +98,18 @@ class ProfileView extends GetView<ProfileController> {
               ],
             ),
           ),
-        
+          // Logout Button
+          IconButton(
+            onPressed: () => controller.onLogoutTap(),
+            icon: Icon(
+              Icons.logout,
+              color: Colors.red,
+              size: 24.sp,
+            ),
+            tooltip: 'Logout',
+            padding: EdgeInsets.all(8.w),
+            constraints: BoxConstraints(),
+          ),
         ],
       ),
     );
@@ -603,6 +614,7 @@ class ProfileView extends GetView<ProfileController> {
       ),
     );
   }
+
 
   String _formatReadableDate(String? isoString) {
     if (isoString == null || isoString.isEmpty) return 'Not available';

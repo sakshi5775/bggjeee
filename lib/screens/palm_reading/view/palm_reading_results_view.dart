@@ -172,7 +172,7 @@ class PalmReadingResultsView extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: AppColors.deepOrange,
+            color: "#F38B3B".toColor(),
             width: 2,
           ),
         ),
@@ -265,7 +265,7 @@ class PalmReadingResultsView extends StatelessWidget {
           Icon(
             Icons.warning_amber_rounded,
             size: 64.w,
-            color: AppColors.deepOrange,
+            color: "#F38B3B".toColor(),
           ),
           Spacing.h(16),
           AutoTranslateText(
@@ -288,24 +288,32 @@ class PalmReadingResultsView extends StatelessWidget {
             textAlign: TextAlign.center,
           )),
           Spacing.h(24),
-          ElevatedButton(
-            onPressed: () {
-              // Navigate back to upload screen
-              Get.offNamed('/palm-reading-upload');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.deepOrange,
-              padding: AppPaddings.symmetric(v: 16, h: 32),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.r),
-              ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: AppColors.orangeGradient,
+              borderRadius: BorderRadius.circular(12.r),
             ),
-            child: AutoTranslateText(
-              'Rescan',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h3),
+            child: ElevatedButton(
+              onPressed: () {
+                // Navigate back to upload screen
+                Get.offNamed('/palm-reading-upload');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                padding: AppPaddings.symmetric(v: 16, h: 32),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                elevation: 0,
+                shadowColor: Colors.transparent,
+              ),
+              child: AutoTranslateText(
+                'Rescan',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ).merge(AppTypography.h3),
+              ),
             ),
           ),
         ],
@@ -333,7 +341,7 @@ class PalmReadingResultsView extends StatelessWidget {
       
       // Head Line
       if (categories.contains('HEAD_LINE')) {
-        buttonList.add(_buildLineButton('Head line', AppColors.deepOrange));
+        buttonList.add(_buildLineButton('Head line', "#F38B3B".toColor()));
       }
       
       // Fate Line
@@ -412,7 +420,7 @@ class PalmReadingResultsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.4),
+            color: "#F38B3B".toColor().withOpacity(0.4),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),

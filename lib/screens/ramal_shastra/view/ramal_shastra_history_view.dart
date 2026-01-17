@@ -88,8 +88,8 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.deepOrange,
-            AppColors.deepOrangemix,
+            "#F38B3B".toColor(),
+            "#DD2914".toColor(),
           ],
         ),
         borderRadius: BorderRadius.only(
