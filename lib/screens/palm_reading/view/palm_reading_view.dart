@@ -54,13 +54,13 @@ class PalmReadingView extends StatelessWidget {
                   
                   Spacing.h(32),
                   
-                  // What You'll Get section
-                  _buildBenefitsSection(),
+                  // Start Reading button
+                  _buildStartButton(context, controller),
                   
                   Spacing.h(32),
                   
-                  // Start Reading button
-                  _buildStartButton(context, controller),
+                  // What You'll Get section
+                  _buildBenefitsSection(),
                   
                   Spacing.h(32),
                 ],

@@ -24,8 +24,6 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
   CameraController? _controller;
   bool _isCameraInitialized = false;
   bool _isCapturing = false;
-  bool _palmDetected = false;
-  double _scanProgress = 0.0;
   String? _errorMessage;
   bool _isFromBackNavigation = false;
   bool _isControllerDisposed = false;
@@ -37,9 +35,6 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
     _isFromBackNavigation = Get.previousRoute == AppRoutes.palmReadingResults ||
         Get.previousRoute == AppRoutes.palmReadingDetail;
     _initializeCamera();
-    if (!_isFromBackNavigation) {
-      _startPalmDetection();
-    }
   }
 
   Future<void> _initializeCamera() async {
@@ -75,23 +70,6 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
     }
   }
 
-  void _startPalmDetection() {
-    // Simulate palm detection after 2 seconds (faster)
-    Future.delayed(const Duration(seconds: 2), () {
-      if (!mounted || _isControllerDisposed) return;
-      if (!_isCapturing) {
-        setState(() {
-          _palmDetected = true;
-          _scanProgress = 0.5;
-        });
-        // Auto capture after palm is detected
-        Future.delayed(const Duration(milliseconds: 800), () {
-          if (!mounted || _isControllerDisposed) return;
-          _capturePhoto();
-        });
-      }
-    });
-  }
 
   Future<void> _capturePhoto() async {
     if (_controller == null || _isControllerDisposed || !_controller!.value.isInitialized || _isCapturing) {
@@ -100,7 +78,7 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
 
     setState(() {
       _isCapturing = true;
-      _scanProgress = 1.0;
+      _errorMessage = null;
     });
 
     try {
@@ -128,21 +106,11 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
         setState(() {
           _errorMessage = 'Failed to capture photo: $e';
           _isCapturing = false;
-          _palmDetected = false;
-          _scanProgress = 0.0;
         });
       }
     }
   }
 
-  void _handleRescan() {
-    setState(() {
-      _palmDetected = false;
-      _scanProgress = 0.0;
-      _errorMessage = null;
-    });
-    _startPalmDetection();
-  }
 
   @override
   void dispose() {
@@ -218,8 +186,8 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
             if (_isCameraInitialized && _controller != null && _controller!.value.isInitialized)
               _buildOverlay(isLeftHand),
 
-            // Top instruction - only show if not coming from back navigation and not detected
-            if (_isCameraInitialized && _controller != null && _controller!.value.isInitialized && !_palmDetected && !_isFromBackNavigation)
+            // Top instruction - only show if not coming from back navigation
+            if (_isCameraInitialized && _controller != null && _controller!.value.isInitialized && !_isFromBackNavigation)
               Positioned(
                 top: 40.h,
                 left: 0,
@@ -236,44 +204,86 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                 ),
               ),
 
-            // Bottom instruction and progress - hide if from back navigation
+            // Bottom instruction - hide if from back navigation
             if (_isCameraInitialized && _controller != null && _controller!.value.isInitialized && !_isFromBackNavigation)
+              Positioned(
+                bottom: 180.h,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: AutoTranslateText(
+                    'Place your hand inside the shape',
+                    style: MyTextTheme.mediumBCN.copyWith(
+                      color: Colors.white,
+                    ).merge(AppTypography.body1),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+
+            // Capture button
+            if (_isCameraInitialized && _controller != null && _controller!.value.isInitialized && !_isCapturing)
               Positioned(
                 bottom: 100.h,
                 left: 0,
                 right: 0,
-                child: Column(
-                  children: [
-                    AutoTranslateText(
-                      _palmDetected
-                          ? 'Palm detected! Capturing...'
-                          : 'Place your hand inside the shape to continue scanning',
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: Colors.white,
-                      ).merge(AppTypography.body1),
-                      textAlign: TextAlign.center,
-                    ),
-                    Spacing.h(16),
-                    // Progress bar
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 40.w),
-                      height: 4.h,
+                child: Center(
+                  child: GestureDetector(
+                    onTap: _capturePhoto,
+                    child: Container(
+                      width: 80.w,
+                      height: 80.w,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(2.r),
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: "#F38B3B".toColor(),
+                          width: 4,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: FractionallySizedBox(
-                        alignment: Alignment.centerLeft,
-                        widthFactor: _scanProgress,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: "#F38B3B".toColor(), // Match Face Reading theme
-                          borderRadius: BorderRadius.circular(2.r),
+                      child: Center(
+                        child: Icon(
+                          Icons.camera_alt,
+                          color: "#F38B3B".toColor(),
+                          size: 36.w,
                         ),
                       ),
+                    ),
+                  ),
+                ),
+              ),
+
+            // Loading indicator when capturing
+            if (_isCapturing)
+              Positioned(
+                bottom: 100.h,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Container(
+                    width: 80.w,
+                    height: 80.w,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: "#F38B3B".toColor(),
+                        width: 4,
                       ),
                     ),
-                  ],
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: "#F38B3B".toColor(),
+                      ),
+                    ),
+                  ),
                 ),
               ),
 
@@ -297,8 +307,8 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                 ),
               ),
 
-            // Error message with rescan option
-            if (_errorMessage != null && _palmDetected)
+            // Error message
+            if (_errorMessage != null && _errorMessage != 'No camera available' && _errorMessage != 'Failed to initialize camera:')
               Positioned(
                 bottom: 200.h,
                 left: 0,
@@ -313,7 +323,7 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                   child: Column(
                     children: [
                       AutoTranslateText(
-                        'Palm is not clearly visible',
+                        'Failed to capture photo',
                         style: MyTextTheme.mediumBCB.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -322,20 +332,11 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                       ),
                       Spacing.h(8),
                       AutoTranslateText(
-                        'Please ensure your palm is fully visible and well-lit',
+                        'Please try again',
                         style: MyTextTheme.smallBCN.copyWith(
                           color: Colors.white,
                         ).merge(AppTypography.body2),
                         textAlign: TextAlign.center,
-                      ),
-                      Spacing.h(16),
-                      ElevatedButton(
-                        onPressed: _handleRescan,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.red,
-                        ),
-                        child: const AutoTranslateText('Rescan'),
                       ),
                     ],
                   ),
