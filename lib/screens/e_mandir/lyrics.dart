@@ -6,6 +6,9 @@ class LyricsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final textScale = MediaQuery.of(context).textScaleFactor.clamp(0.8, 1.2);
+    
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -22,38 +25,50 @@ class LyricsScreen extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              const SizedBox(height: 10),
+              SizedBox(height: size.height * 0.015),
 
               /// 🔝 TOP BAR
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back,
-                          color: Colors.deepOrange),
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.deepOrange,
+                        size: size.width * 0.06,
+                      ),
                       onPressed: () => Get.back(),
                     ),
-                    const Text(
+                    Text(
                       "Lyrics",
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 18 * textScale,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF4E342E),
+                        color: const Color(0xFF4E342E),
                       ),
                     ),
                     Row(
-                      children: const [
+                      children: [
                         CircleAvatar(
+                          radius: size.width * 0.06,
                           backgroundColor: Colors.white,
-                          child: Icon(Icons.description,
-                              color: Colors.deepOrange),
+                          child: Icon(
+                            Icons.description,
+                            color: Colors.deepOrange,
+                            size: size.width * 0.05,
+                          ),
                         ),
-                        SizedBox(width: 8),
+                        SizedBox(width: size.width * 0.02),
                         CircleAvatar(
+                          radius: size.width * 0.06,
                           backgroundColor: Colors.deepOrange,
-                          child: Icon(Icons.menu_book, color: Colors.white),
+                          child: Icon(
+                            Icons.menu_book,
+                            color: Colors.white,
+                            size: size.width * 0.05,
+                          ),
                         ),
                       ],
                     )
@@ -61,22 +76,21 @@ class LyricsScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: size.height * 0.025),
 
               /// 📄 LYRICS CARD
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(size.width * 0.04),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      border:
-                      Border.all(color: Colors.deepOrange.shade200),
+                      border: Border.all(color: Colors.deepOrange.shade200),
                     ),
-                    child: const SingleChildScrollView(
+                    child: SingleChildScrollView(
                       child: Text(
                         "ॐ नमः शिवाय\n"
                             "ॐ नमः शिवाय\n"
@@ -92,7 +106,7 @@ class LyricsScreen extends StatelessWidget {
                             "केलाशवासी शिव",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 15 * textScale,
                           height: 1.8,
                         ),
                       ),
@@ -103,38 +117,59 @@ class LyricsScreen extends StatelessWidget {
 
               /// 🎵 BOTTOM PLAYER
               Padding(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: EdgeInsets.symmetric(
+                  horizontal: size.width * 0.05,
+                  vertical: size.height * 0.02,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset("assets/images/Button (2).png"),
+                    Image.asset(
+                      "assets/images/Button (2).png",
+                      width: size.width * 0.12,
+                      height: size.width * 0.12,
+                      fit: BoxFit.contain,
+                    ),
 
                     Container(
-                      height: 56,
-                      width: 56,
+                      height: size.width * 0.14,
+                      width: size.width * 0.14,
                       decoration: const BoxDecoration(
                         color: Colors.deepOrange,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.play_arrow,
-                          color: Colors.white, size: 30),
+                      child: Icon(
+                        Icons.play_arrow,
+                        color: Colors.white,
+                        size: size.width * 0.075,
+                      ),
                     ),
 
                     Row(
                       children: [
-                        Image.asset("assets/images/Button (3).png"),
-                        const SizedBox(width: 12),
+                        Image.asset(
+                          "assets/images/Button (3).png",
+                          width: size.width * 0.12,
+                          height: size.width * 0.12,
+                          fit: BoxFit.contain,
+                        ),
+                        SizedBox(width: size.width * 0.03),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 6),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: size.width * 0.035,
+                            vertical: size.height * 0.008,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.deepOrange,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: const Text(
+                          child: Text(
                             "Listen on Mandir",
-                            style: TextStyle(color: Colors.white,fontSize: 18,fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14 * textScale,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],

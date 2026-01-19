@@ -20,14 +20,16 @@ class CoursePlayerView extends StatelessWidget {
     final controller = Get.put(CoursePlayerController(courseId: courseId));
 
     return Scaffold(
-      backgroundColor: const Color(
-        0xFFFFF8F0,
-      ), // Light cream background (same as course detail)
+      backgroundColor: Colors.white,
       body: Obx(() {
         // Show loading while data is being fetched
         if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.saffron),
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                AppColors.primaryGradient.colors.first,
+              ),
+            ),
           );
         }
 
@@ -39,7 +41,11 @@ class CoursePlayerView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.error_outline, size: 64.w, color: AppColors.saffron),
+                Icon(
+                  Icons.error_outline,
+                  size: 64.w,
+                  color: AppColors.primaryGradient.colors.first,
+                ),
                 SizedBox(height: 16.h),
                 const AutoTranslateText(
                   'No content available',
@@ -49,7 +55,12 @@ class CoursePlayerView extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () => Get.back(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.saffron,
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                  ).copyWith(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      AppColors.primaryGradient.colors.first,
+                    ),
                   ),
                   child: const AutoTranslateText('Go Back'),
                 ),
@@ -89,7 +100,7 @@ class CoursePlayerView extends StatelessWidget {
                     value: progress / 100,
                     backgroundColor: Colors.grey.withOpacity(0.2),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      AppColors.saffron,
+                      AppColors.primaryGradient.colors.first,
                     ),
                     minHeight: 4.h,
                   )
@@ -142,9 +153,9 @@ class CoursePlayerView extends StatelessWidget {
   // Header with course title, share, menu
   Widget _buildHeader(CoursePlayerController controller) {
     return Container(
-      color: const Color(
-        0xFF5F2221,
-      ), // Dark brown (same as courses view header)
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+      ),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: SafeArea(
         bottom: false,
@@ -358,7 +369,8 @@ class CoursePlayerView extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           decoration: BoxDecoration(
-            color: isActive ? AppColors.saffron : Colors.transparent,
+            gradient: isActive ? AppColors.orangeGradient : null,
+            color: isActive ? null : Colors.transparent,
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: AutoTranslateText(
@@ -540,11 +552,13 @@ class CoursePlayerView extends StatelessWidget {
         margin: EdgeInsets.only(left: 52.w),
         decoration: BoxDecoration(
           color: isCurrent
-              ? AppColors.saffron.withOpacity(0.1)
+              ? AppColors.primaryGradient.colors.first.withOpacity(0.1)
               : Colors.transparent,
           border: Border(
             left: BorderSide(
-              color: isCurrent ? AppColors.saffron : Colors.transparent,
+              color: isCurrent
+                  ? AppColors.primaryGradient.colors.first
+                  : Colors.transparent,
               width: 3.w,
             ),
           ),
@@ -556,9 +570,12 @@ class CoursePlayerView extends StatelessWidget {
               width: 24.w,
               height: 24.w,
               decoration: BoxDecoration(
-                color: isCompleted ? AppColors.saffron : Colors.transparent,
+                gradient: isCompleted ? AppColors.primaryGradient : null,
+                color: isCompleted ? null : Colors.transparent,
                 border: Border.all(
-                  color: isCompleted ? AppColors.saffron : Colors.grey,
+                  color: isCompleted
+                      ? AppColors.primaryGradient.colors.first
+                      : Colors.grey,
                   width: 2,
                 ),
                 borderRadius: BorderRadius.circular(4.r),
@@ -578,7 +595,7 @@ class CoursePlayerView extends StatelessWidget {
                     '$itemNumber. ${content.title}',
                     style: AppTypography.body1.copyWith(
                       color: isCurrent
-                          ? AppColors.saffron
+                          ? AppColors.primaryGradient.colors.first
                           : AppColors.textPrimary,
                       fontSize: 14.sp,
                       fontWeight: isCurrent
@@ -651,14 +668,14 @@ class CoursePlayerView extends StatelessWidget {
                     AutoTranslateText(
                       'Resources',
                       style: AppTypography.body2.copyWith(
-                        color: AppColors.saffron,
+                        color: AppColors.primaryGradient.colors.first,
                         fontSize: 12.sp,
                       ),
                     ),
                     SizedBox(width: 4.w),
                     Icon(
                       Icons.arrow_drop_down,
-                      color: AppColors.saffron,
+                      color: AppColors.primaryGradient.colors.first,
                       size: 16.w,
                     ),
                   ],
@@ -753,7 +770,7 @@ class CoursePlayerView extends StatelessWidget {
                           value: controller.courseProgress.value / 100,
                           backgroundColor: Colors.white.withOpacity(0.2),
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.saffron,
+                            AppColors.primaryGradient.colors.first,
                           ),
                           strokeWidth: 4,
                         ),
@@ -851,18 +868,11 @@ class CoursePlayerView extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
         margin: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppColors.saffron.withOpacity(0.95),
-              const Color(0xFFD4A017), // Deep golden
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          gradient: AppColors.orangeGradient,
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.saffron.withOpacity(0.3),
+              color: AppColors.orangeGradient.colors.first.withOpacity(0.3),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -930,7 +940,7 @@ class CoursePlayerView extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                foregroundColor: AppColors.saffron,
+                foregroundColor: AppColors.orangeGradient.colors.first,
                 elevation: 0,
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 shape: RoundedRectangleBorder(

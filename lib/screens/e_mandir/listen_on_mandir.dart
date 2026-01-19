@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'layirc.dart';
+import 'lyrics.dart';
 import 'meaning.dart';
 
 class DevotionalPlayerScreen extends StatelessWidget {
@@ -9,6 +9,9 @@ class DevotionalPlayerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final textScale = MediaQuery.of(context).textScaleFactor.clamp(0.8, 1.2);
+    
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -24,11 +27,12 @@ class DevotionalPlayerScreen extends StatelessWidget {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
 
-                const SizedBox(height: 10),
+                SizedBox(height: size.height * 0.012),
 
                 /// 🔝 TOP BAR
                 Row(
@@ -37,22 +41,28 @@ class DevotionalPlayerScreen extends StatelessWidget {
                     _circleButton(
                       icon: Icons.arrow_back,
                       onTap: () => Get.back(),
+                      size: size,
                     ),
 
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.deepOrange,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Text(
-                        "Listen on Mandir",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
+                    Flexible(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: size.width * 0.035,
+                          vertical: size.height * 0.007,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.deepOrange,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          "Listen on Mandir",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11 * textScale,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
@@ -60,76 +70,91 @@ class DevotionalPlayerScreen extends StatelessWidget {
                     Row(
                       children: [
                         InkWell(
-                            onTap: (){
-                              Get.to(LyricsScreen());
-                            },
-                            child: _circleButton(icon: Icons.description)),
-                        const SizedBox(width: 8),
+                          onTap: () {
+                            Get.to(() => const LyricsScreen());
+                          },
+                          child: _circleButton(
+                            icon: Icons.description,
+                            size: size,
+                          ),
+                        ),
+                        SizedBox(width: size.width * 0.02),
                         InkWell(
-                            onTap: (){
-                              Get.to(MeaningScreen());
-                            },
-                            child: _circleButton(icon: Icons.menu_book)),
+                          onTap: () {
+                            Get.to(() => const MeaningScreen());
+                          },
+                          child: _circleButton(
+                            icon: Icons.menu_book,
+                            size: size,
+                          ),
+                        ),
                       ],
                     )
                   ],
                 ),
 
-                const SizedBox(height: 30),
+                SizedBox(height: size.height * 0.025),
 
                 /// 🖼 IMAGE CARD
-                Container(
-                  height: 480,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(26),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
+                Flexible(
+                  flex: 3,
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxHeight: size.height * 0.45,
+                      minHeight: size.height * 0.35,
+                    ),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(26),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                      image: const DecorationImage(
+                        image: AssetImage("assets/images/ganesha.png"),
+                        fit: BoxFit.cover,
                       ),
-                    ],
-                    image: const DecorationImage(
-                      image: AssetImage("assets/images/ganesha.png"),
-                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
 
-                const SizedBox(height: 30),
+                SizedBox(height: size.height * 0.025),
 
                 /// 🎵 TITLE
-                const Text(
+                Text(
                   "Om Ganeshaya Namaha",
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 18 * textScale,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF4E342E),
+                    color: const Color(0xFF4E342E),
                   ),
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: size.height * 0.005),
                 Text(
                   "Lord Ganesh",
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 16 * textScale,
                     color: Colors.grey.shade600,
                   ),
                 ),
 
-                const SizedBox(height: 26),
+                SizedBox(height: size.height * 0.02),
 
                 /// ⏱ PROGRESS BAR
                 Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         trackHeight: 4,
-                        thumbShape: const RoundSliderThumbShape(
-                          enabledThumbRadius: 6,
+                        thumbShape: RoundSliderThumbShape(
+                          enabledThumbRadius: size.width * 0.015,
                         ),
-                        overlayShape: const RoundSliderOverlayShape(
-                          overlayRadius: 14,
+                        overlayShape: RoundSliderOverlayShape(
+                          overlayRadius: size.width * 0.035,
                         ),
                       ),
                       child: Slider(
@@ -143,7 +168,9 @@ class DevotionalPlayerScreen extends StatelessWidget {
                     ),
 
                     Padding(
-                      padding: const EdgeInsets.only(left: 20,right: 20),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: size.width * 0.05,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -151,7 +178,7 @@ class DevotionalPlayerScreen extends StatelessWidget {
                             "1:52",
                             style: TextStyle(
                               color: Colors.deepOrange.shade400,
-                              fontSize: 12,
+                              fontSize: 11 * textScale,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -159,7 +186,7 @@ class DevotionalPlayerScreen extends StatelessWidget {
                             "5:23",
                             style: TextStyle(
                               color: Colors.deepOrange.shade400,
-                              fontSize: 12,
+                              fontSize: 11 * textScale,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -169,38 +196,59 @@ class DevotionalPlayerScreen extends StatelessWidget {
                   ],
                 ),
 
-
-                        const Spacer(),
+                Expanded(
+                  child: SizedBox(height: size.height * 0.02),
+                ),
 
                 /// 🎶 CONTROLS
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Image.asset("assets/images/Button (1).png"),
+                    Image.asset(
+                      "assets/images/Button (1).png",
+                      width: size.width * 0.11,
+                      height: size.width * 0.11,
+                      fit: BoxFit.contain,
+                    ),
 
-                    Image.asset("assets/images/Button (2).png"),
+                    Image.asset(
+                      "assets/images/Button (2).png",
+                      width: size.width * 0.11,
+                      height: size.width * 0.11,
+                      fit: BoxFit.contain,
+                    ),
 
                     Container(
-                      height: 64,
-                      width: 64,
+                      height: size.width * 0.15,
+                      width: size.width * 0.15,
                       decoration: const BoxDecoration(
                         color: Colors.deepOrange,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.play_arrow,
                         color: Colors.white,
-                        size: 36,
+                        size: size.width * 0.08,
                       ),
                     ),
 
-                    Image.asset("assets/images/Button (3).png"),
+                    Image.asset(
+                      "assets/images/Button (3).png",
+                      width: size.width * 0.11,
+                      height: size.width * 0.11,
+                      fit: BoxFit.contain,
+                    ),
 
-                    Image.asset("assets/images/Button (4).png"),
+                    Image.asset(
+                      "assets/images/Button (4).png",
+                      width: size.width * 0.11,
+                      height: size.width * 0.11,
+                      fit: BoxFit.contain,
+                    ),
                   ],
                 ),
 
-                const SizedBox(height: 30),
+                SizedBox(height: size.height * 0.025),
               ],
             ),
           ),
@@ -213,17 +261,22 @@ class DevotionalPlayerScreen extends StatelessWidget {
   Widget _circleButton({
     required IconData icon,
     VoidCallback? onTap,
+    required Size size,
   }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
       child: Container(
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.all(size.width * 0.02),
         decoration: const BoxDecoration(
           color: Colors.white,
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: Colors.deepOrange),
+        child: Icon(
+          icon,
+          color: Colors.deepOrange,
+          size: size.width * 0.06,
+        ),
       ),
     );
   }

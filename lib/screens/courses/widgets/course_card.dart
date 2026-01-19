@@ -64,7 +64,9 @@ class CourseCard extends StatelessWidget {
                                   child: Center(
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: AppColors.saffron,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        AppColors.primaryGradient.colors.first,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -95,7 +97,7 @@ class CourseCard extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF38B3B), // Orange
+                        gradient: AppColors.orangeGradient,
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: AutoTranslateText(
@@ -127,7 +129,7 @@ class CourseCard extends StatelessWidget {
                     ),
                         child: Icon(
                           Icons.play_arrow,
-                          color: AppColors.saffron,
+                          color: AppColors.primaryGradient.colors.first,
                           size: 32.w,
                         ),
                         ),
@@ -151,7 +153,7 @@ class CourseCard extends StatelessWidget {
                       child: AutoTranslateText(
                         course.title,
                         style: AppTypography.h3.copyWith(
-                          color: const Color(0xFF5F2221),
+                          color: AppColors.primaryGradient.colors.first,
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -169,13 +171,13 @@ class CourseCard extends StatelessWidget {
                           width: 20.w,
                           height: 20.w,
                           decoration: BoxDecoration(
-                            color: AppColors.saffron.withOpacity(0.2),
+                            color: AppColors.primaryGradient.colors.first.withOpacity(0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.person,
                             size: 14.w,
-                            color: AppColors.saffron,
+                            color: AppColors.primaryGradient.colors.first,
                           ),
                         ),
                         SizedBox(width: 6.w),
@@ -198,7 +200,7 @@ class CourseCard extends StatelessWidget {
                     AutoTranslateText(
                       '₹${course.price.toStringAsFixed(0)}',
                       style: AppTypography.h3.copyWith(
-                        color: AppColors.saffron,
+                        color: AppColors.primaryGradient.colors.first,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -222,8 +224,8 @@ class CourseCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.saffron.withOpacity(0.15),
-            const Color(0xFF5F2221).withOpacity(0.15),
+            AppColors.primaryGradient.colors.first.withOpacity(0.15),
+            AppColors.primaryGradient.colors.last.withOpacity(0.15),
           ],
         ),
       ),
@@ -232,7 +234,7 @@ class CourseCard extends StatelessWidget {
           Center(
             child: Icon(
               Icons.school_rounded,
-              color: AppColors.saffron.withOpacity(0.4),
+              color: AppColors.primaryGradient.colors.first.withOpacity(0.4),
               size: 38.w,
             ),
           ),

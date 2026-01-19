@@ -45,7 +45,7 @@ class OTPView extends BasePage<OTPController> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
+        decoration:  BoxDecoration(gradient: AppColors.primaryGradient),
         child: SafeArea(
           child: SingleChildScrollView(
             padding: AppPaddings.symmetric(h: 24, v: 24),

@@ -14,6 +14,7 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
   final bool? showLeading;
   final bool? centerTile;
   final Color? backgroundColor;
+  final Gradient? gradient;
   const MyAppbar({
     super.key,
     required this.title,
@@ -21,6 +22,7 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
     this.subTitle,
     this.titleTextStyle,
     this.backgroundColor,
+    this.gradient,
     this.action,
     this.showLeading = true,
     this.centerTile = true,
@@ -28,12 +30,22 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasGradient = gradient != null;
+    final bgColor = hasGradient ? Colors.transparent : backgroundColor;
+    
     return AppBar(
       leadingWidth: 56.w,
       centerTitle: centerTile,
-      backgroundColor: backgroundColor,
-      elevation: backgroundColor == Colors.transparent ? 0 : null,
+      backgroundColor: bgColor,
+      elevation: (bgColor == Colors.transparent || hasGradient) ? 0 : null,
       automaticallyImplyLeading: false,
+      flexibleSpace: hasGradient
+          ? Container(
+              decoration: BoxDecoration(
+                gradient: gradient,
+              ),
+            )
+          : null,
       title: subTitle != null
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,8 +53,8 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
                 AutoTranslateText(
                   title,
                   style: titleTextStyle ?? MyTextTheme.veryLarge20.copyWith(
-                    color: backgroundColor == Colors.transparent 
-                        ? const Color(0xFF8B1925) 
+                    color: (bgColor == Colors.transparent || hasGradient)
+                        ? (hasGradient ? Colors.white : const Color(0xFF8B1925))
                         : AppColors.lightBackground,
                     fontWeight: FontWeight.w600,
                   ),
@@ -50,14 +62,22 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
                 AutoTranslateText(
                   subTitle ?? '', 
                   style: MyTextTheme.smallBCB.copyWith(
-                    color: backgroundColor == Colors.transparent 
-                        ? AppColors.textSecondary 
+                    color: (bgColor == Colors.transparent || hasGradient)
+                        ? (hasGradient ? Colors.white70 : AppColors.textSecondary)
                         : null,
                   ),
                 ),
               ],
             )
-          : AutoTranslateText(title),
+          : AutoTranslateText(
+              title,
+              style: hasGradient
+                  ? MyTextTheme.veryLarge20.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    )
+                  : null,
+            ),
       titleTextStyle: titleTextStyle,
       actions: action,
       leading: showLeading == true ? AppBarBackButton() : null,

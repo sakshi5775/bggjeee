@@ -5,14 +5,17 @@ class BhaktiChakraScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final textScale = MediaQuery.of(context).textScaleFactor.clamp(0.8, 1.2);
+    
     return Scaffold(
       backgroundColor: const Color(0xFFFFF3DC),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
           child: Column(
             children: [
-              const SizedBox(height: 10),
+              SizedBox(height: size.height * 0.015),
 
               /// LIST
               Expanded(
@@ -24,6 +27,8 @@ class BhaktiChakraScreen extends StatelessWidget {
                       "After Visiting For 7 Days You have Passed this Chakra",
                       day: "1",
                       status: ChakraStatus.completed,
+                      size: size,
+                      textScale: textScale,
                     ),
                     _chakraItem(
                       title: "2nd Chakra",
@@ -31,6 +36,8 @@ class BhaktiChakraScreen extends StatelessWidget {
                       "After Visiting For 7 Days You have Passed this Chakra",
                       day: "2",
                       status: ChakraStatus.completed,
+                      size: size,
+                      textScale: textScale,
                     ),
                     _chakraItem(
                       title: "3rd Chakra",
@@ -38,6 +45,8 @@ class BhaktiChakraScreen extends StatelessWidget {
                       "After Visiting For 4 Days You have Passed this Chakra",
                       day: "3",
                       status: ChakraStatus.completed,
+                      size: size,
+                      textScale: textScale,
                     ),
                     _chakraItem(
                       title: "4th Chakra",
@@ -45,6 +54,8 @@ class BhaktiChakraScreen extends StatelessWidget {
                       "After Visiting For 7 Days You have Passed this Chakra",
                       day: "4",
                       status: ChakraStatus.current,
+                      size: size,
+                      textScale: textScale,
                     ),
                     _chakraItem(
                       title: "5th Chakra",
@@ -52,6 +63,8 @@ class BhaktiChakraScreen extends StatelessWidget {
                       "After Visiting For 15 Days You have Passed this Chakra",
                       day: "5",
                       status: ChakraStatus.locked,
+                      size: size,
+                      textScale: textScale,
                     ),
                     _chakraItem(
                       title: "6th Chakra",
@@ -59,6 +72,8 @@ class BhaktiChakraScreen extends StatelessWidget {
                       "You will enter this Chakra After visiting 21 Days",
                       day: "6",
                       status: ChakraStatus.locked,
+                      size: size,
+                      textScale: textScale,
                     ),
                     _chakraItem(
                       title: "7th Chakra",
@@ -66,6 +81,8 @@ class BhaktiChakraScreen extends StatelessWidget {
                       "You will enter this Chakra After visiting 30 Days",
                       day: "7",
                       status: ChakraStatus.locked,
+                      size: size,
+                      textScale: textScale,
                     ),
                     _chakraItem(
                       title: "8th Chakra",
@@ -73,6 +90,8 @@ class BhaktiChakraScreen extends StatelessWidget {
                       "You will enter this Chakra After visiting 36 Days",
                       day: "8",
                       status: ChakraStatus.locked,
+                      size: size,
+                      textScale: textScale,
                     ),
                     _chakraItem(
                       title: "9th Chakra",
@@ -80,6 +99,8 @@ class BhaktiChakraScreen extends StatelessWidget {
                       "You will enter this Chakra After visiting 45 Days",
                       day: "9",
                       status: ChakraStatus.locked,
+                      size: size,
+                      textScale: textScale,
                     ),
                     _chakraItem(
                       title: "10th Chakra",
@@ -87,12 +108,14 @@ class BhaktiChakraScreen extends StatelessWidget {
                       "You will enter this Chakra After visiting 50 Days",
                       day: "10",
                       status: ChakraStatus.locked,
+                      size: size,
+                      textScale: textScale,
                     ),
 
-                    const SizedBox(height: 10),
+                    SizedBox(height: size.height * 0.012),
 
-                    _helpRow(),
-                    _helpRow(),
+                    _helpRow(size, textScale),
+                    _helpRow(size, textScale),
                   ],
                 ),
               ),
@@ -109,12 +132,14 @@ class BhaktiChakraScreen extends StatelessWidget {
     required String subtitle,
     required String day,
     required ChakraStatus status,
+    required Size size,
+    required double textScale,
   }) {
     return Stack(
       children: [
         /// DOTTED LINE
         Positioned(
-          left: 18,
+          left: size.width * 0.045,
           top: 0,
           bottom: 0,
           child: Container(
@@ -132,8 +157,8 @@ class BhaktiChakraScreen extends StatelessWidget {
         ),
 
         Container(
-          margin: const EdgeInsets.only(left: 6, bottom: 12),
-          padding: const EdgeInsets.all(12),
+          margin: EdgeInsets.only(left: size.width * 0.015, bottom: size.height * 0.015),
+          padding: EdgeInsets.all(size.width * 0.03),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(14),
@@ -148,9 +173,9 @@ class BhaktiChakraScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               /// LEFT ICON
-              _leftIcon(status),
+              _leftIcon(status, size),
 
-              const SizedBox(width: 10),
+              SizedBox(width: size.width * 0.025),
 
               /// TEXT
               Expanded(
@@ -159,16 +184,16 @@ class BhaktiChakraScreen extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 14,
+                        fontSize: 14 * textScale,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: size.height * 0.005),
                     Text(
                       subtitle,
-                      style: const TextStyle(
-                        fontSize: 12,
+                      style: TextStyle(
+                        fontSize: 12 * textScale,
                         color: Colors.grey,
                       ),
                     ),
@@ -177,7 +202,7 @@ class BhaktiChakraScreen extends StatelessWidget {
               ),
 
               /// DAY BADGE
-              _dayBadge(day, status),
+              _dayBadge(day, status, size, textScale),
             ],
           ),
         ),
@@ -186,34 +211,45 @@ class BhaktiChakraScreen extends StatelessWidget {
   }
 
   /// ================= LEFT ICON =================
-  Widget _leftIcon(ChakraStatus status) {
+  Widget _leftIcon(ChakraStatus status, Size size) {
     if (status == ChakraStatus.completed) {
-      return const CircleAvatar(
-        radius: 12,
+      return CircleAvatar(
+        radius: size.width * 0.03,
         backgroundColor: Colors.green,
-        child: Icon(Icons.check, size: 14, color: Colors.white),
+        child: Icon(
+          Icons.check,
+          size: size.width * 0.035,
+          color: Colors.white,
+        ),
       );
     } else if (status == ChakraStatus.current) {
-      return const CircleAvatar(
-        radius: 12,
+      return CircleAvatar(
+        radius: size.width * 0.03,
         backgroundColor: Colors.deepOrange,
-        child: Icon(Icons.local_fire_department,
-            size: 14, color: Colors.white),
+        child: Icon(
+          Icons.local_fire_department,
+          size: size.width * 0.035,
+          color: Colors.white,
+        ),
       );
     } else {
-      return const CircleAvatar(
-        radius: 12,
+      return CircleAvatar(
+        radius: size.width * 0.03,
         backgroundColor: Colors.grey,
-        child: Icon(Icons.lock, size: 14, color: Colors.white),
+        child: Icon(
+          Icons.lock,
+          size: size.width * 0.035,
+          color: Colors.white,
+        ),
       );
     }
   }
 
   /// ================= DAY BADGE =================
-  Widget _dayBadge(String day, ChakraStatus status) {
+  Widget _dayBadge(String day, ChakraStatus status, Size size, double textScale) {
     return Container(
-      height: 28,
-      width: 28,
+      height: size.width * 0.07,
+      width: size.width * 0.07,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: status == ChakraStatus.locked
@@ -224,7 +260,7 @@ class BhaktiChakraScreen extends StatelessWidget {
       child: Text(
         day,
         style: TextStyle(
-          fontSize: 12,
+          fontSize: 11 * textScale,
           color: status == ChakraStatus.locked
               ? Colors.grey
               : Colors.white,
@@ -235,26 +271,33 @@ class BhaktiChakraScreen extends StatelessWidget {
   }
 
   /// ================= HELP ROW =================
-  Widget _helpRow() {
+  Widget _helpRow(Size size, double textScale) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.symmetric(vertical: size.height * 0.008),
+      padding: EdgeInsets.all(size.width * 0.03),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
-        children: const [
-          Icon(Icons.help_outline, color: Colors.deepOrange),
-          SizedBox(width: 10),
+        children: [
+          Icon(
+            Icons.help_outline,
+            color: Colors.deepOrange,
+            size: size.width * 0.06,
+          ),
+          SizedBox(width: size.width * 0.025),
           Expanded(
             child: Text(
               "Know how to earn More Punya Mudras",
-              style: TextStyle(fontSize: 13),
+              style: TextStyle(fontSize: 13 * textScale),
             ),
           ),
-          Icon(Icons.arrow_forward_ios,
-              size: 14, color: Colors.deepOrange),
+          Icon(
+            Icons.arrow_forward_ios,
+            size: size.width * 0.035,
+            color: Colors.deepOrange,
+          ),
         ],
       ),
     );
@@ -262,3 +305,4 @@ class BhaktiChakraScreen extends StatelessWidget {
 }
 
 enum ChakraStatus { completed, current, locked }
+

@@ -19,13 +19,15 @@ class CourseDetailView extends StatelessWidget {
     final controller = Get.put(CourseDetailController(courseId: courseId));
     
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F0), // Light cream background
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value && controller.courseDetail.value == null) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(
-                color: AppColors.saffron,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppColors.primaryGradient.colors.first,
+                ),
               ),
             );
           }
@@ -38,7 +40,7 @@ class CourseDetailView extends StatelessWidget {
                   Icon(
                     Icons.error_outline,
                     size: 64.w,
-                    color: AppColors.saffron,
+                    color: AppColors.primaryGradient.colors.first,
                   ),
                   SizedBox(height: 16.h),
                   AutoTranslateText(
@@ -194,24 +196,7 @@ class CourseDetailView extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: 8.w),
-              IconButton(
-                onPressed: () {
-                  // TODO: Favorite functionality
-                },
-                icon: Container(
-                  padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    shape: BoxShape.circle,
-              ),
-                  child: Icon(
-                    Icons.favorite_border,
-                  color: Colors.white,
-                    size: 20.w,
-                ),
-              ),
-            ),
+            
             ],
           ),
         ),
@@ -223,7 +208,7 @@ class CourseDetailView extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
             decoration: BoxDecoration(
-              color: const Color(0xFFF38B3B), // Orange
+              gradient: AppColors.orangeGradient,
               borderRadius: BorderRadius.circular(20.r),
             ),
             child: Row(
@@ -271,7 +256,7 @@ class CourseDetailView extends StatelessWidget {
               ),
                 child: Icon(
                   Icons.play_arrow,
-                  color: AppColors.saffron,
+                  color: AppColors.primaryGradient.colors.first,
                   size: 36.w,
             ),
           ),
@@ -367,12 +352,12 @@ class CourseDetailView extends StatelessWidget {
                 width: 56.w,
                 height: 56.w,
                       decoration: BoxDecoration(
-                  color: AppColors.saffron.withOpacity(0.2),
+                  color: AppColors.primaryGradient.colors.first.withOpacity(0.2),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                   Icons.person,
-                  color: AppColors.saffron,
+                  color: AppColors.primaryGradient.colors.first,
                   size: 32.w,
                       ),
                     ),
@@ -559,9 +544,12 @@ class CourseDetailView extends StatelessWidget {
                           child: Container(
             padding: EdgeInsets.symmetric(vertical: 12.h),
                             decoration: BoxDecoration(
+              gradient: controller.selectedTab.value == index
+                  ? AppColors.orangeGradient
+                  : null,
               color: controller.selectedTab.value == index
-                  ? AppColors.templeGold
-                                      : Colors.transparent,
+                  ? null
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(8.r),
                             ),
             child: AutoTranslateText(
@@ -706,7 +694,7 @@ class CourseDetailView extends StatelessWidget {
                   SizedBox(width: 8.w),
                         Icon(
                           isExpanded ? Icons.expand_less : Icons.expand_more,
-                    color: AppColors.saffron,
+                    color: AppColors.primaryGradient.colors.first,
                         ),
                       ],
                     ),
@@ -777,7 +765,7 @@ class CourseDetailView extends StatelessWidget {
                           children: [
             Icon(
               content.type == 'video' ? Icons.play_circle_outline : Icons.picture_as_pdf,
-              color: canAccess ? AppColors.saffron : Colors.grey,
+              color: canAccess ? AppColors.primaryGradient.colors.first : Colors.grey,
               size: 24.w,
             ),
             SizedBox(width: 12.w),
@@ -819,21 +807,15 @@ class CourseDetailView extends StatelessWidget {
   }
 
   Widget _buildBottomCTA(CourseModel course, bool isEnrolled, CourseDetailController controller) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFF820B17), // Dark red
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: SizedBox(
+      return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Container(
           width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+            borderRadius: BorderRadius.circular(12.r),
+          ),
           child: ElevatedButton(
             onPressed: isEnrolled
                 ? () {
@@ -845,7 +827,8 @@ class CourseDetailView extends StatelessWidget {
                     controller.initiatePurchase();
                   },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF820B17),
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
               padding: EdgeInsets.symmetric(vertical: 16.h),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.r),

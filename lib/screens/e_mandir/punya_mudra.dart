@@ -13,6 +13,9 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final textScale = MediaQuery.of(context).textScaleFactor.clamp(0.8, 1.2);
+    
     return Scaffold(
       backgroundColor: const Color(0xFFFFF3DC),
       body: SafeArea(
@@ -23,63 +26,81 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
 
               /// ================= HEADER =================
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: EdgeInsets.symmetric(
+                  horizontal: size.width * 0.04,
+                  vertical: size.height * 0.015,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.deepOrange),
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.deepOrange,
+                        size: size.width * 0.06,
+                      ),
                       onPressed: () {
                         Get.back();
                       },
                     ),
-                    Column(
-                      children: const [
-                        Text(
-                          "Punya Mudras",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF4E342E),
+                    Flexible(
+                      child: Column(
+                        children: [
+                          Text(
+                            "Punya Mudras",
+                            style: TextStyle(
+                              fontSize: 20 * textScale,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF4E342E),
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                        ),
-                        Text(
-                          "User id : 85910542",
-                          style: TextStyle(fontSize: 15, color: Colors.grey),
-                        ),
-                      ],
+                          Text(
+                            "User id : 85910542",
+                            style: TextStyle(
+                              fontSize: 13 * textScale,
+                              color: Colors.grey,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     ),
-                    _pointsWidget(),
+                    _pointsWidget(size, textScale),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 12),
+              SizedBox(height: size.height * 0.015),
 
               /// ================= TEMPLE IMAGE =================
               Center(
-                child: Image.asset("assets/images/rem_mandir.png"),
+                child: Image.asset(
+                  "assets/images/rem_mandir.png",
+                  width: size.width * 0.5,
+                  fit: BoxFit.contain,
+                ),
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: size.height * 0.02),
 
               /// ================= TABS =================
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
+                margin: EdgeInsets.symmetric(horizontal: size.width * 0.04),
                 color: Colors.white,
                 child: Row(
                   children: [
-                    _tab("Earn Punya", 0),
-                    _tab("Bhakti Chakra", 1),
-                    _tab("Passbook", 2),
+                    _tab("Earn Punya", 0, size, textScale),
+                    _tab("Bhakti Chakra", 1, size, textScale),
+                    _tab("Passbook", 2, size, textScale),
                   ],
                 ),
               ),
 
               /// ================= TAB CONTENT =================
-              if (selectedTab == 0) _earnPunyaUI(),
-              if (selectedTab == 1) _dummyScreen("Bhakti Chakra"),
-              if (selectedTab == 2) _dummyScreen("Passbook"),
+              if (selectedTab == 0) _earnPunyaUI(size, textScale),
+              if (selectedTab == 1) _dummyScreen("Bhakti Chakra", size, textScale),
+              if (selectedTab == 2) _dummyScreen("Passbook", size, textScale),
             ],
           ),
         ),
@@ -88,7 +109,7 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
   }
 
   // ================= TAB =================
-  Widget _tab(String title, int index) {
+  Widget _tab(String title, int index, Size size, double textScale) {
     return Expanded(
       child: InkWell(
         onTap: () {
@@ -97,7 +118,7 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
           });
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: EdgeInsets.symmetric(vertical: size.height * 0.015),
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
@@ -113,10 +134,13 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.w600,
+              fontSize: 12 * textScale,
               color: selectedTab == index
                   ? Colors.deepOrange
                   : const Color(0xFF6D2E2E),
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ),
@@ -124,12 +148,12 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
   }
 
   // ================= EARN PUNYA UI (UNCHANGED) =================
-  Widget _earnPunyaUI() {
-    return   Column(
+  Widget _earnPunyaUI(Size size, double textScale) {
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         /// ================= MORE REWARDS =================
-        _sectionTitle("More Rewards for you"),
+        _sectionTitle("More Rewards for you", size, textScale),
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -212,7 +236,7 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
         const SizedBox(height: 16),
 
         /// ================= SHUBH MANTRA =================
-        _sectionTitle("Listen to Today’s Shubh Mantra"),
+        _sectionTitle("Listen to Today's Shubh Mantra", size, textScale),
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -271,7 +295,7 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
         const SizedBox(height: 16),
 
         /// ================= TIPS =================
-        _sectionTitle("Tips to earn Punya Mudra"),
+        _sectionTitle("Tips to earn Punya Mudra", size, textScale),
 
         _tipCard(
           title: "Light Incense In your Temple",
@@ -301,8 +325,8 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
         const SizedBox(height: 16),
 
         /// ================= INVITE =================
-        _sectionTitle("Invite Your Loved Ones"),
-        inviteLovedOnesCard(),
+        _sectionTitle("Invite Your Loved Ones", size, textScale),
+        inviteLovedOnesCard(size, textScale),
 
       ],
     );
@@ -376,34 +400,46 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
     );
   }
   // ================= DUMMY SCREEN =================
-  Widget _dummyScreen(String title) {
+  Widget _dummyScreen(String title, Size size, double textScale) {
     if (title == "Bhakti Chakra") {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        padding: EdgeInsets.symmetric(
+          horizontal: size.width * 0.03,
+          vertical: size.height * 0.02,
+        ),
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Image.asset("assets/images/chakraleft.png"),
+                Image.asset(
+                  "assets/images/chakraleft.png",
+                  width: size.width * 0.1,
+                  fit: BoxFit.contain,
+                ),
                 Text(
                   "Your Chakra",
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 20 * textScale,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF4E342E),
+                    color: const Color(0xFF4E342E),
                   ),
                 ),
-                Image.asset("assets/images/chakraleft.png"),
-
+                Image.asset(
+                  "assets/images/chakraleft.png",
+                  width: size.width * 0.1,
+                  fit: BoxFit.contain,
+                ),
               ],
             ),
-            _sectionTitle("2 January 2025"),
+            _sectionTitle("2 January 2025", size, textScale),
             _chakraItem(
               title: "1st Chakra",
               subtitle:
               "After Visiting For 1 Days you have\nPassed This Chakra",
               number: "1",
+              size: size,
+              textScale: textScale,
             ),
 
             _chakraItem(
@@ -411,6 +447,8 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
               subtitle:
               "After Visiting For 2 Days you have\nPassed This Chakra",
               number: "2",
+              size: size,
+              textScale: textScale,
             ),
 
             _chakraItem(
@@ -418,6 +456,8 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
               subtitle:
               "After Visiting For 4 Days you have\nPassed This Chakra",
               number: "3",
+              size: size,
+              textScale: textScale,
             ),
 
             _chakraItem(
@@ -425,29 +465,39 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
               subtitle:
               "After Visiting For 7 Days you have\nPassed This Chakra",
               number: "4",
+              size: size,
+              textScale: textScale,
             ),
             _lockedChakraItem(
               title: "5th Chakra",
               subtitle: "You will unlock this chakra after visiting 15 Days",
               number: "5",
+              size: size,
+              textScale: textScale,
             ),
             _lockedChakraItem(
               title: "5th Chakra",
               subtitle: "You will unlock this chakra after visiting 15 Days",
               number: "6",
+              size: size,
+              textScale: textScale,
             ),
             _lockedChakraItem(
               title: "5th Chakra",
               subtitle: "You will unlock this chakra after visiting 15 Days",
               number: "7",
+              size: size,
+              textScale: textScale,
             ),
             _lockedChakraItem(
               title: "5th Chakra",
               subtitle: "You will unlock this chakra after visiting 15 Days",
               number: "8",
+              size: size,
+              textScale: textScale,
             ),
-            _sectionTitle("Invite Your Loved Ones"),
-            inviteLovedOnesCard(),
+            _sectionTitle("Invite Your Loved Ones", size, textScale),
+            inviteLovedOnesCard(size, textScale),
           ],
         ),
       );
@@ -455,7 +505,10 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
 
     /// DEFAULT DUMMY (Passbook etc.)
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      padding: EdgeInsets.symmetric(
+        horizontal: size.width * 0.03,
+        vertical: size.height * 0.02,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -465,27 +518,29 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
             children: [
               Image.asset(
                 "assets/images/chakraleft.png",
-                width: 40,
+                width: size.width * 0.1,
+                fit: BoxFit.contain,
               ),
-              const Text(
+              Text(
                 "Your Passbook",
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 20 * textScale,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF4E342E),
+                  color: const Color(0xFF4E342E),
                 ),
               ),
               Image.asset(
                 "assets/images/chakraleft.png",
-                width: 40,
+                width: size.width * 0.1,
+                fit: BoxFit.contain,
               ),
             ],
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: size.height * 0.02),
 
           /// DATE
-          _sectionTitle("2 January 2025"),
+          _sectionTitle("2 January 2025", size, textScale),
 
           /// PASSBOOK ITEM
           Padding(
@@ -568,7 +623,7 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
           const SizedBox(height: 12),
 
           /// NEXT SECTION
-          _sectionTitle("3 January 2025"),
+          _sectionTitle("3 January 2025", size, textScale),
 
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -647,7 +702,7 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
             ),
           ),
 
-          _sectionTitle("4 January 2025"),
+          _sectionTitle("4 January 2025", size, textScale),
 
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -726,7 +781,7 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
             ),
           ),
 
-          _sectionTitle("5 January 2025"),
+          _sectionTitle("5 January 2025", size, textScale),
 
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -816,12 +871,17 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
     required String title,
     required String subtitle,
     required String number,
+    required Size size,
+    required double textScale,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+      padding: EdgeInsets.symmetric(
+        vertical: size.height * 0.005,
+        horizontal: size.width * 0.015,
+      ),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(size.width * 0.03),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -830,17 +890,17 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// LEFT GREEN CHECK
-            const CircleAvatar(
-              radius: 12,
+            CircleAvatar(
+              radius: size.width * 0.03,
               backgroundColor: Colors.green,
               child: Icon(
                 Icons.check,
-                size: 14,
+                size: size.width * 0.035,
                 color: Colors.white,
               ),
             ),
 
-            const SizedBox(width: 10),
+            SizedBox(width: size.width * 0.025),
 
             /// TEXT (EXPANDED MUST BE DIRECT CHILD OF ROW)
             Expanded(
@@ -849,16 +909,16 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 16,
+                      fontSize: 16 * textScale,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: size.height * 0.005),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      fontSize: 14,
+                    style: TextStyle(
+                      fontSize: 14 * textScale,
                       color: Colors.green,
                       height: 1.4,
                     ),
@@ -877,12 +937,17 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
     required String title,
     required String subtitle,
     required String number,
+    required Size size,
+    required double textScale,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+      padding: EdgeInsets.symmetric(
+        vertical: size.height * 0.005,
+        horizontal: size.width * 0.015,
+      ),
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(size.width * 0.03),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -891,17 +956,17 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// LEFT GRAY LOCK
-            const CircleAvatar(
-              radius: 12,
+            CircleAvatar(
+              radius: size.width * 0.03,
               backgroundColor: Colors.grey,
               child: Icon(
                 Icons.lock,
-                size: 14,
+                size: size.width * 0.035,
                 color: Colors.white,
               ),
             ),
 
-            const SizedBox(width: 10),
+            SizedBox(width: size.width * 0.025),
 
             /// TEXT
             Expanded(
@@ -910,17 +975,17 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 16,
+                      fontSize: 16 * textScale,
                       color: Colors.grey,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: size.height * 0.005),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      fontSize: 14,
+                    style: TextStyle(
+                      fontSize: 14 * textScale,
                       color: Colors.grey,
                       height: 1.4,
                     ),
@@ -931,8 +996,12 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
 
             /// RIGHT IMAGE
             Padding(
-              padding: const EdgeInsets.all(8),
-              child: Image.asset("assets/images/lock_chakra.png")
+              padding: EdgeInsets.all(size.width * 0.02),
+              child: Image.asset(
+                "assets/images/lock_chakra.png",
+                width: size.width * 0.1,
+                fit: BoxFit.contain,
+              ),
             ),
           ],
         ),
@@ -944,10 +1013,13 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
 
 
 
-  Widget inviteLovedOnesCard() {
+  Widget inviteLovedOnesCard(Size size, double textScale) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(14),
+      margin: EdgeInsets.symmetric(
+        horizontal: size.width * 0.04,
+        vertical: size.height * 0.01,
+      ),
+      padding: EdgeInsets.all(size.width * 0.035),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -1076,29 +1148,29 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
       ),
     );
   }
-  Widget _pointsWidget() {
+  Widget _pointsWidget(Size size, double textScale) {
     return Container(
-      height: 40,
-      padding: const EdgeInsets.all(2),
+      height: size.height * 0.05,
+      padding: EdgeInsets.all(size.width * 0.005),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
         color: Colors.white,
         border: Border.all(color: Colors.orange),
       ),
       child: Row(
-        children: const [
+        children: [
           Padding(
-            padding: EdgeInsets.all(4),
+            padding: EdgeInsets.all(size.width * 0.01),
             child: Text(
               "66",
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 16 * textScale),
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(4),
+            padding: EdgeInsets.all(size.width * 0.01),
             child: CircleAvatar(
-              radius: 18,
-              backgroundImage: AssetImage("assets/images/omm_icon.png"),
+              radius: size.width * 0.045,
+              backgroundImage: const AssetImage("assets/images/omm_icon.png"),
             ),
           ),
         ],
@@ -1107,19 +1179,30 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
   }
 
   // ================= SECTION TITLE =================
-  Widget _sectionTitle(String text) {
+  Widget _sectionTitle(String text, Size size, double textScale) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: EdgeInsets.fromLTRB(
+        size.width * 0.04,
+        size.height * 0.02,
+        size.width * 0.04,
+        size.height * 0.01,
+      ),
       child: Row(
         children: [
-          Container(height: 18, width: 3, color: Colors.deepOrange),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF6D2E2E),
+          Container(
+            height: size.height * 0.022,
+            width: size.width * 0.008,
+            color: Colors.deepOrange,
+          ),
+          SizedBox(width: size.width * 0.015),
+          Flexible(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 18 * textScale,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF6D2E2E),
+              ),
             ),
           ),
         ],
@@ -1152,3 +1235,4 @@ class _PunyaMudraEarnScreenState extends State<PunyaMudraEarnScreen> {
     );
   }
 }
+

@@ -18,9 +18,10 @@ class OrdersView extends GetView<OrdersController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
-      appBar: const MyAppbar(
+      appBar: MyAppbar(
         title: 'My Orders',
         showLeading: true,
+        gradient: AppColors.primaryGradient,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.w),

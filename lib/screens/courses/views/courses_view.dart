@@ -27,7 +27,7 @@ class CoursesView extends BasePage<CoursesController> {
         return true;
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFFFF8F0),
+        backgroundColor: Colors.white,
         bottomNavigationBar: _buildBottomNav(),
         body: SafeArea(
           child: Column(
@@ -71,7 +71,9 @@ class CoursesView extends BasePage<CoursesController> {
 
   Widget _buildHeader() {
     return Container(
-      color: const Color(0xFF5F2221), // Dark brown
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+      ),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Row(
         children: [
@@ -94,7 +96,7 @@ class CoursesView extends BasePage<CoursesController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AutoTranslateText(
-                  'AstroLearn',
+                  'Digital Educations',
                   style: AppTypography.h2.copyWith(
                     color: Colors.white,
                     fontSize: 20.sp,
@@ -157,7 +159,7 @@ class CoursesView extends BasePage<CoursesController> {
             ),
             prefixIcon: Icon(
               Icons.search,
-              color: AppColors.saffron,
+              color: AppColors.primaryGradient.colors.first,
               size: 20.w,
             ),
             border: InputBorder.none,
@@ -203,11 +205,7 @@ class CoursesView extends BasePage<CoursesController> {
       return Container(
         margin: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFF38B3B), Color(0xFFE56B1F)], // Orange gradient
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          gradient: AppColors.orangeGradient,
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
@@ -464,8 +462,11 @@ class CoursesView extends BasePage<CoursesController> {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
           decoration: BoxDecoration(
+            gradient: controller.selectedCategory.value == index
+                ? AppColors.orangeGradient
+                : null,
             color: controller.selectedCategory.value == index
-                ? const Color(0xFFF38B3B) // Orange
+                ? null
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(20.r),
             border: Border.all(
@@ -497,7 +498,11 @@ class CoursesView extends BasePage<CoursesController> {
         return Padding(
           padding: EdgeInsets.all(32.w),
           child: Center(
-            child: CircularProgressIndicator(color: AppColors.saffron),
+            child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(
+              AppColors.primaryGradient.colors.first,
+            ),
+          ),
           ),
         );
       }
@@ -512,7 +517,7 @@ class CoursesView extends BasePage<CoursesController> {
                 Icon(
                   Icons.school_outlined,
                   size: 64.w,
-                  color: AppColors.saffron.withOpacity(0.5),
+                  color: AppColors.primaryGradient.colors.first.withOpacity(0.5),
                 ),
                 SizedBox(height: 16.h),
                 AutoTranslateText(
@@ -541,7 +546,11 @@ class CoursesView extends BasePage<CoursesController> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.school, color: AppColors.saffron, size: 20.w),
+                    Icon(
+                      Icons.school,
+                      color: AppColors.primaryGradient.colors.first,
+                      size: 20.w,
+                    ),
                     SizedBox(width: 8.w),
                     AutoTranslateText(
                       'Courses',
@@ -561,13 +570,13 @@ class CoursesView extends BasePage<CoursesController> {
                       AutoTranslateText(
                         'View All',
                         style: AppTypography.body1.copyWith(
-                          color: AppColors.saffron,
+                          color: AppColors.primaryGradient.colors.first,
                         ),
                       ),
                       SizedBox(width: 4.w),
                       Icon(
                         Icons.arrow_forward_ios,
-                        color: AppColors.saffron,
+                        color: AppColors.primaryGradient.colors.first,
                         size: 14.w,
                       ),
                     ],

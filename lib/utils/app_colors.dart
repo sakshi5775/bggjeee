@@ -53,8 +53,8 @@ static const Color cream = Color(0xFFFAEAAF); // Turmeric
   );
 
   // Gradient Colors
-  static const LinearGradient primaryGradient = LinearGradient(
-    colors: [saffron, saffronmix],
+  static final LinearGradient primaryGradient = LinearGradient(
+    colors: ["#820B17".toColor(), "#68171E".toColor(), "#5D1C21".toColor()],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );

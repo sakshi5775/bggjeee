@@ -37,45 +37,49 @@ class _DevotionalLibraryScreenState extends State<DevotionalLibraryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final textScale = MediaQuery.of(context).textScaleFactor.clamp(0.8, 1.2);
+    
     return Scaffold(
       backgroundColor: const Color(0xFFFFF4DC),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 12),
+              SizedBox(height: size.height * 0.015),
 
               /// 🔙 HEADER
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.arrow_back,
                       color: Colors.deepOrange,
+                      size: size.width * 0.06,
                     ),
                     onPressed: () {
                       Get.back();
                     },
                   ),
 
-                  const SizedBox(width: 10),
-                  const Column(
+                  SizedBox(width: size.width * 0.025),
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Devotional Library",
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 20 * textScale,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF4E342E),
+                          color: const Color(0xFF4E342E),
                         ),
                       ),
                       Text(
                         "Aartis, Mantras & Stories",
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 15 * textScale,
                           color: Colors.grey,
                         ),
                       ),
@@ -84,11 +88,11 @@ class _DevotionalLibraryScreenState extends State<DevotionalLibraryScreen> {
                 ],
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: size.height * 0.02),
 
               /// 🔘 CATEGORY TABS
               SizedBox(
-                height: 40,
+                height: size.height * 0.05,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: tabs.length,
@@ -99,9 +103,11 @@ class _DevotionalLibraryScreenState extends State<DevotionalLibraryScreen> {
                         setState(() => selectedTab = index);
                       },
                       child: Container(
-                        margin: const EdgeInsets.only(right: 10),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 18, vertical: 8),
+                        margin: EdgeInsets.only(right: size.width * 0.025),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: size.width * 0.045,
+                          vertical: size.height * 0.01,
+                        ),
                         decoration: BoxDecoration(
                           color: isSelected
                               ? Colors.deepOrange
@@ -114,11 +120,11 @@ class _DevotionalLibraryScreenState extends State<DevotionalLibraryScreen> {
                         child: Text(
                           tabs[index],
                           style: TextStyle(
-
                             color: isSelected
                                 ? Colors.white
                                 : Colors.grey,
                             fontWeight: FontWeight.w500,
+                            fontSize: 12 * textScale,
                           ),
                         ),
                       ),
@@ -127,7 +133,7 @@ class _DevotionalLibraryScreenState extends State<DevotionalLibraryScreen> {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              SizedBox(height: size.height * 0.02),
 
               /// 🎵 DEVOTIONAL LIST
               Expanded(
@@ -135,13 +141,14 @@ class _DevotionalLibraryScreenState extends State<DevotionalLibraryScreen> {
                   itemCount: songs.length,
                   itemBuilder: (context, index) {
                     return InkWell(
-                      onTap: (){
-                        Get.to(DevotionalPlayerScreen());
+                      onTap: () {
+                        Get.to(const DevotionalPlayerScreen());
                       },
-
                       child: _devotionalCard(
                         songs[index]["title"]!,
                         songs[index]["time"]!,
+                        size,
+                        textScale,
                       ),
                     );
                   },
@@ -155,10 +162,10 @@ class _DevotionalLibraryScreenState extends State<DevotionalLibraryScreen> {
   }
 
   /// 🎶 DEVOTIONAL CARD
-  Widget _devotionalCard(String title, String time) {
+  Widget _devotionalCard(String title, String time, Size size, double textScale) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.only(bottom: size.height * 0.015),
+      padding: EdgeInsets.all(size.width * 0.03),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -168,8 +175,8 @@ class _DevotionalLibraryScreenState extends State<DevotionalLibraryScreen> {
         children: [
           /// 🎼 MUSIC ICON
           Container(
-            height: 50,
-            width: 50,
+            height: size.width * 0.12,
+            width: size.width * 0.12,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.deepOrange,
@@ -177,7 +184,7 @@ class _DevotionalLibraryScreenState extends State<DevotionalLibraryScreen> {
             child: Image.asset("assets/images/listen_now_icon.png"),
           ),
 
-          const SizedBox(width: 12),
+          SizedBox(width: size.width * 0.03),
 
           /// TITLE + TIME
           Expanded(
@@ -188,17 +195,17 @@ class _DevotionalLibraryScreenState extends State<DevotionalLibraryScreen> {
                   title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 16 * textScale,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: size.height * 0.005),
                 Text(
                   time,
                   style: TextStyle(
                     color: Colors.grey.shade600,
-                    fontSize: 15,
+                    fontSize: 15 * textScale,
                   ),
                 ),
               ],
@@ -207,22 +214,27 @@ class _DevotionalLibraryScreenState extends State<DevotionalLibraryScreen> {
 
           /// ▶ PLAY BUTTON
           Container(
-            height: 36,
-            width: 36,
+            height: size.width * 0.09,
+            width: size.width * 0.09,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.deepOrange.withOpacity(0.15),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.play_arrow,
               color: Colors.deepOrange,
+              size: size.width * 0.06,
             ),
           ),
 
-          const SizedBox(width: 8),
+          SizedBox(width: size.width * 0.02),
 
           /// ⋮ MORE
-          const Icon(Icons.more_vert, color: Colors.deepOrange),
+          Icon(
+            Icons.more_vert,
+            color: Colors.deepOrange,
+            size: size.width * 0.06,
+          ),
         ],
       ),
     );

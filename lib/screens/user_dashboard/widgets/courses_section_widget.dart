@@ -32,7 +32,7 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
                     'Explore Our Courses',
                     style: MyTextTheme.largeBCB
                         .copyWith(
-                          color: "#F38B3B".toColor(),
+                          color: AppColors.orangeGradient.colors.first,
                           fontWeight: FontWeight.bold,
                         )
                         .merge(AppTypography.h2),
@@ -41,7 +41,7 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
                     'View all',
                     style: MyTextTheme.mediumBCN
                         .copyWith(
-                          color: "#9D4807".toColor(),
+                          color: AppColors.orangeGradient.colors.last,
                           fontWeight: FontWeight.w400,
                         )
                         .merge(AppTypography.body1),
@@ -52,7 +52,11 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
               Center(
                 child: Padding(
                   padding: EdgeInsets.all(20.h),
-                  child: CircularProgressIndicator(color: AppColors.deepOrange),
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColors.orangeGradient.colors.first,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -77,7 +81,7 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
                   'Explore Our Courses',
                   style: MyTextTheme.largeBCB
                       .copyWith(
-                        color: "#F38B3B".toColor(),
+                        color: AppColors.orangeGradient.colors.first,
                         fontWeight: FontWeight.bold,
                       )
                       .merge(AppTypography.h2),
@@ -90,7 +94,7 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
                     'View all',
                     style: MyTextTheme.mediumBCN
                         .copyWith(
-                          color: "#9D4807".toColor(),
+                          color: AppColors.orangeGradient.colors.last,
                           fontWeight: FontWeight.w400,
                         )
                         .merge(AppTypography.body1),
@@ -169,8 +173,8 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    AppColors.deepOrange.withOpacity(0.3),
-                                    AppColors.deepOrange.withOpacity(0.1),
+                                    AppColors.orangeGradient.colors.first.withOpacity(0.3),
+                                    AppColors.orangeGradient.colors.first.withOpacity(0.1),
                                   ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
@@ -178,7 +182,7 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
                               ),
                               child: Center(
                                 child: CircularProgressIndicator(
-                                  color: AppColors.deepOrange,
+                                  color: AppColors.orangeGradient.colors.first,
                                   strokeWidth: 2,
                                 ),
                               ),
@@ -187,8 +191,8 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    AppColors.deepOrange.withOpacity(0.3),
-                                    AppColors.deepOrange.withOpacity(0.1),
+                                    AppColors.orangeGradient.colors.first.withOpacity(0.3),
+                                    AppColors.orangeGradient.colors.first.withOpacity(0.1),
                                   ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
@@ -198,7 +202,7 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
                                 child: Icon(
                                   Icons.school,
                                   size: 60.w,
-                                  color: AppColors.deepOrange.withOpacity(0.5),
+                                  color: AppColors.orangeGradient.colors.first.withOpacity(0.5),
                                 ),
                               ),
                             ),
@@ -286,7 +290,7 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
                       courseTitle,
                       style: MyTextTheme.largeBCB
                           .copyWith(
-                            color: "#68171E".toColor(),
+                            color: AppColors.primaryGradient.colors[1],
                             fontWeight: FontWeight.bold,
                           )
                           .merge(AppTypography.h2),
@@ -298,7 +302,7 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
                     AutoTranslateText(
                       description,
                       style: MyTextTheme.smallBCN
-                          .copyWith(color: '#820B17'.toColor().withOpacity(0.6))
+                          .copyWith(color: AppColors.primaryGradient.colors.first.withOpacity(0.6))
                           .merge(AppTypography.body2),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -312,14 +316,14 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
                           price,
                           style: MyTextTheme.mediumBCB
                               .copyWith(
-                                color: "#68171E".toColor(),
+                                color: AppColors.primaryGradient.colors[1],
                                 fontWeight: FontWeight.bold,
                               )
                               .merge(AppTypography.h3),
                         ),
                         Icon(
                           Icons.arrow_forward_ios,
-                          color: "#820B17".toColor(),
+                          color: AppColors.primaryGradient.colors.first,
                           size: 16.w,
                         ),
                       ],

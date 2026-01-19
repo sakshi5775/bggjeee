@@ -27,6 +27,9 @@ class _VirtualDarshanScreenState extends State<VirtualDarshanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final textScale = MediaQuery.of(context).textScaleFactor.clamp(0.8, 1.2);
+    
     return SafeArea(
       child: Scaffold(
         body: Container(
@@ -49,18 +52,22 @@ class _VirtualDarshanScreenState extends State<VirtualDarshanScreen> {
 
               /// 🔙 HEADER
               Positioned(
-                top: 10,
-                left: 10,
+                top: size.height * 0.015,
+                left: size.width * 0.025,
                 child: Row(
                   children: [
                     InkWell(
                       onTap: () => Get.back(),
-                      child: _circleIcon(Icons.arrow_back),
+                      child: _circleIcon(Icons.arrow_back, size),
                     ),
-                    const SizedBox(width: 10),
-                    const Text(
+                    SizedBox(width: size.width * 0.025),
+                    Text(
                       "Virtual Darshan",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16 * textScale,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
@@ -68,58 +75,59 @@ class _VirtualDarshanScreenState extends State<VirtualDarshanScreen> {
 
               /// 👤 AVATARS
               Positioned(
-                top: 60,
-                left: 12,
-                right: 12,
+                top: size.height * 0.08,
+                left: size.width * 0.03,
+                right: size.width * 0.03,
                 child: SizedBox(
-                  height: 50,
+                  height: size.height * 0.065,
                   child: Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(2),
+                        padding: EdgeInsets.all(size.width * 0.005),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
                           color: Colors.white,
                         ),
                         child: Row(
-                          children: const [
+                          children: [
                             CircleAvatar(
-                              radius: 25,
+                              radius: size.width * 0.06,
                               backgroundImage:
-                              AssetImage("assets/images/ganesha.png"),
+                              const AssetImage("assets/images/ganesha.png"),
                             ),
                             Padding(
-                              padding: EdgeInsets.all(4.0),
+                              padding: EdgeInsets.all(size.width * 0.01),
                               child: Text(
                                 "Shri Ganesh",
                                 style: TextStyle(
                                   color: Colors.orange,
                                   fontWeight: FontWeight.w500,
+                                  fontSize: 12 * textScale,
                                 ),
                               ),
                             )
                           ],
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: size.width * 0.025),
                       Expanded(
                         child: ListView.builder(
                           itemCount: 15,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (_, index) {
                             return Container(
-                              margin: const EdgeInsets.only(right: 6),
-                              padding: const EdgeInsets.all(2),
+                              margin: EdgeInsets.only(right: size.width * 0.015),
+                              padding: EdgeInsets.all(size.width * 0.005),
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
                                 gradient: LinearGradient(
                                   colors: [Colors.orange, Colors.deepOrange],
                                 ),
                               ),
-                              child: const CircleAvatar(
-                                radius: 30,
+                              child: CircleAvatar(
+                                radius: size.width * 0.075,
                                 backgroundImage:
-                                AssetImage("assets/images/god_icon.png"),
+                                const AssetImage("assets/images/god_icon.png"),
                               ),
                             );
                           },
@@ -132,30 +140,41 @@ class _VirtualDarshanScreenState extends State<VirtualDarshanScreen> {
 
               /// 🌸 OPEN BOTTOM SHEET
               Positioned(
-                bottom: 90,
-                left: 18,
+                bottom: size.height * 0.12,
+                left: size.width * 0.045,
                 child: InkWell(
                   onTap: _openOfferingBottomSheet,
-                  child: Image.asset("assets/images/aarti_icon.png"),
+                  child: Image.asset(
+                    "assets/images/aarti_icon.png",
+                    width: size.width * 0.12,
+                    height: size.width * 0.12,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
 
               Positioned(
-                bottom: 22,
-                left: 18,
-                child: Image.asset("assets/images/laddu_icon.png"),
+                bottom: size.height * 0.03,
+                left: size.width * 0.045,
+                child: Image.asset(
+                  "assets/images/laddu_icon.png",
+                  width: size.width * 0.12,
+                  height: size.width * 0.12,
+                  fit: BoxFit.contain,
+                ),
               ),
 
               /// 🎵 MUSIC
               Positioned(
-                bottom: 22,
-                right: 18,
+                bottom: size.height * 0.03,
+                right: size.width * 0.045,
                 child: InkWell(
                   onTap: () => Get.to(const DevotionalLibraryScreen()),
                   child: Image.asset(
                     "assets/images/listen_now_icon.png",
-                    width: 50,
-                    height: 50,
+                    width: size.width * 0.12,
+                    height: size.width * 0.12,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
@@ -164,19 +183,21 @@ class _VirtualDarshanScreenState extends State<VirtualDarshanScreen> {
               Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(
-                  padding: const EdgeInsets.only(right: 6),
+                  padding: EdgeInsets.only(right: size.width * 0.015),
                   child: Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: size.width * 0.015,
+                      vertical: size.height * 0.005,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.4),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Listen Now",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 13,
+                        fontSize: 11 * textScale,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -190,14 +211,18 @@ class _VirtualDarshanScreenState extends State<VirtualDarshanScreen> {
     );
   }
 
-  Widget _circleIcon(IconData icon) {
+  Widget _circleIcon(IconData icon, Size size) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: EdgeInsets.all(size.width * 0.025),
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.4),
         shape: BoxShape.circle,
       ),
-      child: Icon(icon, color: Colors.white, size: 26),
+      child: Icon(
+        icon,
+        color: Colors.white,
+        size: size.width * 0.065,
+      ),
     );
   }
 }
@@ -235,22 +260,25 @@ class _OfferingBottomSheetState extends State<_OfferingBottomSheet>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final textScale = MediaQuery.of(context).textScaleFactor.clamp(0.8, 1.2);
+    
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.25,
+      height: size.height * 0.35,
       child: Column(
         children: [
-          const SizedBox(height: 10),
+          SizedBox(height: size.height * 0.015),
 
           Container(
             height: 4,
-            width: 40,
+            width: size.width * 0.1,
             decoration: BoxDecoration(
               color: Colors.grey.shade400,
               borderRadius: BorderRadius.circular(10),
             ),
           ),
 
-          const SizedBox(height: 12),
+          SizedBox(height: size.height * 0.015),
 
           TabBar(
             controller: _tabController,
@@ -259,15 +287,17 @@ class _OfferingBottomSheetState extends State<_OfferingBottomSheet>
             unselectedLabelColor: Colors.grey,
             indicatorColor: Colors.orange,
             indicatorWeight: 3,
+            labelStyle: TextStyle(fontSize: 12 * textScale),
+            unselectedLabelStyle: TextStyle(fontSize: 11 * textScale),
             tabs: tabs.map((e) => Tab(text: e)).toList(),
           ),
 
-          const SizedBox(height: 12),
+          SizedBox(height: size.height * 0.015),
 
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: List.generate(tabs.length, (_) => _gridItems()),
+              children: List.generate(tabs.length, (_) => _gridItems(size, textScale)),
             ),
           ),
         ],
@@ -275,13 +305,15 @@ class _OfferingBottomSheetState extends State<_OfferingBottomSheet>
     );
   }
 
-  Widget _gridItems() {
+  Widget _gridItems(Size size, double textScale) {
+    final crossAxisCount = size.width > 600 ? 6 : (size.width > 400 ? 5 : 4);
+    
     return GridView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 5,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
+      padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        mainAxisSpacing: size.height * 0.015,
+        crossAxisSpacing: size.width * 0.03,
         childAspectRatio: 0.75,
       ),
       itemCount: 5,
@@ -291,31 +323,42 @@ class _OfferingBottomSheetState extends State<_OfferingBottomSheet>
             Stack(
               children: [
                 Container(
-                  height: 56,
-                  width: 56,
+                  height: size.width * 0.14,
+                  width: size.width * 0.14,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.orange),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(6),
-                    child: Icon(Icons.flaky),
+                    padding: EdgeInsets.all(size.width * 0.015),
+                    child: Icon(
+                      Icons.flaky,
+                      size: size.width * 0.08,
+                    ),
                   ),
                 ),
-                const Positioned(
+                Positioned(
                   top: 0,
                   right: 0,
                   child: CircleAvatar(
-                    radius: 8,
+                    radius: size.width * 0.02,
                     backgroundColor: Colors.orange,
-                    child:
-                    Icon(Icons.lock, size: 10, color: Colors.white),
+                    child: Icon(
+                      Icons.lock,
+                      size: size.width * 0.025,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
-            const Text("Flower", style: TextStyle(fontSize: 12)),
+            SizedBox(height: size.height * 0.008),
+            Text(
+              "Flower",
+              style: TextStyle(fontSize: 10 * textScale),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ],
         );
       },

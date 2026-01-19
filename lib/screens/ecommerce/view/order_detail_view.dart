@@ -17,9 +17,10 @@ class OrderDetailView extends GetView<OrderDetailController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
-      appBar: const MyAppbar(
+      appBar: MyAppbar(
         title: 'Order Details',
         showLeading: true,
+        gradient: AppColors.primaryGradient,
       ),
       body: Obx(() {
         if (controller.isLoading.value && controller.order.value == null) {

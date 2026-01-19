@@ -45,7 +45,9 @@ class MyLearningView extends BasePage<MyLearningController> {
 
   Widget _buildHeader() {
     return Container(
-      color: const Color(0xFF5F2221), // Dark brown
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+      ),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Row(
         children: [
