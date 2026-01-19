@@ -4,7 +4,6 @@ import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/screens/ai_chat/controllers/ai_chat_controller.dart';
 import 'package:astrobharataiuser/screens/ai_chat/widgets/category_filter_chips.dart';
 import 'package:astrobharataiuser/screens/ai_chat/widgets/chat_profile_dialog.dart';
@@ -23,7 +22,9 @@ import 'package:get/get.dart';
 import 'dart:math' as math;
 
 class AiChatView extends BasePage<AiChatController> {
-  const AiChatView({super.key});
+  final bool showBackButton;
+  
+  const AiChatView({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -129,48 +130,48 @@ class AiChatView extends BasePage<AiChatController> {
               Expanded(
                 child: Row(
                   children: [
-                    // Back button
-                    GestureDetector(
-                      onTap: () {
-                        // Try to pop from nested navigator, if can't, go to home
-                        final navigator = Get.nestedKey(1)?.currentState;
-                        if (navigator != null && navigator.canPop()) {
-                          navigator.pop();
-                        } else {
-                          // At root of chats tab, navigate to home tab directly
+                    // Back button (conditional)
+                    if (showBackButton) ...[
+                      GestureDetector(
+                        onTap: () {
+                          // When showBackButton is true, it means we navigated from elsewhere (not bottom nav)
+                          // Since AI chat is in the main navigator (not nested), use Get.back()
                           try {
-                            final mainController =
-                                Get.find<UserMainController>();
-                            mainController.selectedIndex.value = 0;
-                            Get.offNamed('/user-home', id: 1);
+                            final context = Get.context;
+                            if (context != null && Navigator.of(context).canPop()) {
+                              Get.back();
+                            } else {
+                              // If can't pop, navigate to dashboard
+                              Get.offAllNamed('/user-dashboard');
+                            }
                           } catch (e) {
-                            // Fallback if controller not found
+                            // If any error, navigate to dashboard
                             Get.offAllNamed('/user-dashboard');
                           }
-                        }
-                      },
-                      child: Container(
-                        width: 40.w,
-                        height: 40.w,
-                        decoration: BoxDecoration(
-                          gradient: AppColors.primaryGradient,
-                          borderRadius: BorderRadius.circular(8.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: '#68171E'.toColor().withOpacity(0.2),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 20.w,
+                        },
+                        child: Container(
+                          width: 40.w,
+                          height: 40.w,
+                          decoration: BoxDecoration(
+                            gradient: AppColors.primaryGradient,
+                            borderRadius: BorderRadius.circular(8.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: '#68171E'.toColor().withOpacity(0.2),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 20.w,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 12.w),
+                      SizedBox(width: 12.w),
+                    ],
                     SvgAssets(
                       path: AppConstant.astroBharatLogo,
                       width: 150.w,

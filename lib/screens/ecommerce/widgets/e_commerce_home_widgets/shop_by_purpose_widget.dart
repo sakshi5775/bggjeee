@@ -1,37 +1,20 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/screens/ecommerce/controller/ecommerce_home_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class ShopByPurposeWidget extends StatelessWidget {
-  const ShopByPurposeWidget({super.key});
+  final EcommerceHomeController controller;
+  
+  const ShopByPurposeWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    final purposes = [
-      {
-        'image': 'https://via.placeholder.com/103x102', // Placeholder - replace with actual image
-        'title': 'Money',
-      },
-      {
-        'image': 'https://via.placeholder.com/103x102',
-        'title': 'Love',
-      },
-      {
-        'image': 'https://via.placeholder.com/103x102',
-        'title': 'career',
-      },
-      {
-        'image': 'https://via.placeholder.com/103x102',
-        'title': 'Evil Eye',
-      },
-      {
-        'image': 'https://via.placeholder.com/103x102',
-        'title': 'Health',
-      },
-    ];
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -88,7 +71,8 @@ class ShopByPurposeWidget extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    // Navigate to purpose products
+                    // Navigate to product list without specific purpose (shows all)
+                    Get.toNamed(AppRoutes.productList);
                   },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -115,33 +99,59 @@ class ShopByPurposeWidget extends StatelessWidget {
               ],
             ),
             Spacing.h(12),
-            SizedBox(
-              height: 180.84.h,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: purposes.length,
-                separatorBuilder: (context, index) => Spacing.w(14.22.w),
-                itemBuilder: (context, index) {
-                  final purpose = purposes[index];
-                  return _buildPurposeCard(purpose);
-                },
-              ),
-            ),
+            Obx(() {
+              if (controller.isLoadingPurposes.value) {
+                return SizedBox(
+                  height: 180.84.h,
+                  child: const Center(child: CircularProgressIndicator()),
+                );
+              }
+              
+              if (controller.purposes.isEmpty) {
+                return SizedBox(
+                  height: 180.84.h,
+                  child: const Center(
+                    child: AutoTranslateText('No purposes available'),
+                  ),
+                );
+              }
+              
+              return SizedBox(
+                height: 180.84.h,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: controller.purposes.length,
+                  separatorBuilder: (context, index) => Spacing.w(14.22.w),
+                  itemBuilder: (context, index) {
+                    final purpose = controller.purposes[index];
+                    return _buildPurposeCard(purpose, context);
+                  },
+                ),
+              );
+            }),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPurposeCard(Map<String, String> purpose) {
-    return Container(
-      width: 183.65.w,
-      height: 180.96.h,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24.38.r),
-      ),
-      child: Stack(
+  Widget _buildPurposeCard(Map<String, String> purpose, BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        // Navigate to product list with purpose filter
+        Get.toNamed(
+          AppRoutes.productList,
+          arguments: {'purpose': purpose['title']},
+        );
+      },
+      child: Container(
+        width: 183.65.w,
+        height: 180.96.h,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24.38.r),
+        ),
+        child: Stack(
         children: [
           // Image
           Positioned(
@@ -155,11 +165,25 @@ class ShopByPurposeWidget extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.r),
-                child: NetworkImageWithLoader(
-                  url: purpose['image']!,
-                  width: 103.11.w,
-                  height: 101.6.h,
-                ),
+                child: purpose['image'] != null && purpose['image']!.isNotEmpty
+                    ? NetworkImageWithLoader(
+                        url: purpose['image']!,
+                        width: 103.11.w,
+                        height: 101.6.h,
+                      )
+                    : Container(
+                        width: 103.11.w,
+                        height: 101.6.h,
+                        decoration: BoxDecoration(
+                          color: '#FFE0C8'.toColor(),
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: Icon(
+                          Icons.category,
+                          size: 40.w,
+                          color: '#8B1925'.toColor(),
+                        ),
+                      ),
               ),
             ),
           ),
@@ -184,6 +208,7 @@ class ShopByPurposeWidget extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }

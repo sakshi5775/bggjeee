@@ -296,14 +296,22 @@ class UserDashboardController extends BaseController
   /// Start Book Pooja carousel auto-slide
   void _startBookPoojaAutoSlide() {
     _bookPoojaTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
-      if (bookPoojaPageController.value.hasClients) {
+      final pageController = bookPoojaPageController.value;
+      // Check if PageController has exactly one client (one PageView attached)
+      // This prevents the "Multiple PageViews attached" error
+      if (pageController.hasClients && pageController.positions.length == 1) {
         int next = (bookPoojaCurrentPage.value + 1) % poojaCards.length;
         bookPoojaCurrentPage.value = next;
-        bookPoojaPageController.value.animateToPage(
-          next,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
+        try {
+          pageController.animateToPage(
+            next,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        } catch (e) {
+          // If animation fails (e.g., controller disposed), stop the timer
+          _stopBookPoojaAutoSlide();
+        }
       }
     });
   }

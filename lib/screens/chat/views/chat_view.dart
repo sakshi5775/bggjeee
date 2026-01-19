@@ -51,6 +51,14 @@ class _ChatViewState extends State<ChatView> {
               child: _buildChatArea(controller),
             ),
             
+            // Topic selection chips (shown after AI's first response)
+            Obx(() {
+              if (!controller.showTopicChips.value || controller.messages.length < 2) {
+                return const SizedBox.shrink();
+              }
+              return _buildTopicChips(controller);
+            }),
+            
             // Message Input
             _buildMessageInput(controller),
           ],
@@ -64,7 +72,7 @@ class _ChatViewState extends State<ChatView> {
       height: 70.h,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF5F2221), // Dark red/maroon
+        gradient: AppColors.primaryGradient,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -173,20 +181,46 @@ class _ChatViewState extends State<ChatView> {
                 ),
                 SizedBox(height: 2.h),
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
+                    Flexible(
+                      child: AutoTranslateText(
+                        'AI Astrologer',
+                        style: MyTextTheme.smallBCN.copyWith(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 11.sp,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(width: 3.w),
+                    Text(
+                      '•',
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                    SizedBox(width: 3.w),
                     Container(
-                      width: 8.w,
-                      height: 8.w,
+                      width: 6.w,
+                      height: 6.w,
                       decoration: BoxDecoration(
                         color: Colors.green,
                         shape: BoxShape.circle,
                       ),
                     ),
-                    SizedBox(width: 6.w),
-                    AutoTranslateText(
-                      'Online',
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: Colors.white.withOpacity(0.9),
+                    SizedBox(width: 3.w),
+                    Flexible(
+                      child: AutoTranslateText(
+                        'Online',
+                        style: MyTextTheme.smallBCN.copyWith(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 11.sp,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -214,21 +248,27 @@ class _ChatViewState extends State<ChatView> {
                       child: AutoTranslateText(
                         'Cancel',
                         style: MyTextTheme.smallBCB.copyWith(
-                          color: AppColors.saffron,
+                          color: AppColors.orangeGradient.colors.first,
                         ),
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Get.back(); // Close confirmation dialog
-                        final chatCtrl = Get.find<ChatController>();
-                        // Show review prompt before ending chat
-                        _showReviewPromptOnEndChat(chatCtrl);
-                      },
-                      child: AutoTranslateText(
-                        'End Chat',
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: Colors.red,
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: AppColors.orangeGradient,
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: TextButton(
+                        onPressed: () {
+                          Get.back(); // Close confirmation dialog
+                          final chatCtrl = Get.find<ChatController>();
+                          // Show review prompt before ending chat
+                          _showReviewPromptOnEndChat(chatCtrl);
+                        },
+                        child: AutoTranslateText(
+                          'End Chat',
+                          style: MyTextTheme.smallBCB.copyWith(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -251,15 +291,7 @@ class _ChatViewState extends State<ChatView> {
   Widget _buildChatArea(ChatController controller) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            const Color(0xFFFFF8F0), // Light beige
-            const Color(0xFFFFE8E8).withOpacity(0.5), // Light pinkish
-            const Color(0xFFFFF8F0),
-          ],
-        ),
+        gradient: AppColors.gradientBackground,
       ),
       child: Stack(
         children: [
@@ -331,7 +363,6 @@ class _ChatViewState extends State<ChatView> {
               },
             );
           }),
-          
         ],
       ),
     );
@@ -399,9 +430,8 @@ class _ChatViewState extends State<ChatView> {
             ),
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: isUser
-                  ? AppColors.saffron // Golden/mustard for user
-                  : const Color(0xFFFFF8F0), // Light beige for assistant
+              gradient: isUser ? AppColors.orangeGradient : null,
+              color: isUser ? null : const Color(0xFFFFF8F0), // Light beige for assistant
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16.r),
                 topRight: Radius.circular(16.r),
@@ -482,6 +512,115 @@ class _ChatViewState extends State<ChatView> {
     );
   }
 
+  Widget _buildTopicChips(ChatController controller) {
+    final topics = [
+      {'label': 'Career', 'icon': Icons.work, 'value': 'Career'},
+      {'label': 'Love & Relationships', 'icon': Icons.favorite, 'value': 'Love & Relationships'},
+      {'label': 'Marriage', 'icon': Icons.favorite_border, 'value': 'Marriage'},
+      {'label': 'Health', 'icon': Icons.health_and_safety, 'value': 'Health'},
+      {'label': 'Finance', 'icon': Icons.account_balance_wallet, 'value': 'Finance'},
+      {'label': 'Education', 'icon': Icons.school, 'value': 'Education'},
+      {'label': 'Family', 'icon': Icons.people, 'value': 'Family'},
+      {'label': 'Spiritual Guidance', 'icon': Icons.auto_awesome, 'value': 'Spiritual Guidance'},
+      {'label': 'Other', 'icon': Icons.more_horiz, 'value': 'Other'},
+    ];
+    
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          top: BorderSide(
+            color: const Color(0xFFE0E0E0).withOpacity(0.5),
+            width: 1,
+          ),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.chat_bubble_outline,
+                size: 18.w,
+                color: const Color(0xFF666666),
+              ),
+              SizedBox(width: 8.w),
+              Flexible(
+                child: AutoTranslateText(
+                  'What would you like to know about? (Optional)',
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: const Color(0xFF666666),
+                    fontSize: 14.sp,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.h),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: topics.map((topic) {
+                final isSelected = controller.selectedTopic.value == topic['value'];
+                return Padding(
+                  padding: EdgeInsets.only(right: 8.w),
+                  child: GestureDetector(
+                    onTap: () => controller.selectTopic(topic['value'] as String),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                      decoration: BoxDecoration(
+                        gradient: isSelected ? AppColors.orangeGradient : null,
+                        color: isSelected ? null : Colors.white,
+                        borderRadius: BorderRadius.circular(20.r),
+                        border: Border.all(
+                          color: isSelected 
+                              ? Colors.transparent 
+                              : const Color(0xFFE0E0E0),
+                          width: isSelected ? 0 : 1.5,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            topic['icon'] as IconData,
+                            size: 18.w,
+                            color: isSelected 
+                                ? Colors.white 
+                                : const Color(0xFF666666),
+                          ),
+                          SizedBox(width: 6.w),
+                          AutoTranslateText(
+                            topic['label'] as String,
+                            style: MyTextTheme.smallBCN.copyWith(
+                              color: isSelected 
+                                  ? Colors.white 
+                                  : const Color(0xFF666666),
+                              fontSize: 13.sp,
+                              fontWeight: isSelected 
+                                  ? FontWeight.w600 
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildMessageInput(ChatController controller) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -504,8 +643,8 @@ class _ChatViewState extends State<ChatView> {
                 color: const Color(0xFFFFF8F0),
                 borderRadius: BorderRadius.circular(24.r),
                 border: Border.all(
-                  color: const Color(0xFFE0E0E0),
-                  width: 1,
+                  color: AppColors.orangeGradient.colors.first.withOpacity(0.3),
+                  width: 1.5,
                 ),
               ),
               child: TextField(
@@ -562,14 +701,17 @@ class _ChatViewState extends State<ChatView> {
                 width: 48.w,
                 height: 48.w,
                 decoration: BoxDecoration(
+                  gradient: (hasText && !isLoading && !isTyping)
+                      ? AppColors.orangeGradient
+                      : null,
                   color: (hasText && !isLoading && !isTyping)
-                      ? const Color(0xFF5F2221) // Dark red/maroon
-                      : const Color(0xFF5F2221).withOpacity(0.5),
+                      ? null
+                      : AppColors.orangeGradient.colors.first.withOpacity(0.5),
                   shape: BoxShape.circle,
                   boxShadow: (hasText && !isLoading && !isTyping)
                       ? [
                           BoxShadow(
-                            color: const Color(0xFF5F2221).withOpacity(0.3),
+                            color: AppColors.orangeGradient.colors.first.withOpacity(0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -806,7 +948,7 @@ class _TypingDotState extends State<_TypingDot> with SingleTickerProviderStateMi
             width: 8.w,
             height: 8.w,
             decoration: BoxDecoration(
-              color: const Color(0xFF5F2221),
+              color: AppColors.orangeGradient.colors.first,
               shape: BoxShape.circle,
             ),
           ),

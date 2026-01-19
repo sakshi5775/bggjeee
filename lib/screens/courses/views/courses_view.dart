@@ -12,7 +12,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class CoursesView extends BasePage<CoursesController> {
-  const CoursesView({super.key});
+  final bool showBackButton;
+  
+  const CoursesView({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -77,18 +79,20 @@ class CoursesView extends BasePage<CoursesController> {
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Row(
         children: [
-          // Back Arrow
-          IconButton(
-            onPressed: () => Get.back(),
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              color: Colors.white,
-              size: 20.w,
+          // Back Arrow (conditional)
+          if (showBackButton) ...[
+            IconButton(
+              onPressed: () => Get.back(),
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+                size: 20.w,
+              ),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
             ),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-          SizedBox(width: 12.w),
+            SizedBox(width: 12.w),
+          ],
 
           // Title and Subtitle
           Expanded(
@@ -96,7 +100,7 @@ class CoursesView extends BasePage<CoursesController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AutoTranslateText(
-                  'Digital Educations',
+                  'Digital Education',
                   style: AppTypography.h2.copyWith(
                     color: Colors.white,
                     fontSize: 20.sp,

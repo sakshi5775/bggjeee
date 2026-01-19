@@ -35,7 +35,7 @@ class _DigitalServicesAnimatedWidgetState
     {
       'path': 'assets/app/DIGITALMART.png',
       'route': () => Get.to(
-            () => const EcommerceHomeView(),
+            () => const EcommerceHomeView(showBackButton: true),
             binding: EcommerceBinding(),
           ),
     },

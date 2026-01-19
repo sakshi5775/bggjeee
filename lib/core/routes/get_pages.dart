@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/binding/courses_binding/my_learning_binding.da
 import 'package:astrobharataiuser/binding/dashboard_binding/user_main_binding.dart';
 import 'package:astrobharataiuser/binding/waiting_screen_binding/waiting_screen_binding.dart';
 import 'package:astrobharataiuser/binding/onboarding_binding/onboarding_binding.dart';
+import 'package:astrobharataiuser/binding/ai_chat_binding/ai_chat_binding.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/ai_chat/views/ai_chat_view.dart';
 import 'package:astrobharataiuser/screens/blogs/view/all_blogs_view.dart';
@@ -338,9 +339,16 @@ class PageRoutes {
     ),
      GetPage(
       name: AppRoutes.aichat,
-      page: () => const AiChatView(),
+      page: () {
+        final args = Get.arguments;
+        final showBackButton = args is Map<String, dynamic>
+            ? args['showBackButton'] as bool? ?? true
+            : true;
+        return AiChatView(showBackButton: showBackButton);
+      },
       transition: Transition.fadeIn,
       transitionDuration: Duration(milliseconds: 300),
+      binding: AiChatBinding(),
     ),
     GetPage(
       name: AppRoutes.allBlogs,
@@ -396,7 +404,13 @@ class PageRoutes {
     ),
     GetPage(
       name: AppRoutes.profile,
-      page: () => const ProfileView(),
+      page: () {
+        final args = Get.arguments;
+        final showBackButton = args is Map<String, dynamic>
+            ? args['showBackButton'] as bool? ?? true
+            : true;
+        return ProfileView(showBackButton: showBackButton);
+      },
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
       binding: ProfileBinding(),
@@ -472,7 +486,13 @@ class PageRoutes {
     // Courses Routes
     GetPage(
       name: AppRoutes.courses,
-      page: () => const CoursesView(),
+      page: () {
+        final args = Get.arguments;
+        final showBackButton = args is Map<String, dynamic>
+            ? args['showBackButton'] as bool? ?? true
+            : true;
+        return CoursesView(showBackButton: showBackButton);
+      },
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
       binding: CoursesBinding(),

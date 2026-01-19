@@ -84,6 +84,10 @@ class EcommerceHomeController extends BaseController {
   final isLoadingRecommendations = false.obs;
   final isLoadingRecentlyViewed = false.obs;
 
+  // Purposes for Shop by Purpose section
+  final purposes = <Map<String, String>>[].obs;
+  final isLoadingPurposes = false.obs;
+
   // Banner carousel
   final PageController bannerPageController = PageController();
   final currentBannerIndex = 0.obs;
@@ -206,6 +210,7 @@ class EcommerceHomeController extends BaseController {
       loadTopSellingProducts(),
       loadRecommendations(),
       loadRecentlyViewedProducts(),
+      loadPurposes(),
     ]);
   }
 
@@ -330,6 +335,58 @@ class EcommerceHomeController extends BaseController {
       print('Error loading top selling products: $e');
     } finally {
       isLoadingTopSelling.value = false;
+    }
+  }
+
+  Future<void> loadPurposes() async {
+    try {
+      isLoadingPurposes.value = true;
+      final purposeList = await _ecommerceService.getPurposes();
+      
+      // Map purposes to the format expected by the widget
+      // Each purpose needs: title and image
+      // For now, we'll use placeholder images or try to get images from products
+      final purposesList = purposeList.map((purpose) {
+        return {
+          'title': purpose,
+          'image': '', // Will be set from products or use default
+        };
+      }).toList();
+      
+      // Try to get images for each purpose by fetching a sample product
+      for (var purposeMap in purposesList) {
+        try {
+          final purposeName = purposeMap['title']!;
+          // Fetch one product with this purpose to get an image
+          final productData = await _ecommerceService.getProducts(
+            limit: 1,
+            purpose: purposeName,
+          );
+          
+          if (productData?.items != null && productData!.items!.isNotEmpty) {
+            final product = productData.items!.first;
+            if (product.images != null && product.images!.isNotEmpty) {
+              purposeMap['image'] = product.images!.first.url ?? '';
+            }
+          }
+        } catch (e) {
+          print('Error loading image for purpose ${purposeMap['title']}: $e');
+        }
+      }
+      
+      purposes.value = purposesList;
+    } catch (e) {
+      print('Error loading purposes: $e');
+      // Set fallback purposes
+      purposes.value = [
+        {'title': 'Money', 'image': ''},
+        {'title': 'Love', 'image': ''},
+        {'title': 'Career', 'image': ''},
+        {'title': 'Evil Eye', 'image': ''},
+        {'title': 'Health', 'image': ''},
+      ];
+    } finally {
+      isLoadingPurposes.value = false;
     }
   }
 

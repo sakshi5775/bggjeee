@@ -349,9 +349,29 @@ class PanchangController extends BaseController {
         moonsetTime.value = response['moonset']?.toString() ?? '';
       }
       
-      if (results[4] != null && results[4]!['response'] != null) {
-        final response = results[4]!['response'] as Map<String, dynamic>;
-        solarNoonTime.value = response['solarNoon']?.toString() ?? '';
+      if (results[4] != null) {
+        if (kDebugMode) {
+          debugPrint('Solar Noon API Response: ${results[4]}');
+        }
+        if (results[4]!['response'] != null) {
+          final response = results[4]!['response'] as Map<String, dynamic>;
+          if (kDebugMode) {
+            debugPrint('Solar Noon Response Data: $response');
+            debugPrint('Solar Noon Value: ${response['solarNoon']}');
+          }
+          solarNoonTime.value = response['solarNoon']?.toString() ?? '';
+          if (kDebugMode) {
+            debugPrint('Solar Noon Time Set To: ${solarNoonTime.value}');
+          }
+        } else {
+          if (kDebugMode) {
+            debugPrint('Solar Noon: response key is null in data');
+          }
+        }
+      } else {
+        if (kDebugMode) {
+          debugPrint('Solar Noon: results[4] is null');
+        }
       }
       
       if (results[5] != null && results[5]!['response'] != null) {

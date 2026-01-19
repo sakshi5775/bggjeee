@@ -57,6 +57,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
             height: 180.h,
             child: Obx(() {
               return PageView.builder(
+                key: const ValueKey('book_pooja_pageview'),
                 controller: controller.bookPoojaPageController.value,
                 onPageChanged: (index) {
                   controller.bookPoojaCurrentPage.value = index;

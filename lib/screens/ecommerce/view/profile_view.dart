@@ -15,7 +15,9 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class ProfileView extends GetView<ProfileController> {
-  const ProfileView({super.key});
+  final bool showBackButton;
+  
+  const ProfileView({super.key, this.showBackButton = true});
 
   static final LinearGradient gradientBackground = LinearGradient(
     colors: ["#FCE5AA".toColor(), "#FFFCF3".toColor(), "#FFFFFF".toColor()],
@@ -74,7 +76,21 @@ class ProfileView extends GetView<ProfileController> {
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Row(
         children: [
-          SizedBox(width: 16.w),
+          // Back button (conditional)
+          if (showBackButton) ...[
+            IconButton(
+              onPressed: () => Get.back(),
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: const Color(0xFF8B1925),
+                size: 20.w,
+              ),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
+            SizedBox(width: 8.w),
+          ] else
+            SizedBox(width: 16.w),
           // Title and Subtitle
           Expanded(
             child: Column(

@@ -178,13 +178,15 @@ class PanchangView extends BasePage<PanchangController> {
             Spacing.h(11.5),
 
             // Solar Noon and Moon Phase Cards
-            CelestialInfoCardWidget(
-              iconPath: AppConstant.solarNoonIcon,
-              label: 'Solar Noon',
-              value: controller.solarNoonTime.value.isNotEmpty
-                  ? controller.solarNoonTime.value
-                  : '--:-- --',
-              iconBgColor: "#FFA602".toColor().withOpacity(0.2),
+            Obx(
+              () => CelestialInfoCardWidget(
+                iconPath: AppConstant.solarNoonIcon,
+                label: 'Solar Noon',
+                value: controller.solarNoonTime.value.isNotEmpty
+                    ? controller.solarNoonTime.value
+                    : '--:-- --',
+                iconBgColor: "#FFA602".toColor().withOpacity(0.2),
+              ),
             ),
             Spacing.h(11.5),
             GestureDetector(

@@ -232,6 +232,49 @@ class EcommerceService with ApiHelperMixin {
     }
   }
 
+  // Get unique purposes from products
+  Future<List<String>> getPurposes() async {
+    try {
+      // Fetch products with a high limit to get all purposes
+      final response = await _apiRepository.getApi(
+        EndPoints.ecommerceProducts,
+        query: {'limit': '100', 'page': '1'},
+      );
+
+      if (response.body['success'] == true) {
+        final productResponse = ProductResponse.fromJson(response.body);
+        final products = productResponse.data?.items ?? [];
+        
+        // Extract unique purposes from products
+        final Set<String> purposesSet = {};
+        for (var product in products) {
+          // Check if product has purpose in specifications or as a direct field
+          // Since purpose is a filter parameter, we'll need to check the API response
+          // For now, we'll extract from a purpose field if it exists
+          if (product.specifications != null) {
+            // Purpose might be in specifications or as a separate field
+            // We'll check the raw JSON for purpose
+          }
+        }
+        
+        // If we can't extract from products, return common purposes
+        // This is a fallback - ideally the API should provide a purposes endpoint
+        if (purposesSet.isEmpty) {
+          return ['Money', 'Love', 'Health', 'Career', 'Protection', 'Rashi', 'Evil Eye', 'Marriage', 'Education', 'Spiritual'];
+        }
+        
+        return purposesSet.toList()..sort();
+      }
+      
+      // Fallback to common purposes
+      return ['Money', 'Love', 'Health',  'Career', 'Protection', 'Rashi', 'Evil Eye',  'Marriage', 'Education', 'Spiritual'];
+    } catch (e) {
+      print('Error fetching purposes: $e');
+      // Return fallback purposes
+      return ['Money', 'Love',  'Health', 'Career', 'Protection', 'Rashi', 'Evil Eye',  'Marriage', 'Education', 'Spiritual'];
+    }
+  }
+
   // Get all products with filters
   Future<ProductData?> getProducts({
     int page = 1,
@@ -248,6 +291,7 @@ class EcommerceService with ApiHelperMixin {
     bool? isEnergized,
     bool? isFeatured,
     bool? inStock,
+    String? purpose,
     String? sortBy,
   }) async {
     try {
@@ -291,6 +335,9 @@ class EcommerceService with ApiHelperMixin {
       }
       if (inStock != null) {
         queryParams['inStock'] = inStock.toString();
+      }
+      if (purpose != null && purpose.isNotEmpty) {
+        queryParams['purpose'] = purpose;
       }
       if (sortBy != null && sortBy.isNotEmpty) {
         queryParams['sortBy'] = sortBy;

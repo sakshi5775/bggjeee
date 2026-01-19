@@ -101,7 +101,9 @@ class ChatService {
       final language = preferredLanguage ?? LanguageDetector.detectLanguage(message);
       var messageToSend = message;
 
-      if (profileForContext != null) {
+      // Only prepend profile context for the first message (new conversation)
+      // For existing conversations, profile is already known to the AI
+      if (profileForContext != null && (conversationId == null || conversationId.isEmpty)) {
         // Include language in the context string
         final context = _formatProfileContext(profileForContext, language);
         if (context.isNotEmpty) {
@@ -111,12 +113,15 @@ class ChatService {
 
       final body = <String, dynamic>{
         'message': messageToSend,
-        'language': language,
+        // Only send language for new conversations (when conversationId is null/empty)
+        // For existing conversations, language is already set and cannot be changed
+        if (conversationId == null || conversationId.isEmpty) 'language': language,
         if (conversationId != null && conversationId.isNotEmpty) 'conversationId': conversationId,
       };
 
-      // Only send userProfile if provided from dialog (not from existing user data)
-      if (profileForContext != null) {
+      // Only send userProfile for new conversations (first message)
+      // For existing conversations, profile is already set
+      if (profileForContext != null && (conversationId == null || conversationId.isEmpty)) {
         final payload = _buildProfilePayload(profileForContext);
         if (payload.isNotEmpty) {
           body['userProfile'] = payload;

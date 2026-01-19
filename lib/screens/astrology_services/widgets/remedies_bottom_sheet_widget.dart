@@ -145,7 +145,11 @@ class RemediesBottomSheetWidget extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () {
                           Get.back();
-                          Get.offNamed('/user-shop', id: 1);
+                          Get.offNamed(
+                            '/user-shop',
+                            id: 1,
+                            arguments: {'showBackButton': true},
+                          );
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 14.h),

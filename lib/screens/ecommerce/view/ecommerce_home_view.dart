@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.d
 import 'package:astrobharataiuser/screens/ecommerce/controller/ecommerce_home_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/product_list_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/big_sale_banner_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/featured_products_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/promotional_banner_widget.dart';
@@ -26,7 +27,9 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class EcommerceHomeView extends BasePage<EcommerceHomeController> {
-  const EcommerceHomeView({super.key});
+  final bool showBackButton;
+  
+  const EcommerceHomeView({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +65,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
               FeaturedProductsWidget(controller: controller),
               SliverToBoxAdapter(child: Spacing.h(15.h)),
               // Shop by Purpose Section
-              ShopByPurposeWidget(),
+              ShopByPurposeWidget(controller: controller),
               SliverToBoxAdapter(child: Spacing.h(15.h)),
               // Best Sellers Section
               if (controller.topSellingProducts.isNotEmpty)
@@ -144,13 +147,53 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Back button (conditional)
+            if (showBackButton) ...[
+              IconButton(
+                onPressed: () {
+                  // When showBackButton is true, it means we navigated from elsewhere (not bottom nav)
+                  // Try to navigate back to home tab within nested navigator first
+                  try {
+                    // Try to get UserMainController and navigate to home tab
+                    final mainController = Get.find<UserMainController>();
+                    mainController.selectedIndex.value = 0;
+                    // Navigate to home within nested navigator
+                    Get.offNamed('/user-home', id: 1);
+                  } catch (e) {
+                    // Controller not found or error, try regular back navigation
+                    try {
+                      final context = Get.context;
+                      if (context != null && Navigator.of(context).canPop()) {
+                        Get.back();
+                      } else {
+                        // Last resort - navigate to dashboard (but this might cause duplicate key issue)
+                        // Instead, try to navigate to home route directly
+                        Get.offNamed('/user-home', id: 1);
+                      }
+                    } catch (e2) {
+                      // If all else fails, use offAllNamed as last resort
+                      Get.offAllNamed('/user-dashboard');
+                    }
+                  }
+                },
+                icon: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.white,
+                  size: 20.w,
+                ),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+              SizedBox(width: 8.w),
+            ],
             // Logo/Brand Name and Subtitle
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
                 AutoTranslateText(
-                  'Astro Shop',
+                  'Digital Mart',
                   style: TextStyle(
                     fontFamily: 'Baloo 2',
                     fontWeight: FontWeight.w500,
@@ -170,6 +213,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                   ),
                 ),
               ],
+            ),
             ),
             // Right side icons
             Row(

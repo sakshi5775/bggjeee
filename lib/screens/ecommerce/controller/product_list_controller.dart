@@ -20,6 +20,7 @@ class ProductListController extends BaseController {
   // Filters
   final searchQuery = ''.obs;
   final selectedSubcategory = Rxn<CategoryModel>();
+  final selectedPurpose = Rxn<String>();
   final sortBy = 'popular'.obs;
   final isGridView = true.obs;
 
@@ -47,6 +48,9 @@ class ProductListController extends BaseController {
       }
       if (args['search'] != null) {
         searchQuery.value = args['search'];
+      }
+      if (args['purpose'] != null) {
+        selectedPurpose.value = args['purpose'] as String;
       }
     }
     loadInitialData();
@@ -195,6 +199,7 @@ class ProductListController extends BaseController {
           search: searchQuery.value.isNotEmpty ? searchQuery.value : null,
           category: category?.id,
           subcategory: subcategory.id,
+          purpose: selectedPurpose.value,
           sortBy: sortBy.value,
         );
       } else if (category != null) {
@@ -221,6 +226,7 @@ class ProductListController extends BaseController {
           search: searchQuery.value.isNotEmpty ? searchQuery.value : null,
           category: selectedCategory.value?.id,
           subcategory: selectedSubcategory.value?.id,
+          purpose: selectedPurpose.value,
           sortBy: sortBy.value,
         );
       }

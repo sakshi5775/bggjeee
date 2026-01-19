@@ -580,10 +580,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             children: [
               Expanded(
                 child: _buildPillServiceCard(
-                  'Digital Shop',
+                  'Digital Mart',
                   'assets/app/digital_shop_video_icon.gif',
                   onTap: () {
-                    Get.offNamed('/user-shop', id: 1);
+                    Get.offNamed(
+                      '/user-shop',
+                      id: 1,
+                      arguments: {'showBackButton': true},
+                    );
                   },
                 ),
               ),
@@ -1802,7 +1806,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.offNamed('/user-shop', id: 1);
+                    Get.offNamed(
+                      '/user-shop',
+                      id: 1,
+                      arguments: {'showBackButton': true},
+                    );
                   },
                   child: AutoTranslateText(
                     'View All',
@@ -3228,7 +3236,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.toNamed(AppRoutes.aichat);
+                    Get.toNamed(
+                      AppRoutes.aichat,
+                      arguments: {'showBackButton': true},
+                    );
                   },
                   child: AutoTranslateText(
                     'View All',
@@ -4614,7 +4625,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       label: 'AstroShop',
                       onTap: () {
                         Navigator.of(context).pop();
-                        Get.offNamed('/user-shop', id: 1);
+                        Get.offNamed(
+                          '/user-shop',
+                          id: 1,
+                          arguments: {'showBackButton': true},
+                        );
                       },
                     ),
                   ],

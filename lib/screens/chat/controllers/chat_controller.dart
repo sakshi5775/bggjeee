@@ -35,8 +35,23 @@ class ChatController extends BaseController {
   // Timer for typing animation
   Timer? _typingTimer;
   
+  // Profile message tracking
+  bool _profileMessageSent = false;
+  
+  // Topic selection
+  final RxString selectedTopic = ''.obs;
+  final RxBool showTopicChips = false.obs;
+  
   // Listener function reference
   void _onMessageTextChanged() {
+    messageText.value = messageController.text;
+  }
+  
+  // Select a topic
+  void selectTopic(String topic) {
+    selectedTopic.value = topic;
+    // Pre-fill the message input
+    messageController.text = 'I want to know about $topic';
     messageText.value = messageController.text;
   }
   
@@ -46,6 +61,15 @@ class ChatController extends BaseController {
     // Listen to text field changes
     messageController.addListener(_onMessageTextChanged);
     // Load conversation if conversationId exists
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    // Send profile message automatically when chat starts (only if no existing conversation)
+    if (conversationId.value.isEmpty && chatProfile != null) {
+      _sendProfileMessageIfNeeded();
+    }
   }
 
   @override
@@ -99,18 +123,23 @@ class ChatController extends BaseController {
       );
       messages.add(userMessage);
       messageController.clear();
+      
+      // Hide topic chips after user sends a message
+      showTopicChips.value = false;
+      selectedTopic.value = '';
 
       isLoading.value = true;
 
       // Send message to API
       // On first message, don't send conversationId (it will be null/empty)
       // After first message, use the conversationId from the response
+      // Only send profile data for the first message (when conversationId is empty)
       final response = await _chatService.sendMessage(
         persona.id,
         messageText,
         conversationId.value.isEmpty ? null : conversationId.value,
-        userProfile: chatProfile,
-        preferredLanguage: preferredLanguage,
+        userProfile: conversationId.value.isEmpty ? chatProfile : null,
+        preferredLanguage: conversationId.value.isEmpty ? preferredLanguage : null,
       );
 
       // Update conversation ID - use the real conversationId from response for subsequent messages
@@ -226,6 +255,108 @@ class ChatController extends BaseController {
     final hour = timestamp.hour.toString().padLeft(2, '0');
     final minute = timestamp.minute.toString().padLeft(2, '0');
     return '$hour:$minute';
+  }
+  
+  /// Format time string for message (convert 24h to 12h with AM/PM)
+  String _formatTimeForMessage(String time24h) {
+    try {
+      final parts = time24h.split(':');
+      if (parts.length >= 2) {
+        final hour = int.parse(parts[0]);
+        final minute = parts[1];
+        final period = hour >= 12 ? 'PM' : 'AM';
+        final hour12 = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+        return '$hour12:$minute $period';
+      }
+    } catch (e) {
+      // If parsing fails, return original
+    }
+    return time24h;
+  }
+
+  /// Send profile message automatically when chat starts
+  Future<void> _sendProfileMessageIfNeeded() async {
+    if (_profileMessageSent || chatProfile == null || conversationId.value.isNotEmpty) return;
+    _profileMessageSent = true;
+
+    try {
+      // Format profile details message (same format as astrologer chat)
+      final name = chatProfile!.personalInfo?.fullName ?? 'User';
+      // Correct mapping from ChatProfileDialog: DOB is in generatedAt
+      final dob = chatProfile!.birthChart?.generatedAt ?? '';
+
+      final birthTime = chatProfile!.birthChart?.birthTime;
+      final tob = birthTime != null
+          ? '${birthTime.hour.toString().padLeft(2, '0')}:${birthTime.minute.toString().padLeft(2, '0')}:${(birthTime.second ?? 0).toString().padLeft(2, '0')}'
+          : '';
+
+      final birthPlace = chatProfile!.birthChart?.birthPlace;
+      final pob = [
+        birthPlace?.city,
+        birthPlace?.state,
+        birthPlace?.country,
+      ].where((e) => e != null && e.isNotEmpty).join(', ');
+
+      // Format message to match the image: "Hello! I am seeking your guidance." + "My Details:" with bullet points
+      final messageContent =
+          'Hello! I am seeking your guidance.\n\n'
+          'My Details:\n'
+          '• Name: $name\n'
+          '• Date of Birth: $dob\n'
+          '• Time of Birth: ${tob.isNotEmpty ? _formatTimeForMessage(tob) : 'Not provided'}\n'
+          '• Place of Birth: ${pob.isNotEmpty ? pob : 'Not provided'}';
+
+      // Send the profile message with profile context
+      // The chat service will automatically prepend the profile context to the message
+      final response = await _chatService.sendMessage(
+        persona.id,
+        messageContent,
+        null, // No conversationId for first message
+        userProfile: chatProfile,
+        preferredLanguage: preferredLanguage,
+      );
+
+      // Update conversation ID from response
+      if (response.conversationId.isNotEmpty) {
+        conversationId.value = response.conversationId;
+      }
+
+      // Add user message (profile details) to the list
+      final userMessage = ChatMessage(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        role: 'user',
+        content: messageContent,
+        timestamp: DateTime.now(),
+      );
+      messages.add(userMessage);
+
+      // Create assistant message and animate it
+      final assistantMessage = ChatMessage(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        role: 'assistant',
+        content: response.response,
+        timestamp: DateTime.now(),
+      );
+
+      // Animate the assistant response
+      await _animateMessage(response.response);
+      
+      // Add the full message to the list after animation completes
+      messages.add(assistantMessage);
+      
+      // Show topic chips after AI's first response
+      showTopicChips.value = true;
+      
+      // Clear displayed message after adding to list
+      await Future.delayed(const Duration(milliseconds: 100));
+      displayedMessage.value = '';
+    } catch (e) {
+      // Reset flag on error so it can be retried
+      _profileMessageSent = false;
+      if (Get.isSnackbarOpen == false) {
+        Get.snackbar('Error', 'Failed to send profile message. Please try again.');
+      }
+    }
   }
 }
 

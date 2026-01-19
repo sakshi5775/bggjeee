@@ -31,6 +31,12 @@ class UserMainController extends GetxController {
   }
 
   Route? onGenerateRoute(RouteSettings settings) {
+    // Check if showBackButton is specified in arguments, otherwise default to false (from bottom nav)
+    final args = settings.arguments;
+    final showBackButton = args is Map<String, dynamic>
+        ? args['showBackButton'] as bool? ?? false
+        : false;
+    
     switch (settings.name) {
       case '/user-home':
         return GetPageRoute(
@@ -41,7 +47,7 @@ class UserMainController extends GetxController {
       case '/user-shop':
         return GetPageRoute(
           settings: settings,
-          page: () => const EcommerceHomeView(),
+          page: () => EcommerceHomeView(showBackButton: showBackButton),
           binding: EcommerceBinding(),
         );
       case '/user-education':
@@ -52,13 +58,13 @@ class UserMainController extends GetxController {
       case '/user-chat':
         return GetPageRoute(
           settings: settings,
-          page: () => const AiChatView(),
+          page: () => AiChatView(showBackButton: showBackButton),
           binding: AiChatBinding(),
         );
       case '/user-profile':
         return GetPageRoute(
           settings: settings,
-          page: () => const ProfileView(),
+          page: () => ProfileView(showBackButton: showBackButton),
           binding: ProfileBinding(),
         );
       default:
@@ -110,7 +116,10 @@ class UserMainController extends GetxController {
 
     // If education tab is clicked, navigate to courses page
     if (index == 2) {
-      Get.toNamed(AppRoutes.courses);
+      Get.toNamed(
+        AppRoutes.courses,
+        arguments: {'showBackButton': false},
+      );
       // Don't reset to home when coming back - let the user stay where they were
     } else {
       Get.offNamed(pages[index], id: 1);
