@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/hindu_calendar_monthly_panchang_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -17,78 +18,45 @@ class HinduCalendarMonthlyPanchangView
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              _buildHeader(),
 
-            // Date and Location Selector
-            _buildDateLocationSelector(),
+              // Date and Location Selector
+              _buildDateLocationSelector(),
 
-            Spacing.h(16),
+              Spacing.h(16),
 
-            // Content
-            Expanded(
-              child: Obx(() {
-                if (controller.isLoading.value &&
-                    controller.monthlyPanchangData.isEmpty) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: "#DFB343".toColor(),
-                    ),
-                  );
-                }
+              // Content
+              Expanded(
+                child: Obx(() {
+                  if (controller.isLoading.value &&
+                      controller.monthlyPanchangData.isEmpty) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.templeGold,
+                      ),
+                    );
+                  }
 
-                return _buildFestivalsTable();
-              }),
-            ),
-          ],
+                  return _buildFestivalsTable();
+                }),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildHeader() {
-    return Container(
-      decoration: BoxDecoration(
-        color: "#6F221E".toColor(),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
-        ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Row(
-          children: [
-            // Back button
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: Icon(
-                Icons.arrow_back,
-                color: const Color(0xFFDFB343),
-                size: 24.w,
-              ),
-            ),
-            Spacing.w(16),
-            // Title
-            Expanded(
-              child: AutoTranslateText(
-                'Hindu Calendar',
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: const Color(0xFFDFB343),
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return CommonHeader(title: 'Hindu Calendar');
   }
 
   Widget _buildDateLocationSelector() {
@@ -101,7 +69,7 @@ class HinduCalendarMonthlyPanchangView
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -118,7 +86,7 @@ class HinduCalendarMonthlyPanchangView
                   children: [
                     Icon(
                       Icons.calendar_month,
-                      color: "#DFB343".toColor(),
+                      color: AppColors.templeGold,
                       size: 20.w,
                     ),
                     Spacing.w(8),
@@ -128,7 +96,7 @@ class HinduCalendarMonthlyPanchangView
                           'dd MMM yyyy',
                         ).format(controller.selectedDate.value),
                         style: MyTextTheme.mediumBCB.copyWith(
-                          color: "#6F221E".toColor(),
+                          color: "#68171E".toColor(),
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -149,7 +117,7 @@ class HinduCalendarMonthlyPanchangView
                   children: [
                     Icon(
                       Icons.location_on,
-                      color: "#DFB343".toColor(),
+                      color: AppColors.templeGold,
                       size: 18.w,
                     ),
                     Spacing.w(4),
@@ -157,7 +125,7 @@ class HinduCalendarMonthlyPanchangView
                       child: AutoTranslateText(
                         controller.selectedLocation.value,
                         style: MyTextTheme.smallBCN.copyWith(
-                          color: "#6F221E".toColor().withOpacity(0.7),
+                          color: "#68171E".toColor().withValues(alpha: 0.7),
                           fontSize: 12.sp,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -180,7 +148,7 @@ class HinduCalendarMonthlyPanchangView
           child: AutoTranslateText(
             'No data found for this month',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: "#68171E".toColor().withValues(alpha: 0.7),
             ),
           ),
         );
@@ -245,10 +213,10 @@ class HinduCalendarMonthlyPanchangView
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: "#DFB343".toColor(),
+              primary: AppColors.templeGold,
               onPrimary: Colors.white,
               surface: Colors.white,
-              onSurface: "#6F221E".toColor(),
+              onSurface: "#68171E".toColor(),
             ),
           ),
           child: child!,
@@ -273,10 +241,11 @@ class HinduCalendarMonthlyPanchangView
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
-            controller.selectCity(city, state, country);
-            Get.back();
-          },
+          onCitySelected:
+              (city, state, country, [latitude, longitude, timezone]) {
+                controller.selectCity(city, state, country);
+                Get.back();
+              },
           selectedCity: controller.selectedLocation.value,
           onUseCurrentLocation: () => controller.getCurrentLocation(),
         ),
@@ -336,7 +305,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -351,12 +320,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
             child: Container(
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    "#DFB343".toColor(),
-                    "#DFB343".toColor().withOpacity(0.8),
-                  ],
-                ),
+                gradient: AppColors.orangeGradient,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16.r),
                   topRight: Radius.circular(16.r),
@@ -373,7 +337,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -383,7 +347,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                       child: AutoTranslateText(
                         '${widget.dayNumber}',
                         style: MyTextTheme.largeBCB.copyWith(
-                          color: "#6F221E".toColor(),
+                          color: "#68171E".toColor(),
                           fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -408,7 +372,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                           AutoTranslateText(
                             '${widget.festivals.length} Festival${widget.festivals.length > 1 ? 's' : ''}',
                             style: MyTextTheme.smallBCN.copyWith(
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withValues(alpha: 0.9),
                               fontSize: 12.sp,
                             ),
                           ),
@@ -433,7 +397,11 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
               children: [
                 // Festivals
                 if (widget.festivals.isNotEmpty) ...[
-                  _buildSectionHeader(Icons.event, 'Festivals', Colors.orange),
+                  _buildSectionHeader(
+                    Icons.event,
+                    'Festivals',
+                    AppColors.orangeGradient.colors.first,
+                  ),
                   Spacing.h(8),
                   Wrap(
                     spacing: 8.w,
@@ -446,17 +414,13 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                           vertical: 6.h,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.1),
+                          gradient: AppColors.orangeGradient,
                           borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(
-                            color: Colors.orange.withOpacity(0.3),
-                            width: 1,
-                          ),
                         ),
                         child: AutoTranslateText(
                           name,
                           style: MyTextTheme.smallBCB.copyWith(
-                            color: Colors.orange.shade700,
+                            color: Colors.white,
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w600,
                           ),
@@ -474,7 +438,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                         Icons.calendar_today,
                         'Tithi',
                         widget.tithi?['name']?.toString() ?? '--',
-                        Colors.blue,
+                        AppColors.orangeGradient.colors.first,
                       ),
                     ),
                     Spacing.w(12),
@@ -483,7 +447,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                         Icons.star,
                         'Nakshatra',
                         widget.nakshatra?['name']?.toString() ?? '--',
-                        Colors.purple,
+                        AppColors.orangeGradient.colors.last,
                       ),
                     ),
                   ],
@@ -496,7 +460,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                         Icons.access_time,
                         'Yoga',
                         widget.yoga?['name']?.toString() ?? '--',
-                        Colors.green,
+                        AppColors.orangeGradient.colors.first,
                       ),
                     ),
                     Spacing.w(12),
@@ -505,7 +469,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                         Icons.auto_awesome,
                         'Rasi',
                         widget.rasi.isNotEmpty ? widget.rasi : '--',
-                        Colors.indigo,
+                        AppColors.orangeGradient.colors.last,
                       ),
                     ),
                   ],
@@ -521,7 +485,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                           'Sunrise',
                           widget.advancedDetails?['sunrise']?.toString() ??
                               '--',
-                          Colors.orange,
+                          AppColors.orangeGradient.colors.first,
                         ),
                       ),
                       Spacing.w(12),
@@ -530,7 +494,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                           Icons.wb_twilight,
                           'Sunset',
                           widget.advancedDetails?['sunset']?.toString() ?? '--',
-                          Colors.deepOrange,
+                          AppColors.orangeGradient.colors.last,
                         ),
                       ),
                     ],
@@ -544,7 +508,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
             Container(
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
-                color: "#6F221E".toColor().withOpacity(0.02),
+                color: "#68171E".toColor().withValues(alpha: 0.02),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(16.r),
                   bottomRight: Radius.circular(16.r),
@@ -656,10 +620,10 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                     Container(
                       padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
+                        color: AppColors.error.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
-                          color: Colors.red.withOpacity(0.3),
+                          color: AppColors.error.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -671,13 +635,13 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                               Icon(
                                 Icons.warning,
                                 size: 18.w,
-                                color: Colors.red,
+                                color: AppColors.error,
                               ),
                               Spacing.w(8),
                               AutoTranslateText(
                                 'Inauspicious Timings',
                                 style: MyTextTheme.mediumBCB.copyWith(
-                                  color: Colors.red.shade700,
+                                  color: AppColors.error,
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -704,10 +668,10 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                     Container(
                       padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.1),
+                        color: AppColors.templeGold.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
-                          color: Colors.blue.withOpacity(0.3),
+                          color: AppColors.templeGold.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -719,13 +683,13 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                               Icon(
                                 Icons.change_circle,
                                 size: 18.w,
-                                color: Colors.blue,
+                                color: AppColors.templeGold,
                               ),
                               Spacing.w(8),
                               AutoTranslateText(
                                 'Sankranti',
                                 style: MyTextTheme.mediumBCB.copyWith(
-                                  color: Colors.blue.shade700,
+                                  color: AppColors.templeGold,
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -763,12 +727,12 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
   Widget _buildSectionHeader(IconData icon, String title, Color color) {
     return Row(
       children: [
-        Icon(icon, size: 18.w, color: color),
+        Icon(icon, size: 18.w, color: AppColors.templeGold),
         Spacing.w(8),
         AutoTranslateText(
           title,
           style: MyTextTheme.mediumBCB.copyWith(
-            color: "#6F221E".toColor(),
+            color: "#68171E".toColor(),
             fontSize: 14.sp,
             fontWeight: FontWeight.bold,
           ),
@@ -786,9 +750,9 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: color.withOpacity(0.3), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -801,7 +765,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                 child: AutoTranslateText(
                   label,
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#68171E".toColor().withValues(alpha: 0.7),
                     fontSize: 11.sp,
                   ),
                   maxLines: 1,
@@ -814,7 +778,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
           AutoTranslateText(
             value,
             style: MyTextTheme.smallBCB.copyWith(
-              color: "#6F221E".toColor(),
+              color: "#68171E".toColor(),
               fontSize: 13.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -837,7 +801,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: "#DFB343".toColor().withOpacity(0.2),
+          color: AppColors.templeGold.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -846,12 +810,12 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
         children: [
           Row(
             children: [
-              Icon(icon, size: 18.w, color: "#DFB343".toColor()),
+              Icon(icon, size: 18.w, color: AppColors.templeGold),
               Spacing.w(8),
               AutoTranslateText(
                 title,
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: "#68171E".toColor(),
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -876,7 +840,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
             child: AutoTranslateText(
               '$label:',
               style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#68171E".toColor().withValues(alpha: 0.7),
                 fontSize: 11.sp,
               ),
             ),
@@ -887,7 +851,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
             child: AutoTranslateText(
               value,
               style: MyTextTheme.smallBCB.copyWith(
-                color: "#6F221E".toColor(),
+                color: "#68171E".toColor(),
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w500,
               ),

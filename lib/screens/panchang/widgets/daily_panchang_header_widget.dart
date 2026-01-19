@@ -158,6 +158,8 @@ class DailyPanchangHeaderWidget extends StatelessWidget {
                             Spacing.w(6),
                             Obx(
                               () => AutoTranslateText(
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 controller.selectedLocation.value,
                                 style: MyTextTheme.smallBCB.copyWith(
                                   fontSize: 13.41.sp,

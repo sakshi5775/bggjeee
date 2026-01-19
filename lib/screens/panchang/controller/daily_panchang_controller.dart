@@ -19,7 +19,7 @@ class DailyPanchangController extends BaseController {
   final latitudeController = TextEditingController();
   final longitudeController = TextEditingController();
   final timezoneController = TextEditingController();
-  
+
   // Language selection
   final selectedLanguage = 'en'.obs; // Default to English
   final Map<String, String> languages = {
@@ -38,8 +38,8 @@ class DailyPanchangController extends BaseController {
   final isFetchingLocation = false.obs;
   final panchangData = Rxn<Map<String, dynamic>>();
   final selectedDate = DateTime.now().obs;
-  final selectedLocation = 'Fetching Location...'.obs; // Will be updated with actual location
-  
+  final selectedLocation = 'Loading...'.obs;
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
@@ -52,19 +52,21 @@ class DailyPanchangController extends BaseController {
   void _initializeForm() {
     // Check if arguments are passed (from monthly calendar navigation)
     final arguments = Get.arguments as Map<String, dynamic>?;
-    
+
     if (arguments != null && arguments['date'] != null) {
       // Use date from arguments
       final date = arguments['date'] as DateTime;
       selectedDate.value = date;
       dateController.text = DateFormat('dd/MM/yyyy').format(date);
-      
+
       // Use location data from arguments if available
       if (arguments['latitude'] != null) {
-        latitudeController.text = (arguments['latitude'] as double).toStringAsFixed(6);
+        latitudeController.text = (arguments['latitude'] as double)
+            .toStringAsFixed(6);
       }
       if (arguments['longitude'] != null) {
-        longitudeController.text = (arguments['longitude'] as double).toStringAsFixed(6);
+        longitudeController.text = (arguments['longitude'] as double)
+            .toStringAsFixed(6);
       }
       if (arguments['timezone'] != null) {
         timezoneController.text = (arguments['timezone'] as double).toString();
@@ -72,11 +74,11 @@ class DailyPanchangController extends BaseController {
       if (arguments['location'] != null) {
         selectedLocation.value = arguments['location'] as String;
       }
-      
+
       // Set current time
       final now = DateTime.now();
       timeController.text = DateFormat('HH:mm').format(now);
-      
+
       // Auto-fetch panchang data
       Future.delayed(const Duration(milliseconds: 500), () {
         fetchPanchang();
@@ -88,7 +90,7 @@ class DailyPanchangController extends BaseController {
       dateController.text = DateFormat('dd/MM/yyyy').format(now);
       timeController.text = DateFormat('HH:mm').format(now);
       timezoneController.text = '5.5'; // Default IST
-      
+
       // Try to get current location on init
       _tryGetCurrentLocation();
     }
@@ -131,7 +133,8 @@ class DailyPanchangController extends BaseController {
 
       // Get current position
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.medium, // Use medium for faster response
+        desiredAccuracy:
+            LocationAccuracy.medium, // Use medium for faster response
       );
 
       // Check again if controller is disposed before using it
@@ -142,14 +145,17 @@ class DailyPanchangController extends BaseController {
       longitudeController.text = position.longitude.toStringAsFixed(6);
 
       // Update location name
-      await _updateLocationFromCoordinates(position.latitude, position.longitude);
+      await _updateLocationFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
       // Get timezone
       final offset = await _getTimezoneOffsetFromCoordinates(
         position.latitude,
         position.longitude,
       );
-      
+
       // Final check before setting timezone
       if (!_isDisposed) {
         timezoneController.text = offset.toString();
@@ -186,7 +192,8 @@ class DailyPanchangController extends BaseController {
       } on MissingPluginException catch (e) {
         showErrorMessage(
           title: 'Location Service Unavailable',
-          message: 'Location service plugin is not available. Please:\n\n1. Stop the app completely\n2. Run: flutter clean\n3. Run: flutter pub get\n4. Rebuild the app (not hot reload)\n\nYou can manually enter coordinates in the meantime.',
+          message:
+              'Location service plugin is not available. Please:\n\n1. Stop the app completely\n2. Run: flutter clean\n3. Run: flutter pub get\n4. Rebuild the app (not hot reload)\n\nYou can manually enter coordinates in the meantime.',
         );
         debugPrint('Geolocator plugin not found: $e');
         return;
@@ -200,7 +207,8 @@ class DailyPanchangController extends BaseController {
         if (!opened) {
           showErrorMessage(
             title: 'Location Service',
-            message: 'Location services are disabled. Please enable them in your device settings.',
+            message:
+                'Location services are disabled. Please enable them in your device settings.',
           );
         }
         return;
@@ -212,7 +220,8 @@ class DailyPanchangController extends BaseController {
         if (permission == LocationPermission.denied) {
           showErrorMessage(
             title: 'Permission Denied',
-            message: 'Location permissions are denied. Please enable them in settings.',
+            message:
+                'Location permissions are denied. Please enable them in settings.',
           );
           return;
         }
@@ -221,7 +230,8 @@ class DailyPanchangController extends BaseController {
       if (permission == LocationPermission.deniedForever) {
         showErrorMessage(
           title: 'Permission Denied',
-          message: 'Location permissions are permanently denied. Please enable them in app settings.',
+          message:
+              'Location permissions are permanently denied. Please enable them in app settings.',
         );
         return;
       }
@@ -239,7 +249,10 @@ class DailyPanchangController extends BaseController {
       longitudeController.text = position.longitude.toStringAsFixed(6);
 
       // Get city name from coordinates using reverse geocoding
-      await _updateLocationFromCoordinates(position.latitude, position.longitude);
+      await _updateLocationFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
       // Get timezone from coordinates
       final timezone = await AddressHelper.getTimezoneFromCoordinates(
@@ -259,10 +272,12 @@ class DailyPanchangController extends BaseController {
           position.longitude,
         );
       }
-      
+
       // Set the timezone offset
       timezoneController.text = offset.toString();
-      debugPrint('Timezone offset set: $offset for coordinates (${position.latitude}, ${position.longitude})');
+      debugPrint(
+        'Timezone offset set: $offset for coordinates (${position.latitude}, ${position.longitude})',
+      );
 
       showSuccessMessage(
         title: 'Success',
@@ -272,13 +287,15 @@ class DailyPanchangController extends BaseController {
       // Handle missing plugin exception
       showErrorMessage(
         title: 'Location Service Unavailable',
-        message: 'Location service is not available. Please rebuild the app after running "flutter pub get".\n\nYou can manually enter your coordinates instead.',
+        message:
+            'Location service is not available. Please rebuild the app after running "flutter pub get".\n\nYou can manually enter your coordinates instead.',
       );
       debugPrint('Geolocator plugin not found: $e');
     } catch (e) {
       showErrorMessage(
         title: 'Error',
-        message: 'Failed to get location: ${e.toString()}\n\nYou can manually enter your coordinates instead.',
+        message:
+            'Failed to get location: ${e.toString()}\n\nYou can manually enter your coordinates instead.',
       );
       debugPrint('Location error: $e');
     } finally {
@@ -287,15 +304,20 @@ class DailyPanchangController extends BaseController {
   }
 
   /// Get timezone offset directly from coordinates (fallback method)
-  Future<double> _getTimezoneOffsetFromCoordinates(double latitude, double longitude) async {
+  Future<double> _getTimezoneOffsetFromCoordinates(
+    double latitude,
+    double longitude,
+  ) async {
     try {
       // Try to get offset from timezone API
       try {
         final response = await http.get(
-          Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$latitude&longitude=$longitude'),
+          Uri.parse(
+            'https://timeapi.io/api/TimeZone/coordinate?latitude=$latitude&longitude=$longitude',
+          ),
           headers: {'Accept': 'application/json'},
         );
-        
+
         if (response.statusCode == 200) {
           final data = json.decode(response.body) as Map<String, dynamic>?;
           // Check for currentUtcOffset field
@@ -319,12 +341,15 @@ class DailyPanchangController extends BaseController {
       } catch (e) {
         debugPrint('Error fetching timezone offset from API: $e');
       }
-      
+
       // Fallback: Use coordinate-based estimation
-      if (latitude >= 6 && latitude <= 37 && longitude >= 68 && longitude <= 97) {
+      if (latitude >= 6 &&
+          latitude <= 37 &&
+          longitude >= 68 &&
+          longitude <= 97) {
         return 5.5; // Indian subcontinent
       }
-      
+
       // Default to UTC
       return 0.0;
     } catch (e) {
@@ -339,14 +364,16 @@ class DailyPanchangController extends BaseController {
       // Try to get offset from timezone API if available
       final lat = double.tryParse(latitudeController.text);
       final lon = double.tryParse(longitudeController.text);
-      
+
       if (lat != null && lon != null) {
         try {
           final response = await http.get(
-            Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon'),
+            Uri.parse(
+              'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+            ),
             headers: {'Accept': 'application/json'},
           );
-          
+
           if (response.statusCode == 200) {
             final data = json.decode(response.body) as Map<String, dynamic>?;
             // Check for currentUtcOffset field
@@ -372,7 +399,7 @@ class DailyPanchangController extends BaseController {
           debugPrint('Error fetching timezone offset from API: $e');
         }
       }
-      
+
       // Fallback: Use known timezone offsets
       final offsetMap = {
         'Asia/Kolkata': 5.5,
@@ -394,16 +421,18 @@ class DailyPanchangController extends BaseController {
         'Australia/Sydney': 10.0,
         'Australia/Melbourne': 10.0,
       };
-      
+
       // Check if timezone matches any key (case-insensitive)
       for (final entry in offsetMap.entries) {
-        if (timezone.toLowerCase().contains(entry.key.toLowerCase().split('/').last)) {
+        if (timezone.toLowerCase().contains(
+          entry.key.toLowerCase().split('/').last,
+        )) {
           return entry.value;
         }
       }
-      
+
       // If timezone contains common patterns
-      if (timezone.toLowerCase().contains('kolkata') || 
+      if (timezone.toLowerCase().contains('kolkata') ||
           timezone.toLowerCase().contains('calcutta') ||
           timezone.toLowerCase().contains('delhi') ||
           timezone.toLowerCase().contains('mumbai') ||
@@ -413,14 +442,14 @@ class DailyPanchangController extends BaseController {
           timezone.toLowerCase().contains('india')) {
         return 5.5; // IST
       }
-      
+
       // Default to IST if in Indian coordinates range
       if (lat != null && lon != null) {
         if (lat >= 6 && lat <= 37 && lon >= 68 && lon <= 97) {
           return 5.5; // Indian subcontinent
         }
       }
-      
+
       // Default to UTC (0.0)
       return 0.0;
     } catch (e) {
@@ -429,28 +458,28 @@ class DailyPanchangController extends BaseController {
       return 5.5;
     }
   }
-  
+
   /// Parse timezone offset string like "+05:30" or "+05:30:00" to double like 5.5
   double? _parseTimezoneOffset(String offsetStr) {
     try {
       // Remove any whitespace
       offsetStr = offsetStr.trim();
-      
+
       // Handle formats like "+05:30", "-05:30", "+05:30:00"
       if (offsetStr.startsWith('+') || offsetStr.startsWith('-')) {
         final sign = offsetStr.startsWith('+') ? 1 : -1;
         final parts = offsetStr.substring(1).split(':');
-        
+
         if (parts.length >= 2) {
           final hours = int.tryParse(parts[0]) ?? 0;
           final minutes = int.tryParse(parts[1]) ?? 0;
-          
+
           // Convert to decimal (e.g., 5 hours 30 minutes = 5.5)
           final offset = hours + (minutes / 60.0);
           return sign * offset;
         }
       }
-      
+
       // Try to parse as direct number
       final directOffset = double.tryParse(offsetStr);
       if (directOffset != null) {
@@ -538,11 +567,17 @@ class DailyPanchangController extends BaseController {
       return;
     }
     if (latitudeController.text.isEmpty) {
-      showErrorMessage(title: 'Error', message: 'Please enter latitude or get current location');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Please enter latitude or get current location',
+      );
       return;
     }
     if (longitudeController.text.isEmpty) {
-      showErrorMessage(title: 'Error', message: 'Please enter longitude or get current location');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Please enter longitude or get current location',
+      );
       return;
     }
     if (timezoneController.text.isEmpty) {
@@ -558,7 +593,10 @@ class DailyPanchangController extends BaseController {
       final tz = double.tryParse(timezoneController.text);
 
       if (latitude == null || longitude == null || tz == null) {
-        showErrorMessage(title: 'Error', message: 'Invalid latitude, longitude, or timezone');
+        showErrorMessage(
+          title: 'Error',
+          message: 'Invalid latitude, longitude, or timezone',
+        );
         return;
       }
 
@@ -574,7 +612,10 @@ class DailyPanchangController extends BaseController {
       if (data != null) {
         panchangData.value = data['response'] as Map<String, dynamic>?;
       } else {
-        showErrorMessage(title: 'Error', message: 'Failed to fetch panchang data');
+        showErrorMessage(
+          title: 'Error',
+          message: 'Failed to fetch panchang data',
+        );
       }
     } catch (e) {
       showErrorMessage(title: 'Error', message: 'Error: ${e.toString()}');
@@ -584,7 +625,11 @@ class DailyPanchangController extends BaseController {
   }
 
   /// Select city and auto-fill coordinates
-  Future<void> selectCity(String cityName, String? state, String? country) async {
+  Future<void> selectCity(
+    String cityName,
+    String? state,
+    String? country,
+  ) async {
     try {
       isFetchingLocation.value = true;
       selectedLocation.value = cityName;
@@ -597,7 +642,8 @@ class DailyPanchangController extends BaseController {
 
       if (result != null) {
         latitudeController.text = result['latitude']?.toStringAsFixed(6) ?? '';
-        longitudeController.text = result['longitude']?.toStringAsFixed(6) ?? '';
+        longitudeController.text =
+            result['longitude']?.toStringAsFixed(6) ?? '';
 
         // Get timezone offset
         final lat = result['latitude'] as double?;
@@ -639,7 +685,7 @@ class DailyPanchangController extends BaseController {
 
       // Use reverse geocoding directly
       final reverseGeocode = await _reverseGeocode(lat, lon);
-      
+
       // Check again before updating
       if (_isDisposed) return;
 
@@ -668,10 +714,7 @@ class DailyPanchangController extends BaseController {
         Uri.parse(
           'https://nominatim.openstreetmap.org/reverse?lat=$lat&lon=$lon&format=json&addressdetails=1&accept-language=en',
         ),
-        headers: {
-          'User-Agent': 'AstrologyApp/1.0',
-          'Accept-Language': 'en',
-        },
+        headers: {'User-Agent': 'AstrologyApp/1.0', 'Accept-Language': 'en'},
       );
 
       if (response.statusCode == 200) {
@@ -679,7 +722,8 @@ class DailyPanchangController extends BaseController {
         final address = result?['address'] as Map<String, dynamic>?;
 
         if (address != null) {
-          final city = address['city']?.toString() ??
+          final city =
+              address['city']?.toString() ??
               address['town']?.toString() ??
               address['village']?.toString() ??
               address['municipality']?.toString() ??
@@ -687,7 +731,8 @@ class DailyPanchangController extends BaseController {
 
           return {
             'city': city,
-            'state': address['state']?.toString() ??
+            'state':
+                address['state']?.toString() ??
                 address['region']?.toString() ??
                 address['province']?.toString(),
             'country': address['country']?.toString(),
@@ -700,4 +745,3 @@ class DailyPanchangController extends BaseController {
     return null;
   }
 }
-

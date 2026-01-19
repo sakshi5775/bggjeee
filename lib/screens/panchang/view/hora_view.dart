@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/hora_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,83 +16,50 @@ class HoraView extends BasePage<HoraController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: Obx(() {
-          if (controller.isLoading.value && controller.horas.isEmpty) {
-            return Center(
-              child: CircularProgressIndicator(
-                color: "#DFB343".toColor(),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Obx(() {
+            if (controller.isLoading.value && controller.horas.isEmpty) {
+              return Center(
+                child: CircularProgressIndicator(color: AppColors.templeGold),
+              );
+            }
+
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Header
+                  _buildHeader(),
+
+                  // Date Selector
+                  _buildDateSelector(),
+
+                  Spacing.h(16),
+
+                  // Current Hora Section
+                  if (controller.currentHora.value != null)
+                    _buildCurrentHoraSection(),
+
+                  Spacing.h(16),
+
+                  // Hora Table
+                  _buildHoraTable(),
+
+                  Spacing.h(20),
+                ],
               ),
             );
-          }
-          
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                // Header
-                _buildHeader(),
-                
-                // Date Selector
-                _buildDateSelector(),
-                
-                Spacing.h(16),
-                
-                // Current Hora Section
-                if (controller.currentHora.value != null)
-                  _buildCurrentHoraSection(),
-                
-                Spacing.h(16),
-                
-                // Hora Table
-                _buildHoraTable(),
-                
-                Spacing.h(20),
-              ],
-            ),
-          );
-        }),
+          }),
+        ),
       ),
     );
   }
 
   Widget _buildHeader() {
-    return Container(
-      decoration: BoxDecoration(
-        color: "#6F221E".toColor(),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
-        ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Row(
-          children: [
-            // Back button
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: Icon(
-                Icons.arrow_back,
-                color: const Color(0xFFDFB343),
-                size: 24.w,
-              ),
-            ),
-            Spacing.w(16),
-            // Title
-            AutoTranslateText(
-              'Hora',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: const Color(0xFFDFB343),
-                fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return CommonHeader(title: 'Hora');
   }
 
   Widget _buildDateSelector() {
@@ -99,30 +67,6 @@ class HoraView extends BasePage<HoraController> {
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       child: Row(
         children: [
-          // Previous day button
-          GestureDetector(
-            onTap: () => controller.previousDay(),
-            child: Container(
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back_ios,
-                color: "#6F221E".toColor(),
-                size: 18.w,
-              ),
-            ),
-          ),
-          Spacing.w(16),
           // Date display
           Expanded(
             child: Container(
@@ -132,56 +76,93 @@ class HoraView extends BasePage<HoraController> {
                 borderRadius: BorderRadius.circular(8.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              child: Center(
-                child: Obx(() => AutoTranslateText(
-                  DateFormat('dd - MMM - yyyy').format(controller.selectedDate.value).toUpperCase(),
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: "#6F221E".toColor(),
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: 8.w,
+                children: [
+                  // Spacing.w(2),
+                  GestureDetector(
+                    onTap: () => controller.previousDay(),
+                    child: Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: AppColors.orangeGradient,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                          size: 18.w,
+                        ),
+                      ),
+                    ),
                   ),
-                )),
-              ),
-            ),
-          ),
-          Spacing.w(16),
-          // Next day button
-          GestureDetector(
-            onTap: () => controller.nextDay(),
-            child: Container(
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
+                  Center(
+                    child: Obx(
+                      () => AutoTranslateText(
+                        DateFormat(
+                          'dd - MMM - yyyy',
+                        ).format(controller.selectedDate.value).toUpperCase(),
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: "#68171E".toColor(),
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
+                  GestureDetector(
+                    onTap: () => controller.nextDay(),
+                    child: Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: AppColors.orangeGradient,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white,
+                          size: 18.w,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Spacing.w(2),
                 ],
               ),
-              child: Icon(
-                Icons.arrow_forward_ios,
-                color: "#6F221E".toColor(),
-                size: 18.w,
-              ),
             ),
           ),
           Spacing.w(16),
+
           // Today button
           GestureDetector(
             onTap: () => controller.goToToday(),
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               decoration: BoxDecoration(
-                color: "#DFB343".toColor(),
+                gradient: AppColors.orangeGradient,
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: AutoTranslateText(
@@ -205,7 +186,7 @@ class HoraView extends BasePage<HoraController> {
     final startStr = hora['start']?.toString() ?? '';
     final endStr = hora['end']?.toString() ?? '';
     final benefits = hora['benefits']?.toString() ?? '';
-    
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Container(
@@ -215,7 +196,7 @@ class HoraView extends BasePage<HoraController> {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -227,7 +208,7 @@ class HoraView extends BasePage<HoraController> {
             AutoTranslateText(
               'Current Hora',
               style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
+                color: "#68171E".toColor(),
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -236,7 +217,7 @@ class HoraView extends BasePage<HoraController> {
             AutoTranslateText(
               planet,
               style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
+                color: "#68171E".toColor(),
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -245,15 +226,17 @@ class HoraView extends BasePage<HoraController> {
             AutoTranslateText(
               controller.formatTimeRange(startStr, endStr),
               style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#68171E".toColor().withValues(alpha: 0.7),
                 fontSize: 14.sp,
               ),
             ),
             Spacing.h(8),
             AutoTranslateText(
-              benefits.isNotEmpty ? benefits : 'Auspicious for various activities',
+              benefits.isNotEmpty
+                  ? benefits
+                  : 'Auspicious for various activities',
               style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.8),
+                color: "#68171E".toColor().withValues(alpha: 0.8),
                 fontSize: 13.sp,
               ),
             ),
@@ -271,13 +254,13 @@ class HoraView extends BasePage<HoraController> {
           child: AutoTranslateText(
             'No hora data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#68171E".toColor().withValues(alpha: 0.6),
             ),
           ),
         ),
       );
     }
-    
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
@@ -287,7 +270,7 @@ class HoraView extends BasePage<HoraController> {
           AutoTranslateText(
             'Hora Table',
             style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
+              color: "#68171E".toColor(),
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -297,7 +280,7 @@ class HoraView extends BasePage<HoraController> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: "#6F221E".toColor().withOpacity(0.1),
+              gradient: AppColors.orangeGradient,
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Row(
@@ -307,7 +290,7 @@ class HoraView extends BasePage<HoraController> {
                   child: AutoTranslateText(
                     'Planet',
                     style: MyTextTheme.mediumBCB.copyWith(
-                      color: "#6F221E".toColor(),
+                      color: Colors.white,
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -318,7 +301,7 @@ class HoraView extends BasePage<HoraController> {
                   child: AutoTranslateText(
                     'Start Time',
                     style: MyTextTheme.mediumBCB.copyWith(
-                      color: "#6F221E".toColor(),
+                      color: Colors.white,
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -329,7 +312,7 @@ class HoraView extends BasePage<HoraController> {
                   child: AutoTranslateText(
                     'End Time',
                     style: MyTextTheme.mediumBCB.copyWith(
-                      color: "#6F221E".toColor(),
+                      color: Colors.white,
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -352,7 +335,7 @@ class HoraView extends BasePage<HoraController> {
     final planet = hora['hora']?.toString() ?? '';
     final startStr = hora['start']?.toString() ?? '';
     final endStr = hora['end']?.toString() ?? '';
-    
+
     return GestureDetector(
       onTap: () => _showHoraProperties(hora),
       child: Container(
@@ -363,7 +346,7 @@ class HoraView extends BasePage<HoraController> {
           borderRadius: BorderRadius.circular(8.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: AppColors.deepOrange,
               blurRadius: 4,
               offset: const Offset(0, 1),
             ),
@@ -377,7 +360,7 @@ class HoraView extends BasePage<HoraController> {
               child: AutoTranslateText(
                 planet,
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: "#68171E".toColor(),
                   fontSize: 15.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -390,7 +373,7 @@ class HoraView extends BasePage<HoraController> {
               child: AutoTranslateText(
                 controller.formatTime(startStr),
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#68171E".toColor().withValues(alpha: 0.7),
                   fontSize: 13.sp,
                 ),
               ),
@@ -402,7 +385,7 @@ class HoraView extends BasePage<HoraController> {
               child: AutoTranslateText(
                 controller.formatTime(endStr),
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#68171E".toColor().withValues(alpha: 0.7),
                   fontSize: 13.sp,
                 ),
               ),
@@ -417,7 +400,7 @@ class HoraView extends BasePage<HoraController> {
     final planet = hora['hora']?.toString() ?? '';
     final benefits = hora['benefits']?.toString() ?? '';
     final luckyGem = hora['lucky_gem']?.toString() ?? '';
-    
+
     showDialog(
       context: Get.context!,
       builder: (context) => AlertDialog(
@@ -427,7 +410,7 @@ class HoraView extends BasePage<HoraController> {
         title: AutoTranslateText(
           'Hora Properties',
           style: MyTextTheme.largeBCB.copyWith(
-            color: "#6F221E".toColor(),
+            color: "#68171E".toColor(),
             fontSize: 20.sp,
             fontWeight: FontWeight.bold,
           ),
@@ -438,9 +421,11 @@ class HoraView extends BasePage<HoraController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AutoTranslateText(
-                benefits.isNotEmpty ? '$planet hora is $benefits' : '$planet hora properties',
+                benefits.isNotEmpty
+                    ? '$planet hora is $benefits'
+                    : '$planet hora properties',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: "#68171E".toColor(),
                   fontSize: 14.sp,
                 ),
               ),
@@ -449,7 +434,7 @@ class HoraView extends BasePage<HoraController> {
                 AutoTranslateText(
                   'Lucky Gem: $luckyGem',
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: "#6F221E".toColor(),
+                    color: "#68171E".toColor(),
                     fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -459,14 +444,20 @@ class HoraView extends BasePage<HoraController> {
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: AutoTranslateText(
-              'OK',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: "#DFB343".toColor(),
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
+          Container(
+            decoration: BoxDecoration(
+              gradient: AppColors.orangeGradient,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: TextButton(
+              onPressed: () => Get.back(),
+              child: AutoTranslateText(
+                'OK',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -475,4 +466,3 @@ class HoraView extends BasePage<HoraController> {
     );
   }
 }
-

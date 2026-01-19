@@ -1,10 +1,12 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/my_text_field.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/muhurat_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,31 +18,38 @@ class MuhuratView extends BasePage<MuhuratController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Header
-              _buildHeader(context),
-              
-              // Form Section
-              _buildFormSection(),
-              Spacing.h(16),
-              
-              // Abhijit Muhurta (Today's Muhurat)
-              Obx(() => controller.abhijitMuhurta.value != null
-                  ? _buildAbhijitMuhurta()
-                  : const SizedBox.shrink()),
-              
-              // Choghadiya Muhurats
-              Obx(() => controller.choghadiyaMuhurta.value != null
-                  ? _buildChoghadiyaMuhurats()
-                  : const SizedBox.shrink()),
-              
-              Spacing.h(20),
-            ],
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Header
+                _buildHeader(context),
+
+                // Form Section
+                _buildFormSection(),
+                Spacing.h(16),
+
+                // Abhijit Muhurta (Today's Muhurat)
+                Obx(
+                  () => controller.abhijitMuhurta.value != null
+                      ? _buildAbhijitMuhurta()
+                      : const SizedBox.shrink(),
+                ),
+
+                // Choghadiya Muhurats
+                Obx(
+                  () => controller.choghadiyaMuhurta.value != null
+                      ? _buildChoghadiyaMuhurats()
+                      : const SizedBox.shrink(),
+                ),
+
+                Spacing.h(20),
+              ],
+            ),
           ),
         ),
       ),
@@ -48,141 +57,128 @@ class MuhuratView extends BasePage<MuhuratController> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: "#6F221E".toColor(),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Back button
-              GestureDetector(
-                onTap: () => Get.back(),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: const Color(0xFFDFB343),
-                  size: 24.w,
-                ),
-              ),
-              Spacing.h(16),
-              // Title
-              AutoTranslateText(
-                "Muhurat",
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: const Color(0xFFDFB343),
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Spacing.h(4),
-              // Subtitle
-              AutoTranslateText(
-                'Auspicious timings for the selected date',
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: const Color(0xFFDFB343),
-                  fontSize: 14.sp,
-                ),
-              ),
-              Spacing.h(20),
-              // Location and Date Selectors
-              Row(
-                children: [
-                  // Location Selector
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => _showLocationBottomSheet(),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(
-                            color: const Color(0xFFDFB343),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              color: const Color(0xFFDFB343),
-                              size: 18.w,
-                            ),
-                            Spacing.w(8),
-                            Expanded(
-                              child: Obx(() => AutoTranslateText(
-                                controller.selectedLocation.value,
-                                style: MyTextTheme.mediumBCB.copyWith(
-                                  color: const Color(0xFFDFB343),
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              )),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Spacing.w(12),
-                  // Date Selector
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => controller.selectDate(),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(
-                            color: const Color(0xFFDFB343),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.calendar_today,
-                              color: const Color(0xFFDFB343),
-                              size: 18.w,
-                            ),
-                            Spacing.w(8),
-                            Expanded(
-                              child: Obx(() => AutoTranslateText(
-                                controller.selectedDate.value.day == DateTime.now().day &&
-                                        controller.selectedDate.value.month == DateTime.now().month &&
-                                        controller.selectedDate.value.year == DateTime.now().year
-                                    ? 'Today'
-                                    : DateFormat('dd MMM').format(controller.selectedDate.value),
-                                style: MyTextTheme.mediumBCB.copyWith(
-                                  color: const Color(0xFFDFB343),
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              )),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+    return CommonHeader(
+      title: 'Muhurat',
+      subtitle: Column(
+        children: [
+          AutoTranslateText(
+            'Auspicious timings for the selected date',
+            style: MyTextTheme.mediumBCN.copyWith(
+              color: Colors.white.withValues(alpha: 0.9),
+              fontSize: 14.sp,
+            ),
           ),
-        ),
+          Spacing.h(8),
+          _buildLocationDateSelector(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLocationDateSelector() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 8.h),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () => _showLocationBottomSheet(),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: AppColors.templeGold, width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      color: AppColors.templeGold,
+                      size: 18.w,
+                    ),
+                    Spacing.w(8),
+                    Expanded(
+                      child: Obx(
+                        () => AutoTranslateText(
+                          controller.selectedLocation.value,
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: "#68171E".toColor(),
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Spacing.w(12),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => controller.selectDate(),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: AppColors.templeGold, width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      color: AppColors.templeGold,
+                      size: 18.w,
+                    ),
+                    Spacing.w(8),
+                    Expanded(
+                      child: Obx(
+                        () => AutoTranslateText(
+                          controller.selectedDate.value.day ==
+                                      DateTime.now().day &&
+                                  controller.selectedDate.value.month ==
+                                      DateTime.now().month &&
+                                  controller.selectedDate.value.year ==
+                                      DateTime.now().year
+                              ? 'Today'
+                              : DateFormat(
+                                  'dd MMM',
+                                ).format(controller.selectedDate.value),
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: "#68171E".toColor(),
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -196,7 +192,7 @@ class MuhuratView extends BasePage<MuhuratController> {
           AutoTranslateText(
             'Enter Details',
             style: MyTextTheme.largeBCB.copyWith(
-              color: "#6F221E".toColor(),
+              color: "#68171E".toColor(),
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -231,116 +227,59 @@ class MuhuratView extends BasePage<MuhuratController> {
                   picked.hour,
                   picked.minute,
                 );
-                controller.timeController.text = DateFormat('HH:mm').format(dateTime);
+                controller.timeController.text = DateFormat(
+                  'HH:mm',
+                ).format(dateTime);
               }
             },
           ),
           Spacing.h(12),
-          // Latitude and Longitude row
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField(
-                  controller: controller.latitudeController,
-                  label: 'Latitude',
-                  icon: Icons.location_on,
-                ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: _buildTextField(
-                  controller: controller.longitudeController,
-                  label: 'Longitude',
-                  icon: Icons.location_on,
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(12),
-          // Get Current Location button
-          Obx(() => SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: controller.isFetchingLocation.value
-                  ? null
-                  : controller.getCurrentLocation,
-              icon: controller.isFetchingLocation.value
-                  ? SizedBox(
-                      width: 20.w,
-                      height: 20.w,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : Icon(Icons.my_location, size: 20.w),
-              label: AutoTranslateText(
-                controller.isFetchingLocation.value
-                    ? 'Getting Location...'
-                    : 'Get Current Location',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: Colors.white,
-                  fontSize: 14.sp,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFDFB343),
-                padding: EdgeInsets.symmetric(vertical: 14.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-              ),
-            ),
-          )),
-          Spacing.h(12),
-          // Timezone and Language row
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField(
-                  controller: controller.timezoneController,
-                  label: 'Timezone',
-                  icon: Icons.access_time,
-                ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: _buildLanguageDropdown(),
-              ),
-            ],
-          ),
+          _buildLanguageDropdown(),
           Spacing.h(20),
           // Submit button
-          Obx(() => SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: controller.isLoading.value ? null : controller.fetchMuhuratData,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: "#6F221E".toColor(),
-                padding: EdgeInsets.symmetric(vertical: 16.h),
-                shape: RoundedRectangleBorder(
+          Obx(
+            () => SizedBox(
+              width: double.infinity,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-              ),
-              child: controller.isLoading.value
-                  ? SizedBox(
-                      width: 24.w,
-                      height: 24.w,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : AutoTranslateText(
-                      'Get Muhurat',
-                      style: MyTextTheme.largeBCB.copyWith(
-                        color: Colors.white,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+                child: ElevatedButton(
+                  onPressed: controller.isLoading.value
+                      ? null
+                      : controller.fetchMuhuratData,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
+                  ),
+                  child: controller.isLoading.value
+                      ? SizedBox(
+                          width: 24.w,
+                          height: 24.w,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                          ),
+                        )
+                      : AutoTranslateText(
+                          'Get Muhurat',
+                          style: MyTextTheme.largeBCB.copyWith(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
+              ),
             ),
-          )),
+          ),
           Spacing.h(20),
         ],
       ),
@@ -348,64 +287,76 @@ class MuhuratView extends BasePage<MuhuratController> {
   }
 
   Widget _buildLanguageDropdown() {
-    return Obx(() => DropdownButtonFormField<String>(
-      value: controller.selectedLanguage.value,
-      decoration: InputDecoration(
-        labelText: 'Language',
-        labelStyle: MyTextTheme.smallBCN.copyWith(
-          color: "#6F221E".toColor().withOpacity(0.7),
-          fontSize: 14.sp,
-        ),
-        prefixIcon: Icon(
-          Icons.language,
-          color: "#6F221E".toColor().withOpacity(0.7),
-          size: 20.w,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: "#DFB343".toColor().withOpacity(0.5)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: "#DFB343".toColor().withOpacity(0.5)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: "#DFB343".toColor(), width: 2),
-        ),
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.8),
-        contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
-      ),
-      items: controller.languages.entries.map((entry) {
-        return DropdownMenuItem<String>(
-          value: entry.key,
-          child: AutoTranslateText(
-            entry.value,
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor(),
-              fontSize: 14.sp,
+    return Obx(
+      () => DropdownButtonFormField<String>(
+        value: controller.selectedLanguage.value,
+        decoration: InputDecoration(
+          labelText: 'Language',
+          labelStyle: MyTextTheme.smallBCN.copyWith(
+            color: "#68171E".toColor().withValues(alpha: 0.7),
+            fontSize: 14.sp,
+          ),
+          prefixIcon: Icon(
+            Icons.language,
+            color: "#68171E".toColor().withValues(alpha: 0.7),
+            size: 20.w,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: AppColors.gray.withValues(alpha: 0.5),
             ),
           ),
-        );
-      }).toList(),
-      onChanged: (String? newValue) {
-        if (newValue != null) {
-          controller.selectedLanguage.value = newValue;
-        }
-      },
-      icon: Icon(
-        Icons.keyboard_arrow_down,
-        color: "#6F221E".toColor(),
-        size: 24.w,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: AppColors.gray.withValues(alpha: 0.5),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: AppColors.gray.withValues(alpha: 0.5),
+              width: 2,
+            ),
+          ),
+          filled: true,
+          fillColor: Colors.white.withValues(alpha: 0.8),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 12.w,
+            vertical: 16.h,
+          ),
+        ),
+        items: controller.languages.entries.map((entry) {
+          return DropdownMenuItem<String>(
+            value: entry.key,
+            child: AutoTranslateText(
+              entry.value,
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: "#68171E".toColor(),
+                fontSize: 14.sp,
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          if (newValue != null) {
+            controller.selectedLanguage.value = newValue;
+          }
+        },
+        icon: Icon(
+          Icons.keyboard_arrow_down,
+          color: "#68171E".toColor(),
+          size: 24.w,
+        ),
+        dropdownColor: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        style: MyTextTheme.mediumBCN.copyWith(
+          color: "#68171E".toColor(),
+          fontSize: 14.sp,
+        ),
       ),
-      dropdownColor: Colors.white,
-      borderRadius: BorderRadius.circular(12.r),
-      style: MyTextTheme.mediumBCN.copyWith(
-        color: "#6F221E".toColor(),
-        fontSize: 14.sp,
-      ),
-    ));
+    );
   }
 
   Widget _buildTextField({
@@ -415,34 +366,13 @@ class MuhuratView extends BasePage<MuhuratController> {
     bool readOnly = false,
     VoidCallback? onTap,
   }) {
-    return TextField(
+    return MyTextField(
       controller: controller,
+      labelText: label,
+      prefixIcon: Icon(icon, color: "#68171E".toColor()),
       readOnly: readOnly,
       onTap: onTap,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon, color: "#6F221E".toColor()),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: "#6F221E".toColor().withOpacity(0.3)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: "#6F221E".toColor().withOpacity(0.3)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: "#6F221E".toColor(), width: 2),
-        ),
-        labelStyle: MyTextTheme.smallBCN.copyWith(
-          color: "#6F221E".toColor().withOpacity(0.7),
-        ),
-      ),
-      style: MyTextTheme.mediumBCN.copyWith(
-        color: "#6F221E".toColor(),
-      ),
+      borderRadius: BorderRadius.circular(12.r),
     );
   }
 
@@ -452,7 +382,7 @@ class MuhuratView extends BasePage<MuhuratController> {
 
     final start = muhurta['start']?.toString() ?? '';
     final end = muhurta['end']?.toString() ?? '';
-    
+
     // Check for NaN values
     final hasValidStart = start.isNotEmpty && !start.contains('NaN');
     final hasValidEnd = end.isNotEmpty && !end.contains('NaN');
@@ -467,7 +397,7 @@ class MuhuratView extends BasePage<MuhuratController> {
           AutoTranslateText(
             "Today's Muhurat",
             style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
+              color: "#68171E".toColor(),
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -477,17 +407,14 @@ class MuhuratView extends BasePage<MuhuratController> {
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Colors.green.shade400,
-                  Colors.green.shade600,
-                ],
+                colors: [Colors.green.shade400, Colors.green.shade600],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(16.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.green.withOpacity(0.3),
+                  color: Colors.green.withValues(alpha: 0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -498,7 +425,7 @@ class MuhuratView extends BasePage<MuhuratController> {
                 Container(
                   padding: EdgeInsets.all(12.w),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Icon(
@@ -525,12 +452,12 @@ class MuhuratView extends BasePage<MuhuratController> {
                         hasValidStart && hasValidEnd
                             ? '${_formatTime(start)} - ${_formatTime(end)}'
                             : hasValidStart
-                                ? 'Starts: ${_formatTime(start)}'
-                                : hasValidEnd
-                                    ? 'Ends: ${_formatTime(end)}'
-                                    : 'Not Available',
+                            ? 'Starts: ${_formatTime(start)}'
+                            : hasValidEnd
+                            ? 'Ends: ${_formatTime(end)}'
+                            : 'Not Available',
                         style: MyTextTheme.mediumBCN.copyWith(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 14.sp,
                         ),
                       ),
@@ -563,12 +490,16 @@ class MuhuratView extends BasePage<MuhuratController> {
           // Selected date and day label
           Row(
             children: [
-              Icon(Icons.calendar_today, size: 18.w, color: "#6F221E".toColor()),
+              Icon(
+                Icons.calendar_today,
+                size: 18.w,
+                color: "#68171E".toColor(),
+              ),
               Spacing.w(8),
               AutoTranslateText(
                 selectedDateStr.isNotEmpty ? selectedDateStr : 'Selected date',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: "#68171E".toColor(),
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
                 ),
@@ -576,19 +507,22 @@ class MuhuratView extends BasePage<MuhuratController> {
               if (dayOfWeek.isNotEmpty) ...[
                 Spacing.w(12),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
+                  ),
                   decoration: BoxDecoration(
-                    color: "#DFB343".toColor().withOpacity(0.15),
+                    color: AppColors.templeGold.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(
-                      color: "#DFB343".toColor().withOpacity(0.4),
+                      color: AppColors.templeGold.withValues(alpha: 0.4),
                       width: 1,
                     ),
                   ),
                   child: AutoTranslateText(
                     dayOfWeek,
                     style: MyTextTheme.smallBCB.copyWith(
-                      color: "#6F221E".toColor(),
+                      color: "#68171E".toColor(),
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w600,
                     ),
@@ -598,34 +532,38 @@ class MuhuratView extends BasePage<MuhuratController> {
             ],
           ),
           Spacing.h(12),
-          
+
           // Day Muhurats
           if (dayMuhurats.isNotEmpty) ...[
             AutoTranslateText(
               'Day Muhurats',
               style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
+                color: "#68171E".toColor(),
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
             Spacing.h(12),
-            ...dayMuhurats.map((muhurat) => _buildMuhuratCard(muhurat as Map<String, dynamic>)),
+            ...dayMuhurats.map(
+              (muhurat) => _buildMuhuratCard(muhurat as Map<String, dynamic>),
+            ),
             Spacing.h(20),
           ],
-          
+
           // Night Muhurats
           if (nightMuhurats.isNotEmpty) ...[
             AutoTranslateText(
               'Night Muhurats',
               style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
+                color: "#68171E".toColor(),
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
             Spacing.h(12),
-            ...nightMuhurats.map((muhurat) => _buildMuhuratCard(muhurat as Map<String, dynamic>)),
+            ...nightMuhurats.map(
+              (muhurat) => _buildMuhuratCard(muhurat as Map<String, dynamic>),
+            ),
           ],
         ],
       ),
@@ -642,7 +580,7 @@ class MuhuratView extends BasePage<MuhuratController> {
     Color cardColor;
     Color textColor;
     IconData icon;
-    
+
     if (type.toLowerCase() == 'auspicious') {
       cardColor = Colors.green.shade50;
       textColor = Colors.green.shade700;
@@ -663,13 +601,10 @@ class MuhuratView extends BasePage<MuhuratController> {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: textColor.withOpacity(0.3),
-          width: 1.5,
-        ),
+        border: Border.all(color: textColor.withValues(alpha: 0.3), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: textColor.withOpacity(0.1),
+            color: textColor.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -680,14 +615,10 @@ class MuhuratView extends BasePage<MuhuratController> {
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
-              color: textColor.withOpacity(0.1),
+              color: textColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10.r),
             ),
-            child: Icon(
-              icon,
-              color: textColor,
-              size: 24.w,
-            ),
+            child: Icon(icon, color: textColor, size: 24.w),
           ),
           Spacing.w(16),
           Expanded(
@@ -700,14 +631,17 @@ class MuhuratView extends BasePage<MuhuratController> {
                       child: AutoTranslateText(
                         muhuratName,
                         style: MyTextTheme.mediumBCB.copyWith(
-                          color: "#6F221E".toColor(),
+                          color: "#68171E".toColor(),
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 4.h,
+                      ),
                       decoration: BoxDecoration(
                         color: textColor,
                         borderRadius: BorderRadius.circular(12.r),
@@ -727,7 +661,7 @@ class MuhuratView extends BasePage<MuhuratController> {
                 AutoTranslateText(
                   '${_formatDateTime(start)} - ${_formatDateTime(end)}',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#68171E".toColor().withValues(alpha: 0.7),
                     fontSize: 13.sp,
                   ),
                 ),
@@ -783,10 +717,11 @@ class MuhuratView extends BasePage<MuhuratController> {
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
-            // Handle city selection if needed
-            Get.back();
-          },
+          onCitySelected:
+              (city, state, country, [latitude, longitude, timezone]) {
+                // Handle city selection if needed
+                Get.back();
+              },
           selectedCity: controller.selectedLocation.value,
           onUseCurrentLocation: () => controller.getCurrentLocation(),
         ),
@@ -796,4 +731,3 @@ class MuhuratView extends BasePage<MuhuratController> {
     );
   }
 }
-
