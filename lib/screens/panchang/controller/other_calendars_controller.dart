@@ -16,34 +16,10 @@ class OtherCalendarsController extends BaseController {
       'route': AppRoutes.hinduCalendarMonthlyPanchang,
     },
     {
-      'title': 'Islamic Calendar',
-      'icon': Icons.nightlight_round,
-      'symbol': '☪',
-      'route': null,
-    },
-    {
       'title': 'Jain Calendar',
       'icon': Icons.pan_tool,
       'symbol': '🕉',
       'route': AppRoutes.jainCalendar,
-    },
-    {
-      'title': 'Tamil Calendar',
-      'icon': Icons.text_fields,
-      'symbol': 'த',
-      'route': null,
-    },
-    {
-      'title': 'Indian Calendar',
-      'icon': Icons.people,
-      'symbol': '🇮🇳',
-      'route': null,
-    },
-    {
-      'title': 'Telugu Calendar',
-      'icon': Icons.text_fields,
-      'symbol': 'వి',
-      'route': null,
     },
     {
       'title': 'Moon Calendar',
@@ -76,4 +52,3 @@ class OtherCalendarsController extends BaseController {
     selectedYear.value = year;
   }
 }
-

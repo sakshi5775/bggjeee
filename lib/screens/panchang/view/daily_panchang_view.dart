@@ -9,12 +9,11 @@ import 'package:astrobharataiuser/screens/panchang/widgets/daily_panchang_form_f
 import 'package:astrobharataiuser/screens/panchang/widgets/daily_panchang_header_widget.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/daily_panchang_language_field_widget.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-
-import '../../../app_manager/my_text_field.dart';
 
 class DailyPanchangView extends BasePage<DailyPanchangController> {
   const DailyPanchangView({super.key});
@@ -22,18 +21,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            "#fbe3a7".toColor(),
-            "#FFFCF3".toColor(),
-            "#fffaee".toColor(),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          stops: [0.0, 0.8, 1.0],
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Column(
@@ -103,7 +91,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
             style: MyTextTheme.largeBCB.copyWith(
               fontSize: 20.sp,
               fontWeight: FontWeight.w500,
-              color: "#8B1925".toColor(), // 1st-maroon
+              color: "#68171E".toColor(),
             ),
           ),
           Spacing.h(20),
@@ -127,55 +115,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
             onTap: controller.selectTime,
           ),
           Spacing.h(15.33),
-          // Latitude and Longitude row
-          Container(
-            padding: AppPaddings.all(16),
-            decoration: BoxDecoration(
-              color: "#FFFFFF".toColor(),
-              borderRadius: BorderRadius.circular(14.04.r),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: MyTextField(
-                    headerText: 'Latitude',
-                    controller: controller.latitudeController,
-                    hintText: '00.000000',
-                    keyboardType: TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                  ),
-                ),
-                Spacing.w(8.02),
-                Expanded(
-                  child: MyTextField(
-                    headerText: 'Longitude',
-                    hintText: '00.000000',
-                    controller: controller.longitudeController,
-                    keyboardType: TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Spacing.h(15.33),
-          // Get Current Location button
-          Obx(
-            () => DailyPanchangButtonWidget(
-              text: controller.isFetchingLocation.value
-                  ? 'Getting Location...'
-                  : 'Get Current Location',
-              icon: Icons.location_on_outlined,
-              onPressed: controller.isFetchingLocation.value
-                  ? null
-                  : controller.getCurrentLocation,
-              isLoading: controller.isFetchingLocation.value,
-              isPrimary: false, // White with orange border
-            ),
-          ),
-          Spacing.h(15.33),
+
           // Timezone and Language row
           Container(
             padding: AppPaddings.all(16),
@@ -183,44 +123,11 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
               color: "#FFFFFF".toColor(),
               borderRadius: BorderRadius.circular(14.04.r),
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: MyTextField(
-                    headerText: 'Timezone',
-                    controller: controller.timezoneController,
-                    hintText: '0.0',
-                    keyboardType: TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                  ),
-                ),
-                Spacing.w(8.02),
-                Expanded(
-                  child: DailyPanchangLanguageFieldWidget(
-                    controller: controller,
-                  ),
-                ),
-              ],
+            child: Expanded(
+              child: DailyPanchangLanguageFieldWidget(controller: controller),
             ),
           ),
-          // Row(
-          //   children: [
-          //     Expanded(
-          //       child: DailyPanchangFormFieldWidget(
-          //         label: 'Timezone',
-          //         hintText: '0.0',
-          //         controller: controller.timezoneController,
-          //         suffixIcon: Icons.access_time,
-          //         keyboardType: TextInputType.numberWithOptions(decimal: true),
-          //       ),
-          //     ),
-          //     Spacing.w(8.02),
-          //     Expanded(
-          //       child: DailyPanchangLanguageFieldWidget(controller: controller),
-          //     ),
-          //   ],
-          // ),
+
           Spacing.h(15.33),
           // Get Panchang button
           Obx(
@@ -273,7 +180,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 12,
                   offset: const Offset(2, 4),
                 ),
@@ -333,15 +240,11 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF6B1B1A), Color(0xFF8B1925)],
-            ),
+            gradient: AppColors.orangeGradient,
             borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: AppColors.deepOrange,
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -350,16 +253,12 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.calendar_month,
-                color: const Color(0xFFDFB343),
-                size: 24.w,
-              ),
+              Icon(Icons.calendar_month, color: Colors.white, size: 24.w),
               Spacing.w(12),
               AutoTranslateText(
                 'View Monthly Calendar',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: const Color(0xFFDFB343),
+                  color: Colors.white,
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
                 ),
@@ -377,15 +276,11 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
       child: Container(
         padding: EdgeInsets.all(20.w),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFF38B3B), Color(0xFFDD2914)],
-          ),
+          gradient: AppColors.orangeGradient,
           borderRadius: BorderRadius.circular(14.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: AppColors.deepOrange,
               blurRadius: 12,
               offset: const Offset(2, 4),
             ),
@@ -399,7 +294,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                 Container(
                   padding: EdgeInsets.all(12.w),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -426,7 +321,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                       AutoTranslateText(
                         'Get personalized guidance from expert astrologers',
                         style: MyTextTheme.smallBCN.copyWith(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 13.sp,
                         ),
                       ),
@@ -452,7 +347,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                 child: AutoTranslateText(
                   'Ask an Astrologer',
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: Color(0xFFDD2914),
+                    color: AppColors.orangeGradient.colors.last,
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w500,
                   ),
@@ -477,10 +372,11 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
-            controller.selectCity(city, state, country);
-            Get.back();
-          },
+          onCitySelected:
+              (city, state, country, [latitude, longitude, timezone]) {
+                controller.selectCity(city, state, country);
+                Get.back();
+              },
           selectedCity: controller.selectedLocation.value,
           onUseCurrentLocation: () => controller.getCurrentLocation(),
         ),
@@ -500,7 +396,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
         AutoTranslateText(
           formattedDate,
           style: MyTextTheme.largeBCB.copyWith(
-            color: "#6B1B1A".toColor(),
+            color: "#68171E".toColor(),
             fontSize: 18.sp,
             fontWeight: FontWeight.w500,
             height: 1.5,
@@ -512,7 +408,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           AutoTranslateText(
             'Date: $apiDate',
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6B1B1A".toColor().withOpacity(0.6),
+              color: "#68171E".toColor().withValues(alpha: 0.6),
               fontSize: 12.sp,
             ),
           ),
@@ -520,13 +416,13 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
         Spacing.h(8),
         Row(
           children: [
-            Icon(Icons.location_on, size: 16.w, color: "#DFB343".toColor()),
+            Icon(Icons.location_on, size: 16.w, color: AppColors.templeGold),
             Spacing.w(4),
             Expanded(
               child: AutoTranslateText(
                 'Lat: ${controller.latitudeController.text}, Lon: ${controller.longitudeController.text}',
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6B1B1A".toColor().withOpacity(0.7),
+                  color: "#68171E".toColor().withValues(alpha: 0.7),
                   fontSize: 12.sp,
                 ),
                 overflow: TextOverflow.ellipsis,
@@ -546,7 +442,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
         AutoTranslateText(
           'Celestial Times',
           style: MyTextTheme.mediumBCB.copyWith(
-            color: "#6B1B1A".toColor(),
+            color: "#68171E".toColor(),
             fontSize: 16.sp,
             fontWeight: FontWeight.w500,
             height: 1.5,
@@ -620,8 +516,6 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
       ),
       child: Row(
         children: [
-          // Icon(icon, size: 20.w, color: "#DFB343".toColor()),
-          // Spacing.w(8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -629,7 +523,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                 AutoTranslateText(
                   label,
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: "#6B1B1A".toColor().withOpacity(0.7),
+                    color: "#68171E".toColor().withValues(alpha: 0.7),
                     fontSize: 11.sp,
                   ),
                 ),
@@ -637,8 +531,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                 AutoTranslateText(
                   displayValue,
                   style: MyTextTheme.largeBCB.copyWith(
-                    color: "#6B1B1A".toColor(),
-
+                    color: "#68171E".toColor(),
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -764,13 +657,13 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
               Icon(
                 Icons.dark_mode_outlined,
                 size: 20.w,
-                color: "#DFB343".toColor(),
+                color: AppColors.templeGold,
               ),
               Spacing.w(8),
               AutoTranslateText(
                 'Vaar Details',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6B1B1A".toColor(),
+                  color: "#68171E".toColor(),
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
                   height: 1.5,
@@ -801,9 +694,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                     vertical: 6.h,
                   ),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
-                    ),
+                    gradient: AppColors.orangeGradient,
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: AutoTranslateText(
@@ -977,7 +868,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           child: AutoTranslateText(
             label,
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6B1B1A".toColor().withOpacity(0.7),
+              color: "#68171E".toColor().withValues(alpha: 0.7),
               fontSize: 13.sp,
             ),
             maxLines: 2,
@@ -990,7 +881,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           child: AutoTranslateText(
             value,
             style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6B1B1A".toColor(),
+              color: "#68171E".toColor(),
               fontSize: 13.sp,
               fontWeight: FontWeight.w500,
             ),
@@ -1048,7 +939,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                         AutoTranslateText(
                           'Abhijit Muhurta',
                           style: MyTextTheme.smallBCB.copyWith(
-                            color: "#6B1B1A".toColor(),
+                            color: "#68171E".toColor(),
                             fontSize: 13.sp,
                             fontWeight: FontWeight.w600,
                           ),
@@ -1064,7 +955,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                                 '',
                           ),
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: "#6B1B1A".toColor(),
+                            color: "#68171E".toColor(),
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w400,
                           ),
@@ -1096,7 +987,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                       AutoTranslateText(
                         'Inauspicious Timings',
                         style: MyTextTheme.smallBCB.copyWith(
-                          color: "#6B1B1A".toColor(),
+                          color: "#68171E".toColor(),
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w600,
                         ),
@@ -1143,14 +1034,14 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10.r),
-                border: Border.all(color: "#FF9802".toColor(), width: 1),
+                border: Border.all(color: AppColors.templeGold, width: 1),
               ),
               child: Row(
                 children: [
                   Icon(
                     Icons.compass_calibration,
                     size: 18.w,
-                    color: "#DFB343".toColor(),
+                    color: AppColors.templeGold,
                   ),
                   Spacing.w(8),
                   Expanded(
@@ -1160,7 +1051,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                         AutoTranslateText(
                           'Disha Shoola',
                           style: MyTextTheme.smallBCB.copyWith(
-                            color: "#6B1B1A".toColor(),
+                            color: "#68171E".toColor(),
                             fontSize: 13.sp,
                             fontWeight: FontWeight.w600,
                           ),
@@ -1169,7 +1060,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                         AutoTranslateText(
                           advancedDetails?['disha_shool']?.toString() ?? '--',
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: "#6B1B1A".toColor(),
+                            color: "#68171E".toColor(),
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w400,
                           ),
@@ -1196,7 +1087,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           child: AutoTranslateText(
             label,
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6B1B1A".toColor(),
+              color: "#68171E".toColor(),
               fontSize: 12.sp,
               fontWeight: FontWeight.w400,
             ),
@@ -1210,7 +1101,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           child: AutoTranslateText(
             time,
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6B1B1A".toColor(),
+              color: "#68171E".toColor(),
               fontSize: 12.sp,
               fontWeight: FontWeight.w400,
             ),
@@ -1249,7 +1140,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           AutoTranslateText(
             'Additional Details',
             style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6B1B1A".toColor(),
+              color: "#68171E".toColor(),
               fontSize: 16.sp,
               fontWeight: FontWeight.w500,
               height: 1.5,
@@ -1322,7 +1213,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
         AutoTranslateText(
           'Sankranti',
           style: MyTextTheme.mediumBCB.copyWith(
-            color: "#6B1B1A".toColor(),
+            color: "#68171E".toColor(),
             fontSize: 14.sp,
             fontWeight: FontWeight.w500,
           ),
@@ -1448,10 +1339,10 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: "#DFB343".toColor().withOpacity(0.05),
+        color: AppColors.templeGold.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: "#DFB343".toColor().withOpacity(0.2),
+          color: AppColors.templeGold.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -1468,9 +1359,7 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
                   Container(
                     padding: EdgeInsets.all(8.w),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
-                      ),
+                      gradient: AppColors.orangeGradient,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -1487,7 +1376,7 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
                         AutoTranslateText(
                           widget.label,
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: "#6B1B1A".toColor().withOpacity(0.7),
+                            color: "#68171E".toColor().withValues(alpha: 0.7),
                             fontSize: 12.sp,
                           ),
                         ),
@@ -1495,7 +1384,7 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
                         AutoTranslateText(
                           widget.value,
                           style: MyTextTheme.mediumBCB.copyWith(
-                            color: "#6B1B1A".toColor(),
+                            color: "#68171E".toColor(),
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w500,
                           ),
@@ -1505,7 +1394,7 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
                           AutoTranslateText(
                             widget.timeRange,
                             style: MyTextTheme.smallBCN.copyWith(
-                              color: "#6B1B1A".toColor().withOpacity(0.6),
+                              color: "#68171E".toColor().withValues(alpha: 0.6),
                               fontSize: 11.sp,
                             ),
                           ),
@@ -1515,7 +1404,7 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
                   ),
                   Icon(
                     _isExpanded ? Icons.expand_less : Icons.expand_more,
-                    color: "#6B1B1A".toColor(),
+                    color: "#68171E".toColor(),
                     size: 24.w,
                   ),
                 ],
@@ -1542,7 +1431,9 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
                               child: AutoTranslateText(
                                 '${entry.key}:',
                                 style: MyTextTheme.smallBCN.copyWith(
-                                  color: "#6B1B1A".toColor().withOpacity(0.7),
+                                  color: "#68171E".toColor().withValues(
+                                    alpha: 0.7,
+                                  ),
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -1554,7 +1445,7 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
                                 entry.value!,
                                 textAlign: TextAlign.right,
                                 style: MyTextTheme.smallBCN.copyWith(
-                                  color: "#6B1B1A".toColor(),
+                                  color: "#68171E".toColor(),
                                   fontSize: 12.sp,
                                 ),
                               ),

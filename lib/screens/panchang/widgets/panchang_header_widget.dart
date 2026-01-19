@@ -72,10 +72,7 @@ class PanchangHeaderWidget extends StatelessWidget {
                 ),
               ),
               Spacer(),
-              Icon(
-                Icons.notifications_none_outlined,
-                color: "#E3B341".toColor(),
-              ),
+
               IconButton(
                 onPressed: () => Get.toNamed('/search'),
                 icon: Icon(

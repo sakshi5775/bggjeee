@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/chogadia_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,83 +16,50 @@ class ChogadiaView extends BasePage<ChogadiaController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: Obx(() {
-          if (controller.isLoading.value && controller.allChogadias.isEmpty) {
-            return Center(
-              child: CircularProgressIndicator(
-                color: "#DFB343".toColor(),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Obx(() {
+            if (controller.isLoading.value && controller.allChogadias.isEmpty) {
+              return Center(
+                child: CircularProgressIndicator(color: AppColors.templeGold),
+              );
+            }
+
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Header
+                  _buildHeader(),
+
+                  // Date Selector
+                  _buildDateSelector(),
+
+                  Spacing.h(16),
+
+                  // Current Chogadia Section
+                  if (controller.currentChogadia.value != null)
+                    _buildCurrentChogadiaSection(),
+
+                  Spacing.h(16),
+
+                  // Chogadia Table
+                  _buildChogadiaTable(),
+
+                  Spacing.h(20),
+                ],
               ),
             );
-          }
-          
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                // Header
-                _buildHeader(),
-                
-                // Date Selector
-                _buildDateSelector(),
-                
-                Spacing.h(16),
-                
-                // Current Chogadia Section
-                if (controller.currentChogadia.value != null)
-                  _buildCurrentChogadiaSection(),
-                
-                Spacing.h(16),
-                
-                // Chogadia Table
-                _buildChogadiaTable(),
-                
-                Spacing.h(20),
-              ],
-            ),
-          );
-        }),
+          }),
+        ),
       ),
     );
   }
 
   Widget _buildHeader() {
-    return Container(
-      decoration: BoxDecoration(
-        color: "#6F221E".toColor(),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
-        ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Row(
-          children: [
-            // Back button
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: Icon(
-                Icons.arrow_back,
-                color: const Color(0xFFDFB343),
-                size: 24.w,
-              ),
-            ),
-            Spacing.w(16),
-            // Title
-            AutoTranslateText(
-              'Chogadia',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: const Color(0xFFDFB343),
-                fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return CommonHeader(title: 'Chogadia');
   }
 
   Widget _buildDateSelector() {
@@ -99,30 +67,6 @@ class ChogadiaView extends BasePage<ChogadiaController> {
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       child: Row(
         children: [
-          // Previous day button
-          GestureDetector(
-            onTap: () => controller.previousDay(),
-            child: Container(
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back_ios,
-                color: "#6F221E".toColor(),
-                size: 18.w,
-              ),
-            ),
-          ),
-          Spacing.w(16),
           // Date display
           Expanded(
             child: Container(
@@ -132,56 +76,91 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                 borderRadius: BorderRadius.circular(8.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              child: Center(
-                child: Obx(() => AutoTranslateText(
-                  DateFormat('dd - MMM - yyyy').format(controller.selectedDate.value).toUpperCase(),
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: "#6F221E".toColor(),
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: 8.w,
+                children: [
+                  GestureDetector(
+                    onTap: () => controller.previousDay(),
+                    child: Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: AppColors.orangeGradient,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                          size: 18.w,
+                        ),
+                      ),
+                    ),
                   ),
-                )),
-              ),
-            ),
-          ),
-          Spacing.w(16),
-          // Next day button
-          GestureDetector(
-            onTap: () => controller.nextDay(),
-            child: Container(
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
+                  Center(
+                    child: Obx(
+                      () => AutoTranslateText(
+                        DateFormat(
+                          'dd - MMM - yyyy',
+                        ).format(controller.selectedDate.value).toUpperCase(),
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: "#68171E".toColor(),
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => controller.nextDay(),
+                    child: Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: AppColors.orangeGradient,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.white,
+                          size: 18.w,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
-              child: Icon(
-                Icons.arrow_forward_ios,
-                color: "#6F221E".toColor(),
-                size: 18.w,
-              ),
             ),
           ),
           Spacing.w(16),
+
           // Today button
           GestureDetector(
             onTap: () => controller.goToToday(),
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               decoration: BoxDecoration(
-                color: "#DFB343".toColor(),
+                gradient: AppColors.orangeGradient,
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: AutoTranslateText(
@@ -205,9 +184,9 @@ class ChogadiaView extends BasePage<ChogadiaController> {
     final startStr = chogadia['start']?.toString() ?? '';
     final endStr = chogadia['end']?.toString() ?? '';
     final type = chogadia['type']?.toString() ?? '';
-    
+
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12 ),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(16.w),
@@ -216,7 +195,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -228,7 +207,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
             AutoTranslateText(
               'Current Chogadia',
               style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
+                color: "#68171E".toColor(),
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -237,7 +216,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
             AutoTranslateText(
               muhurat,
               style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
+                color: "#68171E".toColor(),
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -246,7 +225,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
             AutoTranslateText(
               controller.formatTimeRange(startStr, endStr),
               style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#68171E".toColor().withValues(alpha: 0.7),
                 fontSize: 14.sp,
               ),
             ),
@@ -254,11 +233,11 @@ class ChogadiaView extends BasePage<ChogadiaController> {
             AutoTranslateText(
               type,
               style: MyTextTheme.smallBCN.copyWith(
-                color: type.toLowerCase().contains('auspicious') 
-                    ? Colors.green 
+                color: type.toLowerCase().contains('auspicious')
+                    ? Colors.green
                     : type.toLowerCase().contains('inauspicious')
-                        ? Colors.red
-                        : "#6F221E".toColor().withOpacity(0.8),
+                    ? Colors.red
+                    : "#68171E".toColor().withValues(alpha: 0.8),
                 fontSize: 13.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -277,13 +256,13 @@ class ChogadiaView extends BasePage<ChogadiaController> {
           child: AutoTranslateText(
             'No chogadia data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#68171E".toColor().withValues(alpha: 0.6),
             ),
           ),
         ),
       );
     }
-    
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
@@ -293,7 +272,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
           AutoTranslateText(
             'Chogadia Table',
             style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
+              color: "#68171E".toColor(),
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -303,7 +282,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: "#6F221E".toColor().withOpacity(0.1),
+              gradient: AppColors.orangeGradient,
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Row(
@@ -313,7 +292,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                   child: AutoTranslateText(
                     'Chogadia',
                     style: MyTextTheme.mediumBCB.copyWith(
-                      color: "#6F221E".toColor(),
+                      color: Colors.white,
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -324,7 +303,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                   child: AutoTranslateText(
                     'Start Time',
                     style: MyTextTheme.mediumBCB.copyWith(
-                      color: "#6F221E".toColor(),
+                      color: Colors.white,
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -335,7 +314,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                   child: AutoTranslateText(
                     'End Time',
                     style: MyTextTheme.mediumBCB.copyWith(
-                      color: "#6F221E".toColor(),
+                      color: Colors.white,
                       fontSize: 14.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -358,7 +337,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
     final muhurat = chogadia['muhurat']?.toString() ?? '';
     final startStr = chogadia['start']?.toString() ?? '';
     final endStr = chogadia['end']?.toString() ?? '';
-    
+
     return GestureDetector(
       onTap: () => _showChogadiaProperties(chogadia),
       child: Container(
@@ -369,7 +348,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
           borderRadius: BorderRadius.circular(8.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: AppColors.deepOrange,
               blurRadius: 4,
               offset: const Offset(0, 1),
             ),
@@ -383,7 +362,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
               child: AutoTranslateText(
                 muhurat,
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: "#68171E".toColor(),
                   fontSize: 15.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -396,7 +375,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
               child: AutoTranslateText(
                 controller.formatTime(startStr),
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#68171E".toColor().withValues(alpha: 0.7),
                   fontSize: 13.sp,
                 ),
               ),
@@ -408,7 +387,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
               child: AutoTranslateText(
                 controller.formatTime(endStr),
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#68171E".toColor().withValues(alpha: 0.7),
                   fontSize: 13.sp,
                 ),
               ),
@@ -422,7 +401,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
   void _showChogadiaProperties(Map<String, dynamic> chogadia) {
     final muhurat = chogadia['muhurat']?.toString() ?? '';
     final type = chogadia['type']?.toString() ?? '';
-    
+
     showDialog(
       context: Get.context!,
       builder: (context) => AlertDialog(
@@ -432,7 +411,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
         title: AutoTranslateText(
           'Chogadia Properties',
           style: MyTextTheme.largeBCB.copyWith(
-            color: "#6F221E".toColor(),
+            color: "#68171E".toColor(),
             fontSize: 20.sp,
             fontWeight: FontWeight.bold,
           ),
@@ -445,7 +424,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
               AutoTranslateText(
                 '$muhurat chogadia is $type',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: "#68171E".toColor(),
                   fontSize: 14.sp,
                 ),
               ),
@@ -453,14 +432,20 @@ class ChogadiaView extends BasePage<ChogadiaController> {
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: AutoTranslateText(
-              'OK',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: "#DFB343".toColor(),
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
+          Container(
+            decoration: BoxDecoration(
+              gradient: AppColors.orangeGradient,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: TextButton(
+              onPressed: () => Get.back(),
+              child: AutoTranslateText(
+                'OK',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -469,4 +454,3 @@ class ChogadiaView extends BasePage<ChogadiaController> {
     );
   }
 }
-

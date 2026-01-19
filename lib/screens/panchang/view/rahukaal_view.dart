@@ -1,10 +1,12 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/my_text_field.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/rahukaal_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,25 +18,32 @@ class RahukaalView extends BasePage<RahukaalController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildHeader(context),
-              _buildFormSection(),
-              Spacing.h(16),
-              // Daily Rahukaal
-              Obx(() => controller.dailyPanchang.value != null
-                  ? _buildDailyRahukaal()
-                  : const SizedBox.shrink()),
-              // Monthly Rahukaal list
-              Obx(() => controller.monthlyRahukaal.isNotEmpty
-                  ? _buildMonthlyRahukaal()
-                  : const SizedBox.shrink()),
-              Spacing.h(20),
-            ],
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildHeader(context),
+                _buildFormSection(),
+                Spacing.h(16),
+                // Daily Rahukaal
+                Obx(
+                  () => controller.dailyPanchang.value != null
+                      ? _buildDailyRahukaal()
+                      : const SizedBox.shrink(),
+                ),
+                // Monthly Rahukaal list
+                Obx(
+                  () => controller.monthlyRahukaal.isNotEmpty
+                      ? _buildMonthlyRahukaal()
+                      : const SizedBox.shrink(),
+                ),
+                Spacing.h(20),
+              ],
+            ),
           ),
         ),
       ),
@@ -42,135 +51,131 @@ class RahukaalView extends BasePage<RahukaalController> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: "#6F221E".toColor(),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
+    return CommonHeader(
+      title: 'Rahu Kaal',
+      subtitle: Padding(
+        padding: EdgeInsets.only(top: 4.h),
+        child: Column(
+          children: [
+            AutoTranslateText(
+              'Rahu Kaal & inauspicious timings for the selected date',
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: Colors.white.withValues(alpha: 0.9),
+                fontSize: 14.sp,
+              ),
+            ),
+            Spacing.h(8),
+            _buildLocationDateSelector(),
+          ],
         ),
       ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GestureDetector(
-                onTap: () => Get.back(),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: const Color(0xFFDFB343),
-                  size: 24.w,
+    );
+  }
+
+  Widget _buildLocationDateSelector() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () => _showLocationBottomSheet(),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: AppColors.templeGold, width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-              ),
-              Spacing.h(16),
-              AutoTranslateText(
-                "Rahu Kaal",
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: const Color(0xFFDFB343),
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Spacing.h(4),
-              AutoTranslateText(
-                'Rahu Kaal & inauspicious timings for the selected date',
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: const Color(0xFFDFB343),
-                  fontSize: 14.sp,
-                ),
-              ),
-              Spacing.h(20),
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => _showLocationBottomSheet(),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(
-                            color: const Color(0xFFDFB343),
-                            width: 1.5,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      color: AppColors.templeGold,
+                      size: 18.w,
+                    ),
+                    Spacing.w(8),
+                    Expanded(
+                      child: Obx(
+                        () => AutoTranslateText(
+                          controller.selectedLocation.value,
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: "#68171E".toColor(),
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
                           ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              color: const Color(0xFFDFB343),
-                              size: 18.w,
-                            ),
-                            Spacing.w(8),
-                            Expanded(
-                              child: Obx(() => AutoTranslateText(
-                                    controller.selectedLocation.value,
-                                    style: MyTextTheme.mediumBCB.copyWith(
-                                      color: const Color(0xFFDFB343),
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  )),
-                            ),
-                          ],
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
-                  ),
-                  Spacing.w(12),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => controller.selectDate(),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(
-                            color: const Color(0xFFDFB343),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.calendar_today,
-                              color: const Color(0xFFDFB343),
-                              size: 18.w,
-                            ),
-                            Spacing.w(8),
-                            Expanded(
-                              child: Obx(() => AutoTranslateText(
-                                    controller.selectedDate.value.day == DateTime.now().day &&
-                                            controller.selectedDate.value.month == DateTime.now().month &&
-                                            controller.selectedDate.value.year == DateTime.now().year
-                                        ? 'Today'
-                                        : DateFormat('dd MMM').format(controller.selectedDate.value),
-                                    style: MyTextTheme.mediumBCB.copyWith(
-                                      color: const Color(0xFFDFB343),
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  )),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
-        ),
+          Spacing.w(12),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => controller.selectDate(),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: AppColors.templeGold, width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      color: AppColors.templeGold,
+                      size: 18.w,
+                    ),
+                    Spacing.w(8),
+                    Expanded(
+                      child: Obx(
+                        () => AutoTranslateText(
+                          controller.selectedDate.value.day ==
+                                      DateTime.now().day &&
+                                  controller.selectedDate.value.month ==
+                                      DateTime.now().month &&
+                                  controller.selectedDate.value.year ==
+                                      DateTime.now().year
+                              ? 'Today'
+                              : DateFormat(
+                                  'dd MMM',
+                                ).format(controller.selectedDate.value),
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: "#68171E".toColor(),
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -184,7 +189,7 @@ class RahukaalView extends BasePage<RahukaalController> {
           AutoTranslateText(
             'Enter Details',
             style: MyTextTheme.largeBCB.copyWith(
-              color: "#6F221E".toColor(),
+              color: "#68171E".toColor(),
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -210,85 +215,37 @@ class RahukaalView extends BasePage<RahukaalController> {
                 initialTime: TimeOfDay.fromDateTime(now),
               );
               if (picked != null) {
-                final dateTime = DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
-                controller.timeController.text = DateFormat('HH:mm').format(dateTime);
+                final dateTime = DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                  picked.hour,
+                  picked.minute,
+                );
+                controller.timeController.text = DateFormat(
+                  'HH:mm',
+                ).format(dateTime);
               }
             },
           ),
           Spacing.h(12),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField(
-                  controller: controller.latitudeController,
-                  label: 'Latitude',
-                  icon: Icons.location_on,
-                ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: _buildTextField(
-                  controller: controller.longitudeController,
-                  label: 'Longitude',
-                  icon: Icons.location_on,
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(12),
-          Obx(() => SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: controller.isFetchingLocation.value ? null : controller.getCurrentLocation,
-                  icon: controller.isFetchingLocation.value
-                      ? SizedBox(
-                          width: 20.w,
-                          height: 20.w,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : Icon(Icons.my_location, size: 20.w),
-                  label: AutoTranslateText(
-                    controller.isFetchingLocation.value ? 'Getting Location...' : 'Get Current Location',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: Colors.white,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFDFB343),
-                    padding: EdgeInsets.symmetric(vertical: 14.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                  ),
-                ),
-              )),
-          Spacing.h(12),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField(
-                  controller: controller.timezoneController,
-                  label: 'Timezone',
-                  icon: Icons.access_time,
-                ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: _buildLanguageDropdown(),
-              ),
-            ],
-          ),
+          _buildLanguageDropdown(),
           Spacing.h(20),
-          Obx(() => SizedBox(
-                width: double.infinity,
+          Obx(
+            () => SizedBox(
+              width: double.infinity,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
                 child: ElevatedButton(
-                  onPressed: controller.isLoading.value ? null : controller.fetchRahukaalData,
+                  onPressed: controller.isLoading.value
+                      ? null
+                      : controller.fetchRahukaalData,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: "#6F221E".toColor(),
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
                     padding: EdgeInsets.symmetric(vertical: 16.h),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.r),
@@ -300,7 +257,9 @@ class RahukaalView extends BasePage<RahukaalController> {
                           height: 24.w,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         )
                       : AutoTranslateText(
@@ -312,7 +271,9 @@ class RahukaalView extends BasePage<RahukaalController> {
                           ),
                         ),
                 ),
-              )),
+              ),
+            ),
+          ),
           Spacing.h(20),
         ],
       ),
@@ -326,94 +287,87 @@ class RahukaalView extends BasePage<RahukaalController> {
     bool readOnly = false,
     VoidCallback? onTap,
   }) {
-    return TextField(
+    return MyTextField(
       controller: controller,
+      labelText: label,
+      prefixIcon: Icon(icon, color: "#68171E".toColor()),
       readOnly: readOnly,
       onTap: onTap,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon, color: "#6F221E".toColor()),
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: "#6F221E".toColor().withOpacity(0.3)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: "#6F221E".toColor().withOpacity(0.3)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: "#6F221E".toColor(), width: 2),
-        ),
-        labelStyle: MyTextTheme.smallBCN.copyWith(
-          color: "#6F221E".toColor().withOpacity(0.7),
-        ),
-      ),
-      style: MyTextTheme.mediumBCN.copyWith(
-        color: "#6F221E".toColor(),
-      ),
+      borderRadius: BorderRadius.circular(12.r),
     );
   }
 
   Widget _buildLanguageDropdown() {
-    return Obx(() => DropdownButtonFormField<String>(
-          value: controller.selectedLanguage.value,
-          decoration: InputDecoration(
-            labelText: 'Language',
-            labelStyle: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
-              fontSize: 14.sp,
-            ),
-            prefixIcon: Icon(
-              Icons.language,
-              color: "#6F221E".toColor().withOpacity(0.7),
-              size: 20.w,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: "#DFB343".toColor().withOpacity(0.5)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: "#DFB343".toColor().withOpacity(0.5)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: "#DFB343".toColor(), width: 2),
-            ),
-            filled: true,
-            fillColor: Colors.white.withOpacity(0.8),
-            contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
-          ),
-          items: controller.languages.entries
-              .map((entry) => DropdownMenuItem<String>(
-                    value: entry.key,
-                    child: AutoTranslateText(
-                      entry.value,
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: "#6F221E".toColor(),
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                  ))
-              .toList(),
-          onChanged: (val) {
-            if (val != null) controller.selectedLanguage.value = val;
-          },
-          icon: Icon(
-            Icons.keyboard_arrow_down,
-            color: "#6F221E".toColor(),
-            size: 24.w,
-          ),
-          dropdownColor: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
-          style: MyTextTheme.mediumBCN.copyWith(
-            color: "#6F221E".toColor(),
+    return Obx(
+      () => DropdownButtonFormField<String>(
+        value: controller.selectedLanguage.value,
+        decoration: InputDecoration(
+          labelText: 'Language',
+          labelStyle: MyTextTheme.smallBCN.copyWith(
+            color: "#68171E".toColor().withValues(alpha: 0.7),
             fontSize: 14.sp,
           ),
-        ));
+          prefixIcon: Icon(
+            Icons.language,
+            color: "#68171E".toColor().withValues(alpha: 0.7),
+            size: 20.w,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: AppColors.gray.withValues(alpha: 0.5),
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: AppColors.gray.withValues(alpha: 0.5),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: AppColors.gray.withValues(alpha: 0.5),
+              width: 2,
+            ),
+          ),
+          filled: true,
+          fillColor: Colors.white.withValues(alpha: 0.8),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 12.w,
+            vertical: 16.h,
+          ),
+        ),
+        items: controller.languages.entries
+            .map(
+              (entry) => DropdownMenuItem<String>(
+                value: entry.key,
+                child: AutoTranslateText(
+                  entry.value,
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    color: "#68171E".toColor(),
+                    fontSize: 14.sp,
+                  ),
+                ),
+              ),
+            )
+            .toList(),
+        onChanged: (val) {
+          if (val != null) controller.selectedLanguage.value = val;
+        },
+        icon: Icon(
+          Icons.keyboard_arrow_down,
+          color: "#68171E".toColor(),
+          size: 24.w,
+        ),
+        dropdownColor: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        style: MyTextTheme.mediumBCN.copyWith(
+          color: "#68171E".toColor(),
+          fontSize: 14.sp,
+        ),
+      ),
+    );
   }
 
   Widget _buildDailyRahukaal() {
@@ -427,10 +381,17 @@ class RahukaalView extends BasePage<RahukaalController> {
     final dayName = data['day']?['name']?.toString() ?? '';
     final advanced = data['advanced_details'] as Map<String, dynamic>?;
     final disha = advanced?['disha_shool']?.toString() ?? '';
-    final sunrise = advanced?['sun_rise']?.toString() ?? advanced?['sunrise']?.toString() ?? '';
-    final sunset = advanced?['sun_set']?.toString() ?? advanced?['sunset']?.toString() ?? '';
+    final sunrise =
+        advanced?['sun_rise']?.toString() ??
+        advanced?['sunrise']?.toString() ??
+        '';
+    final sunset =
+        advanced?['sun_set']?.toString() ??
+        advanced?['sunset']?.toString() ??
+        '';
 
-    String _safe(String v) => (v.isEmpty || v.contains('NaN')) ? 'Not Available' : v;
+    String _safe(String v) =>
+        (v.isEmpty || v.contains('NaN')) ? 'Not Available' : v;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -440,7 +401,7 @@ class RahukaalView extends BasePage<RahukaalController> {
           AutoTranslateText(
             "Today's Rahukaal",
             style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
+              color: "#68171E".toColor(),
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -453,7 +414,7 @@ class RahukaalView extends BasePage<RahukaalController> {
               borderRadius: BorderRadius.circular(14.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
+                  color: AppColors.deepOrange,
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -465,12 +426,16 @@ class RahukaalView extends BasePage<RahukaalController> {
                 if (dayName.isNotEmpty)
                   Row(
                     children: [
-                      Icon(Icons.today, size: 18.w, color: "#DFB343".toColor()),
+                      Icon(
+                        Icons.today,
+                        size: 18.w,
+                        color: AppColors.templeGold,
+                      ),
                       Spacing.w(8),
                       AutoTranslateText(
                         dayName,
                         style: MyTextTheme.mediumBCB.copyWith(
-                          color: "#6F221E".toColor(),
+                          color: "#68171E".toColor(),
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
                         ),
@@ -484,7 +449,11 @@ class RahukaalView extends BasePage<RahukaalController> {
                 Spacing.h(8),
                 _timingRow('Yamakanta', _safe(yama), Colors.orange),
                 Spacing.h(8),
-                _timingRow('Bhadrakaal', bhadra.isEmpty ? 'Not Available' : bhadra, Colors.brown),
+                _timingRow(
+                  'Bhadrakaal',
+                  bhadra.isEmpty ? 'Not Available' : bhadra,
+                  Colors.brown,
+                ),
                 if (disha.isNotEmpty) ...[
                   Spacing.h(12),
                   _timingRow('Disha Shool', disha, Colors.blueGrey),
@@ -493,9 +462,21 @@ class RahukaalView extends BasePage<RahukaalController> {
                   Spacing.h(12),
                   Row(
                     children: [
-                      Expanded(child: _timingRow('Sunrise', _safe(sunrise), Colors.green)),
+                      Expanded(
+                        child: _timingRow(
+                          'Sunrise',
+                          _safe(sunrise),
+                          Colors.green,
+                        ),
+                      ),
                       Spacing.w(8),
-                      Expanded(child: _timingRow('Sunset', _safe(sunset), Colors.indigo)),
+                      Expanded(
+                        child: _timingRow(
+                          'Sunset',
+                          _safe(sunset),
+                          Colors.indigo,
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -516,10 +497,7 @@ class RahukaalView extends BasePage<RahukaalController> {
           width: 8.w,
           height: 8.w,
           margin: EdgeInsets.only(top: 6.h),
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         Spacing.w(8),
         Expanded(
@@ -529,7 +507,7 @@ class RahukaalView extends BasePage<RahukaalController> {
               AutoTranslateText(
                 label,
                 style: MyTextTheme.smallBCB.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#68171E".toColor().withValues(alpha: 0.7),
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
                 ),
@@ -538,7 +516,7 @@ class RahukaalView extends BasePage<RahukaalController> {
               AutoTranslateText(
                 value,
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: "#68171E".toColor(),
                   fontSize: 13.sp,
                 ),
               ),
@@ -561,7 +539,7 @@ class RahukaalView extends BasePage<RahukaalController> {
           AutoTranslateText(
             'Monthly Rahukaal',
             style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
+              color: "#68171E".toColor(),
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -581,7 +559,8 @@ class RahukaalView extends BasePage<RahukaalController> {
     final yama = item['yamakanta']?.toString() ?? '';
     final bhadra = item['bhadrakaal']?.toString() ?? '';
 
-    String _safe(String v) => (v.isEmpty || v.contains('NaN')) ? 'Not Available' : v;
+    String _safe(String v) =>
+        (v.isEmpty || v.contains('NaN')) ? 'Not Available' : v;
 
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
@@ -591,25 +570,25 @@ class RahukaalView extends BasePage<RahukaalController> {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: AppColors.deepOrange,
+            blurRadius: 4,
+            offset: const Offset(0, 1),
           ),
         ],
-        border: Border.all(color: "#DFB343".toColor().withOpacity(0.3)),
+        border: Border.all(color: AppColors.templeGold.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.event, size: 18.w, color: "#DFB343".toColor()),
+              Icon(Icons.event, size: 18.w, color: AppColors.templeGold),
               Spacing.w(8),
               Expanded(
                 child: AutoTranslateText(
                   date,
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: "#6F221E".toColor(),
+                    color: "#68171E".toColor(),
                     fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -617,15 +596,18 @@ class RahukaalView extends BasePage<RahukaalController> {
               ),
               if (day.isNotEmpty)
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
+                  ),
                   decoration: BoxDecoration(
-                    color: "#DFB343".toColor().withOpacity(0.15),
+                    color: AppColors.templeGold.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: AutoTranslateText(
                     day,
                     style: MyTextTheme.smallBCB.copyWith(
-                      color: "#6F221E".toColor(),
+                      color: "#68171E".toColor(),
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w600,
                     ),
@@ -660,9 +642,10 @@ class RahukaalView extends BasePage<RahukaalController> {
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
-            Get.back();
-          },
+          onCitySelected:
+              (city, state, country, [latitude, longitude, timezone]) {
+                Get.back();
+              },
           selectedCity: controller.selectedLocation.value,
           onUseCurrentLocation: () => controller.getCurrentLocation(),
         ),
@@ -672,10 +655,3 @@ class RahukaalView extends BasePage<RahukaalController> {
     );
   }
 }
-
-
-
-
-
-
-

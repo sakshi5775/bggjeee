@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/jain_calendar_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,105 +16,76 @@ class JainCalendarView extends BasePage<JainCalendarController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(),
-            
-            // Tabs Section
-            _buildTabsSection(),
-            
-            // Content
-            Expanded(
-              child: Obx(() => _buildTabContent()),
-            ),
-          ],
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              _buildHeader(),
+
+              // Content
+              Expanded(child: Obx(() => _buildTabContent())),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildHeader() {
-    return Container(
-      decoration: BoxDecoration(
-        color: "#6F221E".toColor(),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
-        ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Row(
-          children: [
-            // Back button
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: Icon(
-                Icons.arrow_back,
-                color: const Color(0xFFDFB343),
-                size: 24.w,
-              ),
-            ),
-            Spacing.w(16),
-            // Title
-            Expanded(
-              child: AutoTranslateText(
-                'Jain Calendar',
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: const Color(0xFFDFB343),
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return CommonHeader(title: 'Jain Calendar', subtitle: _buildTabsSection());
   }
 
   Widget _buildTabsSection() {
     return Container(
-      color: Colors.white,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Obx(() => Row(
-        children: controller.tabs.map((tab) {
-          final tabId = tab['id'] as String;
-          final title = tab['title'] as String;
-          final isSelected = controller.selectedTab.value == tabId;
-          
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => controller.selectTab(tabId),
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 4.w),
-                padding: EdgeInsets.symmetric(vertical: 10.h),
-                decoration: BoxDecoration(
-                  color: isSelected 
-                      ? "#DFB343".toColor() 
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: AutoTranslateText(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: isSelected 
-                        ? Colors.white 
-                        : "#6F221E".toColor(),
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.deepOrange,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Obx(
+        () => Row(
+          children: controller.tabs.map((tab) {
+            final tabId = tab['id'] as String;
+            final title = tab['title'] as String;
+            final isSelected = controller.selectedTab.value == tabId;
+
+            return Expanded(
+              child: GestureDetector(
+                onTap: () => controller.selectTab(tabId),
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 4.w),
+                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                  decoration: BoxDecoration(
+                    gradient: isSelected ? AppColors.orangeGradient : null,
+                    color: isSelected ? null : Colors.transparent,
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: AutoTranslateText(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: isSelected ? Colors.white : "#68171E".toColor(),
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
-        }).toList(),
-      )),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 
@@ -129,9 +101,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
     return Obx(() {
       if (controller.isLoadingNavkarshi.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#DFB343".toColor(),
-          ),
+          child: CircularProgressIndicator(color: AppColors.templeGold),
         );
       }
 
@@ -141,7 +111,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: "#68171E".toColor().withValues(alpha: 0.7),
             ),
           ),
         );
@@ -161,7 +131,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -171,7 +141,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
                   children: [
                     Icon(
                       Icons.location_on,
-                      color: "#DFB343".toColor(),
+                      color: AppColors.templeGold,
                       size: 20.w,
                     ),
                     Spacing.w(8),
@@ -179,16 +149,18 @@ class JainCalendarView extends BasePage<JainCalendarController> {
                       child: AutoTranslateText(
                         controller.selectedLocation.value,
                         style: MyTextTheme.mediumBCB.copyWith(
-                          color: "#6F221E".toColor(),
+                          color: "#68171E".toColor(),
                           fontSize: 14.sp,
                         ),
                       ),
                     ),
                     Spacing.w(8),
                     AutoTranslateText(
-                      DateFormat('dd MMM yyyy').format(controller.selectedDate.value),
+                      DateFormat(
+                        'dd MMM yyyy',
+                      ).format(controller.selectedDate.value),
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: "#6F221E".toColor().withOpacity(0.7),
+                        color: "#68171E".toColor().withValues(alpha: 0.7),
                         fontSize: 12.sp,
                       ),
                     ),
@@ -200,7 +172,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
               AutoTranslateText(
                 'Navkarshi Timings',
                 style: MyTextTheme.largeBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: "#68171E".toColor(),
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -238,12 +210,12 @@ class JainCalendarView extends BasePage<JainCalendarController> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: "#DFB343".toColor().withOpacity(0.3),
+          color: AppColors.templeGold.withValues(alpha: 0.3),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -257,7 +229,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
           AutoTranslateText(
             label,
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: "#68171E".toColor().withValues(alpha: 0.7),
               fontSize: 10.sp,
             ),
             maxLines: 1,
@@ -268,7 +240,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
             child: AutoTranslateText(
               time,
               style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
+                color: "#68171E".toColor(),
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -293,7 +265,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
               AutoTranslateText(
                 'Select Section',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: "#68171E".toColor(),
                   fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -301,9 +273,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
               Spacing.h(12),
               Row(
                 children: [
-                  Expanded(
-                    child: _buildSectionButton('Digambar', 'digambar'),
-                  ),
+                  Expanded(child: _buildSectionButton('Digambar', 'digambar')),
                   Spacing.w(12),
                   Expanded(
                     child: _buildSectionButton('Shvetambar', 'shvetambar'),
@@ -312,13 +282,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
               ),
               Spacing.h(20),
               // Month and Year Selector
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildMonthYearSelector(),
-                  ),
-                ],
-              ),
+              Row(children: [Expanded(child: _buildMonthYearSelector())]),
               Spacing.h(20),
               // Kalyanak Events List
               if (controller.isLoadingKalyanak.value)
@@ -326,7 +290,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
                   child: Padding(
                     padding: EdgeInsets.all(40.h),
                     child: CircularProgressIndicator(
-                      color: "#DFB343".toColor(),
+                      color: AppColors.templeGold,
                     ),
                   ),
                 )
@@ -337,13 +301,15 @@ class JainCalendarView extends BasePage<JainCalendarController> {
                     child: AutoTranslateText(
                       'No Kalyanak events found for this month',
                       style: MyTextTheme.mediumBCN.copyWith(
-                        color: "#6F221E".toColor().withOpacity(0.7),
+                        color: "#68171E".toColor().withValues(alpha: 0.7),
                       ),
                     ),
                   ),
                 )
               else
-                ...controller.kalyanakData.map((event) => _buildKalyanakCard(event)),
+                ...controller.kalyanakData.map(
+                  (event) => _buildKalyanakCard(event),
+                ),
             ],
           ),
         ),
@@ -359,19 +325,18 @@ class JainCalendarView extends BasePage<JainCalendarController> {
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 12.h),
           decoration: BoxDecoration(
-            color: isSelected 
-                ? "#DFB343".toColor() 
-                : Colors.white,
+            gradient: isSelected ? AppColors.orangeGradient : null,
+            color: isSelected ? null : Colors.white,
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
-              color: isSelected 
-                  ? "#DFB343".toColor() 
-                  : "#DFB343".toColor().withOpacity(0.3),
+              color: isSelected
+                  ? Colors.transparent
+                  : AppColors.templeGold.withValues(alpha: 0.3),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -381,9 +346,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
             title,
             textAlign: TextAlign.center,
             style: MyTextTheme.mediumBCB.copyWith(
-              color: isSelected 
-                  ? Colors.white 
-                  : "#6F221E".toColor(),
+              color: isSelected ? Colors.white : "#68171E".toColor(),
               fontSize: 14.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -394,52 +357,64 @@ class JainCalendarView extends BasePage<JainCalendarController> {
   }
 
   Widget _buildMonthYearSelector() {
-    return Obx(() => Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          GestureDetector(
-            onTap: () => _showMonthYearPicker(),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.calendar_month,
-                  color: "#DFB343".toColor(),
-                  size: 20.w,
-                ),
-                Spacing.w(8),
-                AutoTranslateText(
-                  '${_getMonthName(controller.selectedMonth.value)} ${controller.selectedYear.value}',
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: "#6F221E".toColor(),
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+    return Obx(
+      () => Container(
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
-          ),
-        ],
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(
+              onTap: () => _showMonthYearPicker(),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.calendar_month,
+                    color: AppColors.templeGold,
+                    size: 20.w,
+                  ),
+                  Spacing.w(8),
+                  AutoTranslateText(
+                    '${_getMonthName(controller.selectedMonth.value)} ${controller.selectedYear.value}',
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: "#68171E".toColor(),
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   String _getMonthName(int month) {
     final months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return months[month - 1];
   }
@@ -454,7 +429,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
         title: AutoTranslateText(
           'Select Month & Year',
           style: MyTextTheme.largeBCB.copyWith(
-            color: "#6F221E".toColor(),
+            color: "#68171E".toColor(),
             fontSize: 20.sp,
             fontWeight: FontWeight.bold,
           ),
@@ -468,7 +443,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
               AutoTranslateText(
                 'Year',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: "#68171E".toColor(),
                 ),
               ),
               Spacing.h(8),
@@ -488,7 +463,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
               AutoTranslateText(
                 'Month',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: "#68171E".toColor(),
                 ),
               ),
               Spacing.h(8),
@@ -508,23 +483,22 @@ class JainCalendarView extends BasePage<JainCalendarController> {
                       margin: EdgeInsets.all(4.w),
                       padding: EdgeInsets.all(8.w),
                       decoration: BoxDecoration(
-                        color: isSelected 
-                            ? "#DFB343".toColor() 
-                            : Colors.white,
+                        gradient: isSelected ? AppColors.orangeGradient : null,
+                        color: isSelected ? null : Colors.white,
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                          color: isSelected 
-                              ? "#DFB343".toColor() 
-                              : "#DFB343".toColor().withOpacity(0.3),
+                          color: isSelected
+                              ? Colors.transparent
+                              : AppColors.templeGold.withValues(alpha: 0.3),
                         ),
                       ),
                       child: AutoTranslateText(
                         _getMonthName(month).substring(0, 3),
                         textAlign: TextAlign.center,
                         style: MyTextTheme.smallBCB.copyWith(
-                          color: isSelected 
-                              ? Colors.white 
-                              : "#6F221E".toColor(),
+                          color: isSelected
+                              ? Colors.white
+                              : "#68171E".toColor(),
                           fontSize: 12.sp,
                         ),
                       ),
@@ -548,7 +522,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -563,13 +537,13 @@ class JainCalendarView extends BasePage<JainCalendarController> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: "#DFB343".toColor().withOpacity(0.2),
+                  gradient: AppColors.orangeGradient,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: AutoTranslateText(
                   event['date'] ?? '--',
                   style: MyTextTheme.smallBCB.copyWith(
-                    color: "#6F221E".toColor(),
+                    color: Colors.white,
                     fontSize: 12.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -583,7 +557,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
             AutoTranslateText(
               'Tithi: ${event['tithi']}',
               style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#68171E".toColor().withValues(alpha: 0.7),
                 fontSize: 12.sp,
               ),
             ),
@@ -592,7 +566,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
           AutoTranslateText(
             event['tirthankar'] ?? '--',
             style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
+              color: "#68171E".toColor(),
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -602,7 +576,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
           AutoTranslateText(
             event['kalyanak'] ?? '--',
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#DFB343".toColor(),
+              color: AppColors.templeGold,
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,
             ),
