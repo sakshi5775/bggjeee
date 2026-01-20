@@ -143,6 +143,7 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
                           // Compatibility Report with injected Kundli charts
                           CompatibilityReportWidget(
                             data: response,
+                            formData: _formData,
                             showProfile: _activeTab == 'North Match' || _activeTab == 'South Match',
                             showGunMilan: _activeTab == 'North Match', // 36 Gun only for North
                             matchScoreTotalOverride: _resolveTotal(response),

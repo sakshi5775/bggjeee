@@ -17,6 +17,9 @@ class EndPoints {
   static const String popularTags = 'blogs/api/tags/popular';
   static String tagBySlug(String slug) => 'blogs/api/tags/$slug';
 
+  /// pujas
+  static const String pujas = 'pujas';
+
   /// ecommerce
   // Category endpoints
   static const String ecommerceCategories = 'ecommerce/api/categories';

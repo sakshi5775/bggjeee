@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 
 class CompatibilityReportWidget extends StatelessWidget {
   final Map<String, dynamic> data;
+  final Map<String, dynamic>? formData;
   final bool showProfile;
   final bool showMatchScore;
   final Widget? kundliSection;
@@ -22,6 +23,7 @@ class CompatibilityReportWidget extends StatelessWidget {
   const CompatibilityReportWidget({
     super.key,
     required this.data,
+    this.formData,
     this.showProfile = true,
     this.showMatchScore = true,
     this.kundliSection,
@@ -150,24 +152,38 @@ class CompatibilityReportWidget extends StatelessWidget {
         response['boy_planetary_details'] as Map<String, dynamic>?;
     final girlPlanetaryDetails =
         response['girl_planetary_details'] as Map<String, dynamic>?;
-    // Extract data from API response - no static fallbacks
+    
+    // Extract Rashi from bhakoot section (most accurate source)
+    final bhakoot = response['bhakoot'] as Map<String, dynamic>?;
+    final boyRasiFromBhakoot = bhakoot?['boy_rasi_name'] as String? ?? '';
+    final girlRasiFromBhakoot = bhakoot?['girl_rasi_name'] as String? ?? '';
+    
+    // Extract data from API response - prefer formData DOB if available
     final boyName = boyDetails?['name'] as String? ?? '';
-    final boyDob =
+    // Use formData DOB first, then fallback to API response
+    final boyDob = formData?['boyDob'] as String? ??
         boyDetails?['dob'] as String? ??
         boyDetails?['birth_dasa_time'] as String? ??
         '';
-    final boyRasi = boyDetails?['rasi'] as String? ?? '';
+    // Prefer Rashi from bhakoot, then from astro details
+    final boyRasi = boyRasiFromBhakoot.isNotEmpty 
+        ? boyRasiFromBhakoot 
+        : (boyDetails?['rasi'] as String? ?? '');
     final boyAscendant =
         boyDetails?['ascendant_sign'] as String? ??
         boyDetails?['ascendant'] as String? ??
         '';
 
     final girlName = girlDetails?['name'] as String? ?? '';
-    final girlDob =
+    // Use formData DOB first, then fallback to API response
+    final girlDob = formData?['girlDob'] as String? ??
         girlDetails?['dob'] as String? ??
         girlDetails?['birth_dasa_time'] as String? ??
         '';
-    final girlRasi = girlDetails?['rasi'] as String? ?? '';
+    // Prefer Rashi from bhakoot, then from astro details
+    final girlRasi = girlRasiFromBhakoot.isNotEmpty 
+        ? girlRasiFromBhakoot 
+        : (girlDetails?['rasi'] as String? ?? '');
     final girlAscendant =
         girlDetails?['ascendant_sign'] as String? ??
         girlDetails?['ascendant'] as String? ??

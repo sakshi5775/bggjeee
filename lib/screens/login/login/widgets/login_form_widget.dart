@@ -1,7 +1,8 @@
-import 'package:astrobharataiuser/app_manager/myButton.dart';
 import 'package:astrobharataiuser/app_manager/my_text_field.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/widgets/phone_field_with_country_code.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/core/services/guest_session_manager.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/login/login/controller/login_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -224,8 +225,42 @@ class LoginFormWidget extends StatelessWidget {
           ),
           Spacing.h(20),
 
+          // Signup Text
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AutoTranslateText(
+                "Already haven't account? ",
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: AppColors.gray,
+                  fontSize: 14,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Get.toNamed(AppRoutes.signup);
+                },
+                child: AutoTranslateText(
+                  'Signup',
+                  style: MyTextTheme.smallBCB.copyWith(
+                    color: AppColors.deepOrangemix,
+                    fontSize: 14,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Spacing.h(12),
+
           TextButton(
-            onPressed: () {},
+            onPressed: () async {
+              // Enable guest mode
+              await GuestSessionManager.enableGuestMode();
+              
+              // Navigate to user dashboard
+              Get.offAllNamed(AppRoutes.userDashboard);
+            },
             child: Text(
               'Continue as a Guest',
               style: MyTextTheme.smallBCB.copyWith(

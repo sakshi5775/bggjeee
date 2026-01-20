@@ -114,7 +114,7 @@ class ApiClient extends GetConnect
     if (!useAuthHeader) return;
     final token = UserData().accessToken;
     if (token != null && token.isNotEmpty) return;
-    await LoginGuard.showLoginRequiredDialog(
+    await LoginGuard.showLoginRequiredModal(
       message: 'Please login to continue.',
     );
     throw FetchDataException(

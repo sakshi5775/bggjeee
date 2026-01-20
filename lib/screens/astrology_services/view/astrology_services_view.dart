@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/screens/astrology_services/widgets/astrology_h
 import 'package:astrobharataiuser/screens/astrology_services/widgets/remedies_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
+import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -1073,26 +1074,53 @@ class AstrologyServicesView extends StatelessWidget {
     final image = astrologer['image'] as String?;
 
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         if (streamId != null) {
           // Get the stream from controller
           final controller = Get.find<AstrologyServicesController>();
-          LiveStreamModel? stream;
-          try {
-            stream = controller.liveStreams.firstWhere(
-              (s) => s.streamId == streamId,
-            );
-          } catch (e) {
-            // Stream not found
-          }
-          if (stream != null) {
-            Get.to(
-              () => LiveStreamView(
-                stream: stream!,
-                astrologerName: astrologerName,
-                astrologerProfilePicture: image,
-              ),
-            );
+          // Check if user is logged in before accessing live stream
+          final isLoggedIn = await LoginGuard.ensureLoggedIn(
+            message: 'Please login to watch live streams.',
+            onLoginSuccess: () async {
+              // Navigate to live stream after successful login
+              LiveStreamModel? stream;
+              try {
+                stream = controller.liveStreams.firstWhere(
+                  (s) => s.streamId == streamId,
+                );
+              } catch (e) {
+                // Stream not found
+              }
+              if (stream != null) {
+                Get.to(
+                  () => LiveStreamView(
+                    stream: stream!,
+                    astrologerName: astrologerName,
+                    astrologerProfilePicture: image,
+                  ),
+                );
+              }
+            },
+          );
+          
+          if (isLoggedIn) {
+            LiveStreamModel? stream;
+            try {
+              stream = controller.liveStreams.firstWhere(
+                (s) => s.streamId == streamId,
+              );
+            } catch (e) {
+              // Stream not found
+            }
+            if (stream != null) {
+              Get.to(
+                () => LiveStreamView(
+                  stream: stream!,
+                  astrologerName: astrologerName,
+                  astrologerProfilePicture: image,
+                ),
+              );
+            }
           }
         }
       },
