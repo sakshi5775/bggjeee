@@ -342,17 +342,29 @@ class EcommerceHomeController extends BaseController {
     try {
       isLoadingPurposes.value = true;
       final purposeList = await _ecommerceService.getPurposes();
-      
+
+      // Filter to only include the 5 allowed purposes
+      final allowedPurposes = [
+        'Money',
+        'Love',
+        'Health',
+        'Rashi',
+        'Protection',
+      ];
+      final filteredPurposeList = purposeList
+          .where((p) => allowedPurposes.contains(p))
+          .toList();
+
       // Map purposes to the format expected by the widget
       // Each purpose needs: title and image
       // For now, we'll use placeholder images or try to get images from products
-      final purposesList = purposeList.map((purpose) {
+      final purposesList = filteredPurposeList.map((purpose) {
         return {
           'title': purpose,
           'image': '', // Will be set from products or use default
         };
       }).toList();
-      
+
       // Try to get images for each purpose by fetching a sample product
       for (var purposeMap in purposesList) {
         try {
@@ -362,7 +374,7 @@ class EcommerceHomeController extends BaseController {
             limit: 1,
             purpose: purposeName,
           );
-          
+
           if (productData?.items != null && productData!.items!.isNotEmpty) {
             final product = productData.items!.first;
             if (product.images != null && product.images!.isNotEmpty) {
@@ -373,7 +385,7 @@ class EcommerceHomeController extends BaseController {
           print('Error loading image for purpose ${purposeMap['title']}: $e');
         }
       }
-      
+
       purposes.value = purposesList;
     } catch (e) {
       print('Error loading purposes: $e');
@@ -381,9 +393,9 @@ class EcommerceHomeController extends BaseController {
       purposes.value = [
         {'title': 'Money', 'image': ''},
         {'title': 'Love', 'image': ''},
-        {'title': 'Career', 'image': ''},
-        {'title': 'Evil Eye', 'image': ''},
         {'title': 'Health', 'image': ''},
+        {'title': 'Rashi', 'image': ''},
+        {'title': 'Protection', 'image': ''},
       ];
     } finally {
       isLoadingPurposes.value = false;

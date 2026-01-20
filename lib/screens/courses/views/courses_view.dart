@@ -13,7 +13,7 @@ import 'package:get/get.dart';
 
 class CoursesView extends BasePage<CoursesController> {
   final bool showBackButton;
-  
+
   const CoursesView({super.key, this.showBackButton = true});
 
   @override
@@ -73,9 +73,7 @@ class CoursesView extends BasePage<CoursesController> {
 
   Widget _buildHeader() {
     return Container(
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-      ),
+      decoration: BoxDecoration(gradient: AppColors.primaryGradient),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Row(
         children: [
@@ -372,16 +370,16 @@ class CoursesView extends BasePage<CoursesController> {
               ),
             ),
           ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Obx(
-              () => _buildStatCard(
-                icon: Icons.menu_book,
-                value: '${controller.eBooksCount.value}',
-                label: 'E-Books',
-              ),
-            ),
-          ),
+          // SizedBox(width: 12.w),
+          // Expanded(
+          //   child: Obx(
+          //     () => _buildStatCard(
+          //       icon: Icons.menu_book,
+          //       value: '${controller.eBooksCount.value}',
+          //       label: 'E-Books',
+          //     ),
+          //   ),
+          // ),
           SizedBox(width: 12.w),
           Expanded(
             child: Obx(
@@ -445,8 +443,8 @@ class CoursesView extends BasePage<CoursesController> {
             _buildTabButton('Courses', 1),
             SizedBox(width: 12.w),
             _buildTabButton('Webinars', 3), // Live Webinars
-            SizedBox(width: 12.w),
-            _buildTabButton('E-Books', 2),
+            // SizedBox(width: 12.w),
+            // _buildTabButton('E-Books', 2),
           ],
         ),
       ),
@@ -503,10 +501,10 @@ class CoursesView extends BasePage<CoursesController> {
           padding: EdgeInsets.all(32.w),
           child: Center(
             child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(
-              AppColors.primaryGradient.colors.first,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                AppColors.primaryGradient.colors.first,
+              ),
             ),
-          ),
           ),
         );
       }
@@ -521,7 +519,9 @@ class CoursesView extends BasePage<CoursesController> {
                 Icon(
                   Icons.school_outlined,
                   size: 64.w,
-                  color: AppColors.primaryGradient.colors.first.withOpacity(0.5),
+                  color: AppColors.primaryGradient.colors.first.withOpacity(
+                    0.5,
+                  ),
                 ),
                 SizedBox(height: 16.h),
                 AutoTranslateText(

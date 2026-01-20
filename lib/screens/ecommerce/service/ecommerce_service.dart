@@ -33,7 +33,9 @@ class EcommerceService with ApiHelperMixin {
       cartModel = CartModel.fromJson(data['cart'] as Map<String, dynamic>);
     }
     if (data['wishlist'] != null && data['wishlist'] is Map<String, dynamic>) {
-      wishlistModel = WishlistModel.fromJson(data['wishlist'] as Map<String, dynamic>);
+      wishlistModel = WishlistModel.fromJson(
+        data['wishlist'] as Map<String, dynamic>,
+      );
     }
     return CartAndWishlistResponse(cart: cartModel, wishlist: wishlistModel);
   }
@@ -97,7 +99,10 @@ class EcommerceService with ApiHelperMixin {
             final List<dynamic> data = response.body['data'];
             return data
                 .where((item) => item is Map<String, dynamic>)
-                .map((item) => CategoryModel.fromJson(item as Map<String, dynamic>))
+                .map(
+                  (item) =>
+                      CategoryModel.fromJson(item as Map<String, dynamic>),
+                )
                 .toList();
           }
           return [];
@@ -244,7 +249,7 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true) {
         final productResponse = ProductResponse.fromJson(response.body);
         final products = productResponse.data?.items ?? [];
-        
+
         // Extract unique purposes from products
         final Set<String> purposesSet = {};
         for (var product in products) {
@@ -256,22 +261,31 @@ class EcommerceService with ApiHelperMixin {
             // We'll check the raw JSON for purpose
           }
         }
-        
+
         // If we can't extract from products, return common purposes
         // This is a fallback - ideally the API should provide a purposes endpoint
         if (purposesSet.isEmpty) {
-          return ['Money', 'Love', 'Health', 'Career', 'Protection', 'Rashi', 'Evil Eye', 'Marriage', 'Education', 'Spiritual'];
+          return ['Money', 'Love', 'Health', 'Rashi', 'Protection'];
         }
-        
-        return purposesSet.toList()..sort();
+
+        // Filter to only include the 5 allowed purposes
+        final allowedPurposes = [
+          'Money',
+          'Love',
+          'Health',
+          'Rashi',
+          'Protection',
+        ];
+        return purposesSet.where((p) => allowedPurposes.contains(p)).toList()
+          ..sort();
       }
-      
+
       // Fallback to common purposes
-      return ['Money', 'Love', 'Health',  'Career', 'Protection', 'Rashi', 'Evil Eye',  'Marriage', 'Education', 'Spiritual'];
+      return ['Money', 'Love', 'Health', 'Rashi', 'Protection'];
     } catch (e) {
       print('Error fetching purposes: $e');
       // Return fallback purposes
-      return ['Money', 'Love',  'Health', 'Career', 'Protection', 'Rashi', 'Evil Eye',  'Marriage', 'Education', 'Spiritual'];
+      return ['Money', 'Love', 'Health', 'Rashi', 'Protection'];
     }
   }
 
@@ -383,7 +397,9 @@ class EcommerceService with ApiHelperMixin {
       }
       showErrorMessage(
         title: "Error",
-        message: response.body['message']?.toString() ?? 'Failed to fetch recommendations',
+        message:
+            response.body['message']?.toString() ??
+            'Failed to fetch recommendations',
       );
     } catch (e) {
       showErrorMessage(title: "Error", message: e.toString());
@@ -391,7 +407,9 @@ class EcommerceService with ApiHelperMixin {
     return [];
   }
 
-  Future<List<ProductModel>> getPersonalizedRecommendations({int limit = 10}) async {
+  Future<List<ProductModel>> getPersonalizedRecommendations({
+    int limit = 10,
+  }) async {
     try {
       final response = await _apiRepository.getApi(
         EndPoints.ecommerceRecommendationsPersonalized,
@@ -410,7 +428,9 @@ class EcommerceService with ApiHelperMixin {
       }
       showErrorMessage(
         title: "Error",
-        message: response.body['message']?.toString() ?? 'Failed to fetch personalized recommendations',
+        message:
+            response.body['message']?.toString() ??
+            'Failed to fetch personalized recommendations',
       );
     } catch (e) {
       showErrorMessage(title: "Error", message: e.toString());
@@ -437,7 +457,9 @@ class EcommerceService with ApiHelperMixin {
       }
       showErrorMessage(
         title: "Error",
-        message: response.body['message']?.toString() ?? 'Failed to fetch recently viewed products',
+        message:
+            response.body['message']?.toString() ??
+            'Failed to fetch recently viewed products',
       );
     } catch (e) {
       showErrorMessage(title: "Error", message: e.toString());
@@ -467,7 +489,8 @@ class EcommerceService with ApiHelperMixin {
       }
       showErrorMessage(
         title: "Error",
-        message: response.body['message']?.toString() ??
+        message:
+            response.body['message']?.toString() ??
             'Failed to fetch frequently bought together products',
       );
     } catch (e) {
@@ -479,9 +502,7 @@ class EcommerceService with ApiHelperMixin {
   // Get featured products
   Future<List<ProductModel>?> getFeaturedProducts({int limit = 10}) async {
     try {
-      final queryParams = <String, String>{
-        'limit': limit.toString(),
-      };
+      final queryParams = <String, String>{'limit': limit.toString()};
 
       final response = await _apiRepository.getApi(
         EndPoints.ecommerceProductsFeatured,
@@ -496,26 +517,26 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true) {
         try {
           final dynamic dataField = response.body['data'];
-          
+
           // Check if data is a List
           if (dataField == null) {
             print('Data is null');
             return [];
           }
-          
+
           if (dataField is! List) {
             print('Data is not a List, it is: ${dataField.runtimeType}');
             return [];
           }
-          
+
           final List<dynamic> data = dataField;
           print('Data is a List with ${data.length} items');
-          
+
           final List<ProductModel> products = [];
           for (int i = 0; i < data.length; i++) {
             final item = data[i];
             print('Processing item $i, type: ${item.runtimeType}');
-            
+
             if (item is Map<String, dynamic>) {
               try {
                 products.add(ProductModel.fromJson(item));
@@ -526,11 +547,15 @@ class EcommerceService with ApiHelperMixin {
                 print('Product data: $item');
               }
             } else {
-              print('Item $i is not a Map, skipping. Type: ${item.runtimeType}');
+              print(
+                'Item $i is not a Map, skipping. Type: ${item.runtimeType}',
+              );
             }
           }
-          
-          print('Successfully parsed ${products.length} products out of ${data.length}');
+
+          print(
+            'Successfully parsed ${products.length} products out of ${data.length}',
+          );
           return products;
         } catch (parseError, stackTrace) {
           print('Parse error in getFeaturedProducts: $parseError');
@@ -561,20 +586,20 @@ class EcommerceService with ApiHelperMixin {
     try {
       final response = await _apiRepository.getApi(
         EndPoints.ecommerceSearch,
-        query: {
-          'q': query,
-          'page': page.toString(),
-          'limit': limit.toString(),
-        },
+        query: {'q': query, 'page': page.toString(), 'limit': limit.toString()},
       );
 
       if (response.body['success'] == true &&
           response.body['data'] is Map<String, dynamic>) {
-        return SearchResponse.fromJson(response.body['data'] as Map<String, dynamic>);
+        return SearchResponse.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       }
       showErrorMessage(
         title: "Search",
-        message: response.body['message']?.toString() ?? 'Failed to fetch search results',
+        message:
+            response.body['message']?.toString() ??
+            'Failed to fetch search results',
       );
     } catch (e) {
       showErrorMessage(title: "Search", message: e.toString());
@@ -589,19 +614,20 @@ class EcommerceService with ApiHelperMixin {
     try {
       final response = await _apiRepository.getApi(
         EndPoints.ecommerceSearchSuggestions,
-        query: {
-          'q': query,
-          'limit': limit.toString(),
-        },
+        query: {'q': query, 'limit': limit.toString()},
       );
 
       if (response.body['success'] == true &&
           response.body['data'] is Map<String, dynamic>) {
-        return SearchSuggestions.fromJson(response.body['data'] as Map<String, dynamic>);
+        return SearchSuggestions.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       }
       showErrorMessage(
         title: "Search",
-        message: response.body['message']?.toString() ?? 'Failed to fetch suggestions',
+        message:
+            response.body['message']?.toString() ??
+            'Failed to fetch suggestions',
       );
     } catch (e) {
       showErrorMessage(title: "Search", message: e.toString());
@@ -624,7 +650,9 @@ class EcommerceService with ApiHelperMixin {
       }
       showErrorMessage(
         title: "Search",
-        message: response.body['message']?.toString() ?? 'Failed to fetch popular searches',
+        message:
+            response.body['message']?.toString() ??
+            'Failed to fetch popular searches',
       );
     } catch (e) {
       showErrorMessage(title: "Search", message: e.toString());
@@ -635,9 +663,7 @@ class EcommerceService with ApiHelperMixin {
   // Get top selling products
   Future<List<ProductModel>?> getTopSellingProducts({int limit = 10}) async {
     try {
-      final queryParams = <String, String>{
-        'limit': limit.toString(),
-      };
+      final queryParams = <String, String>{'limit': limit.toString()};
 
       final response = await _apiRepository.getApi(
         EndPoints.ecommerceProductsTopSelling,
@@ -652,26 +678,26 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true) {
         try {
           final dynamic dataField = response.body['data'];
-          
+
           // Check if data is a List
           if (dataField == null) {
             print('Data is null');
             return [];
           }
-          
+
           if (dataField is! List) {
             print('Data is not a List, it is: ${dataField.runtimeType}');
             return [];
           }
-          
+
           final List<dynamic> data = dataField;
           print('Data is a List with ${data.length} items');
-          
+
           final List<ProductModel> products = [];
           for (int i = 0; i < data.length; i++) {
             final item = data[i];
             print('Processing item $i, type: ${item.runtimeType}');
-            
+
             if (item is Map<String, dynamic>) {
               try {
                 products.add(ProductModel.fromJson(item));
@@ -682,11 +708,15 @@ class EcommerceService with ApiHelperMixin {
                 print('Product data: $item');
               }
             } else {
-              print('Item $i is not a Map, skipping. Type: ${item.runtimeType}');
+              print(
+                'Item $i is not a Map, skipping. Type: ${item.runtimeType}',
+              );
             }
           }
-          
-          print('Successfully parsed ${products.length} products out of ${data.length}');
+
+          print(
+            'Successfully parsed ${products.length} products out of ${data.length}',
+          );
           return products;
         } catch (parseError, stackTrace) {
           print('Parse error in getTopSellingProducts: $parseError');
@@ -761,9 +791,7 @@ class EcommerceService with ApiHelperMixin {
     int limit = 5,
   }) async {
     try {
-      final queryParams = <String, String>{
-        'limit': limit.toString(),
-      };
+      final queryParams = <String, String>{'limit': limit.toString()};
 
       final response = await _apiRepository.getApi(
         EndPoints.ecommerceProductRelated(productId),
@@ -924,24 +952,24 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true &&
           response.body['data'] != null &&
           response.body['data'] is Map<String, dynamic>) {
-        return OrdersResponse.fromJson(response.body['data'] as Map<String, dynamic>);
+        return OrdersResponse.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       } else {
         // Don't show error for 403 - user just doesn't have ecommerce access
-        final errorMessage = response.body['message']?.toString() ?? 'Failed to fetch orders';
+        final errorMessage =
+            response.body['message']?.toString() ?? 'Failed to fetch orders';
         final msgLower = errorMessage.toLowerCase();
-        if (!msgLower.contains('forbidden') && 
+        if (!msgLower.contains('forbidden') &&
             !msgLower.contains('403') &&
             !msgLower.contains('account has been deactivated')) {
-          showErrorMessage(
-            title: "Error",
-            message: errorMessage,
-          );
+          showErrorMessage(title: "Error", message: errorMessage);
         }
       }
     } catch (e) {
       // Check if error is 403 (Forbidden) or contains deactivated message - don't show error
       final errorStr = e.toString().toLowerCase();
-      if (errorStr.contains('403') || 
+      if (errorStr.contains('403') ||
           errorStr.contains('forbidden') ||
           errorStr.contains('account has been deactivated')) {
         // Silently return null - user doesn't have ecommerce access
@@ -964,11 +992,15 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true &&
           response.body['data'] != null &&
           response.body['data'] is Map<String, dynamic>) {
-        return OrderModel.fromJson(response.body['data'] as Map<String, dynamic>);
+        return OrderModel.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to fetch order details',
+          message:
+              response.body['message']?.toString() ??
+              'Failed to fetch order details',
         );
       }
     } catch (e) {
@@ -986,11 +1018,15 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true &&
           response.body['data'] != null &&
           response.body['data'] is Map<String, dynamic>) {
-        return OrderModel.fromJson(response.body['data'] as Map<String, dynamic>);
+        return OrderModel.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to fetch order details',
+          message:
+              response.body['message']?.toString() ??
+              'Failed to fetch order details',
         );
       }
     } catch (e) {
@@ -1034,7 +1070,9 @@ class EcommerceService with ApiHelperMixin {
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to fetch order history',
+          message:
+              response.body['message']?.toString() ??
+              'Failed to fetch order history',
         );
       }
     } catch (e) {
@@ -1052,11 +1090,15 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true &&
           response.body['data'] != null &&
           response.body['data'] is Map<String, dynamic>) {
-        return OrderTrackingInfo.fromJson(response.body['data'] as Map<String, dynamic>);
+        return OrderTrackingInfo.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to fetch tracking info',
+          message:
+              response.body['message']?.toString() ??
+              'Failed to fetch tracking info',
         );
       }
     } catch (e) {
@@ -1065,7 +1107,10 @@ class EcommerceService with ApiHelperMixin {
     return null;
   }
 
-  Future<OrderModel?> cancelOrder(String orderId, {required String reason}) async {
+  Future<OrderModel?> cancelOrder(
+    String orderId, {
+    required String reason,
+  }) async {
     try {
       // Validate reason before sending
       if (reason.isEmpty) {
@@ -1097,21 +1142,22 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true &&
           response.body['data'] != null &&
           response.body['data'] is Map<String, dynamic>) {
-        return OrderModel.fromJson(response.body['data'] as Map<String, dynamic>);
+        return OrderModel.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       } else {
         // Handle validation errors from API
-        String errorMessage = response.body['message']?.toString() ?? 'Failed to cancel order';
-        if (response.body['errors'] != null && response.body['errors'] is List) {
+        String errorMessage =
+            response.body['message']?.toString() ?? 'Failed to cancel order';
+        if (response.body['errors'] != null &&
+            response.body['errors'] is List) {
           final errors = response.body['errors'] as List;
           if (errors.isNotEmpty && errors[0] is Map) {
             final firstError = errors[0] as Map;
             errorMessage = firstError['message']?.toString() ?? errorMessage;
           }
         }
-        showErrorMessage(
-          title: "Error",
-          message: errorMessage,
-        );
+        showErrorMessage(title: "Error", message: errorMessage);
       }
     } catch (e) {
       showErrorMessage(title: "Error", message: e.toString());
@@ -1124,12 +1170,19 @@ class EcommerceService with ApiHelperMixin {
     try {
       final response = await _apiRepository.getApi(EndPoints.ecommerceCart);
       if (response.body['success'] == true) {
-        if (response.body['data'] != null && response.body['data'] is Map<String, dynamic>) {
-          return CartModel.fromJson(response.body['data'] as Map<String, dynamic>);
+        if (response.body['data'] != null &&
+            response.body['data'] is Map<String, dynamic>) {
+          return CartModel.fromJson(
+            response.body['data'] as Map<String, dynamic>,
+          );
         }
         return CartModel();
       } else {
-        showErrorMessage(title: "Error", message: response.body['message']?.toString() ?? 'Failed to fetch cart');
+        showErrorMessage(
+          title: "Error",
+          message:
+              response.body['message']?.toString() ?? 'Failed to fetch cart',
+        );
         return null;
       }
     } catch (e) {
@@ -1152,14 +1205,25 @@ class EcommerceService with ApiHelperMixin {
         body['variantId'] = variantId;
       }
 
-      final response = await _apiRepository.postApi(EndPoints.ecommerceCartItems, body);
+      final response = await _apiRepository.postApi(
+        EndPoints.ecommerceCartItems,
+        body,
+      );
       if (response.body['success'] == true) {
-        if (response.body['data'] != null && response.body['data'] is Map<String, dynamic>) {
-          return CartModel.fromJson(response.body['data'] as Map<String, dynamic>);
+        if (response.body['data'] != null &&
+            response.body['data'] is Map<String, dynamic>) {
+          return CartModel.fromJson(
+            response.body['data'] as Map<String, dynamic>,
+          );
         }
         return CartModel();
       } else {
-        showErrorMessage(title: "Error", message: response.body['message']?.toString() ?? 'Failed to add item to cart');
+        showErrorMessage(
+          title: "Error",
+          message:
+              response.body['message']?.toString() ??
+              'Failed to add item to cart',
+        );
         return null;
       }
     } catch (e) {
@@ -1172,12 +1236,19 @@ class EcommerceService with ApiHelperMixin {
     try {
       final response = await _apiRepository.deleteReq(EndPoints.ecommerceCart);
       if (response.body['success'] == true) {
-        if (response.body['data'] != null && response.body['data'] is Map<String, dynamic>) {
-          return CartModel.fromJson(response.body['data'] as Map<String, dynamic>);
+        if (response.body['data'] != null &&
+            response.body['data'] is Map<String, dynamic>) {
+          return CartModel.fromJson(
+            response.body['data'] as Map<String, dynamic>,
+          );
         }
         return CartModel();
       } else {
-        showErrorMessage(title: "Error", message: response.body['message']?.toString() ?? 'Failed to clear cart');
+        showErrorMessage(
+          title: "Error",
+          message:
+              response.body['message']?.toString() ?? 'Failed to clear cart',
+        );
         return null;
       }
     } catch (e) {
@@ -1188,13 +1259,15 @@ class EcommerceService with ApiHelperMixin {
 
   Future<List<AddressModel>> getAddresses() async {
     try {
-      final response = await _apiRepository.getApi(EndPoints.ecommerceAddresses);
-      
+      final response = await _apiRepository.getApi(
+        EndPoints.ecommerceAddresses,
+      );
+
       // Handle 403 (Forbidden) - user doesn't have ecommerce access, return empty list silently
       if (response.statusCode == 403) {
         return [];
       }
-      
+
       if (response.body['success'] == true) {
         final data = response.body['data'];
         if (data is List) {
@@ -1207,16 +1280,19 @@ class EcommerceService with ApiHelperMixin {
         // Don't show error for 403 - user just doesn't have ecommerce access
         final message = response.body['message']?.toString() ?? '';
         final msgLower = message.toLowerCase();
-        if (!msgLower.contains('forbidden') && 
+        if (!msgLower.contains('forbidden') &&
             !msgLower.contains('403') &&
             !msgLower.contains('account has been deactivated')) {
-          showErrorMessage(title: "Error", message: message.isNotEmpty ? message : 'Failed to fetch addresses');
+          showErrorMessage(
+            title: "Error",
+            message: message.isNotEmpty ? message : 'Failed to fetch addresses',
+          );
         }
       }
     } catch (e) {
       // Check if error is 403 (Forbidden) or contains deactivated message - don't show error
       final errorStr = e.toString().toLowerCase();
-      if (errorStr.contains('403') || 
+      if (errorStr.contains('403') ||
           errorStr.contains('forbidden') ||
           errorStr.contains('account has been deactivated')) {
         // Silently return empty list - user doesn't have ecommerce access
@@ -1232,9 +1308,14 @@ class EcommerceService with ApiHelperMixin {
 
   Future<AddressModel?> getDefaultAddress() async {
     try {
-      final response = await _apiRepository.getApi(EndPoints.ecommerceAddressesDefault);
-      if (response.body['success'] == true && response.body['data'] is Map<String, dynamic>) {
-        return AddressModel.fromJson(response.body['data'] as Map<String, dynamic>);
+      final response = await _apiRepository.getApi(
+        EndPoints.ecommerceAddressesDefault,
+      );
+      if (response.body['success'] == true &&
+          response.body['data'] is Map<String, dynamic>) {
+        return AddressModel.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       }
     } catch (e) {
       showErrorMessage(title: "Error", message: e.toString());
@@ -1244,13 +1325,19 @@ class EcommerceService with ApiHelperMixin {
 
   Future<AddressModel?> getAddressById(String addressId) async {
     try {
-      final response = await _apiRepository.getApi(EndPoints.ecommerceAddressById(addressId));
-      if (response.body['success'] == true && response.body['data'] is Map<String, dynamic>) {
-        return AddressModel.fromJson(response.body['data'] as Map<String, dynamic>);
+      final response = await _apiRepository.getApi(
+        EndPoints.ecommerceAddressById(addressId),
+      );
+      if (response.body['success'] == true &&
+          response.body['data'] is Map<String, dynamic>) {
+        return AddressModel.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to fetch address',
+          message:
+              response.body['message']?.toString() ?? 'Failed to fetch address',
         );
       }
     } catch (e) {
@@ -1261,14 +1348,21 @@ class EcommerceService with ApiHelperMixin {
 
   Future<AddressModel?> setDefaultAddress(String addressId) async {
     try {
-      final response =
-          await _apiRepository.putApiCall(EndPoints.ecommerceAddressSetDefault(addressId), {});
-      if (response.body['success'] == true && response.body['data'] is Map<String, dynamic>) {
-        return AddressModel.fromJson(response.body['data'] as Map<String, dynamic>);
+      final response = await _apiRepository.putApiCall(
+        EndPoints.ecommerceAddressSetDefault(addressId),
+        {},
+      );
+      if (response.body['success'] == true &&
+          response.body['data'] is Map<String, dynamic>) {
+        return AddressModel.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to update default address',
+          message:
+              response.body['message']?.toString() ??
+              'Failed to update default address',
         );
       }
     } catch (e) {
@@ -1286,23 +1380,31 @@ class EcommerceService with ApiHelperMixin {
       );
 
       // Remove null entries to avoid validation errors
-      body.removeWhere((key, value) => value == null || (value is String && value.isEmpty));
+      body.removeWhere(
+        (key, value) => value == null || (value is String && value.isEmpty),
+      );
 
       if (address.id != null && address.id!.isNotEmpty) {
         final response = await _apiRepository.putApiCall(
           EndPoints.ecommerceAddressById(address.id!),
           body,
         );
-        if (response.body['success'] == true && response.body['data'] is Map<String, dynamic>) {
-          return AddressModel.fromJson(response.body['data'] as Map<String, dynamic>);
+        if (response.body['success'] == true &&
+            response.body['data'] is Map<String, dynamic>) {
+          return AddressModel.fromJson(
+            response.body['data'] as Map<String, dynamic>,
+          );
         }
       } else {
         final response = await _apiRepository.postApi(
           EndPoints.ecommerceAddresses,
           body,
         );
-        if (response.body['success'] == true && response.body['data'] is Map<String, dynamic>) {
-          return AddressModel.fromJson(response.body['data'] as Map<String, dynamic>);
+        if (response.body['success'] == true &&
+            response.body['data'] is Map<String, dynamic>) {
+          return AddressModel.fromJson(
+            response.body['data'] as Map<String, dynamic>,
+          );
         }
       }
     } catch (e) {
@@ -1313,11 +1415,18 @@ class EcommerceService with ApiHelperMixin {
 
   Future<bool> deleteAddress(String addressId) async {
     try {
-      final response = await _apiRepository.deleteReq(EndPoints.ecommerceAddressById(addressId));
+      final response = await _apiRepository.deleteReq(
+        EndPoints.ecommerceAddressById(addressId),
+      );
       if (response.body['success'] == true) {
         return true;
       } else {
-        showErrorMessage(title: "Error", message: response.body['message']?.toString() ?? 'Failed to delete address');
+        showErrorMessage(
+          title: "Error",
+          message:
+              response.body['message']?.toString() ??
+              'Failed to delete address',
+        );
       }
     } catch (e) {
       showErrorMessage(title: "Error", message: e.toString());
@@ -1327,13 +1436,15 @@ class EcommerceService with ApiHelperMixin {
 
   Future<List<CouponModel>> getAvailableCoupons() async {
     try {
-      final response = await _apiRepository.getApi(EndPoints.ecommerceCouponsAvailable);
-      
+      final response = await _apiRepository.getApi(
+        EndPoints.ecommerceCouponsAvailable,
+      );
+
       // Handle 403 (Forbidden) - user doesn't have ecommerce access, return empty list silently
       if (response.statusCode == 403) {
         return [];
       }
-      
+
       if (response.body['success'] == true && response.body['data'] is List) {
         return (response.body['data'] as List)
             .whereType<Map<String, dynamic>>()
@@ -1343,7 +1454,7 @@ class EcommerceService with ApiHelperMixin {
         // Don't show error for 403 - user just doesn't have ecommerce access
         final message = response.body['message']?.toString() ?? '';
         final msgLower = message.toLowerCase();
-        if (!msgLower.contains('forbidden') && 
+        if (!msgLower.contains('forbidden') &&
             !msgLower.contains('403') &&
             !msgLower.contains('account has been deactivated')) {
           showErrorMessage(
@@ -1355,7 +1466,7 @@ class EcommerceService with ApiHelperMixin {
     } catch (e) {
       // Check if error is 403 (Forbidden) or contains deactivated message - don't show error
       final errorStr = e.toString().toLowerCase();
-      if (errorStr.contains('403') || 
+      if (errorStr.contains('403') ||
           errorStr.contains('forbidden') ||
           errorStr.contains('account has been deactivated')) {
         // Silently return empty list - user doesn't have ecommerce access
@@ -1378,13 +1489,21 @@ class EcommerceService with ApiHelperMixin {
         'code': code,
         if (cartTotal != null) 'cartTotal': cartTotal,
       };
-      final response = await _apiRepository.postApi(EndPoints.ecommerceCouponValidate, body);
-      if (response.body['success'] == true && response.body['data'] is Map<String, dynamic>) {
-        return CouponValidationResult.fromJson(response.body['data'] as Map<String, dynamic>);
+      final response = await _apiRepository.postApi(
+        EndPoints.ecommerceCouponValidate,
+        body,
+      );
+      if (response.body['success'] == true &&
+          response.body['data'] is Map<String, dynamic>) {
+        return CouponValidationResult.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to validate coupon',
+          message:
+              response.body['message']?.toString() ??
+              'Failed to validate coupon',
         );
       }
     } catch (e) {
@@ -1395,13 +1514,19 @@ class EcommerceService with ApiHelperMixin {
 
   Future<CouponModel?> getCouponByCode(String code) async {
     try {
-      final response = await _apiRepository.getApi(EndPoints.ecommerceCouponByCode(code));
-      if (response.body['success'] == true && response.body['data'] is Map<String, dynamic>) {
-        return CouponModel.fromJson(response.body['data'] as Map<String, dynamic>);
+      final response = await _apiRepository.getApi(
+        EndPoints.ecommerceCouponByCode(code),
+      );
+      if (response.body['success'] == true &&
+          response.body['data'] is Map<String, dynamic>) {
+        return CouponModel.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to fetch coupon',
+          message:
+              response.body['message']?.toString() ?? 'Failed to fetch coupon',
         );
       }
     } catch (e) {
@@ -1425,14 +1550,23 @@ class EcommerceService with ApiHelperMixin {
           'billingAddressId': billingAddressId,
         if (shippingAddressId != null && shippingAddressId.isNotEmpty)
           'shippingAddressId': shippingAddressId,
-        if (couponCode != null && couponCode.isNotEmpty) 'couponCode': couponCode,
+        if (couponCode != null && couponCode.isNotEmpty)
+          'couponCode': couponCode,
       };
 
-      final response = await _apiRepository.postApi(EndPoints.ecommerceOrders, body);
-      if (response.body['success'] == true && response.body['data'] is Map<String, dynamic>) {
+      final response = await _apiRepository.postApi(
+        EndPoints.ecommerceOrders,
+        body,
+      );
+      if (response.body['success'] == true &&
+          response.body['data'] is Map<String, dynamic>) {
         return Map<String, dynamic>.from(response.body['data'] as Map);
       } else {
-        showErrorMessage(title: "Error", message: response.body['message']?.toString() ?? 'Failed to create order');
+        showErrorMessage(
+          title: "Error",
+          message:
+              response.body['message']?.toString() ?? 'Failed to create order',
+        );
         return null;
       }
     } catch (e) {
@@ -1447,22 +1581,28 @@ class EcommerceService with ApiHelperMixin {
   }) async {
     try {
       // Determine payment provider based on payment method
-      final paymentProvider = paymentMethod == 'online' || paymentMethod == 'razorpay' 
-          ? 'razorpay' 
+      final paymentProvider =
+          paymentMethod == 'online' || paymentMethod == 'razorpay'
+          ? 'razorpay'
           : paymentMethod;
-      
+
       final body = {
         'orderId': orderId,
         'paymentMethod': paymentMethod,
         'paymentProvider': paymentProvider,
       };
-      final response = await _apiRepository.postApi(EndPoints.ecommercePaymentsInitiate, body);
+      final response = await _apiRepository.postApi(
+        EndPoints.ecommercePaymentsInitiate,
+        body,
+      );
       if (response.body['success'] == true) {
         return EcommercePaymentInitiateResponse.fromJson(response.body);
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to initiate payment',
+          message:
+              response.body['message']?.toString() ??
+              'Failed to initiate payment',
         );
         return null;
       }
@@ -1485,13 +1625,18 @@ class EcommerceService with ApiHelperMixin {
         if (razorpayPaymentId != null) 'razorpay_payment_id': razorpayPaymentId,
         if (razorpaySignature != null) 'razorpay_signature': razorpaySignature,
       };
-      final response = await _apiRepository.postApi(EndPoints.ecommercePaymentsVerify, body);
+      final response = await _apiRepository.postApi(
+        EndPoints.ecommercePaymentsVerify,
+        body,
+      );
       if (response.body['success'] == true) {
         return EcommercePaymentVerifyResponse.fromJson(response.body);
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to verify payment',
+          message:
+              response.body['message']?.toString() ??
+              'Failed to verify payment',
         );
         return null;
       }
@@ -1522,11 +1667,15 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true &&
           response.body['data'] != null &&
           response.body['data'] is Map<String, dynamic>) {
-        return PaymentsResponse.fromJson(response.body['data'] as Map<String, dynamic>);
+        return PaymentsResponse.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to fetch payments',
+          message:
+              response.body['message']?.toString() ??
+              'Failed to fetch payments',
         );
       }
     } catch (e) {
@@ -1543,11 +1692,15 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true &&
           response.body['data'] != null &&
           response.body['data'] is Map<String, dynamic>) {
-        return PaymentModel.fromJson(response.body['data'] as Map<String, dynamic>);
+        return PaymentModel.fromJson(
+          response.body['data'] as Map<String, dynamic>,
+        );
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to fetch payment details',
+          message:
+              response.body['message']?.toString() ??
+              'Failed to fetch payment details',
         );
       }
     } catch (e) {
@@ -1569,7 +1722,8 @@ class EcommerceService with ApiHelperMixin {
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to remove item',
+          message:
+              response.body['message']?.toString() ?? 'Failed to remove item',
         );
       }
     } catch (e) {
@@ -1590,7 +1744,9 @@ class EcommerceService with ApiHelperMixin {
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to save item for later',
+          message:
+              response.body['message']?.toString() ??
+              'Failed to save item for later',
         );
       }
     } catch (e) {
@@ -1611,7 +1767,8 @@ class EcommerceService with ApiHelperMixin {
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to apply coupon',
+          message:
+              response.body['message']?.toString() ?? 'Failed to apply coupon',
         );
       }
     } catch (e) {
@@ -1622,14 +1779,17 @@ class EcommerceService with ApiHelperMixin {
 
   Future<CartModel?> removeCartCoupon() async {
     try {
-      final response = await _apiRepository.deleteReq(EndPoints.ecommerceCartCoupon);
+      final response = await _apiRepository.deleteReq(
+        EndPoints.ecommerceCartCoupon,
+      );
       if (response.body['success'] == true) {
         final cart = _parseCartResponse(response.body['data']);
         return cart ?? CartModel();
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to remove coupon',
+          message:
+              response.body['message']?.toString() ?? 'Failed to remove coupon',
         );
       }
     } catch (e) {
@@ -1643,7 +1803,7 @@ class EcommerceService with ApiHelperMixin {
     if (sessionId == null || sessionId.isEmpty) {
       return null;
     }
-    
+
     try {
       final response = await _apiRepository.postApi(
         EndPoints.ecommerceCartMerge,
@@ -1670,7 +1830,9 @@ class EcommerceService with ApiHelperMixin {
     return null;
   }
 
-  Future<CartAndWishlistResponse?> moveSavedItemToCart(String savedItemId) async {
+  Future<CartAndWishlistResponse?> moveSavedItemToCart(
+    String savedItemId,
+  ) async {
     try {
       final response = await _apiRepository.postApi(
         EndPoints.ecommerceSavedItemMoveToCart(savedItemId),
@@ -1681,7 +1843,9 @@ class EcommerceService with ApiHelperMixin {
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to move item to cart',
+          message:
+              response.body['message']?.toString() ??
+              'Failed to move item to cart',
         );
       }
     } catch (e) {
@@ -1696,12 +1860,20 @@ class EcommerceService with ApiHelperMixin {
     try {
       final response = await _apiRepository.getApi(EndPoints.ecommerceWishlist);
       if (response.body['success'] == true) {
-        if (response.body['data'] != null && response.body['data'] is Map<String, dynamic>) {
-          return WishlistModel.fromJson(response.body['data'] as Map<String, dynamic>);
+        if (response.body['data'] != null &&
+            response.body['data'] is Map<String, dynamic>) {
+          return WishlistModel.fromJson(
+            response.body['data'] as Map<String, dynamic>,
+          );
         }
         return WishlistModel();
       } else {
-        showErrorMessage(title: "Error", message: response.body['message']?.toString() ?? 'Failed to fetch wishlist');
+        showErrorMessage(
+          title: "Error",
+          message:
+              response.body['message']?.toString() ??
+              'Failed to fetch wishlist',
+        );
         return null;
       }
     } catch (e) {
@@ -1717,12 +1889,20 @@ class EcommerceService with ApiHelperMixin {
         {'productId': productId},
       );
       if (response.body['success'] == true) {
-        if (response.body['data'] != null && response.body['data'] is Map<String, dynamic>) {
-          return WishlistModel.fromJson(response.body['data'] as Map<String, dynamic>);
+        if (response.body['data'] != null &&
+            response.body['data'] is Map<String, dynamic>) {
+          return WishlistModel.fromJson(
+            response.body['data'] as Map<String, dynamic>,
+          );
         }
         return WishlistModel();
       } else {
-        showErrorMessage(title: "Error", message: response.body['message']?.toString() ?? 'Failed to add to wishlist');
+        showErrorMessage(
+          title: "Error",
+          message:
+              response.body['message']?.toString() ??
+              'Failed to add to wishlist',
+        );
         return null;
       }
     } catch (e) {
@@ -1737,14 +1917,19 @@ class EcommerceService with ApiHelperMixin {
         EndPoints.ecommerceWishlistItem(productId),
       );
       if (response.body['success'] == true) {
-        if (response.body['data'] != null && response.body['data'] is Map<String, dynamic>) {
-          return WishlistModel.fromJson(response.body['data'] as Map<String, dynamic>);
+        if (response.body['data'] != null &&
+            response.body['data'] is Map<String, dynamic>) {
+          return WishlistModel.fromJson(
+            response.body['data'] as Map<String, dynamic>,
+          );
         }
         return WishlistModel();
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to remove from wishlist',
+          message:
+              response.body['message']?.toString() ??
+              'Failed to remove from wishlist',
         );
         return null;
       }
@@ -1756,14 +1941,24 @@ class EcommerceService with ApiHelperMixin {
 
   Future<WishlistModel?> clearWishlist() async {
     try {
-      final response = await _apiRepository.deleteReq(EndPoints.ecommerceWishlist);
+      final response = await _apiRepository.deleteReq(
+        EndPoints.ecommerceWishlist,
+      );
       if (response.body['success'] == true) {
-        if (response.body['data'] != null && response.body['data'] is Map<String, dynamic>) {
-          return WishlistModel.fromJson(response.body['data'] as Map<String, dynamic>);
+        if (response.body['data'] != null &&
+            response.body['data'] is Map<String, dynamic>) {
+          return WishlistModel.fromJson(
+            response.body['data'] as Map<String, dynamic>,
+          );
         }
         return WishlistModel();
       } else {
-        showErrorMessage(title: "Error", message: response.body['message']?.toString() ?? 'Failed to clear wishlist');
+        showErrorMessage(
+          title: "Error",
+          message:
+              response.body['message']?.toString() ??
+              'Failed to clear wishlist',
+        );
         return null;
       }
     } catch (e) {
@@ -1772,7 +1967,9 @@ class EcommerceService with ApiHelperMixin {
     }
   }
 
-  Future<CartAndWishlistResponse?> moveWishlistItemToCart(String productId) async {
+  Future<CartAndWishlistResponse?> moveWishlistItemToCart(
+    String productId,
+  ) async {
     try {
       final response = await _apiRepository.postApi(
         EndPoints.ecommerceWishlistItemMoveToCart(productId),
@@ -1783,7 +1980,9 @@ class EcommerceService with ApiHelperMixin {
       } else {
         showErrorMessage(
           title: "Error",
-          message: response.body['message']?.toString() ?? 'Failed to move item to cart',
+          message:
+              response.body['message']?.toString() ??
+              'Failed to move item to cart',
         );
       }
     } catch (e) {
@@ -1799,4 +1998,3 @@ class CartAndWishlistResponse {
 
   CartAndWishlistResponse({this.cart, this.wishlist});
 }
-
