@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
 import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart';
+import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/AnimatedChakra.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/astrology_tool_widget.dart';
@@ -4844,14 +4845,31 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       controller.liveStreams[index].astrologerId,
     );
     return GestureDetector(
-      onTap: () {
-        Get.to(
-          () => LiveStreamView(
-            stream: controller.liveStreams[index],
-            astrologerName: controller.liveStreams[index].astrologerName,
-            astrologerProfilePicture: profilePicture,
-          ),
+      onTap: () async {
+        // Check if user is logged in before accessing live stream
+        final isLoggedIn = await LoginGuard.ensureLoggedIn(
+          message: 'Please login to watch live streams.',
+          onLoginSuccess: () {
+            // Navigate to live stream after successful login
+            Get.to(
+              () => LiveStreamView(
+                stream: controller.liveStreams[index],
+                astrologerName: controller.liveStreams[index].astrologerName,
+                astrologerProfilePicture: profilePicture,
+              ),
+            );
+          },
         );
+        
+        if (isLoggedIn) {
+          Get.to(
+            () => LiveStreamView(
+              stream: controller.liveStreams[index],
+              astrologerName: controller.liveStreams[index].astrologerName,
+              astrologerProfilePicture: profilePicture,
+            ),
+          );
+        }
       },
       child: Stack(
         children: [

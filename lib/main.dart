@@ -60,6 +60,7 @@ void main() async {
       await GetStorage.init('loginData');
       await GetStorage.init('language');
       await GetStorage.init('personaFollows');
+      await GetStorage.init('guestSession');
 
       // Load languages
       await LanguageModelService.loadLanguages();

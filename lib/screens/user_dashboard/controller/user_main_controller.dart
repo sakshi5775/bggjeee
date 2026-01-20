@@ -84,7 +84,7 @@ class UserMainController extends GetxController {
     // Protect education (courses) and chat tabs for guest users
     final requiresLogin = index == 2 || index == 3;
     if (requiresLogin && LoginGuard.isGuest) {
-      LoginGuard.showLoginRequiredDialog(
+      LoginGuard.showLoginRequiredModal(
         message: index == 2
             ? 'Please login to access courses.'
             : 'Please login to chat with astrologers.',

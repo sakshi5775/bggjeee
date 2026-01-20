@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/role_navigation_service.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
+import 'package:astrobharataiuser/core/services/guest_session_manager.dart';
 import 'package:get_storage/get_storage.dart';
 
 class WaitingScreenController extends BaseController {
@@ -64,13 +65,18 @@ class WaitingScreenController extends BaseController {
       // Navigate to onboarding for new users
       pushAndRemoveUntil(AppRoutes.onboarding);
     } else {
-      // For users who have completed onboarding, navigate based on login status
+      // For users who have completed onboarding, navigate to dashboard
+      // Allow guest access - users can browse without login
       final isLoggedIn = LoginGuard.isLoggedIn;
       if (isLoggedIn) {
+        // User is logged in, navigate to dashboard
         final userType = UserData().getLoginData.user?.userType ?? 'USER';
         RoleNavigationService.navigateToDashboard(userType);
       } else {
-        pushAndRemoveUntil(AppRoutes.login);
+        // User is not logged in - allow guest access to dashboard
+        // Guest mode will be set when user explicitly clicks "Continue as Guest"
+        // For now, navigate directly to dashboard (no login required)
+        pushAndRemoveUntil(AppRoutes.userDashboard);
       }
     }
   }

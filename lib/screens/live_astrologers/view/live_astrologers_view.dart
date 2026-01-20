@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/screens/live_astrologers/controller/live_astrologers_controller.dart';
 import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart';
+import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -207,12 +208,27 @@ class LiveAstrologersView extends StatelessWidget {
     final astrologerName = controller.getAstrologerName(stream.astrologerId);
 
     return GestureDetector(
-      onTap: () {
-        Get.to(() => LiveStreamView(
-          stream: stream,
-          astrologerName: astrologerName,
-          astrologerProfilePicture: profilePicture,
-        ));
+      onTap: () async {
+        // Check if user is logged in before accessing live stream
+        final isLoggedIn = await LoginGuard.ensureLoggedIn(
+          message: 'Please login to watch live streams.',
+          onLoginSuccess: () {
+            // Navigate to live stream after successful login
+            Get.to(() => LiveStreamView(
+              stream: stream,
+              astrologerName: astrologerName,
+              astrologerProfilePicture: profilePicture,
+            ));
+          },
+        );
+        
+        if (isLoggedIn) {
+          Get.to(() => LiveStreamView(
+            stream: stream,
+            astrologerName: astrologerName,
+            astrologerProfilePicture: profilePicture,
+          ));
+        }
       },
       child: Container(
         decoration: BoxDecoration(

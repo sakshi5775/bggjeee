@@ -21,7 +21,10 @@ import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart'
 import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/data_model/webinar_model.dart';
 import 'package:astrobharataiuser/data_model/category_model.dart';
+import 'package:astrobharataiuser/data_model/puja_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/puja_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -190,37 +193,12 @@ class UserDashboardController extends BaseController
   final RxInt bookPoojaCurrentPage = 0.obs;
   Timer? _bookPoojaTimer;
 
-  // Static data for pooja cards
-  final RxList<Map<String, dynamic>> poojaCards = <Map<String, dynamic>>[
-    {
-      'title': 'Namkaran Pooja',
-      'description': 'Divine blessings of Lord Shiva',
-      'price': '₹610',
-      'duration': '45 mins',
-      'icon': Icons.auto_awesome,
-    },
-    {
-      'title': 'Griha Pravesh Pooja',
-      'description': 'Sacred house warming ceremony',
-      'price': '₹850',
-      'duration': '60 mins',
-      'icon': Icons.home,
-    },
-    {
-      'title': 'Satyanarayan Pooja',
-      'description': 'Blessings for prosperity and peace',
-      'price': '₹750',
-      'duration': '90 mins',
-      'icon': Icons.stars,
-    },
-    {
-      'title': 'Lakshmi Pooja',
-      'description': 'Invoke Goddess Lakshmi\'s blessings',
-      'price': '₹900',
-      'duration': '60 mins',
-      'icon': Icons.celebration,
-    },
-  ].obs;
+  // Puja Service
+  final PujaService _pujaService = PujaService();
+
+  // Dynamic data for pooja cards
+  final RxList<PujaModel> pujas = <PujaModel>[].obs;
+  final RxBool isLoadingPujas = false.obs;
 
   void toggleView() {
     final offset = scrollController.offset;
@@ -289,18 +267,101 @@ class UserDashboardController extends BaseController
     if (requireAuth && !Get.isRegistered<WalletController>()) {
       Get.put(WalletController());
     }
-    // Start Book Pooja carousel auto-slide
-    _startBookPoojaAutoSlide();
+    // Load pujas from API
+    loadPujas();
+    // Start Book Pooja carousel auto-slide (will be started after pujas are loaded)
+  }
+
+  /// Load pujas from API
+  /// By default, loads all pujas without filters (as per API requirement)
+  Future<void> loadPujas({
+    bool? featured,
+    bool? popular,
+    String? search,
+    String? templeId,
+  }) async {
+    try {
+      isLoadingPujas.value = true;
+      
+      // Call API without filters first (as per user requirement)
+      // Only add filters if explicitly provided
+      final response = await _pujaService.getPujas(
+        page: 1,
+        limit: 10,
+        featured: featured, // Only include if explicitly set
+        popular: popular,   // Only include if explicitly set
+        search: search,     // Only include if explicitly set
+        templeId: templeId, // Only include if explicitly set
+      );
+      
+      if (response != null && response.success == true) {
+        if (response.data != null && response.data!.items != null) {
+          final items = response.data!.items!;
+          
+          // Filter to only show active pujas (if status field exists and is not null)
+          final activePujas = items.where((puja) {
+            // If status is null or empty, include it (API might not return status)
+            // If status exists, only include active ones
+            return puja.status == null || 
+                   puja.status!.isEmpty || 
+                   puja.status!.toLowerCase() == 'active';
+          }).toList();
+          
+          pujas.value = activePujas;
+          
+          if (kDebugMode) {
+            print('Loaded ${activePujas.length} pujas (${items.length} total from API)');
+            if (activePujas.isNotEmpty) {
+              print('First puja: ${activePujas.first.title}');
+            }
+          }
+          
+          // Start auto-slide after pujas are loaded
+          if (pujas.isNotEmpty) {
+            _startBookPoojaAutoSlide();
+          } else {
+            if (kDebugMode) {
+              print('No active pujas available to display');
+            }
+          }
+        } else {
+          if (kDebugMode) {
+            print('Puja response data is null');
+            print('Response: ${response.toJson()}');
+          }
+          pujas.value = [];
+        }
+      } else {
+        if (kDebugMode) {
+          print('Puja API response is null or unsuccessful');
+          if (response != null) {
+            print('Response success: ${response.success}');
+            print('Response message: ${response.message}');
+          }
+        }
+        pujas.value = [];
+      }
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print('Error loading pujas: $e');
+        print('Stack trace: $stackTrace');
+      }
+      pujas.value = [];
+    } finally {
+      isLoadingPujas.value = false;
+    }
   }
 
   /// Start Book Pooja carousel auto-slide
   void _startBookPoojaAutoSlide() {
+    if (pujas.isEmpty) return;
+    
     _bookPoojaTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
       final pageController = bookPoojaPageController.value;
       // Check if PageController has exactly one client (one PageView attached)
       // This prevents the "Multiple PageViews attached" error
       if (pageController.hasClients && pageController.positions.length == 1) {
-        int next = (bookPoojaCurrentPage.value + 1) % poojaCards.length;
+        int next = (bookPoojaCurrentPage.value + 1) % pujas.length;
         bookPoojaCurrentPage.value = next;
         try {
           pageController.animateToPage(
