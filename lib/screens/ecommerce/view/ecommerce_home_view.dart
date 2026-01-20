@@ -28,7 +28,7 @@ import 'package:intl/intl.dart';
 
 class EcommerceHomeView extends BasePage<EcommerceHomeController> {
   final bool showBackButton;
-  
+
   const EcommerceHomeView({super.key, this.showBackButton = true});
 
   @override
@@ -151,30 +151,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
             if (showBackButton) ...[
               IconButton(
                 onPressed: () {
-                  // When showBackButton is true, it means we navigated from elsewhere (not bottom nav)
-                  // Try to navigate back to home tab within nested navigator first
-                  try {
-                    // Try to get UserMainController and navigate to home tab
-                    final mainController = Get.find<UserMainController>();
-                    mainController.selectedIndex.value = 0;
-                    // Navigate to home within nested navigator
-                    Get.offNamed('/user-home', id: 1);
-                  } catch (e) {
-                    // Controller not found or error, try regular back navigation
-                    try {
-                      final context = Get.context;
-                      if (context != null && Navigator.of(context).canPop()) {
-                        Get.back();
-                      } else {
-                        // Last resort - navigate to dashboard (but this might cause duplicate key issue)
-                        // Instead, try to navigate to home route directly
-                        Get.offNamed('/user-home', id: 1);
-                      }
-                    } catch (e2) {
-                      // If all else fails, use offAllNamed as last resort
-                      Get.offAllNamed('/user-dashboard');
-                    }
-                  }
+                  Get.back();
                 },
                 icon: Icon(
                   Icons.arrow_back_ios_new,
@@ -192,28 +169,28 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                AutoTranslateText(
-                  'Digital Mart',
-                  style: TextStyle(
-                    fontFamily: 'Baloo 2',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 27.59.sp,
-                    color: '#DFB343'.toColor(),
-                    height: 1.2,
+                  AutoTranslateText(
+                    'Digital Mart',
+                    style: TextStyle(
+                      fontFamily: 'Baloo 2',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 27.59.sp,
+                      color: '#DFB343'.toColor(),
+                      height: 1.2,
+                    ),
                   ),
-                ),
-                AutoTranslateText(
-                  'Certified • Authentic • Blessed',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 11.04.sp,
-                    color: Colors.white.withOpacity(0.6),
-                    height: 1.33,
+                  AutoTranslateText(
+                    'Certified • Authentic • Blessed',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 11.04.sp,
+                      color: Colors.white.withOpacity(0.6),
+                      height: 1.33,
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
             ),
             // Right side icons
             Row(
@@ -1324,55 +1301,58 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                   ),
                   if (wishlistController != null)
                     Positioned(
-                      top: 6,
-                      right: 6,
+                      top: 4,
+                      right: 4,
                       child: Obx(() {
                         final isUpdating = wishlistController.isUpdating.value;
                         final isWishlisted = wishlistController.isInWishlist(
                           product,
                         );
 
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.shadowLight,
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: IconButton(
-                            iconSize: 18.sp,
-                            padding: EdgeInsets.zero,
-                            constraints: BoxConstraints(
-                              minWidth: 32.w,
-                              minHeight: 32.h,
-                            ),
-                            icon: isUpdating
-                                ? SizedBox(
-                                    width: 14.w,
-                                    height: 14.h,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: AppColors.saffron,
-                                    ),
-                                  )
-                                : Icon(
-                                    isWishlisted
-                                        ? Icons.favorite
-                                        : Icons.favorite_border,
-                                    color: isWishlisted
-                                        ? AppColors.saffron
-                                        : AppColors.textPrimary,
-                                  ),
-                            onPressed: isUpdating
+                        return Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: isUpdating
                                 ? null
                                 : () => wishlistController.toggleWishlist(
                                     product,
                                   ),
+                            borderRadius: BorderRadius.circular(20.r),
+                            child: Container(
+                              width: 32.w,
+                              height: 32.h,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: isUpdating
+                                    ? SizedBox(
+                                        width: 16.w,
+                                        height: 16.h,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: AppColors.saffron,
+                                        ),
+                                      )
+                                    : Icon(
+                                        isWishlisted
+                                            ? Icons.favorite
+                                            : Icons.favorite_border,
+                                        color: isWishlisted
+                                            ? AppColors.saffron
+                                            : AppColors.textPrimary,
+                                        size: 18.sp,
+                                      ),
+                              ),
+                            ),
                           ),
                         );
                       }),

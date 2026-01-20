@@ -32,10 +32,18 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
                   style: AppTypography.h2.copyWith(color: '#820B17'.toColor()),
                 ),
                 Spacing.w(16),
-                AutoTranslateText(
-                  "View All",
-                  style: AppTypography.body1.copyWith(
-                    color: '#9D4807'.toColor(),
+                Padding(
+                  padding: AppPaddings.symmetric(h: 8, v: 16),
+                  child: GestureDetector(
+                    onTap: () {
+                      Get.toNamed(AppRoutes.allAstrologers);
+                    },
+                    child: AutoTranslateText(
+                      "View All",
+                      style: AppTypography.body1.copyWith(
+                        color: '#9D4807'.toColor(),
+                      ),
+                    ),
                   ),
                 ),
               ],

@@ -2,12 +2,10 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/dosh_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class MangalDoshWidget extends StatelessWidget {
   final DoshController controller;
@@ -16,23 +14,7 @@ class MangalDoshWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Sub-tabs for Mangal/Manglik Dosh
-        _buildSubTabs(),
-
-        // Content based on sub-tab
-        Expanded(
-          child: Obx(() {
-            if (controller.selectedMangalSubTab.value == 0) {
-              return _buildClassicalVedicAstrology();
-            } else {
-              return _buildExtendedModernAnalysis();
-            }
-          }),
-        ),
-      ],
-    );
+    return _buildClassicalVedicAstrology();
   }
 
   Widget _buildSubTabs() {
@@ -75,30 +57,7 @@ class MangalDoshWidget extends StatelessWidget {
   Widget _buildSubTab(String title, int index, bool isSelected) {
     return GestureDetector(
       onTap: () => controller.switchMangalSubTab(index),
-      // child: Container(
-      //   padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
-      //   decoration: BoxDecoration(
-      //     color: isSelected
-      //         ? "#ed6f30".toColor().withOpacity(0.1)
-      //         : Colors.transparent,
-      //     border: Border(
-      //       bottom: BorderSide(
-      //         color: isSelected ? "#ed6f30".toColor() : Colors.transparent,
-      //         width: 3,
-      //       ),
-      //     ),
-      //   ),
-      //   child: AutoTranslateText(
-      //     title,
-      //     textAlign: TextAlign.center,
-      //     style: MyTextTheme.smallBCB.copyWith(
-      //       color: isSelected
-      //           ? "#ed6f30".toColor()
-      //           : "#6F221E".toColor().withOpacity(0.6),
-      //       fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-      //     ),
-      //   ),
-      // ),
+
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
@@ -344,27 +303,26 @@ class MangalDoshWidget extends StatelessWidget {
                 height: 50.h,
                 width: 50.w,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [
-                    Color(0xFFFF8C42), Color(0xFFE63946)
-                  ],
-                  begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+                  gradient: LinearGradient(
+                    colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                   ),
-                  borderRadius: BorderRadius.circular(12.r)
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Icon(Icons.bar_chart, color: Colors.white, size: 24,),
-              ), 
+                child: Icon(Icons.bar_chart, color: Colors.white, size: 24),
+              ),
               Spacing.w(12),
               AutoTranslateText(
-            'Dosh Status',
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+                'Dosh Status',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: "#6F221E".toColor(),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
-          
+
           Spacing.h(12),
           _buildStatusItem('Dosh Present', isDoshaPresent),
           _buildStatusItem(
@@ -749,27 +707,26 @@ class MangalDoshWidget extends StatelessWidget {
                 height: 50.h,
                 width: 50.w,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [
-                    Color(0xFFFF8C42), Color(0xFFE63946)
-                  ],
-                  begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+                  gradient: LinearGradient(
+                    colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                   ),
-                  borderRadius: BorderRadius.circular(12.r)
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Icon(Icons.bar_chart, color: Colors.white, size: 24,),
-              ), 
+                child: Icon(Icons.bar_chart, color: Colors.white, size: 24),
+              ),
               Spacing.w(12),
               AutoTranslateText(
-            'Manglik Status',
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+                'Manglik Status',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: "#6F221E".toColor(),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
-          
+
           Spacing.h(12),
           _buildStatusItem('Manglik by Mars', manglikByMars),
           _buildStatusItem('Manglik by Saturn', manglikBySaturn),

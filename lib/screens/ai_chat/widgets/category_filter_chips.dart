@@ -14,64 +14,42 @@ class CategoryFilterChips extends BasePage<AiChatController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () {
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Row(
-            children: [
-              // Menu icon (toggle grid/list view)
-              GestureDetector(
-                onTap: () => controller.toggleViewMode(),
-                child: Container(
-                  width: 40.w,
-                  height: 40.h,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(
-                      color: const Color(0xFFE0E0E0),
-                      width: 1,
-                    ),
-                  ),
-                  child: Obx(
-                    () => Icon(
-                      controller.isGridView.value ? Icons.view_list : Icons.grid_view,
-                      size: 20.w,
-                      color: const Color(0xFF5F2221),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 12.w),
-              // All filter - always show this
-              _buildFilterChip(
-                label: 'All',
-                isSelected: controller.selectedCategory.value == null,
-                onTap: () => controller.clearFilter(),
-                icon: null,
-              ),
-              SizedBox(width: 8.w),
-              // Category filters with icons - dynamically show all categories from API
-              if (controller.categories.isNotEmpty)
-                ...controller.categories.map(
-                  (category) => Padding(
-                    padding: EdgeInsets.only(right: 8.w),
-                    child: _buildFilterChip(
-                      label: category.label,
-                      isSelected: controller.selectedCategory.value?.value ==
-                          category.value,
-                      onTap: () => controller.filterByCategory(category),
-                      icon: _getCategoryIcon(category.value),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        );
-      },
-    );
+    return Obx(() {
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // Menu icon (toggle grid/list view)
+
+            // SizedBox(width: 12.w),
+            // // All filter - always show this
+            // _buildFilterChip(
+            //   label: 'All',
+            //   isSelected: controller.selectedCategory.value == null,
+            //   onTap: () => controller.clearFilter(),
+            //   icon: null,
+            // ),
+            // SizedBox(width: 8.w),
+            // // Category filters with icons - dynamically show all categories from API
+            // if (controller.categories.isNotEmpty)
+            //   ...controller.categories.map(
+            //     (category) => Padding(
+            //       padding: EdgeInsets.only(right: 8.w),
+            //       child: _buildFilterChip(
+            //         label: category.label,
+            //         isSelected: controller.selectedCategory.value?.value ==
+            //             category.value,
+            //         onTap: () => controller.filterByCategory(category),
+            //         icon: _getCategoryIcon(category.value),
+            //       ),
+            //     ),
+            //   ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildFilterChip({
@@ -89,9 +67,7 @@ class CategoryFilterChips extends BasePage<AiChatController> {
           color: isSelected ? null : Colors.white,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: isSelected
-                ? Colors.transparent
-                : const Color(0xFFE0E0E0),
+            color: isSelected ? Colors.transparent : const Color(0xFFE0E0E0),
             width: 1,
           ),
           boxShadow: isSelected
@@ -111,20 +87,18 @@ class CategoryFilterChips extends BasePage<AiChatController> {
               Icon(
                 icon,
                 size: 16.w,
-                color: isSelected
-                    ? Colors.white
-                    : const Color(0xFF666666),
+                color: isSelected ? Colors.white : const Color(0xFF666666),
               ),
               SizedBox(width: 6.w),
             ],
             AutoTranslateText(
               label,
-              style: MyTextTheme.smallBCB.copyWith(
-                color: isSelected
-                    ? Colors.white
-                    : const Color(0xFF666666),
-                fontWeight: FontWeight.w600,
-              ).merge(AppTypography.body2),
+              style: MyTextTheme.smallBCB
+                  .copyWith(
+                    color: isSelected ? Colors.white : const Color(0xFF666666),
+                    fontWeight: FontWeight.w600,
+                  )
+                  .merge(AppTypography.body2),
             ),
           ],
         ),

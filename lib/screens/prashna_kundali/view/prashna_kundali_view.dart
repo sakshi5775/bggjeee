@@ -14,7 +14,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
-  const PrashnaKundaliView({Key? key}) : super(key: key);
+  const PrashnaKundaliView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -389,16 +389,20 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
         width: double.infinity,
         child: Container(
           decoration: BoxDecoration(
-            gradient: controller.isAnalyzing.value ? null : AppColors.orangeGradient,
+            gradient: controller.isAnalyzing.value
+                ? null
+                : AppColors.orangeGradient,
             color: controller.isAnalyzing.value ? '#CCCCCC'.toColor() : null,
             borderRadius: BorderRadius.circular(12.r),
-            boxShadow: controller.isAnalyzing.value ? null : [
-              BoxShadow(
-                color: "#F38B3B".toColor().withOpacity(0.35),
-                blurRadius: 6,
-                offset: const Offset(0, 3),
-              ),
-            ],
+            boxShadow: controller.isAnalyzing.value
+                ? null
+                : [
+                    BoxShadow(
+                      color: "#F38B3B".toColor().withOpacity(0.35),
+                      blurRadius: 6,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
           ),
           child: ElevatedButton(
             onPressed: controller.isAnalyzing.value
@@ -461,32 +465,35 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
                 .merge(AppTypography.h2),
           ),
           Spacing.h(16),
-          Row(
-            children: [
-              Expanded(
-                child: _buildProcessCard(
-                  icon: Icons.help_outline,
-                  title: 'Ask Question',
-                  description: 'Select from curated questions',
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: _buildProcessCard(
+                    icon: Icons.help_outline,
+                    title: 'Ask Question',
+                    description: 'Select from curated questions',
+                  ),
                 ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: _buildProcessCard(
-                  icon: Icons.schedule,
-                  title: 'Exact Timing',
-                  description: 'Chart at query moment',
+                Spacing.w(12),
+                Expanded(
+                  child: _buildProcessCard(
+                    icon: Icons.schedule,
+                    title: 'Exact Timing',
+                    description: 'Chart at query moment',
+                  ),
                 ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: _buildProcessCard(
-                  icon: Icons.auto_awesome,
-                  title: 'AI Analysis',
-                  description: 'Instant divine insights',
+                Spacing.w(12),
+                Expanded(
+                  child: _buildProcessCard(
+                    icon: Icons.auto_awesome,
+                    title: 'AI Analysis',
+                    description: 'Instant divine insights',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -513,6 +520,8 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
             width: 44.w,
@@ -531,17 +540,22 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
               fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           Spacing.h(4),
-          AutoTranslateText(
-            description,
-            style: MyTextTheme.smallBCN.copyWith(
-              color: '#666666'.toColor(),
-              height: 1.25,
+          SizedBox(
+            height: 36.h,
+            child: AutoTranslateText(
+              description,
+              style: MyTextTheme.smallBCN.copyWith(
+                color: '#666666'.toColor(),
+                height: 1.25,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -565,57 +579,59 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
           ),
           Spacing.h(16),
           // Grid of 6 items in 3 columns
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildFeatureCard(
-                      title: 'Direct Answer',
-                      description: 'Clear yes/no response.',
-                    ),
-                    Spacing.h(12),
-                    _buildFeatureCard(
-                      title: 'Timing',
-                      description: 'When it will happen.',
-                    ),
-                  ],
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      _buildFeatureCard(
+                        title: 'Direct Answer',
+                        description: 'Clear yes/no response.',
+                      ),
+                      Spacing.h(12),
+                      _buildFeatureCard(
+                        title: 'Timing',
+                        description: 'When it will happen.',
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildFeatureCard(
-                      title: 'Planetary',
-                      description: 'Celestial influences.',
-                    ),
-                    Spacing.h(12),
-                    _buildFeatureCard(
-                      title: 'Remedies',
-                      description: 'Solutions to improve.',
-                    ),
-                  ],
+                Spacing.w(12),
+                Expanded(
+                  child: Column(
+                    children: [
+                      _buildFeatureCard(
+                        title: 'Planetary',
+                        description: 'Celestial influences.',
+                      ),
+                      Spacing.h(12),
+                      _buildFeatureCard(
+                        title: 'Remedies',
+                        description: 'Solutions to improve.',
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildFeatureCard(
-                      title: 'Accuracy',
-                      description: 'Precise predictions.',
-                    ),
-                    Spacing.h(12),
-                    _buildFeatureCard(
-                      title: 'Guidance',
-                      description: 'Actionable advice.',
-                    ),
-                  ],
+                Spacing.w(12),
+                Expanded(
+                  child: Column(
+                    children: [
+                      _buildFeatureCard(
+                        title: 'Accuracy',
+                        description: 'Precise predictions.',
+                      ),
+                      Spacing.h(12),
+                      _buildFeatureCard(
+                        title: 'Guidance',
+                        description: 'Actionable advice.',
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -642,6 +658,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             width: 40.w,
@@ -661,13 +678,20 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
                   fontWeight: FontWeight.bold,
                 )
                 .merge(AppTypography.body2),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           Spacing.h(4),
-          AutoTranslateText(
-            description,
-            style: MyTextTheme.smallBCN
-                .copyWith(color: '#666666'.toColor())
-                .merge(AppTypography.label),
+          SizedBox(
+            height: 36.h,
+            child: AutoTranslateText(
+              description,
+              style: MyTextTheme.smallBCN
+                  .copyWith(color: '#666666'.toColor())
+                  .merge(AppTypography.label),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),

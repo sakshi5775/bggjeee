@@ -1,10 +1,9 @@
-import 'package:astrobharataiuser/app_manager/my_appbar.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/order_detail_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,60 +14,84 @@ class OrderDetailView extends GetView<OrderDetailController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.lightBackground,
-      appBar: MyAppbar(
-        title: 'Order Details',
-        showLeading: true,
-        gradient: AppColors.primaryGradient,
-      ),
-      body: Obx(() {
-        if (controller.isLoading.value && controller.order.value == null) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Obx(() {
+            if (controller.isLoading.value && controller.order.value == null) {
+              return Center(
+                child: CircularProgressIndicator(color: AppColors.deepOrange),
+              );
+            }
 
-        final order = controller.order.value;
-        if (order == null) {
-          return Center(
-            child: AutoTranslateText(
-              'Unable to load order detail.',
-              style: TextStyle(
-                color: AppColors.textSecondary,
-              ),
-            ),
-          );
-        }
+            final order = controller.order.value;
+            if (order == null) {
+              return Column(
+                children: [
+                  CommonHeader(
+                    title: 'Order Details',
+                    titleColor: AppColors.templeGold,
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: AutoTranslateText(
+                        'Unable to load order detail.',
+                        style: TextStyle(
+                          color: AppColors.textColorMaroon,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
 
-        return SingleChildScrollView(
-          padding: EdgeInsets.all(16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSummaryCard(order, controller, context),
-              SizedBox(height: 24.h),
-              _buildItemsSection(order),
-              SizedBox(height: 24.h),
-              _buildAddressSection(
-                title: 'Billing Address',
-                address: order.billingAddress,
-              ),
-              if (order.shippingAddress != null) ...[
-                SizedBox(height: 24.h),
-                _buildAddressSection(
-                  title: 'Shipping Address',
-                  address: order.shippingAddress,
+            return Column(
+              children: [
+                CommonHeader(
+                  title: 'Order Details',
+                  titleColor: AppColors.templeGold,
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(16.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSummaryCard(order, controller, context),
+                        SizedBox(height: 20.h),
+                        _buildItemsSection(order),
+                        SizedBox(height: 20.h),
+                        _buildAddressSection(
+                          title: 'Billing Address',
+                          address: order.billingAddress,
+                        ),
+                        if (order.shippingAddress != null) ...[
+                          SizedBox(height: 20.h),
+                          _buildAddressSection(
+                            title: 'Shipping Address',
+                            address: order.shippingAddress,
+                          ),
+                        ],
+                        SizedBox(height: 20.h),
+                        _buildPaymentSection(order),
+                        SizedBox(height: 20.h),
+                        _buildTimelineSection(controller),
+                        SizedBox(height: 20.h),
+                        _buildHistorySection(controller),
+                        SizedBox(height: 20.h),
+                      ],
+                    ),
+                  ),
                 ),
               ],
-              SizedBox(height: 24.h),
-              _buildPaymentSection(order),
-              SizedBox(height: 24.h),
-              _buildTimelineSection(controller),
-              SizedBox(height: 24.h),
-              _buildHistorySection(controller),
-            ],
-          ),
-        );
-      }),
+            );
+          }),
+        ),
+      ),
     );
   }
 
@@ -81,87 +104,125 @@ class OrderDetailView extends GetView<OrderDetailController> {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(18.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
+          BoxShadow(
+            color: AppColors.deepOrange.withOpacity(0.15),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
-            offset: const Offset(0, 3),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AutoTranslateText(
-                      order.orderId ?? '',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    SizedBox(height: 6.h),
-                    AutoTranslateText(
-                      'Placed on $createdAt',
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
+          // Header with gradient
+          Container(
+            padding: EdgeInsets.all(18.w),
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.r),
+                topRight: Radius.circular(20.r),
               ),
-              SizedBox(width: 12.w),
-              Flexible(
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: _StatusChip(status: order.status),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AutoTranslateText(
+                        order.orderId ?? '',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.sp,
+                          color: Colors.white,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 8.h),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_today,
+                            size: 14.w,
+                            color: AppColors.templeGold,
+                          ),
+                          SizedBox(width: 6.w),
+                          Flexible(
+                            child: AutoTranslateText(
+                              'Placed on $createdAt',
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                color: AppColors.templeGold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(width: 12.w),
+                Flexible(child: _StatusChip(status: order.status)),
+              ],
+            ),
           ),
-          SizedBox(height: 18.h),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AutoTranslateText(
-                      'Order Summary',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    SizedBox(height: 12.h),
-                    _AmountRow(label: 'Subtotal', value: order.subtotal),
-                    _AmountRow(label: 'Discount', value: order.pricing?.couponDiscount ?? 0),
-                    _AmountRow(label: 'Tax', value: order.tax),
-                    _AmountRow(label: 'Shipping', value: order.pricing?.shipping ?? 0),
-                    Divider(height: 20.h),
-                    _AmountRow(
-                      label: 'Total',
-                      value: order.totalAmount,
-                      isBold: true,
-                    ),
-                  ],
+          // Order Summary
+          Padding(
+            padding: EdgeInsets.all(18.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AutoTranslateText(
+                  'Order Summary',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.sp,
+                    color: AppColors.textColorMaroon,
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(height: 16.h),
+                _AmountRow(label: 'Subtotal', value: order.subtotal),
+                _AmountRow(
+                  label: 'Discount',
+                  value: order.pricing?.couponDiscount ?? 0,
+                ),
+                _AmountRow(label: 'Tax', value: order.tax),
+                _AmountRow(
+                  label: 'Shipping',
+                  value: order.pricing?.shipping ?? 0,
+                ),
+                Divider(
+                  height: 24.h,
+                  thickness: 1,
+                  color: AppColors.textSecondary.withOpacity(0.2),
+                ),
+                _AmountRow(
+                  label: 'Total',
+                  value: order.totalAmount,
+                  isBold: true,
+                ),
+              ],
+            ),
           ),
-          SizedBox(height: 18.h),
-          _buildActionButtons(order, controller, context),
+          // Action Buttons
+          Padding(
+            padding: EdgeInsets.fromLTRB(18.w, 0, 18.w, 18.w),
+            child: _buildActionButtons(order, controller, context),
+          ),
         ],
       ),
     );
@@ -174,29 +235,51 @@ class OrderDetailView extends GetView<OrderDetailController> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
+          BoxShadow(
+            color: AppColors.deepOrange.withOpacity(0.15),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
-            offset: const Offset(0, 3),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.all(16.w),
-            child: AutoTranslateText(
-              'Items',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
+          Container(
+            padding: EdgeInsets.all(18.w),
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.r),
+                topRight: Radius.circular(20.r),
               ),
             ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.shopping_bag,
+                  color: AppColors.templeGold,
+                  size: 20.w,
+                ),
+                SizedBox(width: 8.w),
+                AutoTranslateText(
+                  'Order Items',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.sp,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const Divider(height: 0),
           ...items.map((item) => _OrderItemTile(item: item)).toList(),
         ],
       ),
@@ -207,67 +290,117 @@ class OrderDetailView extends GetView<OrderDetailController> {
     if (address == null) return const SizedBox();
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(18.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
+          BoxShadow(
+            color: AppColors.deepOrange.withOpacity(0.15),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
-            offset: const Offset(0, 3),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(Icons.location_on_outlined, color: AppColors.saffron),
-              SizedBox(width: 8.w),
-              AutoTranslateText(
-                title,
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+          Container(
+            padding: EdgeInsets.all(18.w),
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.r),
+                topRight: Radius.circular(20.r),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.location_on,
+                  color: AppColors.templeGold,
+                  size: 20.w,
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          AutoTranslateText(
-            address.fullName ?? '',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+                SizedBox(width: 8.w),
+                AutoTranslateText(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.sp,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
           ),
-          SizedBox(height: 4.h),
-          if (address.phone != null)
-            AutoTranslateText(
-              address.phone!,
-              style: TextStyle(
-                color: AppColors.textSecondary,
-              ),
-            ),
-          SizedBox(height: 4.h),
-          AutoTranslateText(
-            address.formattedAddress,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              height: 1.4,
+          Padding(
+            padding: EdgeInsets.all(18.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AutoTranslateText(
+                  address.fullName ?? '',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.sp,
+                    color: AppColors.textColorMaroon,
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                if (address.phone != null)
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.phone,
+                        size: 16.w,
+                        color: AppColors.deepOrange,
+                      ),
+                      SizedBox(width: 8.w),
+                      AutoTranslateText(
+                        address.phone!,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: AppColors.textColorMaroon,
+                        ),
+                      ),
+                    ],
+                  ),
+                if (address.phone != null) SizedBox(height: 8.h),
+                AutoTranslateText(
+                  address.formattedAddress,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: AppColors.textSecondary,
+                    height: 1.5,
+                  ),
+                ),
+                if (address.email != null && address.email!.isNotEmpty) ...[
+                  SizedBox(height: 12.h),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.email,
+                        size: 16.w,
+                        color: AppColors.deepOrange,
+                      ),
+                      SizedBox(width: 8.w),
+                      AutoTranslateText(
+                        address.email!,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: AppColors.textColorMaroon,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
             ),
           ),
-          if (address.email != null && address.email!.isNotEmpty) ...[
-            SizedBox(height: 6.h),
-            AutoTranslateText(
-              'Email: ${address.email}',
-              style: TextStyle(
-                color: AppColors.textSecondary,
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -279,83 +412,192 @@ class OrderDetailView extends GetView<OrderDetailController> {
     final invoice = order.invoice;
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(18.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
+          BoxShadow(
+            color: AppColors.deepOrange.withOpacity(0.15),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
-            offset: const Offset(0, 3),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AutoTranslateText(
-            'Payment Information',
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+          Container(
+            padding: EdgeInsets.all(18.w),
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.r),
+                topRight: Radius.circular(20.r),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.payment, color: AppColors.templeGold, size: 20.w),
+                SizedBox(width: 8.w),
+                AutoTranslateText(
+                  'Payment Information',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.sp,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
           ),
-          SizedBox(height: 12.h),
-          _InfoRow(
-            label: 'Payment method',
-            value: payment?.method?.toUpperCase() ?? '—',
+          Padding(
+            padding: EdgeInsets.all(18.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _InfoRow(
+                  label: 'Payment method',
+                  value: payment?.method?.toUpperCase() ?? '—',
+                ),
+                SizedBox(height: 12.h),
+                _InfoRow(
+                  label: 'Payment status',
+                  value: payment?.status?.toUpperCase() ?? '—',
+                ),
+                if (payment?.transactionId != null) ...[
+                  SizedBox(height: 12.h),
+                  _InfoRow(
+                    label: 'Transaction ID',
+                    value: payment!.transactionId!,
+                  ),
+                ],
+                if (payment?.gatewayOrderId != null) ...[
+                  SizedBox(height: 12.h),
+                  _InfoRow(
+                    label: 'Gateway order',
+                    value: payment!.gatewayOrderId!,
+                  ),
+                ],
+                if (payment?.gatewayPaymentId != null &&
+                    payment!.gatewayPaymentId!.isNotEmpty) ...[
+                  SizedBox(height: 12.h),
+                  _InfoRow(
+                    label: 'Gateway payment',
+                    value: payment.gatewayPaymentId!,
+                  ),
+                ],
+                if (payment?.paidAt != null) ...[
+                  SizedBox(height: 12.h),
+                  _InfoRow(
+                    label: 'Paid at',
+                    value: _formatDate(payment!.paidAt),
+                  ),
+                ],
+                if (payment?.failureReason != null &&
+                    payment!.failureReason!.isNotEmpty) ...[
+                  SizedBox(height: 12.h),
+                  Container(
+                    padding: EdgeInsets.all(12.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.error.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          color: AppColors.error,
+                          size: 18.w,
+                        ),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: AutoTranslateText(
+                            payment.failureReason!,
+                            style: TextStyle(
+                              color: AppColors.error,
+                              fontSize: 13.sp,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                if (coupon?.code != null && coupon!.code!.isNotEmpty) ...[
+                  SizedBox(height: 16.h),
+                  Container(
+                    padding: EdgeInsets.all(12.w),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.orangeGradient,
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.local_offer,
+                          color: Colors.white,
+                          size: 18.w,
+                        ),
+                        SizedBox(width: 8.w),
+                        AutoTranslateText(
+                          'Coupon: ${coupon.code}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                if (invoice?.invoiceUrl != null &&
+                    invoice!.invoiceUrl!.isNotEmpty) ...[
+                  SizedBox(height: 16.h),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: AppColors.orangeGradient,
+                      borderRadius: BorderRadius.circular(12.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.deepOrange.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Get.snackbar(
+                          'Invoice',
+                          'Use the provided link to download your invoice.',
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: AppColors.deepOrange,
+                          colorText: Colors.white,
+                        );
+                      },
+                      icon: const Icon(Icons.receipt_long),
+                      label: const AutoTranslateText('Download Invoice'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: Colors.white,
+                        shadowColor: Colors.transparent,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 12.h,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
-          _InfoRow(
-            label: 'Payment status',
-            value: payment?.status?.toUpperCase() ?? '—',
-          ),
-          if (payment?.transactionId != null)
-            _InfoRow(
-              label: 'Transaction ID',
-              value: payment!.transactionId!,
-            ),
-          if (payment?.gatewayOrderId != null)
-            _InfoRow(
-              label: 'Gateway order',
-              value: payment!.gatewayOrderId!,
-            ),
-          if (payment?.gatewayPaymentId != null && payment!.gatewayPaymentId!.isNotEmpty)
-            _InfoRow(
-              label: 'Gateway payment',
-              value: payment.gatewayPaymentId!,
-            ),
-          if (payment?.paidAt != null)
-            _InfoRow(
-              label: 'Paid at',
-              value: _formatDate(payment!.paidAt),
-            ),
-          if (payment?.failureReason != null && payment!.failureReason!.isNotEmpty)
-            _InfoRow(
-              label: 'Failure reason',
-              value: payment.failureReason!,
-            ),
-          if (coupon?.code != null && coupon!.code!.isNotEmpty) ...[
-            SizedBox(height: 12.h),
-            AutoTranslateText(
-              'Coupon applied: ${coupon.code}',
-              style: AppTypography.body2.copyWith(color: AppColors.textSecondary),
-            ),
-          ],
-          if (invoice?.invoiceUrl != null && invoice!.invoiceUrl!.isNotEmpty) ...[
-            SizedBox(height: 16.h),
-            OutlinedButton.icon(
-              onPressed: () {
-                Get.snackbar(
-                  'Invoice',
-                  'Use the provided link to download your invoice.',
-                  snackPosition: SnackPosition.BOTTOM,
-                );
-              },
-              icon: const Icon(Icons.receipt_long_outlined),
-              label: const AutoTranslateText('Download Invoice'),
-            ),
-          ],
         ],
       ),
     );
@@ -364,49 +606,66 @@ class OrderDetailView extends GetView<OrderDetailController> {
   Widget _buildTimelineSection(OrderDetailController controller) {
     return Obx(() {
       final order = controller.order.value;
-      final isCancelled = order?.status?.toLowerCase() == 'cancelled' || 
-                         order?.status?.toLowerCase() == 'canceled';
-      
+      final isCancelled =
+          order?.status?.toLowerCase() == 'cancelled' ||
+          order?.status?.toLowerCase() == 'canceled';
+
       if (isCancelled) {
         return Container(
           width: double.infinity,
           padding: EdgeInsets.all(18.w),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(20.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 3),
+                color: AppColors.error.withOpacity(0.15),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Row(
-                children: [
-                  Icon(Icons.cancel_outlined, color: AppColors.error, size: 24.sp),
-                  SizedBox(width: 12.w),
-                  AutoTranslateText(
-                    'Order Cancelled',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.error,
-                    ),
-                  ),
-                ],
-              ),
-              if (order?.cancellationReason != null && order!.cancellationReason!.isNotEmpty) ...[
-                SizedBox(height: 12.h),
-                AutoTranslateText(
-                  'Reason: ${order.cancellationReason}',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                  ),
+              Container(
+                padding: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withOpacity(0.1),
+                  shape: BoxShape.circle,
                 ),
-              ],
+                child: Icon(
+                  Icons.cancel_outlined,
+                  color: AppColors.error,
+                  size: 24.sp,
+                ),
+              ),
+              SizedBox(width: 16.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AutoTranslateText(
+                      'Order Cancelled',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
+                        color: AppColors.error,
+                      ),
+                    ),
+                    if (order?.cancellationReason != null &&
+                        order!.cancellationReason!.isNotEmpty) ...[
+                      SizedBox(height: 4.h),
+                      AutoTranslateText(
+                        order.cancellationReason!,
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
             ],
           ),
         );
@@ -417,67 +676,99 @@ class OrderDetailView extends GetView<OrderDetailController> {
 
       return Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 12.w),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
+            BoxShadow(
+              color: AppColors.deepOrange.withOpacity(0.15),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 8,
-              offset: const Offset(0, 3),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
+            Container(
+              padding: EdgeInsets.all(18.w),
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.r),
+                  topRight: Radius.circular(20.r),
+                ),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AutoTranslateText(
-                    'Order Progress',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.timeline,
+                        color: AppColors.templeGold,
+                        size: 20.w,
+                      ),
+                      SizedBox(width: 8.w),
+                      AutoTranslateText(
+                        'Order Progress',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.sp,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                   IconButton(
                     onPressed: controller.refreshOrder,
-                    icon: const Icon(Icons.refresh),
+                    icon: Icon(Icons.refresh, color: AppColors.templeGold),
                     tooltip: 'Refresh status',
-                    color: AppColors.saffron,
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 12.h),
-            if (isLoading && entries.isEmpty)
-              const Center(child: CircularProgressIndicator())
-            else if (entries.isEmpty)
-              Padding(
-                padding: EdgeInsets.all(12.w),
-                child: AutoTranslateText(
-                  'Tracking information will appear here once available.',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              )
-            else
-              Column(
-                children: entries
-                    .map(
-                      (entry) => _TimelineEntryTile(
-                        entry: entry,
-                        formattedStatus: controller.formatStatus(entry.status),
-                        date: _formatDate(entry.date),
+            Padding(
+              padding: EdgeInsets.all(18.w),
+              child: isLoading && entries.isEmpty
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.deepOrange,
                       ),
                     )
-                    .toList(),
-              ),
+                  : entries.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20.w),
+                        child: AutoTranslateText(
+                          'Tracking information will appear here once available.',
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 14.sp,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : Column(
+                      children: entries
+                          .map(
+                            (entry) => _TimelineEntryTile(
+                              entry: entry,
+                              formattedStatus: controller.formatStatus(
+                                entry.status,
+                              ),
+                              date: _formatDate(entry.date),
+                            ),
+                          )
+                          .toList(),
+                    ),
+            ),
           ],
         ),
       );
@@ -489,44 +780,70 @@ class OrderDetailView extends GetView<OrderDetailController> {
       final isLoading = controller.isLoadingHistory.value;
       final history = controller.orderHistory.toList();
       if (isLoading && history.isEmpty) {
-        return const Center(child: CircularProgressIndicator());
+        return Center(
+          child: CircularProgressIndicator(color: AppColors.deepOrange),
+        );
       }
       if (history.isEmpty) {
         return const SizedBox();
       }
       return Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 12.w),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
+            BoxShadow(
+              color: AppColors.deepOrange.withOpacity(0.15),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 8,
-              offset: const Offset(0, 3),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: AutoTranslateText(
-                'Order History',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+            Container(
+              padding: EdgeInsets.all(18.w),
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.r),
+                  topRight: Radius.circular(20.r),
                 ),
               ),
+              child: Row(
+                children: [
+                  Icon(Icons.history, color: AppColors.templeGold, size: 20.w),
+                  SizedBox(width: 8.w),
+                  AutoTranslateText(
+                    'Order History',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.sp,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            SizedBox(height: 12.h),
-            ...history.map(
-              (entry) => _HistoryTile(
-                title: controller.formatStatus(entry.status),
-                subtitle: entry.note ?? 'Status updated',
-                date: _formatDate(entry.updatedAt ?? entry.createdAt),
+            Padding(
+              padding: EdgeInsets.all(18.w),
+              child: Column(
+                children: history
+                    .map(
+                      (entry) => _HistoryTile(
+                        title: controller.formatStatus(entry.status),
+                        subtitle: entry.note ?? 'Status updated',
+                        date: _formatDate(entry.updatedAt ?? entry.createdAt),
+                      ),
+                    )
+                    .toList(),
               ),
             ),
           ],
@@ -535,31 +852,55 @@ class OrderDetailView extends GetView<OrderDetailController> {
     });
   }
 
-  Future<void> _promptCancelOrder(BuildContext context, OrderDetailController controller) async {
+  Future<void> _promptCancelOrder(
+    BuildContext context,
+    OrderDetailController controller,
+  ) async {
     final reasonController = TextEditingController();
     final formKey = GlobalKey<FormState>();
     String? errorMessage;
-    
+
     final shouldCancel = await Get.dialog<bool>(
       StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const AutoTranslateText('Cancel order'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          title: AutoTranslateText(
+            'Cancel Order',
+            style: TextStyle(
+              color: AppColors.textColorMaroon,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           content: Form(
             key: formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const AutoTranslateText(
+                AutoTranslateText(
                   'Please provide a reason for cancellation (required)',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textColorMaroon,
+                  ),
                 ),
                 SizedBox(height: 12.h),
                 TextField(
                   controller: reasonController,
                   decoration: InputDecoration(
                     hintText: 'Enter cancellation reason (10-500 characters)',
-                    border: const OutlineInputBorder(),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                      borderSide: BorderSide(
+                        color: AppColors.deepOrange,
+                        width: 2,
+                      ),
+                    ),
                     errorText: errorMessage,
                   ),
                   maxLines: 4,
@@ -575,7 +916,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                     padding: EdgeInsets.only(top: 8.h),
                     child: AutoTranslateText(
                       errorMessage!,
-                      style: AppTypography.body2.copyWith(color: AppColors.error),
+                      style: TextStyle(color: AppColors.error, fontSize: 12.sp),
                     ),
                   ),
               ],
@@ -584,41 +925,61 @@ class OrderDetailView extends GetView<OrderDetailController> {
           actions: [
             TextButton(
               onPressed: () => Get.back(result: false),
-              child: const AutoTranslateText('Keep order'),
+              child: AutoTranslateText(
+                'Keep Order',
+                style: TextStyle(color: AppColors.textSecondary),
+              ),
             ),
             Obx(
-              () => TextButton(
-                onPressed: controller.isCancelling.value
-                    ? null
-                    : () {
-                        final reason = reasonController.text.trim();
-                        if (reason.isEmpty) {
-                          setState(() {
-                            errorMessage = 'Cancellation reason is required';
-                          });
-                          return;
-                        }
-                        if (reason.length < 10) {
-                          setState(() {
-                            errorMessage = 'Reason must be at least 10 characters';
-                          });
-                          return;
-                        }
-                        if (reason.length > 500) {
-                          setState(() {
-                            errorMessage = 'Reason must not exceed 500 characters';
-                          });
-                          return;
-                        }
-                        Get.back(result: true);
-                      },
-                child: controller.isCancelling.value
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const AutoTranslateText('Cancel order'),
+              () => Container(
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: TextButton(
+                  onPressed: controller.isCancelling.value
+                      ? null
+                      : () {
+                          final reason = reasonController.text.trim();
+                          if (reason.isEmpty) {
+                            setState(() {
+                              errorMessage = 'Cancellation reason is required';
+                            });
+                            return;
+                          }
+                          if (reason.length < 10) {
+                            setState(() {
+                              errorMessage =
+                                  'Reason must be at least 10 characters';
+                            });
+                            return;
+                          }
+                          if (reason.length > 500) {
+                            setState(() {
+                              errorMessage =
+                                  'Reason must not exceed 500 characters';
+                            });
+                            return;
+                          }
+                          Get.back(result: true);
+                        },
+                  child: controller.isCancelling.value
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : AutoTranslateText(
+                          'Cancel Order',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
               ),
             ),
           ],
@@ -643,12 +1004,31 @@ class OrderDetailView extends GetView<OrderDetailController> {
       final isCancelling = controller.isCancelling.value;
       return Wrap(
         spacing: 12.w,
-        runSpacing: 8.h,
+        runSpacing: 12.h,
         children: [
-          ElevatedButton.icon(
-            onPressed: controller.refreshOrder,
-            icon: const Icon(Icons.refresh),
-            label: const AutoTranslateText('Refresh'),
+          Container(
+            decoration: BoxDecoration(
+              gradient: AppColors.orangeGradient,
+              borderRadius: BorderRadius.circular(12.r),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.deepOrange.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ElevatedButton.icon(
+              onPressed: controller.refreshOrder,
+              icon: const Icon(Icons.refresh),
+              label: const AutoTranslateText('Refresh'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.white,
+                shadowColor: Colors.transparent,
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+              ),
+            ),
           ),
           if (controller.canCancelOrder)
             OutlinedButton.icon(
@@ -656,23 +1036,53 @@ class OrderDetailView extends GetView<OrderDetailController> {
                   ? null
                   : () => _promptCancelOrder(context, controller),
               icon: isCancelling
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 16,
                       height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.error,
+                      ),
                     )
                   : const Icon(Icons.cancel_outlined),
-              label: AutoTranslateText(isCancelling ? 'Cancelling...' : 'Cancel order'),
+              label: AutoTranslateText(
+                isCancelling ? 'Cancelling...' : 'Cancel Order',
+              ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.error,
+                side: BorderSide(color: AppColors.error, width: 2),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
               ),
             ),
-          if (order.cancellationReason != null && order.cancellationReason!.isNotEmpty)
-            Chip(
-              backgroundColor: AppColors.error.withOpacity(0.08),
-              label: AutoTranslateText(
-                'Cancelled: ${order.cancellationReason}',
-                style: AppTypography.label.copyWith(color: AppColors.error),
+          if (order.cancellationReason != null &&
+              order.cancellationReason!.isNotEmpty)
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              decoration: BoxDecoration(
+                color: AppColors.error.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.info_outline, color: AppColors.error, size: 18.w),
+                  SizedBox(width: 8.w),
+                  Flexible(
+                    child: AutoTranslateText(
+                      'Cancelled: ${order.cancellationReason}',
+                      style: TextStyle(
+                        color: AppColors.error,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12.sp,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
             ),
         ],
@@ -705,22 +1115,22 @@ class _AmountRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4.h),
+      padding: EdgeInsets.symmetric(vertical: 6.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           AutoTranslateText(
             label,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-            ),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 14.sp),
           ),
           AutoTranslateText(
             '₹${value.toStringAsFixed(0)}',
             style: TextStyle(
-              fontSize: isBold ? 16.sp : 13.sp,
-              fontWeight: isBold ? FontWeight.w700 : FontWeight.w600,
-              color: AppColors.textPrimary,
+              fontSize: isBold ? 20.sp : 15.sp,
+              fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
+              color: isBold
+                  ? AppColors.textColorMaroon
+                  : AppColors.textColorMaroon,
             ),
           ),
         ],
@@ -737,31 +1147,27 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4.h),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 120.w,
-            child: AutoTranslateText(
-              label,
-              style: TextStyle(
-                color: AppColors.textSecondary,
-              ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 120.w,
+          child: AutoTranslateText(
+            label,
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 14.sp),
+          ),
+        ),
+        Expanded(
+          child: AutoTranslateText(
+            value,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 14.sp,
+              color: AppColors.textColorMaroon,
             ),
           ),
-          Expanded(
-            child: AutoTranslateText(
-              value,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -776,26 +1182,54 @@ class _OrderItemTile extends StatelessWidget {
     final imageUrl = _resolveOrderImage(item);
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
+      padding: EdgeInsets.all(16.w),
+      margin: EdgeInsets.symmetric(horizontal: 4.w),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: AppColors.textSecondary.withOpacity(0.1),
+            width: 1,
+          ),
+        ),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.r),
-            child: imageUrl != null
-                ? NetworkImageWithLoader(
-                    url: imageUrl,
-                    height: 50.h,
-                    width: 50.w,
-                  )
-                : Container(
-                    height: 50.h,
-                    width: 50.w,
-                    color: AppColors.textSecondary.withOpacity(0.1),
-                    child: Icon(Icons.image, size: 18.sp, color: AppColors.textSecondary),
-                  ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12.r),
+              child: imageUrl != null
+                  ? NetworkImageWithLoader(
+                      url: imageUrl,
+                      height: 70.h,
+                      width: 70.w,
+                    )
+                  : Container(
+                      height: 70.h,
+                      width: 70.w,
+                      decoration: BoxDecoration(
+                        gradient: AppColors.orangeGradient,
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Icon(
+                        Icons.image,
+                        size: 28.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+            ),
           ),
-          SizedBox(width: 6.w),
+          SizedBox(width: 12.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -806,57 +1240,77 @@ class _OrderItemTile extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15.sp,
+                    color: AppColors.textColorMaroon,
                   ),
                 ),
-                SizedBox(height: 3.h),
+                SizedBox(height: 6.h),
                 if (item.productSnapshot?.sku != null)
-                  AutoTranslateText(
-                    'SKU: ${item.productSnapshot!.sku}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.label.copyWith(color: AppColors.textSecondary),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.orangeGradient.colors.first.withOpacity(
+                        0.1,
+                      ),
+                      borderRadius: BorderRadius.circular(6.r),
+                    ),
+                    child: AutoTranslateText(
+                      'SKU: ${item.productSnapshot!.sku}',
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        color: AppColors.deepOrange,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
-                SizedBox(height: 3.h),
-                AutoTranslateText(
-                  'Qty: ${item.quantity ?? 0}',
-                  style: TextStyle(color: AppColors.textSecondary).merge(AppTypography.label),
+                SizedBox(height: 6.h),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.orangeGradient,
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: AutoTranslateText(
+                    'Qty: ${item.quantity ?? 0}',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
-          SizedBox(width: 4.w),
-          SizedBox(
-            width: 60.w,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerRight,
-                  child: AutoTranslateText(
-                    '₹${(item.discountedPrice ?? item.price ?? 0).toStringAsFixed(0)}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
-                    maxLines: 1,
-                  ),
+          SizedBox(width: 8.w),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AutoTranslateText(
+                '₹${(item.discountedPrice ?? item.price ?? 0).toStringAsFixed(0)}',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.sp,
+                  color: AppColors.textColorMaroon,
                 ),
-                SizedBox(height: 3.h),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerRight,
-                  child: AutoTranslateText(
-                    '₹${(item.total ?? 0).toStringAsFixed(0)}',
-                    style: AppTypography.label.copyWith(color: AppColors.textSecondary),
-                    maxLines: 1,
-                  ),
+              ),
+              SizedBox(height: 4.h),
+              AutoTranslateText(
+                'Total: ₹${(item.total ?? 0).toStringAsFixed(0)}',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: AppColors.textSecondary,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
@@ -871,23 +1325,29 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = (status ?? 'unknown').replaceAll('_', ' ');
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      alignment: Alignment.centerRight,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-        decoration: BoxDecoration(
-          color: AppColors.saffron.withOpacity(0.12),
-          borderRadius: BorderRadius.circular(20.r),
-        ),
-        child: AutoTranslateText(
-          label,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: AppColors.saffron,
+    final label = (status ?? 'unknown').replaceAll('_', ' ').toUpperCase();
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        gradient: AppColors.orangeGradient,
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.deepOrange.withOpacity(0.3),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
+        ],
+      ),
+      child: AutoTranslateText(
+        label,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 10.sp,
+          color: Colors.white,
         ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
@@ -930,31 +1390,61 @@ class _TimelineEntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = entry.completed ? AppColors.saffron : AppColors.textSecondary.withOpacity(0.4);
+    final color = entry.completed
+        ? AppColors.deepOrange
+        : AppColors.textSecondary.withOpacity(0.4);
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h),
+      padding: EdgeInsets.symmetric(vertical: 12.h),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Column(
             children: [
               Container(
-                height: 18.w,
-                width: 18.w,
+                height: 20.w,
+                width: 20.w,
                 decoration: BoxDecoration(
-                  color: entry.completed ? AppColors.saffron : Colors.transparent,
+                  gradient: entry.completed
+                      ? AppColors.orangeGradient
+                      : LinearGradient(
+                          colors: [Colors.transparent, Colors.transparent],
+                        ),
                   border: Border.all(color: color, width: 2),
                   shape: BoxShape.circle,
+                  boxShadow: entry.completed
+                      ? [
+                          BoxShadow(
+                            color: AppColors.deepOrange.withOpacity(0.4),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
                 ),
+                alignment: Alignment.center,
+                child: entry.completed
+                    ? Icon(Icons.check, size: 12.w, color: Colors.white)
+                    : null,
               ),
-              Container(
-                width: 2,
-                height: 40.h,
-                color: color,
-              ),
+              if (!entry.completed)
+                Container(
+                  width: 2,
+                  height: 50.h,
+                  decoration: BoxDecoration(
+                    gradient: entry.completed
+                        ? AppColors.orangeGradient
+                        : LinearGradient(
+                            colors: [
+                              AppColors.textSecondary.withOpacity(0.3),
+                              AppColors.textSecondary.withOpacity(0.3),
+                            ],
+                          ),
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                ),
             ],
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: 16.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -962,16 +1452,18 @@ class _TimelineEntryTile extends StatelessWidget {
                 AutoTranslateText(
                   formattedStatus,
                   style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15.sp,
+                    color: AppColors.textColorMaroon,
                   ),
                 ),
                 SizedBox(height: 4.h),
                 AutoTranslateText(
                   date,
                   style: TextStyle(
+                    fontSize: 12.sp,
                     color: AppColors.textSecondary,
-                  ).merge(AppTypography.label),
+                  ),
                 ),
               ],
             ),
@@ -995,12 +1487,28 @@ class _HistoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      margin: EdgeInsets.only(bottom: 8.h),
+      decoration: BoxDecoration(
+        color: AppColors.gradientBackground.colors.first.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: AppColors.deepOrange.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.event_note_outlined, color: AppColors.saffron, size: 18.sp),
+          Container(
+            padding: EdgeInsets.all(8.w),
+            decoration: BoxDecoration(
+              gradient: AppColors.orangeGradient,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.event_note, color: Colors.white, size: 16.w),
+          ),
           SizedBox(width: 12.w),
           Expanded(
             child: Column(
@@ -1009,22 +1517,25 @@ class _HistoryTile extends StatelessWidget {
                 AutoTranslateText(
                   title,
                   style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14.sp,
+                    color: AppColors.textColorMaroon,
                   ),
                 ),
                 SizedBox(height: 4.h),
                 AutoTranslateText(
                   subtitle,
                   style: TextStyle(
+                    fontSize: 12.sp,
                     color: AppColors.textSecondary,
                     height: 1.4,
-                  ).merge(AppTypography.label),
+                  ),
                 ),
                 SizedBox(height: 4.h),
                 AutoTranslateText(
                   date,
                   style: TextStyle(
+                    fontSize: 11.sp,
                     color: AppColors.textSecondary.withOpacity(0.7),
                   ),
                 ),
@@ -1036,4 +1547,3 @@ class _HistoryTile extends StatelessWidget {
     );
   }
 }
-

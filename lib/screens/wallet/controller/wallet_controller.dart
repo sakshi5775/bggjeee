@@ -146,7 +146,9 @@ class WalletController extends BaseController {
                   padding: EdgeInsets.all(24.w),
                   decoration: BoxDecoration(
                     gradient: AppColors.primaryGradient,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(30.r),
+                    ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

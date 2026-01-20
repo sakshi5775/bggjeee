@@ -488,24 +488,35 @@ class AllAstrologersView extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   // Price and Reviews Row
-                  Row(
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8.w,
+                    runSpacing: 4.h,
                     children: [
-                      Icon(
-                        Icons.currency_rupee,
-                        color: AppColors.templeGold,
-                        size: 13.w,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.currency_rupee,
+                            color: AppColors.templeGold,
+                            size: 13.w,
+                          ),
+                          Flexible(
+                            child: AutoTranslateText(
+                              '$price/min',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12.sp,
+                                color: AppColors.templeGold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
-                      AutoTranslateText(
-                        '$price/min',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12.sp,
-                          color: AppColors.templeGold,
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Expanded(
+                      Flexible(
                         child: AutoTranslateText(
                           '($totalRatings reviews)',
                           style: TextStyle(

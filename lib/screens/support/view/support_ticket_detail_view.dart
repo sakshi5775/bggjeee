@@ -1,9 +1,9 @@
 import 'package:astrobharataiuser/app_manager/common/image_picker.dart';
-import 'package:astrobharataiuser/app_manager/my_appbar.dart';
 import 'package:astrobharataiuser/data_model/support_ticket_model.dart';
 import 'package:astrobharataiuser/screens/support/controller/support_ticket_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,13 +41,19 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
   Widget build(BuildContext context) {
     final controller = Get.find<SupportTicketController>();
 
-    return Scaffold(
-      backgroundColor: AppColors.lightBackground,
-      appBar: const MyAppbar(
-        title: 'Ticket Details',
-        showLeading: true,
-      ),
-      body: Obx(() {
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              CommonHeader(
+                title: 'Ticket Details',
+                titleColor: AppColors.templeGold,
+              ),
+              Expanded(
+                child: Obx(() {
         if (controller.isLoadingTicketDetails.value && controller.selectedTicket.value == null) {
           return const Center(child: CircularProgressIndicator());
         }
@@ -90,10 +96,15 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
                 ),
               ),
             ),
-            if (!isClosed) _buildReplySection(controller),
-          ],
-        );
-      }),
+                  if (!isClosed) _buildReplySection(controller),
+                ],
+              );
+            }),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -508,49 +519,75 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
             SizedBox(height: 8.h),
             SizedBox(
               width: double.infinity,
-              child: Obx(() => ElevatedButton(
-                    onPressed: controller.isSendingReply.value
-                        ? null
-                        : () async {
-                            controller.replyMessageController.text = replyController.text;
-                            final success = await controller.replyToTicket(widget.ticketId);
-                            if (success) {
-                              replyController.clear();
-                              // Scroll to bottom
-                              Future.delayed(const Duration(milliseconds: 300), () {
-                                if (scrollController.hasClients) {
-                                  scrollController.animateTo(
-                                    scrollController.position.maxScrollExtent,
-                                    duration: const Duration(milliseconds: 300),
-                                    curve: Curves.easeOut,
-                                  );
-                                }
-                              });
-                            }
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.saffron,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 14.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
+              child: Obx(() => Container(
+                    decoration: BoxDecoration(
+                      gradient: controller.isSendingReply.value
+                          ? null
+                          : AppColors.orangeGradient,
+                      color: controller.isSendingReply.value
+                          ? Colors.grey[300]
+                          : null,
+                      borderRadius: BorderRadius.circular(12.r),
+                      boxShadow: controller.isSendingReply.value
+                          ? null
+                          : [
+                              BoxShadow(
+                                color: AppColors.deepOrange.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                     ),
-                    child: controller.isSendingReply.value
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    child: ElevatedButton(
+                      onPressed: controller.isSendingReply.value
+                          ? null
+                          : () async {
+                              controller.replyMessageController.text =
+                                  replyController.text;
+                              final success =
+                                  await controller.replyToTicket(widget.ticketId);
+                              if (success) {
+                                replyController.clear();
+                                // Scroll to bottom
+                                Future.delayed(const Duration(milliseconds: 300),
+                                    () {
+                                  if (scrollController.hasClients) {
+                                    scrollController.animateTo(
+                                      scrollController.position.maxScrollExtent,
+                                      duration: const Duration(milliseconds: 300),
+                                      curve: Curves.easeOut,
+                                    );
+                                  }
+                                });
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: Colors.white,
+                        shadowColor: Colors.transparent,
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                      ),
+                      child: controller.isSendingReply.value
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              ),
+                            )
+                          : AutoTranslateText(
+                              'Send Reply',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          )
-                        : AutoTranslateText(
-                            'Send Reply',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                    ),
                   )),
             ),
           ],

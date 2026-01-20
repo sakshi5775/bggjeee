@@ -22,7 +22,7 @@ class UserMainController extends GetxController {
     super.onInit();
     pages.assignAll([
       '/user-home',
-      '/user-shop',
+      AppRoutes.ecommerceHome,
       '/user-education',
       '/user-chat',
       '/user-profile',
@@ -36,7 +36,7 @@ class UserMainController extends GetxController {
     final showBackButton = args is Map<String, dynamic>
         ? args['showBackButton'] as bool? ?? false
         : false;
-    
+
     switch (settings.name) {
       case '/user-home':
         return GetPageRoute(
@@ -44,7 +44,7 @@ class UserMainController extends GetxController {
           page: () => const UserDashboardView(),
           binding: UserDashboardBinding(),
         );
-      case '/user-shop':
+      case AppRoutes.ecommerceHome:
         return GetPageRoute(
           settings: settings,
           page: () => EcommerceHomeView(showBackButton: showBackButton),
@@ -116,10 +116,7 @@ class UserMainController extends GetxController {
 
     // If education tab is clicked, navigate to courses page
     if (index == 2) {
-      Get.toNamed(
-        AppRoutes.courses,
-        arguments: {'showBackButton': false},
-      );
+      Get.toNamed(AppRoutes.courses, arguments: {'showBackButton': false});
       // Don't reset to home when coming back - let the user stay where they were
     } else {
       Get.offNamed(pages[index], id: 1);

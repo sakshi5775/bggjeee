@@ -22,7 +22,7 @@ class DailyAstrologersWidget extends BasePage<UserDashboardController> {
     final List<Map<String, dynamic>> dailyCards = [
       {'icon': AppConstant.horoscope, 'title': "Today's Horoscope"},
       {'icon': AppConstant.tarot, 'title': "Today's Tarot Reading"},
-      {'icon': AppConstant.service2025, 'title': 'All About 2026'},
+      // {'icon': AppConstant.service2025, 'title': 'All About 2026'},
       {'icon': AppConstant.servicePanchang, 'title': 'Todays Panchang'},
       {'icon': AppConstant.serviceNumerology, 'title': "Today's Numerology"},
     ];

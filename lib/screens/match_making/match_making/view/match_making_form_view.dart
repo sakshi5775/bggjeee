@@ -404,6 +404,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
   void _showDatePicker(BuildContext context, bool isPerson1) async {
     final pickedDate = await showDatePicker(
       context: context,
+
       initialDate: isPerson1
           ? controller.person1Date.value
           : controller.person2Date.value,

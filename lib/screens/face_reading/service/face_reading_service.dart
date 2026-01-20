@@ -18,7 +18,9 @@ class FaceReadingService {
     required Map<String, File?> files,
   }) async {
     // Using port 8002 temporarily
-    final url = Uri.parse('http://3.109.91.254:8002/api/users/face-reading/analyze');
+    final url = Uri.parse(
+      'http://3.109.91.254:8002/api/users/face-reading/analyze',
+    );
     final request = http.MultipartRequest('POST', url);
 
     // Add authorization header
@@ -36,7 +38,7 @@ class FaceReadingService {
       if (file != null) {
         final fileName = file.path.split('/').last.toLowerCase();
         String? contentType;
-        
+
         if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
           contentType = 'image/jpeg';
         } else if (fileName.endsWith('.png')) {
@@ -46,13 +48,13 @@ class FaceReadingService {
         } else if (fileName.endsWith('.webp')) {
           contentType = 'image/webp';
         }
-        
+
         request.files.add(
           await http.MultipartFile.fromPath(
             entry.key,
             file.path,
             filename: file.path.split('/').last,
-            contentType: contentType != null 
+            contentType: contentType != null
                 ? MediaType.parse(contentType)
                 : null,
           ),
@@ -65,7 +67,7 @@ class FaceReadingService {
   }
 
   /// Analyze face reading with image and optional user data
-  /// 
+  ///
   /// Required: faceImage (File)
   /// Optional: name, dateOfBirth, gender, age, language
   Future<FaceReadingData> analyzeFaceReading({
@@ -96,9 +98,7 @@ class FaceReadingService {
       }
 
       // Prepare files
-      final Map<String, File?> files = {
-        'faceImage': faceImage,
-      };
+      final Map<String, File?> files = {'faceImage': faceImage};
 
       // Make API call
       // Using port 8002 temporarily - will switch back to 8000 later
@@ -110,36 +110,53 @@ class FaceReadingService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseBody = response.body;
         final jsonData = json.decode(responseBody);
-        
+
         final faceReadingResponse = FaceReadingResponse.fromJson(jsonData);
-        
+
         if (faceReadingResponse.success && faceReadingResponse.data != null) {
           return faceReadingResponse.data!;
         } else {
-          throw Exception(faceReadingResponse.message.isNotEmpty
-              ? faceReadingResponse.message
-              : 'Face reading analysis failed');
+          throw Exception(
+            faceReadingResponse.message.isNotEmpty
+                ? faceReadingResponse.message
+                : 'Face reading analysis failed',
+          );
         }
       } else {
-        throw Exception('Failed to analyze face reading: ${response.statusCode}');
+        throw Exception(
+          'Failed to analyze face reading: ${response.statusCode}',
+        );
       }
     } on SocketException {
-      throw Exception('No internet connection. Please check your network and try again.');
+      throw Exception(
+        'No internet connection. Please check your network and try again.',
+      );
     } on TimeoutException {
-      throw Exception('Request timeout. The server took too long to respond. Please try again.');
+      throw Exception(
+        'Request timeout. The server took too long to respond. Please try again.',
+      );
     } on http.ClientException catch (e) {
-      if (e.message.contains('Connection closed') || e.toString().contains('Connection closed')) {
-        throw Exception('Connection error. The server closed the connection. Please try again with a smaller image or check your internet connection.');
+      if (e.message.contains('Connection closed') ||
+          e.toString().contains('Connection closed')) {
+        throw Exception(
+          'Connection error. The server closed the connection. Please try again with a smaller image or check your internet connection.',
+        );
       }
       throw Exception('Network error: ${e.message}. Please try again.');
     } catch (e) {
       final errorMessage = e.toString();
       if (errorMessage.contains('Connection closed')) {
-        throw Exception('Connection error. Please try again with a smaller image or check your internet connection.');
-      } else if (errorMessage.contains('timeout') || errorMessage.contains('Timeout')) {
+        throw Exception(
+          'Connection error. Please try again with a smaller image or check your internet connection.',
+        );
+      } else if (errorMessage.contains('timeout') ||
+          errorMessage.contains('Timeout')) {
         throw Exception('Request timeout. Please try again.');
-      } else if (errorMessage.contains('SocketException') || errorMessage.contains('network')) {
-        throw Exception('Network error. Please check your internet connection and try again.');
+      } else if (errorMessage.contains('SocketException') ||
+          errorMessage.contains('network')) {
+        throw Exception(
+          'Network error. Please check your internet connection and try again.',
+        );
       }
       throw Exception('Error analyzing face reading: ${e.toString()}');
     }
@@ -153,17 +170,16 @@ class FaceReadingService {
     try {
       final response = await _apiRepository.getApi(
         EndPoints.faceReadingHistory,
-        query: {
-          'page': page.toString(),
-          'limit': limit.toString(),
-        },
+        query: {'page': page.toString(), 'limit': limit.toString()},
       );
 
       if (response.statusCode == 200) {
         final jsonData = response.body;
         return FaceReadingHistoryResponse.fromJson(jsonData);
       } else {
-        throw Exception('Failed to get face reading history: ${response.statusCode}');
+        throw Exception(
+          'Failed to get face reading history: ${response.statusCode}',
+        );
       }
     } catch (e) {
       throw Exception('Error getting face reading history: ${e.toString()}');
@@ -180,13 +196,15 @@ class FaceReadingService {
       if (response.statusCode == 200) {
         final jsonData = response.body;
         final faceReadingResponse = FaceReadingResponse.fromJson(jsonData);
-        
+
         if (faceReadingResponse.success && faceReadingResponse.data != null) {
           return faceReadingResponse.data!;
         } else {
-          throw Exception(faceReadingResponse.message.isNotEmpty
-              ? faceReadingResponse.message
-              : 'Face reading not found');
+          throw Exception(
+            faceReadingResponse.message.isNotEmpty
+                ? faceReadingResponse.message
+                : 'Face reading not found',
+          );
         }
       } else {
         throw Exception('Failed to get face reading: ${response.statusCode}');
@@ -204,15 +222,11 @@ class FaceReadingService {
       );
 
       if (response.statusCode == 200) {
-        final jsonData = response.body;
-        final result = json.decode(jsonData.toString());
-        return result['success'] == true;
-      } else {
-        throw Exception('Failed to delete face reading: ${response.statusCode}');
+        return true;
       }
+      return false;
     } catch (e) {
-      throw Exception('Error deleting face reading: ${e.toString()}');
+      return false;
     }
   }
 }
-

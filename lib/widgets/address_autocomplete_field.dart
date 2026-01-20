@@ -178,6 +178,9 @@ class _AddressAutocompleteFieldState extends State<AddressAutocompleteField> {
     if (placeId == null) return;
 
     _removeOverlay();
+    // Unfocus the field to prevent overlay from showing again
+    _focusNode.unfocus();
+    
     setState(() {
       _isLoading = true;
       _suggestions = [];
@@ -190,14 +193,28 @@ class _AddressAutocompleteFieldState extends State<AddressAutocompleteField> {
       );
 
       if (placeDetails != null) {
+        // Temporarily remove listener to prevent triggering search when updating text
+        widget.controller.removeListener(_onTextChanged);
+        
         // Update the text field with the selected address
         widget.controller.text = placeDetails['displayName'] ?? '';
+
+        // Re-add listener after a short delay
+        Future.delayed(const Duration(milliseconds: 100), () {
+          if (mounted) {
+            widget.controller.addListener(_onTextChanged);
+          }
+        });
 
         // Notify parent widget
         widget.onPlaceSelected(placeDetails);
       }
     } catch (e) {
       print('Error getting place details: $e');
+      // Re-add listener if there was an error
+      if (mounted) {
+        widget.controller.addListener(_onTextChanged);
+      }
     } finally {
       setState(() {
         _isLoading = false;

@@ -1,7 +1,7 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/dasha_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -167,165 +167,110 @@ class DashaTableWidget extends StatelessWidget {
   }
 
   Widget _buildTwoColumnRow(String leftText, String rightText, int index) {
-    // return Row(
-    //   children: [
-    //     // Left Column
-    //     Expanded(
-    //       child: Container(
-    //         padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
-    //         decoration: BoxDecoration(
-    //           color: index == 0
-    //               ? "#ed6f30".toColor().withOpacity(0.05)
-    //               : Colors.transparent,
-    //           borderRadius: BorderRadius.circular(8.r),
-    //         ),
-    //         child: AutoTranslateText(
-    //           leftText,
-    //           textAlign: TextAlign.center,
-    //           style: MyTextTheme.mediumBCN.copyWith(
-    //             color: "#6F221E".toColor(),
-    //             fontWeight: FontWeight.w500,
-    //           ),
-    //         ),
-    //       ),
-    //     ),
-
-    //     // Divider
-    //     Container(
-    //       width: 1,
-    //       height: 40.h,
-    //       color: "#ed6f30".toColor().withOpacity(0.2),
-    //     ),
-
-    //     // Right Column
-    //     Expanded(
-    //       child: GestureDetector(
-    //         onTap: () {
-    //           // Handle navigation for right column
-    //           if (rightText == 'Mahadasha') {
-    //             controller.navigateToMahadashaTab();
-    //           }
-    //         },
-    //         child: Container(
-    //           padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
-    //           decoration: BoxDecoration(
-    //             color: index == 0
-    //                 ? "#ed6f30".toColor().withOpacity(0.05)
-    //                 : Colors.transparent,
-    //             borderRadius: BorderRadius.circular(8.r),
-    //           ),
-    //           child: AutoTranslateText(
-    //             rightText,
-    //             textAlign: TextAlign.center,
-    //             style: MyTextTheme.mediumBCN.copyWith(
-    //               color: "#6F221E".toColor(),
-    //               fontWeight: FontWeight.w500,
-    //             ),
-    //           ),
-    //         ),
-    //       ),
-    //     ),
-    //   ],
-    // );
-    return Row(
-      children: [
-        /// Left Column
-        Expanded(
-          child: Container(
-            // height: 60.h,
-            padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
-            decoration: BoxDecoration(
-              color: index == 0
-                  ? "#ed6f30".toColor().withOpacity(0.08)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            child: AutoTranslateText(
-              leftText,
-              textAlign: TextAlign.center,
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: index == 0 ? FontWeight.w600 : FontWeight.w500,
-              ),
-            ),
-          ),
-        ),
-
-        /// Vertical Divider
-        Container(
-          width: 1,
-          height: 36.h,
-          margin: EdgeInsets.symmetric(horizontal: 6.w),
-          decoration: BoxDecoration(
-            color: "#ed6f30".toColor().withOpacity(0.2),
-            borderRadius: BorderRadius.circular(2.r),
-          ),
-        ),
-
-        /// Right Column (Clickable)
-        Expanded(
-          child: InkWell(
-            borderRadius: BorderRadius.circular(10.r),
-            onTap: () {
-              if (rightText == 'Mahadasha') {
-                controller.navigateToMahadashaTab();
-              }
-            },
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          /// Left Column
+          Expanded(
             child: Container(
+              constraints: BoxConstraints(minHeight: 50.h),
               padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
               decoration: BoxDecoration(
                 color: index == 0
-                    ? "#ed6f30".toColor().withOpacity(0.08)
+                    ? AppColors.deepOrange.withValues(alpha: 0.08)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(10.r),
               ),
-              child: AutoTranslateText(
-                rightText,
-                textAlign: TextAlign.center,
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor(),
-                  fontWeight: index == 0 ? FontWeight.w600 : FontWeight.w500,
+              child: Center(
+                child: AutoTranslateText(
+                  leftText,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    color: "#68171E".toColor(),
+                    fontWeight: index == 0 ? FontWeight.w600 : FontWeight.w500,
+                    fontSize: 13.sp,
+                    height: 1.4,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+
+          /// Vertical Divider
+          Container(
+            width: 1,
+            margin: EdgeInsets.symmetric(horizontal: 6.w),
+            decoration: BoxDecoration(
+              color: AppColors.deepOrange.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(2.r),
+            ),
+          ),
+
+          /// Right Column (Clickable)
+          Expanded(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10.r),
+              onTap: () {
+                if (rightText == 'Mahadasha') {
+                  controller.navigateToMahadashaTab();
+                }
+              },
+              child: Container(
+                constraints: BoxConstraints(minHeight: 50.h),
+                padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
+                decoration: BoxDecoration(
+                  color: index == 0
+                      ? AppColors.deepOrange.withValues(alpha: 0.08)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Center(
+                  child: AutoTranslateText(
+                    rightText,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: MyTextTheme.mediumBCN.copyWith(
+                      color: "#68171E".toColor(),
+                      fontWeight: index == 0
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                      fontSize: 13.sp,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildSingleColumnRow(String leftText, int index) {
-    // return Container(
-    //   padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
-    //   decoration: BoxDecoration(
-    //     color: index == 1
-    //         ? "#ed6f30".toColor().withOpacity(0.05)
-    //         : Colors.transparent,
-    //     borderRadius: BorderRadius.circular(8.r),
-    //   ),
-    //   child: AutoTranslateText(
-    //     leftText,
-    //     textAlign: TextAlign.center,
-    //     style: MyTextTheme.mediumBCN.copyWith(
-    //       color: "#6F221E".toColor(),
-    //       fontWeight: FontWeight.w500,
-    //     ),
-    //   ),
-    // );
     return Container(
+      constraints: BoxConstraints(minHeight: 50.h),
       padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.w),
       decoration: BoxDecoration(
-        color: index == 1
-            ? "#ed6f30".toColor().withOpacity(0.08)
-            : Colors.transparent,
+        color: AppColors.deepOrange.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(10.r),
       ),
-      child: AutoTranslateText(
-        leftText,
-        textAlign: TextAlign.center,
-        style: MyTextTheme.mediumBCN.copyWith(
-          color: "#6F221E".toColor(),
-          fontWeight: index == 1 ? FontWeight.w600 : FontWeight.w500,
+      child: Center(
+        child: AutoTranslateText(
+          leftText,
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: MyTextTheme.mediumBCN.copyWith(
+            color: "#68171E".toColor(),
+            fontWeight: FontWeight.w600,
+            fontSize: 13.sp,
+            height: 1.4,
+          ),
         ),
       ),
     );

@@ -11,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class PalmReadingFormView extends StatelessWidget {
-  const PalmReadingFormView({Key? key}) : super(key: key);
+  const PalmReadingFormView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +57,9 @@ class PalmReadingFormView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    
+
                     Spacing.h(40),
-                    
+
                     // App Title
                     AutoTranslateText(
                       'AstroBharatAI',
@@ -69,9 +69,9 @@ class PalmReadingFormView extends StatelessWidget {
                         letterSpacing: 4.w,
                       ).merge(AppTypography.h1),
                     ),
-                    
+
                     Spacing.h(32),
-                    
+
                     // Instruction text
                     AutoTranslateText(
                       'Enter your details (all fields are optional)',
@@ -80,19 +80,19 @@ class PalmReadingFormView extends StatelessWidget {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                          
+
                     Spacing.h(40),
-                    
+
                     // Form fields
                     _buildFormFields(controller),
-                    
+
                     Spacing.h(40),
-                    
+
                     // Continue button
                     _buildContinueButton(context, controller),
-                    
+
                     Spacing.h(16),
-                    
+
                     // Skip button
                     _buildSkipButton(context, controller),
                   ],
@@ -115,14 +115,14 @@ class PalmReadingFormView extends StatelessWidget {
           controller: controller.nameController,
           icon: Icons.person_outline,
         ),
-        
+
         Spacing.h(20),
-        
+
         // Date of Birth field
         _buildDateField(controller),
-        
+
         Spacing.h(20),
-        
+
         // Language field
         _buildLanguageField(controller),
       ],
@@ -140,21 +140,15 @@ class PalmReadingFormView extends StatelessWidget {
       children: [
         AutoTranslateText(
           label,
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: const Color(0xFF5F2221),
-          ),
+          style: MyTextTheme.mediumBCB.copyWith(color: const Color(0xFF5F2221)),
         ),
         Spacing.h(8),
         TextField(
           controller: controller,
-          style: MyTextTheme.mediumBCN.copyWith(
-            color: const Color(0xFF5F2221),
-          ),
+          style: MyTextTheme.mediumBCN.copyWith(color: const Color(0xFF5F2221)),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: MyTextTheme.mediumBCN.copyWith(
-              color: Colors.grey[600],
-            ),
+            hintStyle: MyTextTheme.mediumBCN.copyWith(color: Colors.grey[600]),
             prefixIcon: Icon(icon, color: "#F38B3B".toColor(), size: 24.w),
             filled: true,
             fillColor: Colors.white,
@@ -174,10 +168,7 @@ class PalmReadingFormView extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(
-                color: "#F38B3B".toColor(),
-                width: 2,
-              ),
+              borderSide: BorderSide(color: "#F38B3B".toColor(), width: 2),
             ),
             contentPadding: AppPaddings.symmetric(h: 16, v: 16),
           ),
@@ -192,9 +183,7 @@ class PalmReadingFormView extends StatelessWidget {
       children: [
         AutoTranslateText(
           'Date of Birth',
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: const Color(0xFF5F2221),
-          ),
+          style: MyTextTheme.mediumBCB.copyWith(color: const Color(0xFF5F2221)),
         ),
         Spacing.h(8),
         GestureDetector(
@@ -204,10 +193,7 @@ class PalmReadingFormView extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(
-                color: Colors.grey.withOpacity(0.3),
-                width: 1,
-              ),
+              border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
@@ -218,21 +204,31 @@ class PalmReadingFormView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today, color: "#F38B3B".toColor(), size: 24.w),
+                Icon(
+                  Icons.calendar_today,
+                  color: "#F38B3B".toColor(),
+                  size: 24.w,
+                ),
                 Spacing.w(12),
                 Expanded(
-                  child: Obx(() => AutoTranslateText(
-                    controller.dateOfBirth.value.isEmpty
-                        ? 'Select date of birth'
-                        : controller.dateOfBirth.value,
-                    style: MyTextTheme.mediumBCN.copyWith(
-                      color: controller.dateOfBirth.value.isEmpty
-                          ? Colors.grey[600]
-                          : '#3E2723'.toColor(),
+                  child: Obx(
+                    () => AutoTranslateText(
+                      controller.dateOfBirth.value.isEmpty
+                          ? 'Select date of birth'
+                          : controller.dateOfBirth.value,
+                      style: MyTextTheme.mediumBCN.copyWith(
+                        color: controller.dateOfBirth.value.isEmpty
+                            ? Colors.grey[600]
+                            : '#3E2723'.toColor(),
+                      ),
                     ),
-                  )),
+                  ),
                 ),
-                Icon(Icons.arrow_drop_down, color: Colors.grey[600], size: 24.w),
+                Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.grey[600],
+                  size: 24.w,
+                ),
               ],
             ),
           ),
@@ -247,9 +243,7 @@ class PalmReadingFormView extends StatelessWidget {
       children: [
         AutoTranslateText(
           'Language',
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: const Color(0xFF5F2221),
-          ),
+          style: MyTextTheme.mediumBCB.copyWith(color: const Color(0xFF5F2221)),
         ),
         Spacing.h(8),
         GestureDetector(
@@ -259,10 +253,7 @@ class PalmReadingFormView extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(
-                color: Colors.grey.withOpacity(0.3),
-                width: 1,
-              ),
+              border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
@@ -276,18 +267,24 @@ class PalmReadingFormView extends StatelessWidget {
                 Icon(Icons.language, color: "#F38B3B".toColor(), size: 24.w),
                 Spacing.w(12),
                 Expanded(
-                  child: Obx(() => AutoTranslateText(
-                    controller.selectedLanguage.value.isEmpty
-                        ? 'Select language'
-                        : controller.selectedLanguage.value,
-                    style: MyTextTheme.mediumBCN.copyWith(
-                      color: controller.selectedLanguage.value.isEmpty
-                          ? Colors.grey[600]
-                          : '#3E2723'.toColor(),
+                  child: Obx(
+                    () => AutoTranslateText(
+                      controller.selectedLanguage.value.isEmpty
+                          ? 'Select language'
+                          : controller.selectedLanguage.value,
+                      style: MyTextTheme.mediumBCN.copyWith(
+                        color: controller.selectedLanguage.value.isEmpty
+                            ? Colors.grey[600]
+                            : '#3E2723'.toColor(),
+                      ),
                     ),
-                  )),
+                  ),
                 ),
-                Icon(Icons.arrow_drop_down, color: Colors.grey[600], size: 24.w),
+                Icon(
+                  Icons.arrow_drop_down,
+                  color: Colors.grey[600],
+                  size: 24.w,
+                ),
               ],
             ),
           ),
@@ -296,7 +293,10 @@ class PalmReadingFormView extends StatelessWidget {
     );
   }
 
-  Widget _buildContinueButton(BuildContext context, PalmReadingController controller) {
+  Widget _buildContinueButton(
+    BuildContext context,
+    PalmReadingController controller,
+  ) {
     return Padding(
       padding: AppPaddings.symmetric(h: 16),
       child: SizedBox(
@@ -344,7 +344,10 @@ class PalmReadingFormView extends StatelessWidget {
     );
   }
 
-  Widget _buildSkipButton(BuildContext context, PalmReadingController controller) {
+  Widget _buildSkipButton(
+    BuildContext context,
+    PalmReadingController controller,
+  ) {
     return Padding(
       padding: AppPaddings.symmetric(h: 16),
       child: TextButton(

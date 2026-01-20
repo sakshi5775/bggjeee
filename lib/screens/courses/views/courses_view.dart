@@ -38,7 +38,7 @@ class CoursesView extends BasePage<CoursesController> {
               _buildHeader(),
 
               // Search Bar
-              _buildSearchBar(),
+              // _buildSearchBar(),
 
               // Main Content
               Expanded(
@@ -53,7 +53,7 @@ class CoursesView extends BasePage<CoursesController> {
                       ),
 
                       // Stats Cards
-                      _buildStatsCards(),
+                      // _buildStatsCards(),
 
                       // Category Tabs
                       _buildCategoryTabs(),
@@ -129,14 +129,14 @@ class CoursesView extends BasePage<CoursesController> {
           ),
 
           // Filter Icon
-          IconButton(
-            onPressed: () {
-              // TODO: Implement filter
-            },
-            icon: Icon(Icons.filter_list, color: Colors.white, size: 24.w),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
+          // IconButton(
+          //   onPressed: () {
+
+          //   },
+          //   icon: Icon(Icons.filter_list, color: Colors.white, size: 24.w),
+          //   padding: EdgeInsets.zero,
+          //   constraints: const BoxConstraints(),
+          // ),
         ],
       ),
     );

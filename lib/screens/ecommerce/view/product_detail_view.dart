@@ -34,7 +34,7 @@ class ProductDetailView extends StatelessWidget {
             title: 'Product Details',
             actions: [
               IconButton(
-                onPressed: () {},
+                onPressed: () => controller.shareProduct(),
                 icon: Icon(Icons.share_outlined, color: AppColors.templeGold),
               ),
             ],

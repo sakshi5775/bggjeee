@@ -19,34 +19,34 @@ class PalmReadingController extends GetxController {
   final TextEditingController nameController = TextEditingController();
   final RxString dateOfBirth = ''.obs;
   final RxString selectedLanguage = ''.obs;
-  
+
   // Birth time
   final RxInt selectedHour = 12.obs;
   final RxInt selectedMinute = 0.obs;
   final RxString selectedAmPm = 'PM'.obs;
-  
+
   // Hand and gender
   final RxString selectedHand = ''.obs; // 'Left' or 'Right'
   final RxString selectedGender = ''.obs; // 'Male', 'Female', 'Others'
-  
+
   // Palm image
   final Rx<File?> selectedPalmImage = Rx<File?>(null);
-  
+
   // Form validation
   final RxBool isFormValid = false.obs;
   final RxBool isTimeValid = false.obs;
   final RxBool isHandGenderValid = false.obs;
-  
+
   // Scanning state
   final RxBool isScanning = false.obs;
   final RxString scanError = ''.obs;
-  
+
   // Reading data
   final Rx<PalmReadingData?> palmReadingData = Rx<PalmReadingData?>(null);
   final RxString currentReadingId = ''.obs;
   final RxBool isLoadingReading = false.obs;
   final RxString readingError = ''.obs;
-  
+
   DateTime? _selectedDate;
   AppLanguageModel? _selectedLanguageModel;
   final ImagePicker _imagePicker = ImagePicker();
@@ -55,6 +55,10 @@ class PalmReadingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    // Set default language to first language (index 0)
+    _setDefaultLanguage();
+
     // Listen to form changes
     nameController.addListener(_validateForm);
     ever(dateOfBirth, (_) => _validateForm());
@@ -66,6 +70,20 @@ class PalmReadingController extends GetxController {
     ever(selectedGender, (_) => _validateHandGender());
   }
 
+  Future<void> _setDefaultLanguage() async {
+    try {
+      final languages = await LanguageModelService.getLanguages();
+      if (languages.isNotEmpty) {
+        // Select the first language (index 0)
+        _selectedLanguageModel = languages[0];
+        selectedLanguage.value = languages[0].nameEn;
+      }
+    } catch (e) {
+      // If loading fails, keep empty selection
+      print('Error loading default language: $e');
+    }
+  }
+
   @override
   void onClose() {
     nameController.dispose();
@@ -73,13 +91,15 @@ class PalmReadingController extends GetxController {
   }
 
   void _validateForm() {
-    isFormValid.value = nameController.text.trim().isNotEmpty &&
+    isFormValid.value =
+        nameController.text.trim().isNotEmpty &&
         dateOfBirth.value.isNotEmpty &&
         selectedLanguage.value.isNotEmpty;
   }
 
   void _validateTime() {
-    isTimeValid.value = selectedHour.value >= 1 &&
+    isTimeValid.value =
+        selectedHour.value >= 1 &&
         selectedHour.value <= 12 &&
         selectedMinute.value >= 0 &&
         selectedMinute.value <= 59 &&
@@ -87,8 +107,8 @@ class PalmReadingController extends GetxController {
   }
 
   void _validateHandGender() {
-    isHandGenderValid.value = selectedHand.value.isNotEmpty &&
-        selectedGender.value.isNotEmpty;
+    isHandGenderValid.value =
+        selectedHand.value.isNotEmpty && selectedGender.value.isNotEmpty;
   }
 
   Future<void> selectDateOfBirth() async {
@@ -128,7 +148,7 @@ class PalmReadingController extends GetxController {
 
     try {
       final languages = await LanguageModelService.getLanguages();
-      
+
       await showModalBottomSheet(
         context: context,
         backgroundColor: Colors.white,
@@ -163,13 +183,18 @@ class PalmReadingController extends GetxController {
                   itemCount: languages.length,
                   itemBuilder: (context, index) {
                     final language = languages[index];
-                    final isSelected = _selectedLanguageModel?.code == language.code;
+                    final isSelected =
+                        _selectedLanguageModel?.code == language.code;
                     return ListTile(
                       title: AutoTranslateText(
                         language.nameEn,
                         style: TextStyle(
-                          color: isSelected ? "#F38B3B".toColor() : const Color(0xFF5F2221),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          color: isSelected
+                              ? "#F38B3B".toColor()
+                              : const Color(0xFF5F2221),
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                       ),
                       trailing: isSelected
@@ -325,17 +350,17 @@ class PalmReadingController extends GetxController {
 
       // Prepare form fields
       final fields = <String, String>{};
-      
+
       // Add name if available
       if (nameController.text.trim().isNotEmpty) {
         fields['name'] = nameController.text.trim();
       }
-      
+
       // Add date of birth if available (format: YYYY-MM-DD)
       if (_selectedDate != null) {
         fields['dateOfBirth'] = DateFormat('yyyy-MM-dd').format(_selectedDate!);
       }
-      
+
       // Add time of birth if available (format: HH:MM)
       if (selectedHour.value > 0 && selectedMinute.value >= 0) {
         // Convert to 24-hour format
@@ -345,16 +370,18 @@ class PalmReadingController extends GetxController {
         } else if (selectedAmPm.value == 'AM' && hour24 == 12) {
           hour24 = 0;
         }
-        fields['timeOfBirth'] = '${hour24.toString().padLeft(2, '0')}:${selectedMinute.value.toString().padLeft(2, '0')}';
+        fields['timeOfBirth'] =
+            '${hour24.toString().padLeft(2, '0')}:${selectedMinute.value.toString().padLeft(2, '0')}';
       }
-      
+
       // Add gender if available (convert to lowercase)
       if (selectedGender.value.isNotEmpty) {
         fields['gender'] = selectedGender.value.toLowerCase();
       }
-      
+
       // Add language if available (get language code)
-      if (_selectedLanguageModel != null && _selectedLanguageModel!.code.isNotEmpty) {
+      if (_selectedLanguageModel != null &&
+          _selectedLanguageModel!.code.isNotEmpty) {
         fields['language'] = _selectedLanguageModel!.code.toLowerCase();
       } else if (selectedLanguage.value.isNotEmpty) {
         // Fallback to language name if code not available
@@ -382,13 +409,16 @@ class PalmReadingController extends GetxController {
             isScanning.value = false;
             return;
           }
-          
+
           final responseBody = json.decode(response.body);
-          
+
           // Parse response using new structure
-          final palmReadingResponse = PalmReadingResponse.fromJson(responseBody);
-          
-          if (!palmReadingResponse.success || palmReadingResponse.data == null) {
+          final palmReadingResponse = PalmReadingResponse.fromJson(
+            responseBody,
+          );
+
+          if (!palmReadingResponse.success ||
+              palmReadingResponse.data == null) {
             // Close loader on error
             if (Get.isDialogOpen == true) {
               try {
@@ -397,8 +427,8 @@ class PalmReadingController extends GetxController {
                 // Ignore error
               }
             }
-            scanError.value = palmReadingResponse.message.isNotEmpty 
-                ? palmReadingResponse.message 
+            scanError.value = palmReadingResponse.message.isNotEmpty
+                ? palmReadingResponse.message
                 : 'Palm is not clearly visible. Please try with a clearer image.';
             isScanning.value = false;
             return;
@@ -407,7 +437,7 @@ class PalmReadingController extends GetxController {
           // Store reading data
           palmReadingData.value = palmReadingResponse.data;
           currentReadingId.value = palmReadingResponse.data!.readingId ?? '';
-          
+
           // Close loader before navigation
           if (Get.isDialogOpen == true) {
             try {
@@ -416,13 +446,15 @@ class PalmReadingController extends GetxController {
               // Ignore error
             }
           }
-          
+
           // Check if hand type is UNKNOWN or status is FAILED
           final handType = palmReadingResponse.data!.handType.toUpperCase();
           final status = palmReadingResponse.data!.status?.toUpperCase() ?? '';
-          final hasOnlyOverall = palmReadingResponse.data!.readings.isNotEmpty &&
-              palmReadingResponse.data!.readings.first.category.toUpperCase() == 'OVERALL';
-          
+          final hasOnlyOverall =
+              palmReadingResponse.data!.readings.isNotEmpty &&
+              palmReadingResponse.data!.readings.first.category.toUpperCase() ==
+                  'OVERALL';
+
           if (handType == 'UNKNOWN' || status == 'FAILED' || hasOnlyOverall) {
             // Still navigate to results, but it will show rescan option
             isScanning.value = false;
@@ -459,14 +491,20 @@ class PalmReadingController extends GetxController {
           if (response.body.isNotEmpty) {
             final responseBody = json.decode(response.body);
             final serverMessage = responseBody['message']?.toString() ?? '';
-            scanError.value = serverMessage.isNotEmpty 
-                ? serverMessage 
-                : ErrorFormatter.formatError('Failed to analyze palm (Status: ${response.statusCode})');
+            scanError.value = serverMessage.isNotEmpty
+                ? serverMessage
+                : ErrorFormatter.formatError(
+                    'Failed to analyze palm (Status: ${response.statusCode})',
+                  );
           } else {
-            scanError.value = ErrorFormatter.formatError('Failed to analyze palm (Status: ${response.statusCode})');
+            scanError.value = ErrorFormatter.formatError(
+              'Failed to analyze palm (Status: ${response.statusCode})',
+            );
           }
         } catch (e) {
-          scanError.value = ErrorFormatter.formatError('Failed to analyze palm (Status: ${response.statusCode})');
+          scanError.value = ErrorFormatter.formatError(
+            'Failed to analyze palm (Status: ${response.statusCode})',
+          );
         }
         isScanning.value = false;
       }
@@ -506,7 +544,7 @@ class PalmReadingController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseBody = response.body;
         final palmReadingResponse = PalmReadingResponse.fromJson(responseBody);
-        
+
         if (palmReadingResponse.success && palmReadingResponse.data != null) {
           palmReadingData.value = palmReadingResponse.data;
           currentReadingId.value = readingId;
@@ -556,9 +594,7 @@ class PalmReadingController extends GetxController {
   // Load reading history
   Future<void> loadReadingHistory() async {
     try {
-      final response = await _apiRepository.getApi(
-        EndPoints.palmistryHistory,
-      );
+      final response = await _apiRepository.getApi(EndPoints.palmistryHistory);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Handle history response
@@ -572,9 +608,7 @@ class PalmReadingController extends GetxController {
   // Get statistics
   Future<void> loadStatistics() async {
     try {
-      final response = await _apiRepository.getApi(
-        EndPoints.palmistryStats,
-      );
+      final response = await _apiRepository.getApi(EndPoints.palmistryStats);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Handle stats response

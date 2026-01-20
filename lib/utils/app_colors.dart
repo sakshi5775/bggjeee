@@ -5,28 +5,26 @@ class AppColors {
   AppColors._();
   // Primary Colors
   static const Color saffron = Color(0xFF3D0C11); // Sacred saffron
-   static const Color saffronmix = Color(0xFF5D1C21);
+  static final Color textColorMaroon = "#68171E".toColor();
+  static const Color saffronmix = Color(0xFF5D1C21);
   static const Color deepOrange = Color(0xFFF38B3B); // Temple orange
   static const Color deepOrangemix = Color(0xFFDD2914);
- static const Color templeGold = Color(0xFFE3B341); // Golden
- static const Color turmericYellow = Color(0xFFC9A033); // Turmeric 
- //secondary colors
-static const Color cream = Color(0xFFFAEAAF); // Turmeric
- static const Color white = Color(0xFFFFFfff); // Cream white
+  static const Color templeGold = Color(0xFFE3B341); // Golden
+  static const Color turmericYellow = Color(0xFFC9A033); // Turmeric
+  //secondary colors
+  static const Color cream = Color(0xFFFAEAAF); // Turmeric
+  static const Color white = Color(0xFFFFFfff); // Cream white
   static const Color green = Color(0xFF08A44F); // Cream white
-   static const Color gray = Color(0xFF666666); // Cream white
-
-
+  static const Color gray = Color(0xFF666666); // Cream white
 
   static const Color sacredRed = Color(0xFFDC143C); // Kumkum red
-  static const Color goldenYellow = Color(0xFFFFD700); // Divine gold 
+  static const Color goldenYellow = Color(0xFFFFD700); // Divine gold
 
   // Secondary Colors
   static const Color lotusWhite = Color(0xFFFFFBF0); // Cream white
- 
+
   static const Color spiritualPurple = Color(0xFF6A0DAD); // Royal purple
   static const Color peacockBlue = Color(0xFF1E90FF); // Krishna blue
-  
 
   // Neutral Colors
   static const Color lightBackground = Color(0xFFFFF8F0); // Light cream
@@ -58,11 +56,11 @@ static const Color cream = Color(0xFFFAEAAF); // Turmeric
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
- static LinearGradient orangeGradient = LinearGradient(
-   colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
- );
+  static LinearGradient orangeGradient = LinearGradient(
+    colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
+  );
   static const LinearGradient goldenGradient = LinearGradient(
-    colors: [ templeGold, turmericYellow],
+    colors: [templeGold, turmericYellow],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );

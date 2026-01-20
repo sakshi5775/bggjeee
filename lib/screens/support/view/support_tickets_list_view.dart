@@ -1,9 +1,9 @@
-import 'package:astrobharataiuser/app_manager/my_appbar.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/support_ticket_model.dart';
 import 'package:astrobharataiuser/screens/support/controller/support_ticket_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,25 +15,42 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.lightBackground,
-      appBar: const MyAppbar(
-        title: 'Support Tickets',
-        showLeading: true,
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Get.toNamed(AppRoutes.createSupportTicket),
-        backgroundColor: AppColors.saffron,
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const AutoTranslateText(
-          'New Ticket',
-          style: TextStyle(color: Colors.white),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        floatingActionButton: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.orangeGradient,
+            borderRadius: BorderRadius.circular(30.r),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.deepOrange.withOpacity(0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: FloatingActionButton.extended(
+            onPressed: () => Get.toNamed(AppRoutes.createSupportTicket),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const AutoTranslateText(
+              'New Ticket',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
         ),
-      ),
-      body: Column(
-        children: [
-          _buildFilters(),
-          Expanded(
+        body: SafeArea(
+          child: Column(
+            children: [
+              CommonHeader(
+                title: 'Support Tickets',
+                titleColor: AppColors.templeGold,
+              ),
+              _buildFilters(),
+              Expanded(
             child: Obx(() {
               if (controller.isLoadingTickets.value && controller.tickets.isEmpty) {
                 return const Center(child: CircularProgressIndicator());
@@ -93,8 +110,10 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
                 ),
               );
             }),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

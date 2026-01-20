@@ -390,10 +390,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Spacing.h(50),
-          // Daily Astrologers Section
-          DailyAstrologersWidget(),
-
-          Spacing.h(10),
 
           if (controller.liveStreams.isNotEmpty) Spacing.h(24),
 
@@ -444,7 +440,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Get.to(() => const ComingSoonPage());
+                            Get.toNamed(AppRoutes.liveAstrologers);
                           },
                           child: AutoTranslateText(
                             'View All',
@@ -475,6 +471,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               return SizedBox.shrink();
             }
           }),
+
+          // Daily Astrologers Section
+          DailyAstrologersWidget(),
+
+          Spacing.h(10),
 
           Spacing.h(12),
           _buildOurServicesPillSection(),
@@ -540,9 +541,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           Spacing.h(24),
 
           // Join Live Webinar Section (only if user has enrolled course with live webinar)
-          Obx(() => controller.hasLiveWebinarForEnrolledCourse.value
-              ? _buildJoinLiveWebinarSection()
-              : const SizedBox.shrink()),
+          Obx(
+            () => controller.hasLiveWebinarForEnrolledCourse.value
+                ? _buildJoinLiveWebinarSection()
+                : const SizedBox.shrink(),
+          ),
 
           // Spacing.h(24),
 
@@ -575,7 +578,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-        
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -1161,9 +1163,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        constraints: BoxConstraints(
-          minHeight: 60.h,
-        ),
+        constraints: BoxConstraints(minHeight: 60.h),
         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
         decoration: BoxDecoration(
           gradient: AppColors.orangeGradient,
@@ -1735,57 +1735,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
   Widget _buildAstroRemedySection() {
     return Obx(() {
-      if (controller.isLoadingRemedyCategories.value &&
-          controller.remedyCategories.isEmpty) {
-        return Padding(
-          padding: AppPaddings.symmetric(h: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AutoTranslateText(
-                    'ASTRO REMEDY',
-                    style: MyTextTheme.largeBCB
-                        .copyWith(
-                          color: "#6F221E".toColor(),
-                          fontWeight: FontWeight.w400,
-                          fontFamily: 'Baloo',
-                          letterSpacing: -0.05,
-                        )
-                        .merge(AppTypography.h2),
-                  ),
-                  AutoTranslateText(
-                    'View All',
-                    style: MyTextTheme.mediumBCN
-                        .copyWith(
-                          color: "#6F221E".toColor(),
-                          fontWeight: FontWeight.w400,
-                          fontFamily: 'Poppins',
-                        )
-                        .merge(AppTypography.body1),
-                  ),
-                ],
-              ),
-              Spacing.h(16),
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.all(20.h),
-                  child: CircularProgressIndicator(
-                    color: AppColors.deepOrange,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      }
-
-      if (controller.remedyCategories.isEmpty) {
-        return const SizedBox.shrink();
-      }
-
       return Padding(
         padding: AppPaddings.symmetric(h: 16),
         child: Column(
@@ -1807,9 +1756,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.offNamed(
-                      '/user-shop',
-                      id: 1,
+                    Get.toNamed(
+                      AppRoutes.ecommerceHome,
                       arguments: {'showBackButton': true},
                     );
                   },
@@ -1830,7 +1778,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: controller.remedyCategories.asMap().entries.map((entry) {
+                children: controller.remedyCategories.asMap().entries.map((
+                  entry,
+                ) {
                   final index = entry.key;
                   final category = entry.value;
                   return Row(
@@ -2154,10 +2104,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       onTap: () {
         // Navigate to product list with category filter
         if (category.id != null) {
-          Get.toNamed(
-            '/product-list',
-            arguments: {'category': category},
-          );
+          Get.toNamed('/product-list', arguments: {'category': category});
         } else if (category.slug != null) {
           Get.toNamed(
             '/product-list',
@@ -2194,7 +2141,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       width: width,
                       height: 150.h,
                       color: "#E9F6FE".toColor(),
-                      child: Icon(Icons.category, size: 40.w, color: Colors.grey),
+                      child: Icon(
+                        Icons.category,
+                        size: 40.w,
+                        color: Colors.grey,
+                      ),
                     ),
             ),
             // Gradient overlay at bottom
@@ -2884,8 +2835,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         Get.toNamed('/ai-guider');
       },
       child: Container(
-        width: 100.w,
-        height: 100.h,
+        width: 70.w,
+        height: 70.h,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(
             8.r,
@@ -2894,8 +2845,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         child: Image.asset(
           'assets/app/ai_astro_icon.png',
           fit: BoxFit.contain,
-          width: 100.w,
-          height: 100.h,
+          width: 70.w,
+          height: 70.h,
           errorBuilder: (_, __, ___) =>
               Icon(Icons.chat_bubble_outline, color: Colors.white, size: 28.w),
         ),
@@ -2933,9 +2884,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        constraints: BoxConstraints(
-          minHeight: 52.h,
-        ),
+        constraints: BoxConstraints(minHeight: 52.h),
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         decoration: BoxDecoration(
           color: "#F7C443".toColor().withValues(alpha: 0.5),
@@ -2972,7 +2921,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       ),
     );
   }
-
 
   Widget _buildSacredMandirsSection() {
     return Padding(
@@ -3722,45 +3670,47 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
       return GestureDetector(
         onTap: () async {
-              // Navigate to live webinar session
-              if (webinar.webinarId != null && webinar.webinarId!.isNotEmpty) {
-                try {
-                  final webinarService = WebinarService();
-                  final response = await webinarService.joinWebinar(webinar.webinarId!);
-                  if (response != null) {
-                    Get.toNamed(
-                      '/live-webinar-session',
-                      arguments: {
-                        'webinarId': webinar.webinarId!,
-                        'courseId': webinar.courseId?.id ?? '',
-                        'joinResponse': response,
-                        'webinar': webinar,
-                      },
-                    );
-                  } else {
-                    // If join fails, still try to navigate (user might already be in session)
-                    Get.toNamed(
-                      '/live-webinar-session',
-                      arguments: {
-                        'webinarId': webinar.webinarId!,
-                        'courseId': webinar.courseId?.id ?? '',
-                        'webinar': webinar,
-                      },
-                    );
-                  }
-                } catch (e) {
-                  debugPrint('Error joining webinar: $e');
-                  // On error, still try to navigate
-                  Get.toNamed(
-                    '/live-webinar-session',
-                    arguments: {
-                      'webinarId': webinar.webinarId!,
-                      'courseId': webinar.courseId?.id ?? '',
-                      'webinar': webinar,
-                    },
-                  );
-                }
+          // Navigate to live webinar session
+          if (webinar.webinarId != null && webinar.webinarId!.isNotEmpty) {
+            try {
+              final webinarService = WebinarService();
+              final response = await webinarService.joinWebinar(
+                webinar.webinarId!,
+              );
+              if (response != null) {
+                Get.toNamed(
+                  '/live-webinar-session',
+                  arguments: {
+                    'webinarId': webinar.webinarId!,
+                    'courseId': webinar.courseId?.id ?? '',
+                    'joinResponse': response,
+                    'webinar': webinar,
+                  },
+                );
+              } else {
+                // If join fails, still try to navigate (user might already be in session)
+                Get.toNamed(
+                  '/live-webinar-session',
+                  arguments: {
+                    'webinarId': webinar.webinarId!,
+                    'courseId': webinar.courseId?.id ?? '',
+                    'webinar': webinar,
+                  },
+                );
               }
+            } catch (e) {
+              debugPrint('Error joining webinar: $e');
+              // On error, still try to navigate
+              Get.toNamed(
+                '/live-webinar-session',
+                arguments: {
+                  'webinarId': webinar.webinarId!,
+                  'courseId': webinar.courseId?.id ?? '',
+                  'webinar': webinar,
+                },
+              );
+            }
+          }
         },
         child: Stack(
           children: [
@@ -4623,7 +4573,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     _buildDrawerItemStatic(
                       context: context,
                       icon: Icons.shopping_bag,
-                      label: 'AstroShop',
+                      label: 'DigitalShop',
                       onTap: () {
                         Navigator.of(context).pop();
                         Get.offNamed(
@@ -4860,7 +4810,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             );
           },
         );
-        
+
         if (isLoggedIn) {
           Get.to(
             () => LiveStreamView(

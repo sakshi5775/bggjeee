@@ -23,7 +23,7 @@ import 'dart:math' as math;
 
 class AiChatView extends BasePage<AiChatController> {
   final bool showBackButton;
-  
+
   const AiChatView({super.key, this.showBackButton = true});
 
   @override
@@ -39,8 +39,38 @@ class AiChatView extends BasePage<AiChatController> {
               _buildHeader(),
 
               // Category Filter Chips
-              SizedBox(height: 16.h),
-              const CategoryFilterChips(),
+              // SizedBox(height: 16.h),
+              // const CategoryFilterChips(),
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: GestureDetector(
+                    onTap: () => controller.toggleViewMode(),
+                    child: Container(
+                      width: 40.w,
+                      height: 40.h,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: const Color(0xFFE0E0E0),
+                          width: 1,
+                        ),
+                      ),
+                      child: Obx(
+                        () => Icon(
+                          controller.isGridView.value
+                              ? Icons.view_list
+                              : Icons.grid_view,
+                          size: 20.w,
+                          color: const Color(0xFF5F2221),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
 
               SizedBox(height: 16.h),
 
@@ -138,7 +168,8 @@ class AiChatView extends BasePage<AiChatController> {
                           // Since AI chat is in the main navigator (not nested), use Get.back()
                           try {
                             final context = Get.context;
-                            if (context != null && Navigator.of(context).canPop()) {
+                            if (context != null &&
+                                Navigator.of(context).canPop()) {
                               Get.back();
                             } else {
                               // If can't pop, navigate to dashboard

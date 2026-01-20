@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -234,6 +235,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
         TextField(
           controller: controller.phoneController,
           keyboardType: TextInputType.phone,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           decoration: InputDecoration(
             hintText: 'Enter your phone number',
             border: OutlineInputBorder(
@@ -486,7 +488,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       AutoTranslateText(
-                        'Continue to Features',
+                        'Continue...',
                         style: MyTextTheme.mediumBCB.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,

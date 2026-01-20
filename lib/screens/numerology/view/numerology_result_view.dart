@@ -1206,9 +1206,9 @@ class NumerologyResultView extends StatelessWidget {
           _buildNumberInfoCard(
             'Karmic Numbers',
             _getValue(data['karmicNumbers']),
-            AppColors.spiritualPurple,
+            AppColors.textColorMaroon,
           ),
-        ], AppColors.spiritualPurple),
+        ], AppColors.textColorMaroon),
       );
     }
 
@@ -1222,7 +1222,7 @@ class NumerologyResultView extends StatelessWidget {
           _buildInsightCard(
             'Your Karmic Number',
             _getValue(kn['title']),
-            AppColors.spiritualPurple,
+            AppColors.textColorMaroon,
           ),
         );
       }
@@ -1231,7 +1231,7 @@ class NumerologyResultView extends StatelessWidget {
           _buildDescriptionCard(
             'Summary',
             _getValue(kn['summary']),
-            AppColors.spiritualPurple,
+            AppColors.textColorMaroon,
           ),
         );
       }
@@ -1243,7 +1243,7 @@ class NumerologyResultView extends StatelessWidget {
           _buildDescriptionCard(
             'Details',
             '• $karmicDesc',
-            AppColors.spiritualPurple,
+            AppColors.textColorMaroon,
           ),
         );
       }
@@ -1254,7 +1254,7 @@ class NumerologyResultView extends StatelessWidget {
             'Karmic Number Analysis',
             Icons.insights,
             karmicCards,
-            AppColors.spiritualPurple,
+            AppColors.textColorMaroon,
           ),
         );
       }

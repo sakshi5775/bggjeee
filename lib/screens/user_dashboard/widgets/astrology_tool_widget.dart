@@ -22,7 +22,7 @@ class AstrologyToolWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               AutoTranslateText(
-                'Astrology Tools',
+                'Astrology Services',
                 style: AppTypography.h2.copyWith(color: '#8B1925'.toColor()),
               ),
               // AutoTranslateText(
@@ -135,9 +135,7 @@ class AstrologyToolWidget extends StatelessWidget {
                 );
                 break;
               default:
-                _requireLogin(
-                  () async => Get.toNamed(AppRoutes.comingSoon),
-                );
+                _requireLogin(() async => Get.toNamed(AppRoutes.comingSoon));
                 break;
             }
           },

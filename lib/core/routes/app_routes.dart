@@ -29,6 +29,7 @@ class AppRoutes {
   static const String allBlogs = '/all-blogs';
 
   // E-commerce Routes
+  static const String ecommerceHome = '/ecommerce-home';
   static const String productList = '/product-list';
   static const String productDetail = '/product-detail';
   static const String cart = '/cart';

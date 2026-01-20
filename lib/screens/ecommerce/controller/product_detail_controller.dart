@@ -5,6 +5,8 @@ import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.d
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:intl/intl.dart';
 
 class ProductDetailController extends BaseController {
   final EcommerceService _ecommerceService = EcommerceService();
@@ -501,21 +503,24 @@ class ProductDetailController extends BaseController {
       'rating': 5,
       'verified': true,
       'timeAgo': '2 weeks ago',
-      'review': 'Excellent quality! Got amazing results after wearing this. Highly recommended.',
+      'review':
+          'Excellent quality! Got amazing results after wearing this. Highly recommended.',
     },
     {
       'name': 'Priya Sharma',
       'rating': 5,
       'verified': true,
       'timeAgo': '1 month ago',
-      'review': 'Authentic product with proper certification. Very satisfied with the purchase.',
+      'review':
+          'Authentic product with proper certification. Very satisfied with the purchase.',
     },
     {
       'name': 'Amit Patel',
       'rating': 4,
       'verified': true,
       'timeAgo': '1 month ago',
-      'review': 'Good product but delivery took longer than expected. Quality is great though.',
+      'review':
+          'Good product but delivery took longer than expected. Quality is great though.',
     },
   ];
 
@@ -535,9 +540,7 @@ class ProductDetailController extends BaseController {
           'name': review.userName ?? 'Anonymous',
           'rating': review.rating ?? 5,
           'verified': review.isVerified ?? false,
-          'timeAgo': createdAt != null
-              ? _formatTimeAgo(createdAt)
-              : 'Recently',
+          'timeAgo': createdAt != null ? _formatTimeAgo(createdAt) : 'Recently',
           'review': review.comment ?? '',
         };
       }).toList();
@@ -558,6 +561,80 @@ class ProductDetailController extends BaseController {
       return '${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'} ago';
     } else {
       return 'Recently';
+    }
+  }
+
+  /// Share product via different platforms
+  Future<void> shareProduct() async {
+    final currentProduct = product.value;
+    if (currentProduct == null) {
+      Get.snackbar(
+        'Error',
+        'Product information not available',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    try {
+      // Build shareable message
+      final productName = currentProduct.name ?? 'Product';
+      final productDescription =
+          currentProduct.shortDescription ??
+          currentProduct.description ??
+          'Check out this amazing product!';
+
+      // Format price
+      final priceFormatter = NumberFormat.currency(
+        symbol: '₹',
+        decimalDigits: 0,
+      );
+      final currentPrice =
+          currentProduct.currentPrice ??
+          currentProduct.discountedPrice ??
+          currentProduct.basePrice ??
+          0.0;
+      final priceText = priceFormatter.format(currentPrice);
+
+      // Build product link (using product ID or slug)
+      String productLink = '';
+      if (currentProduct.id != null && currentProduct.id!.isNotEmpty) {
+        // You can replace this with your actual web URL or deep link
+        productLink = 'https://astrobharatai.com/product/${currentProduct.id}';
+      } else if (currentProduct.slug != null &&
+          currentProduct.slug!.isNotEmpty) {
+        productLink =
+            'https://astrobharatai.com/product/${currentProduct.slug}';
+      } else {
+        productLink = 'https://astrobharatai.com/products';
+      }
+
+      // Build share text
+      final shareText =
+          '''
+🌟 $productName
+
+$productDescription
+
+💰 Price: $priceText
+
+🔗 View Product: $productLink
+
+Download AstroBharatAI App to explore more products!
+''';
+
+      // Share using share_plus
+      await Share.share(shareText, subject: productName);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to share product: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 }

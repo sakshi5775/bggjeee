@@ -23,7 +23,6 @@ import 'package:astrobharataiuser/screens/kundli/widgets/varshphal_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class KundliResultView extends BasePage<KundliResultController> {
   const KundliResultView({super.key});
@@ -159,10 +158,17 @@ class KundliResultView extends BasePage<KundliResultController> {
       ),
       child: Obx(() {
         final selectedIndex = controller.selectedTabIndex.value;
+
+        // Scroll to selected tab when it changes
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToSelectedTab(selectedIndex);
+        });
+
         return Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
+                controller: controller.tabsScrollController,
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: controller.tabs.asMap().entries.map((entry) {
@@ -170,9 +176,16 @@ class KundliResultView extends BasePage<KundliResultController> {
                     final tab = entry.value;
                     final isSelected = selectedIndex == index;
 
+                    // Get or create GlobalKey for this tab
+                    if (!controller.tabKeys.containsKey(index)) {
+                      controller.tabKeys[index] = GlobalKey();
+                    }
+                    final tabKey = controller.tabKeys[index]!;
+
                     return GestureDetector(
                       onTap: () => controller.onTabSelected(index),
                       child: Container(
+                        key: tabKey,
                         padding: EdgeInsets.symmetric(
                           horizontal: 22.w,
                           vertical: 14.h,
@@ -669,8 +682,68 @@ class KundliResultView extends BasePage<KundliResultController> {
       return VarshphalWidget(controller: controller);
     }
 
+    // Show "Coming Soon" for additional features tabs
+    final additionalFeaturesTabs = [
+      'bhav madhya',
+      'person details',
+      'ghatak and favourable',
+      'reports',
+      'friendship',
+      'avkahada chakra',
+      'download pdf',
+    ];
+
+    if (additionalFeaturesTabs.contains(tabName)) {
+      return _buildComingSoonContent(tabName);
+    }
+
     // Show features for other tabs
     return _buildOtherTabsContent();
+  }
+
+  Widget _buildComingSoonContent(String tabName) {
+    return Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(32.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 120.w,
+              height: 120.w,
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.hourglass_empty,
+                color: Colors.white,
+                size: 60.w,
+              ),
+            ),
+            Spacing.h(24),
+            AutoTranslateText(
+              'Coming Soon',
+              style: MyTextTheme.largeBCB.copyWith(
+                color: "#68171E".toColor(),
+                fontWeight: FontWeight.bold,
+                fontSize: 24.sp,
+              ),
+            ),
+            Spacing.h(12),
+            AutoTranslateText(
+              'This feature is under development.\nWe will notify you when it\'s ready!',
+              textAlign: TextAlign.center,
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: AppColors.textSecondary,
+                fontSize: 14.sp,
+                height: 1.5,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildOtherTabsContent() {
@@ -710,6 +783,86 @@ class KundliResultView extends BasePage<KundliResultController> {
           color: isSelected ? AppColors.deepOrange : Colors.grey.shade300,
           borderRadius: BorderRadius.circular(2.r),
         ),
+      );
+    });
+  }
+
+  void _scrollToSelectedTab(int selectedIndex) {
+    final scrollController = controller.tabsScrollController;
+    if (!scrollController.hasClients) return;
+
+    // Try to use Scrollable.ensureVisible for accurate scrolling
+    final tabKey = controller.tabKeys[selectedIndex];
+    if (tabKey?.currentContext != null) {
+      final context = tabKey!.currentContext!;
+      final scrollable = Scrollable.maybeOf(context);
+      if (scrollable != null) {
+        final renderObject = context.findRenderObject();
+        if (renderObject is RenderBox) {
+          // Use ensureVisible to scroll the tab into view
+          Scrollable.ensureVisible(
+            context,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            alignment: 0.5, // Center the tab
+          );
+          return;
+        }
+      }
+    }
+
+    // Fallback: Calculate position by measuring actual tab widths
+    // Wait a frame to ensure tabs are rendered, then calculate
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!scrollController.hasClients) return;
+
+      double totalWidth = 0;
+      // Measure actual widths of tabs before the selected one
+      for (int i = 0; i < selectedIndex; i++) {
+        final key = controller.tabKeys[i];
+        if (key?.currentContext != null) {
+          final renderBox =
+              key!.currentContext!.findRenderObject() as RenderBox?;
+          if (renderBox != null) {
+            totalWidth += renderBox.size.width;
+          } else {
+            // Fallback estimation if not rendered yet
+            final tabName = controller.tabs[i];
+            totalWidth += 44.0 + (tabName.length * 9.0);
+          }
+        } else {
+          // Fallback estimation
+          final tabName = controller.tabs[i];
+          totalWidth += 44.0 + (tabName.length * 9.0);
+        }
+      }
+
+      final viewportWidth = scrollController.position.viewportDimension;
+      final selectedKey = controller.tabKeys[selectedIndex];
+      double selectedTabWidth = 0;
+
+      if (selectedKey?.currentContext != null) {
+        final renderBox =
+            selectedKey!.currentContext!.findRenderObject() as RenderBox?;
+        if (renderBox != null) {
+          selectedTabWidth = renderBox.size.width;
+        }
+      }
+
+      if (selectedTabWidth == 0) {
+        // Fallback estimation
+        final selectedTabName = controller.tabs[selectedIndex];
+        selectedTabWidth = 44.0 + (selectedTabName.length * 9.0);
+      }
+
+      // Calculate position to center the selected tab
+      final targetPosition =
+          totalWidth - (viewportWidth / 2) + (selectedTabWidth / 2);
+
+      scrollController.animateTo(
+        targetPosition.clamp(0.0, scrollController.position.maxScrollExtent),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
       );
     });
   }

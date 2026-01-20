@@ -47,48 +47,57 @@ class FeaturesAndVideosWidget extends BasePage<UserDashboardController> {
       },
     ];
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: features.map((feature) {
-        return Expanded(
-          child: Column(
-            children: [
-              // Icon with orange circular border
-              Padding(
-                padding: EdgeInsets.only(left: 18.w, right: 18.w),
-                child: Image.asset(
-                  feature['icon'] as String,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(
-                      Icons.info_outline,
-                      color: AppColors.deepOrange,
-                      size: 24.w,
-                    );
-                  },
+    return IntrinsicHeight(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: features.map((feature) {
+          return Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Icon with orange circular border
+                Padding(
+                  padding: EdgeInsets.only(left: 18.w, right: 18.w),
+                  child: Image.asset(
+                    feature['icon'] as String,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(
+                        Icons.info_outline,
+                        color: AppColors.deepOrange,
+                        size: 24.w,
+                      );
+                    },
+                  ),
                 ),
-              ),
-              Spacing.h(8),
-              // Feature Text
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child: AutoTranslateText(
-                  feature['text'] as String,
-                  style: MyTextTheme.smallBCN
-                      .copyWith(
-                        color: "#820B17".toColor(),
-                        fontWeight: FontWeight.w400,
-                      )
-                      .merge(AppTypography.body2),
-                  textAlign: TextAlign.center,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
+                Spacing.h(8),
+                // Feature Text with fixed minimum height
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
+                  child: SizedBox(
+                    height: 48.h, // Fixed height to accommodate 3 lines
+                    child: AutoTranslateText(
+                      feature['text'] as String,
+                      style: MyTextTheme.smallBCN
+                          .copyWith(
+                            color: "#820B17".toColor(),
+                            fontWeight: FontWeight.w400,
+                          )
+                          .merge(AppTypography.body2),
+                      textAlign: TextAlign.center,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 

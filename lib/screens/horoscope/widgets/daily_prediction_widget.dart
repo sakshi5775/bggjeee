@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_main_controller.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,10 +11,7 @@ import 'package:get/get.dart';
 class DailyPredictionWidget extends StatelessWidget {
   final HoroscopeMainController controller;
 
-  const DailyPredictionWidget({
-    super.key,
-    required this.controller,
-  });
+  const DailyPredictionWidget({super.key, required this.controller});
 
   // Gradient definitions
   static final LinearGradient gradientBackground = LinearGradient(
@@ -39,7 +37,9 @@ class DailyPredictionWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(orangeGradient.colors.first),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  orangeGradient.colors.first,
+                ),
               ),
               Spacing.h(16),
               AutoTranslateText(
@@ -68,26 +68,29 @@ class DailyPredictionWidget extends StatelessWidget {
       final response = data['response'] as Map<String, dynamic>? ?? {};
       final horoscopeData = response['horoscope_data']?.toString() ?? '';
       final luckyColor = response['lucky_color']?.toString() ?? '';
-      final luckyNumbers = (response['lucky_numbers'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
-      
+      final luckyNumbers =
+          (response['lucky_numbers'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [];
+
       return Container(
-        decoration: BoxDecoration(
-          gradient: gradientBackground,
-        ),
+        decoration: BoxDecoration(gradient: gradientBackground),
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildTitleSection(),
-            Spacing.h(20),
-            _buildDaySelector(),
-            Spacing.h(20),
-            if (horoscopeData.isNotEmpty) _buildPredictionCard(horoscopeData),
-            Spacing.h(20),
-            if (luckyColor.isNotEmpty || luckyNumbers.isNotEmpty) _buildLuckyElementsCard(luckyColor, luckyNumbers),
-          ],
-        ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTitleSection(),
+              Spacing.h(20),
+              _buildDaySelector(),
+              Spacing.h(20),
+              if (horoscopeData.isNotEmpty) _buildPredictionCard(horoscopeData),
+              Spacing.h(20),
+              if (luckyColor.isNotEmpty || luckyNumbers.isNotEmpty)
+                _buildLuckyElementsCard(luckyColor, luckyNumbers),
+            ],
+          ),
         ),
       );
     });
@@ -246,8 +249,8 @@ class DailyPredictionWidget extends StatelessWidget {
           Spacing.h(20),
           if (luckyColor.isNotEmpty) ...[
             _buildInfoRow('Lucky Color', luckyColor),
-            if (luckyNumbers.isNotEmpty) _buildDivider(),
           ],
+          if (luckyNumbers.isNotEmpty) Spacing.h(20),
           if (luckyNumbers.isNotEmpty)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,7 +260,8 @@ class DailyPredictionWidget extends StatelessWidget {
                   child: AutoTranslateText(
                     'Lucky Numbers',
                     style: MyTextTheme.smallBCB.copyWith(
-                      color: primaryGradient.colors.first.withOpacity(0.7),
+                      color: '#6B1B1A'.toColor(),
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -269,7 +273,10 @@ class DailyPredictionWidget extends StatelessWidget {
                     runSpacing: 8.h,
                     children: luckyNumbers.map((num) {
                       return Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 6.h,
+                        ),
                         decoration: BoxDecoration(
                           gradient: orangeGradient,
                           borderRadius: BorderRadius.circular(8.r),
@@ -303,8 +310,8 @@ class DailyPredictionWidget extends StatelessWidget {
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCB.copyWith(
-                color: primaryGradient.colors.first.withOpacity(0.7),
-                fontWeight: FontWeight.w600,
+                color: '#6B1B1A'.toColor(),
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -332,77 +339,84 @@ class DailyPredictionWidget extends StatelessWidget {
   }
 
   Widget _buildDaySelector() {
-    return Obx(() => Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AutoTranslateText(
-            'Select Day',
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: primaryGradient.colors.first,
+    return Obx(
+      () => Container(
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-          ),
-          Spacing.h(12),
-          Row(
-            children: controller.dayOptions.map((day) {
-              final isSelected = controller.selectedDay.value == day;
-              return Expanded(
-                child: GestureDetector(
-                  onTap: () => controller.onDayChanged(day),
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 4.w),
-                    padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
-                    decoration: BoxDecoration(
-                      gradient: isSelected ? orangeGradient : null,
-                      color: isSelected ? null : Colors.grey.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(
-                        color: isSelected
-                            ? Colors.transparent
-                            : primaryGradient.colors.first.withOpacity(0.3),
-                        width: 1.5,
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AutoTranslateText(
+              'Select Day',
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: primaryGradient.colors.first,
+              ),
+            ),
+            Spacing.h(12),
+            Row(
+              children: controller.dayOptions.map((day) {
+                final isSelected = controller.selectedDay.value == day;
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () => controller.onDayChanged(day),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 4.w),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 12.h,
+                        horizontal: 8.w,
                       ),
-                      boxShadow: isSelected
-                          ? [
-                              BoxShadow(
-                                color: orangeGradient.colors.first.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Center(
-                      child: AutoTranslateText(
-                        day.substring(0, 1).toUpperCase() + day.substring(1),
-                        style: MyTextTheme.smallBCB.copyWith(
+                      decoration: BoxDecoration(
+                        gradient: isSelected ? orangeGradient : null,
+                        color: isSelected ? null : Colors.grey.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
                           color: isSelected
-                              ? Colors.white
-                              : primaryGradient.colors.first.withOpacity(0.7),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                              ? Colors.transparent
+                              : primaryGradient.colors.first.withOpacity(0.3),
+                          width: 1.5,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: orangeGradient.colors.first
+                                      .withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: Center(
+                        child: AutoTranslateText(
+                          day.substring(0, 1).toUpperCase() + day.substring(1),
+                          style: MyTextTheme.smallBCB.copyWith(
+                            color: isSelected
+                                ? Colors.white
+                                : primaryGradient.colors.first.withOpacity(0.7),
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
+                );
+              }).toList(),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 }
-

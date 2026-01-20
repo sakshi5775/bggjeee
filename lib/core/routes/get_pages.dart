@@ -70,6 +70,7 @@ import 'package:astrobharataiuser/screens/astrology_services/views/astrologer_ch
 import 'package:astrobharataiuser/screens/astrology_services/views/astrologer_chat_history_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrologer_voice_call_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrologer_video_call_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/view/ecommerce_home_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/product_list_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/product_detail_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/binding/product_list_binding.dart';
@@ -86,6 +87,7 @@ import 'package:astrobharataiuser/screens/ecommerce/view/addresses_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/coupons_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/payments_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/payment_detail_view.dart';
+import 'package:astrobharataiuser/binding/ecommerce_binding/ecommerce_binding.dart';
 import 'package:astrobharataiuser/screens/ecommerce/binding/cart_binding.dart';
 import 'package:astrobharataiuser/screens/ecommerce/binding/wishlist_binding.dart';
 import 'package:astrobharataiuser/screens/ecommerce/binding/profile_binding.dart';
@@ -337,7 +339,7 @@ class PageRoutes {
       transition: Transition.fadeIn,
       transitionDuration: Duration(milliseconds: 300),
     ),
-     GetPage(
+    GetPage(
       name: AppRoutes.aichat,
       page: () {
         final args = Get.arguments;
@@ -367,6 +369,19 @@ class PageRoutes {
       transition: Transition.rightToLeft,
     ),
     // E-commerce Routes
+    GetPage(
+      name: AppRoutes.ecommerceHome,
+      page: () {
+        final args = Get.arguments;
+        final showBackButton = args is Map<String, dynamic>
+            ? args['showBackButton'] as bool? ?? false
+            : false;
+        return EcommerceHomeView(showBackButton: showBackButton);
+      },
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: EcommerceBinding(),
+    ),
     GetPage(
       name: AppRoutes.productList,
       page: () => const ProductListView(),

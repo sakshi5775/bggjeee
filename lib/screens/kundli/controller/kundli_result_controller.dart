@@ -19,6 +19,12 @@ class KundliResultController extends BaseController {
   // PageController for swipeable tabs
   late PageController pageController;
 
+  // ScrollController for tabs
+  final ScrollController tabsScrollController = ScrollController();
+
+  // Map to store GlobalKeys for each tab
+  final Map<int, GlobalKey> tabKeys = {};
+
   // Tabs
   final tabs = [
     'Basic',
