@@ -26,7 +26,7 @@ class AstrologyReportWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 AutoTranslateText(
-                  'Astrology Report',
+                  'Digital Education',
                   style: AppTypography.h2.copyWith(color: "#820B17".toColor()),
                 ),
                 GestureDetector(

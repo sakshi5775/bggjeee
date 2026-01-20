@@ -4,7 +4,6 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_form_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -83,13 +82,11 @@ class KundliFormView extends BasePage<KundliFormController> {
             Expanded(
               child: AutoTranslateText(
                 'Generate Kundli',
-                style: MyTextTheme.largeBCB
-                    .copyWith(
-                      color: Color(0xFFF7C443),
-                      fontWeight: FontWeight.w900,
-                      fontSize: 12,
-                    )
-                    .merge(AppTypography.h1),
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: Color(0xFFF7C443),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18.sp,
+                ),
               ),
             ),
           ],
@@ -151,39 +148,7 @@ class KundliFormView extends BasePage<KundliFormController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Container(
-              height: 60.h,
-              width: 60.w,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: ['#FF8C42'.toColor(), '#E63946'.toColor()],
-                ),
-                borderRadius: BorderRadius.circular(50.r),
-                border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.star_border_outlined,
-                color: Colors.white,
-                size: 30.w,
-              ),
-            ),
-          ),
-          // AutoTranslateText(
-          //   'Enter Birth Details',
-          //   style: MyTextTheme.largeBCB.copyWith(
-          //     color: '#3E2723'.toColor(),
-          //     fontWeight: FontWeight.bold,
-          //   ),
-          // ),
-          Spacing.h(16),
+          Spacing.h(8),
 
           // Name field (Optional)
           _buildTextField(
@@ -196,19 +161,7 @@ class KundliFormView extends BasePage<KundliFormController> {
           Spacing.h(12),
 
           // Gender dropdown
-          AutoTranslateText(
-            'Select Gender',
-            style: MyTextTheme.smallBCB.copyWith(
-              fontFamily: 'Baloo2',
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.w500,
-              fontSize: 18,
-            ),
-          ),
-          Spacing.h(6),
-          _genderTile(title: 'Male', icon: Icons.male),
-          _genderTile(title: 'Female', icon: Icons.female),
-          _genderTile(title: 'Other', icon: Icons.transgender),
+          _buildGenderField(),
           Spacing.h(12),
 
           // Date field
@@ -242,41 +195,6 @@ class KundliFormView extends BasePage<KundliFormController> {
 
           _buildLocationSelector(),
           Spacing.h(12),
-          // Latitude and Longitude row
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField(
-                  title: 'Enter Latitude',
-                  controller: controller.latitudeController,
-                  hint: 'Latitude',
-                  icon: Icons.location_on,
-                  readOnly: true,
-                ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: _buildTextField(
-                  title: 'Enter Longitude',
-                  controller: controller.longitudeController,
-                  hint: 'Longitude',
-                  icon: Icons.location_on,
-                  readOnly: true,
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(12),
-
-          // Timezone field
-          _buildTextField(
-            title: 'Enter Timezone offset',
-            controller: controller.timezoneController,
-            hint: 'Timezone offset',
-            icon: Icons.access_time,
-            readOnly: true,
-          ),
-          Spacing.h(12),
 
           // Language dropdown
           _buildLanguageField(),
@@ -284,10 +202,6 @@ class KundliFormView extends BasePage<KundliFormController> {
 
           // Style dropdown
           _buildStyleField(),
-          Spacing.h(12),
-
-          // Colored planets dropdown
-          _buildColoredPlanetsField(),
           Spacing.h(20),
 
           // Submit button
@@ -414,10 +328,7 @@ class KundliFormView extends BasePage<KundliFormController> {
               value: controller.selectedLanguage.value,
               decoration: InputDecoration(
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: 18.h,
-                  horizontal: 12.w,
-                ),
+                contentPadding: EdgeInsets.all(16.w),
                 prefixIcon: Padding(
                   padding: EdgeInsets.all(12.w),
                   child: Icon(
@@ -467,23 +378,27 @@ class KundliFormView extends BasePage<KundliFormController> {
     );
   }
 
-  Widget _genderTile({required String title, required IconData icon}) {
-    return Obx(() {
-      final bool isSelected = controller.selectedGender.value == title;
+  Widget _buildGenderField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// 🔹 TOP TEXT
+        Text(
+          'Select Gender',
+          style: MyTextTheme.smallBCB.copyWith(
+            fontFamily: 'Baloo2',
+            color: '#3E2723'.toColor(),
+            fontWeight: FontWeight.w500,
+            fontSize: 18,
+          ),
+        ),
+        SizedBox(height: 6.h),
 
-      return GestureDetector(
-        onTap: () => controller.selectedGender.value = title,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(14),
+        /// 🔹 DROPDOWN
+        Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isSelected ? const Color(0xff5D1C21) : Colors.transparent,
-              width: 1.5,
-            ),
+            borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -492,38 +407,65 @@ class KundliFormView extends BasePage<KundliFormController> {
               ),
             ],
           ),
-          child: Row(
-            children: [
-              Container(
-                height: 40,
-                width: 40,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+          child: Obx(
+            () => DropdownButtonFormField<String>(
+              value: controller.selectedGender.value,
+              decoration: InputDecoration(
+                isDense: true,
+                contentPadding: EdgeInsets.all(16.w),
+                prefixIcon: Padding(
+                  padding: EdgeInsets.all(12.w),
+                  child: Icon(
+                    Icons.person_outline,
+                    color: '#FF6B35'.toColor(),
+                    size: 20.w,
                   ),
                 ),
-                child: Icon(icon, color: Colors.white),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: BorderSide(
+                    color: '#F5D7B8'.toColor().withOpacity(0.5),
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
+                ),
+                filled: true,
+                fillColor: Colors.white,
               ),
-              const SizedBox(width: 12),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  color: const Color(0xff5D1C21),
+              hint: AutoTranslateText(
+                'Select Gender',
+                style: MyTextTheme.mediumBCN.copyWith(
+                  color: '#3E2723'.toColor().withOpacity(0.5),
                 ),
               ),
-              const Spacer(),
-              if (isSelected)
-                const Icon(Icons.check_circle, color: Color(0xff5D1C21)),
-            ],
+              items: controller.genderOptions.map((gender) {
+                return DropdownMenuItem<String>(
+                  value: gender,
+                  child: AutoTranslateText(
+                    gender,
+                    style: MyTextTheme.mediumBCN.copyWith(
+                      color: '#3E2723'.toColor(),
+                    ),
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  controller.selectedGender.value = value;
+                }
+              },
+            ),
           ),
         ),
-      );
-    });
+      ],
+    );
   }
 
   Widget _buildStyleField() {
@@ -560,10 +502,7 @@ class KundliFormView extends BasePage<KundliFormController> {
               value: controller.selectedStyle.value,
               decoration: InputDecoration(
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: 18.h,
-                  horizontal: 12.w,
-                ),
+                contentPadding: EdgeInsets.all(16.w),
                 prefixIcon: Padding(
                   padding: EdgeInsets.all(12.w),
                   child: Icon(
@@ -604,92 +543,6 @@ class KundliFormView extends BasePage<KundliFormController> {
               onChanged: (value) {
                 if (value != null) {
                   controller.selectedStyle.value = value;
-                }
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildColoredPlanetsField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        /// 🔹 TOP TEXT
-        Text(
-          'Colored Planets Font',
-          style: MyTextTheme.smallBCB.copyWith(
-            fontFamily: 'baloo2',
-            color: '#3E2723'.toColor(),
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
-        ),
-        SizedBox(height: 6.h),
-
-        /// 🔹 DROPDOWN FIELD
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Obx(
-            () => DropdownButtonFormField<bool>(
-              value: controller.coloredPlanets.value,
-              decoration: InputDecoration(
-                isDense: true,
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: 18.h,
-                  horizontal: 12.w,
-                ),
-                prefixIcon: Padding(
-                  padding: EdgeInsets.all(12.w),
-                  child: Icon(
-                    Icons.palette,
-                    color: '#FF6B35'.toColor(),
-                    size: 20.w,
-                  ),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(
-                    color: '#F5D7B8'.toColor().withOpacity(0.5),
-                    width: 1,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
-                ),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              items: const [
-                DropdownMenuItem<bool>(
-                  value: true,
-                  child: AutoTranslateText('True'),
-                ),
-                DropdownMenuItem<bool>(
-                  value: false,
-                  child: AutoTranslateText('False'),
-                ),
-              ],
-              onChanged: (value) {
-                if (value != null) {
-                  controller.coloredPlanets.value = value;
                 }
               },
             ),
@@ -741,6 +594,7 @@ class KundliFormView extends BasePage<KundliFormController> {
                       style: MyTextTheme.largeBCB.copyWith(
                         color: Color(0xFFF7C443),
                         fontWeight: FontWeight.bold,
+                        fontSize: 18.sp,
                       ),
                     ),
             ),
@@ -825,6 +679,8 @@ class KundliFormView extends BasePage<KundliFormController> {
     );
   }
 }
+
+
 
 
 // Widget _buildTextField({

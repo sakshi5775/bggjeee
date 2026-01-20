@@ -205,6 +205,18 @@ class AppRoutes {
   static const String ramalShastraStats = '/ramal-shastra-stats';
   static const String ramalShastraDetail = '/ramal-shastra-detail';
 
+
+  
   // E-Mandir Routes
   static const String namasteHome = '/namaste-home';
+  static const String punyaMudra = '/punya-mudra';
+  static const String virtualDarshan = '/virtual-darshan';
+  static const String devotionalLibrary = '/devotional-library';
+  static const String devotionalPlayer = '/devotional-player';
+  static const String lyrics = '/lyrics';
+  static const String meaning = '/meaning';
+  static const String bhaktiChakra = '/bhakti-chakra';
+  static const String passbook = '/passbook';
+  static const String bookPuja = '/book-puja';
+  static const String pujaDetail = '/puja-detail';
 }

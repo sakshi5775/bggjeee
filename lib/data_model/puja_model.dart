@@ -114,23 +114,29 @@ class PujaTemple {
   String? id;
   String? name;
   String? slug;
+  String? description;
   PujaLocation? location;
   String? image;
+  String? fullAddress;
 
   PujaTemple({
     this.id,
     this.name,
     this.slug,
+    this.description,
     this.location,
     this.image,
+    this.fullAddress,
   });
 
   PujaTemple.fromJson(Map<String, dynamic> json) {
     id = json['_id'] ?? json['id'];
     name = json['name'];
     slug = json['slug'];
+    description = json['description'];
     location = json['location'] != null ? PujaLocation.fromJson(json['location']) : null;
     image = json['image'];
+    fullAddress = json['fullAddress'];
   }
 
   Map<String, dynamic> toJson() {
@@ -139,10 +145,12 @@ class PujaTemple {
     data['id'] = id;
     data['name'] = name;
     data['slug'] = slug;
+    data['description'] = description;
     if (location != null) {
       data['location'] = location!.toJson();
     }
     data['image'] = image;
+    data['fullAddress'] = fullAddress;
     return data;
   }
 }
@@ -150,18 +158,24 @@ class PujaTemple {
 class PujaLocation {
   String? city;
   String? state;
+  String? pincode;
+  String? country;
 
-  PujaLocation({this.city, this.state});
+  PujaLocation({this.city, this.state, this.pincode, this.country});
 
   PujaLocation.fromJson(Map<String, dynamic> json) {
     city = json['city'];
     state = json['state'];
+    pincode = json['pincode'];
+    country = json['country'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['city'] = city;
     data['state'] = state;
+    data['pincode'] = pincode;
+    data['country'] = country;
     return data;
   }
 }

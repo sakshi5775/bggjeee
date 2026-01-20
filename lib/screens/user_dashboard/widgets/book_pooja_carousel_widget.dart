@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/puja_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -39,7 +40,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
               GestureDetector(
                 onTap: () {
                   // Navigate to view all poojas
-                  // Get.toNamed(AppRoutes.allPoojas);
+                  Get.toNamed(AppRoutes.bookPuja);
                 },
                 child: AutoTranslateText(
                   'View all',
@@ -116,9 +117,15 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
       }
     }
     
-    return Card(
-      elevation: 2,
-      child: Column(
+    return GestureDetector(
+      onTap: () {
+        if (puja.id != null && puja.id!.isNotEmpty) {
+          Get.toNamed(AppRoutes.pujaDetail, arguments: puja.id);
+        }
+      },
+      child: Card(
+        elevation: 2,
+        child: Column(
         children: [
           Padding(
             padding: AppPaddings.symmetric(h: 15, v: 20),
@@ -227,8 +234,13 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                           // Book Now Button
                           GestureDetector(
                             onTap: () {
-                              // Handle book now action
-                              // Get.toNamed(AppRoutes.bookPooja, arguments: puja);
+                              // Navigate to puja detail page
+                              if (puja.id != null && puja.id!.isNotEmpty) {
+                                Get.toNamed(AppRoutes.pujaDetail, arguments: puja.id);
+                              } else {
+                                // Fallback to book puja page
+                                Get.toNamed(AppRoutes.bookPuja);
+                              }
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(
@@ -263,6 +275,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
           // Pagination Dots
           _buildPaginationDots(),
         ],
+      ),
       ),
     );
   }
