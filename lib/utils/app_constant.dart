@@ -205,4 +205,27 @@ class AppConstant {
       'assets/app/ZodiacSigns/Capricornus.png';
   static const String zodiacAquarius = 'assets/app/ZodiacSigns/Aquarius.png';
   static const String zodiacPisces = 'assets/app/ZodiacSigns/Pisces.png';
+
+
+  // E-Mandir Images
+      static const String eMandirGanesha = 'assets/images/ganesha.png';
+      static const String eMandirLiveDarshan = 'assets/images/live_darshan.png';
+      static const String eMandirPlayIcon = 'assets/images/play_icon.png';
+      static const String eMandirEPuja = 'assets/images/e_puja.png';
+      static const String eMandirLibraryAarti = 'assets/images/liberary_arti.png';
+      static const String eMandirPlusIcon = 'assets/images/plus_icon.png';
+      static const String eMandirGodIcon = 'assets/images/god_icon.png';
+      static const String eMandirAartiIcon = 'assets/images/aarti_icon.png';
+      static const String eMandirLadduIcon = 'assets/images/laddu_icon.png';
+      static const String eMandirListenNowIcon = 'assets/images/listen_now_icon.png';
+      static const String eMandirGoldenTemple = 'assets/images/golder temple.png';
+      static const String eMandirMeenakshiTemple = 'assets/images/meenakshi temple.png';
+      static const String eMandirTirupatiBalaji = 'assets/images/tirupatiBalaji.jpg';
+      static const String eMandirOmmIcon = 'assets/images/omm_icon.png';
+      static const String eMandirRemMandir = 'assets/images/rem_mandir.png';
+      static const String eMandirLightImage = 'assets/images/light_image.png';
+      static const String eMandirChakraLeft = 'assets/images/chakraleft.png';
+      static const String eMandirPassbookOom = 'assets/images/passbook_oom.png';
+      static const String eMandirChakra = 'assets/images/chakra.png';
+      static const String eMandirLockChakra = 'assets/images/lock_chakra.png';
 }

@@ -107,4 +107,76 @@ class PujaService {
       return null;
     }
   }
+
+  /// Get puja by ID
+  Future<PujaModel?> getPujaById(String pujaId) async {
+    try {
+      final uri = Uri.parse('$_baseUrl/pujas/$pujaId');
+
+      final currentToken = UserData().accessToken?.trim();
+
+      if (kDebugMode) {
+        debugPrint('Puja Detail API URL: ${uri.toString()}');
+      }
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+          if (currentToken != null && currentToken.isNotEmpty)
+            'Authorization': 'Bearer $currentToken',
+        },
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw Exception('Request timeout');
+        },
+      );
+
+      if (kDebugMode) {
+        debugPrint('Puja Detail API Status: ${response.statusCode}');
+        debugPrint('Puja Detail API Response: ${response.body}');
+      }
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        
+        if (kDebugMode) {
+          debugPrint('Puja Detail API Response Data: $jsonData');
+        }
+        
+        try {
+          if (jsonData['success'] == true && jsonData['data'] != null) {
+            final pujaModel = PujaModel.fromJson(jsonData['data']);
+            
+            if (kDebugMode) {
+              debugPrint('Puja Detail Retrieved: ${pujaModel.title}');
+            }
+            
+            return pujaModel;
+          }
+          return null;
+        } catch (e, stackTrace) {
+          if (kDebugMode) {
+            debugPrint('Error parsing PujaModel: $e');
+            debugPrint('Stack trace: $stackTrace');
+            debugPrint('Response body: ${response.body}');
+          }
+          return null;
+        }
+      } else {
+        if (kDebugMode) {
+          debugPrint('Puja Detail API Error: ${response.statusCode} - ${response.body}');
+        }
+        return null;
+      }
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        debugPrint('Error fetching puja detail: $e');
+        debugPrint('Stack trace: $stackTrace');
+      }
+      return null;
+    }
+  }
 }
