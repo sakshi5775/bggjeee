@@ -65,11 +65,11 @@ class DailyAstrologersWidget extends BasePage<UserDashboardController> {
           Spacing.h(16),
           // Horizontal Scrollable List
           SizedBox(
-            height: 100.h,
+            height: 80.h,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: dailyCards.length,
-              separatorBuilder: (context, index) => Spacing.w(12),
+              separatorBuilder: (context, index) => Spacing.w(10),
               itemBuilder: (context, index) {
                 final card = dailyCards[index];
                 return _buildDailyCard(card);
@@ -105,50 +105,50 @@ class DailyAstrologersWidget extends BasePage<UserDashboardController> {
         }
       },
       child: Container(
-        width: 110.w,
+        width: 85.w,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
         ),
         child: Padding(
-          padding: AppPaddings.all(12.w),
+          padding: AppPaddings.all(8.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               // Icon with Orange Gradient Background
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 16.w),
+                padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 8.w),
                 child: iconPath.endsWith('.svg')
-                    ? SvgAssets(path: iconPath, width: 28.w, height: 28.h)
+                    ? SvgAssets(path: iconPath, width: 22.w, height: 22.h)
                     : Image.asset(
                         iconPath,
-                        width: 26.w,
-                        height: 26.h,
+                        width: 20.w,
+                        height: 20.h,
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return Icon(
                             Icons.star,
                             color: Colors.white,
-                            size: 28.w,
+                            size: 22.w,
                           );
                         },
                       ),
               ),
-              Spacing.h(8),
+              Spacing.h(4),
               // Title Text
-              AutoTranslateText(
-                title,
-                style: MyTextTheme.smallBCN
-                    .copyWith(
-                      color: "#361515".toColor(),
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w500,
-                    )
-                    .merge(AppTypography.body2),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              Flexible(
+                child: AutoTranslateText(
+                  title,
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: "#361515".toColor(),
+                    height: 1.1,
+                    fontSize: 10.sp,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 3,
+                  overflow: TextOverflow.visible,
+                ),
               ),
             ],
           ),

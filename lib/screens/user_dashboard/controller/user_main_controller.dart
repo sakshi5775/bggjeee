@@ -1,10 +1,9 @@
 import 'package:astrobharataiuser/binding/dashboard_binding/user_dashboard_binding.dart';
 import 'package:astrobharataiuser/binding/ecommerce_binding/ecommerce_binding.dart';
-import 'package:astrobharataiuser/binding/e_mandir_binding/namaste_home_binding.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
-import 'package:astrobharataiuser/screens/e_mandir/namaste_home_screen/view/namaste_home_view.dart';
+import 'package:astrobharataiuser/screens/e_mandir/namaste_home_screen.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/ecommerce_home_view.dart';
 import 'package:flutter/material.dart';
@@ -43,8 +42,7 @@ class UserMainController extends GetxController {
 
       case AppRoutes.namasteHome:
         return GetPageRoute(
-          page: () => const NamasteHomeView(),
-          binding: NamasteHomeBinding(),
+          page: () => const NamasteHomeScreen(),
         );
 
       case AppRoutes.astrologyServices:
@@ -53,12 +51,26 @@ class UserMainController extends GetxController {
         );
 
       case AppRoutes.courses:
-        return GetPageRoute(
-          page: () => const _Placeholder('Digital Education'),
-        );
+        // Navigate to courses route from get_pages.dart
+        return null; // Let main router handle it
 
       default:
-        return GetPageRoute(page: () => const _Placeholder('Empty'));
+        // If route not found, check if it's an e-mandir route and go to namasteHome
+        // Otherwise go to home
+        if (settings.name?.contains('mandir') == true || 
+            settings.name?.contains('darshan') == true ||
+            settings.name?.contains('punya') == true ||
+            settings.name?.contains('devotional') == true ||
+            settings.name?.contains('bhakti') == true ||
+            settings.name?.contains('passbook') == true) {
+          return GetPageRoute(
+            page: () => const NamasteHomeScreen(),
+          );
+        }
+        return GetPageRoute(
+          page: () => const UserDashboardView(),
+          binding: UserDashboardBinding(),
+        );
     }
   }
 
@@ -106,21 +118,12 @@ class UserMainController extends GetxController {
     if (nav != null && nav.canPop()) {
       nav.pop();
     } else {
-      selectedIndex.value = 0;
-      Get.offNamed(pages[0], id: 1);
+      // If at root of nested navigator, go to the current tab's main page
+      // instead of always going to home
+      final currentIndex = selectedIndex.value;
+      selectedIndex.value = currentIndex;
+      Get.offNamed(pages[currentIndex], id: 1);
     }
   }
 }
 
-class _Placeholder extends StatelessWidget {
-  final String title;
-  const _Placeholder(this.title);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(child: Text(title)),
-    );
-  }
-}
