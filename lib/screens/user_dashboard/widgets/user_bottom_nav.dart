@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -53,25 +54,21 @@ class UserBottomNav extends StatelessWidget {
                   label: 'Digital Mandir',
                   index: 2,
                   selectedIndex: c.selectedIndex.value,
-                  onTap: () {
-                    Get.toNamed('/book-puja');
-                  },
+                   onTap: () => onTap(2),
                 ),
                 _buildNavItem(
                   icon: Icons.person,
                   label: 'Consult',
                   index: 3,
                   selectedIndex: c.selectedIndex.value,
-                  onTap: () {
-                    Get.toNamed('/astrology-services');
-                  },
+                 onTap: () => onTap(3),
                 ),
                 _buildNavItem(
                   icon: Icons.school,
                   label: 'Digital Education',
                   index: 4,
                   selectedIndex: c.selectedIndex.value,
-                  onTap: () => onTap(4),
+                   onTap: () => onTap(4),
                 ),
               ],
             ),

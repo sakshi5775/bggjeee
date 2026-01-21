@@ -64,11 +64,13 @@ class AstrologyToolWidget extends StatelessWidget {
                 ),
                 _buildAstrologyTools(
                   title: 'Prshan\nKundli',
-                  image: AppConstant.astrologyToolPrashnKundli,
+                  image: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/PrashanKundli.jpg',
+                  isNetworkImage: true,
                 ),
                 _buildAstrologyTools(
                   title: 'Tarot\nReading',
-                  image: AppConstant.astrologyToolTarotReading,
+                image: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/TarotReading.png',
+                  isNetworkImage: true,
                 ),
               ],
             ),

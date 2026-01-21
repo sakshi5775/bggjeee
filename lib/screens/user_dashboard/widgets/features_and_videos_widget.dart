@@ -194,23 +194,7 @@ class FeaturesAndVideosWidget extends BasePage<UserDashboardController> {
             ),
           ],
         ),
-        GestureDetector(
-          onTap: () {
-            // Navigate to all videos
-            // Get.toNamed(AppRoutes.videos);
-          },
-          child: AutoTranslateText(
-            'View All',
-            style: MyTextTheme.mediumBCN
-                .copyWith(
-                  color: "#6F221E".toColor(),
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Poppins',
-                  height: 1.5,
-                )
-                .merge(AppTypography.body1),
-          ),
-        ),
+       
       ],
     );
   }
@@ -423,7 +407,7 @@ class FeaturesAndVideosWidget extends BasePage<UserDashboardController> {
                     // Content
                     Expanded(
                       child: Padding(
-                        padding: EdgeInsets.all(10.w),
+                        padding: EdgeInsets.all(2.w),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
@@ -435,7 +419,7 @@ class FeaturesAndVideosWidget extends BasePage<UserDashboardController> {
                                   color: "#DFB343".toColor(),
                                   fontWeight: FontWeight.w600,
                                   fontFamily: 'Baloo Bhai 2',
-                                  height: 1.2,
+                                  height: 1.0,
                                   fontSize: 11.sp,
                                 ),
                                 maxLines: 2,

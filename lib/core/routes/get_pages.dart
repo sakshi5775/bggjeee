@@ -14,7 +14,6 @@ import 'package:astrobharataiuser/binding/e_mandir_binding/puja_detail_binding.d
 import 'package:astrobharataiuser/binding/e_mandir_binding/devotional_player_binding.dart';
 import 'package:astrobharataiuser/binding/e_mandir_binding/lyrics_binding.dart';
 import 'package:astrobharataiuser/binding/e_mandir_binding/meaning_binding.dart';
-import 'package:astrobharataiuser/binding/e_mandir_binding/namaste_home_binding.dart';
 import 'package:astrobharataiuser/binding/e_mandir_binding/passbook_binding.dart';
 import 'package:astrobharataiuser/binding/e_mandir_binding/punya_mudra_binding.dart';
 import 'package:astrobharataiuser/binding/e_mandir_binding/virtual_darshan_binding.dart';
@@ -38,7 +37,7 @@ import 'package:astrobharataiuser/screens/e_mandir/puja_detail/view/puja_detail_
 import 'package:astrobharataiuser/screens/e_mandir/devotional_player/view/devotional_player_view.dart';
 import 'package:astrobharataiuser/screens/e_mandir/lyrics/view/lyrics_view.dart';
 import 'package:astrobharataiuser/screens/e_mandir/meaning/view/meaning_view.dart';
-import 'package:astrobharataiuser/screens/e_mandir/namaste_home_screen/view/namaste_home_view.dart';
+import 'package:astrobharataiuser/screens/e_mandir/namaste_home_screen.dart';
 import 'package:astrobharataiuser/screens/e_mandir/passbook/view/passbook_view.dart';
 import 'package:astrobharataiuser/screens/e_mandir/punya_mudra/view/punya_mudra_view.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan_screen/view/virtual_darshan_view.dart';
@@ -1362,10 +1361,9 @@ class PageRoutes {
    // E-Mandir Routes
     GetPage(
       name: AppRoutes.namasteHome,
-      page: () => const NamasteHomeView(),
+      page: () => const NamasteHomeScreen(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
-      binding: NamasteHomeBinding(),
     ),
     GetPage(
       name: AppRoutes.punyaMudra,

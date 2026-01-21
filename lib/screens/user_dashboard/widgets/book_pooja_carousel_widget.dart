@@ -56,8 +56,8 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
           ),
           Spacing.h(16),
           // Carousel Section
-          SizedBox(
-            height: 115.h,
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: 120.h),
             child: Obx(() {
               if (controller.isLoadingPujas.value) {
                 return const Center(child: CircularProgressIndicator());
@@ -125,19 +125,22 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
       },
       child: Card(
         elevation: 2,
-        child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: AppPaddings.symmetric(h: 15, v: 6),
-            child: Row(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: 120.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: Padding(
+                  padding: AppPaddings.symmetric(h: 15, v: 2),
+                  child: Row(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Puja Image
                 Container(
-                  width: 48.w,
-                  height: 48.w,
+                  width: 42.w,
+                  height: 42.w,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(
@@ -150,13 +153,13 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                     child: puja.image != null && puja.image!.isNotEmpty
                         ? Image.network(
                             puja.image!,
-                            width: 50.w,
-                            height: 50.w,
+                            width: 42.w,
+                            height: 42.w,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
-                                width: 50.w,
-                                height: 50.w,
+                                width: 42.w,
+                                height: 42.w,
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: ["#FFF8F0".toColor(), "#FFE8D0".toColor()],
@@ -173,8 +176,8 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                             },
                           )
                         : Container(
-                            width: 50.w,
-                            height: 50.w,
+                            width: 42.w,
+                            height: 42.w,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: ["#FFF8F0".toColor(), "#FFE8D0".toColor()],
@@ -185,7 +188,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                             child: Icon(
                               Icons.auto_awesome,
                               color: AppColors.deepOrange,
-                              size: 24.w,
+                              size: 20.w,
                             ),
                           ),
                   ),
@@ -208,20 +211,20 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      Spacing.h(4),
+                      Spacing.h(2),
                       // Description (subheading)
                       AutoTranslateText(
                         puja.subheading ?? puja.title ?? 'Divine blessings',
                         style: MyTextTheme.smallBCN
                             .copyWith(
                               color: "#666666".toColor(),
-                              fontSize: 11.sp,
+                              fontSize: 9.sp,
                             )
                             .merge(AppTypography.body2),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      Spacing.h(6),
+                      Spacing.h(3),
                       // Price, Timing and Button Row
                       Row(
                         children: [
@@ -233,7 +236,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                                   .copyWith(
                                     color: AppColors.deepOrange,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 18.sp,
+                                    fontSize: 16.sp,
                                   )
                                   .merge(AppTypography.h3),
                               maxLines: 1,
@@ -241,7 +244,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                             ),
                           ),
                           if (timingText.isNotEmpty) ...[
-                            Spacing.w(12),
+                            Spacing.w(8),
                             // Timing with icon
                             Flexible(
                               child: Row(
@@ -249,17 +252,17 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                                 children: [
                                   Icon(
                                     Icons.access_time,
-                                    size: 14.w,
+                                    size: 12.w,
                                     color: "#666666".toColor(),
                                   ),
-                                  Spacing.w(4),
+                                  Spacing.w(3),
                                   Flexible(
                                     child: AutoTranslateText(
                                       timingText,
                                       style: MyTextTheme.smallBCN
                                           .copyWith(
                                             color: "#666666".toColor(),
-                                            fontSize: 12.sp,
+                                            fontSize: 10.sp,
                                           )
                                           .merge(AppTypography.body2),
                                       maxLines: 1,
@@ -284,8 +287,8 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(
-                                horizontal: 14.w,
-                                vertical: 6.h,
+                                horizontal: 16.w,
+                                vertical: 8.h,
                               ),
                               decoration: BoxDecoration(
                                 gradient: AppColors.orangeGradient,
@@ -297,9 +300,11 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                                     .copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 12.sp,
+                                      fontSize: 10.sp,
                                     )
                                     .merge(AppTypography.body2),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ),
@@ -309,13 +314,15 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                   ),
                 ),
               ],
-            ),
+                  ),
+                ),
+              ),
+              Spacing.h(2),
+              // Pagination Dots
+              _buildPaginationDots(),
+            ],
           ),
-          Spacing.h(6),
-          // Pagination Dots
-          _buildPaginationDots(),
-        ],
-      ),
+        ),
       ),
     );
   }

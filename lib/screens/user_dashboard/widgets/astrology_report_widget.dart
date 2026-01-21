@@ -1,13 +1,13 @@
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../app_manager/ext/hex_color_ext.dart';
-import '../../../utils/app_constant.dart';
 import '../../../widgets/auto_translate_text.dart';
 import 'ComingSoonPage.dart';
+import 'book_open_page.dart';
 
 class AstrologyReportWidget extends StatelessWidget {
   const AstrologyReportWidget({super.key});
@@ -29,15 +29,7 @@ class AstrologyReportWidget extends StatelessWidget {
                   'Digital Education',
                   style: AppTypography.h2.copyWith(color: "#820B17".toColor()),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Get.to(() => const ComingSoonPage());
-                  },
-                  child: AutoTranslateText(
-                    'View All',
-                    style: AppTypography.body1.copyWith(color: "#9D4807".toColor()),
-                  ),
-                ),
+              
               ],
             ),
             Spacing.h(10),
@@ -47,24 +39,24 @@ class AstrologyReportWidget extends StatelessWidget {
                 spacing: 10,
                 children: [
                   _buildAstrologyReportCard(
-                    image: AppConstant.astrologyReportBrihatKudli,
-                    title: 'Brihat Kundli',
+                    imageUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/atharvaveda.jpeg',
+                    title: 'Atharvaveda',
                   ),
                   _buildAstrologyReportCard(
-                    image: AppConstant.astrologyReportHoroscope2026,
-                    title: 'Horoscope 2026',
+                    imageUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/jyotishVedang.jpeg',
+                    title: 'Jyotish Vedang',
                   ),
                   _buildAstrologyReportCard(
-                    image: AppConstant.astrologyYearBookReport,
-                    title: 'Year Book',
+                    imageUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/rigveda.jpeg',
+                    title: 'Rigveda',
                   ),
                   _buildAstrologyReportCard(
-                    image: AppConstant.astrologyYearBookReportShani,
-                    title: 'Year Book',
+                    imageUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/samveda.jpeg',
+                    title: 'Samveda',
                   ),
                   _buildAstrologyReportCard(
-                    image: AppConstant.astrologyRajYogaReport,
-                    title: 'Raj Yoga',
+                    imageUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/yajurveda.jpeg',
+                    title: 'Yajurveda',
                   ),
                 ],
               ),
@@ -76,59 +68,74 @@ class AstrologyReportWidget extends StatelessWidget {
   }
 
   Widget _buildAstrologyReportCard({
-    required String image,
+    required String imageUrl,
     required String title,
   }) {
     return GestureDetector(
       onTap: () {
-        Get.to(() => const ComingSoonPage());
+        Get.to(() => BookOpenPage(
+              imageUrl: imageUrl,
+              title: title,
+            ));
       },
-      child: Container(
-        // height: 82,
-        width: 82,
-        decoration: BoxDecoration(
-          gradient: AppColors.orangeGradient,
-          borderRadius: AppRadius.only(
-            topLeft: 13,
-            topRight: 13,
-            bottomRight: 13,
-          ),
+      child: ClipRRect(
+        borderRadius: AppRadius.only(
+          topLeft: 13,
+          topRight: 13,
+          bottomRight: 13,
         ),
-        child: Padding(
-          padding: AppPaddings.all(1),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: AppRadius.only(
-                topLeft: 13,
-                topRight: 13,
-                bottomRight: 13,
-              ),
-            ),
-            child: Column(
-              children: [
-                Center(
-                  child: Image.asset(
-                    image,
-                    // fit: BoxFit.cover,
-                    height: 70,
-                    width: 70,
+        child: Container(
+          width: 82,
+          height: 100,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Hero(
+                tag: imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey.withOpacity(0.3),
+                    child: const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey.withOpacity(0.3),
+                    child: const Icon(Icons.error_outline),
                   ),
                 ),
-                Padding(
-                  padding: AppPaddings.symmetric(h: 5),
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: AppPaddings.symmetric(h: 5, v: 4),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        Colors.black.withOpacity(0.7),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
                   child: AutoTranslateText(
                     title,
                     textAlign: TextAlign.center,
                     maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: AppTypography.body2.copyWith(
-                      color: '#8B1925'.toColor(),
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
-                Spacing.h(5),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

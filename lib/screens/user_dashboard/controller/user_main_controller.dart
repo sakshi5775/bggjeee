@@ -1,135 +1,111 @@
-import 'package:astrobharataiuser/app_manager/localized_text.dart';
 import 'package:astrobharataiuser/binding/dashboard_binding/user_dashboard_binding.dart';
 import 'package:astrobharataiuser/binding/ecommerce_binding/ecommerce_binding.dart';
-import 'package:astrobharataiuser/binding/ai_chat_binding/ai_chat_binding.dart';
+import 'package:astrobharataiuser/binding/e_mandir_binding/namaste_home_binding.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
+import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
+import 'package:astrobharataiuser/screens/e_mandir/namaste_home_screen/view/namaste_home_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/ecommerce_home_view.dart';
-import 'package:astrobharataiuser/screens/ecommerce/view/profile_view.dart';
-import 'package:astrobharataiuser/screens/ecommerce/binding/profile_binding.dart';
-import 'package:astrobharataiuser/screens/ai_chat/views/ai_chat_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class UserMainController extends GetxController {
   final selectedIndex = 0.obs;
-  final pages = <String>[].obs;
-  final initialRoute = ''.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    pages.assignAll([
-      '/user-home',
-      AppRoutes.ecommerceHome,
-      '/user-education',
-      '/user-chat',
-      '/user-profile',
-    ]);
-    initialRoute.value = pages.first;
-  }
+  final pages = [
+    '/user-home',
+    AppRoutes.ecommerceHome,
+    AppRoutes.namasteHome,
+    AppRoutes.astrologyServices,
+    AppRoutes.courses,
+  ];
 
+  String get initialRoute => pages.first;
+
+  // ---------------- ROUTING ----------------
   Route? onGenerateRoute(RouteSettings settings) {
-    // Check if showBackButton is specified in arguments, otherwise default to false (from bottom nav)
-    final args = settings.arguments;
-    final showBackButton = args is Map<String, dynamic>
-        ? args['showBackButton'] as bool? ?? false
-        : false;
+    final args = settings.arguments as Map<String, dynamic>?;
+    final showBackButton = args?['showBackButton'] ?? false;
 
     switch (settings.name) {
       case '/user-home':
         return GetPageRoute(
-          settings: settings,
           page: () => const UserDashboardView(),
           binding: UserDashboardBinding(),
         );
+
       case AppRoutes.ecommerceHome:
         return GetPageRoute(
-          settings: settings,
           page: () => EcommerceHomeView(showBackButton: showBackButton),
           binding: EcommerceBinding(),
         );
-      case '/user-education':
+
+      case AppRoutes.namasteHome:
         return GetPageRoute(
-          settings: settings,
-          page: () => _Placeholder('Education'),
+          page: () => const NamasteHomeView(),
+          binding: NamasteHomeBinding(),
         );
-      case '/user-chat':
+
+      case AppRoutes.astrologyServices:
         return GetPageRoute(
-          settings: settings,
-          page: () => AiChatView(showBackButton: showBackButton),
-          binding: AiChatBinding(),
+          page: () => const AstrologyServicesView(),
         );
-      case '/user-profile':
+
+      case AppRoutes.courses:
         return GetPageRoute(
-          settings: settings,
-          page: () => ProfileView(showBackButton: showBackButton),
-          binding: ProfileBinding(),
+          page: () => const _Placeholder('Digital Education'),
         );
+
       default:
-        return GetPageRoute(
-          settings: settings,
-          page: () => _Placeholder('Empty'),
-        );
+        return GetPageRoute(page: () => const _Placeholder('Empty'));
     }
   }
 
+  // ---------------- TAB CHANGE ----------------
   void changePage(int index) {
-    // If clicking the same tab that's already selected, do nothing
-    if (index == selectedIndex.value) {
-      return;
-    }
+    if (index == selectedIndex.value) return;
 
-    // Protect education (courses) and chat tabs for guest users
-    final requiresLogin = index == 2 || index == 3;
+    // Protect Consult & Education
+    final requiresLogin = index == 3 || index == 4;
     if (requiresLogin && LoginGuard.isGuest) {
       LoginGuard.showLoginRequiredModal(
-        message: index == 2
+        message: index == 4
             ? 'Please login to access courses.'
-            : 'Please login to chat with astrologers.',
+            : 'Please login to consult astrologers.',
       );
       return;
     }
 
-    // Check if we're currently on the courses page (outside nested navigator)
-    final bool isOnCoursesPage = Get.currentRoute == AppRoutes.courses;
-
-    // If we're on courses page and clicking a different tab
-    if (isOnCoursesPage && index != 2) {
-      // Navigate back from courses first, then navigate directly to selected tab
-      Get.back(); // Navigate back from courses to nested navigator
+    // If coming from courses full page
+    if (Get.currentRoute == AppRoutes.courses && index != 4) {
+      Get.back();
       Future.delayed(const Duration(milliseconds: 200), () {
-        selectedIndex.value = index;
-        Get.offNamed(pages[index], id: 1);
+        _navigate(index);
       });
       return;
     }
 
-    // Normal navigation within nested navigator
-    _navigateToTab(index);
+    _navigate(index);
   }
 
-  // Reusable method to navigate to a specific tab
-  void _navigateToTab(int index) {
+  void _navigate(int index) {
     selectedIndex.value = index;
 
-    // If education tab is clicked, navigate to courses page
-    if (index == 2) {
+    if (index == 4) {
       Get.toNamed(AppRoutes.courses, arguments: {'showBackButton': false});
-      // Don't reset to home when coming back - let the user stay where they were
     } else {
       Get.offNamed(pages[index], id: 1);
     }
   }
 
-  // Handle back navigation within nested navigator
+  // ---------------- BACK HANDLER ----------------
   void handleBackNavigation() {
-    final navigator = Get.nestedKey(1)?.currentState;
-    if (navigator != null && navigator.canPop()) {
-      navigator.pop();
+    final nav = Get.nestedKey(1)?.currentState;
+
+    if (nav != null && nav.canPop()) {
+      nav.pop();
     } else {
-      // If at root of current tab, navigate to home
       selectedIndex.value = 0;
       Get.offNamed(pages[0], id: 1);
     }
@@ -143,11 +119,8 @@ class _Placeholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: LocalizedText(text: title),
-      ),
-      body: Center(child: LocalizedText(text: title)),
+      appBar: AppBar(title: Text(title)),
+      body: Center(child: Text(title)),
     );
   }
 }

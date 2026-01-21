@@ -73,30 +73,24 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   controller: controller.scrollController,
-                  child: Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Header with menu, logo, icons and search bar
-                          _buildHeader(context),
-                          Spacing.h(10),
-
-                          // Body with curve, gradient and all content sections
-                          _buildBodyWithCurve(context),
-
-                          // Bottom padding to prevent content from being hidden behind sticky banner
-                          // Spacing.h(100),
-                        ],
-                      ),
-                      Positioned(
-                        top: 110,
-                        left: 25,
-                        right: 25,
-                        child: _buildSearchBar(context),
-                      ),
-                    ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header with menu, logo, icons
+                  _buildHeader(context),
+                  Spacing.h(10),
+                  // In-flow search bar to avoid unbounded Stack constraints
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: _buildSearchBar(context),
                   ),
+                  Spacing.h(10),
+                  // Body with curve, gradient and all content sections
+                  _buildBodyWithCurve(context),
+                  // Bottom padding to prevent content from being hidden behind sticky banner
+                  // Spacing.h(100),
+                ],
+              ),
                 ),
               ),
               // 🔥 Search bar overlay (FIX)
@@ -389,19 +383,21 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Spacing.h(50),
+         
 
           // Live Astrologers Section
           Obx(() {
             final hasLiveStreams = controller.liveStreams.isNotEmpty;
-            final randomAstrologers = controller.allAstrologer.take(5).toList();
+
+            // Pick a random, non-mutating subset from allAstrologer for offline display
+            final randomAstrologers = () {
+              final copy = List<AstrologerModel>.from(controller.allAstrologer);
+              copy.shuffle();
+              return copy.take(5).toList();
+            }();
             
-            // Always show section - with live streams or random astrologers
             final showSection = hasLiveStreams || randomAstrologers.isNotEmpty;
-            
-            if (!showSection) {
-              return SizedBox.shrink();
-            }
+            if (!showSection) return const SizedBox.shrink();
 
             return Padding(
               padding: EdgeInsets.only(top: 24.h, left: 16.w, right: 16.w),
@@ -458,32 +454,32 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       ),
                     ],
                   ),
-                  if (!hasLiveStreams) ...[
-                    Spacing.h(8),
-                    Container(
-                      padding: AppPaddings.symmetric(h: 12.w, v: 8.h),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8.r),
-                        border: Border.all(color: Colors.red.withOpacity(0.3)),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(Icons.info_outline, color: Colors.red, size: 18.w),
-                          Spacing.w(8),
-                          Expanded(
-                            child: AutoTranslateText(
-                              'No astrologer live at the moment',
-                              style: AppTypography.body2.copyWith(
-                                color: Colors.red.shade700,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                  // if (!hasLiveStreams) ...[
+                  //   Spacing.h(8),
+                  //   Container(
+                  //     padding: AppPaddings.symmetric(h: 12.w, v: 8.h),
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.red.withOpacity(0.1),
+                  //       borderRadius: BorderRadius.circular(8.r),
+                  //       border: Border.all(color: Colors.red.withOpacity(0.3)),
+                  //     ),
+                  //     child: Row(
+                  //       children: [
+                  //         Icon(Icons.info_outline, color: Colors.red, size: 18.w),
+                  //         Spacing.w(8),
+                  //         Expanded(
+                  //           child: AutoTranslateText(
+                  //             'No astrologer is live',
+                  //             style: AppTypography.body2.copyWith(
+                  //               color: Colors.red.shade700,
+                  //               fontWeight: FontWeight.w500,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ],
                   Spacing.h(16),
                   SizedBox(
                     height: 110.h,
@@ -513,18 +509,19 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ),
             );
           }),
-
-          // Digital Services Animated Widget
-          const DigitalServicesAnimatedWidget(),
-
-          Spacing.h(15),
+// Daily Astrologers Section
+          DailyAstrologersWidget(),
+            Spacing.h(10),
 
           // Our Services Pill Section
           _buildOurServicesPillSection(),
+          // Digital Services Animated Widget
+          const DigitalServicesAnimatedWidget(),
+
+        
           Spacing.h(24),
 
-          // Daily Astrologers Section
-          DailyAstrologersWidget(),
+          
 
           AllAstrologerWidget(),
           Spacing.h(12),
@@ -561,7 +558,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           Spacing.h(24),
           // Courses Section
           CoursesSectionWidget(),
-          Spacing.h(24),
+          Spacing.h(2),
           // kids specialist astrologers
           const KidsSpecialistAstrologersWidget(),
 
@@ -569,10 +566,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
           // // Live Pooja in Temples Section
           // _buildLivePoojaSection(),
-          Spacing.h(24),
+          // Spacing.h(24),
 
-          // Sacred Mandirs of Bharat Section
-          _buildSacredMandirsSection(),
+          // // Sacred Mandirs of Bharat Section
+          // _buildSacredMandirsSection(),
 
           Spacing.h(12),
 
@@ -592,7 +589,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
           // // Prashna Kundli Astrologers Section
           // _buildPrashnaKundliSection(),
-          Spacing.h(24),
+          Spacing.h(2),
 
           // Blog Section
           _buildBlogSection(),
@@ -625,7 +622,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               Expanded(
                 child: _buildPillServiceCard(
                   'Digital Mart',
-                  'assets/app/digital_shop_video_icon.gif',
+                  'assets/app/pill_digital_mart.png',
                   onTap: () {
                     Get.offNamed(
                       '/user-shop',
@@ -638,8 +635,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               Spacing.w(10),
               Expanded(
                 child: _buildPillServiceCard(
-                  'Digital Pooja',
-                  'assets/app/digital_pooja_video_icon.gif',
+                  'Digital Mandir',
+                  'assets/app/pill_digital_mandir.png',
                   onTap: () {
                     Get.toNamed(AppRoutes.namasteHome);
                   },
@@ -654,7 +651,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               Expanded(
                 child: _buildPillServiceCard(
                   'Consultation',
-                  'assets/app/consultation_video_icon.gif',
+                  'assets/app/pill_consult.png',
                   onTap: () {
                     Get.toNamed(AppRoutes.astrologyServices);
                   },
@@ -664,7 +661,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               Expanded(
                 child: _buildPillServiceCard(
                   'Digital Education',
-                  'assets/app/digital_education_video_icon.gif',
+                  'assets/app/pill_digital_education.png',
                   onTap: () {
                     Get.toNamed(AppRoutes.courses);
                   },
@@ -1603,13 +1600,13 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 ],
               ),
             ),
-            Spacing.w(12),
-            // Right Side - Navigation Arrow
-            Icon(
-              Icons.arrow_forward_ios,
-              color: AppColors.deepOrange,
-              size: 20.w,
-            ),
+            // Spacing.w(12),
+            // // Right Side - Navigation Arrow
+            // Icon(
+            //   Icons.arrow_forward_ios,
+            //   color: AppColors.deepOrange,
+            //   size: 20.w,
+            // ),
           ],
         ),
       ),
@@ -2630,10 +2627,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 ),
               ],
             ),
-            Spacing.h(16),
+            Spacing.h(12),
             // Horizontal Scrollable List
             SizedBox(
-              height: 295.h,
+              height: 210.h,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: controller.vedicAstrologers.length >= 5
@@ -2688,18 +2685,21 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           color: Colors.white,
           border: Border.all(color: "#F38B3B".toColor(), width: 1),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Spacing.h(16),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: 210.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Spacing.h(6),
             // Profile Image with Decorative Border
             Stack(
               alignment: Alignment.center,
               children: [
                 // Background image
                 Container(
-                  width: 135.w,
-                  height: 135.w,
+                  width: 95.w,
+                  height: 95.w,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
@@ -2714,8 +2714,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
                 // Profile Image
                 Container(
-                  width: 90.w,
-                  height: 90.w,
+                  width: 70.w,
+                  height: 70.w,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(color: AppColors.deepOrange, width: 1),
@@ -2755,7 +2755,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 ),
               ],
             ),
-            Spacing.h(12),
+            Spacing.h(6),
             // Name
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -2765,35 +2765,38 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     .copyWith(
                       color: "#361515".toColor(),
                       fontWeight: FontWeight.bold,
+                      fontSize: 11.sp,
                     )
-                    .merge(AppTypography.body1),
+                    .merge(AppTypography.body2),
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            Spacing.h(4),
+            Spacing.h(0.5),
             // Experience
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: AutoTranslateText(
                 experience,
                 style: MyTextTheme.smallBCN
-                    .copyWith(color: "#909090".toColor(), fontSize: 11.sp)
+                    .copyWith(color: "#909090".toColor(), fontSize: 7.5.sp)
                     .merge(AppTypography.body2),
                 textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
-            Spacing.h(8),
+            Spacing.h(2),
             // Price
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: Wrap(
-                spacing: 8.w,
-                runSpacing: 8.h,
+                spacing: 2.5.w,
+                runSpacing: 2.5.h,
                 children: [
                   Container(
-                    padding: AppPaddings.all(4),
+                    padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.5.h),
                     decoration: BoxDecoration(
                       color: AppColors.deepOrange,
                       borderRadius: BorderRadius.circular(12.r),
@@ -2804,12 +2807,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           .copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
+                            fontSize: 8.sp,
                           )
                           .merge(AppTypography.body2),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Container(
-                    padding: AppPaddings.all(4),
+                    padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.5.h),
                     decoration: BoxDecoration(
                       color: AppColors.deepOrange,
                       borderRadius: BorderRadius.circular(12.r),
@@ -2820,12 +2826,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           .copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
+                            fontSize: 8.sp,
                           )
                           .merge(AppTypography.body2),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Container(
-                    padding: AppPaddings.all(4),
+                    padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.5.h),
                     decoration: BoxDecoration(
                       color: AppColors.deepOrange,
                       borderRadius: BorderRadius.circular(12.r),
@@ -2836,38 +2845,42 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           .copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
+                            fontSize: 8.sp,
                           )
                           .merge(AppTypography.body2),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
               ),
             ),
 
-            Spacing.h(8),
+            Spacing.h(2),
             // Languages with icon
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.language, size: 14.w, color: "#909090".toColor()),
-                  Spacing.w(4),
+                  Icon(Icons.language, size: 9.w, color: "#909090".toColor()),
+                  Spacing.w(2),
                   Expanded(
                     child: AutoTranslateText(
                       ': $languages',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: MyTextTheme.smallBCN
-                          .copyWith(color: "#909090".toColor(), fontSize: 11.sp)
+                          .copyWith(color: "#909090".toColor(), fontSize: 7.5.sp)
                           .merge(AppTypography.body2),
                     ),
                   ),
                 ],
               ),
             ),
-            Spacing.h(16),
-          ],
+            Spacing.h(8),
+            ],
+          ),
         ),
       ),
     );
@@ -3087,7 +3100,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           ),
           Spacing.h(16),
             SizedBox(
-              height: 450.h,
+              height: 360.h,
             child: StreamBuilder<int>(
               stream: Stream.periodic(const Duration(seconds: 5), (x) => x),
               initialData: 0,
@@ -3365,11 +3378,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         : (persona.specializations.isNotEmpty
               ? persona.specializations.first
               : 'AI Astrologer');
-    final tags = persona.tags.isNotEmpty
-        ? persona.tags.take(3).toList()
-        : (persona.specializations.isNotEmpty
-              ? persona.specializations.take(3).toList()
-              : ['Astrology', 'Consultation', 'Guidance']);
+    // final tags = persona.tags.isNotEmpty
+    //     ? persona.tags.take(3).toList()
+    //     : (persona.specializations.isNotEmpty
+    //           ? persona.specializations.take(3).toList()
+    //           : ['Astrology', 'Consultation', 'Guidance']);
     final imagePath = persona.image ?? '';
     return GestureDetector(
       onTap: () {
@@ -3378,10 +3391,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           arguments: {'personaId': persona.id, 'persona': persona},
         );
       },
-      child: Container(
-        width: 255.99.w,
-        height: 265.h,
-        decoration: BoxDecoration(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: 255.99.w,
+          maxHeight: 220.h,
+        ),
+        child: Container(
+          width: 255.99.w,
+          decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
               "#3D0C11".toColor(),
@@ -3405,73 +3422,73 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 BlendMode.srcIn,
               ),
             ),
-            SingleChildScrollView(
-              child: SizedBox(
-                height: 265.h,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Image with emoji overlay - moved to top
-                    SizedBox(
-                      // width: 224.w,
-                      height: 130.h,
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(16.r),
-                            child: imagePath.isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl: imagePath,
-                                    width: double.infinity,
-                                    // height: 127.99.h,
-                                    fit: BoxFit.cover,
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 220.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Image with emoji overlay - moved to top
+                  SizedBox(
+                    width: 255.99.w,
+                    height: 120.h,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16.r),
+                          child: imagePath.isNotEmpty
+                              ? CachedNetworkImage(
+                                  imageUrl: imagePath,
+                                  width: 255.99.w,
+                                  height: 120.h,
+                                  fit: BoxFit.contain,
 
-                                    errorWidget: (context, url, error) {
-                                      return Container(
-                                        width: 224.w,
-                                        height: 127.99.h,
-                                        color: Colors.grey.withOpacity(0.3),
-                                        child: Icon(
-                                          Icons.person,
-                                          color: Colors.white.withOpacity(0.5),
-                                          size: 40.w,
-                                        ),
-                                      );
-                                    },
-                                  )
-                                : Container(
-                                    width: 224.w,
-                                    height: 127.99.h,
-                                    color: Colors.grey.withOpacity(0.3),
-                                    child: Icon(
-                                      Icons.person,
-                                      color: Colors.white.withOpacity(0.5),
-                                      size: 40.w,
-                                    ),
+                                  errorWidget: (context, url, error) {
+                                    return Container(
+                                      width: 255.99.w,
+                                      height: 120.h,
+                                      color: Colors.grey.withOpacity(0.3),
+                                      child: Icon(
+                                        Icons.person,
+                                        color: Colors.white.withOpacity(0.5),
+                                        size: 40.w,
+                                      ),
+                                    );
+                                  },
+                                )
+                              : Container(
+                                  width: 255.99.w,
+                                  height: 120.h,
+                                  color: Colors.grey.withOpacity(0.3),
+                                  child: Icon(
+                                    Icons.person,
+                                    color: Colors.white.withOpacity(0.5),
+                                    size: 40.w,
                                   ),
-                          ),
-                          // Gradient overlay
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: Container(
-                              height: 50.h,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.transparent,
-                                    Colors.black.withOpacity(0.8),
-                                  ],
                                 ),
+                        ),
+                        // Gradient overlay
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            height: 50.h,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.8),
+                                ],
                               ),
                             ),
                           ),
+                        ),
 
-                          // Emoji badge
+                        // Emoji badge
                           // Positioned(
                           //   top: 72.h,
                           //   right: 50.w,
@@ -3509,12 +3526,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           //     ),
                           //   ),
                           // ),
-                        ],
-                      ),
+                      ],
                     ),
-                    Spacing.h(8),
-                    // Title and subtitle
-                    Padding(
+                  ),
+                  Spacing.h(1),
+                  // Title and subtitle
+                  Padding(
                       padding: AppPaddings.symmetric(h: 10),
                       child: AutoTranslateText(
                         title,
@@ -3523,15 +3540,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                               color: "#DFB343".toColor(),
                               fontWeight: FontWeight.w500,
                               fontFamily: 'Baloo Bhai 2',
-                              height: 1.2,
-                              fontSize: 16.sp,
+                              height: 1.0,
+                              fontSize: 14.sp,
                             )
-                            .merge(AppTypography.h2),
+                            .merge(AppTypography.h3),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Spacing.h(3),
+                    Spacing.h(4),
                     Padding(
                       padding: AppPaddings.symmetric(h: 10),
                       child: Row(
@@ -3544,33 +3561,33 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                 color: "#FFF6C2".toColor().withOpacity(0.7),
                                 fontWeight: FontWeight.w400,
                                 fontFamily: 'Poppins',
-                                height: 1.2,
-                                fontSize: 11.sp,
+                                height: 1.0,
+                                fontSize: 9.sp,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Spacing.w(4),
+                          Spacing.w(3),
                           Row(
                             children: [
                               Container(
-                                width: 5.w,
-                                height: 5.h,
+                                width: 3.5.w,
+                                height: 3.5.h,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: "#05DF72".toColor().withOpacity(0.91),
                                 ),
                               ),
-                              Spacing.w(4),
+                              Spacing.w(2),
                               AutoTranslateText(
                                 'Online',
                                 style: MyTextTheme.smallBCN.copyWith(
                                   color: "#E3B341".toColor(),
                                   fontWeight: FontWeight.w400,
                                   fontFamily: 'Poppins',
-                                  height: 1.2,
-                                  fontSize: 10.sp,
+                                  height: 1.0,
+                                  fontSize: 8.sp,
                                 ),
                               ),
                             ],
@@ -3578,50 +3595,50 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         ],
                       ),
                     ),
+                    // Spacing.h(1),
+                    // // Tags
+                    // Padding(
+                    //   padding: AppPaddings.symmetric(h: 10),
+                    //   child: Wrap(
+                    //     spacing: 4.w,
+                    //     runSpacing: 4.h,
+                    //     children: tags
+                    //         .map(
+                    //           (tag) => Container(
+                    //             padding: EdgeInsets.symmetric(
+                    //               horizontal: 6.w,
+                    //               vertical: 3.h,
+                    //             ),
+                    //             decoration: BoxDecoration(
+                    //               color: "#E3B341".toColor().withOpacity(0.2),
+                    //               borderRadius: BorderRadius.circular(
+                    //                 17722700.r,
+                    //               ),
+                    //               border: Border.all(
+                    //                 color: "#E3B341".toColor().withOpacity(0.3),
+                    //                 width: 0.53,
+                    //               ),
+                    //             ),
+                    //             child: AutoTranslateText(
+                    //               tag,
+                    //               style: MyTextTheme.smallBCN.copyWith(
+                    //                 color: "#FFF6C2".toColor(),
+                    //                 fontWeight: FontWeight.w400,
+                    //                 fontFamily: 'Poppins',
+                    //                 height: 1.33,
+                    //               ),
+                    //             ),
+                    //           ),
+                    //         )
+                    //         .toList(),
+                    //   ),
+                    // ),
                     Spacing.h(8),
-                    // Tags
-                    Padding(
-                      padding: AppPaddings.symmetric(h: 10),
-                      child: Wrap(
-                        spacing: 6.w,
-                        runSpacing: 6.h,
-                        children: tags
-                            .map(
-                              (tag) => Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 7.w,
-                                  vertical: 4.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: "#E3B341".toColor().withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(
-                                    17722700.r,
-                                  ),
-                                  border: Border.all(
-                                    color: "#E3B341".toColor().withOpacity(0.3),
-                                    width: 0.53,
-                                  ),
-                                ),
-                                child: AutoTranslateText(
-                                  tag,
-                                  style: MyTextTheme.smallBCN.copyWith(
-                                    color: "#FFF6C2".toColor(),
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'Poppins',
-                                    height: 1.33,
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                      ),
-                    ),
-                    Spacer(),
                     // Chat Now button
                     Padding(
                       padding: AppPaddings.symmetric(h: 10),
                       child: Row(
-                        spacing: 10.w,
+                        spacing: 6.w,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
@@ -3630,7 +3647,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                               child: Container(
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 8.w,
-                                  vertical: 5.h,
+                                  vertical: 8.h,
                                 ),
                                 decoration: BoxDecoration(
                                   gradient: AppColors.orangeGradient,
@@ -3644,16 +3661,16 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                       width: 14.w,
                                       height: 14.h,
                                     ),
-                                    Spacing.w(3),
+                                    Spacing.w(4),
                                     Flexible(
                                       child: AutoTranslateText(
                                         'Chat Now',
                                         style: MyTextTheme.smallBCN.copyWith(
                                           color: "#FFFFFF".toColor(),
-                                          fontWeight: FontWeight.w400,
+                                          fontWeight: FontWeight.w500,
                                           fontFamily: 'Poppins',
                                           height: 1.2,
-                                          fontSize: 10.sp,
+                                          fontSize: 11.sp,
                                         ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -3670,13 +3687,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                               child: Container(
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 8.w,
-                                  vertical: 5.h,
+                                  vertical: 8.h,
                                 ),
                                 decoration: BoxDecoration(
                                   gradient: AppColors.orangeGradient,
                                   borderRadius: BorderRadius.circular(20.r),
                                 ),
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     SvgAssets(
                                       path: AppConstant.callIcon,
@@ -3687,16 +3705,16 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                         BlendMode.srcIn,
                                       ),
                                     ),
-                                    Spacing.w(3),
+                                    Spacing.w(4),
                                     Flexible(
                                       child: AutoTranslateText(
                                         'Call Now',
                                         style: MyTextTheme.smallBCN.copyWith(
                                           color: "#FFFFFF".toColor(),
-                                          fontWeight: FontWeight.w400,
+                                          fontWeight: FontWeight.w500,
                                           fontFamily: 'Poppins',
                                           height: 1.2,
-                                          fontSize: 10.sp,
+                                          fontSize: 11.sp,
                                         ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -3710,11 +3728,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         ],
                       ),
                     ),
-                    Spacing.h(12),
                   ],
                 ),
               ),
-            ),
             // FREE badge - positioned in top right of card
             Positioned(
               right: 12.w,
@@ -3753,6 +3769,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ),
             ),
           ],
+        ),
         ),
       ),
     );
@@ -4963,10 +4980,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ),
             );
           } else {
-            // Show "live stream is ended" message
+            // Show "live stream has ended" message
             Get.snackbar(
               'Stream Ended',
-              'Live stream is ended',
+              'Live stream has ended',
               snackPosition: SnackPosition.BOTTOM,
               backgroundColor: Colors.red,
               colorText: Colors.white,
@@ -5075,10 +5092,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         );
 
         if (isLoggedIn) {
-          // Show "live stream is ended" message
+          // Show "live stream has ended" message
           Get.snackbar(
             'Stream Ended',
-            'Live stream is ended',
+            'Live stream has ended',
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.red,
             colorText: Colors.white,
@@ -5156,7 +5173,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
                 decoration: BoxDecoration(
-                  color: Colors.red,
+                  gradient: AppColors.orangeGradient,
                   border: Border.all(color: Colors.white, width: 2),
                   borderRadius: BorderRadius.circular(10.r),
                 ),

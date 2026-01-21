@@ -48,7 +48,7 @@ class _DigitalServicesAnimatedWidgetState
   void initState() {
     super.initState();
 
-    _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
       if (!mounted) return;
       setState(() {
         _currentIndex = (_currentIndex + 1) % _imageData.length;
@@ -73,7 +73,7 @@ class _DigitalServicesAnimatedWidgetState
 
     return Padding(
       padding: EdgeInsets.only(
-        top: 30.h,
+        top: 10.h,
         left: 16.w,
         right: 16.w,
       ),
@@ -82,7 +82,7 @@ class _DigitalServicesAnimatedWidgetState
         child: GestureDetector(
           onTap: _navigateToRoute,
           child: AnimatedSwitcher(
-  duration: const Duration(milliseconds: 650),
+  duration: const Duration(milliseconds: 450),
   transitionBuilder: (child, animation) {
     return FadeTransition(
       opacity: animation,

@@ -404,7 +404,7 @@ class UserDashboardController extends BaseController
     const int servicesCount = 5;
     if (servicesCount == 0) return;
     
-    _ourServicesTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+    _ourServicesTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
       final pageController = ourServicesPageController.value;
       // Check if PageController has exactly one client (one PageView attached)
       if (pageController.hasClients && pageController.positions.length == 1) {
@@ -442,6 +442,7 @@ class UserDashboardController extends BaseController
   }
 
   @override
+  @override
   void onClose() {
     _shouldAnimate = false;
     _isAnimating = false;
@@ -451,6 +452,7 @@ class UserDashboardController extends BaseController
     _stopOurServicesAutoSlide();
     bookPoojaPageController.value.dispose();
     ourServicesPageController.value.dispose();
+    liveVideoIconController.dispose();
     super.onClose();
   }
 
@@ -465,10 +467,8 @@ class UserDashboardController extends BaseController
             .toList();
         
         liveStreams.value = currentLive;
-        // Fetch astrologer details for live streams only
-        if (liveStreams.isNotEmpty) {
-          await _loadAstrologerDetails(liveStreams);
-        }
+        // Fetch astrologer details (also needed when no one is live to show random cards)
+        await _loadAstrologerDetails(liveStreams);
       }
     } catch (e) {
       debugPrint('Error loading live streams: $e');
