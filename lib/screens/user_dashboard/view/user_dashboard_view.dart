@@ -9,7 +9,6 @@ import 'package:astrobharataiuser/screens/astrology_services/view/astrology_serv
 import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/AnimatedChakra.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/astrology_tool_widget.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -19,6 +18,7 @@ import 'package:astrobharataiuser/data_model/blog_model.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/data_model/category_model.dart';
+import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/video_player_widget.dart';
 import 'package:astrobharataiuser/widgets/language_selector.dart';
@@ -391,42 +391,49 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         children: [
           Spacing.h(50),
 
-          if (controller.liveStreams.isNotEmpty) Spacing.h(24),
-
           // Live Astrologers Section
           Obx(() {
-            if (controller.liveStreams.isNotEmpty) {
-              return Padding(
-                padding: AppPaddings.symmetric(h: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            ShaderMask(
-                              shaderCallback: (bounds) {
-                                return AppColors.orangeGradient.createShader(
-                                  Rect.fromLTWH(
-                                    0,
-                                    0,
-                                    bounds.width,
-                                    bounds.height,
-                                  ),
-                                );
-                              },
-                              child: AutoTranslateText(
-                                'Live Astrologers',
-                                style: AppTypography.h2.copyWith(
-                                  color: Colors.white, // IMPORTANT
-                                  letterSpacing: -0.05,
+            final hasLiveStreams = controller.liveStreams.isNotEmpty;
+            final randomAstrologers = controller.allAstrologer.take(5).toList();
+            
+            // Always show section - with live streams or random astrologers
+            final showSection = hasLiveStreams || randomAstrologers.isNotEmpty;
+            
+            if (!showSection) {
+              return SizedBox.shrink();
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(top: 24.h, left: 16.w, right: 16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          ShaderMask(
+                            shaderCallback: (bounds) {
+                              return AppColors.orangeGradient.createShader(
+                                Rect.fromLTWH(
+                                  0,
+                                  0,
+                                  bounds.width,
+                                  bounds.height,
                                 ),
+                              );
+                            },
+                            child: AutoTranslateText(
+                              'Live Astrologers',
+                              style: AppTypography.h2.copyWith(
+                                color: Colors.white,
+                                letterSpacing: -0.05,
                               ),
                             ),
-
-                            Spacing.w(8),
+                          ),
+                          Spacing.w(8),
+                          if (hasLiveStreams)
                             FadeTransition(
                               opacity: controller.liveVideoIconOpacity,
                               child: ScaleTransition(
@@ -436,54 +443,88 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Get.toNamed(AppRoutes.liveAstrologers);
-                          },
-                          child: AutoTranslateText(
-                            'View All',
-                            style: AppTypography.body1.copyWith(
-                              color: "#9D4807".toColor(),
-                            ),
+                        ],
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(AppRoutes.liveAstrologers);
+                        },
+                        child: AutoTranslateText(
+                          'View All',
+                          style: AppTypography.body1.copyWith(
+                            color: "#9D4807".toColor(),
                           ),
                         ),
-                      ],
-                    ),
-                    Spacing.h(16),
-                    SizedBox(
-                      height: 110.h,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: controller.liveStreams.length,
-                        separatorBuilder: (context, index) =>
-                            SizedBox(width: 12.w),
-                        itemBuilder: (context, index) {
-                          return _buildLiveAstrologerProfile(index);
-                        },
+                      ),
+                    ],
+                  ),
+                  if (!hasLiveStreams) ...[
+                    Spacing.h(8),
+                    Container(
+                      padding: AppPaddings.symmetric(h: 12.w, v: 8.h),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(color: Colors.red.withOpacity(0.3)),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.info_outline, color: Colors.red, size: 18.w),
+                          Spacing.w(8),
+                          Expanded(
+                            child: AutoTranslateText(
+                              'No astrologer live at the moment',
+                              style: AppTypography.body2.copyWith(
+                                color: Colors.red.shade700,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
-                ),
-              );
-            } else {
-              return SizedBox.shrink();
-            }
+                  Spacing.h(16),
+                  SizedBox(
+                    height: 110.h,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: hasLiveStreams 
+                          ? controller.liveStreams.length 
+                          : randomAstrologers.length,
+                      separatorBuilder: (context, index) =>
+                          SizedBox(width: 12.w),
+                      itemBuilder: (context, index) {
+                        if (hasLiveStreams) {
+                          return _buildLiveAstrologerProfile(
+                            index, 
+                            controller.liveStreams[index],
+                          );
+                        } else {
+                          return _buildOfflineAstrologerProfile(
+                            index, 
+                            randomAstrologers[index],
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
           }),
 
-          // Daily Astrologers Section
-          DailyAstrologersWidget(),
-
-          Spacing.h(10),
-
-          Spacing.h(12),
-          _buildOurServicesPillSection(),
-          Spacing.h(24),
           // Digital Services Animated Widget
           const DigitalServicesAnimatedWidget(),
 
           Spacing.h(15),
+
+          // Our Services Pill Section
+          _buildOurServicesPillSection(),
+          Spacing.h(24),
+
+          // Daily Astrologers Section
+          DailyAstrologersWidget(),
 
           AllAstrologerWidget(),
           Spacing.h(12),
@@ -515,8 +556,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           _buildVedicKundliAstrologersSection(),
           Spacing.h(24),
 
-          // Kundli Matching Promotional Card
-          _buildKundliMatchingCard(),
+          // Our Services Carousel
+          _buildOurServicesCarousel(),
           Spacing.h(24),
           // Courses Section
           CoursesSectionWidget(),
@@ -914,17 +955,17 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
   Widget _buildHoroscopeCard(Map<String, dynamic> card, int index) {
     // Responsive dimensions - all using .w, .h, .r for proper scaling
-    final double cardHeight = 185.h; // Match consultation card height
+    final double cardHeight = 155.h; // Reduced card height
     final double guruImageWidth = 160.w; // Responsive width
     final double guruImageHeight =
-        320.h; // Increased for stronger top overlap per Figma
+        280.h; // Reduced for better proportion
     // Bottom flush with card: offset = cardHeight - guruHeight (negative -> head overlaps)
     final double guruTopOffset = cardHeight - guruImageHeight;
 
     return Container(
       key: ValueKey('horoscope_$index'),
       width: double.infinity, // Full width minus parent padding - responsive
-      height: cardHeight, // Match consultation card height (185.h)
+      height: cardHeight, // Reduced card height (155.h)
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -1040,7 +1081,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       },
       child: Container(
         key: ValueKey('${card['title']}_$index'),
-        height: 185.h,
+        height: 155.h,
         decoration: BoxDecoration(
           color: bgColor.toColor(),
           borderRadius: BorderRadius.circular(12.r),
@@ -1413,15 +1454,95 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   //   );
   // }
 
-  Widget _buildKundliMatchingCard() {
+  Widget _buildOurServicesCarousel() {
+    final services = [
+      {
+        'title': 'Kundli Matching',
+        'description': 'Find your perfect match with 36 Gun Milan analysis and AI-powered compatibility insights.',
+        'icon': 'assets/app/kundli_matching_icon.png',
+        'route': AppRoutes.matchMakingForm,
+      },
+      {
+        'title': 'Generate Kundli',
+        'description': 'Get your personalized birth chart with detailed planetary positions and analysis.',
+        'icon': 'assets/app/kundli_matching_icon.png',
+        'route': AppRoutes.kundliForm,
+      },
+      {
+        'title': 'Life Predictions',
+        'description': 'Discover your future with comprehensive life predictions based on your birth chart.',
+        'icon': 'assets/app/kundli_matching_icon.png',
+        'route': AppRoutes.kundliForm,
+        'args': {'targetRoute': AppRoutes.predictions},
+      },
+      {
+        'title': 'Dosh Analysis',
+        'description': 'Check for malefic planetary combinations and get remedies for dosh in your chart.',
+        'icon': 'assets/app/kundli_matching_icon.png',
+        'route': AppRoutes.kundliForm,
+        'args': {'targetRoute': AppRoutes.dosh},
+      },
+      {
+        'title': 'Dasha Prediction',
+        'description': 'Understand your current planetary periods and their effects on your life.',
+        'icon': 'assets/app/kundli_matching_icon.png',
+        'route': AppRoutes.kundliForm,
+        'args': {'targetRoute': AppRoutes.dasha},
+      },
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: AppPaddings.symmetric(h: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              AutoTranslateText(
+                'Our Services',
+                style: MyTextTheme.largeBCB
+                    .copyWith(
+                      color: "#68171E".toColor(),
+                      fontWeight: FontWeight.bold,
+                    )
+                    .merge(AppTypography.h2),
+              ),
+            ],
+          ),
+        ),
+        Spacing.h(16),
+        SizedBox(
+          height: 110.h,
+          child: PageView.builder(
+            controller: controller.ourServicesPageController.value,
+            onPageChanged: (index) {
+              controller.ourServicesCurrentPage.value = index;
+            },
+            itemCount: services.length,
+            itemBuilder: (context, index) {
+              final service = services[index];
+              return _buildServiceCard(service);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildServiceCard(Map<String, dynamic> service) {
     return GestureDetector(
       onTap: () {
-        // Navigate to Kundli Matching screen
-        Get.toNamed(AppRoutes.matchMakingForm);
+        final args = service['args'] as Map<String, dynamic>?;
+        if (args != null) {
+          Get.toNamed(service['route'] as String, arguments: args);
+        } else {
+          Get.toNamed(service['route'] as String);
+        }
       },
       child: Container(
-        margin: AppPaddings.symmetric(h: 16),
-        padding: AppPaddings.symmetric(h: 16, v: 26),
+        margin: AppPaddings.symmetric(h: 8),
+        padding: AppPaddings.symmetric(h: 16, v: 20),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
@@ -1437,11 +1558,17 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: Image.asset(
-                'assets/app/kundli_matching_icon.png',
+                service['icon'] as String,
                 height: 40.h,
                 width: 40.w,
-
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(
+                    Icons.star,
+                    color: Colors.white,
+                    size: 24.w,
+                  );
+                },
               ),
             ),
             Spacing.w(16),
@@ -1453,7 +1580,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 children: [
                   // Title
                   AutoTranslateText(
-                    'Kundli Matching',
+                    service['title'] as String,
                     style: MyTextTheme.largeBCB
                         .copyWith(
                           color: "#68171E".toColor(),
@@ -1466,10 +1593,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   Spacing.h(6),
                   // Description
                   AutoTranslateText(
-                    'Find your perfect match with 36 Gun Milan analysis and AI-powered compatibility insights.',
+                    service['description'] as String,
                     style: MyTextTheme.mediumBCN
                         .copyWith(color: "#F38B3B".toColor())
                         .merge(AppTypography.body2),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -2504,7 +2633,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             Spacing.h(16),
             // Horizontal Scrollable List
             SizedBox(
-              height: 330.h,
+              height: 295.h,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: controller.vedicAstrologers.length >= 5
@@ -2957,8 +3086,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             ],
           ),
           Spacing.h(16),
-          SizedBox(
-            height: 520.h,
+            SizedBox(
+              height: 450.h,
             child: StreamBuilder<int>(
               stream: Stream.periodic(const Duration(seconds: 5), (x) => x),
               initialData: 0,
@@ -3242,8 +3371,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ? persona.specializations.take(3).toList()
               : ['Astrology', 'Consultation', 'Guidance']);
     final imagePath = persona.image ?? '';
-    // Use first character of display name or category as emoji fallback
-    final emoji = _getEmojiForPersona(persona);
     return GestureDetector(
       onTap: () {
         Get.toNamed(
@@ -3253,7 +3380,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       },
       child: Container(
         width: 255.99.w,
-        height: 350.04.h,
+        height: 265.h,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -3272,7 +3399,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             SvgAssets(
               path: 'assets/icons/ai_astrologer_circle.svg',
               width: 255.99.w,
-              height: 350.04.h,
+              height: 265.h,
               colorFilter: ColorFilter.mode(
                 "#FFF6C2".toColor().withOpacity(0.1),
                 BlendMode.srcIn,
@@ -3280,15 +3407,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             ),
             SingleChildScrollView(
               child: SizedBox(
-                height: 350.04.h,
+                height: 265.h,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // Image with emoji overlay - moved to top
                     SizedBox(
                       // width: 224.w,
-                      height: 150.h,
+                      height: 130.h,
                       child: Stack(
                         children: [
                           ClipRRect(
@@ -3385,7 +3512,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         ],
                       ),
                     ),
-                    Spacing.h(12),
+                    Spacing.h(8),
                     // Title and subtitle
                     Padding(
                       padding: AppPaddings.symmetric(h: 10),
@@ -3396,45 +3523,54 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                               color: "#DFB343".toColor(),
                               fontWeight: FontWeight.w500,
                               fontFamily: 'Baloo Bhai 2',
-                              height: 1.33,
+                              height: 1.2,
+                              fontSize: 16.sp,
                             )
                             .merge(AppTypography.h2),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Spacing.h(4),
+                    Spacing.h(3),
                     Padding(
                       padding: AppPaddings.symmetric(h: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          AutoTranslateText(
-                            subtitle,
-                            style: MyTextTheme.smallBCN.copyWith(
-                              color: "#FFF6C2".toColor().withOpacity(0.7),
-                              fontWeight: FontWeight.w400,
-                              fontFamily: 'Poppins',
-                              height: 1.33,
+                          Expanded(
+                            child: AutoTranslateText(
+                              subtitle,
+                              style: MyTextTheme.smallBCN.copyWith(
+                                color: "#FFF6C2".toColor().withOpacity(0.7),
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'Poppins',
+                                height: 1.2,
+                                fontSize: 11.sp,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-
+                          Spacing.w(4),
                           Row(
                             children: [
                               Container(
-                                width: 6.w,
-                                height: 6.h,
+                                width: 5.w,
+                                height: 5.h,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: "#05DF72".toColor().withOpacity(0.91),
                                 ),
                               ),
-                              Spacing.w(6),
+                              Spacing.w(4),
                               AutoTranslateText(
                                 'Online',
                                 style: MyTextTheme.smallBCN.copyWith(
                                   color: "#E3B341".toColor(),
                                   fontWeight: FontWeight.w400,
                                   fontFamily: 'Poppins',
-                                  height: 1.33,
+                                  height: 1.2,
+                                  fontSize: 10.sp,
                                 ),
                               ),
                             ],
@@ -3442,19 +3578,19 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         ],
                       ),
                     ),
-                    Spacing.h(12),
+                    Spacing.h(8),
                     // Tags
                     Padding(
                       padding: AppPaddings.symmetric(h: 10),
                       child: Wrap(
-                        spacing: 8.w,
-                        runSpacing: 8.h,
+                        spacing: 6.w,
+                        runSpacing: 6.h,
                         children: tags
                             .map(
                               (tag) => Container(
                                 padding: EdgeInsets.symmetric(
-                                  horizontal: 8.53.w,
-                                  vertical: 4.99.h,
+                                  horizontal: 7.w,
+                                  vertical: 4.h,
                                 ),
                                 decoration: BoxDecoration(
                                   color: "#E3B341".toColor().withOpacity(0.2),
@@ -3493,28 +3629,34 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                               onTap: () async {},
                               child: Container(
                                 padding: EdgeInsets.symmetric(
-                                  horizontal: 10.w,
-                                  vertical: 6.h,
+                                  horizontal: 8.w,
+                                  vertical: 5.h,
                                 ),
                                 decoration: BoxDecoration(
                                   gradient: AppColors.orangeGradient,
                                   borderRadius: BorderRadius.circular(20.r),
                                 ),
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     SvgAssets(
                                       path: AppConstant.chatIcon,
-                                      width: 16.w,
-                                      height: 16.h,
+                                      width: 14.w,
+                                      height: 14.h,
                                     ),
                                     Spacing.w(3),
-                                    AutoTranslateText(
-                                      'Chat Now',
-                                      style: MyTextTheme.smallBCN.copyWith(
-                                        color: "#FFFFFF".toColor(),
-                                        fontWeight: FontWeight.w400,
-                                        fontFamily: 'Poppins',
-                                        height: 1.67,
+                                    Flexible(
+                                      child: AutoTranslateText(
+                                        'Chat Now',
+                                        style: MyTextTheme.smallBCN.copyWith(
+                                          color: "#FFFFFF".toColor(),
+                                          fontWeight: FontWeight.w400,
+                                          fontFamily: 'Poppins',
+                                          height: 1.2,
+                                          fontSize: 10.sp,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ],
@@ -3527,8 +3669,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                               onTap: () async {},
                               child: Container(
                                 padding: EdgeInsets.symmetric(
-                                  horizontal: 10.w,
-                                  vertical: 6.h,
+                                  horizontal: 8.w,
+                                  vertical: 5.h,
                                 ),
                                 decoration: BoxDecoration(
                                   gradient: AppColors.orangeGradient,
@@ -3538,21 +3680,26 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                   children: [
                                     SvgAssets(
                                       path: AppConstant.callIcon,
-                                      width: 16.w,
-                                      height: 16.h,
+                                      width: 14.w,
+                                      height: 14.h,
                                       colorFilter: ColorFilter.mode(
                                         "#FFFFFF".toColor(),
                                         BlendMode.srcIn,
                                       ),
                                     ),
                                     Spacing.w(3),
-                                    AutoTranslateText(
-                                      'Call Now',
-                                      style: MyTextTheme.smallBCN.copyWith(
-                                        color: "#FFFFFF".toColor(),
-                                        fontWeight: FontWeight.w400,
-                                        fontFamily: 'Poppins',
-                                        height: 1.67,
+                                    Flexible(
+                                      child: AutoTranslateText(
+                                        'Call Now',
+                                        style: MyTextTheme.smallBCN.copyWith(
+                                          color: "#FFFFFF".toColor(),
+                                          fontWeight: FontWeight.w400,
+                                          fontFamily: 'Poppins',
+                                          height: 1.2,
+                                          fontSize: 10.sp,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ],
@@ -4790,35 +4937,42 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     );
   }
 
-  Widget _buildLiveAstrologerProfile(int index) {
+  Widget _buildLiveAstrologerProfile(int index, LiveStreamModel stream) {
     final profilePicture = controller.getProfilePictureForAstrologer(
-      controller.liveStreams[index].astrologerId,
+      stream.astrologerId,
     );
+    final isLive = stream.status == 'LIVE';
+    final borderColor = isLive ? "#00C853".toColor() : Colors.red;
+    final badgeColor = isLive ? "#00C853".toColor() : Colors.red;
+    
     return GestureDetector(
       onTap: () async {
         // Check if user is logged in before accessing live stream
         final isLoggedIn = await LoginGuard.ensureLoggedIn(
           message: 'Please login to watch live streams.',
-          onLoginSuccess: () {
-            // Navigate to live stream after successful login
+        );
+
+          if (isLoggedIn) {
+          if (isLive) {
+            // Navigate to live stream if it's actually live
             Get.to(
               () => LiveStreamView(
-                stream: controller.liveStreams[index],
-                astrologerName: controller.liveStreams[index].astrologerName,
+                stream: stream,
+                astrologerName: stream.astrologerName,
                 astrologerProfilePicture: profilePicture,
               ),
             );
-          },
-        );
-
-        if (isLoggedIn) {
-          Get.to(
-            () => LiveStreamView(
-              stream: controller.liveStreams[index],
-              astrologerName: controller.liveStreams[index].astrologerName,
-              astrologerProfilePicture: profilePicture,
-            ),
-          );
+          } else {
+            // Show "live stream is ended" message
+            Get.snackbar(
+              'Stream Ended',
+              'Live stream is ended',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+              duration: const Duration(seconds: 2),
+            );
+          }
         }
       },
       child: Stack(
@@ -4830,7 +4984,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 height: 70.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: "#00C853".toColor(), width: 2.w),
+                  border: Border.all(color: borderColor, width: 2.w),
                 ),
                 child: ClipOval(
                   child: Image.network(
@@ -4853,7 +5007,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               SizedBox(
                 width: 70.w,
                 child: AutoTranslateText(
-                  controller.liveStreams[index].astrologerName,
+                  stream.astrologerName,
                   style: AppTypography.body2.copyWith(
                     color: "#3D0C11".toColor(),
                     fontWeight: FontWeight.w500,
@@ -4873,7 +5027,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
                 decoration: BoxDecoration(
-                  color: "#00C853".toColor(),
+                  color: badgeColor,
                   border: Border.all(color: Colors.white, width: 2),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
@@ -4890,7 +5044,136 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     ),
                     SizedBox(width: 3.w),
                     Text(
-                      'Live',
+                      isLive ? 'Live' : 'Offline',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 8.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOfflineAstrologerProfile(int index, AstrologerModel astrologer) {
+    final profilePicture = astrologer.profilePicture ?? '';
+    final astrologerName = astrologer.displayName.isNotEmpty 
+        ? astrologer.displayName 
+        : astrologer.name;
+    
+    return GestureDetector(
+      onTap: () async {
+        // Check if user is logged in
+        final isLoggedIn = await LoginGuard.ensureLoggedIn(
+          message: 'Please login to view astrologer profiles.',
+        );
+
+        if (isLoggedIn) {
+          // Show "live stream is ended" message
+          Get.snackbar(
+            'Stream Ended',
+            'Live stream is ended',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 2),
+          );
+        }
+      },
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              Container(
+                width: 70.w,
+                height: 70.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.red, width: 2.w),
+                ),
+                child: ClipOval(
+                  child: profilePicture.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: profilePicture,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            color: Colors.grey[300],
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.deepOrange,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) {
+                            return Container(
+                              color: Colors.grey[300],
+                              child: Icon(
+                                Icons.person,
+                                size: 35.w,
+                                color: Colors.grey[600],
+                              ),
+                            );
+                          },
+                        )
+                      : Container(
+                          color: Colors.grey[300],
+                          child: Icon(
+                            Icons.person,
+                            size: 35.w,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                ),
+              ),
+              Spacing.h(6),
+              SizedBox(
+                width: 70.w,
+                child: AutoTranslateText(
+                  astrologerName,
+                  style: AppTypography.body2.copyWith(
+                    color: "#3D0C11".toColor(),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            bottom: 37,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  border: Border.all(color: Colors.white, width: 2),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 4.w,
+                      height: 4.w,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    SizedBox(width: 3.w),
+                    Text(
+                      'Offline',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 8.sp,

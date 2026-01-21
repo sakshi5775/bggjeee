@@ -65,7 +65,7 @@ class DailyAstrologersWidget extends BasePage<UserDashboardController> {
           Spacing.h(16),
           // Horizontal Scrollable List
           SizedBox(
-            height: 120.h,
+            height: 100.h,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: dailyCards.length,
@@ -111,37 +111,38 @@ class DailyAstrologersWidget extends BasePage<UserDashboardController> {
           borderRadius: BorderRadius.circular(16.r),
         ),
         child: Padding(
-          padding: AppPaddings.all(16.w),
+          padding: AppPaddings.all(12.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Icon with Orange Gradient Background
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 20.w),
+                padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 16.w),
                 child: iconPath.endsWith('.svg')
-                    ? SvgAssets(path: iconPath, width: 32.w, height: 32.h)
+                    ? SvgAssets(path: iconPath, width: 28.w, height: 28.h)
                     : Image.asset(
                         iconPath,
-                        width: 28.w,
-                        height: 28.h,
+                        width: 26.w,
+                        height: 26.h,
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return Icon(
                             Icons.star,
                             color: Colors.white,
-                            size: 32.w,
+                            size: 28.w,
                           );
                         },
                       ),
               ),
-              Spacing.h(12),
+              Spacing.h(8),
               // Title Text
               AutoTranslateText(
                 title,
                 style: MyTextTheme.smallBCN
                     .copyWith(
                       color: "#361515".toColor(),
-                      fontSize: 12.sp,
+                      fontSize: 11.sp,
                       fontWeight: FontWeight.w500,
                     )
                     .merge(AppTypography.body2),

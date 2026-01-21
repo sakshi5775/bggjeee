@@ -3,13 +3,16 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/youtube_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:astrobharataiuser/screens/courses/widgets/video_player_widget.dart';
+import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class FeaturesAndVideosWidget extends BasePage<UserDashboardController> {
   const FeaturesAndVideosWidget({super.key});
@@ -102,25 +105,60 @@ class FeaturesAndVideosWidget extends BasePage<UserDashboardController> {
   }
 
   Widget _buildVideosSection() {
-    // Static video data
-    final videoData = {
-      'videoUrl': '', // Will be added later
-      'title': 'Complete Guide to Jupiter Transit 2025 & Its Effects',
-      'author': 'Dr. Priya Sharma',
-      'viewsCount': 45000,
-      'duration': 15, // minutes
-    };
+    return Obx(() {
+      if (controller.isLoadingYoutubeVideos.value) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildVideosHeader(),
+            Spacing.h(16),
+            Center(
+              child: Padding(
+                padding: EdgeInsets.all(40.w),
+                child: CircularProgressIndicator(
+                  color: AppColors.deepOrange,
+                ),
+              ),
+            ),
+          ],
+        );
+      }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildVideosHeader(),
-        Spacing.h(16),
-        _buildLargeVideoCard(videoData),
-        Spacing.h(16),
-        _videosList(),
-      ],
-    );
+      if (controller.youtubeVideos.isEmpty) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildVideosHeader(),
+            Spacing.h(16),
+            Center(
+              child: Padding(
+                padding: EdgeInsets.all(20.w),
+                child: AutoTranslateText(
+                  'No videos available',
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    color: "#6F221E".toColor(),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      }
+
+      final firstVideo = controller.youtubeVideos.first;
+      final otherVideos = controller.youtubeVideos.skip(1).take(5).toList();
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildVideosHeader(),
+          Spacing.h(16),
+          _buildLargeVideoCard(firstVideo),
+          Spacing.h(16),
+          _videosList(otherVideos),
+        ],
+      );
+    });
   }
 
   Widget _buildVideosHeader() {
@@ -177,17 +215,13 @@ class FeaturesAndVideosWidget extends BasePage<UserDashboardController> {
     );
   }
 
-  Widget _buildLargeVideoCard(Map<String, dynamic> videoData) {
-    final videoUrl = videoData['videoUrl'] as String;
-    final title = videoData['title'] as String;
-    final author = videoData['author'] as String;
-    final viewsCount = videoData['viewsCount'] as int;
-    final duration = videoData['duration'] as int;
-
+  Widget _buildLargeVideoCard(YouTubeVideo video) {
     return GestureDetector(
-      onTap: () {
-        // Handle video tap - navigate to video detail or play video
-        // Get.toNamed(AppRoutes.videoDetail, arguments: videoData);
+      onTap: () async {
+        final url = Uri.parse(video.videoUrl);
+        if (await canLaunchUrl(url)) {
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+        }
       },
       child: Container(
         width: double.infinity,
@@ -199,22 +233,47 @@ class FeaturesAndVideosWidget extends BasePage<UserDashboardController> {
               // Video Thumbnail
               Container(
                 width: double.infinity,
-                height: 200.h,
+                height: 170.h,
                 color: Colors.black,
-                child: videoUrl.isNotEmpty
-                    ? VideoPlayerWidget(
-                        videoUrl: videoUrl,
-                        autoPlay: false,
-                        showControls: false,
-                      )
-                    : Container(
-                        color: Colors.grey[300],
-                        child: Icon(
-                          Icons.video_library,
-                          size: 60.w,
-                          color: Colors.grey[600],
-                        ),
+                child: CachedNetworkImage(
+                  imageUrl: video.thumbnailUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[300],
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.deepOrange,
                       ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey[300],
+                    child: Icon(
+                      Icons.video_library,
+                      size: 60.w,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+              ),
+              // Gradient overlay at bottom
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: 100.h,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.8),
+                      ],
+                    ),
+                  ),
+                ),
               ),
               // Large Semi-transparent Orange Play Button in Center
               Positioned.fill(
@@ -234,79 +293,37 @@ class FeaturesAndVideosWidget extends BasePage<UserDashboardController> {
                   ),
                 ),
               ),
-
+              // Title and Channel at bottom
               Positioned(
-                top: 12.h,
+                bottom: 12.h,
+                left: 12.w,
                 right: 12.w,
-                child: Container(
-                  padding: AppPaddings.symmetric(h: 8.w, v: 8.h),
-                  decoration: BoxDecoration(
-                    color: "#E3B341".toColor().withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child: AutoTranslateText(
-                    _formatDuration(duration),
-                    style: MyTextTheme.smallBCN
-                        .copyWith(color: Colors.white)
-                        .merge(AppTypography.label),
-                  ),
-                ),
-              ),
-              Spacing.h(16),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: AppPaddings.symmetric(h: 12.w),
-
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Title
-                      AutoTranslateText(
-                        title,
-                        style: MyTextTheme.mediumBCB
-                            .copyWith(
-                              color: "#DFB343".toColor(),
-                              fontWeight: FontWeight.bold,
-                            )
-                            .merge(AppTypography.h3),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-
-                      // Creator Name and Views
-                      Row(
-                        children: [
-                          AutoTranslateText(
-                            author,
-                            style: MyTextTheme.smallBCN
-                                .copyWith(color: Colors.white)
-                                .merge(AppTypography.body2),
-                          ),
-                          Spacing.w(12),
-                          Icon(
-                            Icons.visibility_outlined,
-                            size: 14.w,
-                            color: Colors.white,
-                          ),
-                          Spacing.w(4),
-                          AutoTranslateText(
-                            '${_formatViews(viewsCount)} views',
-                            style: MyTextTheme.smallBCN
-                                .copyWith(
-                                  color: Colors.white.withOpacity(0.9),
-                                  fontSize: 12.sp,
-                                )
-                                .merge(AppTypography.body2),
-                          ),
-                        ],
-                      ),
-
-                      Spacing.h(4),
-                    ],
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    AutoTranslateText(
+                      video.title,
+                      style: MyTextTheme.mediumBCB
+                          .copyWith(
+                            color: "#DFB343".toColor(),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h3),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Spacing.h(4),
+                    // Creator Name
+                    AutoTranslateText(
+                      video.channelTitle,
+                      style: MyTextTheme.smallBCN
+                          .copyWith(color: Colors.white.withOpacity(0.9))
+                          .merge(AppTypography.body2),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -316,133 +333,125 @@ class FeaturesAndVideosWidget extends BasePage<UserDashboardController> {
     );
   }
 
-  String _formatDuration(int minutes) {
-    if (minutes < 60) return '$minutes:00';
-    final hours = minutes ~/ 60;
-    final mins = minutes % 60;
-    return '${hours}:${mins.toString().padLeft(2, '0')}';
-  }
 
-  String _formatViews(int views) {
-    if (views >= 1000000) return '${(views / 1000000).toStringAsFixed(1)}M';
-    if (views >= 1000) return '${(views / 1000).toStringAsFixed(1)}K';
-    return views.toString();
-  }
+  Widget _videosList(List<YouTubeVideo> videos) {
+    if (videos.isEmpty) return SizedBox.shrink();
 
-  Widget _videosList() {
-    return GestureDetector(
-      onTap: () {},
-      child: SizedBox(
-        width: 168,
-        child: Card(
-          elevation: 4,
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(16.r),
-              bottom: Radius.circular(16.r),
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Image or Video
-              Container(
-                width: 168,
-                height: 96.h,
+    return SizedBox(
+      height: 140.h,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: videos.length,
+        separatorBuilder: (context, index) => Spacing.w(12),
+        itemBuilder: (context, index) {
+          final video = videos[index];
+          return GestureDetector(
+            onTap: () async {
+              final url = Uri.parse(video.videoUrl);
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url, mode: LaunchMode.externalApplication);
+              }
+            },
+            child: SizedBox(
+              width: 168.w,
+              child: Card(
+                elevation: 4,
                 clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16.r),
-                    topRight: Radius.circular(16.r),
-                  ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.r),
                 ),
-                child: Stack(
-                  children: [
-                    Image.asset(
-                      'assets/app/video_thumbnail.png',
-                      width: 168,
-                      height: 96.h,
-                      fit: BoxFit.cover,
-                    ),
-
-                    Center(
-                      child: Container(
-                        padding: EdgeInsets.all(8.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.play_arrow,
-                          color: Colors.black,
-                          size: 18.w,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.5),
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        padding: AppPaddings.symmetric(h: 8.w, v: 8.h),
-                        child: AutoTranslateText(
-                          '12:00',
-                          style: MyTextTheme.smallBCN
-                              .copyWith(color: Colors.white)
-                              .merge(AppTypography.label),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Content
-              Padding(
-                padding: EdgeInsets.all(11.99.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AutoTranslateText(
-                      'Untitled',
-                      style: MyTextTheme.smallBCB.copyWith(
-                        color: "#DFB343".toColor(),
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Baloo Bhai 2',
-                        height: 1.25,
+                    // Video Thumbnail
+                    Container(
+                      width: double.infinity,
+                      height: 96.h,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(16.r),
+                          topRight: Radius.circular(16.r),
+                        ),
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Spacing.h(3.99),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.visibility_outlined,
-                          size: 11.99.w,
-                          color: "#F38B3B".toColor(),
-                        ),
-                        Spacing.w(3.99),
-                        AutoTranslateText(
-                          '99k views',
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: "#F38B3B".toColor(),
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'Poppins',
-                            height: 1.33,
+                      child: Stack(
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl: video.thumbnailUrl,
+                            width: double.infinity,
+                            height: 96.h,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: Colors.grey[300],
+                              child: Center(
+                                child: SizedBox(
+                                  width: 20.w,
+                                  height: 20.h,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.deepOrange,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              color: Colors.grey[300],
+                              child: Icon(
+                                Icons.video_library,
+                                size: 30.w,
+                                color: Colors.grey[600],
+                              ),
+                            ),
                           ),
+                          Center(
+                            child: Container(
+                              padding: EdgeInsets.all(8.w),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.play_arrow,
+                                color: Colors.black,
+                                size: 18.w,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Content
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.all(10.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: AutoTranslateText(
+                                video.title,
+                                style: MyTextTheme.smallBCB.copyWith(
+                                  color: "#DFB343".toColor(),
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Baloo Bhai 2',
+                                  height: 1.2,
+                                  fontSize: 11.sp,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

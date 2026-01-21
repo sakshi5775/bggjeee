@@ -24,6 +24,7 @@ import 'package:astrobharataiuser/data_model/category_model.dart';
 import 'package:astrobharataiuser/data_model/puja_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/puja_service.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/youtube_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -193,12 +194,22 @@ class UserDashboardController extends BaseController
   final RxInt bookPoojaCurrentPage = 0.obs;
   Timer? _bookPoojaTimer;
 
+  // Our Services Carousel
+  final Rx<PageController> ourServicesPageController = PageController().obs;
+  final RxInt ourServicesCurrentPage = 0.obs;
+  Timer? _ourServicesTimer;
+
   // Puja Service
   final PujaService _pujaService = PujaService();
 
   // Dynamic data for pooja cards
   final RxList<PujaModel> pujas = <PujaModel>[].obs;
   final RxBool isLoadingPujas = false.obs;
+
+  // YouTube videos
+  final YouTubeService _youtubeService = YouTubeService();
+  final RxList<YouTubeVideo> youtubeVideos = <YouTubeVideo>[].obs;
+  final RxBool isLoadingYoutubeVideos = false.obs;
 
   void toggleView() {
     final offset = scrollController.offset;
@@ -270,6 +281,10 @@ class UserDashboardController extends BaseController
     // Load pujas from API
     loadPujas();
     // Start Book Pooja carousel auto-slide (will be started after pujas are loaded)
+    // Load YouTube videos
+    loadYouTubeVideos();
+    // Start Our Services carousel auto-slide
+    _startOurServicesAutoSlide();
   }
 
   /// Load pujas from API
@@ -383,6 +398,38 @@ class UserDashboardController extends BaseController
     _bookPoojaTimer = null;
   }
 
+  /// Start Our Services carousel auto-slide
+  void _startOurServicesAutoSlide() {
+    // Our Services has 5 items
+    const int servicesCount = 5;
+    if (servicesCount == 0) return;
+    
+    _ourServicesTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      final pageController = ourServicesPageController.value;
+      // Check if PageController has exactly one client (one PageView attached)
+      if (pageController.hasClients && pageController.positions.length == 1) {
+        int next = (ourServicesCurrentPage.value + 1) % servicesCount;
+        ourServicesCurrentPage.value = next;
+        try {
+          pageController.animateToPage(
+            next,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        } catch (e) {
+          // If animation fails (e.g., controller disposed), stop the timer
+          _stopOurServicesAutoSlide();
+        }
+      }
+    });
+  }
+
+  /// Stop Our Services carousel auto-slide
+  void _stopOurServicesAutoSlide() {
+    _ourServicesTimer?.cancel();
+    _ourServicesTimer = null;
+  }
+
   /// Start the global free service manager (only after dashboard loads)
   void _startGlobalFreeServiceManager() {
     // Wait for dashboard to fully load, then start the global service
@@ -401,7 +448,9 @@ class UserDashboardController extends BaseController
     // searchController.dispose();
     _speechToText.stop();
     _stopBookPoojaAutoSlide();
+    _stopOurServicesAutoSlide();
     bookPoojaPageController.value.dispose();
+    ourServicesPageController.value.dispose();
     super.onClose();
   }
 
@@ -410,12 +459,16 @@ class UserDashboardController extends BaseController
     try {
       final response = await _liveStreamService.getLiveStreams(limit: 20);
       if (response != null) {
-        // Filter to only show LIVE streams
-        liveStreams.value = response.streams
+        // Get only LIVE streams
+        final currentLive = response.streams
             .where((stream) => stream.status == 'LIVE')
             .toList();
-        // Fetch astrologer details for profile pictures and names
-        await _loadAstrologerDetails(liveStreams);
+        
+        liveStreams.value = currentLive;
+        // Fetch astrologer details for live streams only
+        if (liveStreams.isNotEmpty) {
+          await _loadAstrologerDetails(liveStreams);
+        }
       }
     } catch (e) {
       debugPrint('Error loading live streams: $e');
@@ -846,6 +899,23 @@ class UserDashboardController extends BaseController
   }
 
   /// Pull-to-refresh handler for dashboard content
+  /// Load YouTube videos from channel
+  Future<void> loadYouTubeVideos({String? apiKey}) async {
+    try {
+      isLoadingYoutubeVideos.value = true;
+      final videos = await _youtubeService.getChannelVideos(apiKey: apiKey);
+      youtubeVideos.value = videos;
+      
+      if (kDebugMode) {
+        print('Loaded ${videos.length} YouTube videos');
+      }
+    } catch (e) {
+      debugPrint('Error loading YouTube videos: $e');
+    } finally {
+      isLoadingYoutubeVideos.value = false;
+    }
+  }
+
   Future<void> refreshDashboard() async {
     _loadUserData(); // Ensure user data stays up to date
     await loadLiveStreams();

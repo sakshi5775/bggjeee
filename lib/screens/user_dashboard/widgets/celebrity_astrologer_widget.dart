@@ -107,7 +107,7 @@ class CelebrityAstrologerWidget extends BasePage<UserDashboardController> {
             Spacing.h(16),
             // Horizontal Scrollable List
             SizedBox(
-              height: 320.h,
+              height: 270.h,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: controller.celebrityAstrologers.length >= 5

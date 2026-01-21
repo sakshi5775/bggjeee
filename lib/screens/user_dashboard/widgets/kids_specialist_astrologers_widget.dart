@@ -105,7 +105,7 @@ class KidsSpecialistAstrologersWidget
             Spacing.h(16),
             // Horizontal Scrollable List
             SizedBox(
-              height: 330.h,
+              height: 280.h,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: controller.kidsSpecialistAstrologers.length >= 5

@@ -78,7 +78,7 @@ class _DigitalServicesAnimatedWidgetState
         right: 16.w,
       ),
       child: SizedBox(
-        height: 185.h,
+        height: 155.h,
         child: GestureDetector(
           onTap: _navigateToRoute,
           child: AnimatedSwitcher(
@@ -112,7 +112,7 @@ class _DigitalServicesAnimatedWidgetState
         imagePath,
         fit: BoxFit.cover,
         width: double.infinity,
-        height: 185.h,
+        height: 155.h,
         filterQuality: FilterQuality.high,
         errorBuilder: (context, error, stackTrace) {
           return Container(

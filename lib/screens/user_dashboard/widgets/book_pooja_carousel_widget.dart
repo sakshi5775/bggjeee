@@ -57,7 +57,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
           Spacing.h(16),
           // Carousel Section
           SizedBox(
-            height: 180.h,
+            height: 115.h,
             child: Obx(() {
               if (controller.isLoadingPujas.value) {
                 return const Center(child: CircularProgressIndicator());
@@ -126,28 +126,68 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
       child: Card(
         elevation: 2,
         child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: AppPaddings.symmetric(h: 15, v: 20),
+            padding: AppPaddings.symmetric(h: 15, v: 6),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Icon with gradient circle
+                // Puja Image
                 Container(
-                  width: 50.w,
-                  height: 50.w,
+                  width: 48.w,
+                  height: 48.w,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: ["#FFF8F0".toColor(), "#FFE8D0".toColor()],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(
+                      color: '#F5D7B8'.toColor(),
+                      width: 1,
                     ),
-                    shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.auto_awesome,
-                    color: AppColors.deepOrange,
-                    size: 24.w,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12.r),
+                    child: puja.image != null && puja.image!.isNotEmpty
+                        ? Image.network(
+                            puja.image!,
+                            width: 50.w,
+                            height: 50.w,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 50.w,
+                                height: 50.w,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: ["#FFF8F0".toColor(), "#FFE8D0".toColor()],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                ),
+                                child: Icon(
+                                  Icons.auto_awesome,
+                                  color: AppColors.deepOrange,
+                                  size: 24.w,
+                                ),
+                              );
+                            },
+                          )
+                        : Container(
+                            width: 50.w,
+                            height: 50.w,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: ["#FFF8F0".toColor(), "#FFE8D0".toColor()],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.auto_awesome,
+                              color: AppColors.deepOrange,
+                              size: 24.w,
+                            ),
+                          ),
                   ),
                 ),
                 Spacing.w(16),
@@ -168,20 +208,20 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      Spacing.h(6),
+                      Spacing.h(4),
                       // Description (subheading)
                       AutoTranslateText(
                         puja.subheading ?? puja.title ?? 'Divine blessings',
                         style: MyTextTheme.smallBCN
                             .copyWith(
                               color: "#666666".toColor(),
-                              fontSize: 12.sp,
+                              fontSize: 11.sp,
                             )
                             .merge(AppTypography.body2),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      Spacing.h(12),
+                      Spacing.h(6),
                       // Price, Timing and Button Row
                       Row(
                         children: [
@@ -244,8 +284,8 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: 8.h,
+                                horizontal: 14.w,
+                                vertical: 6.h,
                               ),
                               decoration: BoxDecoration(
                                 gradient: AppColors.orangeGradient,
@@ -271,7 +311,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
               ],
             ),
           ),
-          Spacing.h(12),
+          Spacing.h(6),
           // Pagination Dots
           _buildPaginationDots(),
         ],

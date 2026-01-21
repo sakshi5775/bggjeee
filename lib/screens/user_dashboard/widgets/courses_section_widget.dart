@@ -105,7 +105,7 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
             Spacing.h(16),
             // Horizontal Scrollable List
             SizedBox(
-              height: 350.h,
+              height: 290.h,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: controller.courses.length >= 5
@@ -260,9 +260,10 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
             Expanded(
               flex: 2,
               child: Padding(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.all(12.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // Foundation Programs Tag
                     Container(

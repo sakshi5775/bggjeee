@@ -39,23 +39,28 @@ class AstrologyToolWidget extends StatelessWidget {
               children: [
                 _buildAstrologyTools(
                   title: 'Face\nReading',
-                  image: AppConstant.astrologyToolFaceReading,
+                  image: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/face2.jpeg',
+                  isNetworkImage: true,
                 ),
                 _buildAstrologyTools(
                   title: 'Palm\nReading',
-                  image: AppConstant.astrologyToolPalmReading,
+                  image: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/hand.jpeg',
+                  isNetworkImage: true,
                 ),
                 _buildAstrologyTools(
                   title: 'Vastu\nMatching',
-                  image: AppConstant.astrologyToolVastuReading,
+                  image: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/vastu.jpeg',
+                  isNetworkImage: true,
                 ),
                 _buildAstrologyTools(
                   title: 'Ramal\nShastra',
-                  image: AppConstant.astrologyToolRamalShastra,
+                  image: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/ramal.jpeg',
+                  isNetworkImage: true,
                 ),
                 _buildAstrologyTools(
                   title: 'Writing\nAstrology',
-                  image: AppConstant.astrologyToolWritingAstrology,
+                  image: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/writing.jpeg',
+                  isNetworkImage: true,
                 ),
                 _buildAstrologyTools(
                   title: 'Prshan\nKundli',
@@ -73,7 +78,7 @@ class AstrologyToolWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildAstrologyTools({required String title, required String image}) {
+  Widget _buildAstrologyTools({required String title, required String image, bool isNetworkImage = false}) {
     Future<void> _requireLogin(
       Future<void> Function() action, {
       String? message,
@@ -144,10 +149,15 @@ class AstrologyToolWidget extends StatelessWidget {
             width: 90,
             decoration: BoxDecoration(
               borderRadius: AppRadius.all(0),
-              image: DecorationImage(
-                image: AssetImage(image),
-                fit: BoxFit.cover,
-              ),
+              image: isNetworkImage
+                  ? DecorationImage(
+                      image: NetworkImage(image),
+                      fit: BoxFit.cover,
+                    )
+                  : DecorationImage(
+                      image: AssetImage(image),
+                      fit: BoxFit.cover,
+                    ),
             ),
           ),
         ),

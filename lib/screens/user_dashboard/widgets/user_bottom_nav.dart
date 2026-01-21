@@ -43,28 +43,32 @@ class UserBottomNav extends StatelessWidget {
                 ),
                 _buildNavItem(
                   icon: Icons.shopping_bag,
-                  label: 'Shop',
+                  label: 'Digital Mart',
                   index: 1,
                   selectedIndex: c.selectedIndex.value,
                   onTap: () => onTap(1),
                 ),
-                _buildNavItem(
-                  icon: Icons.school,
-                  label: 'Education',
+                _buildNavItemWithImage(
+                  imagePath: 'assets/app/digital_mandir.png',
+                  label: 'Digital Mandir',
                   index: 2,
                   selectedIndex: c.selectedIndex.value,
-                  onTap: () => onTap(2),
+                  onTap: () {
+                    Get.toNamed('/book-puja');
+                  },
                 ),
                 _buildNavItem(
-                  icon: Icons.chat_bubble_outline,
-                  label: 'Chats',
+                  icon: Icons.person,
+                  label: 'Consult',
                   index: 3,
                   selectedIndex: c.selectedIndex.value,
-                  onTap: () => onTap(3),
+                  onTap: () {
+                    Get.toNamed('/astrology-services');
+                  },
                 ),
                 _buildNavItem(
-                  icon: Icons.person_outline,
-                  label: 'Profile',
+                  icon: Icons.school,
+                  label: 'Digital Education',
                   index: 4,
                   selectedIndex: c.selectedIndex.value,
                   onTap: () => onTap(4),
@@ -89,7 +93,7 @@ class UserBottomNav extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
           decoration: BoxDecoration(
             gradient: isSelected ? AppColors.orangeGradient : null,
             color: isSelected
@@ -102,30 +106,131 @@ class UserBottomNav extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               isSelected
-                  ? Icon(icon, color: Colors.white, size: 22.w)
+                  ? Icon(icon, color: Colors.white, size: 20.w)
                   : ShaderMask(
                       shaderCallback: (bounds) =>
                           _inactiveGradient.createShader(bounds),
                       blendMode: BlendMode.srcIn,
-                      child: Icon(icon, color: Colors.white, size: 22.w),
+                      child: Icon(icon, color: Colors.white, size: 20.w),
                     ),
               SizedBox(height: 2.h),
+              Flexible(
+                child: isSelected
+                    ? AutoTranslateText(
+                        label,
+                        style: AppTypography.label.copyWith(
+                          color: Colors.white,
+                          fontSize: 10.sp,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    : ShaderMask(
+                        shaderCallback: (bounds) =>
+                            _inactiveGradient.createShader(bounds),
+                        blendMode: BlendMode.srcIn,
+                        child: AutoTranslateText(
+                          label,
+                          style: AppTypography.label.copyWith(
+                            color: Colors.white,
+                            fontSize: 10.sp,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItemWithImage({
+    required String imagePath,
+    required String label,
+    required int index,
+    required int selectedIndex,
+    required VoidCallback onTap,
+  }) {
+    final isSelected = index == selectedIndex;
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+          decoration: BoxDecoration(
+            gradient: isSelected ? AppColors.orangeGradient : null,
+            color: isSelected
+                ? const Color(0xFFFFF8F0)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
               isSelected
-                  ? AutoTranslateText(
-                      label,
-                      style: AppTypography.label.copyWith(color: Colors.white),
+                  ? Container(
+                      width: 20.w,
+                      height: 20.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          imagePath,
+                          width: 20.w,
+                          height: 20.w,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(Icons.image, color: Colors.white, size: 20.w);
+                          },
+                        ),
+                      ),
                     )
                   : ShaderMask(
                       shaderCallback: (bounds) =>
                           _inactiveGradient.createShader(bounds),
                       blendMode: BlendMode.srcIn,
-                      child: AutoTranslateText(
+                      child: Image.asset(
+                        imagePath,
+                        width: 20.w,
+                        height: 20.w,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(Icons.image, size: 20.w);
+                        },
+                      ),
+                    ),
+              SizedBox(height: 2.h),
+              Flexible(
+                child: isSelected
+                    ? AutoTranslateText(
                         label,
                         style: AppTypography.label.copyWith(
                           color: Colors.white,
+                          fontSize: 10.sp,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    : ShaderMask(
+                        shaderCallback: (bounds) =>
+                            _inactiveGradient.createShader(bounds),
+                        blendMode: BlendMode.srcIn,
+                        child: AutoTranslateText(
+                          label,
+                          style: AppTypography.label.copyWith(
+                            color: Colors.white,
+                            fontSize: 10.sp,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    ),
+              ),
             ],
           ),
         ),
