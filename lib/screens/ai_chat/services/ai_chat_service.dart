@@ -54,7 +54,9 @@ class AiChatService {
   // Get categories
   Future<List<PersonaCategory>> getCategories() async {
     try {
-      final response = await _apiRepository.getApi(EndPoints.personaAiCategories);
+      final response = await _apiRepository.getApi(
+        EndPoints.personaAiCategories,
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.body['success'] == true && response.body['data'] != null) {
@@ -87,10 +89,7 @@ class AiChatService {
   }
 
   // Get user's personas
-  Future<PersonaResponse?> getMyPersonas({
-    int page = 1,
-    int limit = 20,
-  }) async {
+  Future<PersonaResponse?> getMyPersonas({int page = 1, int limit = 20}) async {
     try {
       final query = <String, dynamic>{
         'page': page.toString(),
@@ -148,7 +147,7 @@ class AiChatService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        if (response.body['success'] == true && 
+        if (response.body['success'] == true &&
             response.body['data'] != null &&
             response.body['data']['review'] != null) {
           final reviewData = response.body['data']['review'];
@@ -169,11 +168,13 @@ class AiChatService {
     String personaId, {
     required int rating,
     required String reviewText,
+    required String serviceType,
   }) async {
     try {
       final body = {
         'rating': rating,
         'reviewText': reviewText,
+        "serviceType": serviceType,
       };
 
       final response = await _apiRepository.postApi(
@@ -182,23 +183,30 @@ class AiChatService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return {'success': true, 'message': response.body['message']?.toString() ?? 'Review submitted successfully'};
+        return {
+          'success': true,
+          'message':
+              response.body['message']?.toString() ??
+              'Review submitted successfully',
+        };
       } else {
         // Extract error message from response body
         String errorMessage = 'Failed to submit review. Please try again.';
         if (response.body != null) {
           if (response.body is Map) {
             final body = response.body as Map;
-            errorMessage = body['message']?.toString() ?? 
-                          body['error']?.toString() ?? 
-                          errorMessage;
+            errorMessage =
+                body['message']?.toString() ??
+                body['error']?.toString() ??
+                errorMessage;
           } else if (response.body is String) {
             try {
               final decoded = json.decode(response.body as String);
               if (decoded is Map) {
-                errorMessage = decoded['message']?.toString() ?? 
-                              decoded['error']?.toString() ?? 
-                              errorMessage;
+                errorMessage =
+                    decoded['message']?.toString() ??
+                    decoded['error']?.toString() ??
+                    errorMessage;
               }
             } catch (_) {
               // Use default message if parsing fails
@@ -210,32 +218,37 @@ class AiChatService {
     } catch (e) {
       debugPrint('Error creating review: $e');
       String errorMessage = 'Failed to submit review. Please try again.';
-      
+
       // Try to extract error message from exception
       final errorString = e.toString().toLowerCase();
-      if (errorString.contains('must have a conversation') || 
+      if (errorString.contains('must have a conversation') ||
           errorString.contains('conversation')) {
-        errorMessage = 'You must have a conversation with this persona before leaving a review.';
-      } else if (errorString.contains('already reviewed') || 
-                 errorString.contains('already exists')) {
-        errorMessage = 'You have already reviewed this persona. Use the update option to modify your review.';
-      } else if (errorString.contains('unauthorized') || 
-                 errorString.contains('401')) {
+        errorMessage =
+            'You must have a conversation with this persona before leaving a review.';
+      } else if (errorString.contains('already reviewed') ||
+          errorString.contains('already exists')) {
+        errorMessage =
+            'You have already reviewed this persona. Use the update option to modify your review.';
+      } else if (errorString.contains('unauthorized') ||
+          errorString.contains('401')) {
         errorMessage = 'Please login to submit a review.';
-      } else if (errorString.contains('network') || 
-                 errorString.contains('connection') ||
-                 errorString.contains('socket')) {
-        errorMessage = 'Network error. Please check your connection and try again.';
+      } else if (errorString.contains('network') ||
+          errorString.contains('connection') ||
+          errorString.contains('socket')) {
+        errorMessage =
+            'Network error. Please check your connection and try again.';
       } else if (errorString.contains('timeout')) {
         errorMessage = 'Request timeout. Please try again.';
       } else if (errorString.contains('fetchdataexception')) {
         // Extract message from FetchDataException
-        final match = RegExp(r'FetchDataException:\s*(.+)').firstMatch(errorString);
+        final match = RegExp(
+          r'FetchDataException:\s*(.+)',
+        ).firstMatch(errorString);
         if (match != null) {
           errorMessage = match.group(1) ?? errorMessage;
         }
       }
-      
+
       return {'success': false, 'message': errorMessage};
     }
   }
@@ -248,10 +261,7 @@ class AiChatService {
     required String reviewText,
   }) async {
     try {
-      final body = {
-        'rating': rating,
-        'reviewText': reviewText,
-      };
+      final body = {'rating': rating, 'reviewText': reviewText};
 
       final response = await _apiRepository.putApiCall(
         EndPoints.personaAiReviewById(personaId, reviewId),
@@ -259,9 +269,16 @@ class AiChatService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return {'success': true, 'message': response.body['message']?.toString() ?? 'Review updated successfully'};
+        return {
+          'success': true,
+          'message':
+              response.body['message']?.toString() ??
+              'Review updated successfully',
+        };
       } else {
-        final errorMessage = response.body['message']?.toString() ?? 'Failed to update review. Please try again.';
+        final errorMessage =
+            response.body['message']?.toString() ??
+            'Failed to update review. Please try again.';
         return {'success': false, 'message': errorMessage};
       }
     } catch (e) {
@@ -328,10 +345,7 @@ class AiChatService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final followerCount = response.body['data']?['followerCount'] as int?;
-        return {
-          'success': true,
-          'followerCount': followerCount,
-        };
+        return {'success': true, 'followerCount': followerCount};
       }
       return {'success': false};
     } catch (e) {
@@ -350,10 +364,7 @@ class AiChatService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final followerCount = response.body['data']?['followerCount'] as int?;
-        return {
-          'success': true,
-          'followerCount': followerCount,
-        };
+        return {'success': true, 'followerCount': followerCount};
       }
       return {'success': false};
     } catch (e) {

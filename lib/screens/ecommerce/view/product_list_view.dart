@@ -69,64 +69,18 @@ class _ProductListViewState extends State<ProductListView> {
                 // Cart Icon with Badge
                 Obx(() {
                   final cartItemCount = cartController.itemCount;
-                  return Stack(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(9.2.w),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.transparent,
-                        ),
-                        child: Icon(
-                          Icons.shopping_cart_outlined,
-                          color: AppColors.templeGold,
-                          size: 18.39.w,
-                        ),
+                  return IconButton(
+                    onPressed: () {
+                      Get.toNamed(AppRoutes.cart);
+                    },
+                    icon: Badge.count(
+                      count: cartItemCount,
+                      child: Icon(
+                        Icons.shopping_cart,
+                        size: 32,
+                        color: AppColors.templeGold,
                       ),
-                      if (cartItemCount > 0)
-                        Positioned(
-                          right: 22.07.w,
-                          top: -3.68.h,
-                          child: Container(
-                            width: 18.39.w,
-                            height: 18.39.w,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  '#E3B341'.toColor(),
-                                  '#C9A033'.toColor(),
-                                ],
-                              ),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 5.52,
-                                  offset: Offset(0, 3.68),
-                                ),
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 9.2,
-                                  offset: Offset(0, 2.76),
-                                ),
-                              ],
-                            ),
-                            child: Center(
-                              child: AutoTranslateText(
-                                '$cartItemCount',
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 11.sp,
-                                  color: '#3D0C11'.toColor(),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
+                    ),
                   );
                 }),
               ],

@@ -4,6 +4,8 @@ import 'package:astrobharataiuser/data_model/daily_quote_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
+import '../../../data_model/user_profile_model.dart';
+
 class DailyQuoteService {
   final ApiRepository _apiRepository = Get.find();
 
@@ -28,7 +30,9 @@ class DailyQuoteService {
           return null;
         }
       }
-      debugPrint('Daily Quote API returned status code: ${response.statusCode}');
+      debugPrint(
+        'Daily Quote API returned status code: ${response.statusCode}',
+      );
       return null;
     } catch (e) {
       if (kDebugMode) {
@@ -39,7 +43,9 @@ class DailyQuoteService {
   }
 
   /// Get available languages for daily quote
-  Future<Map<String, dynamic>?> getDailyQuoteLanguages({bool useAuthHeader = true}) async {
+  Future<Map<String, dynamic>?> getDailyQuoteLanguages({
+    bool useAuthHeader = true,
+  }) async {
     try {
       final response = await _apiRepository.getApi(
         EndPoints.dailyQuoteLanguages,
@@ -53,7 +59,9 @@ class DailyQuoteService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response.body as Map<String, dynamic>?;
       }
-      debugPrint('Daily Quote Languages API returned status code: ${response.statusCode}');
+      debugPrint(
+        'Daily Quote Languages API returned status code: ${response.statusCode}',
+      );
       return null;
     } catch (e) {
       if (kDebugMode) {
@@ -82,7 +90,9 @@ class DailyQuoteService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response.body as Map<String, dynamic>?;
       }
-      debugPrint('Daily Quote History API returned status code: ${response.statusCode}');
+      debugPrint(
+        'Daily Quote History API returned status code: ${response.statusCode}',
+      );
       return null;
     } catch (e) {
       if (kDebugMode) {
@@ -92,4 +102,3 @@ class DailyQuoteService {
     }
   }
 }
-

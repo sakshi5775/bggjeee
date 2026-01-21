@@ -8,22 +8,22 @@ import 'package:get_storage/get_storage.dart';
 class PersonaDetailController extends BaseController {
   final AiChatService _aiChatService = AiChatService();
   final _followStorage = GetStorage('personaFollows');
-  
+
   final Rx<PersonaModel?> persona = Rx<PersonaModel?>(null);
   final RxBool isLoading = false.obs;
   final RxBool isDescriptionExpanded = false.obs;
-  
+
   // Reviews
   final RxList<PersonaReview> reviews = <PersonaReview>[].obs;
   final Rx<PersonaReview?> myReview = Rx<PersonaReview?>(null);
   final RxBool isLoadingReviews = false.obs;
   final RxInt currentReviewPage = 1.obs;
   final RxBool hasMoreReviews = true.obs;
-  
+
   // Follow state
   final RxBool isFollowing = false.obs;
   final RxBool isTogglingFollow = false.obs;
-  
+
   // Get follow state from storage
   bool _getFollowStateFromStorage(String personaId) {
     try {
@@ -33,7 +33,7 @@ class PersonaDetailController extends BaseController {
       return false;
     }
   }
-  
+
   // Save follow state to storage
   void _saveFollowStateToStorage(String personaId, bool isFollowing) {
     try {
@@ -42,7 +42,7 @@ class PersonaDetailController extends BaseController {
       debugPrint('Error saving follow state to storage: $e');
     }
   }
-  
+
   // Get follower count from storage
   int? _getFollowerCountFromStorage(String personaId) {
     try {
@@ -52,7 +52,7 @@ class PersonaDetailController extends BaseController {
       return null;
     }
   }
-  
+
   // Save follower count to storage
   void _saveFollowerCountToStorage(String personaId, int followerCount) {
     try {
@@ -61,7 +61,6 @@ class PersonaDetailController extends BaseController {
       debugPrint('Error saving follower count to storage: $e');
     }
   }
-  
 
   Future<void> loadPersonaDetail(String personaId) async {
     try {
@@ -72,20 +71,22 @@ class PersonaDetailController extends BaseController {
         // If API returns isFollowing, use it; otherwise use storage
         final storedFollowState = _getFollowStateFromStorage(personaId);
         isFollowing.value = loadedPersona.isFollowing ?? storedFollowState;
-        
+
         // Get follower count from storage
         final storedFollowerCount = _getFollowerCountFromStorage(personaId);
         int? finalFollowerCount = loadedPersona.followers;
-        
+
         // If API returns null or 0, but we have a stored value, use stored value
         // This handles the case where API doesn't return accurate follower count
-        if ((finalFollowerCount == null || finalFollowerCount == 0) && storedFollowerCount != null && storedFollowerCount > 0) {
+        if ((finalFollowerCount == null || finalFollowerCount == 0) &&
+            storedFollowerCount != null &&
+            storedFollowerCount > 0) {
           finalFollowerCount = storedFollowerCount;
         } else if (finalFollowerCount != null && finalFollowerCount > 0) {
           // API returned a valid follower count, save it to storage
           _saveFollowerCountToStorage(personaId, finalFollowerCount);
         }
-        
+
         // Update persona with final follower count if it differs from API response
         if (finalFollowerCount != loadedPersona.followers) {
           final updatedPersona = PersonaModel(
@@ -112,12 +113,9 @@ class PersonaDetailController extends BaseController {
         } else {
           persona.value = loadedPersona;
         }
-        
+
         // Load reviews and user's review
-        await Future.wait([
-          loadReviews(personaId),
-          loadMyReview(personaId),
-        ]);
+        await Future.wait([loadReviews(personaId), loadMyReview(personaId)]);
       } else {
         showErrorMessage(
           title: 'Error',
@@ -182,6 +180,7 @@ class PersonaDetailController extends BaseController {
     String personaId, {
     required int rating,
     required String reviewText,
+    required String serviceType,
   }) async {
     try {
       setLoadingState(true);
@@ -189,6 +188,7 @@ class PersonaDetailController extends BaseController {
         personaId,
         rating: rating,
         reviewText: reviewText,
+        serviceType: serviceType,
       );
 
       if (result['success'] == true) {
@@ -255,20 +255,17 @@ class PersonaDetailController extends BaseController {
         // Remove from local list
         reviews.removeWhere((r) => r.id == reviewId);
         myReview.value = null;
-        
+
         // Reload persona details to update statistics
         await loadPersonaDetail(personaId);
-        
+
         showSuccessMessage(
           title: 'Success',
           message: 'Review deleted successfully',
         );
         return true;
       } else {
-        showErrorMessage(
-          title: 'Error',
-          message: 'Failed to delete review',
-        );
+        showErrorMessage(title: 'Error', message: 'Failed to delete review');
         return false;
       }
     } catch (e) {
@@ -296,18 +293,20 @@ class PersonaDetailController extends BaseController {
         // Update follow state
         final newFollowState = !currentState;
         isFollowing.value = newFollowState;
-        
+
         // Save follow state to storage for persistence
         _saveFollowStateToStorage(personaId, newFollowState);
-        
+
         // Update persona model with new follower count and follow state
         if (persona.value != null) {
           final newFollowerCount = result['followerCount'] as int?;
-          final updatedFollowerCount = newFollowerCount ?? ((persona.value!.followers ?? 0) + (currentState ? -1 : 1));
-          
+          final updatedFollowerCount =
+              newFollowerCount ??
+              ((persona.value!.followers ?? 0) + (currentState ? -1 : 1));
+
           // Save follower count to storage for persistence
           _saveFollowerCountToStorage(personaId, updatedFollowerCount);
-          
+
           final updatedPersona = PersonaModel(
             id: persona.value!.id,
             displayName: persona.value!.displayName,
@@ -339,7 +338,8 @@ class PersonaDetailController extends BaseController {
     } catch (e) {
       showErrorMessage(
         title: 'Error',
-        message: 'Failed to ${currentState ? 'unfollow' : 'follow'}: ${e.toString()}',
+        message:
+            'Failed to ${currentState ? 'unfollow' : 'follow'}: ${e.toString()}',
       );
     } finally {
       isTogglingFollow.value = false;
@@ -348,7 +348,10 @@ class PersonaDetailController extends BaseController {
 
   Future<void> markReviewHelpful(String personaId, String reviewId) async {
     try {
-      final success = await _aiChatService.markReviewHelpful(personaId, reviewId);
+      final success = await _aiChatService.markReviewHelpful(
+        personaId,
+        reviewId,
+      );
       if (success) {
         // Update local review
         final index = reviews.indexWhere((r) => r.id == reviewId);
@@ -376,5 +379,3 @@ class PersonaDetailController extends BaseController {
     isDescriptionExpanded.value = !isDescriptionExpanded.value;
   }
 }
-
-

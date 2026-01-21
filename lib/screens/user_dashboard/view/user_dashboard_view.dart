@@ -586,9 +586,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   'Digital Mart',
                   'assets/app/digital_shop_video_icon.gif',
                   onTap: () {
-                    Get.offNamed(
-                      '/user-shop',
-                      id: 1,
+                    Get.toNamed(
+                      AppRoutes.ecommerceHome,
                       arguments: {'showBackButton': true},
                     );
                   },
@@ -4320,18 +4319,19 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                             shape: BoxShape.circle,
                           ),
                           child: ClipOval(
-                            child: Image.asset(
-                              'assets/app/logo1.png',
-                              width: 40.w,
-                              height: 40.h,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Icon(
-                                  Icons.star,
-                                  color: const Color(0xFFFFD700), // Gold
-                                  size: 24.w,
-                                );
-                              },
+                            child: Padding(
+                              padding: AppPaddings.all(3),
+                              child: Image.asset(
+                                'assets/app/app_icon.png',
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Icon(
+                                    Icons.star,
+                                    color: const Color(0xFFFFD700), // Gold
+                                    size: 24.w,
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),
@@ -4388,19 +4388,17 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   children: [
                     Row(
                       children: [
-                        Container(
-                          width: 50.w,
-                          height: 50.h,
-                          decoration: BoxDecoration(
-                            color: "#F38B3B".toColor(), // Orange
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.person,
-                            color: Colors.white,
-                            size: 30.w,
-                          ),
-                        ),
+                        Obx(() {
+                          return NetworkImageWithLoader(
+                            url:
+                                controller
+                                    ?.userProfile
+                                    .value
+                                    ?.personalInfo
+                                    ?.profilePicture ??
+                                '',
+                          );
+                        }),
                         Spacing.w(12),
                         Expanded(
                           child: Column(
@@ -4666,14 +4664,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           shape: BoxShape.circle,
                         ),
                         child: AutoTranslateText(
-                          '4',
+                          '0',
                           style: MyTextTheme.smallBCN
                               .copyWith(color: Colors.white)
                               .merge(AppTypography.label),
                         ),
                       ),
                       onTap: () {
-                        Navigator.of(context).pop();
+                        Get.back();
+                        Get.toNamed(AppRoutes.comingSoon);
                       },
                     ),
                     _buildDrawerItemStatic(
