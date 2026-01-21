@@ -13,36 +13,31 @@ import 'package:intl/intl.dart';
 class YoginiDashaWidget extends StatelessWidget {
   final DashaController controller;
 
-  const YoginiDashaWidget({
-    super.key,
-    required this.controller,
-  });
+  const YoginiDashaWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       // Show loading for main
-      if (controller.yoginiCurrentLevel.value == 'main' && controller.isLoadingYoginiMain.value) {
+      if (controller.yoginiCurrentLevel.value == 'main' &&
+          controller.isLoadingYoginiMain.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
-      
+
       // Show loading for sub
-      if (controller.yoginiCurrentLevel.value == 'sub' && controller.isLoadingYoginiSub.value) {
+      if (controller.yoginiCurrentLevel.value == 'sub' &&
+          controller.isLoadingYoginiSub.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final currentList = controller.yoginiCurrentLevel.value == 'main'
           ? controller.getYoginiMainList()
           : controller.getYoginiSubList();
-      
+
       if (currentList.isEmpty) {
         return Center(
           child: AutoTranslateText(
@@ -66,40 +61,35 @@ class YoginiDashaWidget extends StatelessWidget {
                   width: 50.w,
                   padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                      Color(0xFFFF8C42),
-                      Color(0xFFE63946),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(16.r),
-              ),
-                  child: Icon(Icons.import_contacts, color: Colors.white),
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16.r),
                   ),
+                  child: Icon(Icons.import_contacts, color: Colors.white),
+                ),
                 Spacing.w(16),
-// Title
-            AutoTranslateText(
-              controller.getYoginiLevelTitle(),
-              style: MyTextTheme.largeBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                // Title
+                AutoTranslateText(
+                  controller.getYoginiLevelTitle(),
+                  style: MyTextTheme.largeBCB.copyWith(
+                    color: "#6F221E".toColor(),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
 
-            
-            
             Spacing.h(16),
-            
+
             // Main Dasha Info (only show when in sub level)
             if (controller.yoginiCurrentLevel.value == 'sub') ...[
               _buildMainDashaInfo(),
               Spacing.h(16),
             ],
-            
+
             // Dasha List
             Container(
               decoration: BoxDecoration(
@@ -163,7 +153,7 @@ class YoginiDashaWidget extends StatelessWidget {
                         ],
                       ),
                     ),
-                  
+
                   // List Items
                   ...currentList.asMap().entries.map((entry) {
                     final index = entry.key;
@@ -172,26 +162,34 @@ class YoginiDashaWidget extends StatelessWidget {
                     final dasha = item['dasha'] as String? ?? '';
                     final lord = item['lord'] as String? ?? '';
                     final endDate = item['end_date'] as String? ?? '';
-                    final formattedDate = endDate.isNotEmpty ? _formatDate(endDate) : '';
-                    final hasNextLevel = controller.yoginiCurrentLevel.value == 'main';
+                    final formattedDate = endDate.isNotEmpty
+                        ? _formatDate(endDate)
+                        : '';
+                    final hasNextLevel =
+                        controller.yoginiCurrentLevel.value == 'main';
                     // Get full path with slashes
                     final fullPath = controller.getYoginiFullPath(dasha);
-                    
+
                     return GestureDetector(
-                      onTap: hasNextLevel ? () => controller.onYoginiMainItemTap(index) : null,
+                      onTap: hasNextLevel
+                          ? () => controller.onYoginiMainItemTap(index)
+                          : null,
                       child: Container(
                         padding: EdgeInsets.all(16.w),
                         decoration: BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
-                              color: isLast ? Colors.transparent : "#ed6f30".toColor().withOpacity(0.1),
+                              color: isLast
+                                  ? Colors.transparent
+                                  : "#ed6f30".toColor().withOpacity(0.1),
                               width: 1,
                             ),
                           ),
                         ),
                         child: controller.yoginiCurrentLevel.value == 'main'
                             ? Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   // Full Path (e.g., "Mangala")
                                   Expanded(
@@ -221,14 +219,17 @@ class YoginiDashaWidget extends StatelessWidget {
                                       formattedDate,
                                       textAlign: TextAlign.right,
                                       style: MyTextTheme.smallBCN.copyWith(
-                                        color: "#6F221E".toColor().withOpacity(0.7),
+                                        color: "#6F221E".toColor().withOpacity(
+                                          0.7,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ],
                               )
                             : Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   // Full Path (e.g., "Mangala/Mangala")
                                   Expanded(
@@ -244,7 +245,9 @@ class YoginiDashaWidget extends StatelessWidget {
                                   AutoTranslateText(
                                     formattedDate,
                                     style: MyTextTheme.smallBCN.copyWith(
-                                      color: "#6F221E".toColor().withOpacity(0.7),
+                                      color: "#6F221E".toColor().withOpacity(
+                                        0.7,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -255,25 +258,24 @@ class YoginiDashaWidget extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             Spacing.h(16),
-            
+
             // BACK Button (only show when not at top level)
             if (controller.canGoBackYogini())
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFF3D0C11), Color(0xFF5D1C21),]
+                    colors: [Color(0xFF3D0C11), Color(0xFF5D1C21)],
                   ),
-                  borderRadius: BorderRadius.circular(12.r)
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
                 margin: EdgeInsets.only(bottom: 16.h),
                 child: ElevatedButton(
                   onPressed: () => controller.navigateYoginiBack(),
                   style: ElevatedButton.styleFrom(
                     // backgroundColor: "#DFB343".toColor(),
-                    
                     padding: EdgeInsets.symmetric(vertical: 14.h),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.r),
@@ -285,12 +287,12 @@ class YoginiDashaWidget extends StatelessWidget {
                     style: MyTextTheme.mediumBCB.copyWith(
                       color: Color(0xFFE3B341),
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'baloo2'
+                      fontFamily: 'baloo2',
                     ),
                   ),
                 ),
               ),
-            
+
             // Note
             Container(
               padding: EdgeInsets.all(12.w),
@@ -299,7 +301,7 @@ class YoginiDashaWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   AutoTranslateText(
                     'Note:- ',
@@ -308,15 +310,7 @@ class YoginiDashaWidget extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  // Container(
-                  //   height: 10.h,
-                  //   width: 10.w,
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.red.shade100,
-                  //     borderRadius: BorderRadius.circular(50.r)
-                  //   ),
-                  //   child: Icon(Icons.info_outline, color: Colors.white,)
-                  // ),
+
                   Expanded(
                     child: AutoTranslateText(
                       controller.yoginiCurrentLevel.value == 'main'
@@ -339,11 +333,11 @@ class YoginiDashaWidget extends StatelessWidget {
   Widget _buildMainDashaInfo() {
     final mainInfo = controller.getSelectedYoginiMainInfo();
     if (mainInfo == null) return SizedBox.shrink();
-    
+
     final mainDasha = mainInfo['main_dasha']?.toString() ?? '';
     final mainDashaLord = mainInfo['main_dasha_lord']?.toString() ?? '';
     final startDate = mainInfo['sub_dasha_start_dates']?.toString() ?? '';
-    
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
@@ -397,7 +391,7 @@ class YoginiDashaWidget extends StatelessWidget {
         'MMM dd yyyy',
         'dd/MM/yyyy',
       ];
-      
+
       for (final format in formats) {
         try {
           final date = DateFormat(format).parse(dateStr);
@@ -406,7 +400,7 @@ class YoginiDashaWidget extends StatelessWidget {
           continue;
         }
       }
-      
+
       return dateStr;
     } catch (e) {
       return dateStr;

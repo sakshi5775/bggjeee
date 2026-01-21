@@ -1,10 +1,12 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_form_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,203 +18,280 @@ class KundliFormView extends BasePage<KundliFormController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-          ),
-        ),
-        child: SingleChildScrollView(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
           child: Column(
             children: [
-              SafeArea(
+              // Header using CommonHeader
+              CommonHeader(
+                title: 'Generate Kundli',
+                titleColor: AppColors.templeGold,
+              ),
+
+              // Form Content
+              Expanded(
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      // Header
-                      _buildHeader(),
-
-                      Spacing.h(12),
-                      // Form Section
-                      _buildFormSection(),
-
-                      Spacing.h(20),
-                    ],
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 24.h,
                   ),
+                  child: _buildFormSection(),
                 ),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF3D0C11), Color(0xFF5D1C21)],
-        ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
-        ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Row(
-          children: [
-            // Back button
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: Icon(
-                Icons.arrow_back,
-                color: Color(0xFFF7C443),
-                size: 24.w,
-              ),
-            ),
-            Spacing.w(16),
-            // Title
-            Expanded(
-              child: AutoTranslateText(
-                'Generate Kundli',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: Color(0xFFF7C443),
-                  fontWeight: FontWeight.w600,
-                  fontSize: 18.sp,
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
   }
 
   Widget _buildLocationSelector() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.h),
-      child: GestureDetector(
-        onTap: () => _showLocationBottomSheet(),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(6.w),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.deepOrange.withOpacity(0.15),
+                    AppColors.deepOrange.withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(8.r),
               ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.location_on, color: '#FF6B35'.toColor(), size: 20.w),
-              Spacing.w(12),
-              Expanded(
-                child: Obx(
-                  () => AutoTranslateText(
-                    controller.selectedLocation.value,
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: '#3E2723'.toColor(),
-                      fontWeight: FontWeight.w600,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
+              child: Icon(
+                Icons.location_on,
+                color: AppColors.deepOrange,
+                size: 18.w,
+              ),
+            ),
+            SizedBox(width: 8.w),
+            AutoTranslateText(
+              'Select Location',
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: AppColors.textColorMaroon,
+                fontWeight: FontWeight.w700,
+                fontSize: 15.sp,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 12.h),
+        GestureDetector(
+          onTap: () => _showLocationBottomSheet(),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.white, Colors.grey.shade50],
+              ),
+              borderRadius: BorderRadius.circular(16.r),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.deepOrange.withOpacity(0.08),
+                  blurRadius: 20,
+                  offset: const Offset(0, 4),
+                  spreadRadius: 0,
+                ),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16.r),
+                border: Border.all(
+                  color: AppColors.deepOrange.withOpacity(0.15),
+                  width: 1.5,
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: '#FF6B35'.toColor(),
-                size: 16.w,
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 18.w,
+                      vertical: 20.h,
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.deepOrange.withOpacity(0.1),
+                            AppColors.deepOrange.withOpacity(0.05),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Icon(
+                        Icons.location_on,
+                        color: AppColors.deepOrange,
+                        size: 22.w,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 18.h,
+                        horizontal: 4.w,
+                      ),
+                      child: Obx(
+                        () => AutoTranslateText(
+                          controller.selectedLocation.value,
+                          style: MyTextTheme.mediumBCN.copyWith(
+                            color: AppColors.textColorMaroon,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(right: 16.w),
+                    child: Container(
+                      padding: EdgeInsets.all(6.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.deepOrange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        color: AppColors.deepOrange,
+                        size: 14.w,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 
   Widget _buildFormSection() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Spacing.h(8),
-
-          // Name field (Optional)
-          _buildTextField(
-            title: 'Enter Full Name',
-            hint: 'Enter Full Name',
-            controller: controller.nameController,
-            icon: Icons.person,
-            readOnly: false,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Enhanced Section Title with decorative elements
+        Center(
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.deepOrange.withOpacity(0.1),
+                      AppColors.templeGold.withOpacity(0.1),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(20.r),
+                  border: Border.all(
+                    color: AppColors.deepOrange.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: AutoTranslateText(
+                  'Enter Details',
+                  style: MyTextTheme.largeBCB
+                      .copyWith(
+                        color: AppColors.textColorMaroon,
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.h2),
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Container(
+                height: 3.h,
+                width: 60.w,
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+            ],
           ),
-          Spacing.h(12),
+        ),
+        Spacing.h(32),
 
-          // Gender dropdown
-          _buildGenderField(),
-          Spacing.h(12),
+        // Name field (Optional)
+        _buildTextField(
+          title: 'Enter Full Name',
+          hint: 'Enter Full Name',
+          controller: controller.nameController,
+          icon: Icons.person,
+          readOnly: false,
+        ),
+        Spacing.h(20),
 
-          // Date field
-          _buildTextField(
-            title: 'Enter Date of birth',
-            controller: controller.dateController,
-            hint: '(dd/mm/yyyy)',
-            icon: Icons.calendar_today,
-            readOnly: true,
-            onTap: () => _showDatePicker(),
-          ),
-          Spacing.h(6),
-          TimeInfoWidget(
-            icon: Icons.access_time,
-            title: 'correct birth date improve kundli accuracy',
-          ),
+        // Gender dropdown
+        _buildGenderField(),
+        Spacing.h(20),
 
-          Spacing.h(12),
+        // Date field
+        _buildTextField(
+          title: 'Enter Date of birth',
+          controller: controller.dateController,
+          hint: '(dd/mm/yyyy)',
+          icon: Icons.calendar_today,
+          readOnly: true,
+          onTap: () => _showDatePicker(),
+        ),
+        Spacing.h(10),
+        TimeInfoWidget(
+          icon: Icons.access_time,
+          title: 'correct birth date improve kundli accuracy',
+        ),
 
-          // Time field
-          _buildTextField(
-            title: 'Enter Birth time',
-            controller: controller.timeController,
-            hint: 'Birth time (hh:mm)',
-            icon: Icons.access_time,
-            readOnly: true,
-            onTap: () => _showTimePicker(),
-          ),
+        Spacing.h(20),
 
-          Spacing.h(12),
+        // Time field
+        _buildTextField(
+          title: 'Enter Birth time',
+          controller: controller.timeController,
+          hint: 'Birth time (hh:mm)',
+          icon: Icons.access_time,
+          readOnly: true,
+          onTap: () => _showTimePicker(),
+        ),
 
-          _buildLocationSelector(),
-          Spacing.h(12),
+        Spacing.h(20),
 
-          // Language dropdown
-          _buildLanguageField(),
-          Spacing.h(12),
+        _buildLocationSelector(),
+        Spacing.h(20),
 
-          // Style dropdown
-          _buildStyleField(),
-          Spacing.h(20),
+        // Language dropdown
+        _buildLanguageField(),
+        Spacing.h(20),
 
-          // Submit button
-          _buildSubmitButton(),
-        ],
-      ),
+        // Style dropdown
+        _buildStyleField(),
+        Spacing.h(40),
+
+        // Submit button
+        _buildSubmitButton(),
+        Spacing.h(24),
+      ],
     );
   }
 
   Widget _buildTextField({
-    required String title, // 👈 upper text
+    required String title,
     required TextEditingController controller,
     required String hint,
     required IconData icon,
@@ -222,26 +301,50 @@ class KundliFormView extends BasePage<KundliFormController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// 🔹 TOP TEXT
-        Text(
-          title,
-          style: MyTextTheme.smallBCB.copyWith(
-            fontFamily: 'Baloo2',
-            color: '#3E2723'.toColor(),
-            fontWeight: FontWeight.w500,
-            fontSize: 18,
-          ),
+        Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(6.w),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.deepOrange.withOpacity(0.15),
+                    AppColors.deepOrange.withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Icon(icon, color: AppColors.deepOrange, size: 16.w),
+            ),
+            SizedBox(width: 8.w),
+            AutoTranslateText(
+              title,
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: AppColors.textColorMaroon,
+                fontWeight: FontWeight.w700,
+                fontSize: 15.sp,
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 6.h),
-
-        /// 🔹 TEXT FIELD
+        SizedBox(height: 12.h),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.white, Colors.grey.shade50],
+            ),
+            borderRadius: BorderRadius.circular(16.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: AppColors.deepOrange.withOpacity(0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 4),
+                spreadRadius: 0,
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -251,42 +354,74 @@ class KundliFormView extends BasePage<KundliFormController> {
             controller: controller,
             readOnly: readOnly,
             onTap: onTap,
-            style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
+            style: MyTextTheme.mediumBCN.copyWith(
+              color: AppColors.textColorMaroon,
+              fontWeight: FontWeight.w500,
+            ),
             decoration: InputDecoration(
               isDense: true,
               contentPadding: EdgeInsets.symmetric(
-                vertical: 18.h,
-                horizontal: 12.w,
+                vertical: 22.h,
+                horizontal: 20.w,
               ),
-
-              /// hint inside field
               hintText: hint,
               hintStyle: MyTextTheme.smallBCN.copyWith(
-                color: '#3E2723'.toColor().withOpacity(0.5),
+                color: AppColors.textSecondary.withOpacity(0.5),
+                fontWeight: FontWeight.w400,
               ),
-
               prefixIcon: Padding(
-                padding: EdgeInsets.all(12.w),
-                child: Icon(icon, color: '#FF6B35'.toColor(), size: 20.w),
+                padding: EdgeInsets.all(14.w),
+                child: Container(
+                  padding: EdgeInsets.all(6.w),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.deepOrange.withOpacity(0.1),
+                        AppColors.deepOrange.withOpacity(0.05),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Icon(icon, color: AppColors.deepOrange, size: 20.w),
+                ),
               ),
-
+              suffixIcon: readOnly && onTap != null
+                  ? Padding(
+                      padding: EdgeInsets.only(right: 16.w),
+                      child: Container(
+                        padding: EdgeInsets.all(6.w),
+                        decoration: BoxDecoration(
+                          color: AppColors.deepOrange.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          color: AppColors.deepOrange,
+                          size: 14.w,
+                        ),
+                      ),
+                    )
+                  : null,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
+                borderRadius: BorderRadius.circular(16.r),
+                borderSide: BorderSide(
+                  color: AppColors.deepOrange.withOpacity(0.15),
+                  width: 1.5,
+                ),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(16.r),
                 borderSide: BorderSide(
-                  color: '#F5D7B8'.toColor().withOpacity(0.5),
-                  width: 1,
+                  color: AppColors.deepOrange.withOpacity(0.15),
+                  width: 1.5,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
+                borderRadius: BorderRadius.circular(16.r),
+                borderSide: BorderSide(color: AppColors.deepOrange, width: 2.5),
               ),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: Colors.transparent,
             ),
           ),
         ),
@@ -298,26 +433,54 @@ class KundliFormView extends BasePage<KundliFormController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// 🔹 TOP TEXT
-        Text(
-          'Select Language',
-          style: MyTextTheme.smallBCB.copyWith(
-            fontFamily: 'Baloo2',
-            color: '#3E2723'.toColor(),
-            fontWeight: FontWeight.w500,
-            fontSize: 18,
-          ),
+        Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(6.w),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.deepOrange.withOpacity(0.15),
+                    AppColors.deepOrange.withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Icon(
+                Icons.language,
+                color: AppColors.deepOrange,
+                size: 18.w,
+              ),
+            ),
+            SizedBox(width: 8.w),
+            AutoTranslateText(
+              'Select Language',
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: AppColors.textColorMaroon,
+                fontWeight: FontWeight.w700,
+                fontSize: 15.sp,
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 6.h),
-
-        /// 🔹 DROPDOWN
+        SizedBox(height: 12.h),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.white, Colors.grey.shade50],
+            ),
+            borderRadius: BorderRadius.circular(16.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: AppColors.deepOrange.withOpacity(0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 4),
+                spreadRadius: 0,
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -328,32 +491,61 @@ class KundliFormView extends BasePage<KundliFormController> {
               value: controller.selectedLanguage.value,
               decoration: InputDecoration(
                 isDense: true,
-                contentPadding: EdgeInsets.all(16.w),
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 20.h,
+                  horizontal: 20.w,
+                ),
                 prefixIcon: Padding(
-                  padding: EdgeInsets.all(12.w),
+                  padding: EdgeInsets.all(14.w),
+                  child: Container(
+                    padding: EdgeInsets.all(6.w),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.deepOrange.withOpacity(0.1),
+                          AppColors.deepOrange.withOpacity(0.05),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Icon(
+                      Icons.language,
+                      color: AppColors.deepOrange,
+                      size: 20.w,
+                    ),
+                  ),
+                ),
+                suffixIcon: Padding(
+                  padding: EdgeInsets.only(right: 16.w),
                   child: Icon(
-                    Icons.language,
-                    color: '#FF6B35'.toColor(),
-                    size: 20.w,
+                    Icons.arrow_drop_down,
+                    color: AppColors.deepOrange,
+                    size: 28.w,
                   ),
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
+                  borderRadius: BorderRadius.circular(16.r),
+                  borderSide: BorderSide(
+                    color: AppColors.deepOrange.withOpacity(0.15),
+                    width: 1.5,
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(16.r),
                   borderSide: BorderSide(
-                    color: '#F5D7B8'.toColor().withOpacity(0.5),
-                    width: 1,
+                    color: AppColors.deepOrange.withOpacity(0.15),
+                    width: 1.5,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
+                  borderRadius: BorderRadius.circular(16.r),
+                  borderSide: BorderSide(
+                    color: AppColors.deepOrange,
+                    width: 2.5,
+                  ),
                 ),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: Colors.transparent,
               ),
               items: controller.languages.entries.map((entry) {
                 return DropdownMenuItem<String>(
@@ -361,7 +553,8 @@ class KundliFormView extends BasePage<KundliFormController> {
                   child: AutoTranslateText(
                     entry.value,
                     style: MyTextTheme.mediumBCN.copyWith(
-                      color: '#3E2723'.toColor(),
+                      color: AppColors.textColorMaroon,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 );
@@ -382,26 +575,54 @@ class KundliFormView extends BasePage<KundliFormController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// 🔹 TOP TEXT
-        Text(
-          'Select Gender',
-          style: MyTextTheme.smallBCB.copyWith(
-            fontFamily: 'Baloo2',
-            color: '#3E2723'.toColor(),
-            fontWeight: FontWeight.w500,
-            fontSize: 18,
-          ),
+        Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(6.w),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.deepOrange.withOpacity(0.15),
+                    AppColors.deepOrange.withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Icon(
+                Icons.person_outline,
+                color: AppColors.deepOrange,
+                size: 18.w,
+              ),
+            ),
+            SizedBox(width: 8.w),
+            AutoTranslateText(
+              'Select Gender',
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: AppColors.textColorMaroon,
+                fontWeight: FontWeight.w700,
+                fontSize: 15.sp,
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 6.h),
-
-        /// 🔹 DROPDOWN
+        SizedBox(height: 12.h),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.white, Colors.grey.shade50],
+            ),
+            borderRadius: BorderRadius.circular(16.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: AppColors.deepOrange.withOpacity(0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 4),
+                spreadRadius: 0,
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -412,37 +633,67 @@ class KundliFormView extends BasePage<KundliFormController> {
               value: controller.selectedGender.value,
               decoration: InputDecoration(
                 isDense: true,
-                contentPadding: EdgeInsets.all(16.w),
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 20.h,
+                  horizontal: 20.w,
+                ),
                 prefixIcon: Padding(
-                  padding: EdgeInsets.all(12.w),
+                  padding: EdgeInsets.all(14.w),
+                  child: Container(
+                    padding: EdgeInsets.all(6.w),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.deepOrange.withOpacity(0.1),
+                          AppColors.deepOrange.withOpacity(0.05),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Icon(
+                      Icons.person_outline,
+                      color: AppColors.deepOrange,
+                      size: 20.w,
+                    ),
+                  ),
+                ),
+                suffixIcon: Padding(
+                  padding: EdgeInsets.only(right: 16.w),
                   child: Icon(
-                    Icons.person_outline,
-                    color: '#FF6B35'.toColor(),
-                    size: 20.w,
+                    Icons.arrow_drop_down,
+                    color: AppColors.deepOrange,
+                    size: 28.w,
                   ),
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
+                  borderRadius: BorderRadius.circular(16.r),
+                  borderSide: BorderSide(
+                    color: AppColors.deepOrange.withOpacity(0.15),
+                    width: 1.5,
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(16.r),
                   borderSide: BorderSide(
-                    color: '#F5D7B8'.toColor().withOpacity(0.5),
-                    width: 1,
+                    color: AppColors.deepOrange.withOpacity(0.15),
+                    width: 1.5,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
+                  borderRadius: BorderRadius.circular(16.r),
+                  borderSide: BorderSide(
+                    color: AppColors.deepOrange,
+                    width: 2.5,
+                  ),
                 ),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: Colors.transparent,
               ),
               hint: AutoTranslateText(
                 'Select Gender',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#3E2723'.toColor().withOpacity(0.5),
+                  color: AppColors.textSecondary.withOpacity(0.5),
+                  fontWeight: FontWeight.w400,
                 ),
               ),
               items: controller.genderOptions.map((gender) {
@@ -451,7 +702,8 @@ class KundliFormView extends BasePage<KundliFormController> {
                   child: AutoTranslateText(
                     gender,
                     style: MyTextTheme.mediumBCN.copyWith(
-                      color: '#3E2723'.toColor(),
+                      color: AppColors.textColorMaroon,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 );
@@ -472,26 +724,50 @@ class KundliFormView extends BasePage<KundliFormController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// 🔹 TOP TEXT
-        Text(
-          'Chart Style',
-          style: MyTextTheme.smallBCB.copyWith(
-            fontFamily: 'Baloo2',
-            color: '#3E2723'.toColor(),
-            fontWeight: FontWeight.w500,
-            fontSize: 18,
-          ),
+        Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(6.w),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.deepOrange.withOpacity(0.15),
+                    AppColors.deepOrange.withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Icon(Icons.style, color: AppColors.deepOrange, size: 18.w),
+            ),
+            SizedBox(width: 8.w),
+            AutoTranslateText(
+              'Chart Style',
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: AppColors.textColorMaroon,
+                fontWeight: FontWeight.w700,
+                fontSize: 15.sp,
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 6.h),
-
-        /// 🔹 DROPDOWN
+        SizedBox(height: 12.h),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.white, Colors.grey.shade50],
+            ),
+            borderRadius: BorderRadius.circular(16.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: AppColors.deepOrange.withOpacity(0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 4),
+                spreadRadius: 0,
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -502,32 +778,61 @@ class KundliFormView extends BasePage<KundliFormController> {
               value: controller.selectedStyle.value,
               decoration: InputDecoration(
                 isDense: true,
-                contentPadding: EdgeInsets.all(16.w),
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 20.h,
+                  horizontal: 20.w,
+                ),
                 prefixIcon: Padding(
-                  padding: EdgeInsets.all(12.w),
+                  padding: EdgeInsets.all(14.w),
+                  child: Container(
+                    padding: EdgeInsets.all(6.w),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.deepOrange.withOpacity(0.1),
+                          AppColors.deepOrange.withOpacity(0.05),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Icon(
+                      Icons.style,
+                      color: AppColors.deepOrange,
+                      size: 20.w,
+                    ),
+                  ),
+                ),
+                suffixIcon: Padding(
+                  padding: EdgeInsets.only(right: 16.w),
                   child: Icon(
-                    Icons.style,
-                    color: '#FF6B35'.toColor(),
-                    size: 20.w,
+                    Icons.arrow_drop_down,
+                    color: AppColors.deepOrange,
+                    size: 28.w,
                   ),
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
+                  borderRadius: BorderRadius.circular(16.r),
+                  borderSide: BorderSide(
+                    color: AppColors.deepOrange.withOpacity(0.15),
+                    width: 1.5,
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(16.r),
                   borderSide: BorderSide(
-                    color: '#F5D7B8'.toColor().withOpacity(0.5),
-                    width: 1,
+                    color: AppColors.deepOrange.withOpacity(0.15),
+                    width: 1.5,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: '#FF6B35'.toColor(), width: 2),
+                  borderRadius: BorderRadius.circular(16.r),
+                  borderSide: BorderSide(
+                    color: AppColors.deepOrange,
+                    width: 2.5,
+                  ),
                 ),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: Colors.transparent,
               ),
               items: controller.styles.map((style) {
                 return DropdownMenuItem<String>(
@@ -535,7 +840,8 @@ class KundliFormView extends BasePage<KundliFormController> {
                   child: AutoTranslateText(
                     style.toUpperCase(),
                     style: MyTextTheme.mediumBCN.copyWith(
-                      color: '#3E2723'.toColor(),
+                      color: AppColors.textColorMaroon,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 );
@@ -554,48 +860,80 @@ class KundliFormView extends BasePage<KundliFormController> {
 
   Widget _buildSubmitButton() {
     return Obx(
-      () => SizedBox(
+      () => Container(
         width: double.infinity,
-        height: 52.h,
+        height: 58.h,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.deepOrange.withOpacity(0.4),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+              spreadRadius: 0,
+            ),
+            BoxShadow(
+              color: AppColors.deepOrange.withOpacity(0.2),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: ElevatedButton(
           onPressed: controller.isLoading.value
               ? null
               : controller.generateKundli,
           style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.zero, // 🔥 important
+            padding: EdgeInsets.zero,
             backgroundColor: Colors.transparent,
             shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(16.r),
             ),
+            elevation: 0,
           ),
           child: Ink(
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFF3D0C11), Color(0xFF5D1C21)],
-              ),
-              borderRadius: BorderRadius.circular(12.r),
+              gradient: controller.isLoading.value
+                  ? LinearGradient(
+                      colors: [
+                        AppColors.deepOrange.withOpacity(0.5),
+                        AppColors.templeGold.withOpacity(0.5),
+                      ],
+                    )
+                  : AppColors.orangeGradient,
+              borderRadius: BorderRadius.circular(16.r),
             ),
             child: Container(
               alignment: Alignment.center,
               child: controller.isLoading.value
                   ? SizedBox(
-                      height: 22.h,
-                      width: 22.w,
+                      height: 24.h,
+                      width: 24.w,
                       child: const CircularProgressIndicator(
-                        strokeWidth: 2,
+                        strokeWidth: 3,
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
-                  : AutoTranslateText(
-                      'Generate Kundli',
-                      style: MyTextTheme.largeBCB.copyWith(
-                        color: Color(0xFFF7C443),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.sp,
-                      ),
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.auto_awesome,
+                          color: AppColors.white,
+                          size: 22.w,
+                        ),
+                        SizedBox(width: 12.w),
+                        AutoTranslateText(
+                          'Generate Kundli',
+                          style: MyTextTheme.largeBCB.copyWith(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.sp,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
                     ),
             ),
           ),
@@ -614,10 +952,10 @@ class KundliFormView extends BasePage<KundliFormController> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: '#FF6B35'.toColor(),
+              primary: AppColors.deepOrange,
               onPrimary: Colors.white,
               surface: Colors.white,
-              onSurface: '#3E2723'.toColor(),
+              onSurface: AppColors.textColorMaroon,
             ),
           ),
           child: child!,
@@ -638,10 +976,10 @@ class KundliFormView extends BasePage<KundliFormController> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: '#FF6B35'.toColor(),
+              primary: AppColors.deepOrange,
               onPrimary: Colors.white,
               surface: Colors.white,
-              onSurface: '#3E2723'.toColor(),
+              onSurface: AppColors.textColorMaroon,
             ),
           ),
           child: child!,
@@ -666,10 +1004,11 @@ class KundliFormView extends BasePage<KundliFormController> {
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
-            controller.selectCity(city, state, country);
-            Get.back();
-          },
+          onCitySelected:
+              (city, state, country, [latitude, longitude, timezone]) {
+                controller.selectCity(city, state, country);
+                Get.back();
+              },
           selectedCity: controller.selectedLocation.value,
           onUseCurrentLocation: () => controller.getCurrentLocation(),
         ),
@@ -679,9 +1018,6 @@ class KundliFormView extends BasePage<KundliFormController> {
     );
   }
 }
-
-
-
 
 // Widget _buildTextField({
   //   required TextEditingController controller,

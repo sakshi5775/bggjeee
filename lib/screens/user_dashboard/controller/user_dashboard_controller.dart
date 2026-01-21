@@ -33,6 +33,8 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:video_player/video_player.dart';
 
 import '../../../data_model/astrologer_model.dart';
+import '../../../data_model/user_profile_model.dart';
+import '../service/user_profile_service.dart';
 
 class UserDashboardController extends BaseController
     with GetTickerProviderStateMixin {
@@ -65,9 +67,12 @@ class UserDashboardController extends BaseController
     DailyQuoteData(
       quoteDate: '',
       sanskrit: SanskritQuote(
-        text: 'उद्यमेन हि सिद्ध्यन्ति कार्याणि न मनोरथैः।\nन हि सुप्तस्य सिंहस्य प्रविशन्ति मुखे मृगाः॥',
-        transliteration: 'Udyamena hi siddhyanti karyani na manorathaih.\nNa hi suptasya simhasya pravishanti mukhe mrigah.',
-        meaning: 'Success comes by effort, not by wishes. A sleeping lion does not get food.',
+        text:
+            'उद्यमेन हि सिद्ध्यन्ति कार्याणि न मनोरथैः।\nन हि सुप्तस्य सिंहस्य प्रविशन्ति मुखे मृगाः॥',
+        transliteration:
+            'Udyamena hi siddhyanti karyani na manorathaih.\nNa hi suptasya simhasya pravishanti mukhe mrigah.',
+        meaning:
+            'Success comes by effort, not by wishes. A sleeping lion does not get food.',
         source: 'Traditional Sanskrit Quote',
         category: 'Motivation',
       ),
@@ -77,9 +82,12 @@ class UserDashboardController extends BaseController
     DailyQuoteData(
       quoteDate: '',
       sanskrit: SanskritQuote(
-        text: 'विद्या ददाति विनयं विनयाद् याति पात्रताम्।\nपात्रत्वात् धनमाप्नोति धनात् धर्मं ततः सुखम्॥',
-        transliteration: 'Vidya dadati vinayam vinayad yati patratam.\nPatratvat dhanamapnoti dhanat dharmam tatah sukham.',
-        meaning: 'Knowledge gives humility, humility gives worthiness, worthiness brings wealth, wealth leads to righteousness, and righteousness brings happiness.',
+        text:
+            'विद्या ददाति विनयं विनयाद् याति पात्रताम्।\nपात्रत्वात् धनमाप्नोति धनात् धर्मं ततः सुखम्॥',
+        transliteration:
+            'Vidya dadati vinayam vinayad yati patratam.\nPatratvat dhanamapnoti dhanat dharmam tatah sukham.',
+        meaning:
+            'Knowledge gives humility, humility gives worthiness, worthiness brings wealth, wealth leads to righteousness, and righteousness brings happiness.',
         source: 'Traditional Sanskrit Quote',
         category: 'Education',
       ),
@@ -101,9 +109,12 @@ class UserDashboardController extends BaseController
     DailyQuoteData(
       quoteDate: '',
       sanskrit: SanskritQuote(
-        text: 'सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः।\nसर्वे भद्राणि पश्यन्तु मा कश्चिद् दुःखभाग्भवेत्॥',
-        transliteration: 'Sarve bhavantu sukhinah sarve santu niraamayah.\nSarve bhadrani pashyantu ma kashchid duhkhabhagbhavet.',
-        meaning: 'May all be happy, healthy, see goodness, and may no one suffer.',
+        text:
+            'सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः।\nसर्वे भद्राणि पश्यन्तु मा कश्चिद् दुःखभाग्भवेत्॥',
+        transliteration:
+            'Sarve bhavantu sukhinah sarve santu niraamayah.\nSarve bhadrani pashyantu ma kashchid duhkhabhagbhavet.',
+        meaning:
+            'May all be happy, healthy, see goodness, and may no one suffer.',
         source: 'Traditional Sanskrit Prayer',
         category: 'Blessing',
       ),
@@ -149,7 +160,9 @@ class UserDashboardController extends BaseController
 
   // Live Webinar for enrolled courses
   final WebinarService _webinarService = WebinarService();
-  final Rx<WebinarModel?> liveWebinarForEnrolledCourse = Rx<WebinarModel?>(null);
+  final Rx<WebinarModel?> liveWebinarForEnrolledCourse = Rx<WebinarModel?>(
+    null,
+  );
   final RxBool hasLiveWebinarForEnrolledCourse = false.obs;
 
   // Blogs
@@ -253,6 +266,7 @@ class UserDashboardController extends BaseController
     );
     final requireAuth = !_isGuest;
     _loadUserData();
+    loadUserProfile();
     loadLiveStreams();
     loadDailyQuote(requireAuth: requireAuth);
     loadBlogs(requireAuth: requireAuth);
@@ -297,40 +311,42 @@ class UserDashboardController extends BaseController
   }) async {
     try {
       isLoadingPujas.value = true;
-      
+
       // Call API without filters first (as per user requirement)
       // Only add filters if explicitly provided
       final response = await _pujaService.getPujas(
         page: 1,
         limit: 10,
         featured: featured, // Only include if explicitly set
-        popular: popular,   // Only include if explicitly set
-        search: search,     // Only include if explicitly set
+        popular: popular, // Only include if explicitly set
+        search: search, // Only include if explicitly set
         templeId: templeId, // Only include if explicitly set
       );
-      
+
       if (response != null && response.success == true) {
         if (response.data != null && response.data!.items != null) {
           final items = response.data!.items!;
-          
+
           // Filter to only show active pujas (if status field exists and is not null)
           final activePujas = items.where((puja) {
             // If status is null or empty, include it (API might not return status)
             // If status exists, only include active ones
-            return puja.status == null || 
-                   puja.status!.isEmpty || 
-                   puja.status!.toLowerCase() == 'active';
+            return puja.status == null ||
+                puja.status!.isEmpty ||
+                puja.status!.toLowerCase() == 'active';
           }).toList();
-          
+
           pujas.value = activePujas;
-          
+
           if (kDebugMode) {
-            print('Loaded ${activePujas.length} pujas (${items.length} total from API)');
+            print(
+              'Loaded ${activePujas.length} pujas (${items.length} total from API)',
+            );
             if (activePujas.isNotEmpty) {
               print('First puja: ${activePujas.first.title}');
             }
           }
-          
+
           // Start auto-slide after pujas are loaded
           if (pujas.isNotEmpty) {
             _startBookPoojaAutoSlide();
@@ -370,7 +386,7 @@ class UserDashboardController extends BaseController
   /// Start Book Pooja carousel auto-slide
   void _startBookPoojaAutoSlide() {
     if (pujas.isEmpty) return;
-    
+
     _bookPoojaTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
       final pageController = bookPoojaPageController.value;
       // Check if PageController has exactly one client (one PageView attached)
@@ -595,15 +611,30 @@ class UserDashboardController extends BaseController
     }
   }
 
+  final Rxn<UserProfileModel> userProfile = Rxn<UserProfileModel>();
+  Future<void> loadUserProfile() async {
+    try {
+      final response = await UserProfileService().getProfile(
+        UserData().getLoginData.user?.userId ?? '',
+      );
+      if (response != null) {
+        userProfile.value = response;
+      }
+    } catch (e) {
+      userProfile.value = null;
+      debugPrint('Error loading user profile: $e');
+    }
+  }
+
   /// Set a fallback quote when API doesn't return data
   void _setFallbackQuote(String date) {
     // Select a quote based on day of year to ensure variety
-    final dayOfYear = DateTime.now().difference(
-      DateTime(DateTime.now().year, 1, 1),
-    ).inDays;
+    final dayOfYear = DateTime.now()
+        .difference(DateTime(DateTime.now().year, 1, 1))
+        .inDays;
     final quoteIndex = dayOfYear % _fallbackQuotes.length;
     final selectedQuote = _fallbackQuotes[quoteIndex];
-    
+
     // Create a new DailyQuoteData with today's date
     dailyQuote.value = DailyQuoteData(
       quoteDate: date,
@@ -727,7 +758,7 @@ class UserDashboardController extends BaseController
       // Get enrolled courses - try progress overview first, then enrollments API
       final progressOverview = await _coursesService.getProgressOverview();
       List<dynamic>? coursesList;
-      
+
       if (progressOverview != null && progressOverview['courses'] != null) {
         // Format from progress overview
         coursesList = progressOverview['courses'] as List<dynamic>?;
@@ -736,8 +767,9 @@ class UserDashboardController extends BaseController
         final enrollmentsData = await _coursesService.getEnrollments(page: 1);
         if (enrollmentsData != null) {
           // Check both possible response formats
-          coursesList = enrollmentsData['courses'] as List<dynamic>? ?? 
-                       enrollmentsData['data'] as List<dynamic>?;
+          coursesList =
+              enrollmentsData['courses'] as List<dynamic>? ??
+              enrollmentsData['data'] as List<dynamic>?;
         }
       }
 
@@ -752,26 +784,30 @@ class UserDashboardController extends BaseController
       final enrolledCourseIds = <String>{};
       for (var courseJson in coursesList) {
         final courseMap = courseJson as Map<String, dynamic>;
-        
+
         // Try different possible field names for course ID
         String? courseId = courseMap['courseId'] as String?;
         if (courseId == null) {
           // Check if course is an object with _id
           final courseObj = courseMap['course'] as Map<String, dynamic>?;
           if (courseObj != null) {
-            courseId = courseObj['_id'] as String? ?? courseObj['id'] as String?;
+            courseId =
+                courseObj['_id'] as String? ?? courseObj['id'] as String?;
           } else {
             // Direct _id or id
-            courseId = courseMap['_id'] as String? ?? courseMap['id'] as String?;
+            courseId =
+                courseMap['_id'] as String? ?? courseMap['id'] as String?;
           }
         }
-        
+
         if (courseId != null && courseId.isNotEmpty) {
           enrolledCourseIds.add(courseId);
         }
       }
 
-      debugPrint("Found ${enrolledCourseIds.length} enrolled course IDs: $enrolledCourseIds");
+      debugPrint(
+        "Found ${enrolledCourseIds.length} enrolled course IDs: $enrolledCourseIds",
+      );
 
       if (enrolledCourseIds.isEmpty) {
         liveWebinarForEnrolledCourse.value = null;
@@ -782,7 +818,7 @@ class UserDashboardController extends BaseController
       // Get live webinars
       final liveWebinars = await _webinarService.getLiveWebinars();
       debugPrint("Found ${liveWebinars.length} live webinars");
-      
+
       if (liveWebinars.isEmpty) {
         liveWebinarForEnrolledCourse.value = null;
         hasLiveWebinarForEnrolledCourse.value = false;
@@ -791,13 +827,17 @@ class UserDashboardController extends BaseController
 
       // Find if any live webinar belongs to an enrolled course
       for (var webinar in liveWebinars) {
-        final webinarCourseId = webinar.courseId?.sId ?? 
-                               webinar.courseId?.id;
-        
-        debugPrint("Checking webinar: ${webinar.title}, courseId: $webinarCourseId");
-        
-        if (webinarCourseId != null && enrolledCourseIds.contains(webinarCourseId)) {
-          debugPrint("Match found! Live webinar for enrolled course: ${webinar.title}");
+        final webinarCourseId = webinar.courseId?.sId ?? webinar.courseId?.id;
+
+        debugPrint(
+          "Checking webinar: ${webinar.title}, courseId: $webinarCourseId",
+        );
+
+        if (webinarCourseId != null &&
+            enrolledCourseIds.contains(webinarCourseId)) {
+          debugPrint(
+            "Match found! Live webinar for enrolled course: ${webinar.title}",
+          );
           liveWebinarForEnrolledCourse.value = webinar;
           hasLiveWebinarForEnrolledCourse.value = true;
           return;
@@ -918,6 +958,7 @@ class UserDashboardController extends BaseController
 
   Future<void> refreshDashboard() async {
     _loadUserData(); // Ensure user data stays up to date
+    await loadUserProfile();
     await loadLiveStreams();
     final requireAuth = !_isGuest;
     await loadDailyQuote(

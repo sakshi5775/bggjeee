@@ -692,91 +692,91 @@ class PersonaDetailView extends StatelessWidget {
           Spacing.h(16),
 
           // Write/Edit Review Button
-          Obx(() {
-            if (controller.myReview.value == null) {
-              return GestureDetector(
-                onTap: () => _showReviewDialog(
-                  context,
-                  controller,
-                  persona.id,
-                  persona: persona,
-                ),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 10.h,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: AppColors.orangeGradient,
-                    borderRadius: BorderRadius.circular(8.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: '#F38B3B'.toColor().withOpacity(0.3),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.edit, size: 16.w, color: Colors.white),
-                      SizedBox(width: 8.w),
-                      AutoTranslateText(
-                        'Write a Review',
-                        style: AppTypography.body2.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            } else {
-              return GestureDetector(
-                onTap: () => _showReviewDialog(
-                  context,
-                  controller,
-                  persona.id,
-                  persona: persona,
-                ),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 10.h,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: AppColors.orangeGradient,
-                    borderRadius: BorderRadius.circular(8.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: '#F38B3B'.toColor().withOpacity(0.3),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.edit, size: 16.w, color: Colors.white),
-                      SizedBox(width: 8.w),
-                      AutoTranslateText(
-                        'Edit Your Review',
-                        style: AppTypography.body2.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-          }),
+          // Obx(() {
+          //   if (controller.myReview.value == null) {
+          //     return GestureDetector(
+          //       onTap: () => _showReviewDialog(
+          //         context,
+          //         controller,
+          //         persona.id,
+          //         persona: persona,
+          //       ),
+          //       child: Container(
+          //         padding: EdgeInsets.symmetric(
+          //           horizontal: 16.w,
+          //           vertical: 10.h,
+          //         ),
+          //         decoration: BoxDecoration(
+          //           gradient: AppColors.orangeGradient,
+          //           borderRadius: BorderRadius.circular(8.r),
+          //           boxShadow: [
+          //             BoxShadow(
+          //               color: '#F38B3B'.toColor().withOpacity(0.3),
+          //               blurRadius: 4,
+          //               offset: const Offset(0, 2),
+          //             ),
+          //           ],
+          //         ),
+          //         child: Row(
+          //           mainAxisSize: MainAxisSize.min,
+          //           mainAxisAlignment: MainAxisAlignment.center,
+          //           children: [
+          //             Icon(Icons.edit, size: 16.w, color: Colors.white),
+          //             SizedBox(width: 8.w),
+          //             AutoTranslateText(
+          //               'Write a Review',
+          //               style: AppTypography.body2.copyWith(
+          //                 color: Colors.white,
+          //               ),
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //     );
+          //   } else {
+          //     return GestureDetector(
+          //       onTap: () => _showReviewDialog(
+          //         context,
+          //         controller,
+          //         persona.id,
+          //         persona: persona,
+          //       ),
+          //       child: Container(
+          //         padding: EdgeInsets.symmetric(
+          //           horizontal: 16.w,
+          //           vertical: 10.h,
+          //         ),
+          //         decoration: BoxDecoration(
+          //           gradient: AppColors.orangeGradient,
+          //           borderRadius: BorderRadius.circular(8.r),
+          //           boxShadow: [
+          //             BoxShadow(
+          //               color: '#F38B3B'.toColor().withOpacity(0.3),
+          //               blurRadius: 4,
+          //               offset: const Offset(0, 2),
+          //             ),
+          //           ],
+          //         ),
+          //         child: Row(
+          //           mainAxisSize: MainAxisSize.min,
+          //           mainAxisAlignment: MainAxisAlignment.center,
+          //           children: [
+          //             Icon(Icons.edit, size: 16.w, color: Colors.white),
+          //             SizedBox(width: 8.w),
+          //             AutoTranslateText(
+          //               'Edit Your Review',
+          //               style: AppTypography.body2.copyWith(
+          //                 color: Colors.white,
+          //               ),
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //     );
+          //   }
+          // }),
 
-          Spacing.h(16),
+          // Spacing.h(16),
 
           // Reviews List
           Obx(() {
@@ -1358,6 +1358,7 @@ class PersonaDetailView extends StatelessWidget {
                                               reviewText: reviewTextController
                                                   .text
                                                   .trim(),
+                                              serviceType: "CHAT",
                                             );
 
                                       if (success) {
