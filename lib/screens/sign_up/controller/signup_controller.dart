@@ -1,7 +1,6 @@
-import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
-import 'package:astrobharataiuser/core/services/role_navigation_service.dart';
+import 'package:astrobharataiuser/screens/otp/service/otp_service.dart';
 import 'package:astrobharataiuser/screens/sign_up/service/signup_service.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -10,6 +9,7 @@ import 'package:get/get.dart';
 
 class SignUpController extends BaseController {
   final SignUpService _signUpService = SignUpService();
+  final OtpService _otpService = OtpService();
 
   late final TextEditingController phoneController;
   late final TextEditingController emailController;
@@ -56,6 +56,44 @@ class SignUpController extends BaseController {
         final phoneNumber = phoneController.text.trim();
         final countryCode = selectedCountryCode.value.dialCode ?? '+91';
         final phone = '$countryCode$phoneNumber';
+        final email = emailController.text.trim();
+        
+        // Check if user already exists before attempting registration
+        try {
+          final existsResult = await _otpService.checkExists(
+            email: email,
+            phone: phone,
+          );
+          if (existsResult != null) {
+            if (existsResult['emailExists'] == true && existsResult['phoneExists'] == true) {
+              showErrorMessage(
+                title: "Account Exists",
+                message: "An account with this email and phone number already exists. Please try logging in.",
+              );
+              setLoadingState(false);
+              return;
+            } else if (existsResult['emailExists'] == true) {
+              showErrorMessage(
+                title: "Email Already Registered",
+                message: "This email is already registered. Please use a different email or try logging in.",
+              );
+              setLoadingState(false);
+              return;
+            } else if (existsResult['phoneExists'] == true) {
+              showErrorMessage(
+                title: "Phone Already Registered",
+                message: "This phone number is already registered. Please use a different phone number or try logging in.",
+              );
+              setLoadingState(false);
+              return;
+            }
+          }
+        } catch (e) {
+          // If check fails, continue with registration - backend will handle duplicate check
+          if (kDebugMode) {
+            print('Error checking user existence: $e');
+          }
+        }
         
         // Additional validation check before API call (defensive programming)
         final cleanNumber = phoneNumber.replaceAll(RegExp(r'[^\d]'), '');
@@ -79,7 +117,7 @@ class SignUpController extends BaseController {
         
         final signUpModel = await _signUpService.register(
           phone: phone,
-          email: emailController.text.trim(),
+          email: email,
           username: usernameController.text.trim(),
           password: passwordController.text.trim(),
           confirmPassword: confirmPasswordController.text.trim(),
@@ -87,55 +125,84 @@ class SignUpController extends BaseController {
         );
 
         if (signUpModel != null) {
-          // Store tokens and user data for auto-login
-          if (signUpModel.accessToken != null && signUpModel.refreshToken != null) {
-            try {
-              // Create login data structure matching LoginModel format
-              final loginData = {
-                'accessToken': signUpModel.accessToken,
-                'refreshToken': signUpModel.refreshToken,
-                'user': signUpModel.user?.toJson(),
-              };
-              UserData().addLoginData(loginData);
-              
-              if (kDebugMode) {
-                print('User data stored successfully after registration');
-              }
-            } catch (e) {
-              // If storing fails, show error but continue
-              if (kDebugMode) {
-                print('Error storing tokens: $e');
-              }
-              showErrorMessage(
-                title: "Warning",
-                message: "Account created but failed to save login data. Please login manually.",
-              );
-              await Future.delayed(const Duration(milliseconds: 500));
-              onBack(); // Navigate to login screen
-              return;
-            }
+          // Registration now returns OTP info instead of tokens
+          // User needs to verify OTP before getting tokens
+          
+          // Determine identifier for OTP verification (phone or email)
+          // For phone registration, always use phone as identifier
+          String identifier = phone;
+          if (signUpModel.otpSentTo?.email == true && 
+              signUpModel.otpSentTo?.phone != true) {
+            identifier = emailController.text.trim();
           }
-
+          
+          if (kDebugMode) {
+            print('SignUp: Registration successful');
+            print('SignUp: OTP sent to phone: ${signUpModel.otpSentTo?.phone}');
+            print('SignUp: OTP sent to email: ${signUpModel.otpSentTo?.email}');
+            print('SignUp: Identifier for OTP: $identifier');
+          }
+          
           // Show success message
           showSuccessMessage(
-            title: "Success",
-            message: "Account created successfully! Welcome to the app.",
+            title: "Registration Successful",
+            message: signUpModel.message ?? "OTP has been sent. Please verify to complete registration.",
           );
           
-          // Navigate to home page (user dashboard) after a short delay
-          await Future.delayed(const Duration(milliseconds: 800));
+          // Navigate to OTP screen for verification
+          await Future.delayed(const Duration(milliseconds: 500));
           
-          // Navigate to user dashboard using RoleNavigationService
+          if (kDebugMode) {
+            print('SignUp: Navigating to OTP screen with identifier: $identifier');
+            print('SignUp: OTP route: ${AppRoutes.otp}');
+            print('SignUp: OTP arguments: destination=$identifier, userType=${signUpModel.user?.userType ?? 'USER'}, isRegistration=true');
+          }
+          
           try {
-            RoleNavigationService.navigateToDashboard(
-              signUpModel.user?.userType ?? 'USER',
+            // Use replaceRoute to remove signup page from stack
+            await replaceRoute(
+              AppRoutes.otp,
+              arguments: {
+                'destination': identifier,
+                'userType': signUpModel.user?.userType ?? 'USER',
+                'isRegistration': true,
+              },
             );
-          } catch (e) {
+            
             if (kDebugMode) {
-              print('Error navigating to dashboard: $e');
+              print('SignUp: Navigation to OTP completed successfully');
             }
-            // Fallback to direct navigation
-            Get.offAllNamed(AppRoutes.userDashboard);
+          } catch (e, stackTrace) {
+            if (kDebugMode) {
+              print('SignUp: Navigation error: $e');
+              print('SignUp: Stack trace: $stackTrace');
+            }
+            // Try alternative navigation method
+            try {
+              Get.offNamed(
+                AppRoutes.otp,
+                arguments: {
+                  'destination': identifier,
+                  'userType': signUpModel.user?.userType ?? 'USER',
+                  'isRegistration': true,
+                },
+              );
+              if (kDebugMode) {
+                print('SignUp: Alternative navigation (Get.offNamed) succeeded');
+              }
+            } catch (e2) {
+              if (kDebugMode) {
+                print('SignUp: Alternative navigation also failed: $e2');
+              }
+              showErrorMessage(
+                title: "Navigation Error",
+                message: "Registration successful but failed to navigate to OTP page. Please try again.",
+              );
+            }
+          }
+        } else {
+          if (kDebugMode) {
+            print('SignUp: Registration failed - signUpModel is null');
           }
         }
       }

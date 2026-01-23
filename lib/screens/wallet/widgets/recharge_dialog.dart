@@ -16,10 +16,21 @@ class RechargeDialog extends StatefulWidget {
 }
 
 class _RechargeDialogState extends State<RechargeDialog> {
-  final WalletController _controller = Get.find<WalletController>();
+  late final WalletController _controller;
   final TextEditingController _amountController = TextEditingController();
   final List<int> _quickAmounts = [100, 500, 1000, 2000, 5000, 10000];
   int? _selectedQuickAmount;
+
+  @override
+  void initState() {
+    super.initState();
+    // Ensure WalletController is registered before using it
+    if (Get.isRegistered<WalletController>()) {
+      _controller = Get.find<WalletController>();
+    } else {
+      _controller = Get.put(WalletController());
+    }
+  }
 
   @override
   void dispose() {

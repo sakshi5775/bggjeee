@@ -22,31 +22,6 @@ class LoginFormWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Welcome AutoTranslateText
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset("assets/images/star.png", height: 20, width: 30),
-              const SizedBox(width: 8),
-              AutoTranslateText(
-                'Welcome Back',
-                style: MyTextTheme.veryLargeWCB.copyWith(
-                  color: AppColors.saffron,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(width: 8),
-              Image.asset("assets/images/star.png", height: 20, width: 30),
-            ],
-          ),
-          Spacing.h(4),
-          AutoTranslateText(
-            'Continue your spiritual journey',
-            style: MyTextTheme.mediumBCN.copyWith(color: AppColors.saffron),
-            textAlign: TextAlign.center,
-          ),
-          Spacing.h(32),
-
           // Phone/Email Field - Show phone field by default
           Obx(() {
             if (controller.isEmailMode.value) {
@@ -72,18 +47,26 @@ class LoginFormWidget extends StatelessWidget {
               );
             }
           }),
-          Spacing.h(20),
+          Spacing.h(8),
 
-          // Password Field - Show for both email and phone login
-          MyTextField(
-            controller: controller.passwordController,
-            headerText: 'Password',
-            hintText: 'Enter your password',
-            isPasswordField: true,
-            prefixIcon: const Icon(Icons.lock_outline),
-            validator: controller.validatePassword,
+          // Password Field - Only show for email login
+          Obx(
+            () => controller.isEmailMode.value
+                ? Column(
+                    children: [
+                      MyTextField(
+                        controller: controller.passwordController,
+                        headerText: 'Password',
+                        hintText: 'Enter your password',
+                        isPasswordField: true,
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        validator: controller.validatePassword,
+                      ),
+                      Spacing.h(3),
+                    ],
+                  )
+                : const SizedBox.shrink(),
           ),
-          Spacing.h(5),
 
           Align(
             alignment: Alignment.bottomRight,
@@ -153,7 +136,7 @@ class LoginFormWidget extends StatelessWidget {
             );
           }),
 
-          Spacing.h(20),
+          Spacing.h(10),
 
           // Login Button
           Obx(() {
@@ -207,7 +190,7 @@ class LoginFormWidget extends StatelessWidget {
             );
           }),
 
-          Spacing.h(20),
+          Spacing.h(8),
 
           Center(
             child: Row(
@@ -223,7 +206,7 @@ class LoginFormWidget extends StatelessWidget {
               ],
             ),
           ),
-          Spacing.h(20),
+          Spacing.h(8),
 
           // Signup Text
           Row(
@@ -251,7 +234,7 @@ class LoginFormWidget extends StatelessWidget {
               ),
             ],
           ),
-          Spacing.h(12),
+          Spacing.h(8),
 
           TextButton(
             onPressed: () async {

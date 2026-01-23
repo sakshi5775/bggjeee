@@ -15,85 +15,76 @@ class SignUpView extends BasePage<SignUpController> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppColors.lightBackground,
-              AppColors.saffron.withOpacity(0.1),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      body: SingleChildScrollView(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFFF7C443).withOpacity(0.3),
+                Color(0xFFFFFCF3).withOpacity(0.1),
+              ],
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Stack(
-            alignment: Alignment.topCenter,
+          child: Column(
             children: [
-              Column(
-                children: [
-                  Container(
-                    margin: AppMargin.only(top: 20, bottom: 10),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 100.h,
-                          width: 100.h,
-                          decoration: BoxDecoration(
-                            color: AppColors.saffron,
-                            borderRadius: AppRadius.all(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.shadowLight,
-                                blurRadius: 20.r,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Image.asset(
-                              "assets/app/logo.png",
-                              height: 60.h,
-                              width: 60.h,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Icon(
-                                  Icons.account_circle,
-                                  size: 60.h,
-                                  color: AppColors.saffron,
-                                );
-                              },
+              // Ganesh Image Header (matching login page)
+              Container(
+                width: double.infinity,
+                height: 350.h,
+                child: Stack(
+                  children: [
+                    Image.asset(
+                      'assets/app/ganeshji_u.png',
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                    // Back button overlay
+                    SafeArea(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.w),
+                        child: GestureDetector(
+                          onTap: () => controller.goToLogin(),
+                          child: Container(
+                            padding: EdgeInsets.all(8.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.9),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.arrow_back_ios,
+                              color: AppColors.saffron,
+                              size: 18.sp,
                             ),
                           ),
                         ),
-                        Spacing.h(10),
-                        AutoTranslateText(
-                          'AstroBharatAI',
-                          style: MyTextTheme.veryLargeWCB.copyWith(
-                            color: AppColors.saffron,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-
-              SingleChildScrollView(
-                padding: AppPaddings.symmetric(h: 12, v: 40),
-                child: Column(
-                  children: [
-                    SizedBox(height: 130.h),
-                    Container(
-                      padding: AppPaddings.all(24),
+              // Form Container
+              Container(
+                width: double.infinity,
+                child: SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 18.w),
+                    child: Container(
+                      padding: EdgeInsets.all(24.w),
                       decoration: BoxDecoration(
-                        color: AppColors.cardLight,
-                        borderRadius: AppRadius.all(20),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24.r),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.shadowMedium,
+                            color: AppColors.shadowMedium.withOpacity(0.15),
                             blurRadius: 20.r,
                             offset: const Offset(0, 10),
                           ),
@@ -101,11 +92,10 @@ class SignUpView extends BasePage<SignUpController> {
                       ),
                       child: SignUpFormWidget(controller: controller),
                     ),
-
-                    SizedBox(height: 100.h),
-                  ],
+                  ),
                 ),
               ),
+              SizedBox(height: 40.h),
             ],
           ),
         ),

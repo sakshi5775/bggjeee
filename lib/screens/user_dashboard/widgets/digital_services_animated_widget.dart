@@ -73,12 +73,12 @@ class _DigitalServicesAnimatedWidgetState
 
     return Padding(
       padding: EdgeInsets.only(
-        top: 10.h,
+        top: 20.h,
         left: 16.w,
         right: 16.w,
       ),
       child: SizedBox(
-        height: 155.h,
+        height: 195.h,
         child: GestureDetector(
           onTap: _navigateToRoute,
           child: AnimatedSwitcher(
@@ -112,7 +112,7 @@ class _DigitalServicesAnimatedWidgetState
         imagePath,
         fit: BoxFit.cover,
         width: double.infinity,
-        height: 155.h,
+        height: 195.h,
         filterQuality: FilterQuality.high,
         errorBuilder: (context, error, stackTrace) {
           return Container(

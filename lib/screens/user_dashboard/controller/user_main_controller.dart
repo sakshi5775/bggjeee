@@ -51,7 +51,7 @@ class UserMainController extends GetxController {
         );
 
       case AppRoutes.courses:
-        // Navigate to courses route from get_pages.dart
+        // Navigate to courses route from get_pages.dart (main router)
         return null; // Let main router handle it
 
       default:
@@ -105,7 +105,12 @@ class UserMainController extends GetxController {
     selectedIndex.value = index;
 
     if (index == 4) {
-      Get.toNamed(AppRoutes.courses, arguments: {'showBackButton': false});
+      // Navigate to courses using main router (not nested navigator)
+      // Transition is set in get_pages.dart route definition
+      Get.toNamed(
+        AppRoutes.courses,
+        arguments: {'showBackButton': false},
+      );
     } else {
       Get.offNamed(pages[index], id: 1);
     }

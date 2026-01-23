@@ -53,6 +53,31 @@ class KundliResultController extends BaseController {
     'Download PDF',
   ];
 
+  /// Tab names that show "Coming Soon". These tabs are hidden from the UI.
+  static const _comingSoonTabNames = [
+    'bhav madhya',
+    'shad bala',
+    'person details',
+    'ghatak and favourable',
+    'reports',
+    'friendship',
+    'avkahada chakra',
+    'download pdf',
+  ];
+
+  /// Indices into [tabs] for non-coming-soon tabs (visible in tab bar & PageView).
+  List<int> get visibleTabIndices => tabs.asMap().entries
+      .where((e) => !_comingSoonTabNames.contains(e.value.toLowerCase()))
+      .map((e) => e.key)
+      .toList();
+
+  /// Tab names for visible tabs only.
+  List<String> get visibleTabs =>
+      visibleTabIndices.map((i) => tabs[i]).toList();
+
+  bool _isComingSoonTab(String tabName) =>
+      _comingSoonTabNames.contains(tabName.toLowerCase());
+
   // Feature grid items
   final featureGridItems = [
     {'title': 'Dasha', 'icon': Icons.timeline},
@@ -60,7 +85,7 @@ class KundliResultController extends BaseController {
     {'title': 'Dosh', 'icon': Icons.ac_unit},
     {'title': 'Predictions', 'icon': Icons.auto_awesome},
     {'title': 'KP System', 'icon': Icons.grid_view},
-    {'title': 'Shodashvarga', 'icon': Icons.view_module},
+    {'title': 'Shodash\nvarga', 'icon': Icons.view_module},
     {'title': 'Lal Kitab', 'icon': Icons.menu_book},
     {'title': 'Varshphal', 'icon': Icons.calendar_today},
   ];
@@ -119,11 +144,12 @@ class KundliResultController extends BaseController {
     super.onClose();
   }
 
-  // Handle page change from swipe
+  // Handle page change from swipe. [index] is visible (page) index.
   void onPageChanged(int index) {
-    selectedTabIndex.value = index;
-    // Call onTabSelected to trigger data fetching
-    onTabSelected(index);
+    if (index < 0 || index >= visibleTabIndices.length) return;
+    final fullIndex = visibleTabIndices[index];
+    selectedTabIndex.value = fullIndex;
+    onTabSelected(fullIndex);
   }
 
   // SVG data
@@ -163,6 +189,9 @@ class KundliResultController extends BaseController {
   final divisionalChartData = Rxn<Map<String, dynamic>>();
   final isLoadingDivisionalChart = false.obs;
   final selectedDivisionForChart = Rxn<String>();
+
+  /// Selected Lagna action: 'planet' = show Planets below slider; null = default (Planetary Positions)
+  final selectedLagnaAction = Rxn<String>();
 
   // Ascendant Report data
   final ascendantReportData = Rxn<Map<String, dynamic>>();
@@ -583,20 +612,21 @@ class KundliResultController extends BaseController {
   }
 
   void onTabSelected(int index) {
-    final tabName = tabs[index];
-
-    // Handle Planets tab - navigate to Planets screen
-    if (tabName.toLowerCase() == 'planets') {
-      Get.toNamed(AppRoutes.planets, arguments: {'formData': formData.value});
-      return;
+    // Clear Lagna "Planet" selection when switching away from Lagna tab
+    const lagnaIndex = 1;
+    if (index != lagnaIndex) {
+      selectedLagnaAction.value = null;
     }
 
     selectedTabIndex.value = index;
 
-    // Animate PageView to selected tab
-    if (pageController.hasClients && pageController.page?.round() != index) {
+    // Animate PageView to selected tab (use visible index)
+    final visibleIdx = visibleTabIndices.indexOf(index);
+    if (visibleIdx != -1 &&
+        pageController.hasClients &&
+        pageController.page?.round() != visibleIdx) {
       pageController.animateToPage(
-        index,
+        visibleIdx,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
@@ -634,8 +664,14 @@ class KundliResultController extends BaseController {
       fetchTransitChart();
     }
 
-    // Fetch Planet details when LAGNA tab is selected (index 1)
+    // Fetch Planet details when LAGNA or PLANETS tab is selected
     if (index == 1) {
+      fetchPlanetDetails();
+    }
+    final planetsIndex = tabs.indexWhere(
+      (tab) => tab.toLowerCase() == 'planets',
+    );
+    if (planetsIndex != -1 && index == planetsIndex) {
       fetchPlanetDetails();
     }
 
@@ -1645,9 +1681,25 @@ class KundliResultController extends BaseController {
     // Find matching tab by name (case-insensitive)
     final featureLower = feature.toLowerCase();
 
-    // Handle Planets navigation FIRST - before checking for tab matching
+    // Handle Planets: switch to Planets tab (slider + PlanetsWidget below, no navigation)
     if (featureLower == 'planet' || featureLower == 'planets') {
-      Get.toNamed(AppRoutes.planets, arguments: {'formData': formData.value});
+      final planetsIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == 'planets',
+      );
+      if (planetsIndex != -1) {
+        selectedTabIndex.value = planetsIndex;
+        final visibleIdx = visibleTabIndices.indexOf(planetsIndex);
+        if (visibleIdx != -1 &&
+            pageController.hasClients &&
+            pageController.page?.round() != visibleIdx) {
+          pageController.animateToPage(
+            visibleIdx,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+        fetchPlanetDetails();
+      }
       return;
     }
 
@@ -1812,81 +1864,10 @@ class KundliResultController extends BaseController {
       return;
     }
 
-    //additional features
-    // Handle Varshphal - switch to Varshphal tab
-    if (featureLower == 'bhav madhya') {
-      final bhavMadhyaIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'bhav madhya',
-      );
-      if (bhavMadhyaIndex != -1) {
-        onTabSelected(bhavMadhyaIndex);
-      }
-      return;
-    }
-
-    // Handle personal details - switch to Personal Details tab
-    if (featureLower == 'personal details') {
-      final personalDetailsIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'personal details',
-      );
-      if (personalDetailsIndex != -1) {
-        onTabSelected(personalDetailsIndex);
-      }
-      return;
-    }
-
-    // Handle ghatkata - switch to Varshphal tab
-    if (featureLower == 'ghatak and favourable') {
-      final ghatkataIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'ghatak and favourable',
-      );
-      if (ghatkataIndex != -1) {
-        onTabSelected(ghatkataIndex);
-      }
-      return;
-    }
-
-    // Handle reports - switch to Reports tab
-    if (featureLower == 'reports') {
-      final reportsIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'reports',
-      );
-      if (reportsIndex != -1) {
-        onTabSelected(reportsIndex);
-      }
-      return;
-    }
-
-    // Handle friendship - switch to Varshphal tab
-    if (featureLower == 'friendship') {
-      final friendshipIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'friendship',
-      );
-      if (friendshipIndex != -1) {
-        onTabSelected(friendshipIndex);
-      }
-      return;
-    }
-
-    // Handle Avkahada Chakra - switch to Varshphal tab
-    if (featureLower == 'avkahada chakra') {
-      final avkahadaChakraIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'avkahada chakra',
-      );
-      if (avkahadaChakraIndex != -1) {
-        onTabSelected(avkahadaChakraIndex);
-      }
-      return;
-    }
-
-    // Handle download pdf - switch to Varshphal tab
-    if (featureLower == 'download pdf') {
-      final downloadPdfIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'download pdf',
-      );
-      if (downloadPdfIndex != -1) {
-        onTabSelected(downloadPdfIndex);
-      }
+    // Coming-soon tabs: no navigation (hidden from UI)
+    if (_isComingSoonTab(featureLower) ||
+        featureLower == 'personal details' ||
+        featureLower == 'person details') {
       return;
     }
 
@@ -1921,31 +1902,14 @@ class KundliResultController extends BaseController {
     final tabName = featureToTabMap[featureLower];
 
     if (tabName != null) {
-      // Find the index of the matching tab
+      if (_isComingSoonTab(tabName)) return;
+
       final tabIndex = tabs.indexWhere(
         (tab) => tab.toLowerCase() == tabName.toLowerCase(),
       );
 
       if (tabIndex != -1) {
-        selectedTabIndex.value = tabIndex;
-
-        // Fetch chart data for specific tabs
-        if (tabIndex == 2) {
-          // NAVAMSHA
-          fetchNavamshaChart();
-        } else if (tabIndex == 3) {
-          // SUN
-          fetchSunChart();
-        } else if (tabIndex == 4) {
-          // MOON
-          fetchMoonChart();
-        } else if (tabIndex == 5) {
-          // BHAV-CHALIT
-          fetchChalitChart();
-        } else if (tabName.toLowerCase() == 'transit') {
-          fetchTransitChart();
-        }
-
+        onTabSelected(tabIndex);
         return;
       }
     }

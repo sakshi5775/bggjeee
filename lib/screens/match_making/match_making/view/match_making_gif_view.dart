@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 class MatchMakingGifView extends StatefulWidget {
   const MatchMakingGifView({super.key});
@@ -13,7 +14,7 @@ class _MatchMakingGifViewState extends State<MatchMakingGifView> {
   void initState() {
     super.initState();
     // Navigate to form after 3 seconds
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
         Get.offNamed('/match-making-form');
       }
@@ -25,11 +26,12 @@ class _MatchMakingGifViewState extends State<MatchMakingGifView> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Image.asset(
-          'assets/app/matching_gif.gif',
+        child: Lottie.asset(
+          'assets/app/match_making_animation.json',
           fit: BoxFit.contain,
           width: double.infinity,
           height: double.infinity,
+          repeat: true,
         ),
       ),
     );

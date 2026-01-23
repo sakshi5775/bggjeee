@@ -1,4 +1,3 @@
-import 'package:astrobharataiuser/app_manager/myButton.dart';
 import 'package:astrobharataiuser/app_manager/my_text_field.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/widgets/phone_field_with_country_code.dart';
@@ -21,17 +20,44 @@ class SignUpFormWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Welcome AutoTranslateText
-          AutoTranslateText(
-            'Create Account',
-            style: MyTextTheme.veryLargeWCB.copyWith(color: AppColors.saffron),
-            textAlign: TextAlign.center,
+          // Title with stars (matching login page style)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                "assets/images/star.png",
+                height: 18,
+                width: 24,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: AutoTranslateText(
+                  'Create Account',
+                  style: MyTextTheme.veryLargeWCB.copyWith(
+                    color: AppColors.saffron,
+                    fontSize: 26,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Image.asset(
+                "assets/images/star.png",
+                height: 18,
+                width: 24,
+                fit: BoxFit.contain,
+              ),
+            ],
           ),
           Spacing.h(8),
           AutoTranslateText(
             'Join us to get started',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: AppColors.textSecondary,
+              color: AppColors.saffron,
             ),
             textAlign: TextAlign.center,
           ),
@@ -94,21 +120,57 @@ class SignUpFormWidget extends StatelessWidget {
           ),
           Spacing.h(32),
 
-          // Sign Up Button
+          // Sign Up Button (matching login page style)
           Obx(
-            () => MyButton(
-              title: controller.isLoading.value
-                  ? 'Creating Account...'
-                  : 'Sign Up',
-              onPress: controller.isLoading.value ? null : controller.signUp,
-              prefixIcon: controller.isLoading.value
-                  ? SizedBox(
-                      width: 12,
-                      height: 12,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.person_add, color: Colors.white, size: 15),
-            ),
+            () {
+              final isLoading = controller.isLoading.value;
+              return GestureDetector(
+                onTap: isLoading ? null : controller.signUp,
+                child: Container(
+                  height: 52,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    gradient: const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xFFF38B3B), // light orange
+                        Color(0xFFDD2914), // deep orange/red
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.orange.withOpacity(0.45),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: isLoading
+                        ? const SizedBox(
+                            height: 22,
+                            width: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          )
+                        : const Text(
+                            "Create Account",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                  ),
+                ),
+              );
+            },
           ),
 
           Spacing.h(20),

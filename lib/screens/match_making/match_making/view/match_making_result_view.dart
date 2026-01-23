@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 class MatchMakingResultView extends StatefulWidget {
   const MatchMakingResultView({super.key});
@@ -30,8 +31,8 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
   @override
   void initState() {
     super.initState();
-    // Show matching.png for 3 seconds, then show report
-    Future.delayed(const Duration(seconds: 3), () {
+    // Show matching animation for 3 seconds, then show report
+    Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
         setState(() {
           _showMatchingImage = false;
@@ -94,19 +95,17 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
     
     final response = _currentResponse!;
     
-    // Show matching.png first
+    // Show matching animation first
     if (_showMatchingImage) {
       return Scaffold(
         backgroundColor: Colors.white,
         body: Center(
-          child: Image.asset(
-            'assets/app/matching.png',
+          child: Lottie.asset(
+            'assets/app/match_making_kundli.json',
+            fit: BoxFit.contain,
             width: double.infinity,
             height: double.infinity,
-            fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) {
-              return SizedBox.shrink();
-            },
+            repeat: true,
           ),
         ),
       );

@@ -2,13 +2,16 @@ import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/login/login/service/login_service.dart';
+import 'package:astrobharataiuser/screens/otp/service/otp_service.dart';
 import 'package:country_code_picker/country_code_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class LoginController extends BaseController {
   final LoginService _loginService = LoginService();
+  final OtpService _otpService = OtpService();
   late final TextEditingController phoneController;
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
@@ -82,17 +85,44 @@ class LoginController extends BaseController {
             return;
           }
         } else {
+          // Phone login - no password required, send OTP and navigate to OTP page
           final phoneNumber = phoneController.text.trim();
           final countryCode = selectedCountryCode.value.dialCode ?? '+91';
           identifier = '$countryCode$phoneNumber';
-          // Password is now required for phone login too (backend will handle it)
-          if (password.isEmpty) {
-            showErrorMessage(title: "Error", message: "Password is required");
-            setLoadingState(false);
-            return;
+          
+          if (kDebugMode) {
+            print('Login: Phone login - sending OTP to: $identifier');
           }
+          
+          // Send OTP first
+          final otpSent = await _otpService.sendOtp(phone: identifier);
+          
+          if (otpSent) {
+            if (kDebugMode) {
+              print('Login: OTP sent successfully, navigating to OTP page');
+            }
+            
+          // Navigate to OTP page - use offNamed to replace current route
+          await Future.delayed(const Duration(milliseconds: 300));
+          Get.offNamed(
+            AppRoutes.otp,
+            arguments: {
+              'destination': identifier,
+              'userType': 'USER',
+              'isRegistration': false, // This is login, not registration
+            },
+          );
+          } else {
+            if (kDebugMode) {
+              print('Login: Failed to send OTP');
+            }
+            // Error message already shown by OtpService
+          }
+          setLoadingState(false);
+          return;
         }
 
+        // Email login - password is required
         final loginModel = await _loginService.login(identifier, password);
 
         if (loginModel != null) {
@@ -100,10 +130,11 @@ class LoginController extends BaseController {
           UserData().addLoginData(loginModel.toJson());
 
           showSuccessMessage(title: "Success", message: "Login successful!");
-          await pushRoute(
-            AppRoutes.otp,
-            arguments: {'destination': identifier},
-          );
+          
+          // Navigate directly to dashboard (email login doesn't require OTP)
+          await Future.delayed(const Duration(milliseconds: 500));
+          // Use offAllNamed to clear navigation stack and go to dashboard
+          Get.offAllNamed(AppRoutes.userDashboard);
         }
       }
     } catch (e) {
@@ -165,6 +196,10 @@ class LoginController extends BaseController {
   }
 
   String? validatePassword(String? value) {
+    // Password is only required for email login
+    if (!isEmailMode.value) {
+      return null; // Skip validation for phone login
+    }
     if (value == null || value.isEmpty) {
       return 'Please enter your password';
     }

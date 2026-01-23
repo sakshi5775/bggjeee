@@ -2,20 +2,27 @@ import 'dart:async';
 
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
-import 'package:astrobharataiuser/core/enums/user_role.dart';
-import 'package:astrobharataiuser/core/services/role_navigation_service.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/otp/service/otp_service.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
 class OTPController extends BaseController {
-  final int otpLength = 4;
+  final int otpLength = 6; // Updated to 6 digits as per backend
   late final TextEditingController otpTextController;
   final RxBool isSubmitting = false.obs;
   final RxInt secondsRemaining = 60.obs;
   Timer? _timer;
+  final OtpService _otpService = OtpService();
 
   RxString get maskedDestination =>
       (Get.arguments?['destination'] ?? '').toString().obs;
+  
+  RxString get userType =>
+      (Get.arguments?['userType'] ?? 'USER').toString().obs;
+  
+  RxBool get isRegistration =>
+      (Get.arguments?['isRegistration'] ?? false).obs;
 
   @override
   void onInit() {
@@ -44,34 +51,143 @@ class OTPController extends BaseController {
   }
 
   Future<void> resendOtp() async {
-    // TODO: integrate API to resend OTP
-    showSuccessMessage(title: 'OTP Sent', message: 'A new code has been sent.');
-    _startTimer();
+    try {
+      setLoadingState(true);
+      final identifier = maskedDestination.value;
+      
+      if (identifier.isEmpty) {
+        showErrorMessage(
+          title: 'Error',
+          message: 'Unable to resend OTP. Please try again.',
+        );
+        setLoadingState(false);
+        return;
+      }
+
+      final success = await _otpService.resendOtp(identifier: identifier);
+      
+      if (success) {
+        showSuccessMessage(
+          title: 'OTP Sent',
+          message: 'A new code has been sent.',
+        );
+        _startTimer();
+      } else {
+        // Check if registration is already completed
+        // If user is already logged in, navigate to dashboard
+        final userData = UserData();
+        if (userData.accessToken != null && userData.accessToken!.isNotEmpty) {
+          showSuccessMessage(
+            title: 'Already Verified',
+            message: 'Your registration is already complete. Redirecting...',
+          );
+          await Future.delayed(const Duration(milliseconds: 500));
+          Get.offAllNamed(AppRoutes.userDashboard);
+        }
+      }
+    } catch (e) {
+      print('Resend OTP error: $e');
+      // Check if user is already logged in
+      final userData = UserData();
+      if (userData.accessToken != null && userData.accessToken!.isNotEmpty) {
+        showSuccessMessage(
+          title: 'Already Verified',
+          message: 'Your registration is already complete. Redirecting...',
+        );
+        await Future.delayed(const Duration(milliseconds: 500));
+        Get.offAllNamed(AppRoutes.userDashboard);
+      } else {
+        showErrorMessage(
+          title: 'Error',
+          message: 'Failed to resend OTP. Please try again.',
+        );
+      }
+    } finally {
+      setLoadingState(false);
+    }
   }
 
   Future<void> submitOtp(String code) async {
-    if (code.length != otpLength) return;
+    if (code.length != otpLength) {
+      showErrorMessage(
+        title: 'Invalid OTP',
+        message: 'Please enter a valid $otpLength-digit OTP.',
+      );
+      return;
+    }
+    
     isSubmitting.value = true;
+    setLoadingState(true);
+    
     try {
-      await Future.delayed(const Duration(milliseconds: 800));
-      // TODO: Verify OTP via API
-      showSuccessMessage(
-        title: 'Verified',
-        message: 'Verification successful.',
+      final identifier = maskedDestination.value;
+      final userTypeValue = userType.value;
+      
+      if (identifier.isEmpty) {
+        showErrorMessage(
+          title: 'Error',
+          message: 'Unable to verify OTP. Please try again.',
+        );
+        isSubmitting.value = false;
+        setLoadingState(false);
+        return;
+      }
+
+      final loginModel = await _otpService.verifyOtp(
+        identifier: identifier,
+        otp: code,
+        userType: userTypeValue,
       );
 
-      // Navigate based on user role
-      final userData = UserData().getLoginData.user?.userType;
-      final userType = UserRole.fromString(userData ?? 'USER').value.toString();
-      RoleNavigationService.navigateToDashboard(userType);
+      if (loginModel != null) {
+        try {
+          // Save user data and tokens
+          UserData().addLoginData(loginModel.toJson());
+          
+          // Show success message (don't await to avoid blocking)
+          showSuccessMessage(
+            title: 'Verified',
+            message: isRegistration.value 
+                ? 'Registration completed successfully!'
+                : 'Verification successful.',
+          );
+
+          // Navigate directly to dashboard
+          await Future.delayed(const Duration(milliseconds: 300));
+          Get.offAllNamed(AppRoutes.userDashboard);
+        } catch (navError) {
+          // If navigation fails, still try to navigate
+          print('Navigation error: $navError');
+          Get.offAllNamed(AppRoutes.userDashboard);
+        }
+      } else {
+        // Error message is already shown by the service
+        isSubmitting.value = false;
+      }
     } catch (e) {
-      showErrorMessage(title: 'Error', message: 'Verification failed.');
-    } finally {
+      print('OTP verification error: $e');
+      // Only show error if we haven't already saved user data
+      final userData = UserData();
+      if (userData.accessToken == null || userData.accessToken!.isEmpty) {
+        showErrorMessage(
+          title: 'Error',
+          message: 'Verification failed. Please try again.',
+        );
+      } else {
+        // User data is saved, just navigate
+        Get.offAllNamed(AppRoutes.userDashboard);
+      }
       isSubmitting.value = false;
+    } finally {
+      setLoadingState(false);
     }
   }
 
   void changeNumber() {
-    onBack();
+    Get.offNamed(AppRoutes.login);
+  }
+  
+  void goBack() {
+    Get.offNamed(AppRoutes.login);
   }
 }

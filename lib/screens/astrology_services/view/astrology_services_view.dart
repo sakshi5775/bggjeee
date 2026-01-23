@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -418,24 +419,14 @@ class AstrologyServicesView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: AppPaddings.symmetric(h: 20, v: 20),
-              decoration: BoxDecoration(
-                gradient: AppColors.orangeGradient,
-                borderRadius: BorderRadius.circular(15.r),
-              ),
-              child: Image.asset(
-                category['icon'] as String,
-                height: 20.h,
-                width: 20.w,
-              ),
-            ),
+            _buildCategoryIcon(category['icon'] as String),
             Spacing.h(6),
             Flexible(
               child: AutoTranslateText(
                 category['name'] as String,
                 style: MyTextTheme.smallBCN.copyWith(
                   color: const Color(0xFF5F2221),
+                  fontSize: 11.sp,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -446,6 +437,61 @@ class AstrologyServicesView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildCategoryIcon(String iconUrl) {
+    // Check if it's a network URL or asset path
+    if (iconUrl.startsWith('http://') || iconUrl.startsWith('https://')) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(15.r),
+        child: CachedNetworkImage(
+          imageUrl: iconUrl,
+          height: 60.h,
+          width: 60.w,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => SizedBox(
+            height: 60.h,
+            width: 60.w,
+            child: Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.deepOrange,
+              ),
+            ),
+          ),
+          errorWidget: (context, url, error) => Container(
+            height: 60.h,
+            width: 60.w,
+            color: Colors.grey.withOpacity(0.3),
+            child: Icon(
+              Icons.image_not_supported,
+              size: 30.w,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+      );
+    } else {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(15.r),
+        child: Image.asset(
+          iconUrl,
+          height: 60.h,
+          width: 60.w,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => Container(
+            height: 60.h,
+            width: 60.w,
+            color: Colors.grey.withOpacity(0.3),
+            child: Icon(
+              Icons.image_not_supported,
+              size: 30.w,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   void _navigateToCategory(

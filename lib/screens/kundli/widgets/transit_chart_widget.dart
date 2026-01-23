@@ -2,13 +2,13 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/consult_astrologer_card.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
 class TransitChartWidget extends StatelessWidget {
@@ -45,15 +45,14 @@ class TransitChartWidget extends StatelessWidget {
       final transitTime = DateFormat('HH:mm').format(now);
 
       return SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Auto-calculated label
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(12.w),
-              margin: EdgeInsets.only(bottom: 12.h),
+              margin: EdgeInsets.only(bottom: 10.h),
               decoration: BoxDecoration(
                 color: "#ed6f30".toColor().withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12.r),
@@ -76,11 +75,6 @@ class TransitChartWidget extends StatelessWidget {
                       size: 20.w,
                     ),
                   ),
-                  // Icon(
-                  //   Icons.info_outline,
-                  //   color: "#ed6f30".toColor(),
-                  //   size: 20.w,
-                  // ),
                   Spacing.w(8),
                   Expanded(
                     child: Column(
@@ -106,35 +100,33 @@ class TransitChartWidget extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Chart Container
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16.r),
+                borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withOpacity(0.06),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
+                border: Border.all(
+                  color: "#ed6f30".toColor().withOpacity(0.2),
+                  width: 1,
+                ),
               ),
-              padding: EdgeInsets.all(16.w),
+              padding: EdgeInsets.all(10.w),
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  final chartSize = constraints.maxWidth - 32.w;
+                  final chartSize = constraints.maxWidth - 20.w;
                   return Center(
-                    child: Container(
-                      width: chartSize,
-                      height: chartSize,
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.r),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.r),
+                      child: SizedBox(
+                        width: chartSize,
+                        height: chartSize,
                         child: SvgPicture.string(
                           svgData,
                           width: chartSize,
@@ -142,12 +134,11 @@ class TransitChartWidget extends StatelessWidget {
                           fit: BoxFit.contain,
                           alignment: Alignment.center,
                           placeholderBuilder: (context) => Container(
-                            width: chartSize,
-                            height: chartSize,
-                            color: Colors.grey.withOpacity(0.1),
+                            color: Colors.grey.withOpacity(0.08),
                             child: Center(
                               child: CircularProgressIndicator(
                                 color: "#ed6f30".toColor(),
+                                strokeWidth: 2,
                               ),
                             ),
                           ),
@@ -159,8 +150,9 @@ class TransitChartWidget extends StatelessWidget {
                 },
               ),
             ),
-
-            Spacing.h(16),
+            Spacing.h(12),
+            const ConsultAstrologerCard(),
+            Spacing.h(12),
           ],
         ),
       );

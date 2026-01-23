@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/networkException/exception.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
+import 'package:astrobharataiuser/services/astrologer_cache_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
@@ -10,6 +11,27 @@ class LiveStreamService {
 
   // Get live streams
   Future<LiveStreamResponse?> getLiveStreams({
+    int page = 1,
+    int limit = 20,
+    bool useCache = true,
+  }) async {
+    // Try cache first (only for page 1)
+    if (useCache && page == 1) {
+      final cached = AstrologerCacheService.getCachedLiveStreams();
+      if (cached != null) {
+        debugPrint('Using cached live streams data');
+        // Try to fetch fresh data in background
+        _fetchAndCacheLiveStreams();
+        return cached;
+      }
+    }
+    
+    // Fetch from API
+    return await _fetchAndCacheLiveStreams(page: page, limit: limit);
+  }
+  
+  /// Internal method to fetch and cache live streams
+  Future<LiveStreamResponse?> _fetchAndCacheLiveStreams({
     int page = 1,
     int limit = 20,
   }) async {
@@ -27,12 +49,42 @@ class LiveStreamService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.body['success'] == true) {
-          return LiveStreamResponse.fromJson(response.body);
+          final liveStreamResponse = LiveStreamResponse.fromJson(response.body);
+          
+          // Cache only page 1
+          if (page == 1) {
+            await AstrologerCacheService.saveLiveStreams(
+              liveStreamResponse,
+              rawJson: response.body,
+            );
+          }
+          
+          return liveStreamResponse;
         }
       }
+      
+      // If API fails, try to return cached data
+      if (page == 1) {
+        final cached = AstrologerCacheService.getCachedLiveStreams();
+        if (cached != null) {
+          debugPrint('API failed, using cached live streams data');
+          return cached;
+        }
+      }
+      
       return null;
     } catch (e) {
       debugPrint('Error fetching live streams: $e');
+      
+      // On error, try to return cached data
+      if (page == 1) {
+        final cached = AstrologerCacheService.getCachedLiveStreams();
+        if (cached != null) {
+          debugPrint('Error occurred, using cached live streams data');
+          return cached;
+        }
+      }
+      
       return null;
     }
   }
@@ -141,6 +193,27 @@ class LiveStreamService {
   Future<UpcomingStreamsResponse?> getUpcomingStreams({
     int page = 1,
     int limit = 20,
+    bool useCache = true,
+  }) async {
+    // Try cache first (only for page 1)
+    if (useCache && page == 1) {
+      final cached = AstrologerCacheService.getCachedUpcomingStreams();
+      if (cached != null) {
+        debugPrint('Using cached upcoming streams data');
+        // Try to fetch fresh data in background
+        _fetchAndCacheUpcomingStreams();
+        return cached;
+      }
+    }
+    
+    // Fetch from API
+    return await _fetchAndCacheUpcomingStreams(page: page, limit: limit);
+  }
+  
+  /// Internal method to fetch and cache upcoming streams
+  Future<UpcomingStreamsResponse?> _fetchAndCacheUpcomingStreams({
+    int page = 1,
+    int limit = 20,
   }) async {
     try {
       final query = <String, dynamic>{
@@ -156,12 +229,42 @@ class LiveStreamService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.body['success'] == true) {
-          return UpcomingStreamsResponse.fromJson(response.body);
+          final upcomingResponse = UpcomingStreamsResponse.fromJson(response.body);
+          
+          // Cache only page 1
+          if (page == 1) {
+            await AstrologerCacheService.saveUpcomingStreams(
+              upcomingResponse,
+              rawJson: response.body,
+            );
+          }
+          
+          return upcomingResponse;
         }
       }
+      
+      // If API fails, try to return cached data
+      if (page == 1) {
+        final cached = AstrologerCacheService.getCachedUpcomingStreams();
+        if (cached != null) {
+          debugPrint('API failed, using cached upcoming streams data');
+          return cached;
+        }
+      }
+      
       return null;
     } catch (e) {
       debugPrint('Error fetching upcoming streams: $e');
+      
+      // On error, try to return cached data
+      if (page == 1) {
+        final cached = AstrologerCacheService.getCachedUpcomingStreams();
+        if (cached != null) {
+          debugPrint('Error occurred, using cached upcoming streams data');
+          return cached;
+        }
+      }
+      
       return null;
     }
   }

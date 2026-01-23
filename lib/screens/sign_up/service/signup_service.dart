@@ -60,8 +60,8 @@ class SignUpService with ApiHelperMixin {
 
             final signUpModel = SignUpModel.fromJson(jsonData);
             
-            // Verify success
-            if (signUpModel.success == true && signUpModel.accessToken != null) {
+            // Verify success - registration now returns OTP info instead of tokens
+            if (signUpModel.success == true && signUpModel.user != null) {
               return signUpModel;
             } else {
               showErrorMessage(

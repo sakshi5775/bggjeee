@@ -5,7 +5,6 @@ import 'package:astrobharataiuser/data_model/category_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/live_stream_service.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
-import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,30 +16,27 @@ class AstrologyServicesController extends GetxController {
   final List<Map<String, dynamic>> categories = [
     {
       'name': 'Daily Horoscope',
-      'icon':
-          AppConstant.consultationCategoryHoroScopes, // Cancer zodiac symbol
+      'icon': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/DailyHoroscope.png',
     },
     {
       'name': 'Kundli Analysis',
-      'icon':
-          AppConstant.consultationCategoryKundli, // Geometric star/sun symbol
+      'icon': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/kundali.jpeg',
     },
     {
       'name': 'Compatibility',
-      'icon': AppConstant.consultationCategoryCompatibility, // Heart symbol
+      'icon': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/Compatibility.png',
     },
     {
       'name': 'Tarot Reading',
-      'icon': AppConstant.consultationCategoryTarot, // Tarot card symbol
+      'icon': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/TarotReading.png',
     },
     {
       'name': 'Numerology',
-      'icon': AppConstant.consultationCategoryNumerology, // 9+ symbol
+      'icon': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/num.jpeg',
     },
     {
       'name': 'Remedies',
-      'icon':
-          AppConstant.consultationCategoryRemedies, // Mortar and pestle symbol
+      'icon': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/Remediess.png',
     },
   ];
   // Reactive variables

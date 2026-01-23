@@ -2,14 +2,12 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/consult_astrologer_card.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class AshtakvargaChartWidget extends StatelessWidget {
   final KundliResultController controller;
@@ -65,11 +63,10 @@ class AshtakvargaChartWidget extends StatelessWidget {
       }
 
       return SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
             AutoTranslateText(
               'Ashtakvarga Chart',
               style: MyTextTheme.largeBCB.copyWith(
@@ -77,10 +74,7 @@ class AshtakvargaChartWidget extends StatelessWidget {
                 fontSize: 18.sp,
               ),
             ),
-
-            Spacing.h(16),
-
-            // Chart Container
+            Spacing.h(12),
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
@@ -88,46 +82,52 @@ class AshtakvargaChartWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withOpacity(0.06),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
+                border: Border.all(
+                  color: "#ed6f30".toColor().withOpacity(0.2),
+                  width: 1,
+                ),
               ),
+              padding: EdgeInsets.all(10.w),
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  // Make chart responsive - use available width but maintain aspect ratio
-                  final chartSize = constraints.maxWidth - 32.w;
-                  return Container(
-                    width: chartSize,
-                    height: chartSize,
-                    padding: EdgeInsets.all(16.w),
+                  final chartSize = constraints.maxWidth - 20.w;
+                  return Center(
                     child: Builder(
                       builder: (context) {
                         try {
-                          return SvgPicture.string(
-                            svgData,
-                            width: chartSize - 32.w,
-                            height: chartSize - 32.w,
-                            fit: BoxFit.contain,
-                            placeholderBuilder: (context) => Container(
-                              width: chartSize - 32.w,
-                              height: chartSize - 32.w,
-                              color: Colors.grey.withOpacity(0.1),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: "#ed6f30".toColor(),
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(8.r),
+                            child: SizedBox(
+                              width: chartSize,
+                              height: chartSize,
+                              child: SvgPicture.string(
+                                svgData,
+                                width: chartSize,
+                                height: chartSize,
+                                fit: BoxFit.contain,
+                                placeholderBuilder: (context) => Container(
+                                  color: Colors.grey.withOpacity(0.08),
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: "#ed6f30".toColor(),
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
                                 ),
+                                semanticsLabel: 'Ashtakvarga Chart',
                               ),
                             ),
-                            semanticsLabel: 'Ashtakvarga Chart',
                           );
                         } catch (e) {
                           debugPrint('Error rendering SVG: $e');
-                          return Container(
-                            width: chartSize - 32.w,
-                            height: chartSize - 32.w,
-                            color: Colors.grey.withOpacity(0.1),
+                          return SizedBox(
+                            width: chartSize,
+                            height: chartSize,
                             child: Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -155,6 +155,9 @@ class AshtakvargaChartWidget extends StatelessWidget {
                 },
               ),
             ),
+            Spacing.h(12),
+            const ConsultAstrologerCard(),
+            Spacing.h(12),
           ],
         ),
       );

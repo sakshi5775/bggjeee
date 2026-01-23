@@ -5,6 +5,11 @@ class EndPoints {
   static const String refreshToken = 'auth/refresh';
   static const String logout = 'auth/logout';
   static const String logoutAll = 'auth/logout-all';
+  static const String sendOtp = 'auth/send-otp';
+  static const String verifyOtp = 'auth/verify-otp';
+  static const String resendOtp = 'auth/resend-otp';
+  static const String checkExists = 'auth/check-exists';
+  static const String profile = 'auth/profile';
 
   /// blogs
   static const String blogs = 'blogs/api/blogs';

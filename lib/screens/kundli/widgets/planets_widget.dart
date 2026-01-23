@@ -1,394 +1,346 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
-import 'package:astrobharataiuser/screens/kundli/controller/planets_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class PlanetsWidget extends StatelessWidget {
-  final PlanetsController controller;
+  /// Controller with [planetDetailsData] (e.g. PlanetsController or KundliResultController).
+  final dynamic controller;
 
-  const PlanetsWidget({super.key, required this.controller});
+  /// When true, only the content column is built (no scroll). Use when embedded
+  /// e.g. below Lagna actions slider.
+  final bool embedded;
+
+  const PlanetsWidget({
+    super.key,
+    required this.controller,
+    this.embedded = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       final data = controller.planetDetailsData.value;
+      final isLoading = controller.isLoadingPlanetDetails.value;
       if (data == null) {
+        if (embedded && isLoading) {
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 24.w,
+                  height: 24.w,
+                  child: CircularProgressIndicator(
+                    color: "#ed6f30".toColor(),
+                    strokeWidth: 2,
+                  ),
+                ),
+                SizedBox(width: 10.w),
+                AutoTranslateText(
+                  'Loading...',
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: "#6F221E".toColor().withOpacity(0.7),
+                    fontSize: 12.sp,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
         return Center(
-          child: AutoTranslateText(
-            'No data available',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+          child: Padding(
+            padding: EdgeInsets.all(embedded ? 24.w : 0),
+            child: AutoTranslateText(
+              'No data available',
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: "#6F221E".toColor().withOpacity(0.7),
+              ),
             ),
           ),
         );
       }
 
-      return SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Planets Section
-            _buildPlanetsSection(data),
-
-            Spacing.h(20),
-
-            // Lucky Things Section
-            _buildLuckyThingsSection(data),
-
-            Spacing.h(20),
-
-            // Birth Details Section
-            _buildBirthDetailsSection(data),
-
-            Spacing.h(20),
-
-            // Panchang Section
-            if (data['panchang'] != null)
-              _buildPanchangSection(data['panchang'] as Map<String, dynamic>),
-
-            if (data['panchang'] != null) Spacing.h(20),
-
-            // Ghatka Chakra Section
-            if (data['ghatka_chakra'] != null)
-              _buildGhatkaChakraSection(
-                data['ghatka_chakra'] as Map<String, dynamic>,
-              ),
-
-            if (data['ghatka_chakra'] != null) Spacing.h(20),
-
-            // Dasa Section
-            _buildDasaSection(data),
-
-            Spacing.h(20),
+      final content = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPlanetsSection(data),
+          Spacing.h(6),
+          _buildLuckyThingsSection(data),
+          Spacing.h(6),
+          _buildBirthDetailsSection(data),
+          Spacing.h(6),
+          if (data['panchang'] != null) ...[
+            _buildPanchangSection(data['panchang'] as Map<String, dynamic>),
+            Spacing.h(6),
           ],
-        ),
+          if (data['ghatka_chakra'] != null) ...[
+            _buildGhatkaChakraSection(
+              data['ghatka_chakra'] as Map<String, dynamic>,
+            ),
+            Spacing.h(6),
+          ],
+          _buildDasaSection(data),
+          if (!embedded) Spacing.h(6),
+        ],
+      );
+
+      if (embedded) {
+        return content;
+      }
+      return SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+        child: content,
       );
     });
   }
 
   Widget _buildPlanetsSection(Map<String, dynamic> data) {
-    final planets = <String, Map<String, dynamic>>{};
-
-    // Extract planets (0-9)
+    final planets = <Map<String, dynamic>>[];
     for (int i = 0; i <= 9; i++) {
       final planetKey = i.toString();
       if (data[planetKey] != null) {
-        planets[planetKey] = data[planetKey] as Map<String, dynamic>;
+        planets.add(data[planetKey] as Map<String, dynamic>);
       }
     }
+    if (planets.isEmpty) return const SizedBox.shrink();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: "#FFFFFF".toColor(),
-            border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Container(
-                    height: 50.h,
-                    width: 50.w,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
-                      ),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Icon(
-                      Icons.star_outline_outlined,
-                      color: "#FFFFFF".toColor(),
-                      size: 24.w,
-                    ),
-                  ),
-                  Spacing.w(12),
-                  _buildSectionTitle('Planetary Positions'),
-                ],
-              ),
-            ],
-          ),
-        ),
-
-        Spacing.h(12),
-        ...planets.entries.map((entry) {
-          return Padding(
-            padding: EdgeInsets.only(bottom: 12.h),
-            child: _buildPlanetCard(entry.value),
-          );
-        }).toList(),
-      ],
+    return _sectionCard(
+      title: 'Planetary Positions',
+      icon: Icons.star_outline_rounded,
+      compact: true,
+      child: _buildPlanetsTable(planets),
     );
   }
 
-  Widget _buildPlanetCard(Map<String, dynamic> planet) {
+  static const _planetHeaders = [
+    'Planet',
+    'Zodiac',
+    'House',
+    'Nakshatra',
+    'Nak Lord',
+    'Pada',
+    'Zod Lord',
+    'L°',
+    'G°',
+    'Prog%',
+    'Set',
+    'Avastha',
+    'Lord St',
+    'Combust',
+  ];
+
+  Widget _buildPlanetsTable(List<Map<String, dynamic>> planets) {
+    final oc = "#ed6f30".toColor();
+    final maroon = "#6F221E".toColor();
+    final headerStyle = MyTextTheme.smallBCB.copyWith(
+      color: Colors.white,
+      fontWeight: FontWeight.w600,
+      fontSize: 9.sp,
+    );
+    final cellStyle = MyTextTheme.smallBCN.copyWith(
+      color: maroon,
+      fontSize: 9.sp,
+    );
+    const n = 14;
+    final columnWidths = <int, TableColumnWidth>{
+      for (int i = 0; i < n; i++) i: FixedColumnWidth(52.w),
+    };
+    columnWidths[0] = FixedColumnWidth(64.w);  // Planet
+    columnWidths[3] = FixedColumnWidth(58.w);  // Nakshatra
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Table(
+        columnWidths: columnWidths,
+        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        children: [
+          TableRow(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: ["#FF8A3D".toColor(), oc],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+            ),
+            children: [
+              for (int c = 0; c < n; c++)
+                _tableCell(
+                  _planetHeaders[c],
+                  headerStyle,
+                  align: c == 0 ? TextAlign.left : TextAlign.center,
+                ),
+            ],
+          ),
+          for (int i = 0; i < planets.length; i++) ...[
+            TableRow(
+              decoration: BoxDecoration(
+                color: i.isOdd ? oc.withOpacity(0.04) : Colors.transparent,
+              ),
+              children: _planetCells(planets[i], cellStyle),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _planetCells(Map<String, dynamic> p, TextStyle cellStyle) {
+    final av = (p['basic_avastha']?.toString() ?? '').trim().isEmpty
+        ? '–'
+        : (p['basic_avastha']?.toString() ?? '–');
+    final ls = (p['lord_status']?.toString() ?? '').trim().isEmpty
+        ? '–'
+        : (p['lord_status']?.toString() ?? '–');
+    final comb = (p['is_combust'] == null || p['is_combust'] == '-')
+        ? '–'
+        : (p['is_combust']?.toString() ?? '–');
+
+    return [
+      _tableCell(
+        p['full_name']?.toString() ?? p['name']?.toString() ?? '–',
+        cellStyle,
+        align: TextAlign.left,
+      ),
+      _tableCell(p['zodiac']?.toString() ?? '–', cellStyle),
+      _tableCell(p['house']?.toString() ?? '–', cellStyle),
+      _tableCell(p['nakshatra']?.toString() ?? '–', cellStyle),
+      _tableCell(p['nakshatra_lord']?.toString() ?? '–', cellStyle),
+      _tableCell(p['nakshatra_pada']?.toString() ?? '–', cellStyle),
+      _tableCell(p['zodiac_lord']?.toString() ?? '–', cellStyle),
+      _tableCell(_formatDegree(p['local_degree']), cellStyle),
+      _tableCell(_formatDegree(p['global_degree']), cellStyle),
+      _tableCell('${_formatPercentage(p['progress_in_percentage'])}%', cellStyle),
+      _tableCell(p['is_planet_set']?.toString() ?? '–', cellStyle),
+      _tableCell(av, cellStyle),
+      _tableCell(ls, cellStyle),
+      _tableCell(comb, cellStyle),
+    ];
+  }
+
+  Widget _tableCell(String text, TextStyle style, {TextAlign align = TextAlign.center}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.h),
+      child: AutoTranslateText(
+        text,
+        style: style,
+        textAlign: align,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  String _formatPercentage(dynamic v) {
+    if (v == null) return '–';
+    if (v is num) return v.toStringAsFixed(2);
+    return v.toString();
+  }
+
+  Widget _sectionCard({
+    required String title,
+    required IconData icon,
+    required Widget child,
+    bool compact = false,
+  }) {
+    final pad = compact ? 6.w : 10.w;
     return Container(
-      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: "#ed6f30".toColor().withOpacity(0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Planet Name
-          Row(
-            children: [
-              AutoTranslateText(
-                planet['full_name']?.toString() ??
-                    planet['name']?.toString() ??
-                    'Unknown',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
-                  fontSize: 14.sp,
-                ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: pad, vertical: compact ? 6.h : 8.h),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: ["#FF8A3D".toColor(), "#ed6f30".toColor()],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
               ),
-              Spacing.w(8),
-              if (planet['name'] != null)
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                  decoration: BoxDecoration(
-                    color: "#ed6f30".toColor().withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(4.r),
-                  ),
-                  child: AutoTranslateText(
-                    planet['name'].toString(),
-                    style: MyTextTheme.smallBCB.copyWith(
-                      color: "#ed6f30".toColor(),
-                    ),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, size: compact ? 14.w : 16.w, color: Colors.white),
+                Spacing.w(6),
+                AutoTranslateText(
+                  title,
+                  style: MyTextTheme.smallBCB.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: compact ? 11.sp : 12.sp,
                   ),
                 ),
-            ],
-          ),
-          Spacing.h(12),
-
-          // Planet Details Grid
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isWide = constraints.maxWidth > 600;
-              return GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: isWide ? 3 : 2,
-                childAspectRatio: isWide ? 2.5 : 2.2,
-                crossAxisSpacing: 8.w,
-                mainAxisSpacing: 8.h,
-                children: [
-                  _buildDetailItem(
-                    'Zodiac',
-                    planet['zodiac']?.toString() ?? '-',
-                  ),
-                  _buildDetailItem('House', planet['house']?.toString() ?? '-'),
-                  _buildDetailItem(
-                    'Nakshatra',
-                    planet['nakshatra']?.toString() ?? '-',
-                  ),
-                  _buildDetailItem(
-                    'Nakshatra Lord',
-                    planet['nakshatra_lord']?.toString() ?? '-',
-                  ),
-                  _buildDetailItem(
-                    'Nakshatra Pada',
-                    planet['nakshatra_pada']?.toString() ?? '-',
-                  ),
-                  _buildDetailItem(
-                    'Zodiac Lord',
-                    planet['zodiac_lord']?.toString() ?? '-',
-                  ),
-                  _buildDetailItem(
-                    'Local Degree',
-                    _formatDegree(planet['local_degree']),
-                  ),
-                  _buildDetailItem(
-                    'Global Degree',
-                    _formatDegree(planet['global_degree']),
-                  ),
-                  _buildDetailItem(
-                    'Progress',
-                    '${_formatPercentage(planet['progress_in_percentage'])}%',
-                  ),
-                  if (planet['basic_avastha'] != null &&
-                      planet['basic_avastha'].toString().trim().isNotEmpty)
-                    _buildDetailItem(
-                      'Basic Avastha',
-                      planet['basic_avastha']?.toString() ?? '-',
-                    ),
-                  if (planet['lord_status'] != null &&
-                      planet['lord_status'].toString().trim().isNotEmpty)
-                    _buildDetailItem(
-                      'Lord Status',
-                      planet['lord_status']?.toString() ?? '-',
-                    ),
-                  _buildDetailItem(
-                    'Is Planet Set',
-                    planet['is_planet_set']?.toString() ?? '-',
-                  ),
-                  if (planet['is_combust'] != null &&
-                      planet['is_combust'] != '-')
-                    _buildDetailItem(
-                      'Is Combust',
-                      planet['is_combust']?.toString() ?? '-',
-                    ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailItem(String label, String value) {
-    return Container(
-      padding: EdgeInsets.all(8.w),
-      decoration: BoxDecoration(
-        color: "#FF8C42".toColor().withOpacity(0.05),
-        border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AutoTranslateText(
-            label,
-            style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              ],
             ),
           ),
-          Spacing.h(4),
-          AutoTranslateText(
-            value,
-            style: MyTextTheme.smallBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.w600,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          Padding(padding: EdgeInsets.all(pad), child: child),
         ],
       ),
     );
   }
 
   Widget _buildLuckyThingsSection(Map<String, dynamic> data) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: "#FFFFFF".toColor(),
-            border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Container(
-                    height: 50.h,
-                    width: 50.w,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
-                      ),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Icon(
-                      Icons.star_outline_outlined,
-                      color: "#FFFFFF".toColor(),
-                      size: 24.w,
-                    ),
-                  ),
-                  Spacing.w(12),
-                  _buildSectionTitle('Lucky Things'),
-                ],
-              ),
-            ],
-          ),
-        ),
+    final items = <Widget>[];
+    if (data['lucky_gem'] != null) items.add(_buildLuckyItem('Lucky Gem', data['lucky_gem']));
+    if (data['lucky_num'] != null) items.add(_buildLuckyItem('Lucky Number', data['lucky_num']));
+    if (data['lucky_colors'] != null) items.add(_buildLuckyItem('Lucky Colors', data['lucky_colors']));
+    if (data['lucky_letters'] != null) items.add(_buildLuckyItem('Lucky Letters', data['lucky_letters']));
+    if (data['lucky_name_start'] != null) items.add(_buildLuckyItem('Lucky Name Start', data['lucky_name_start']));
+    if (items.isEmpty) return const SizedBox.shrink();
 
-        // _buildSectionTitle('Lucky Things'),
-        Spacing.h(12),
-        Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (data['lucky_gem'] != null)
-                _buildLuckyItem('Lucky Gem', data['lucky_gem']),
-              if (data['lucky_num'] != null)
-                _buildLuckyItem('Lucky Number', data['lucky_num']),
-              if (data['lucky_colors'] != null)
-                _buildLuckyItem('Lucky Colors', data['lucky_colors']),
-              if (data['lucky_letters'] != null)
-                _buildLuckyItem('Lucky Letters', data['lucky_letters']),
-              if (data['lucky_name_start'] != null)
-                _buildLuckyItem('Lucky Name Start', data['lucky_name_start']),
-            ],
-          ),
-        ),
-      ],
+    return _sectionCard(
+      title: 'Lucky Things',
+      icon: Icons.auto_awesome,
+      compact: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: items,
+      ),
     );
   }
 
   Widget _buildLuckyItem(String label, dynamic value) {
-    String displayValue = '';
-    if (value is List) {
-      displayValue = value.join(', ');
-    } else {
-      displayValue = value.toString();
-    }
-
+    final displayValue = value is List ? value.join(', ') : value.toString();
     return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.only(bottom: 4.h),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 120.w,
+            width: 88.w,
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCB.copyWith(
                 color: "#6F221E".toColor().withOpacity(0.7),
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
+                fontSize: 9.sp,
               ),
             ),
           ),
           Expanded(
             child: AutoTranslateText(
               displayValue,
-              style: MyTextTheme.smallBCN.copyWith(color: "#6F221E".toColor()),
+              style: MyTextTheme.smallBCN.copyWith(
+                color: "#6F221E".toColor(),
+                fontSize: 9.sp,
+              ),
             ),
           ),
         ],
@@ -397,377 +349,119 @@ class PlanetsWidget extends StatelessWidget {
   }
 
   Widget _buildBirthDetailsSection(Map<String, dynamic> data) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: "#FFFFFF".toColor(),
-            border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Container(
-                    height: 50.h,
-                    width: 50.w,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
-                      ),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Icon(
-                      Icons.info_outline,
-                      color: "#FFFFFF".toColor(),
-                      size: 24.w,
-                    ),
-                  ),
-                  Spacing.w(12),
-                  _buildSectionTitle('Birth Details'),
-                ],
-              ),
-            ],
-          ),
-        ),
+    final items = <Widget>[];
+    if (data['rasi'] != null) items.add(_buildDetailRow('Rasi', data['rasi'].toString()));
+    if (data['nakshatra'] != null) items.add(_buildDetailRow('Nakshatra', data['nakshatra'].toString()));
+    if (data['nakshatra_pada'] != null) items.add(_buildDetailRow('Nakshatra Pada', data['nakshatra_pada'].toString()));
+    if (items.isEmpty) return const SizedBox.shrink();
 
-        Spacing.h(12),
-        Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (data['rasi'] != null)
-                _buildDetailRow('Rasi', data['rasi'].toString()),
-              if (data['nakshatra'] != null)
-                _buildDetailRow('Nakshatra', data['nakshatra'].toString()),
-              if (data['nakshatra_pada'] != null)
-                _buildDetailRow(
-                  'Nakshatra Pada',
-                  data['nakshatra_pada'].toString(),
-                ),
-            ],
-          ),
-        ),
-      ],
+    return _sectionCard(
+      title: 'Birth Details',
+      icon: Icons.cake_outlined,
+      compact: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: items,
+      ),
     );
   }
 
   Widget _buildPanchangSection(Map<String, dynamic> panchang) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: "#FFFFFF".toColor(),
-            border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Container(
-                    height: 50.h,
-                    width: 50.w,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
-                      ),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Icon(
-                      Icons.star_outline_outlined,
-                      color: "#FFFFFF".toColor(),
-                      size: 24.w,
-                    ),
-                  ),
-                  Spacing.w(12),
-                  _buildSectionTitle('Panchang'),
-                ],
-              ),
-            ],
-          ),
-        ),
+    final rows = <Widget>[];
+    void add(String k, String v) => rows.add(_buildDetailRow(k, v));
+    if (panchang['day_of_birth'] != null) add('Day of Birth', panchang['day_of_birth'].toString());
+    if (panchang['day_lord'] != null) add('Day Lord', panchang['day_lord'].toString());
+    if (panchang['hora_lord'] != null) add('Hora Lord', panchang['hora_lord'].toString());
+    if (panchang['sunrise_at_birth'] != null) add('Sunrise at Birth', panchang['sunrise_at_birth'].toString());
+    if (panchang['sunset_at_birth'] != null) add('Sunset at Birth', panchang['sunset_at_birth'].toString());
+    if (panchang['karana'] != null) add('Karana', panchang['karana'].toString());
+    if (panchang['yoga'] != null) add('Yoga', panchang['yoga'].toString());
+    if (panchang['tithi'] != null) add('Tithi', panchang['tithi'].toString());
+    if (panchang['ayanamsa'] != null) add('Ayanamsa', panchang['ayanamsa'].toString());
+    if (panchang['ayanamsa_name'] != null) add('Ayanamsa Name', panchang['ayanamsa_name'].toString());
+    if (rows.isEmpty) return const SizedBox.shrink();
 
-        Spacing.h(12),
-        Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (panchang['day_of_birth'] != null)
-                _buildDetailRow(
-                  'Day of Birth',
-                  panchang['day_of_birth'].toString(),
-                ),
-              if (panchang['day_lord'] != null)
-                _buildDetailRow('Day Lord', panchang['day_lord'].toString()),
-              if (panchang['hora_lord'] != null)
-                _buildDetailRow('Hora Lord', panchang['hora_lord'].toString()),
-              if (panchang['sunrise_at_birth'] != null)
-                _buildDetailRow(
-                  'Sunrise at Birth',
-                  panchang['sunrise_at_birth'].toString(),
-                ),
-              if (panchang['sunset_at_birth'] != null)
-                _buildDetailRow(
-                  'Sunset at Birth',
-                  panchang['sunset_at_birth'].toString(),
-                ),
-              if (panchang['karana'] != null)
-                _buildDetailRow('Karana', panchang['karana'].toString()),
-              if (panchang['yoga'] != null)
-                _buildDetailRow('Yoga', panchang['yoga'].toString()),
-              if (panchang['tithi'] != null)
-                _buildDetailRow('Tithi', panchang['tithi'].toString()),
-              if (panchang['ayanamsa'] != null)
-                _buildDetailRow('Ayanamsa', panchang['ayanamsa'].toString()),
-              if (panchang['ayanamsa_name'] != null)
-                _buildDetailRow(
-                  'Ayanamsa Name',
-                  panchang['ayanamsa_name'].toString(),
-                ),
-            ],
-          ),
-        ),
-      ],
+    return _sectionCard(
+      title: 'Panchang',
+      icon: Icons.nightlight_round,
+      compact: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: rows,
+      ),
     );
   }
 
   Widget _buildGhatkaChakraSection(Map<String, dynamic> ghatkaChakra) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: "#FFFFFF".toColor(),
-            border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Container(
-                    height: 50.h,
-                    width: 50.w,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
-                      ),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Icon(
-                      Icons.description,
-                      color: "#FFFFFF".toColor(),
-                      size: 24.w,
-                    ),
-                  ),
-                  Spacing.w(12),
-                  _buildSectionTitle('Ghatka Chakra'),
-                ],
-              ),
-            ],
-          ),
-        ),
+    final rows = <Widget>[];
+    void add(String k, String v) => rows.add(_buildDetailRow(k, v));
+    if (ghatkaChakra['rasi'] != null) add('Rasi', ghatkaChakra['rasi'].toString());
+    if (ghatkaChakra['tithi'] != null) {
+      final t = ghatkaChakra['tithi'];
+      add('Tithi', t is List ? t.join(', ') : t.toString());
+    }
+    if (ghatkaChakra['day'] != null) add('Day', ghatkaChakra['day'].toString());
+    if (ghatkaChakra['nakshatra'] != null) add('Nakshatra', ghatkaChakra['nakshatra'].toString());
+    if (ghatkaChakra['tatva'] != null) add('Tatva', ghatkaChakra['tatva'].toString());
+    if (ghatkaChakra['lord'] != null) add('Lord', ghatkaChakra['lord'].toString());
+    if (ghatkaChakra['same_sex_lagna'] != null) add('Same Sex Lagna', ghatkaChakra['same_sex_lagna'].toString());
+    if (ghatkaChakra['opposite_sex_lagna'] != null) add('Opposite Sex Lagna', ghatkaChakra['opposite_sex_lagna'].toString());
+    if (rows.isEmpty) return const SizedBox.shrink();
 
-        Spacing.h(12),
-        Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (ghatkaChakra['rasi'] != null)
-                _buildDetailRow('Rasi', ghatkaChakra['rasi'].toString()),
-              if (ghatkaChakra['tithi'] != null) ...[
-                Builder(
-                  builder: (context) {
-                    final tithi = ghatkaChakra['tithi'];
-                    if (tithi is List) {
-                      return _buildDetailRow('Tithi', tithi.join(', '));
-                    } else {
-                      return _buildDetailRow('Tithi', tithi.toString());
-                    }
-                  },
-                ),
-              ],
-              if (ghatkaChakra['day'] != null)
-                _buildDetailRow('Day', ghatkaChakra['day'].toString()),
-              if (ghatkaChakra['nakshatra'] != null)
-                _buildDetailRow(
-                  'Nakshatra',
-                  ghatkaChakra['nakshatra'].toString(),
-                ),
-              if (ghatkaChakra['tatva'] != null)
-                _buildDetailRow('Tatva', ghatkaChakra['tatva'].toString()),
-              if (ghatkaChakra['lord'] != null)
-                _buildDetailRow('Lord', ghatkaChakra['lord'].toString()),
-              if (ghatkaChakra['same_sex_lagna'] != null)
-                _buildDetailRow(
-                  'Same Sex Lagna',
-                  ghatkaChakra['same_sex_lagna'].toString(),
-                ),
-              if (ghatkaChakra['opposite_sex_lagna'] != null)
-                _buildDetailRow(
-                  'Opposite Sex Lagna',
-                  ghatkaChakra['opposite_sex_lagna'].toString(),
-                ),
-            ],
-          ),
-        ),
-      ],
+    return _sectionCard(
+      title: 'Ghatka Chakra',
+      icon: Icons.grain,
+      compact: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: rows,
+      ),
     );
   }
 
   Widget _buildDasaSection(Map<String, dynamic> data) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: "#FFFFFF".toColor(),
-            border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Container(
-                    height: 50.h,
-                    width: 50.w,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
-                      ),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Icon(
-                      Icons.star_outline_outlined,
-                      color: "#FFFFFF".toColor(),
-                      size: 24.w,
-                    ),
-                  ),
-                  Spacing.w(12),
-                  _buildSectionTitle('Dasa'),
-                ],
-              ),
-            ],
-          ),
-        ),
+    final rows = <Widget>[];
+    if (data['birth_dasa'] != null) rows.add(_buildDetailRow('Birth Dasa', data['birth_dasa'].toString()));
+    if (data['current_dasa'] != null) rows.add(_buildDetailRow('Current Dasa', data['current_dasa'].toString()));
+    if (data['birth_dasa_time'] != null) rows.add(_buildDetailRow('Birth Dasa Time', data['birth_dasa_time'].toString()));
+    if (data['current_dasa_time'] != null) rows.add(_buildDetailRow('Current Dasa Time', data['current_dasa_time'].toString()));
+    if (rows.isEmpty) return const SizedBox.shrink();
 
-        Spacing.h(12),
-        Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (data['birth_dasa'] != null)
-                _buildDetailRow('Birth Dasa', data['birth_dasa'].toString()),
-              if (data['current_dasa'] != null)
-                _buildDetailRow(
-                  'Current Dasa',
-                  data['current_dasa'].toString(),
-                ),
-              if (data['birth_dasa_time'] != null)
-                _buildDetailRow(
-                  'Birth Dasa Time',
-                  data['birth_dasa_time'].toString(),
-                ),
-              if (data['current_dasa_time'] != null)
-                _buildDetailRow(
-                  'Current Dasa Time',
-                  data['current_dasa_time'].toString(),
-                ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return AutoTranslateText(
-      title,
-      style: MyTextTheme.mediumBCB.copyWith(
-        color: "#6F221E".toColor(),
-        fontWeight: FontWeight.bold,
-        fontSize: 16.sp,
+    return _sectionCard(
+      title: 'Dasa',
+      icon: Icons.schedule,
+      compact: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: rows,
       ),
     );
   }
 
   Widget _buildDetailRow(String label, String value) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.only(bottom: 4.h),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 140.w,
+            width: 88.w,
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCB.copyWith(
                 color: "#6F221E".toColor().withOpacity(0.7),
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
+                fontSize: 9.sp,
               ),
             ),
           ),
           Expanded(
             child: AutoTranslateText(
               value,
-              style: MyTextTheme.smallBCN.copyWith(color: "#6F221E".toColor()),
+              style: MyTextTheme.smallBCN.copyWith(
+                color: "#6F221E".toColor(),
+                fontSize: 9.sp,
+              ),
             ),
           ),
         ],
@@ -781,13 +475,5 @@ class PlanetsWidget extends StatelessWidget {
       return degree.toStringAsFixed(2);
     }
     return degree.toString();
-  }
-
-  String _formatPercentage(dynamic percentage) {
-    if (percentage == null) return '-';
-    if (percentage is num) {
-      return percentage.toStringAsFixed(2);
-    }
-    return percentage.toString();
   }
 }

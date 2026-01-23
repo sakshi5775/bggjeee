@@ -1,11 +1,13 @@
 import 'dart:ui';
+import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
-import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/login/login/controller/login_controller.dart';
 import 'package:astrobharataiuser/screens/login/login/widgets/login_form_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 
 class LoginView extends BasePage<LoginController> {
@@ -42,18 +44,62 @@ class LoginView extends BasePage<LoginController> {
               // ),
               Container(
                 width: double.infinity,
-                height: 350,
                 child: Stack(
                   children: [
                     /// 🔹 Main Image
                     Image.asset(
                       'assets/app/ganeshji_u.png',
                       width: double.infinity,
-                      // height: 300,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitWidth,
                     ),
-
-                  
+                    /// 🔹 Welcome Text Overlay
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        padding: EdgeInsets.only(bottom: 20.h),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/images/star.png",
+                                  height: 20.h,
+                                  width: 30.w,
+                                ),
+                                SizedBox(width: 8.w),
+                                AutoTranslateText(
+                                  'Welcome Back',
+                                  style: MyTextTheme.veryLargeWCB.copyWith(
+                                    color: AppColors.saffron,
+                                    fontSize: 28.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(width: 8.w),
+                                Image.asset(
+                                  "assets/images/star.png",
+                                  height: 20.h,
+                                  width: 30.w,
+                                ),
+                              ],
+                            ),
+                            Spacing.h(4),
+                            AutoTranslateText(
+                              'Continue your spiritual journey',
+                              style: MyTextTheme.mediumBCN.copyWith(
+                                color: AppColors.saffron,
+                                fontSize: 14.sp,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -112,9 +158,12 @@ class LoginView extends BasePage<LoginController> {
                       //     ],
                       //   ),
                       // ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 18.0, right: 18.0),
-                        child: LoginFormWidget(controller: controller),
+                      Transform.translate(
+                        offset: Offset(0, -20.h),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                          child: LoginFormWidget(controller: controller),
+                        ),
                       ),
                     ],
                   ),

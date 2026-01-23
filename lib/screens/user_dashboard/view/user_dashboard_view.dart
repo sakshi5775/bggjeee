@@ -51,74 +51,77 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              "#FCE5AA".toColor(), // Light yellow/cream at top (3%)
-              "#FFFCF3".toColor(), // Light cream in middle (52%)
-              "#FFFFFF".toColor(), // White at bottom (100%)
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      drawer: buildDrawer(context),
+      body: Builder(
+        builder: (context) => Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                "#FCE5AA".toColor(), // Light yellow/cream at top (3%)
+                "#FFFCF3".toColor(), // Light cream in middle (52%)
+                "#FFFFFF".toColor(), // White at bottom (100%)
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Stack(
-            children: [
-              // Scrollable content with pull-to-refresh
-              RefreshIndicator(
-                onRefresh: controller.refreshDashboard,
-                color: "#6F221E".toColor(),
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  controller: controller.scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header with menu, logo, icons
-                  _buildHeader(context),
-                  Spacing.h(10),
-                  // In-flow search bar to avoid unbounded Stack constraints
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: _buildSearchBar(context),
+          child: SafeArea(
+            child: Stack(
+              children: [
+                // Scrollable content with pull-to-refresh
+                RefreshIndicator(
+                  onRefresh: controller.refreshDashboard,
+                  color: "#6F221E".toColor(),
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: controller.scrollController,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header with menu, logo, icons
+                        _buildHeader(context),
+                        Spacing.h(10),
+                        // In-flow search bar to avoid unbounded Stack constraints
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: _buildSearchBar(context),
+                        ),
+                        Spacing.h(10),
+                        // Body with curve, gradient and all content sections
+                        _buildBodyWithCurve(context),
+                        // Bottom padding to prevent content from being hidden behind sticky banner
+                        // Spacing.h(100),
+                      ],
+                    ),
                   ),
-                  Spacing.h(10),
-                  // Body with curve, gradient and all content sections
-                  _buildBodyWithCurve(context),
-                  // Bottom padding to prevent content from being hidden behind sticky banner
-                  // Spacing.h(100),
-                ],
-              ),
                 ),
-              ),
-              // 🔥 Search bar overlay (FIX)
+                // 🔥 Search bar overlay (FIX)
 
-              // Circular button for AI Chat navigation at bottom - just above bottom nav
-              Positioned(
-                right: 1.w,
-                bottom: 60
-                    .h, // Position just above bottom nav (60h nav + 20h spacing)
-                child: _buildCircularChatButton(),
-              ),
-              // Floating action buttons row
-              // Option 3: Container with full width white background
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  color: Colors.white,
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 6.h,
-                  ),
-                  child: _buildAstrologerActionsRow(),
+                // Circular button for AI Chat navigation at bottom - just above bottom nav
+                Positioned(
+                  right: 1.w,
+                  bottom: 60
+                      .h, // Position just above bottom nav (60h nav + 20h spacing)
+                  child: _buildCircularChatButton(),
                 ),
-              ),
-            ],
+                // Floating action buttons row
+                // Option 3: Container with full width white background
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    color: Colors.white,
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 6.h,
+                    ),
+                    child: _buildAstrologerActionsRow(),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -157,16 +160,16 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   Row(
                     children: [
                       // Menu icon
-                      IconButton(
-                        onPressed: () {
-                          final scaffoldState = context
-                              .findAncestorStateOfType<ScaffoldState>();
-                          scaffoldState?.openDrawer();
-                        },
-                        icon: Icon(
-                          Icons.menu,
-                          size: 24.w,
-                          color: "#6F221E".toColor(),
+                      Builder(
+                        builder: (context) => IconButton(
+                          onPressed: () {
+                            Scaffold.of(context).openDrawer();
+                          },
+                          icon: Icon(
+                            Icons.menu,
+                            size: 24.w,
+                            color: "#6F221E".toColor(),
+                          ),
                         ),
                       ),
                       Spacing.w(8),
@@ -621,7 +624,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             children: [
               Expanded(
                 child: _buildPillServiceCard(
-                  'Digital Mart',
+                  'Mart',
                   'assets/app/pill_digital_mart.png',
                   onTap: () {
                     Get.toNamed(
@@ -634,7 +637,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               Spacing.w(10),
               Expanded(
                 child: _buildPillServiceCard(
-                  'Digital Mandir',
+                  'Mandir',
                   'assets/app/pill_digital_mandir.png',
                   onTap: () {
                     Get.toNamed(AppRoutes.namasteHome);
@@ -659,7 +662,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               Spacing.w(10),
               Expanded(
                 child: _buildPillServiceCard(
-                  'Digital Education',
+                  'Education',
                   'assets/app/pill_digital_education.png',
                   onTap: () {
                     Get.toNamed(AppRoutes.courses);
@@ -1511,13 +1514,19 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         SizedBox(
           height: 110.h,
           child: PageView.builder(
+            key: const ValueKey('our_services_pageview'),
             controller: controller.ourServicesPageController.value,
             onPageChanged: (index) {
-              controller.ourServicesCurrentPage.value = index;
+              // Use modulo to get the actual service index for infinite loop
+              final actualIndex = index % services.length;
+              controller.ourServicesCurrentPage.value = actualIndex;
             },
-            itemCount: services.length,
+            // Use a large number for infinite scrolling (1000 pages = 200 full cycles)
+            itemCount: services.length * 1000,
             itemBuilder: (context, index) {
-              final service = services[index];
+              // Use modulo to get the actual service index
+              final actualIndex = index % services.length;
+              final service = services[actualIndex];
               return _buildServiceCard(service);
             },
           ),
@@ -2651,25 +2660,20 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   Widget _buildVedicAstrologerCard(AstrologerModel astrologer) {
     // Map astrologer data to display
     final name = astrologer.displayName;
-    final experience = 'Experience: ${astrologer.experienceYears} years';
-    final languages = astrologer.languages.isNotEmpty
-        ? astrologer.languages.join('/')
-        : 'Hindi/English';
+    final experienceYears = astrologer.experienceYears;
+    final experienceText = '$experienceYears Years';
     final voicePricePerMin = astrologer.services.voice.pricePerMinute ?? 0;
     final videoPricePerMin = astrologer.services.video.pricePerMinute ?? 0;
     final chatPrice = astrologer.services.chat.pricePerMinute ?? 0;
     final voicePrice = voicePricePerMin > 0
-        ? '${voicePricePerMin.toInt()}/Min'
-        : '0';
+        ? '₹${voicePricePerMin.toInt()}/Min'
+        : '₹0/Min';
     final videoPrice = videoPricePerMin > 0
-        ? '${videoPricePerMin.toInt()}/Min'
-        : '0';
-    final chatPriceText = chatPrice > 0 ? '${chatPrice.toInt()}/Msg' : '0';
-
-    final videoPriceHighlight = videoPrice;
-    final voicePriceHighlight = voicePrice;
-    final chatPriceHighlight = chatPriceText;
+        ? '₹${videoPricePerMin.toInt()}/Min'
+        : '₹0/Min';
+    final chatPriceText = chatPrice > 0 ? '₹${chatPrice.toInt()}/Msg' : '₹0/Msg';
     final imagePath = astrologer.profilePicture ?? '';
+    
     return GestureDetector(
       onTap: () {
         Get.toNamed(
@@ -2678,62 +2682,68 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         );
       },
       child: Container(
-        width: 250.w,
+        width: 170.w,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.r),
           color: Colors.white,
           border: Border.all(color: "#F38B3B".toColor(), width: 1),
         ),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 210.h),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 12.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Spacing.h(6),
-            // Profile Image with Decorative Border
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                // Background image
-                Container(
-                  width: 95.w,
-                  height: 95.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: AssetImage(
-                        'assets/app/vedic_astrologer_background.png',
+              // Profile Image with Decorative Border and Experience Badge
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Background decorative border image
+                  Container(
+                    width: 95.w,
+                    height: 95.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: AssetImage(
+                          'assets/app/vedic_astrologer_background.png',
+                        ),
+                        fit: BoxFit.cover,
                       ),
-                      fit: BoxFit.cover,
                     ),
                   ),
-                ),
-                // Decorative border with Sanskrit text (simulated with circular border)
-
-                // Profile Image
-                Container(
-                  width: 70.w,
-                  height: 70.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.deepOrange, width: 1),
-                  ),
-                  child: ClipOval(
-                    child: imagePath.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: imagePath,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => Container(
-                              color: Colors.grey.withOpacity(0.3),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColors.deepOrange,
-                                  strokeWidth: 2,
+                  // Profile Image
+                  Container(
+                    width: 70.w,
+                    height: 70.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.deepOrange, width: 1),
+                    ),
+                    child: ClipOval(
+                      child: imagePath.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl: imagePath,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(
+                                color: Colors.grey.withOpacity(0.3),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.deepOrange,
+                                    strokeWidth: 2,
+                                  ),
                                 ),
                               ),
-                            ),
-                            errorWidget: (context, url, error) => Container(
+                              errorWidget: (context, url, error) => Container(
+                                color: Colors.grey.withOpacity(0.3),
+                                child: Icon(
+                                  Icons.person,
+                                  color: Colors.white.withOpacity(0.5),
+                                  size: 40.w,
+                                ),
+                              ),
+                            )
+                          : Container(
                               color: Colors.grey.withOpacity(0.3),
                               child: Icon(
                                 Icons.person,
@@ -2741,143 +2751,157 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                 size: 40.w,
                               ),
                             ),
-                          )
-                        : Container(
-                            color: Colors.grey.withOpacity(0.3),
-                            child: Icon(
-                              Icons.person,
-                              color: Colors.white.withOpacity(0.5),
-                              size: 40.w,
-                            ),
-                          ),
+                    ),
                   ),
+                  // Experience Badge at bottom-center
+                  Positioned(
+                    bottom: 0,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: ["#FF6B35".toColor(), "#F38B3B".toColor()],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: AutoTranslateText(
+                        experienceText,
+                        style: MyTextTheme.smallBCB
+                            .copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 9.sp,
+                            )
+                            .merge(AppTypography.body2),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Spacing.h(8),
+              // Name
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                child: AutoTranslateText(
+                  name,
+                  style: MyTextTheme.mediumBCB
+                      .copyWith(
+                        color: "#361515".toColor(),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13.sp,
+                      )
+                      .merge(AppTypography.h3),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ],
-            ),
-            Spacing.h(6),
-            // Name
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
-              child: AutoTranslateText(
-                name,
-                style: MyTextTheme.mediumBCB
-                    .copyWith(
-                      color: "#361515".toColor(),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11.sp,
-                    )
-                    .merge(AppTypography.body2),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            Spacing.h(0.5),
-            // Experience
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
-              child: AutoTranslateText(
-                experience,
-                style: MyTextTheme.smallBCN
-                    .copyWith(color: "#909090".toColor(), fontSize: 7.5.sp)
-                    .merge(AppTypography.body2),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              Spacing.h(2),
+              // Designation
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                child: AutoTranslateText(
+                  'Vedic Astrologer',
+                  style: MyTextTheme.smallBCN
+                      .copyWith(color: "#909090".toColor(), fontSize: 10.sp)
+                      .merge(AppTypography.body2),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
-            Spacing.h(2),
-            // Price
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
-              child: Wrap(
-                spacing: 2.5.w,
-                runSpacing: 2.5.h,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.5.h),
-                    decoration: BoxDecoration(
-                      color: AppColors.deepOrange,
-                      borderRadius: BorderRadius.circular(12.r),
+              Spacing.h(8),
+              // Service Pricing Section (Horizontal with Icons)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 6.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Video Service
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.videocam,
+                            size: 14.w,
+                            color: AppColors.deepOrange,
+                          ),
+                          Spacing.h(2),
+                          AutoTranslateText(
+                            videoPrice,
+                            style: MyTextTheme.smallBCB
+                                .copyWith(
+                                   color: AppColors.deepOrange,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 5.sp,
+                                )
+                                .merge(AppTypography.label),
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.visible,
+                          ),
+                        ],
+                      ),
                     ),
-                    child: AutoTranslateText(
-                      '₹  Video: $videoPriceHighlight ',
-                      style: MyTextTheme.smallBCB
-                          .copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 8.sp,
-                          )
-                          .merge(AppTypography.body2),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    // Voice Service
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.phone,
+                            size: 14.w,
+                             color: AppColors.deepOrange,
+                          ),
+                          Spacing.h(2),
+                          AutoTranslateText(
+                            voicePrice,
+                            style: MyTextTheme.smallBCB
+                                 .copyWith(
+                                   color: AppColors.deepOrange,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 5.sp,
+                                )
+                                .merge(AppTypography.label),
+                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.visible,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.5.h),
-                    decoration: BoxDecoration(
-                      color: AppColors.deepOrange,
-                      borderRadius: BorderRadius.circular(12.r),
+                    // Chat Service
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.chat_bubble_outline,
+                            size: 14.w,
+                             color: AppColors.deepOrange,
+                          ),
+                          Spacing.h(2),
+                          AutoTranslateText(
+                            chatPriceText,
+                            style: MyTextTheme.smallBCB
+                                 .copyWith(
+                                   color: AppColors.deepOrange,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 5.sp,
+                                )
+                                .merge(AppTypography.label),
+                            maxLines: 1,
+                            overflow: TextOverflow.visible,
+                          ),
+                        ],
+                      ),
                     ),
-                    child: AutoTranslateText(
-                      '₹  Voice: $voicePriceHighlight ',
-                      style: MyTextTheme.smallBCB
-                          .copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 8.sp,
-                          )
-                          .merge(AppTypography.body2),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.5.h),
-                    decoration: BoxDecoration(
-                      color: AppColors.deepOrange,
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: AutoTranslateText(
-                      '₹  Chat: $chatPriceHighlight ',
-                      style: MyTextTheme.smallBCB
-                          .copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 8.sp,
-                          )
-                          .merge(AppTypography.body2),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-
-            Spacing.h(2),
-            // Languages with icon
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.language, size: 9.w, color: "#909090".toColor()),
-                  Spacing.w(2),
-                  Expanded(
-                    child: AutoTranslateText(
-                      ': $languages',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: MyTextTheme.smallBCN
-                          .copyWith(color: "#909090".toColor(), fontSize: 7.5.sp)
-                          .merge(AppTypography.body2),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Spacing.h(8),
             ],
           ),
         ),

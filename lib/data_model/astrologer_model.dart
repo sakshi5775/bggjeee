@@ -19,13 +19,23 @@ class AstrologerModel {
 
   factory AstrologerModel.fromJson(Map<String, dynamic> json) {
     return AstrologerModel(
-      id: json['_id'] as String,
-      astrologerId: json['astrologerId'] as String,
-      basicInfo: BasicInfo.fromJson(json['basicInfo'] as Map<String, dynamic>),
-      services: Services.fromJson(json['services'] as Map<String, dynamic>),
-      availability: Availability.fromJson(json['availability'] as Map<String, dynamic>),
-      metrics: Metrics.fromJson(json['metrics'] as Map<String, dynamic>),
-      metadata: Metadata.fromJson(json['metadata'] as Map<String, dynamic>),
+      id: (json['_id'] ?? json['id'] ?? '').toString(),
+      astrologerId: (json['astrologerId'] ?? json['_id'] ?? '').toString(),
+      basicInfo: BasicInfo.fromJson(
+        json['basicInfo'] as Map<String, dynamic>? ?? {},
+      ),
+      services: Services.fromJson(
+        json['services'] as Map<String, dynamic>? ?? {},
+      ),
+      availability: Availability.fromJson(
+        json['availability'] as Map<String, dynamic>? ?? {},
+      ),
+      metrics: Metrics.fromJson(
+        json['metrics'] as Map<String, dynamic>? ?? {},
+      ),
+      metadata: Metadata.fromJson(
+        json['metadata'] as Map<String, dynamic>? ?? {},
+      ),
     );
   }
 
@@ -86,10 +96,10 @@ class BasicInfo {
 
   factory BasicInfo.fromJson(Map<String, dynamic> json) {
     return BasicInfo(
-      fullName: json['fullName'] as String,
-      displayName: json['displayName'] as String,
-      profilePicture: json['profilePicture'] as String?,
-      bio: json['bio'] as String? ?? '',
+      fullName: (json['fullName'] ?? '').toString(),
+      displayName: (json['displayName'] ?? json['fullName'] ?? '').toString(),
+      profilePicture: json['profilePicture']?.toString(),
+      bio: (json['bio'] ?? '').toString(),
       languages: (json['languages'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
@@ -98,7 +108,9 @@ class BasicInfo {
               ?.map((e) => e.toString())
               .toList() ??
           [],
-      experience: Experience.fromJson(json['experience'] as Map<String, dynamic>),
+      experience: Experience.fromJson(
+        json['experience'] as Map<String, dynamic>? ?? {},
+      ),
     );
   }
 }
@@ -135,10 +147,18 @@ class Services {
 
   factory Services.fromJson(Map<String, dynamic> json) {
     return Services(
-      voice: VoiceService.fromJson(json['voice'] as Map<String, dynamic>),
-      video: VideoService.fromJson(json['video'] as Map<String, dynamic>),
-      chat: ChatService.fromJson(json['chat'] as Map<String, dynamic>),
-      reports: ReportsService.fromJson(json['reports'] as Map<String, dynamic>),
+      voice: VoiceService.fromJson(
+        json['voice'] as Map<String, dynamic>? ?? {},
+      ),
+      video: VideoService.fromJson(
+        json['video'] as Map<String, dynamic>? ?? {},
+      ),
+      chat: ChatService.fromJson(
+        json['chat'] as Map<String, dynamic>? ?? {},
+      ),
+      reports: ReportsService.fromJson(
+        json['reports'] as Map<String, dynamic>? ?? {},
+      ),
     );
   }
 }
@@ -276,8 +296,12 @@ class Metrics {
 
   factory Metrics.fromJson(Map<String, dynamic> json) {
     return Metrics(
-      rating: Rating.fromJson(json['rating'] as Map<String, dynamic>),
-      consultations: Consultations.fromJson(json['consultations'] as Map<String, dynamic>),
+      rating: Rating.fromJson(
+        json['rating'] as Map<String, dynamic>? ?? {},
+      ),
+      consultations: Consultations.fromJson(
+        json['consultations'] as Map<String, dynamic>? ?? {},
+      ),
     );
   }
 }
@@ -296,7 +320,7 @@ class Rating {
   factory Rating.fromJson(Map<String, dynamic> json) {
     return Rating(
       distribution: RatingDistribution.fromJson(
-          json['distribution'] as Map<String, dynamic>),
+          json['distribution'] as Map<String, dynamic>? ?? {}),
       average: (json['average'] as num?)?.toDouble() ?? 0.0,
       totalRatings: (json['totalRatings'] as num?)?.toInt() ?? 0,
     );

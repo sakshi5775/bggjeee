@@ -11,10 +11,12 @@ class UserProfileService with ApiHelperMixin {
   final ApiClient _apiRepository = Get.find<ApiClient>();
 
   /// Get user profile
-  Future<UserProfileModel?> getProfile(String userId) async {
+  /// Uses the new auth/profile endpoint which doesn't require userId
+  Future<UserProfileModel?> getProfile([String? userId]) async {
     try {
+      // Use new auth/profile endpoint (doesn't require userId in path)
       final response = await _apiRepository.getApi(
-        EndPoints.getUserProfile(userId),
+        EndPoints.profile,
       );
 
       if (response.body['success'] == true &&

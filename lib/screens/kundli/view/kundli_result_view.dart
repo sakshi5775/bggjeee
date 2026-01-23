@@ -3,7 +3,8 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/ascendant_report_widget.dart';
@@ -15,6 +16,7 @@ import 'package:astrobharataiuser/screens/kundli/widgets/chalit_chart_widget.dar
 import 'package:astrobharataiuser/screens/kundli/widgets/divisional_chart_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/daily_panchang_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/lagna_chart_widget.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/planets_tab_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/moon_chart_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/navamsha_chart_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/sun_chart_widget.dart';
@@ -38,7 +40,7 @@ class KundliResultView extends BasePage<KundliResultController> {
         ),
       ),
       child: Scaffold(
-        // backgroundColor: AppColors.lightBackground,
+        drawer: UserDashboardView.buildDrawer(context),
         body: Container(
           // decoration: BoxDecoration(gradient: AppColors.appBackground),
           decoration: BoxDecoration(
@@ -51,25 +53,20 @@ class KundliResultView extends BasePage<KundliResultController> {
           child: SafeArea(
             child: Column(
               children: [
-                // Header
-                _buildHeader(),
-
-                // Tabs
+                KundliHeader(),
                 _buildTabs(),
-
-                // Content
                 Expanded(
                   child: PageView.builder(
                     controller: controller.pageController,
                     onPageChanged: controller.onPageChanged,
-                    itemCount: controller.tabs.length,
+                    itemCount: controller.visibleTabIndices.length,
                     itemBuilder: (context, index) {
+                      final fullIndex = controller.visibleTabIndices[index];
                       return RefreshIndicator(
                         onRefresh: () async {
-                          // Refresh the current tab content
-                          controller.onTabSelected(index);
+                          controller.onTabSelected(fullIndex);
                         },
-                        child: _buildTabContent(index),
+                        child: _buildTabContent(fullIndex),
                       );
                     },
                   ),
@@ -82,162 +79,116 @@ class KundliResultView extends BasePage<KundliResultController> {
     );
   }
 
-  Widget _buildHeader() {
-    return Container(
-      height: 80.h,
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowDark,
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Row(
-          children: [
-            // Back button
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: Container(
-                padding: EdgeInsets.all(10.r),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.25),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: AppColors.turmericYellow,
-                  size: 24.w,
-                ),
-              ),
-            ),
-            Spacing.w(16),
-            // Title
-            Expanded(
-              child: AutoTranslateText(
-                'Kundli Report',
-                style: MyTextTheme.veryLargeBCB
-                    .copyWith(
-                      color: AppColors.turmericYellow,
-                      fontWeight: FontWeight.bold,
-                    )
-                    .merge(AppTypography.h2),
-              ),
-            ),
-            // Placeholder for future actions
-            Opacity(
-              opacity: 0,
-              child: Icon(Icons.more_vert, color: AppColors.turmericYellow),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildTabs() {
+    const orange = Color(0xFFed6f30);
+    const orangeLight = Color(0xFFFF8A3D);
+    const maroon = Color(0xFF6F221E);
+
     return Container(
-      height: 70.h,
-      decoration: BoxDecoration(
-        color: AppColors.cardLight,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowMedium,
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
+      height: 48.h,
+      color: Colors.transparent,
+      padding: EdgeInsets.symmetric(vertical: 6.h),
       child: Obx(() {
         final selectedIndex = controller.selectedTabIndex.value;
-
-        // Scroll to selected tab when it changes
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _scrollToSelectedTab(selectedIndex);
         });
 
-        return Column(
+        return Row(
           children: [
+            Padding(
+              padding: EdgeInsets.only(left: 12.w, right: 10.w),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [orangeLight, orange],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.auto_stories_rounded, size: 14.w, color: Colors.white),
+                    SizedBox(width: 6.w),
+                    AutoTranslateText(
+                      'Kundli Report',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             Expanded(
               child: SingleChildScrollView(
                 controller: controller.tabsScrollController,
                 scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
                 child: Row(
-                  children: controller.tabs.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final tab = entry.value;
-                    final isSelected = selectedIndex == index;
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(width: 4.w),
+                    ...controller.visibleTabIndices.asMap().entries.map((entry) {
+                      final fullIndex = entry.value;
+                      final tab = controller.tabs[fullIndex];
+                      final isSelected = selectedIndex == fullIndex;
+                      if (!controller.tabKeys.containsKey(fullIndex)) {
+                        controller.tabKeys[fullIndex] = GlobalKey();
+                      }
+                      final tabKey = controller.tabKeys[fullIndex]!;
 
-                    // Get or create GlobalKey for this tab
-                    if (!controller.tabKeys.containsKey(index)) {
-                      controller.tabKeys[index] = GlobalKey();
-                    }
-                    final tabKey = controller.tabKeys[index]!;
-
-                    return GestureDetector(
-                      onTap: () => controller.onTabSelected(index),
-                      child: Container(
+                      return Padding(
                         key: tabKey,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 22.w,
-                          vertical: 14.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.deepOrange.withOpacity(0.15)
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(12.r),
-                          ),
-                          border: Border(
-                            bottom: BorderSide(
-                              color: isSelected
-                                  ? AppColors.deepOrange
-                                  : Colors.transparent,
-                              width: 4,
+                        padding: EdgeInsets.only(right: 6.w),
+                        child: GestureDetector(
+                          onTap: () => controller.onTabSelected(fullIndex),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeOut,
+                            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                            decoration: BoxDecoration(
+                              color: isSelected ? orange : Colors.transparent,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: isSelected
+                                  ? null
+                                  : Border.all(
+                                      color: maroon.withOpacity(0.2),
+                                      width: 1,
+                                    ),
+                              boxShadow: isSelected
+                                  ? [
+                                      BoxShadow(
+                                        color: orange.withOpacity(0.25),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 1),
+                                      ),
+                                    ]
+                                  : null,
+                            ),
+                            child: Center(
+                              child: AutoTranslateText(
+                                tab,
+                                textAlign: TextAlign.center,
+                                style: MyTextTheme.mediumBCB.copyWith(
+                                  color: isSelected ? Colors.white : maroon,
+                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                        child: AnimatedDefaultTextStyle(
-                          duration: const Duration(milliseconds: 200),
-                          style: MyTextTheme.mediumBCB.copyWith(
-                            color: isSelected
-                                ? AppColors.deepOrange
-                                : AppColors.textSecondary,
-                            fontWeight: isSelected
-                                ? FontWeight.w700
-                                : FontWeight.w500,
-                          ),
-                          child: AutoTranslateText(
-                            tab,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }),
+                    SizedBox(width: 10.w),
+                  ],
                 ),
-              ),
-            ),
-            // Tab indicator
-            Container(
-              height: 6.h,
-              margin: EdgeInsets.symmetric(horizontal: 20.w),
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: controller.tabs.length,
-                separatorBuilder: (context, index) => SizedBox(width: 10.w),
-                itemBuilder: (context, index) {
-                  // return _buildTabIndicator(index);
-                },
               ),
             ),
           ],
@@ -248,31 +199,30 @@ class KundliResultView extends BasePage<KundliResultController> {
 
   Widget _buildFeatureGrid() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      padding: EdgeInsets.symmetric(horizontal: 4.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AutoTranslateText(
             'Features',
-            style: MyTextTheme.largeBCB
-                .copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.bold,
-                )
-                .merge(AppTypography.h2),
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+              fontSize: 15.sp,
+            ),
           ),
-          Spacing.h(8),
+          Spacing.h(6),
           LayoutBuilder(
             builder: (context, constraints) {
-              final crossAxisCount = constraints.maxWidth > 600 ? 3 : 2;
+              final crossAxisCount = constraints.maxWidth > 600 ? 4 : 4;
               return GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: crossAxisCount,
-                  childAspectRatio: 1.1,
-                  crossAxisSpacing: 8.w,
-                  mainAxisSpacing: 8.h,
+                  childAspectRatio: 0.95,
+                  crossAxisSpacing: 6.w,
+                  mainAxisSpacing: 6.h,
                 ),
                 itemCount: controller.featureGridItems.length,
                 itemBuilder: (context, index) {
@@ -302,13 +252,13 @@ class KundliResultView extends BasePage<KundliResultController> {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.cardLight,
-          borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: AppColors.deepOrange, width: 1),
+          borderRadius: BorderRadius.circular(10.r),
+          border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
           boxShadow: [
             BoxShadow(
               color: AppColors.shadowLight,
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -316,22 +266,23 @@ class KundliResultView extends BasePage<KundliResultController> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(12.r),
+              padding: EdgeInsets.all(6.r),
               decoration: BoxDecoration(
                 gradient: AppColors.orangeGradient,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: AppColors.textLight, size: 32.w),
+              child: Icon(icon, color: AppColors.textLight, size: 18.w),
             ),
-            Spacing.h(8),
+            Spacing.h(4),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: AutoTranslateText(
                 title,
                 textAlign: TextAlign.center,
                 style: MyTextTheme.smallBCB.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
+                  fontSize: 11.sp,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -345,77 +296,62 @@ class KundliResultView extends BasePage<KundliResultController> {
 
   Widget _buildFeatureList() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 8.w),
+      margin: EdgeInsets.symmetric(horizontal: 4.w),
       decoration: BoxDecoration(
         color: AppColors.cardLight,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: AppColors.dividerLight, width: 1),
         boxShadow: [
           BoxShadow(
             color: AppColors.shadowLight,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(8.w),
+        padding: EdgeInsets.all(10.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header row with title and view all button
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 AutoTranslateText(
                   'More Features',
-                  style: MyTextTheme.largeBCB
-                      .copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                      )
-                      .merge(AppTypography.h2),
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15.sp,
+                  ),
                 ),
                 Obx(() {
                   final allFeatures = [
                     ...controller.leftColumnFeatures,
                     ...controller.rightColumnFeatures,
                   ];
-
-                  return Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 6.h,
-                    ),
-                    decoration: BoxDecoration(
-                      // color: AppColors.cardLight,
-                      gradient: LinearGradient(
-                        colors: [AppColors.deepOrange, AppColors.error],
+                  if (allFeatures.length <= 5) return const SizedBox.shrink();
+                  return GestureDetector(
+                    onTap: () => controller.showAllFeatures.toggle(),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 4.h,
                       ),
-                      borderRadius: BorderRadius.circular(10.r),
-                      border: Border.all(color: AppColors.deepOrange, width: 1),
-                    ),
-                    child: TextButton(
-                      onPressed: allFeatures.length > 5
-                          ? () {
-                              controller.showAllFeatures.toggle();
-                            }
-                          : null,
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size(0, 0),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.orangeGradient,
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(
+                            color: AppColors.deepOrange.withOpacity(0.5)),
                       ),
                       child: AutoTranslateText(
                         controller.showAllFeatures.value
                             ? 'Show Less'
                             : 'View All',
-                        style: MyTextTheme.mediumBCB.copyWith(
+                        style: MyTextTheme.smallBCB.copyWith(
                           color: AppColors.textLight,
                           fontWeight: FontWeight.w600,
+                          fontSize: 12.sp,
                         ),
                       ),
                     ),
@@ -423,29 +359,23 @@ class KundliResultView extends BasePage<KundliResultController> {
                 }),
               ],
             ),
-            Spacing.h(8),
-            // Single column layout with view all functionality
+            Spacing.h(6),
             Obx(() {
-              // Combine both left and right column features into a single list
               final allFeatures = [
                 ...controller.leftColumnFeatures,
                 ...controller.rightColumnFeatures,
               ];
-
-              // Show only first 5 features by default
               final displayedFeatures = controller.showAllFeatures.value
                   ? allFeatures
                   : allFeatures.take(5).toList();
 
               return Column(
-                children: [
-                  ...displayedFeatures.map((feature) {
-                    return _buildFeatureListItem(
-                      title: feature,
-                      onTap: () => controller.onFeatureTap(feature),
-                    );
-                  }).toList(),
-                ],
+                children: displayedFeatures
+                    .map((feature) => _buildFeatureListItem(
+                          title: feature,
+                          onTap: () => controller.onFeatureTap(feature),
+                        ))
+                    .toList(),
               );
             }),
           ],
@@ -461,22 +391,21 @@ class KundliResultView extends BasePage<KundliResultController> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.only(bottom: 12.h),
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        margin: EdgeInsets.only(bottom: 6.h),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         decoration: BoxDecoration(
-          // color: AppColors.cardLight,
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [AppColors.cardLight, const Color(0xFFFFF8F0)],
           ),
-          borderRadius: BorderRadius.circular(14.r),
+          borderRadius: BorderRadius.circular(10.r),
           border: Border.all(color: AppColors.dividerLight, width: 1),
           boxShadow: [
             BoxShadow(
               color: AppColors.shadowLight,
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+              blurRadius: 3,
+              offset: const Offset(0, 1),
             ),
           ],
         ),
@@ -485,16 +414,17 @@ class KundliResultView extends BasePage<KundliResultController> {
             Expanded(
               child: AutoTranslateText(
                 title,
-                style: MyTextTheme.mediumBCN.copyWith(
+                style: MyTextTheme.smallBCN.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w500,
+                  fontSize: 13.sp,
                 ),
               ),
             ),
             Icon(
               Icons.arrow_forward_ios,
               color: AppColors.deepOrange,
-              size: 16.w,
+              size: 12.w,
             ),
           ],
         ),
@@ -504,31 +434,30 @@ class KundliResultView extends BasePage<KundliResultController> {
 
   Widget _buildAdditionalFeatures() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      padding: EdgeInsets.symmetric(horizontal: 4.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AutoTranslateText(
             'Additional Features',
-            style: MyTextTheme.largeBCB
-                .copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.bold,
-                )
-                .merge(AppTypography.h2),
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
+              fontSize: 15.sp,
+            ),
           ),
-          Spacing.h(8),
+          Spacing.h(6),
           LayoutBuilder(
             builder: (context, constraints) {
-              final crossAxisCount = constraints.maxWidth > 600 ? 3 : 2;
+              final crossAxisCount = constraints.maxWidth > 600 ? 4 : 4;
               return GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: crossAxisCount,
-                  childAspectRatio: 1.0,
-                  crossAxisSpacing: 8.w,
-                  mainAxisSpacing: 8.h,
+                  childAspectRatio: 0.95,
+                  crossAxisSpacing: 6.w,
+                  mainAxisSpacing: 6.h,
                 ),
                 itemCount: controller.additionalFeatures.length,
                 itemBuilder: (context, index) {
@@ -558,13 +487,14 @@ class KundliResultView extends BasePage<KundliResultController> {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.cardLight,
-          border: Border.all(color: AppColors.deepOrange, width: 1),
-          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+              color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+          borderRadius: BorderRadius.circular(10.r),
           boxShadow: [
             BoxShadow(
               color: AppColors.shadowLight,
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -572,22 +502,23 @@ class KundliResultView extends BasePage<KundliResultController> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(12.r),
+              padding: EdgeInsets.all(6.r),
               decoration: BoxDecoration(
                 gradient: AppColors.orangeGradient,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: AppColors.textLight, size: 32.w),
+              child: Icon(icon, color: AppColors.textLight, size: 18.w),
             ),
-            Spacing.h(8),
+            Spacing.h(4),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: AutoTranslateText(
                 title,
                 textAlign: TextAlign.center,
                 style: MyTextTheme.smallBCB.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
+                  fontSize: 10.sp,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -647,9 +578,9 @@ class KundliResultView extends BasePage<KundliResultController> {
       return DivisionalChartWidget(controller: controller);
     }
 
-    // Show Planets tab - navigate to Planets screen (handled in controller)
+    // Show Planets tab: header + slider bar + PlanetsWidget below
     if (tabName == 'planets') {
-      return _buildOtherTabsContent();
+      return PlanetsTabWidget(controller: controller);
     }
 
     // Show Ascendant Report when ASCENDANT REPORT tab is selected
@@ -685,6 +616,7 @@ class KundliResultView extends BasePage<KundliResultController> {
     // Show "Coming Soon" for additional features tabs
     final additionalFeaturesTabs = [
       'bhav madhya',
+      'shad bala',
       'person details',
       'ghatak and favourable',
       'reports',
@@ -704,13 +636,13 @@ class KundliResultView extends BasePage<KundliResultController> {
   Widget _buildComingSoonContent(String tabName) {
     return Center(
       child: SingleChildScrollView(
-        padding: EdgeInsets.all(32.w),
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 120.w,
-              height: 120.w,
+              width: 72.w,
+              height: 72.w,
               decoration: BoxDecoration(
                 gradient: AppColors.orangeGradient,
                 shape: BoxShape.circle,
@@ -718,26 +650,26 @@ class KundliResultView extends BasePage<KundliResultController> {
               child: Icon(
                 Icons.hourglass_empty,
                 color: Colors.white,
-                size: 60.w,
+                size: 36.w,
               ),
             ),
-            Spacing.h(24),
+            Spacing.h(16),
             AutoTranslateText(
               'Coming Soon',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: "#68171E".toColor(),
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: AppColors.textColorMaroon,
                 fontWeight: FontWeight.bold,
-                fontSize: 24.sp,
+                fontSize: 18.sp,
               ),
             ),
-            Spacing.h(12),
+            Spacing.h(8),
             AutoTranslateText(
               'This feature is under development.\nWe will notify you when it\'s ready!',
               textAlign: TextAlign.center,
-              style: MyTextTheme.mediumBCN.copyWith(
+              style: MyTextTheme.smallBCN.copyWith(
                 color: AppColors.textSecondary,
-                fontSize: 14.sp,
-                height: 1.5,
+                fontSize: 13.sp,
+                height: 1.4,
               ),
             ),
           ],
@@ -748,43 +680,20 @@ class KundliResultView extends BasePage<KundliResultController> {
 
   Widget _buildOtherTabsContent() {
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Feature Grid
           _buildFeatureGrid(),
-
-          Spacing.h(20),
-
-          // Feature List (2 columns)
-          _buildFeatureList(),
-
-          Spacing.h(20),
-
-          // Additional Features Grid
-          _buildAdditionalFeatures(),
-
-          Spacing.h(16),
+          Spacing.h(12),
+         //  _buildAdditionalFeatures(),
+          
+          // Spacing.h(12),
+         _buildFeatureList(),
+          Spacing.h(12),
         ],
       ),
     );
-  }
-
-  // Enhanced tab indicator
-  Widget _buildTabIndicator(int index) {
-    return Obx(() {
-      final isSelected = controller.selectedTabIndex.value == index;
-      return AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        width: isSelected ? 30.w : 8.w,
-        height: 4.h,
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.deepOrange : Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(2.r),
-        ),
-      );
-    });
   }
 
   void _scrollToSelectedTab(int selectedIndex) {
@@ -812,13 +721,15 @@ class KundliResultView extends BasePage<KundliResultController> {
     }
 
     // Fallback: Calculate position by measuring actual tab widths
-    // Wait a frame to ensure tabs are rendered, then calculate
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!scrollController.hasClients) return;
 
-      double totalWidth = 0;
-      // Measure actual widths of tabs before the selected one
-      for (int i = 0; i < selectedIndex; i++) {
+      final visibleIdx = controller.visibleTabIndices.indexOf(selectedIndex);
+      if (visibleIdx < 0) return;
+
+      double totalWidth = 4.w; // initial SizedBox before tabs
+      for (int v = 0; v < visibleIdx; v++) {
+        final i = controller.visibleTabIndices[v];
         final key = controller.tabKeys[i];
         if (key?.currentContext != null) {
           final renderBox =
@@ -826,14 +737,10 @@ class KundliResultView extends BasePage<KundliResultController> {
           if (renderBox != null) {
             totalWidth += renderBox.size.width;
           } else {
-            // Fallback estimation if not rendered yet
-            final tabName = controller.tabs[i];
-            totalWidth += 44.0 + (tabName.length * 9.0);
+            totalWidth += 44.0 + (controller.tabs[i].length * 9.0);
           }
         } else {
-          // Fallback estimation
-          final tabName = controller.tabs[i];
-          totalWidth += 44.0 + (tabName.length * 9.0);
+          totalWidth += 44.0 + (controller.tabs[i].length * 9.0);
         }
       }
 

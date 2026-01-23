@@ -94,22 +94,28 @@ class OurServicesSection extends BasePage<UserDashboardController> {
           Spacing.h(10),
           Obx(() {
             final itemCount = controller.visibleItemCount(_items.length);
+            final isExpanded = controller.isExpanded.value;
 
-            return GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 0.w),
-              itemCount: itemCount,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                crossAxisSpacing: 4.w,
-                mainAxisSpacing: 4.h,
-                childAspectRatio: 0.95,
+            return AnimatedSize(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: GridView.builder(
+                key: ValueKey('services_grid_$isExpanded'),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.symmetric(horizontal: 0.w),
+                itemCount: itemCount,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  crossAxisSpacing: 4.w,
+                  mainAxisSpacing: 4.h,
+                  childAspectRatio: 0.95,
+                ),
+                itemBuilder: (context, index) {
+                  final item = _items[index];
+                  return _serviceButton(item.$1, item.$2);
+                },
               ),
-              itemBuilder: (context, index) {
-                final item = _items[index];
-                return _serviceButton(item.$1, item.$2);
-              },
             );
           }),
         ],
@@ -132,7 +138,10 @@ class OurServicesSection extends BasePage<UserDashboardController> {
 
     return GestureDetector(
       onTap: () {
-        switch (label.toLowerCase()) {
+        // Normalize label by removing newlines and converting to lowercase
+        final normalizedLabel = label.toLowerCase().replaceAll('\n', ' ').trim();
+        
+        switch (normalizedLabel) {
           case 'face reading':
             _requireLogin(
               () async => Get.toNamed(AppRoutes.faceReading),
@@ -145,6 +154,7 @@ class OurServicesSection extends BasePage<UserDashboardController> {
               message: 'Login to start palm reading.',
             );
             break;
+          case 'tarot reading':
           case 'tarot card reading':
             _requireLogin(
               () async => Get.toNamed(AppRoutes.tarotReading),
@@ -165,6 +175,7 @@ class OurServicesSection extends BasePage<UserDashboardController> {
             );
             break;
           case 'horoscope':
+          case 'check horoscope':
             _requireLogin(
               () async => Get.toNamed(AppRoutes.horoscopeForm),
               message: 'Login to check your horoscope.',
@@ -172,11 +183,10 @@ class OurServicesSection extends BasePage<UserDashboardController> {
             break;
           case 'numerology':
             _requireLogin(
-              () async => Get.toNamed('/numerology-form'),
+              () async => Get.toNamed(AppRoutes.numerologyForm),
               message: 'Login to try numerology.',
             );
             break;
-          case 'generate\nkundli':
           case 'generate kundli':
             _requireLogin(
               () async => Get.toNamed(AppRoutes.kundliForm),
@@ -276,12 +286,13 @@ class OurServicesSection extends BasePage<UserDashboardController> {
             break;
           default:
             // Check if label contains "kundli" (case insensitive)
-            if (label.toLowerCase().contains('kundli')) {
+            if (normalizedLabel.contains('kundli')) {
               _requireLogin(
                 () async => Get.toNamed(AppRoutes.kundliForm),
                 message: 'Login to generate your Kundli.',
               );
             } else {
+              // If no match found, show coming soon
               _requireLogin(() async => Get.to(() => const ComingSoonPage()));
             }
         }

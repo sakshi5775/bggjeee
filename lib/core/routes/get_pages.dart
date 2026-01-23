@@ -517,8 +517,8 @@ class PageRoutes {
             : true;
         return CoursesView(showBackButton: showBackButton);
       },
-      transition: Transition.rightToLeft,
-      transitionDuration: Duration(milliseconds: 300),
+      transition: Transition.noTransition,
+      transitionDuration: Duration.zero,
       binding: CoursesBinding(),
     ),
     GetPage(

@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '227172104482',
     projectId: 'astrobharatai-db3cf',
     storageBucket: 'astrobharatai-db3cf.firebasestorage.app',
-    iosBundleId: 'com.astrobharataiuser',
+    iosBundleId: 'com.astrobharatai.astrouser',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '227172104482',
     projectId: 'astrobharatai-db3cf',
     storageBucket: 'astrobharatai-db3cf.firebasestorage.app',
-    iosBundleId: 'com.astrobharataiuser',
+    iosBundleId: 'com.astrobharatai.astrouser',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

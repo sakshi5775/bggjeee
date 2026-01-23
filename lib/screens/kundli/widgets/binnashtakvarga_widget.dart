@@ -2,327 +2,302 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class BinnashtakvargaWidget extends StatelessWidget {
   final KundliResultController controller;
 
   const BinnashtakvargaWidget({super.key, required this.controller});
 
-  // Available planets
   static const List<String> planets = [
-    'Sun',
-    'Moon',
-    'Mars',
-    'Mercury',
-    'Jupiter',
-    'Venus',
-    'Saturn',
+    'Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn',
   ];
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       return SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.all(16.w),
-              decoration: BoxDecoration(
-                color: "#FFFFFF".toColor(),
-                border: Border.all(color: "#FF8C42".toColor(), width: 1.w),
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          // color: "#FF8C42".toColor(),
-                          gradient: LinearGradient(
-                            colors: ["#FF8C42".toColor(), "#FF4B2B".toColor()],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        padding: EdgeInsets.all(8.w),
-                        child: Icon(
-                          Icons.info_outline,
-                          color: "#FFFFFF".toColor(),
-                        ),
-                      ),
-                      Spacing.w(12),
-                      AutoTranslateText(
-                        'Binnashtakvarga',
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: "#6F221E".toColor(),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: "#ed6f30".toColor().withOpacity(0.2),
+              width: 1,
             ),
-
-            // Title
-            // AutoTranslateText(
-            //   'Binnashtakvarga',
-            //   style: MyTextTheme.largeBCB.copyWith(
-            //     color: "#6F221E".toColor(),
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
-            Spacing.h(16),
-
-            // Note Card
-            Container(
-              padding: EdgeInsets.all(16.w),
-              decoration: BoxDecoration(
-                color: "#DFB343".toColor().withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(
-                  color: "#DFB343".toColor().withOpacity(0.3),
-                  width: 1,
-                ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
               ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    color: "#DFB343".toColor(),
-                    size: 24.w,
-                  ),
-                  Spacing.w(12),
-                  Expanded(
-                    child: AutoTranslateText(
-                      'Choose a planet to fetch its Binnashtakvarga information',
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: "#6F221E".toColor(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            Spacing.h(20),
-
-            Container(
-              padding: EdgeInsets.all(16.w),
-              decoration: BoxDecoration(
-                color: "#FFFFFF".toColor(),
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: "#DFB343".toColor(), width: 1),
-              ),
-              child: Column(
-                children: [
-                  // Planet Selection Grid
-                  AutoTranslateText(
-                    'Select Planet',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: "#6F221E".toColor(),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.sp,
-                    ),
-                  ),
-
-                  Spacing.h(12),
-
-                  // Planet Grid
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      final crossAxisCount = constraints.maxWidth > 600 ? 4 : 3;
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: crossAxisCount,
-                          childAspectRatio: 1.2,
-                          crossAxisSpacing: 12.w,
-                          mainAxisSpacing: 12.h,
-                        ),
-                        itemCount: planets.length,
-                        itemBuilder: (context, index) {
-                          final planet = planets[index];
-                          final isSelected =
-                              controller
-                                  .selectedPlanetForBinnashtakvarga
-                                  .value ==
-                              planet;
-                          final isLoading =
-                              controller.isLoadingBinnashtakvarga.value &&
-                              isSelected;
-
-                          return GestureDetector(
-                            onTap: isLoading
-                                ? null
-                                : () {
-                                    controller.fetchBinnashtakvargaData(planet);
-                                  },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? "#ed6f30".toColor()
-                                    : Colors.white,
-                                borderRadius: BorderRadius.circular(12.r),
-                                border: Border.all(
-                                  color: isSelected
-                                      ? "#ed6f30".toColor()
-                                      : "#DFB343".toColor(),
-                                  width: isSelected ? 2 : 1,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.08),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  if (isLoading)
-                                    SizedBox(
-                                      width: 24.w,
-                                      height: 24.w,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                              Colors.white,
-                                            ),
-                                      ),
-                                    )
-                                  else
-                                    Icon(
-                                      Icons.star,
-                                      color: isSelected
-                                          ? Colors.white
-                                          : "#DFB343".toColor(),
-                                      size: 32.w,
-                                    ),
-                                  Spacing.h(8),
-                                  AutoTranslateText(
-                                    planet,
-                                    textAlign: TextAlign.center,
-                                    style: MyTextTheme.smallBCB.copyWith(
-                                      color: isSelected
-                                          ? Colors.white
-                                          : "#6F221E".toColor(),
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-
-            Spacing.h(24),
-
-            // Data Display
-            if (controller.isLoadingBinnashtakvarga.value &&
-                controller.selectedPlanetForBinnashtakvarga.value != null)
-              Center(
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildHeader(),
+              _buildNoteBar(),
+              Padding(
+                padding: EdgeInsets.all(10.w),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircularProgressIndicator(color: "#ed6f30".toColor()),
-                    Spacing.h(16),
-                    AutoTranslateText(
-                      'Loading Binnashtakvarga data for ${controller.selectedPlanetForBinnashtakvarga.value}...',
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: "#6F221E".toColor().withOpacity(0.7),
-                      ),
-                    ),
+                    _buildPlanetGrid(),
+                    if (controller.isLoadingBinnashtakvarga.value &&
+                        controller.selectedPlanetForBinnashtakvarga.value != null) ...[
+                      Spacing.h(12),
+                      _buildLoading(),
+                    ] else if (controller.binnashtakvargaData.value != null) ...[
+                      Spacing.h(12),
+                      _buildDataTable(controller.binnashtakvargaData.value!),
+                    ],
                   ],
                 ),
-              )
-            else if (controller.binnashtakvargaData.value != null)
-              _buildDataTable(controller.binnashtakvargaData.value!),
-          ],
+              ),
+            ],
+          ),
         ),
       );
     });
   }
 
-  Widget _buildDataTable(Map<String, dynamic> data) {
-    // Get all planet data
-    final planetKeys = [
-      'sun',
-      'moon',
-      'mars',
-      'mercury',
-      'jupiter',
-      'venus',
-      'saturn',
-    ];
-    final ascendant = data['ascendant'] as List<dynamic>?;
-    final total = data['Total'] as List<dynamic>?;
-
+  Widget _buildHeader() {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        gradient: LinearGradient(
+          colors: ["#FF8A3D".toColor(), "#ed6f30".toColor()],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          // Selected Planet Info
-          if (controller.selectedPlanetForBinnashtakvarga.value != null) ...[
-            AutoTranslateText(
-              'Binnashtakvarga for ${controller.selectedPlanetForBinnashtakvarga.value}',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.bold,
-              ),
+          Icon(Icons.grid_on_rounded, size: 18.w, color: Colors.white),
+          Spacing.w(8),
+          AutoTranslateText(
+            'Binnashtakvarga',
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 13.sp,
             ),
-            Spacing.h(16),
-          ],
-
-          // Table
-          LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: _buildTableContent(planetKeys, data, ascendant, total),
-                ),
-              );
-            },
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTableContent(
+  Widget _buildNoteBar() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: "#ed6f30".toColor().withOpacity(0.06),
+        border: Border(
+          bottom: BorderSide(
+            color: "#ed6f30".toColor().withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline_rounded, size: 16.w, color: "#ed6f30".toColor()),
+          Spacing.w(8),
+          Expanded(
+            child: AutoTranslateText(
+              'Choose a planet to fetch its Binnashtakvarga',
+              style: MyTextTheme.smallBCN.copyWith(
+                color: "#6F221E".toColor(),
+                fontSize: 11.sp,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlanetGrid() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AutoTranslateText(
+          'Select Planet',
+          style: MyTextTheme.smallBCB.copyWith(
+            color: "#6F221E".toColor(),
+            fontWeight: FontWeight.w600,
+            fontSize: 12.sp,
+          ),
+        ),
+        Spacing.h(8),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final crossAxisCount = constraints.maxWidth > 500 ? 4 : 3;
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                childAspectRatio: 1.4,
+                crossAxisSpacing: 8.w,
+                mainAxisSpacing: 8.h,
+              ),
+              itemCount: planets.length,
+              itemBuilder: (context, index) {
+                final planet = planets[index];
+                final isSelected =
+                    controller.selectedPlanetForBinnashtakvarga.value == planet;
+                final isLoading =
+                    controller.isLoadingBinnashtakvarga.value && isSelected;
+
+                return GestureDetector(
+                  onTap: isLoading
+                      ? null
+                      : () => controller.fetchBinnashtakvargaData(planet),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 6.h),
+                    decoration: BoxDecoration(
+                      gradient: isSelected
+                          ? LinearGradient(
+                              colors: ["#FF8A3D".toColor(), "#ed6f30".toColor()],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            )
+                          : null,
+                      color: isSelected ? null : Colors.white,
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(
+                        color: isSelected
+                            ? "#ed6f30".toColor()
+                            : "#ed6f30".toColor().withOpacity(0.35),
+                        width: isSelected ? 1.5 : 1,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (isLoading)
+                          SizedBox(
+                            width: 20.w,
+                            height: 20.w,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: isSelected
+                                  ? Colors.white
+                                  : "#ed6f30".toColor(),
+                            ),
+                          )
+                        else
+                          Icon(
+                            Icons.star_rounded,
+                            color: isSelected
+                                ? Colors.white
+                                : "#ed6f30".toColor(),
+                            size: 22.w,
+                          ),
+                        Spacing.h(4),
+                        AutoTranslateText(
+                          planet,
+                          textAlign: TextAlign.center,
+                          style: MyTextTheme.smallBCB.copyWith(
+                            color: isSelected
+                                ? Colors.white
+                                : "#6F221E".toColor(),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 10.sp,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLoading() {
+    return Center(
+      child: Column(
+        children: [
+          SizedBox(
+            width: 28.w,
+            height: 28.w,
+            child: CircularProgressIndicator(
+              color: "#ed6f30".toColor(),
+              strokeWidth: 2,
+            ),
+          ),
+          Spacing.h(8),
+          AutoTranslateText(
+            'Loading ${controller.selectedPlanetForBinnashtakvarga.value}...',
+            style: MyTextTheme.smallBCN.copyWith(
+              color: "#6F221E".toColor().withOpacity(0.7),
+              fontSize: 11.sp,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDataTable(Map<String, dynamic> data) {
+    final planetKeys = [
+      'sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn',
+    ];
+    final ascendant = data['ascendant'] as List<dynamic>?;
+    final total = data['Total'] as List<dynamic>?;
+
+    return Container(
+      padding: EdgeInsets.all(10.w),
+      decoration: BoxDecoration(
+        color: "#ed6f30".toColor().withOpacity(0.03),
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(
+          color: "#ed6f30".toColor().withOpacity(0.15),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (controller.selectedPlanetForBinnashtakvarga.value != null) ...[
+            AutoTranslateText(
+              'Binnashtakvarga for ${controller.selectedPlanetForBinnashtakvarga.value}',
+              style: MyTextTheme.smallBCB.copyWith(
+                color: "#6F221E".toColor(),
+                fontWeight: FontWeight.w600,
+                fontSize: 12.sp,
+              ),
+            ),
+            Spacing.h(8),
+          ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: _buildTable(planetKeys, data, ascendant, total),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTable(
     List<String> planetKeys,
     Map<String, dynamic> data,
     List<dynamic>? ascendant,
@@ -330,60 +305,46 @@ class BinnashtakvargaWidget extends StatelessWidget {
   ) {
     return Table(
       border: TableBorder.all(
-        color: "#6F221E".toColor().withOpacity(0.2),
+        color: "#6F221E".toColor().withOpacity(0.15),
         width: 1,
       ),
       columnWidths: {
-        0: FixedColumnWidth(80.w), // House column
-        for (int i = 1; i <= planetKeys.length; i++)
-          i: FixedColumnWidth(60.w), // Planet columns
-        planetKeys.length + 1: FixedColumnWidth(60.w), // Ascendant column
-        planetKeys.length + 2: FixedColumnWidth(70.w), // Total column
+        0: FixedColumnWidth(52.w),
+        for (int i = 1; i <= planetKeys.length; i++) i: FixedColumnWidth(42.w),
+        planetKeys.length + 1: FixedColumnWidth(42.w),
+        planetKeys.length + 2: FixedColumnWidth(48.w),
       },
       children: [
-        // Header row
         TableRow(
           decoration: BoxDecoration(
-            color: "#6F221E".toColor().withOpacity(0.1),
+            color: "#ed6f30".toColor().withOpacity(0.12),
           ),
           children: [
-            _buildHeaderCell('House'),
-            for (String planet in planetKeys)
-              _buildHeaderCell(
-                planet.substring(0, 1).toUpperCase() + planet.substring(1),
-              ),
-            _buildHeaderCell('Asc'),
-            _buildHeaderCell('Total'),
+            _cell('H', header: true),
+            ...planetKeys.map((p) => _cell(
+                  p.length >= 2 ? p.substring(0, 2) : p,
+                  header: true,
+                )),
+            _cell('Asc', header: true),
+            _cell('Tot', header: true),
           ],
         ),
-        // Data rows for each house (1-12)
-        ...List.generate(12, (houseIndex) {
+        ...List.generate(12, (i) {
           return TableRow(
             decoration: BoxDecoration(
-              color: houseIndex % 2 == 0
+              color: i % 2 == 0
                   ? Colors.white
-                  : "#DFB343".toColor().withOpacity(0.05),
+                  : "#ed6f30".toColor().withOpacity(0.04),
             ),
             children: [
-              // House number
-              _buildHouseCell('H${houseIndex + 1}'),
-              // Points for each planet in this house
-              for (String planetKey in planetKeys)
-                _buildDataCell(_getPointForHouse(planetKey, houseIndex, data)),
-              // Ascendant point
-              _buildDataCell(
-                _getPointForHouse(
-                  'ascendant',
-                  houseIndex,
-                  data,
-                  ascendant: ascendant,
-                ),
-              ),
-              // Total for this house
-              _buildTotalCell(
-                houseIndex < (total?.length ?? 0)
-                    ? total![houseIndex]?.toString() ?? '--'
+              _cell('H${i + 1}'),
+              ...planetKeys.map((k) => _cell(_point(k, i, data))),
+              _cell(_point('ascendant', i, data, ascendant: ascendant)),
+              _cell(
+                i < (total?.length ?? 0)
+                    ? (total![i]?.toString() ?? '--')
                     : '--',
+                bold: true,
               ),
             ],
           );
@@ -392,74 +353,29 @@ class BinnashtakvargaWidget extends StatelessWidget {
     );
   }
 
-  String _getPointForHouse(
-    String planetKey,
-    int houseIndex,
-    Map<String, dynamic> data, {
-    List<dynamic>? ascendant,
-  }) {
-    if (planetKey == 'ascendant') {
-      if (ascendant != null && houseIndex < ascendant.length) {
-        return ascendant[houseIndex]?.toString() ?? '--';
+  String _point(String key, int i, Map<String, dynamic> data,
+      {List<dynamic>? ascendant}) {
+    if (key == 'ascendant') {
+      if (ascendant != null && i < ascendant.length) {
+        return ascendant[i]?.toString() ?? '--';
       }
       return '--';
     }
-
-    final planetData = data[planetKey] as List<dynamic>?;
-    if (planetData != null && houseIndex < planetData.length) {
-      return planetData[houseIndex]?.toString() ?? '--';
-    }
+    final arr = data[key] as List<dynamic>?;
+    if (arr != null && i < arr.length) return arr[i]?.toString() ?? '--';
     return '--';
   }
 
-  Widget _buildHeaderCell(String text) {
+  Widget _cell(String text, {bool header = false, bool bold = false}) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
+      padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 4.w),
       child: AutoTranslateText(
         text,
         textAlign: TextAlign.center,
-        style: MyTextTheme.smallBCB.copyWith(
+        style: MyTextTheme.smallBCN.copyWith(
           color: "#6F221E".toColor(),
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHouseCell(String text) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
-      child: AutoTranslateText(
-        text,
-        textAlign: TextAlign.center,
-        style: MyTextTheme.smallBCB.copyWith(
-          color: "#6F221E".toColor(),
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDataCell(String text) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 4.w),
-      child: AutoTranslateText(
-        text,
-        textAlign: TextAlign.center,
-        style: MyTextTheme.smallBCN.copyWith(color: "#6F221E".toColor()),
-      ),
-    );
-  }
-
-  Widget _buildTotalCell(String text) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 4.w),
-      child: AutoTranslateText(
-        text,
-        textAlign: TextAlign.center,
-        style: MyTextTheme.mediumBCB.copyWith(
-          color: "#6F221E".toColor(),
-          fontWeight: FontWeight.bold,
+          fontWeight: header || bold ? FontWeight.w600 : FontWeight.normal,
+          fontSize: 10.sp,
         ),
       ),
     );

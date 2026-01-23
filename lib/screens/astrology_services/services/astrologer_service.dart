@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
+import 'package:astrobharataiuser/services/astrologer_cache_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
@@ -23,7 +24,59 @@ class AstrologerService {
   /// - [search]: Search by astrologer name (full name or display name)
   /// - [page]: Page number for pagination (default: 1)
   /// - [limit]: Number of astrologers per page, max 100 (default: 20)
+  /// - [useCache]: Whether to use cached data if available (default: true)
   Future<AstrologerResponse?> getAstrologers({
+    int page = 1,
+    int limit = 20,
+    String? specialization,
+    String? language,
+    double? minRating,
+    double? maxPrice,
+    String? availability,
+    int? experience,
+    String? sortBy,
+    String? search,
+    String? astrologerCategory,
+    bool useCache = true,
+  }) async {
+    // Try cache first (only for basic queries without filters)
+    if (useCache && 
+        specialization == null && 
+        language == null && 
+        minRating == null && 
+        maxPrice == null && 
+        availability == null && 
+        experience == null && 
+        search == null && 
+        astrologerCategory == null &&
+        page == 1) {
+      final cached = AstrologerCacheService.getCachedAstrologers();
+      if (cached != null) {
+        debugPrint('Using cached astrologers data');
+        // Try to fetch fresh data in background
+        _fetchAndCacheAstrologers();
+        return cached;
+      }
+    }
+    
+    // Fetch from API
+    return await _fetchAndCacheAstrologers(
+      page: page,
+      limit: limit,
+      specialization: specialization,
+      language: language,
+      minRating: minRating,
+      maxPrice: maxPrice,
+      availability: availability,
+      experience: experience,
+      sortBy: sortBy,
+      search: search,
+      astrologerCategory: astrologerCategory,
+    );
+  }
+  
+  /// Internal method to fetch and cache astrologers
+  Future<AstrologerResponse?> _fetchAndCacheAstrologers({
     int page = 1,
     int limit = 20,
     String? specialization,
@@ -86,12 +139,66 @@ class AstrologerService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.body['success'] == true) {
-          return AstrologerResponse.fromJson(response.body);
+          final astrologerResponse = AstrologerResponse.fromJson(response.body);
+          
+          // Cache only basic queries (no filters, page 1)
+          if (specialization == null && 
+              language == null && 
+              minRating == null && 
+              maxPrice == null && 
+              availability == null && 
+              experience == null && 
+              search == null && 
+              astrologerCategory == null &&
+              page == 1) {
+            await AstrologerCacheService.saveAstrologers(
+              astrologerResponse,
+              rawJson: response.body,
+            );
+          }
+          
+          return astrologerResponse;
         }
       }
+      
+      // If API fails, try to return cached data
+      if (specialization == null && 
+          language == null && 
+          minRating == null && 
+          maxPrice == null && 
+          availability == null && 
+          experience == null && 
+          search == null && 
+          astrologerCategory == null &&
+          page == 1) {
+        final cached = AstrologerCacheService.getCachedAstrologers();
+        if (cached != null) {
+          debugPrint('API failed, using cached astrologers data');
+          return cached;
+        }
+      }
+      
       return null;
     } catch (e) {
       debugPrint('Error fetching astrologers: $e');
+      
+      // On error, try to return cached data
+      if (specialization == null && 
+          language == null && 
+          minRating == null && 
+          maxPrice == null && 
+          availability == null && 
+          experience == null && 
+          search == null && 
+          astrologerCategory == null &&
+          page == 1) {
+        final cached = AstrologerCacheService.getCachedAstrologers();
+        if (cached != null) {
+          debugPrint('Error occurred, using cached astrologers data');
+          return cached;
+        }
+      }
+      
       return null;
     }
   }

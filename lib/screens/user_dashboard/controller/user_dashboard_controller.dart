@@ -208,9 +208,10 @@ class UserDashboardController extends BaseController
   Timer? _bookPoojaTimer;
 
   // Our Services Carousel
-  final Rx<PageController> ourServicesPageController = PageController().obs;
+  final Rx<PageController> ourServicesPageController = PageController(initialPage: 2500).obs; // Start at middle for infinite scroll (500 * 5 services)
   final RxInt ourServicesCurrentPage = 0.obs;
   Timer? _ourServicesTimer;
+  bool _ourServicesInitialized = false;
 
   // Puja Service
   final PujaService _pujaService = PujaService();
@@ -225,14 +226,29 @@ class UserDashboardController extends BaseController
   final RxBool isLoadingYoutubeVideos = false.obs;
 
   void toggleView() {
-    final offset = scrollController.offset;
+    // Only preserve scroll position if controller is properly attached
+    double? offset;
+    if (scrollController.hasClients && scrollController.positions.length == 1) {
+      offset = scrollController.offset;
+    }
 
     isExpanded.toggle();
 
-    // Restore scroll position AFTER layout rebuild
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      scrollController.jumpTo(offset);
-    });
+    // Restore scroll position AFTER layout rebuild (only if we saved it)
+    if (offset != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (scrollController.hasClients && scrollController.positions.length == 1) {
+          try {
+            scrollController.jumpTo(offset!);
+          } catch (e) {
+            // Ignore errors if controller is no longer valid
+            if (kDebugMode) {
+              print('Error restoring scroll position: $e');
+            }
+          }
+        }
+      });
+    }
   }
 
   int visibleItemCount(int total) {
@@ -297,8 +313,10 @@ class UserDashboardController extends BaseController
     // Start Book Pooja carousel auto-slide (will be started after pujas are loaded)
     // Load YouTube videos
     loadYouTubeVideos();
-    // Start Our Services carousel auto-slide
-    _startOurServicesAutoSlide();
+    // Start Our Services carousel auto-slide after a delay to ensure PageView is built
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      _startOurServicesAutoSlide();
+    });
   }
 
   /// Load pujas from API
@@ -420,20 +438,80 @@ class UserDashboardController extends BaseController
     const int servicesCount = 5;
     if (servicesCount == 0) return;
     
+    // Stop any existing timer first
+    _stopOurServicesAutoSlide();
+    _ourServicesInitialized = false;
+    
+    if (kDebugMode) {
+      print('Our Services: Starting auto-scroll setup...');
+    }
+    
+    // Initialize PageController to middle position after PageView is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 2500), () {
+        final pageController = ourServicesPageController.value;
+        if (pageController.hasClients && pageController.positions.isNotEmpty) {
+          try {
+            final initialPage = 500 * servicesCount; // Start at middle (2500)
+            pageController.jumpToPage(initialPage);
+            ourServicesCurrentPage.value = 0;
+            _ourServicesInitialized = true;
+            
+            if (kDebugMode) {
+              print('Our Services: Initialized to page $initialPage');
+            }
+          } catch (e) {
+            if (kDebugMode) {
+              print('Our Services initialization error: $e');
+            }
+          }
+        }
+      });
+    });
+    
+    // Start timer immediately - it will wait for initialization
+    if (kDebugMode) {
+      print('Our Services: Creating auto-scroll timer...');
+    }
+    
     _ourServicesTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
       final pageController = ourServicesPageController.value;
-      // Check if PageController has exactly one client (one PageView attached)
-      if (pageController.hasClients && pageController.positions.length == 1) {
-        int next = (ourServicesCurrentPage.value + 1) % servicesCount;
-        ourServicesCurrentPage.value = next;
+      
+      // Wait for PageController to be ready and initialized
+      if (!pageController.hasClients || 
+          pageController.positions.isEmpty || 
+          !_ourServicesInitialized) {
+        if (kDebugMode && timer.tick == 1) {
+          print('Our Services: Waiting for PageView to be ready... (tick ${timer.tick})');
+        }
+        return; // Wait for next tick
+      }
+      
+      // Auto-scroll logic
+      if (pageController.positions.length == 1) {
         try {
+          // Get current page and move to next (scroll right to left)
+          final currentPage = pageController.page?.round() ?? (500 * servicesCount);
+          final nextPage = currentPage + 1;
+          
+          // Update the current page index (for display purposes)
+          ourServicesCurrentPage.value = nextPage % servicesCount;
+          
+          if (kDebugMode && timer.tick % 5 == 0) {
+            print('Our Services: Auto-scrolling from page $currentPage to $nextPage (tick ${timer.tick})');
+          }
+          
+          // Animate to next page (infinite scroll from right to left)
           pageController.animateToPage(
-            next,
+            nextPage,
             duration: const Duration(milliseconds: 500),
             curve: Curves.easeInOut,
           );
         } catch (e) {
           // If animation fails (e.g., controller disposed), stop the timer
+          if (kDebugMode) {
+            print('Our Services auto-scroll error: $e');
+          }
           _stopOurServicesAutoSlide();
         }
       }

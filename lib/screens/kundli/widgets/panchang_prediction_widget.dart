@@ -2,12 +2,11 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/predictions_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class PanchangPredictionWidget extends StatelessWidget {
   final PredictionsController controller;
@@ -22,14 +21,31 @@ class PanchangPredictionWidget extends StatelessWidget {
     return Obx(() {
       if (controller.isLoadingPanchang.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 28.w,
+                height: 28.w,
+                child: CircularProgressIndicator(
+                  color: "#ed6f30".toColor(),
+                  strokeWidth: 2,
+                ),
+              ),
+              Spacing.h(10),
+              AutoTranslateText(
+                'Loading...',
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: "#6F221E".toColor().withOpacity(0.7),
+                  fontSize: 12.sp,
+                ),
+              ),
+            ],
           ),
         );
       }
 
       final data = controller.panchangPredictionData.value;
-      
       if (data == null || data.isEmpty) {
         return Center(
           child: Column(
@@ -37,22 +53,24 @@ class PanchangPredictionWidget extends StatelessWidget {
             children: [
               Icon(
                 Icons.info_outline,
-                size: 48.w,
-                color: "#6F221E".toColor().withOpacity(0.5),
+                size: 40.w,
+                color: "#ed6f30".toColor().withOpacity(0.5),
               ),
-              Spacing.h(16),
+              Spacing.h(12),
               AutoTranslateText(
                 'No data available',
                 style: MyTextTheme.mediumBCN.copyWith(
                   color: "#6F221E".toColor().withOpacity(0.6),
+                  fontSize: 13.sp,
                 ),
               ),
-              Spacing.h(8),
+              Spacing.h(4),
               AutoTranslateText(
                 'Please select Panchang from the table',
                 textAlign: TextAlign.center,
                 style: MyTextTheme.smallBCN.copyWith(
                   color: "#6F221E".toColor().withOpacity(0.5),
+                  fontSize: 11.sp,
                 ),
               ),
             ],
@@ -65,8 +83,9 @@ class PanchangPredictionWidget extends StatelessWidget {
         return Center(
           child: AutoTranslateText(
             'No data available',
-            style: MyTextTheme.mediumBCN.copyWith(
+            style: MyTextTheme.smallBCN.copyWith(
               color: "#6F221E".toColor().withOpacity(0.6),
+              fontSize: 12.sp,
             ),
           ),
         );
@@ -80,109 +99,96 @@ class PanchangPredictionWidget extends StatelessWidget {
       final nakshatra = response['nakshatra'] as Map<String, dynamic>?;
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Explanation
-            if (explantion.isNotEmpty) ...[
-              Container(
-                padding: EdgeInsets.all(16.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.r),
+            border: Border.all(
+              color: "#ed6f30".toColor().withOpacity(0.2),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildHeader(),
+              Padding(
+                padding: EdgeInsets.all(8.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.info_outline,
-                          color: "#ed6f30".toColor(),
-                          size: 20.w,
-                        ),
-                        Spacing.w(8),
-                        AutoTranslateText(
-                          'About Panchang Phala',
-                          style: AppTypography.h2.copyWith(
-                            color: "#6F221E".toColor(),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Spacing.h(12),
-                    AutoTranslateText(
-                      explantion,
-                      style: AppTypography.body1.copyWith(
-                        color: "#6F221E".toColor(),
-                        height: 1.6,
-                      ),
-                    ),
+                    if (explantion.isNotEmpty) ...[
+                      _buildAboutSection(explantion),
+                      Spacing.h(6),
+                    ],
+                    if (tithi != null) _buildItem('Tithi', tithi, Icons.calendar_today),
+                    if (tithi != null) Spacing.h(5),
+                    if (weekday != null) _buildItem('Weekday', weekday, Icons.today),
+                    if (weekday != null) Spacing.h(5),
+                    if (yoga != null) _buildItem('Yoga', yoga, Icons.auto_awesome),
+                    if (yoga != null) Spacing.h(5),
+                    if (karan != null) _buildItem('Karan', karan, Icons.star),
+                    if (karan != null) Spacing.h(5),
+                    if (nakshatra != null) _buildItem('Nakshatra', nakshatra, Icons.stars),
                   ],
                 ),
               ),
-              Spacing.h(16),
             ],
-            
-            // Tithi
-            if (tithi != null) _buildPanchangItem('Tithi', tithi, Icons.calendar_today),
-            Spacing.h(16),
-            
-            // Weekday
-            if (weekday != null) _buildPanchangItem('Weekday', weekday, Icons.today),
-            Spacing.h(16),
-            
-            // Yoga
-            if (yoga != null) _buildPanchangItem('Yoga', yoga, Icons.auto_awesome),
-            Spacing.h(16),
-            
-            // Karan
-            if (karan != null) _buildPanchangItem('Karan', karan, Icons.star),
-            Spacing.h(16),
-            
-            // Nakshatra
-            if (nakshatra != null) _buildPanchangItem('Nakshatra', nakshatra, Icons.stars),
-          ],
+          ),
         ),
       );
     });
   }
 
-  Widget _buildPanchangItem(String title, Map<String, dynamic> data, IconData icon) {
-    final name = data['name'] as String? ?? '';
-    final prediction = data['prediction'] as String? ?? '';
-
+  Widget _buildHeader() {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        gradient: AppColors.orangeGradient,
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.nightlight_round, size: 14.w, color: Colors.white),
+          Spacing.w(6),
+          AutoTranslateText(
+            'Panchang Phala',
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 12.sp,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAboutSection(String text) {
+    return Container(
+      padding: EdgeInsets.all(8.w),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            "#ed6f30".toColor().withOpacity(0.1),
-            "#ed6f30".toColor().withOpacity(0.05),
+            AppColors.orangeGradient.colors.first.withOpacity(0.08),
+            AppColors.orangeGradient.colors.last.withOpacity(0.04),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.2),
+          color: AppColors.orangeGradient.colors.first.withOpacity(0.25),
           width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,53 +196,98 @@ class PanchangPredictionWidget extends StatelessWidget {
           Row(
             children: [
               Icon(
-                icon,
-                color: "#ed6f30".toColor(),
-                size: 20.w,
+                Icons.info_outline,
+                color: AppColors.orangeGradient.colors.first,
+                size: 14.w,
               ),
-              Spacing.w(8),
+              Spacing.w(5),
               AutoTranslateText(
-                title,
-                style: AppTypography.h2.copyWith(
+                'About Panchang Phala',
+                style: MyTextTheme.smallBCB.copyWith(
                   color: "#6F221E".toColor(),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11.sp,
                 ),
               ),
             ],
           ),
-          Spacing.h(12),
-          
-          // Name
+          Spacing.h(5),
+          AutoTranslateText(
+            text,
+            style: MyTextTheme.smallBCN.copyWith(
+              color: "#6F221E".toColor(),
+              height: 1.45,
+              fontSize: 10.sp,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildItem(String title, Map<String, dynamic> data, IconData icon) {
+    final name = data['name'] as String? ?? '';
+    final prediction = data['prediction'] as String? ?? '';
+
+    return Container(
+      padding: EdgeInsets.all(8.w),
+      decoration: BoxDecoration(
+        color: AppColors.orangeGradient.colors.first.withOpacity(0.04),
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(
+          color: AppColors.orangeGradient.colors.first.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(4.w),
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
+                  borderRadius: BorderRadius.circular(5.r),
+                ),
+                child: Icon(icon, color: Colors.white, size: 12.w),
+              ),
+              Spacing.w(6),
+              AutoTranslateText(
+                title,
+                style: MyTextTheme.smallBCB.copyWith(
+                  color: "#6F221E".toColor(),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11.sp,
+                ),
+              ),
+            ],
+          ),
           if (name.isNotEmpty) ...[
+            Spacing.h(4),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
               decoration: BoxDecoration(
-                color: "#ed6f30".toColor().withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8.r),
+                color: AppColors.orangeGradient.colors.first.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(5.r),
               ),
               child: AutoTranslateText(
                 name,
-                style: AppTypography.h3.copyWith(
-                  color: "#ed6f30".toColor(),
+                style: MyTextTheme.smallBCB.copyWith(
+                  color: AppColors.orangeGradient.colors.first,
+                  fontSize: 10.sp,
                 ),
               ),
             ),
-            Spacing.h(12),
           ],
-          
-          // Prediction
           if (prediction.isNotEmpty) ...[
-            Container(
-              padding: EdgeInsets.all(12.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: AutoTranslateText(
-                prediction,
-                style: AppTypography.body1.copyWith(
-                  color: "#6F221E".toColor(),
-                  height: 1.6,
-                ),
+            Spacing.h(4),
+            AutoTranslateText(
+              prediction,
+              style: MyTextTheme.smallBCN.copyWith(
+                color: "#6F221E".toColor(),
+                height: 1.45,
+                fontSize: 10.sp,
               ),
             ),
           ],
@@ -245,4 +296,3 @@ class PanchangPredictionWidget extends StatelessWidget {
     );
   }
 }
-

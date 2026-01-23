@@ -2,13 +2,11 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
 class DailyPanchangWidget extends StatelessWidget {
@@ -22,20 +20,25 @@ class DailyPanchangWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Show loading if fetching data
       if (controller.isLoadingPanchang.value) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                color: "#ed6f30".toColor(),
+              SizedBox(
+                width: 28.w,
+                height: 28.w,
+                child: CircularProgressIndicator(
+                  color: AppColors.orangeGradient.colors.first,
+                  strokeWidth: 2,
+                ),
               ),
-              Spacing.h(16),
+              Spacing.h(10),
               AutoTranslateText(
-                'Loading panchang data...',
-                style: MyTextTheme.mediumBCN.copyWith(
+                'Loading...',
+                style: MyTextTheme.smallBCN.copyWith(
                   color: "#6F221E".toColor().withOpacity(0.7),
+                  fontSize: 12.sp,
                 ),
               ),
             ],
@@ -48,33 +51,17 @@ class DailyPanchangWidget extends StatelessWidget {
         return Center(
           child: AutoTranslateText(
             'No panchang data available',
-            style: MyTextTheme.mediumBCN.copyWith(
+            style: MyTextTheme.smallBCN.copyWith(
               color: "#6F221E".toColor().withOpacity(0.7),
+              fontSize: 12.sp,
             ),
           ),
         );
       }
 
       return SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Title
-            AutoTranslateText(
-              'Daily Panchang',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            
-            Spacing.h(16),
-            
-            // Panchang Data Card
-            _buildPanchangDataCard(data),
-          ],
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+        child: _buildPanchangDataCard(data),
       );
     });
   }
@@ -87,57 +74,78 @@ class DailyPanchangWidget extends StatelessWidget {
     final nakshatra = data['nakshatra'] as Map<String, dynamic>?;
     final karana = data['karana'] as Map<String, dynamic>?;
     final yoga = data['yoga'] as Map<String, dynamic>?;
-
-    // Format date
     final dateStr = controller.formData.value?['date']?.toString() ?? '';
     final formattedDate = _formatDateForDisplay(dateStr);
+    final oc = AppColors.orangeGradient.colors.first;
 
     return Container(
-      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: oc.withOpacity(0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Date and Location Header
-          _buildDateLocationHeader(formattedDate),
-          Spacing.h(20),
-          
-          // Celestial Times Section
-          _buildCelestialTimes(advancedDetails),
-          Spacing.h(20),
-          _buildDivider(),
-          Spacing.h(20),
-          
-          // Tithi, Nakshatra, Yoga, Karana Section
-          _buildAstrologicalDetails(tithi, nakshatra, yoga, karana, data),
-          Spacing.h(20),
-          _buildDivider(),
-          Spacing.h(20),
-          
-          // Vaar Details Section
-          _buildVaarDetails(data, masa, years, advancedDetails),
-          Spacing.h(20),
-          _buildDivider(),
-          Spacing.h(20),
-          
-          // Muhurta Timings Section
-          _buildMuhurtaTimings(advancedDetails, data),
-          Spacing.h(20),
-          _buildDivider(),
-          Spacing.h(20),
-          
-          // Additional Details Section
-          _buildAdditionalDetails(data, advancedDetails, masa),
+          _buildHeader(),
+          Padding(
+            padding: EdgeInsets.all(10.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildDateLocationHeader(formattedDate),
+                Spacing.h(10),
+                _buildCelestialTimes(advancedDetails),
+                Spacing.h(10),
+                _buildDivider(),
+                Spacing.h(10),
+                _buildAstrologicalDetails(tithi, nakshatra, yoga, karana, data),
+                Spacing.h(10),
+                _buildDivider(),
+                Spacing.h(10),
+                _buildVaarDetails(data, masa, years, advancedDetails),
+                Spacing.h(10),
+                _buildDivider(),
+                Spacing.h(10),
+                _buildMuhurtaTimings(advancedDetails, data),
+                Spacing.h(10),
+                _buildDivider(),
+                Spacing.h(10),
+                _buildAdditionalDetails(data, advancedDetails, masa),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        gradient: AppColors.orangeGradient,
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.calendar_today, size: 16.w, color: Colors.white),
+          Spacing.w(8),
+          AutoTranslateText(
+            'Daily Panchang',
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 13.sp,
+            ),
+          ),
         ],
       ),
     );
@@ -150,22 +158,24 @@ class DailyPanchangWidget extends StatelessWidget {
       children: [
         AutoTranslateText(
           formattedDate,
-          style: MyTextTheme.largeBCB.copyWith(
+          style: MyTextTheme.mediumBCB.copyWith(
             color: "#6F221E".toColor(),
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
+            fontSize: 13.sp,
           ),
         ),
         if (place != '-') ...[
           Spacing.h(4),
           Row(
             children: [
-              Icon(Icons.location_on, size: 16.w, color: "#DFB343".toColor()),
+              Icon(Icons.location_on, size: 14.w, color: AppColors.orangeGradient.colors.first),
               Spacing.w(4),
               Expanded(
                 child: AutoTranslateText(
                   place,
                   style: MyTextTheme.smallBCN.copyWith(
                     color: "#6F221E".toColor().withOpacity(0.7),
+                    fontSize: 11.sp,
                   ),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
@@ -179,79 +189,66 @@ class DailyPanchangWidget extends StatelessWidget {
   }
 
   Widget _buildCelestialTimes(Map<String, dynamic>? advancedDetails) {
+    final oc = AppColors.orangeGradient.colors.first;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AutoTranslateText(
-          'Celestial Times',
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: "#6F221E".toColor(),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Spacing.h(12),
+        _sectionTitle('Celestial Times'),
+        Spacing.h(8),
         Row(
           children: [
             Expanded(
-              child: _buildTimeItem(
-                Icons.wb_sunny,
-                'Sunrise',
-                advancedDetails?['sun_rise']?.toString() ?? '--',
-              ),
+              child: _buildTimeItem(Icons.wb_sunny, 'Sunrise', advancedDetails?['sun_rise']?.toString() ?? '--', oc),
             ),
-            Spacing.w(12),
+            Spacing.w(6),
             Expanded(
-              child: _buildTimeItem(
-                Icons.wb_twilight,
-                'Sunset',
-                advancedDetails?['sun_set']?.toString() ?? '--',
-              ),
+              child: _buildTimeItem(Icons.wb_twilight, 'Sunset', advancedDetails?['sun_set']?.toString() ?? '--', oc),
             ),
           ],
         ),
-        Spacing.h(12),
+        Spacing.h(6),
         Row(
           children: [
             Expanded(
-              child: _buildTimeItem(
-                Icons.nightlight_round,
-                'Moonrise',
-                advancedDetails?['moon_rise']?.toString() ?? '--',
-              ),
+              child: _buildTimeItem(Icons.nightlight_round, 'Moonrise', advancedDetails?['moon_rise']?.toString() ?? '--', oc),
             ),
-            Spacing.w(12),
+            Spacing.w(6),
             Expanded(
-              child: _buildTimeItem(
-                Icons.brightness_2,
-                'Moonset',
-                advancedDetails?['moon_set']?.toString() ?? '--',
-              ),
+              child: _buildTimeItem(Icons.brightness_2, 'Moonset', advancedDetails?['moon_set']?.toString() ?? '--', oc),
             ),
           ],
         ),
         if (advancedDetails?['solar_noon'] != null) ...[
-          Spacing.h(12),
-          _buildTimeItem(
-            Icons.access_time,
-            'Solar Noon',
-            advancedDetails?['solar_noon']?.toString() ?? '--',
-          ),
+          Spacing.h(6),
+          _buildTimeItem(Icons.access_time, 'Solar Noon', advancedDetails?['solar_noon']?.toString() ?? '--', oc),
         ],
       ],
     );
   }
 
-  Widget _buildTimeItem(IconData icon, String label, String value) {
+  Widget _sectionTitle(String text) {
+    return AutoTranslateText(
+      text,
+      style: MyTextTheme.smallBCB.copyWith(
+        color: "#6F221E".toColor(),
+        fontWeight: FontWeight.w600,
+        fontSize: 12.sp,
+      ),
+    );
+  }
+
+  Widget _buildTimeItem(IconData icon, String label, String value, Color accent) {
     return Container(
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: "#DFB343".toColor().withOpacity(0.1),
-        borderRadius: BorderRadius.circular(10.r),
+        color: accent.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: accent.withOpacity(0.2)),
       ),
       child: Row(
         children: [
-          Icon(icon, size: 20.w, color: "#DFB343".toColor()),
-          Spacing.w(8),
+          Icon(icon, size: 16.w, color: accent),
+          Spacing.w(6),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,14 +257,16 @@ class DailyPanchangWidget extends StatelessWidget {
                   label,
                   style: MyTextTheme.smallBCN.copyWith(
                     color: "#6F221E".toColor().withOpacity(0.7),
+                    fontSize: 10.sp,
                   ),
                 ),
                 Spacing.h(2),
                 AutoTranslateText(
                   value,
-                  style: MyTextTheme.mediumBCB.copyWith(
+                  style: MyTextTheme.smallBCB.copyWith(
                     color: "#6F221E".toColor(),
                     fontWeight: FontWeight.w600,
+                    fontSize: 11.sp,
                   ),
                 ),
               ],
@@ -285,118 +284,91 @@ class DailyPanchangWidget extends StatelessWidget {
     Map<String, dynamic>? karana,
     Map<String, dynamic> data,
   ) {
+    final oc = AppColors.orangeGradient.colors.first;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AutoTranslateText(
-          'Astrological Details',
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: "#6F221E".toColor(),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Spacing.h(12),
-        // Tithi
+        _sectionTitle('Astrological Details'),
+        Spacing.h(8),
         if (tithi != null) ...[
           _buildAstroItem(
-            Icons.access_time,
-            'Tithi',
-            tithi['name']?.toString() ?? '--',
+            Icons.access_time, 'Tithi', tithi['name']?.toString() ?? '--',
             '${_formatDateTime(tithi['start'])} → ${_formatDateTime(tithi['end'])}',
+            oc,
             details: {
-              'Type': tithi['type']?.toString(),
-              'Number': tithi['number']?.toString(),
-              'Diety': tithi['diety']?.toString(),
-              'Next Tithi': tithi['next_tithi']?.toString(),
-              'Meaning': tithi['meaning']?.toString(),
-              'Special': tithi['special']?.toString(),
+              'Type': tithi['type']?.toString(), 'Number': tithi['number']?.toString(),
+              'Diety': tithi['diety']?.toString(), 'Next Tithi': tithi['next_tithi']?.toString(),
+              'Meaning': tithi['meaning']?.toString(), 'Special': tithi['special']?.toString(),
             },
           ),
-          Spacing.h(12),
+          Spacing.h(6),
         ],
-        // Nakshatra
         if (nakshatra != null) ...[
           _buildAstroItem(
-            Icons.star,
-            'Nakshatra',
-            nakshatra['name']?.toString() ?? '--',
+            Icons.star, 'Nakshatra', nakshatra['name']?.toString() ?? '--',
             '${_formatDateTime(nakshatra['start'])} → ${_formatDateTime(nakshatra['end'])}',
+            oc,
             details: {
-              'Lord': nakshatra['lord']?.toString(),
-              'Diety': nakshatra['diety']?.toString(),
-              'Number': nakshatra['number']?.toString(),
-              'Pada': nakshatra['pada']?.toString(),
+              'Lord': nakshatra['lord']?.toString(), 'Diety': nakshatra['diety']?.toString(),
+              'Number': nakshatra['number']?.toString(), 'Pada': nakshatra['pada']?.toString(),
               'Next Nakshatra': nakshatra['next_nakshatra']?.toString(),
-              'Meaning': nakshatra['meaning']?.toString(),
-              'Special': nakshatra['special']?.toString(),
-              'Summary': nakshatra['summary']?.toString(),
-              'Words': nakshatra['words']?.toString(),
+              'Meaning': nakshatra['meaning']?.toString(), 'Special': nakshatra['special']?.toString(),
+              'Summary': nakshatra['summary']?.toString(), 'Words': nakshatra['words']?.toString(),
             },
           ),
-          Spacing.h(12),
+          Spacing.h(6),
         ],
-        // Yoga
         if (yoga != null) ...[
           _buildAstroItem(
-            Icons.my_location,
-            'Yoga',
-            yoga['name']?.toString() ?? '--',
+            Icons.my_location, 'Yoga', yoga['name']?.toString() ?? '--',
             '${_formatDateTime(yoga['start'])} → ${_formatDateTime(yoga['end'])}',
+            oc,
             details: {
-              'Number': yoga['number']?.toString(),
-              'Next Yoga': yoga['next_yoga']?.toString(),
-              'Meaning': yoga['meaning']?.toString(),
-              'Special': yoga['special']?.toString(),
+              'Number': yoga['number']?.toString(), 'Next Yoga': yoga['next_yoga']?.toString(),
+              'Meaning': yoga['meaning']?.toString(), 'Special': yoga['special']?.toString(),
             },
           ),
-          Spacing.h(12),
+          Spacing.h(6),
         ],
-        // Karana
-        if (karana != null) ...[
+        if (karana != null)
           _buildAstroItem(
-            Icons.grid_view,
-            'Karana',
-            karana['name']?.toString() ?? '--',
+            Icons.grid_view, 'Karana', karana['name']?.toString() ?? '--',
             '${_formatDateTime(karana['start'])} → ${_formatDateTime(karana['end'])}',
+            oc,
             details: {
-              'Type': karana['type']?.toString(),
-              'Lord': karana['lord']?.toString(),
-              'Diety': karana['diety']?.toString(),
-              'Number': karana['number']?.toString(),
-              'Next Karana': karana['next_karana']?.toString(),
-              'Special': karana['special']?.toString(),
+              'Type': karana['type']?.toString(), 'Lord': karana['lord']?.toString(),
+              'Diety': karana['diety']?.toString(), 'Number': karana['number']?.toString(),
+              'Next Karana': karana['next_karana']?.toString(), 'Special': karana['special']?.toString(),
             },
           ),
-        ],
-        if (data['day'] != null)
-          _buildDetailRow('Day', data['day']?.toString() ?? '--'),
-        if (data['day_lord'] != null)
-          _buildDetailRow('Day Lord', data['day_lord']?.toString() ?? '--'),
+        if (data['day'] != null) _buildDetailRow('Day', data['day']?.toString() ?? '--'),
+        if (data['day_lord'] != null) _buildDetailRow('Day Lord', data['day_lord']?.toString() ?? '--'),
       ],
     );
   }
-  
+
   Widget _buildAstroItem(
     IconData icon,
     String label,
     String value,
-    String timeRange, {
+    String timeRange,
+    Color accent, {
     Map<String, String?>? details,
   }) {
     return Container(
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
-        color: "#DFB343".toColor().withOpacity(0.05),
-        borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: "#DFB343".toColor().withOpacity(0.2)),
+        color: accent.withOpacity(0.06),
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: accent.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, size: 18.w, color: "#DFB343".toColor()),
-              Spacing.w(8),
+              Icon(icon, size: 16.w, color: accent),
+              Spacing.w(6),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -405,21 +377,24 @@ class DailyPanchangWidget extends StatelessWidget {
                       label,
                       style: MyTextTheme.smallBCB.copyWith(
                         color: "#6F221E".toColor().withOpacity(0.7),
+                        fontSize: 10.sp,
                       ),
                     ),
                     Spacing.h(2),
                     AutoTranslateText(
                       value,
-                      style: MyTextTheme.mediumBCB.copyWith(
+                      style: MyTextTheme.smallBCB.copyWith(
                         color: "#6F221E".toColor(),
                         fontWeight: FontWeight.w600,
+                        fontSize: 11.sp,
                       ),
                     ),
-                    Spacing.h(4),
+                    Spacing.h(2),
                     AutoTranslateText(
                       timeRange,
                       style: MyTextTheme.smallBCN.copyWith(
                         color: "#6F221E".toColor().withOpacity(0.6),
+                        fontSize: 10.sp,
                       ),
                     ),
                   ],
@@ -428,33 +403,36 @@ class DailyPanchangWidget extends StatelessWidget {
             ],
           ),
           if (details != null && details.isNotEmpty) ...[
-            Spacing.h(8),
-            ...details.entries.where((e) => e.value != null && e.value!.isNotEmpty).map((entry) {
-              return Padding(
-                padding: EdgeInsets.only(top: 4.h),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AutoTranslateText(
-                      entry.key,
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: "#6F221E".toColor().withOpacity(0.6),
+            Spacing.h(6),
+            ...details.entries
+                .where((e) => e.value != null && e.value!.isNotEmpty)
+                .map((entry) => Padding(
+                      padding: EdgeInsets.only(top: 3.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AutoTranslateText(
+                            entry.key,
+                            style: MyTextTheme.smallBCN.copyWith(
+                              color: "#6F221E".toColor().withOpacity(0.6),
+                              fontSize: 10.sp,
+                            ),
+                          ),
+                          Expanded(
+                            child: AutoTranslateText(
+                              entry.value ?? '',
+                              style: MyTextTheme.smallBCB.copyWith(
+                                color: "#6F221E".toColor(),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 10.sp,
+                              ),
+                              textAlign: TextAlign.right,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    Expanded(
-                      child: AutoTranslateText(
-                        entry.value ?? '',
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: "#6F221E".toColor(),
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.right,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+                    )),
           ],
         ],
       ),
@@ -475,21 +453,32 @@ class DailyPanchangWidget extends StatelessWidget {
 
   Widget _buildDetailRow(String label, String value) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
+      padding: EdgeInsets.symmetric(vertical: 4.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AutoTranslateText(
-            label,
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+          Flexible(
+            flex: 2,
+            child: AutoTranslateText(
+              label,
+              style: MyTextTheme.smallBCN.copyWith(
+                color: "#6F221E".toColor().withOpacity(0.7),
+                fontSize: 10.sp,
+              ),
             ),
           ),
-          AutoTranslateText(
-            value,
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.w600,
+          Spacing.w(8),
+          Flexible(
+            flex: 3,
+            child: AutoTranslateText(
+              value,
+              style: MyTextTheme.smallBCB.copyWith(
+                color: "#6F221E".toColor(),
+                fontWeight: FontWeight.w600,
+                fontSize: 10.sp,
+              ),
+              textAlign: TextAlign.right,
             ),
           ),
         ],
@@ -503,135 +492,105 @@ class DailyPanchangWidget extends StatelessWidget {
     Map<String, dynamic>? years,
     Map<String, dynamic>? advancedDetails,
   ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    final oc = AppColors.orangeGradient.colors.first;
+    final rows = <Widget>[
+      _buildVaarRow('Day of Week', data['day']?['name']?.toString() ?? data['day']?.toString() ?? '--'),
+    ];
+    if (masa?['paksha'] != null) {
+      rows.add(Spacing.h(6));
+      rows.add(
         Row(
           children: [
-            Icon(Icons.calendar_today, size: 20.w, color: "#DFB343".toColor()),
-            Spacing.w(8),
-            AutoTranslateText(
-              'Vaar Details',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.bold,
+            Expanded(child: _buildVaarRow('Paksha', masa!['paksha']?.toString() ?? '--')),
+            Spacing.w(6),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: AutoTranslateText(
+                masa['paksha']?.toString() ?? '',
+                style: MyTextTheme.smallBCB.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 10.sp,
+                ),
               ),
             ),
           ],
         ),
-        Spacing.h(16),
+      );
+    }
+    void add(String k, String v) {
+      rows.add(Spacing.h(6));
+      rows.add(_buildVaarRow(k, v));
+    }
+    if (masa?['amanta_name'] != null) add('Lunar Month', masa!['amanta_name']?.toString() ?? '--');
+    if (masa?['name'] != null) add('Masa', masa!['name']?.toString() ?? '--');
+    if (years?['vikram_samvaat_name'] != null) add('Lunar Year', years!['vikram_samvaat_name']?.toString() ?? '--');
+    if (years?['vikram_samvaat'] != null) add('Vikram Samvat', years!['vikram_samvaat']?.toString() ?? '--');
+    if (years?['saka'] != null) add('Shaka Samvat', years!['saka']?.toString() ?? '--');
+    if (years?['kali'] != null) add('Kali Yuga', years!['kali']?.toString() ?? '--');
+    if (masa?['ritu'] != null) add('Ritu', masa!['ritu']?.toString() ?? '--');
+    if (masa?['ayana'] != null) add('Ayana', masa!['ayana']?.toString() ?? '--');
+    if (data['ayanamsa']?['name'] != null) add('Ayanamsa', data['ayanamsa']!['name']?.toString() ?? '--');
+    if (data['rasi']?['name'] != null) add('Moon Sign', data['rasi']!['name']?.toString() ?? '--');
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _sectionTitle('Vaar Details'),
+        Spacing.h(8),
         Container(
-          padding: EdgeInsets.all(16.w),
+          padding: EdgeInsets.all(10.w),
           decoration: BoxDecoration(
-            color: "#DFB343".toColor().withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12.r),
+            color: oc.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(8.r),
+            border: Border.all(color: oc.withOpacity(0.2)),
           ),
-          child: Column(
-            children: [
-              _buildVaarRow('Day of Week', data['day']?['name']?.toString() ?? data['day']?.toString() ?? '--'),
-              if (masa?['paksha'] != null) ...[
-                Spacing.h(12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildVaarRow('Paksha', masa?['paksha']?.toString() ?? '--'),
-                    ),
-                    Spacing.w(8),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                      decoration: BoxDecoration(
-                        color: "#DFB343".toColor(),
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                      child: AutoTranslateText(
-                        masa?['paksha']?.toString() ?? '',
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-              if (masa?['amanta_name'] != null) ...[
-                Spacing.h(12),
-                _buildVaarRow('Lunar Month', masa?['amanta_name']?.toString() ?? '--'),
-              ],
-              if (masa?['name'] != null) ...[
-                Spacing.h(12),
-                _buildVaarRow('Masa', masa?['name']?.toString() ?? '--'),
-              ],
-              if (years?['vikram_samvaat_name'] != null) ...[
-                Spacing.h(12),
-                _buildVaarRow('Lunar Year', years?['vikram_samvaat_name']?.toString() ?? '--'),
-              ],
-              if (years?['vikram_samvaat'] != null) ...[
-                Spacing.h(12),
-                _buildVaarRow('Vikram Samvat', years?['vikram_samvaat']?.toString() ?? '--'),
-              ],
-              if (years?['saka'] != null) ...[
-                Spacing.h(12),
-                _buildVaarRow('Shaka Samvat', years?['saka']?.toString() ?? '--'),
-              ],
-              if (years?['kali'] != null) ...[
-                Spacing.h(12),
-                _buildVaarRow('Kali Yuga', years?['kali']?.toString() ?? '--'),
-              ],
-              if (masa?['ritu'] != null) ...[
-                Spacing.h(12),
-                _buildVaarRow('Ritu', masa?['ritu']?.toString() ?? '--'),
-              ],
-              if (masa?['ayana'] != null) ...[
-                Spacing.h(12),
-                _buildVaarRow('Ayana', masa?['ayana']?.toString() ?? '--'),
-              ],
-              if (data['ayanamsa']?['name'] != null) ...[
-                Spacing.h(12),
-                _buildVaarRow('Ayanamsa', data['ayanamsa']?['name']?.toString() ?? '--'),
-              ],
-              if (data['rasi']?['name'] != null) ...[
-                Spacing.h(12),
-                _buildVaarRow('Moon Sign', data['rasi']?['name']?.toString() ?? '--'),
-              ],
-            ],
-          ),
+          child: Column(children: rows),
         ),
       ],
     );
   }
-  
+
   Widget _buildVaarRow(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Flexible(
-          flex: 2,
-          child: AutoTranslateText(
-            label,
-            style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 3.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Flexible(
+            flex: 2,
+            child: AutoTranslateText(
+              label,
+              style: MyTextTheme.smallBCN.copyWith(
+                color: "#6F221E".toColor().withOpacity(0.7),
+                fontSize: 10.sp,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
-        ),
-        Spacing.w(8),
-        Flexible(
-          flex: 3,
-          child: AutoTranslateText(
-            value,
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.w600,
+          Spacing.w(8),
+          Flexible(
+            flex: 3,
+            child: AutoTranslateText(
+              value,
+              style: MyTextTheme.smallBCB.copyWith(
+                color: "#6F221E".toColor(),
+                fontWeight: FontWeight.w600,
+                fontSize: 10.sp,
+              ),
+              textAlign: TextAlign.right,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            textAlign: TextAlign.right,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
   
@@ -639,176 +598,158 @@ class DailyPanchangWidget extends StatelessWidget {
     Map<String, dynamic>? advancedDetails,
     Map<String, dynamic> data,
   ) {
+    final oc = AppColors.orangeGradient.colors.first;
+    final hasInauspicious = (data['rahukaal'] != null && data['rahukaal'].toString().isNotEmpty) ||
+        (data['gulika'] != null && data['gulika'].toString().isNotEmpty) ||
+        (data['yamakanta'] != null && data['yamakanta'].toString().isNotEmpty) ||
+        (data['bhadrakaal'] != null && data['bhadrakaal'].toString().isNotEmpty);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AutoTranslateText(
-          'Muhurta Timings',
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: "#6F221E".toColor(),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Spacing.h(12),
-        // Auspicious Timings
+        _sectionTitle('Muhurta Timings'),
+        Spacing.h(8),
         if (advancedDetails?['abhijitMuhurta'] != null) ...[
-          Container(
-            padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10.r),
-              border: Border.all(color: Colors.green.withOpacity(0.3)),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.check_circle, size: 18.w, color: Colors.green),
-                Spacing.w(8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AutoTranslateText(
-                        'Abhijit Muhurta',
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: "#6F221E".toColor(),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Spacing.h(2),
-                      AutoTranslateText(
-                        '${advancedDetails?['abhijitMuhurta']?['start']} - ${advancedDetails?['abhijitMuhurta']?['end']}',
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: "#6F221E".toColor().withOpacity(0.7),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+          _muhurtaChip(
+            Icons.check_circle,
+            'Abhijit Muhurta',
+            '${advancedDetails?['abhijitMuhurta']?['start']} - ${advancedDetails?['abhijitMuhurta']?['end']}',
+            Colors.green,
           ),
-          Spacing.h(12),
+          Spacing.h(6),
         ],
-        // Inauspicious Timings
-        if (data['rahukaal'] != null && data['rahukaal'].toString().isNotEmpty ||
-            data['gulika'] != null && data['gulika'].toString().isNotEmpty ||
-            data['yamakanta'] != null && data['yamakanta'].toString().isNotEmpty ||
-            data['bhadrakaal'] != null && data['bhadrakaal'].toString().isNotEmpty) ...[
+        if (hasInauspicious) ...[
           Container(
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
-              color: Colors.red.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10.r),
-              border: Border.all(color: Colors.red.withOpacity(0.3)),
+              color: Colors.red.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(8.r),
+              border: Border.all(color: Colors.red.withOpacity(0.25)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Icon(Icons.warning, size: 18.w, color: Colors.red),
-                    Spacing.w(8),
+                    Icon(Icons.warning, size: 16.w, color: Colors.red),
+                    Spacing.w(6),
                     AutoTranslateText(
                       'Inauspicious Timings',
                       style: MyTextTheme.smallBCB.copyWith(
                         color: "#6F221E".toColor(),
                         fontWeight: FontWeight.w600,
+                        fontSize: 11.sp,
                       ),
                     ),
                   ],
                 ),
-                Spacing.h(8),
+                Spacing.h(6),
                 if (data['rahukaal'] != null && data['rahukaal'].toString().isNotEmpty)
                   _buildTimingRow('Rahu Kaal', data['rahukaal']?.toString() ?? ''),
                 if (data['gulika'] != null && data['gulika'].toString().isNotEmpty) ...[
-                  Spacing.h(6),
+                  Spacing.h(4),
                   _buildTimingRow('Gulika Kaal', data['gulika']?.toString() ?? ''),
                 ],
                 if (data['yamakanta'] != null && data['yamakanta'].toString().isNotEmpty) ...[
-                  Spacing.h(6),
+                  Spacing.h(4),
                   _buildTimingRow('Yamakanta', data['yamakanta']?.toString() ?? ''),
                 ],
                 if (data['bhadrakaal'] != null && data['bhadrakaal'].toString().isNotEmpty) ...[
-                  Spacing.h(6),
+                  Spacing.h(4),
                   _buildTimingRow('Bhadrakaal', data['bhadrakaal']?.toString() ?? ''),
                 ],
               ],
             ),
           ),
+          Spacing.h(6),
         ],
-        if (advancedDetails?['disha_shool'] != null) ...[
-          Spacing.h(12),
-          Container(
-            padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(
-              color: Colors.orange.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10.r),
-              border: Border.all(color: Colors.orange.withOpacity(0.3)),
-            ),
-            child: Row(
+        if (advancedDetails?['disha_shool'] != null)
+          _muhurtaChip(
+            Icons.compass_calibration,
+            'Disha Shoola',
+            advancedDetails!['disha_shool']?.toString() ?? '--',
+            oc,
+          ),
+      ],
+    );
+  }
+
+  Widget _muhurtaChip(IconData icon, String title, String subtitle, Color accent) {
+    return Container(
+      padding: EdgeInsets.all(10.w),
+      decoration: BoxDecoration(
+        color: accent.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: accent.withOpacity(0.25)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 16.w, color: accent),
+          Spacing.w(6),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.compass_calibration, size: 18.w, color: Colors.orange),
-                Spacing.w(8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AutoTranslateText(
-                        'Disha Shoola',
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: "#6F221E".toColor(),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Spacing.h(2),
-                      AutoTranslateText(
-                        advancedDetails?['disha_shool']?.toString() ?? '--',
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: "#6F221E".toColor().withOpacity(0.7),
-                        ),
-                      ),
-                    ],
+                AutoTranslateText(
+                  title,
+                  style: MyTextTheme.smallBCB.copyWith(
+                    color: "#6F221E".toColor(),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 11.sp,
+                  ),
+                ),
+                Spacing.h(2),
+                AutoTranslateText(
+                  subtitle,
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: "#6F221E".toColor().withOpacity(0.7),
+                    fontSize: 10.sp,
                   ),
                 ),
               ],
             ),
           ),
         ],
-      ],
+      ),
     );
   }
-  
+
   Widget _buildTimingRow(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Flexible(
-          flex: 2,
-          child: AutoTranslateText(
-            label,
-            style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 3.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Flexible(
+            flex: 2,
+            child: AutoTranslateText(
+              label,
+              style: MyTextTheme.smallBCN.copyWith(
+                color: "#6F221E".toColor().withOpacity(0.7),
+                fontSize: 10.sp,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
-        ),
-        Spacing.w(8),
-        Flexible(
-          flex: 3,
-          child: AutoTranslateText(
-            value,
-            style: MyTextTheme.smallBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.w500,
+          Spacing.w(8),
+          Flexible(
+            flex: 3,
+            child: AutoTranslateText(
+              value,
+              style: MyTextTheme.smallBCB.copyWith(
+                color: "#6F221E".toColor(),
+                fontWeight: FontWeight.w500,
+                fontSize: 10.sp,
+              ),
+              textAlign: TextAlign.right,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            textAlign: TextAlign.right,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
   
@@ -817,7 +758,7 @@ class DailyPanchangWidget extends StatelessWidget {
     Map<String, dynamic>? advancedDetails,
     Map<String, dynamic>? masa,
   ) {
-    final hasAdditionalData = 
+    final hasAdditionalData =
         advancedDetails?['moon_yogini_nivas'] != null ||
         advancedDetails?['ahargana'] != null ||
         masa?['moon_phase'] != null ||
@@ -826,45 +767,31 @@ class DailyPanchangWidget extends StatelessWidget {
 
     if (!hasAdditionalData) return const SizedBox.shrink();
 
+    final oc = AppColors.orangeGradient.colors.first;
+    final rows = <Widget>[];
+    void add(String k, String v) {
+      if (rows.isNotEmpty) rows.add(Spacing.h(6));
+      rows.add(_buildVaarRow(k, v));
+    }
+    if (masa?['moon_phase'] != null) add('Moon Phase', masa!['moon_phase']?.toString() ?? '--');
+    if (advancedDetails?['moon_yogini_nivas'] != null) add('Moon Yogini Nivas', advancedDetails!['moon_yogini_nivas']?.toString() ?? '--');
+    if (advancedDetails?['ahargana'] != null) add('Ahargana', advancedDetails!['ahargana']?.toString() ?? '--');
+    if (advancedDetails?['next_full_moon'] != null) add('Next Full Moon', advancedDetails!['next_full_moon']?.toString() ?? '--');
+    if (advancedDetails?['next_new_moon'] != null) add('Next New Moon', advancedDetails!['next_new_moon']?.toString() ?? '--');
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AutoTranslateText(
-          'Additional Details',
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: "#6F221E".toColor(),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Spacing.h(12),
+        _sectionTitle('Additional Details'),
+        Spacing.h(8),
         Container(
-          padding: EdgeInsets.all(16.w),
+          padding: EdgeInsets.all(10.w),
           decoration: BoxDecoration(
-            color: "#DFB343".toColor().withOpacity(0.05),
-            borderRadius: BorderRadius.circular(12.r),
+            color: oc.withOpacity(0.06),
+            borderRadius: BorderRadius.circular(8.r),
+            border: Border.all(color: oc.withOpacity(0.2)),
           ),
-          child: Column(
-            children: [
-              if (masa?['moon_phase'] != null)
-                _buildVaarRow('Moon Phase', masa?['moon_phase']?.toString() ?? '--'),
-              if (advancedDetails?['moon_yogini_nivas'] != null) ...[
-                Spacing.h(12),
-                _buildVaarRow('Moon Yogini Nivas', advancedDetails?['moon_yogini_nivas']?.toString() ?? '--'),
-              ],
-              if (advancedDetails?['ahargana'] != null) ...[
-                Spacing.h(12),
-                _buildVaarRow('Ahargana', advancedDetails?['ahargana']?.toString() ?? '--'),
-              ],
-              if (advancedDetails?['next_full_moon'] != null) ...[
-                Spacing.h(12),
-                _buildVaarRow('Next Full Moon', advancedDetails?['next_full_moon']?.toString() ?? '--'),
-              ],
-              if (advancedDetails?['next_new_moon'] != null) ...[
-                Spacing.h(12),
-                _buildVaarRow('Next New Moon', advancedDetails?['next_new_moon']?.toString() ?? '--'),
-              ],
-            ],
-          ),
+          child: Column(children: rows),
         ),
       ],
     );

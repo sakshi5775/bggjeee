@@ -21,7 +21,7 @@ class DailyAstrologersWidget extends BasePage<UserDashboardController> {
     // Static data for Daily Astrologers cards
     final List<Map<String, dynamic>> dailyCards = [
       {'icon': AppConstant.horoscope, 'title': "Today's Horoscope"},
-      {'icon': AppConstant.tarot, 'title': "Today's Tarot Reading"},
+      {'icon': AppConstant.tarot, 'title': "Today's Tarot"},
       // {'icon': AppConstant.service2025, 'title': 'All About 2026'},
       {'icon': AppConstant.servicePanchang, 'title': 'Todays Panchang'},
       {'icon': AppConstant.serviceNumerology, 'title': "Today's Numerology"},
@@ -69,7 +69,7 @@ class DailyAstrologersWidget extends BasePage<UserDashboardController> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: dailyCards.length,
-              separatorBuilder: (context, index) => Spacing.w(10),
+              separatorBuilder: (context, index) => Spacing.w(3),
               itemBuilder: (context, index) {
                 final card = dailyCards[index];
                 return _buildDailyCard(card);
@@ -91,6 +91,7 @@ class DailyAstrologersWidget extends BasePage<UserDashboardController> {
           case "Today's Horoscope":
             Get.toNamed(AppRoutes.horoscopeForm);
             break;
+          case "Today's Tarot":
           case "Today's Tarot Reading":
             Get.toNamed(AppRoutes.tarotReading);
             break;
@@ -102,6 +103,10 @@ class DailyAstrologersWidget extends BasePage<UserDashboardController> {
             break;
           case "Today's Numerology":
             Get.toNamed(AppRoutes.numerologyForm);
+            break;
+          default:
+            // Handle any other cases or log for debugging
+            print('Unhandled daily astrology card: $title');
         }
       },
       child: Container(

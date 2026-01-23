@@ -44,14 +44,14 @@ class UserBottomNav extends StatelessWidget {
                 ),
                 _buildNavItem(
                   icon: Icons.shopping_bag,
-                  label: 'Digital Mart',
+                  label: 'Mart',
                   index: 1,
                   selectedIndex: c.selectedIndex.value,
                   onTap: () => onTap(1),
                 ),
                 _buildNavItemWithImage(
                   imagePath: 'assets/app/digital_mandir.png',
-                  label: 'Digital Mandir',
+                  label: 'Mandir',
                   index: 2,
                   selectedIndex: c.selectedIndex.value,
                    onTap: () => onTap(2),
@@ -65,7 +65,7 @@ class UserBottomNav extends StatelessWidget {
                 ),
                 _buildNavItem(
                   icon: Icons.school,
-                  label: 'Digital Education',
+                  label: 'Education',
                   index: 4,
                   selectedIndex: c.selectedIndex.value,
                    onTap: () => onTap(4),

@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/consult_astrologer_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -38,38 +39,37 @@ class ChalitChartWidget extends StatelessWidget {
       }
 
       return SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Chart Container
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16.r),
+                borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withOpacity(0.06),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
+                border: Border.all(
+                  color: "#ed6f30".toColor().withOpacity(0.2),
+                  width: 1,
+                ),
               ),
-              padding: EdgeInsets.all(16.w),
+              padding: EdgeInsets.all(10.w),
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  final chartSize = constraints.maxWidth - 32.w;
+                  final chartSize = constraints.maxWidth - 20.w;
                   return Center(
-                    child: Container(
-                      width: chartSize,
-                      height: chartSize,
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.r),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.r),
+                      child: SizedBox(
+                        width: chartSize,
+                        height: chartSize,
                         child: SvgPicture.string(
                           svgData,
                           width: chartSize,
@@ -77,12 +77,11 @@ class ChalitChartWidget extends StatelessWidget {
                           fit: BoxFit.contain,
                           alignment: Alignment.center,
                           placeholderBuilder: (context) => Container(
-                            width: chartSize,
-                            height: chartSize,
-                            color: Colors.grey.withOpacity(0.1),
+                            color: Colors.grey.withOpacity(0.08),
                             child: Center(
                               child: CircularProgressIndicator(
                                 color: "#ed6f30".toColor(),
+                                strokeWidth: 2,
                               ),
                             ),
                           ),
@@ -94,9 +93,9 @@ class ChalitChartWidget extends StatelessWidget {
                 },
               ),
             ),
-            
-            Spacing.h(16),
-            
+            Spacing.h(12),
+            const ConsultAstrologerCard(),
+            Spacing.h(12),
           ],
         ),
       );

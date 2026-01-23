@@ -6,9 +6,18 @@ class LoginModel {
   LoginModel({this.user, this.accessToken, this.refreshToken});
 
   LoginModel.fromJson(Map<String, dynamic> json) {
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
-    accessToken = json['accessToken'];
-    refreshToken = json['refreshToken'];
+    // Handle nested data structure from API response
+    if (json['data'] != null && json['data'] is Map<String, dynamic>) {
+      final data = json['data'] as Map<String, dynamic>;
+      user = data['user'] != null ? new User.fromJson(data['user']) : null;
+      accessToken = data['accessToken'];
+      refreshToken = data['refreshToken'];
+    } else {
+      // Fallback for direct structure (backward compatibility)
+      user = json['user'] != null ? new User.fromJson(json['user']) : null;
+      accessToken = json['accessToken'];
+      refreshToken = json['refreshToken'];
+    }
   }
 
   Map<String, dynamic> toJson() {

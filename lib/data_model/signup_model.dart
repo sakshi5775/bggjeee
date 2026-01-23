@@ -4,6 +4,7 @@ class SignUpModel {
   User? user;
   String? accessToken;
   String? refreshToken;
+  OtpSentTo? otpSentTo;
 
   SignUpModel({
     this.success,
@@ -11,6 +12,7 @@ class SignUpModel {
     this.user,
     this.accessToken,
     this.refreshToken,
+    this.otpSentTo,
   });
 
   SignUpModel.fromJson(Map<String, dynamic> json) {
@@ -23,11 +25,17 @@ class SignUpModel {
       user = data['user'] != null ? User.fromJson(data['user'] as Map<String, dynamic>) : null;
       accessToken = data['accessToken']?.toString();
       refreshToken = data['refreshToken']?.toString();
+      otpSentTo = data['otpSentTo'] != null 
+          ? OtpSentTo.fromJson(data['otpSentTo'] as Map<String, dynamic>) 
+          : null;
     } else {
       // Fallback for direct structure (backward compatibility)
       user = json['user'] != null ? User.fromJson(json['user'] as Map<String, dynamic>) : null;
       accessToken = json['accessToken']?.toString();
       refreshToken = json['refreshToken']?.toString();
+      otpSentTo = json['otpSentTo'] != null 
+          ? OtpSentTo.fromJson(json['otpSentTo'] as Map<String, dynamic>) 
+          : null;
     }
   }
 
@@ -40,6 +48,28 @@ class SignUpModel {
     }
     data['accessToken'] = accessToken;
     data['refreshToken'] = refreshToken;
+    if (otpSentTo != null) {
+      data['otpSentTo'] = otpSentTo!.toJson();
+    }
+    return data;
+  }
+}
+
+class OtpSentTo {
+  bool? phone;
+  bool? email;
+
+  OtpSentTo({this.phone, this.email});
+
+  OtpSentTo.fromJson(Map<String, dynamic> json) {
+    phone = json['phone'] == true;
+    email = json['email'] == true;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['phone'] = phone;
+    data['email'] = email;
     return data;
   }
 }

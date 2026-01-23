@@ -2,13 +2,10 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class AshtakvargaWidget extends StatelessWidget {
   final KundliResultController controller;
@@ -18,18 +15,25 @@ class AshtakvargaWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Show loading if fetching data
       if (controller.isLoadingAshtakvarga.value) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(color: "#ed6f30".toColor()),
-              Spacing.h(16),
+              SizedBox(
+                width: 28.w,
+                height: 28.w,
+                child: CircularProgressIndicator(
+                  color: "#ed6f30".toColor(),
+                  strokeWidth: 2,
+                ),
+              ),
+              Spacing.h(10),
               AutoTranslateText(
                 'Loading Ashtakvarga data...',
-                style: MyTextTheme.mediumBCN.copyWith(
+                style: MyTextTheme.smallBCN.copyWith(
                   color: "#6F221E".toColor().withOpacity(0.7),
+                  fontSize: 12.sp,
                 ),
               ),
             ],
@@ -42,8 +46,9 @@ class AshtakvargaWidget extends StatelessWidget {
         return Center(
           child: AutoTranslateText(
             'No Ashtakvarga data available',
-            style: MyTextTheme.mediumBCN.copyWith(
+            style: MyTextTheme.smallBCN.copyWith(
               color: "#6F221E".toColor().withOpacity(0.7),
+              fontSize: 12.sp,
             ),
           ),
         );
@@ -53,105 +58,65 @@ class AshtakvargaWidget extends StatelessWidget {
       final points = data['ashtakvarga_points'] as List<dynamic>? ?? [];
       final totals = data['ashtakvarga_total'] as List<dynamic>? ?? [];
 
-      // Debug: Print data to verify
-      debugPrint('Ashtakvarga Order: $order');
-      debugPrint('Ashtakvarga Points: $points');
-      debugPrint('Ashtakvarga Totals: $totals');
-      debugPrint(
-        'Order length: ${order.length}, Points length: ${points.length}, Totals length: ${totals.length}',
-      );
-
       return SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Ashtakvarga Container
-            Container(
-              padding: EdgeInsets.all(16.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: "#E63946".toColor(), width: 1),
-                borderRadius: BorderRadius.circular(12.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: "#ed6f30".toColor().withOpacity(0.2),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        height: 50.h,
-                        width: 50.w,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        child: Icon(
-                          Icons.table_chart,
-                          color: Colors.white,
-                          size: 24.w,
-                        ),
-                      ),
-                      Spacing.w(16),
-                      AutoTranslateText(
-                        'Ashtakvarga',
-                        style: MyTextTheme.largeBCB.copyWith(
-                          color: "#6F221E".toColor(),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          fontFamily: 'baloo2',
-                        ),
-                      ),
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      "#FF8A3D".toColor(),
+                      "#ed6f30".toColor(),
                     ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
                   ),
-                ],
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.table_chart_rounded,
+                      size: 18.w,
+                      color: Colors.white,
+                    ),
+                    Spacing.w(8),
+                    AutoTranslateText(
+                      'Ashtakvarga',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-
-            // Title
-            // AutoTranslateText(
-            //   'Ashtakvarga',
-            //   style: MyTextTheme.largeBCB.copyWith(
-            //     color: "#6F221E".toColor(),
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
-            Spacing.h(16),
-
-            // Ashtakvarga Table Card
-            Container(
-              padding: EdgeInsets.all(16.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+              Padding(
+                padding: EdgeInsets.all(12.w),
+                child: _buildTable(order, points, totals),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Table with both vertical and horizontal scroll
-                  _buildTable(order, points, totals),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     });
@@ -181,30 +146,21 @@ class AshtakvargaWidget extends StatelessWidget {
     List<dynamic> points,
     List<dynamic> totals,
   ) {
-    // Ensure we have valid data
     final planetCount = order.length;
-    final pointsCount = points.length;
-
-    debugPrint(
-      'Building table with $planetCount planets and $pointsCount point rows',
-    );
-
     return Table(
       border: TableBorder.all(
-        color: "#6F221E".toColor().withOpacity(0.2),
+        color: "#6F221E".toColor().withOpacity(0.15),
         width: 1,
       ),
       columnWidths: {
-        0: FixedColumnWidth(80.w), // House column
-        for (int i = 1; i <= planetCount; i++)
-          i: FixedColumnWidth(60.w), // Planet columns
-        planetCount + 1: FixedColumnWidth(70.w), // Total column
+        0: FixedColumnWidth(58.w),
+        for (int i = 1; i <= planetCount; i++) i: FixedColumnWidth(48.w),
+        planetCount + 1: FixedColumnWidth(56.w),
       },
       children: [
-        // Header row: House | Planet1 | Planet2 | ... | Total
         TableRow(
           decoration: BoxDecoration(
-            color: "#6F221E".toColor().withOpacity(0.1),
+            color: "#ed6f30".toColor().withOpacity(0.12),
           ),
           children: [
             _buildHeaderCell('House'),
@@ -213,27 +169,19 @@ class AshtakvargaWidget extends StatelessWidget {
             _buildHeaderCell('Total'),
           ],
         ),
-        // Data rows for each house (1-12)
         ...List.generate(12, (houseIndex) {
           return TableRow(
             decoration: BoxDecoration(
               color: houseIndex % 2 == 0
                   ? Colors.white
-                  : "#DFB343".toColor().withOpacity(0.05),
+                  : "#ed6f30".toColor().withOpacity(0.04),
             ),
             children: [
-              // House number
               _buildHouseCell('H${houseIndex + 1}'),
-              // Points for each planet in this house
-              for (
-                int planetIndex = 0;
-                planetIndex < planetCount;
-                planetIndex++
-              )
+              for (int planetIndex = 0; planetIndex < planetCount; planetIndex++)
                 _buildDataCell(
                   _getPointForHouse(planetIndex, houseIndex, points),
                 ),
-              // Total for this house
               _buildTotalCell(
                 houseIndex < totals.length
                     ? totals[houseIndex]?.toString() ?? '--'
@@ -262,13 +210,14 @@ class AshtakvargaWidget extends StatelessWidget {
 
   Widget _buildHeaderCell(String text) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
+      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 6.w),
       child: AutoTranslateText(
         text,
         textAlign: TextAlign.center,
         style: MyTextTheme.smallBCB.copyWith(
           color: "#6F221E".toColor(),
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w600,
+          fontSize: 11.sp,
         ),
       ),
     );
@@ -276,13 +225,14 @@ class AshtakvargaWidget extends StatelessWidget {
 
   Widget _buildHouseCell(String text) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 8.w),
+      padding: EdgeInsets.symmetric(vertical: 7.h, horizontal: 6.w),
       child: AutoTranslateText(
         text,
         textAlign: TextAlign.center,
         style: MyTextTheme.smallBCB.copyWith(
           color: "#6F221E".toColor(),
           fontWeight: FontWeight.w600,
+          fontSize: 11.sp,
         ),
       ),
     );
@@ -290,24 +240,28 @@ class AshtakvargaWidget extends StatelessWidget {
 
   Widget _buildDataCell(String text) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 4.w),
+      padding: EdgeInsets.symmetric(vertical: 7.h, horizontal: 4.w),
       child: AutoTranslateText(
         text,
         textAlign: TextAlign.center,
-        style: MyTextTheme.smallBCN.copyWith(color: "#6F221E".toColor()),
+        style: MyTextTheme.smallBCN.copyWith(
+          color: "#6F221E".toColor(),
+          fontSize: 11.sp,
+        ),
       ),
     );
   }
 
   Widget _buildTotalCell(String text) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 4.w),
+      padding: EdgeInsets.symmetric(vertical: 7.h, horizontal: 4.w),
       child: AutoTranslateText(
         text,
         textAlign: TextAlign.center,
-        style: MyTextTheme.mediumBCB.copyWith(
+        style: MyTextTheme.smallBCB.copyWith(
           color: "#6F221E".toColor(),
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w600,
+          fontSize: 11.sp,
         ),
       ),
     );
