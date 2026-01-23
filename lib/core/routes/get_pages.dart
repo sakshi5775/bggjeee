@@ -21,15 +21,24 @@ import 'package:astrobharataiuser/screens/ai_chat/views/persona_detail_view.dart
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/views/persona_voice_call_view.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/views/persona_voice_history_view.dart';
-import 'package:astrobharataiuser/screens/e_mandir/bhakti_chakra_screen.dart';
-import 'package:astrobharataiuser/screens/e_mandir/devotional_library.dart';
-import 'package:astrobharataiuser/screens/e_mandir/namaste_home_screen.dart';
-import 'package:astrobharataiuser/screens/e_mandir/listen_on_mandir.dart';
-import 'package:astrobharataiuser/screens/e_mandir/layirc.dart';
-import 'package:astrobharataiuser/screens/e_mandir/meaning.dart';
-import 'package:astrobharataiuser/screens/e_mandir/passbook_screen.dart';
-import 'package:astrobharataiuser/screens/e_mandir/punya_mudra.dart';
-import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan_screen.dart';
+import 'package:astrobharataiuser/screens/e_mandir/bhakti_chakra/view/bhakti_chakra_view.dart';
+import 'package:astrobharataiuser/binding/e_mandir_binding/bhakti_chakra_binding.dart';
+import 'package:astrobharataiuser/screens/e_mandir/devotional_library/view/devotional_library_view.dart';
+import 'package:astrobharataiuser/binding/e_mandir_binding/devotional_library_binding.dart';
+import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/view/namaste_home_view.dart';
+import 'package:astrobharataiuser/binding/e_mandir_binding/namaste_home_binding.dart';
+import 'package:astrobharataiuser/screens/e_mandir/devotional_player/view/devotional_player_view.dart';
+import 'package:astrobharataiuser/binding/e_mandir_binding/devotional_player_binding.dart';
+import 'package:astrobharataiuser/screens/e_mandir/lyrics/view/lyrics_view.dart';
+import 'package:astrobharataiuser/binding/e_mandir_binding/lyrics_binding.dart';
+import 'package:astrobharataiuser/screens/e_mandir/meaning/view/meaning_view.dart';
+import 'package:astrobharataiuser/binding/e_mandir_binding/meaning_binding.dart';
+import 'package:astrobharataiuser/screens/e_mandir/passbook/view/passbook_view.dart';
+import 'package:astrobharataiuser/binding/e_mandir_binding/passbook_binding.dart';
+import 'package:astrobharataiuser/screens/e_mandir/punya_mudra/view/punya_mudra_view.dart';
+import 'package:astrobharataiuser/binding/e_mandir_binding/punya_mudra_binding.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/view/virtual_darshan_view.dart';
+import 'package:astrobharataiuser/binding/e_mandir_binding/virtual_darshan_binding.dart';
 import 'package:astrobharataiuser/screens/login/login/view/login_view.dart';
 import 'package:astrobharataiuser/screens/match_making/match_making/view/match_making_form_view.dart';
 import 'package:astrobharataiuser/screens/match_making/match_making/view/match_making_full_kundli_view.dart';
@@ -1350,55 +1359,64 @@ class PageRoutes {
    // E-Mandir Routes
     GetPage(
       name: AppRoutes.namasteHome,
-      page: () => const NamasteHomeScreen(),
+      page: () => const NamasteHomeView(),
+      binding: NamasteHomeBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
       name: AppRoutes.punyaMudra,
-      page: () => const PunyaMudraEarnScreen(),
+      page: () => const PunyaMudraView(),
+      binding: PunyaMudraBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
       name: AppRoutes.virtualDarshan,
-      page: () => const VirtualDarshanScreen(),
+      page: () => const VirtualDarshanView(),
+      binding: VirtualDarshanBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
       name: AppRoutes.devotionalLibrary,
-      page: () => const DevotionalLibraryScreen(),
+      page: () => const DevotionalLibraryView(),
+      binding: DevotionalLibraryBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
       name: AppRoutes.devotionalPlayer,
-      page: () => const DevotionalPlayerScreen(),
+      page: () => const DevotionalPlayerView(),
+      binding: DevotionalPlayerBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
       name: AppRoutes.lyrics,
-      page: () => const LyricsScreen(),
+      page: () => const LyricsView(),
+      binding: LyricsBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
       name: AppRoutes.meaning,
-      page: () => const MeaningScreen(),
+      page: () => const MeaningView(),
+      binding: MeaningBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
       name: AppRoutes.bhaktiChakra,
-      page: () => const BhaktiChakraScreen(),
+      page: () => const BhaktiChakraView(),
+      binding: BhaktiChakraBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
       name: AppRoutes.passbook,
-      page: () => const YourPassbookScreen(),
+      page: () => const PassbookView(),
+      binding: PassbookBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
