@@ -36,6 +36,12 @@ class DashaController extends BaseController {
   // PageController for swipeable tabs
   late PageController pageController;
   
+  // ScrollController for tabs
+  final ScrollController tabsScrollController = ScrollController();
+  
+  // Map to store GlobalKeys for each tab
+  final Map<int, GlobalKey> tabKeys = {};
+  
   // Current navigation level: 'mahadasha', 'antardasha', 'paryantardasha', 'shookshamadasha', 'pranadasha'
   final currentLevel = 'mahadasha'.obs;
   
@@ -68,6 +74,7 @@ class DashaController extends BaseController {
   @override
   void onClose() {
     pageController.dispose();
+    tabsScrollController.dispose();
     super.onClose();
   }
   

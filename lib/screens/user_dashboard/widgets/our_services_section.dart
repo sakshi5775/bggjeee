@@ -17,113 +17,69 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class OurServicesSection extends BasePage<UserDashboardController> {
-  final String title;
-  const OurServicesSection({super.key, required this.title});
+  // final String title;
+  //const OurServicesSection({super.key, required this.title});
 
   final List<(String, String)> _items = const [
     ('Consult\nAstrologer', AppConstant.serviceConsult),
     ('Generate\nKundli', AppConstant.serviceGenerateKundali),
-   //  ('Everything About 2026', AppConstant.service2025),
     ('Match\nMaking', AppConstant.serviceMatchMaking),
-     ('Numerology', AppConstant.serviceNumerology),
-     ('Panchang', AppConstant.servicePanchang),
-     ('Check\nHoroscope', AppConstant.horoscope),
-     ('Tarot\nReading', AppConstant.tarot),
+    ('Numerology', AppConstant.serviceNumerology),
+    ('Panchang', AppConstant.servicePanchang),
+    ('Check\nHoroscope', AppConstant.horoscope),
+    ('Tarot\nReading', AppConstant.tarot),
     ('Carrot\nAstrology', AppConstant.carrotAstrology),
     ('Writing\nAstrology', AppConstant.writingAstrology),
     ('Prashna\nKundli', AppConstant.prashnaKundali),
-
-     ('Face\nreading', AppConstant.serviceFaceReading),
-     ('Palm\nReading', AppConstant.servicePalmReading),
-
+    ('Face\nreading', AppConstant.serviceFaceReading),
+    ('Palm\nReading', AppConstant.servicePalmReading),
     ('Ramal\nShastra', AppConstant.ramalShastra),
     ('Vastu\nReading', AppConstant.vastu),
-    
-
-
-
-
-
-     ('Life\nPredictions', AppConstant.lifePredictions),
-    
-
-     ('Dosh', AppConstant.dosh),
-     ('Dasha', AppConstant.dasha),
-
+    ('Life\nPredictions', AppConstant.lifePredictions),
+    ('Dosh', AppConstant.dosh),
+    ('Dasha', AppConstant.dasha),
     ('KP\nAstrology', AppConstant.kPAstrology),
     ('Lal\nKitab', AppConstant.lalKitab),
-
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: AppPaddings.symmetric(h: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: AppPaddings.symmetric(h: 6),
-                child: AutoTranslateText(
-                  title,
-                  style: AppTypography.h2.copyWith(
-                    color: "#6F221E".toColor(),
-                    letterSpacing: -0.05,
-                  ),
-                ),
-              ),
+    const maroon = Color(0xFF6F221E);
 
-              GestureDetector(
-                onTap: controller.toggleView,
-                child: Obx(
-                  () => AutoTranslateText(
-                    controller.viewText,
-                    style: AppTypography.body1.copyWith(
-                      color: "#9D4807".toColor(),
-                      letterSpacing: -0.05,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Padding(
+        //   padding: AppPaddings.symmetric(h: 16),
+        //   child: AutoTranslateText(
+        //     title,
+        //     style: AppTypography.h2.copyWith(
+        //       color: maroon,
+        //       letterSpacing: -0.05,
+        //     ),
+        //   ),
+        // ),
+        // Spacing.h(10),
+        SizedBox(
+          height: 80.h,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            itemCount: _items.length,
+            separatorBuilder: (_, __) => SizedBox(width: 2.w),
+            itemBuilder: (context, index) {
+              final item = _items[index];
+              final label = item.$1;
+              final iconPath = item.$2;
+              return _serviceButton(label, iconPath, maroon);
+            },
           ),
-
-          Spacing.h(10),
-          Obx(() {
-            final itemCount = controller.visibleItemCount(_items.length);
-            final isExpanded = controller.isExpanded.value;
-
-            return AnimatedSize(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              child: GridView.builder(
-                key: ValueKey('services_grid_$isExpanded'),
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 0.w),
-                itemCount: itemCount,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  crossAxisSpacing: 4.w,
-                  mainAxisSpacing: 4.h,
-                  childAspectRatio: 0.95,
-                ),
-                itemBuilder: (context, index) {
-                  final item = _items[index];
-                  return _serviceButton(item.$1, item.$2);
-                },
-              ),
-            );
-          }),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _serviceButton(String label, String iconPath) {
+  Widget _serviceButton(String label, String iconPath, Color maroon) {
     Future<void> _requireLogin(
       Future<void> Function() action, {
       String? message,
@@ -139,8 +95,11 @@ class OurServicesSection extends BasePage<UserDashboardController> {
     return GestureDetector(
       onTap: () {
         // Normalize label by removing newlines and converting to lowercase
-        final normalizedLabel = label.toLowerCase().replaceAll('\n', ' ').trim();
-        
+        final normalizedLabel = label
+            .toLowerCase()
+            .replaceAll('\n', ' ')
+            .trim();
+
         switch (normalizedLabel) {
           case 'face reading':
             _requireLogin(
@@ -230,59 +189,49 @@ class OurServicesSection extends BasePage<UserDashboardController> {
             );
             break;
           case 'life predictions':
-            _requireLogin(
-              () async {
-                // Navigate to kundli form with target route for predictions
-                Get.toNamed(AppRoutes.kundliForm, arguments: {
-                  'targetRoute': AppRoutes.predictions,
-                });
-              },
-              message: 'Login to view Life Predictions.',
-            );
+            _requireLogin(() async {
+              // Navigate to kundli form with target route for predictions
+              Get.toNamed(
+                AppRoutes.kundliForm,
+                arguments: {'targetRoute': AppRoutes.predictions},
+              );
+            }, message: 'Login to view Life Predictions.');
             break;
           case 'dosh':
-            _requireLogin(
-              () async {
-                // Navigate to kundli form with target route for dosh
-                Get.toNamed(AppRoutes.kundliForm, arguments: {
-                  'targetRoute': AppRoutes.dosh,
-                });
-              },
-              message: 'Login to check Dosh.',
-            );
+            _requireLogin(() async {
+              // Navigate to kundli form with target route for dosh
+              Get.toNamed(
+                AppRoutes.kundliForm,
+                arguments: {'targetRoute': AppRoutes.dosh},
+              );
+            }, message: 'Login to check Dosh.');
             break;
           case 'dasha':
-            _requireLogin(
-              () async {
-                // Navigate to kundli form with target route for dasha
-                Get.toNamed(AppRoutes.kundliForm, arguments: {
-                  'targetRoute': AppRoutes.dasha,
-                });
-              },
-              message: 'Login to view Dasha.',
-            );
+            _requireLogin(() async {
+              // Navigate to kundli form with target route for dasha
+              Get.toNamed(
+                AppRoutes.kundliForm,
+                arguments: {'targetRoute': AppRoutes.dasha},
+              );
+            }, message: 'Login to view Dasha.');
             break;
           case 'kp astrology':
-            _requireLogin(
-              () async {
-                // Navigate to kundli form with target route for kp system
-                Get.toNamed(AppRoutes.kundliForm, arguments: {
-                  'targetRoute': AppRoutes.kpSystem,
-                });
-              },
-              message: 'Login to use KP Astrology.',
-            );
+            _requireLogin(() async {
+              // Navigate to kundli form with target route for kp system
+              Get.toNamed(
+                AppRoutes.kundliForm,
+                arguments: {'targetRoute': AppRoutes.kpSystem},
+              );
+            }, message: 'Login to use KP Astrology.');
             break;
           case 'lal kitab':
-            _requireLogin(
-              () async {
-                // Navigate to kundli form with target route for lal kitab
-                Get.toNamed(AppRoutes.kundliForm, arguments: {
-                  'targetRoute': AppRoutes.lalKitab,
-                });
-              },
-              message: 'Login to use Lal Kitab.',
-            );
+            _requireLogin(() async {
+              // Navigate to kundli form with target route for lal kitab
+              Get.toNamed(
+                AppRoutes.kundliForm,
+                arguments: {'targetRoute': AppRoutes.lalKitab},
+              );
+            }, message: 'Login to use Lal Kitab.');
             break;
           default:
             // Check if label contains "kundli" (case insensitive)
@@ -297,91 +246,60 @@ class OurServicesSection extends BasePage<UserDashboardController> {
             }
         }
       },
+      behavior: HitTestBehavior.opaque,
       child: Container(
-        width: 110.w,
-
+        width: 70.w,
+        height: 80.h,
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
         decoration: BoxDecoration(
           color: Colors.white,
-
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        child: Padding(
-          padding: AppPaddings.all(8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: label == 'Writing Astrology' || label == 'Ramal Shastra'
-                    ? 24.w
-                    : 24.w,
-                height: label == 'Writing Astrology' || label == 'Ramal Shastra'
-                    ? 24.h
-                    : 24.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: iconPath.endsWith('.svg')
-                    ? SvgAssets(
-                        path: iconPath,
-                        width:
-                            label == 'Writing Astrology' ||
-                                label == 'Ramal Shastra'
-                            ? 24.w
-                            : 24.w,
-                        height:
-                            label == 'Writing Astrology' ||
-                                label == 'Ramal Shastra'
-                            ? 24.h
-                            : 24.h,
-                      )
-                    : Image.asset(
-                        iconPath,
-                        width:
-                            label == 'Writing Astrology' ||
-                                label == 'Ramal Shastra'
-                            ? 24.w
-                            : 24.w,
-                        height:
-                            label == 'Writing Astrology' ||
-                                label == 'Ramal Shastra'
-                            ? 24.h
-                            : 24.h,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          final iconSize =
-                              label == 'Writing Astrology' ||
-                                  label == 'Ramal Shastra'
-                              ? 24.w
-                              : 24.w;
-                          return Container(
-                            width: iconSize,
-                            height: iconSize,
-                            color: Colors.grey.withOpacity(0.3),
-                            child: Icon(Icons.error, size: 20.w),
-                          );
-                        },
-                      ),
-              ),
-              Spacing.h(4),
-              Flexible(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: AutoTranslateText(
-                    label,
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: "#6F221E".toColor(),
-                      height: 1.1,
-                      fontSize: 10.sp,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 3,
-                    overflow: TextOverflow.visible,
-                  ),
-                ),
-              ),
-            ],
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(
+            color: "#DBCCA8".toColor().withOpacity(0.6),
+            width: 1,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: maroon.withOpacity(0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 36.w,
+              height: 36.h,
+              child: iconPath.endsWith('.svg')
+                  ? SvgAssets(path: iconPath, width: 36.w, height: 36.h)
+                  : Image.asset(
+                      iconPath,
+                      width: 36.w,
+                      height: 36.h,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) =>
+                          Icon(Icons.star_outline, size: 28.w, color: maroon),
+                    ),
+            ),
+            SizedBox(height: 3.h),
+            Flexible(
+              child: AutoTranslateText(
+                label,
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: maroon,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 9.sp,
+                  height: 1.1,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
         ),
       ),
     );

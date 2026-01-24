@@ -225,8 +225,8 @@ class KidsSpecialistAstrologersWidget
                 // Online Status Indicator
                 if (isOnline)
                   Positioned(
-                    top: 5,
-                    right: 5,
+                    top: 5.h,
+                    right: 5.w,
                     child: Container(
                       width: 16.w,
                       height: 16.w,

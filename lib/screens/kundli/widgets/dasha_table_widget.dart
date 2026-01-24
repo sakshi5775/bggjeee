@@ -1,4 +1,3 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/dasha_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -16,263 +15,188 @@ class DashaTableWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      // padding: EdgeInsets.all(8.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
       child: Container(
         decoration: BoxDecoration(
-          // color: Colors.white,
-          borderRadius: BorderRadius.circular(16.r),
+          color: AppColors.cardLight,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 8,
+              color: AppColors.shadowLight,
+              blurRadius: 4,
               offset: const Offset(0, 2),
             ),
           ],
         ),
-        // child: Column(
-        //   children: [
-        //     // Table Rows
-        //     ...controller.dashaTableData.asMap().entries.map((entry) {
-        //       final index = entry.key;
-        //       final row = entry.value;
-        //       final isLast = index == controller.dashaTableData.length - 1;
-        //       final leftText = row['left'] as String;
-        //       final rightText = row['right'] as String;
-        //       final hasRightColumn = rightText.isNotEmpty;
-
-        //       return GestureDetector(
-        //         onTap: () {
-        //           // Handle navigation based on left column text
-        //           if (leftText == 'Vimshottari Dasha') {
-        //             controller.navigateToVimshottariDasha();
-        //           } else if (leftText == 'Current Mahadasha') {
-        //             controller.navigateToCurrentMahadashaTab();
-        //           } else if (leftText == 'Yogini Dasha') {
-        //             controller.navigateToYoginiDasha();
-        //           }
-        //         },
-        //         child: Container(
-        //           padding: EdgeInsets.all(16.w),
-        //           decoration: BoxDecoration(
-        //             border: Border(
-        //               bottom: BorderSide(
-        //                 color: isLast ? Colors.transparent : "#ed6f30".toColor().withOpacity(0.1),
-        //                 width: 1,
-        //               ),
-        //             ),
-        //           ),
-        //           child: hasRightColumn
-        //               ? _buildTwoColumnRow(leftText, rightText, index)
-        //               : _buildSingleColumnRow(leftText, index),
-        //         ),
-        //       );
-        //     }).toList(),
-        //   ],
-        // ),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14.r),
-            border: Border.all(color: "#ed6f30".toColor().withOpacity(0.15)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
+        child: Column(
+          children: [
+            // Header
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+              decoration: BoxDecoration(
+                color: AppColors.deepOrange.withOpacity(0.1),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12.r),
+                  topRight: Radius.circular(12.r),
+                ),
               ),
-            ],
-          ),
-          child: Column(
-            children: [
-              Row(
+              child: Row(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      height: 50.h,
-                      width: 50.h,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: Icon(
-                        Icons.access_time,
-                        color: Colors.white,
-                        size: 24,
-                      ),
+                  Container(
+                    padding: EdgeInsets.all(6.r),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.orangeGradient,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.timeline,
+                      color: AppColors.textLight,
+                      size: 18.w,
                     ),
                   ),
-                  Spacing.w(12),
+                  Spacing.w(8),
                   AutoTranslateText(
-                    "Runing Dasha",
-                    style: TextStyle(
-                      fontSize: 18,
+                    'Dasha Options',
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'baloo2',
+                      fontSize: 15.sp,
                     ),
                   ),
                 ],
               ),
-              ...controller.dashaTableData.asMap().entries.map((entry) {
-                final index = entry.key;
-                final row = entry.value;
-                final isLast = index == controller.dashaTableData.length - 1;
-                final leftText = row['left'] as String;
-                final rightText = row['right'] as String;
-                final hasRightColumn = rightText.isNotEmpty;
+            ),
+            // Table Rows
+            ...controller.dashaTableData.asMap().entries.map((entry) {
+              final index = entry.key;
+              final row = entry.value;
+              final isLast = index == controller.dashaTableData.length - 1;
+              final leftText = row['left'] as String;
+              final rightText = row['right'] as String;
+              final hasRightColumn = rightText.isNotEmpty;
 
-                return InkWell(
-                  borderRadius: BorderRadius.circular(14.r),
-                  onTap: () {
-                    if (leftText == 'Vimshottari Dasha') {
-                      controller.navigateToVimshottariDasha();
-                    } else if (leftText == 'Current Mahadasha') {
-                      controller.navigateToCurrentMahadashaTab();
-                    } else if (leftText == 'Yogini Dasha') {
-                      controller.navigateToYoginiDasha();
-                    }
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 8.h,
+              return InkWell(
+                onTap: () {
+                  if (leftText == 'Vimshottari Dasha') {
+                    controller.navigateToVimshottariDasha();
+                  } else if (leftText == 'Current Mahadasha') {
+                    controller.navigateToCurrentMahadashaTab();
+                  } else if (leftText == 'Yogini Dasha') {
+                    controller.navigateToYoginiDasha();
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: isLast
+                            ? Colors.transparent
+                            : AppColors.deepOrange.withOpacity(0.2),
+                        width: 1,
                       ),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: isLast
-                                ? Colors.transparent
-                                : "#ed6f30".toColor().withOpacity(0.1),
-                          ),
-                        ),
-                      ),
-                      child: hasRightColumn
-                          ? _buildTwoColumnRow(leftText, rightText, index)
-                          : _buildSingleColumnRow(leftText, index),
                     ),
                   ),
-                );
-              }).toList(),
+                  child: hasRightColumn
+                      ? _buildTwoColumnRow(leftText, rightText)
+                      : _buildSingleColumnRow(leftText),
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTwoColumnRow(String leftText, String rightText) {
+    return Row(
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              Icon(
+                Icons.timeline,
+                size: 16.w,
+                color: AppColors.deepOrange,
+              ),
+              Spacing.w(8),
+              Expanded(
+                child: AutoTranslateText(
+                  leftText,
+                  style: MyTextTheme.smallBCB.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12.sp,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTwoColumnRow(String leftText, String rightText, int index) {
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          /// Left Column
-          Expanded(
-            child: Container(
-              constraints: BoxConstraints(minHeight: 50.h),
-              padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
-              decoration: BoxDecoration(
-                color: index == 0
-                    ? AppColors.deepOrange.withValues(alpha: 0.08)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(10.r),
-              ),
-              child: Center(
-                child: AutoTranslateText(
-                  leftText,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: "#68171E".toColor(),
-                    fontWeight: index == 0 ? FontWeight.w600 : FontWeight.w500,
-                    fontSize: 13.sp,
-                    height: 1.4,
-                  ),
+        Container(
+          width: 1,
+          height: 30.h,
+          margin: EdgeInsets.symmetric(horizontal: 10.w),
+          color: AppColors.deepOrange.withOpacity(0.2),
+        ),
+        Expanded(
+          child: InkWell(
+            onTap: () {
+              if (rightText == 'Mahadasha') {
+                controller.navigateToMahadashaTab();
+              }
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.calendar_month,
+                  size: 16.w,
+                  color: AppColors.deepOrange,
                 ),
-              ),
-            ),
-          ),
-
-          /// Vertical Divider
-          Container(
-            width: 1,
-            margin: EdgeInsets.symmetric(horizontal: 6.w),
-            decoration: BoxDecoration(
-              color: AppColors.deepOrange.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(2.r),
-            ),
-          ),
-
-          /// Right Column (Clickable)
-          Expanded(
-            child: InkWell(
-              borderRadius: BorderRadius.circular(10.r),
-              onTap: () {
-                if (rightText == 'Mahadasha') {
-                  controller.navigateToMahadashaTab();
-                }
-              },
-              child: Container(
-                constraints: BoxConstraints(minHeight: 50.h),
-                padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 12.w),
-                decoration: BoxDecoration(
-                  color: index == 0
-                      ? AppColors.deepOrange.withValues(alpha: 0.08)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: Center(
+                Spacing.w(8),
+                Expanded(
                   child: AutoTranslateText(
                     rightText,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: MyTextTheme.mediumBCN.copyWith(
-                      color: "#68171E".toColor(),
-                      fontWeight: index == 0
-                          ? FontWeight.w600
-                          : FontWeight.w500,
-                      fontSize: 13.sp,
-                      height: 1.4,
+                    style: MyTextTheme.smallBCB.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12.sp,
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildSingleColumnRow(String leftText, int index) {
-    return Container(
-      constraints: BoxConstraints(minHeight: 50.h),
-      padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.w),
-      decoration: BoxDecoration(
-        color: AppColors.deepOrange.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: Center(
-        child: AutoTranslateText(
-          leftText,
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: MyTextTheme.mediumBCN.copyWith(
-            color: "#68171E".toColor(),
-            fontWeight: FontWeight.w600,
-            fontSize: 13.sp,
-            height: 1.4,
+  Widget _buildSingleColumnRow(String leftText) {
+    return Row(
+      children: [
+        Icon(
+          leftText == 'Current Mahadasha'
+              ? Icons.alarm_add_outlined
+              : Icons.import_contacts,
+          size: 16.w,
+          color: AppColors.deepOrange,
+        ),
+        Spacing.w(8),
+        Expanded(
+          child: AutoTranslateText(
+            leftText,
+            style: MyTextTheme.smallBCB.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w600,
+              fontSize: 12.sp,
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
+
 }

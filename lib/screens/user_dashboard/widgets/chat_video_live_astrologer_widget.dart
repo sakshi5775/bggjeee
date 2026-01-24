@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../app_manager/ext/hex_color_ext.dart';
@@ -23,7 +24,7 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
       return Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -50,7 +51,7 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
             ),
           ),
           SizedBox(
-            height: 90,
+            height: 90.h,
             child: ListView.separated(
               separatorBuilder: (context, index) => Spacing.w(8),
               itemCount: controller.allAstrologer.length,
@@ -60,7 +61,7 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
                 return Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.deepOrange, width: 1),
+                    border: Border.all(color: AppColors.deepOrange, width: 1.w),
                   ),
                   child: Row(
                     children: [
@@ -77,8 +78,8 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
                           url:
                               controller.allAstrologer[index].profilePicture ??
                               '',
-                          width: 70,
-                          height: 70,
+                          width: 70.w,
+                          height: 70.h,
                           isCircular: true,
                         ),
                       ),

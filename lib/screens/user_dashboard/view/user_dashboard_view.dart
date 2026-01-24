@@ -66,61 +66,91 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             ),
           ),
           child: SafeArea(
-            child: Stack(
-              children: [
-                // Scrollable content with pull-to-refresh
-                RefreshIndicator(
-                  onRefresh: controller.refreshDashboard,
-                  color: "#6F221E".toColor(),
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    controller: controller.scrollController,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Header with menu, logo, icons
-                        _buildHeader(context),
-                        Spacing.h(10),
-                        // In-flow search bar to avoid unbounded Stack constraints
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: _buildSearchBar(context),
-                        ),
-                        Spacing.h(10),
-                        // Body with curve, gradient and all content sections
-                        _buildBodyWithCurve(context),
-                        // Bottom padding to prevent content from being hidden behind sticky banner
-                        // Spacing.h(100),
-                      ],
+            top: false,
+            child: Padding(
+              padding: EdgeInsets.only(
+                top:
+                    (MediaQuery.of(context).padding.top > 0
+                            ? MediaQuery.of(context).padding.top * 0.5
+                            : 0.0)
+                        .clamp(6.0, 24.0)
+                        .toDouble(),
+              ),
+              child: Stack(
+                children: [
+                  // Scrollable content with pull-to-refresh
+                  RefreshIndicator(
+                    onRefresh: controller.refreshDashboard,
+                    color: "#6F221E".toColor(),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      controller: controller.scrollController,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Spacing.h(22),
+                          // Header + Slider with fullchakra behind both
+                          _buildHeaderAndSliderWithChakra(context),
+                          Spacing.h(8),
+                          // Kundli / Horoscope / Predictions / etc. tabs (all visible)
+                          _buildKundliTabs(context),
+                          Spacing.h(8),
+                          // Stack to overlap search bar with body curve
+                          Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              // Body with curve, gradient and all content sections
+                              Padding(
+                                padding: EdgeInsets.only(top: 30.h),
+                                child: _buildBodyWithCurve(context),
+                              ),
+                              // Search bar overlapping the top of body curve
+                              Positioned(
+                                top: 0,
+                                left: 20.w,
+                                right: 20.w,
+                                child: _buildSearchBar(context),
+                              ),
+                            ],
+                          ),
+                          // Bottom padding to prevent content from being hidden behind sticky banner
+                          // Spacing.h(100),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                // 🔥 Search bar overlay (FIX)
+                  // Header search overlay (tap search icon → opens; same app-wide search as dashboard bar)
+                  Obx(
+                    () => controller.isHeaderSearchOpen.value
+                        ? _buildHeaderSearchOverlay(context)
+                        : const SizedBox.shrink(),
+                  ),
 
-                // Circular button for AI Chat navigation at bottom - just above bottom nav
-                Positioned(
-                  right: 1.w,
-                  bottom: 60
-                      .h, // Position just above bottom nav (60h nav + 20h spacing)
-                  child: _buildCircularChatButton(),
-                ),
-                // Floating action buttons row
-                // Option 3: Container with full width white background
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: Container(
-                    color: Colors.white,
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 6.h,
-                    ),
-                    child: _buildAstrologerActionsRow(),
+                  // Circular button for AI Chat navigation at bottom - just above bottom nav
+                  Positioned(
+                    right: 1.w,
+                    bottom: 60
+                        .h, // Position just above bottom nav (60h nav + 20h spacing)
+                    child: _buildCircularChatButton(),
                   ),
-                ),
-              ],
+                  // Floating action buttons row
+                  // Option 3: Container with full width white background
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      color: Colors.white,
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 6.h,
+                      ),
+                      child: _buildAstrologerActionsRow(),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -128,13 +158,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeaderAndSliderWithChakra(BuildContext context) {
     return Stack(
+      clipBehavior: Clip.none,
       children: [
-        // Animated fullchakra background - positioned in header background
+        // Fullchakra as background behind both header and slider
         Positioned(
           right: -20.w,
-          top: -15.h,
+          //    top: -20.h,
           child: AnimatedChakra(
             child: SvgAssets(
               colorFilter: ColorFilter.mode(
@@ -147,42 +178,64 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             ),
           ),
         ),
-        // Header content
+        // Header content + slider on top (transparent)
         Column(
-          children: [
-            // Top section with menu, logo and icons
-            Container(
-              height: 120.h,
-              padding: AppPaddings.symmetric(h: 16, v: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [_buildHeaderContent(context), _buildSlider(context)],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeaderContent(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          height: 56.h,
+          padding: AppPaddings.symmetric(h: 16, v: 6),
+          color: Colors.transparent,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    children: [
-                      // Menu icon
-                      Builder(
-                        builder: (context) => IconButton(
-                          onPressed: () {
-                            Scaffold.of(context).openDrawer();
-                          },
-                          icon: Icon(
-                            Icons.menu,
-                            size: 24.w,
-                            color: "#6F221E".toColor(),
-                          ),
-                        ),
+                  // Menu icon
+                  Builder(
+                    builder: (context) => IconButton(
+                      onPressed: () {
+                        Scaffold.of(context).openDrawer();
+                      },
+                      icon: Icon(
+                        Icons.menu,
+                        size: 24.w,
+                        color: "#6F221E".toColor(),
                       ),
-                      Spacing.w(8),
-                      // Logo placed near drawer
-                      SvgAssets(
-                        path: 'assets/app/AstrobharatAi .svg',
-                        width: 120.w,
-                        height: 30.h,
+                      style: IconButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size(36.w, 36.h),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                    ],
+                    ),
                   ),
-                  // Wallet, Language and Cart icons
-                  Row(
+                  Spacing.w(8),
+                  // Logo placed near drawer
+                  SvgAssets(
+                    path: 'assets/app/AstrobharatAi .svg',
+                    width: 120.w,
+                    height: 30.h,
+                  ),
+                ],
+              ),
+              // Wallet, Language, Cart and Search icons
+              Flexible(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       IconButton(
                         onPressed: () {
@@ -190,14 +243,18 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         },
                         icon: Icon(
                           Icons.account_balance_wallet,
-                          size: 24.w,
+                          size: 22.w,
                           color: "#6F221E".toColor(),
                         ),
+                        style: IconButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(36.w, 36.h),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
                       ),
-                      // Language selector
                       LanguageSelector(
                         iconColor: "#6F221E".toColor(),
-                        iconSize: 24.w,
+                        iconSize: 22.w,
                       ),
                       IconButton(
                         onPressed: () {
@@ -205,20 +262,340 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         },
                         icon: SvgAssets(
                           path: 'assets/app/cart.svg',
-                          width: 24.w,
-                          height: 24.h,
+                          width: 22.w,
+                          height: 22.h,
                           colorFilter: ColorFilter.mode(
                             "#6F221E".toColor(),
                             BlendMode.srcIn,
                           ),
                         ),
+                        style: IconButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(36.w, 36.h),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => controller.openHeaderSearch(),
+                        icon: Icon(
+                          Icons.search,
+                          size: 22.w,
+                          color: "#6F221E".toColor(),
+                        ),
+                        style: IconButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(36.w, 36.h),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
                       ),
                     ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSlider(BuildContext context) {
+    return Obx(() {
+      final selectedIndex = controller.selectedSliderIndex.value;
+      return Container(
+        color: Colors.transparent,
+        height: 26.h,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          itemCount: controller.sliderTabs.length,
+          separatorBuilder: (_, __) => Spacing.w(20),
+          itemBuilder: (context, index) {
+            final isSelected = selectedIndex == index;
+            final label = controller.sliderTabs[index];
+            return GestureDetector(
+              onTap: () => controller.selectedSliderIndex.value = index,
+              behavior: HitTestBehavior.opaque,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    label,
+                    style: AppTypography.body1.copyWith(
+                      color: isSelected
+                          ? "#6F221E".toColor()
+                          : "#3D0C11".toColor().withOpacity(0.75),
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                    ),
+                  ),
+                  Spacing.h(4),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    height: 2.5.h,
+                    width: isSelected ? 36.w : 0,
+                    margin: EdgeInsets.only(top: 1.h),
+                    decoration: BoxDecoration(
+                      color: "#6F221E".toColor(),
+                      borderRadius: BorderRadius.circular(2.r),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      );
+    });
+  }
+
+  static final List<Map<String, dynamic>> _kundliTabs = [
+    {
+      'label': 'Kundli',
+      'route': AppRoutes.kundliForm,
+      'icon': AppConstant.serviceGenerateKundali,
+    },
+    {
+      'label': 'Matching',
+      'route': AppRoutes.matchMakingForm,
+      'icon': AppConstant.serviceMatchMaking,
+    },
+    {
+      'label': 'Horoscope',
+      'route': AppRoutes.horoscope,
+      'icon': AppConstant.horoscope,
+    },
+    {
+      'label': 'Predictions',
+      'route': AppRoutes.predictions,
+      'icon': AppConstant.lifePredictions,
+    },
+    {'label': 'Dasha', 'route': AppRoutes.dasha, 'icon': AppConstant.dasha},
+    {'label': 'Dosh', 'route': AppRoutes.dosh, 'icon': AppConstant.dosh},
+    {
+      'label': 'Lal Kitab',
+      'route': AppRoutes.lalKitab,
+      'icon': AppConstant.lalKitab,
+    },
+    {
+      'label': 'KP Astrology',
+      'route': AppRoutes.kpSystem,
+      'icon': AppConstant.kPAstrology,
+    },
+    {
+      'label': 'Numerology',
+      'route': AppRoutes.numerologyForm,
+      'icon': AppConstant.serviceNumerology,
+    },
+    {
+      'label': 'Panchang',
+      'route': AppRoutes.panchang,
+      'icon': AppConstant.servicePanchang,
+    },
+  ];
+
+  Widget _buildKundliTabs(BuildContext context) {
+    const maroon = Color(0xFF6F221E);
+
+    return SizedBox(
+      height: 80.h,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        itemCount: _kundliTabs.length,
+        separatorBuilder: (_, __) => SizedBox(width: 2.w),
+        itemBuilder: (context, index) {
+          final tab = _kundliTabs[index];
+          final label = tab['label'] as String;
+          final route = tab['route'] as String;
+          final iconPath = tab['icon'] as String;
+          return GestureDetector(
+            onTap: () => Get.toNamed(route),
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              width: 70.w,
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20.r),
+                border: Border.all(
+                  color: "#DBCCA8".toColor().withOpacity(0.6),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: "#6F221E".toColor().withOpacity(0.08),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 40.w,
+                    height: 40.h,
+                    child: iconPath.endsWith('.svg')
+                        ? SvgAssets(path: iconPath, width: 40.w, height: 40.h)
+                        : Image.asset(
+                            iconPath,
+                            width: 40.w,
+                            height: 40.h,
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => Icon(
+                              Icons.star_outline,
+                              size: 32.w,
+                              color: maroon,
+                            ),
+                          ),
+                  ),
+                  SizedBox(height: 4.h),
+                  AutoTranslateText(
+                    label,
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: maroon,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 10.sp,
+                      height: 1.2,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-          ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildAdsSection(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 100.h,
+          child: PageView.builder(
+            controller: controller.adsPageController.value,
+            onPageChanged: (index) => controller.adsCurrentPage.value = index,
+            itemCount: controller.adsImages.length,
+            itemBuilder: (context, index) {
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 16.w),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16.r),
+                  child: Stack(
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: controller.adsImages[index],
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          color: "#6F221E".toColor().withOpacity(0.1),
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          color: "#6F221E".toColor().withOpacity(0.1),
+                          child: Center(
+                            child: Icon(
+                              Icons.ads_click,
+                              color: "#6F221E".toColor(),
+                              size: 40.w,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              Colors.black.withOpacity(0.4),
+                              Colors.transparent,
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(12.w),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AutoTranslateText(
+                              index == 0
+                                  ? "Detailed Kundli Analysis"
+                                  : index == 1
+                                  ? "Know Your Future"
+                                  : "Personalized Predictions",
+                              style: MyTextTheme.mediumBCB.copyWith(
+                                color: Colors.white,
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Spacing.h(2),
+                            AutoTranslateText(
+                              index == 0
+                                  ? "Get deep insights into your life"
+                                  : index == 1
+                                  ? "Understand your planetary positions"
+                                  : "Plan your path with expert guidance",
+                              style: MyTextTheme.mediumBCB.copyWith(
+                                color: Colors.white,
+                                fontSize: 9.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        Spacing.h(8),
+        Obx(
+          () => Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              controller.adsImages.length,
+              (index) => AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                margin: EdgeInsets.symmetric(horizontal: 2.w),
+                height: 6.h,
+                width: controller.adsCurrentPage.value == index ? 16.w : 6.w,
+                decoration: BoxDecoration(
+                  color: controller.adsCurrentPage.value == index
+                      ? "#6F221E".toColor()
+                      : "#6F221E".toColor().withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(3.r),
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -371,6 +748,120 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     });
   }
 
+  Widget _buildHeaderSearchOverlay(BuildContext context) {
+    return Positioned.fill(
+      child: Stack(
+        children: [
+          GestureDetector(
+            onTap: controller.closeHeaderSearch,
+            behavior: HitTestBehavior.opaque,
+            child: Container(color: Colors.black54),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 0),
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  padding: AppPaddings.symmetric(h: 16, v: 10),
+                  decoration: BoxDecoration(
+                    color: "#FFFFFF".toColor(),
+                    borderRadius: BorderRadius.circular(100.r),
+                    border: Border.all(color: "#DBCCA8".toColor(), width: 1.2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.12),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: controller.closeHeaderSearch,
+                        icon: Icon(
+                          Icons.arrow_back_ios_new,
+                          size: 20.w,
+                          color: "#6F221E".toColor(),
+                        ),
+                        style: IconButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(36.w, 36.h),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                      Spacing.w(8),
+                      Expanded(
+                        child: TextField(
+                          controller: controller.headerSearchController,
+                          focusNode: controller.headerSearchFocusNode,
+                          autofocus: true,
+                          style: MyTextTheme.mediumBCN
+                              .copyWith(
+                                color: "#3D0C11".toColor(),
+                                fontWeight: FontWeight.w500,
+                              )
+                              .merge(AppTypography.body1),
+                          decoration: InputDecoration(
+                            hintText:
+                                'Search horoscope, kundli, tarot, palm reading...',
+                            hintStyle: MyTextTheme.mediumBCN
+                                .copyWith(
+                                  color: "#3D0C11".toColor().withOpacity(0.5),
+                                  fontWeight: FontWeight.w500,
+                                )
+                                .merge(AppTypography.body1),
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          onSubmitted: (value) {
+                            if (value.trim().isNotEmpty) {
+                              controller.processTextSearch(
+                                value,
+                                fromHeaderSearch: true,
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                      Spacing.w(8),
+                      IconButton(
+                        onPressed: () {
+                          final q = controller.headerSearchController.text
+                              .trim();
+                          if (q.isNotEmpty) {
+                            controller.processTextSearch(
+                              q,
+                              fromHeaderSearch: true,
+                            );
+                          }
+                        },
+                        icon: Icon(
+                          Icons.search,
+                          size: 22.w,
+                          color: "#6F221E".toColor(),
+                        ),
+                        style: IconButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(36.w, 36.h),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildBodyWithCurve(context) {
     return Container(
       decoration: BoxDecoration(
@@ -386,8 +877,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-         
-
+          Spacing.h(30),
+          AstrologyToolWidget(),
+          Spacing.h(2),
+          _buildAdsSection(context),
+          Spacing.h(2),
+          //   OurServicesSection(),
           // Live Astrologers Section
           Obx(() {
             final hasLiveStreams = controller.liveStreams.isNotEmpty;
@@ -398,12 +893,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               copy.shuffle();
               return copy.take(5).toList();
             }();
-            
+
             final showSection = hasLiveStreams || randomAstrologers.isNotEmpty;
             if (!showSection) return const SizedBox.shrink();
 
             return Padding(
-              padding: EdgeInsets.only(top: 24.h, left: 16.w, right: 16.w),
+              padding: EdgeInsets.only(top: 2.h, left: 16.w, right: 16.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -483,25 +978,25 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   //     ),
                   //   ),
                   // ],
-                  Spacing.h(16),
+                  Spacing.h(2),
                   SizedBox(
                     height: 110.h,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
-                      itemCount: hasLiveStreams 
-                          ? controller.liveStreams.length 
+                      itemCount: hasLiveStreams
+                          ? controller.liveStreams.length
                           : randomAstrologers.length,
                       separatorBuilder: (context, index) =>
                           SizedBox(width: 12.w),
                       itemBuilder: (context, index) {
                         if (hasLiveStreams) {
                           return _buildLiveAstrologerProfile(
-                            index, 
+                            index,
                             controller.liveStreams[index],
                           );
                         } else {
                           return _buildOfflineAstrologerProfile(
-                            index, 
+                            index,
                             randomAstrologers[index],
                           );
                         }
@@ -512,25 +1007,19 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ),
             );
           }),
-// Daily Astrologers Section
-          DailyAstrologersWidget(),
-            Spacing.h(10),
+          // Daily Astrologers Section
+          //  DailyAstrologersWidget(),
+          //   Spacing.h(10),
 
           // Our Services Pill Section
-          _buildOurServicesPillSection(),
+          //    _buildOurServicesPillSection(),
           // Digital Services Animated Widget
-          const DigitalServicesAnimatedWidget(),
-
-        
-          Spacing.h(24),
-
-          
-
+          // const DigitalServicesAnimatedWidget(),
+          //   Spacing.h(24),
           AllAstrologerWidget(),
           Spacing.h(12),
-          OurServicesSection(title: 'Our Services'),
-          Spacing.h(12),
-          AstrologyToolWidget(),
+
+          // Spacing.h(12),
           Spacing.h(12),
           // // Talk to AI Astrologer Card
           // _buildTalkToAIAstrologerCard(),
@@ -573,7 +1062,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
           // // Sacred Mandirs of Bharat Section
           // _buildSacredMandirsSection(),
-
           Spacing.h(12),
 
           // Celebrity Astrologer Section
@@ -956,8 +1444,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     // Responsive dimensions - all using .w, .h, .r for proper scaling
     final double cardHeight = 155.h; // Reduced card height
     final double guruImageWidth = 160.w; // Responsive width
-    final double guruImageHeight =
-        280.h; // Reduced for better proportion
+    final double guruImageHeight = 280.h; // Reduced for better proportion
     // Bottom flush with card: offset = cardHeight - guruHeight (negative -> head overlaps)
     final double guruTopOffset = cardHeight - guruImageHeight;
 
@@ -1457,33 +1944,38 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     final services = [
       {
         'title': 'Kundli Matching',
-        'description': 'Find your perfect match with 36 Gun Milan analysis and AI-powered compatibility insights.',
+        'description':
+            'Find your perfect match with 36 Gun Milan analysis and AI-powered compatibility insights.',
         'icon': 'assets/app/kundli_matching_icon.png',
         'route': AppRoutes.matchMakingForm,
       },
       {
         'title': 'Generate Kundli',
-        'description': 'Get your personalized birth chart with detailed planetary positions and analysis.',
+        'description':
+            'Get your personalized birth chart with detailed planetary positions and analysis.',
         'icon': 'assets/app/kundli_matching_icon.png',
         'route': AppRoutes.kundliForm,
       },
       {
         'title': 'Life Predictions',
-        'description': 'Discover your future with comprehensive life predictions based on your birth chart.',
+        'description':
+            'Discover your future with comprehensive life predictions based on your birth chart.',
         'icon': 'assets/app/kundli_matching_icon.png',
         'route': AppRoutes.kundliForm,
         'args': {'targetRoute': AppRoutes.predictions},
       },
       {
         'title': 'Dosh Analysis',
-        'description': 'Check for malefic planetary combinations and get remedies for dosh in your chart.',
+        'description':
+            'Check for malefic planetary combinations and get remedies for dosh in your chart.',
         'icon': 'assets/app/kundli_matching_icon.png',
         'route': AppRoutes.kundliForm,
         'args': {'targetRoute': AppRoutes.dosh},
       },
       {
         'title': 'Dasha Prediction',
-        'description': 'Understand your current planetary periods and their effects on your life.',
+        'description':
+            'Understand your current planetary periods and their effects on your life.',
         'icon': 'assets/app/kundli_matching_icon.png',
         'route': AppRoutes.kundliForm,
         'args': {'targetRoute': AppRoutes.dasha},
@@ -1568,11 +2060,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 width: 40.w,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  return Icon(
-                    Icons.star,
-                    color: Colors.white,
-                    size: 24.w,
-                  );
+                  return Icon(Icons.star, color: Colors.white, size: 24.w);
                 },
               ),
             ),
@@ -1972,9 +2460,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           Spacing.h(16),
           Obx(() {
             if (controller.isLoadingBlogs.value && controller.blogs.isEmpty) {
-              return const Center(
+              return Center(
                 child: Padding(
-                  padding: EdgeInsets.all(20.0),
+                  padding: EdgeInsets.all(20.w),
                   child: CircularProgressIndicator(),
                 ),
               );
@@ -2671,9 +3159,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     final videoPrice = videoPricePerMin > 0
         ? '₹${videoPricePerMin.toInt()}/Min'
         : '₹0/Min';
-    final chatPriceText = chatPrice > 0 ? '₹${chatPrice.toInt()}/Msg' : '₹0/Msg';
+    final chatPriceText = chatPrice > 0
+        ? '₹${chatPrice.toInt()}/Msg'
+        : '₹0/Msg';
     final imagePath = astrologer.profilePicture ?? '';
-    
+
     return GestureDetector(
       onTap: () {
         Get.toNamed(
@@ -2689,7 +3179,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           border: Border.all(color: "#F38B3B".toColor(), width: 1),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 12.h),
+          padding: EdgeInsets.symmetric(vertical: 5.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
@@ -2700,8 +3190,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 children: [
                   // Background decorative border image
                   Container(
-                    width: 95.w,
-                    height: 95.w,
+                    width: 120.w,
+                    height: 120.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
@@ -2757,7 +3247,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   Positioned(
                     bottom: 0,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 4.h,
+                      ),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: ["#FF6B35".toColor(), "#F38B3B".toColor()],
@@ -2780,7 +3273,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   ),
                 ],
               ),
-              Spacing.h(8),
+              Spacing.h(3),
               // Name
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -2798,7 +3291,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Spacing.h(2),
+              Spacing.h(1),
               // Designation
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -2812,7 +3305,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Spacing.h(8),
+              Spacing.h(3),
               // Service Pricing Section (Horizontal with Icons)
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 6.w),
@@ -2834,7 +3327,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                             videoPrice,
                             style: MyTextTheme.smallBCB
                                 .copyWith(
-                                   color: AppColors.deepOrange,
+                                  color: AppColors.deepOrange,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 5.sp,
                                 )
@@ -2854,14 +3347,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           Icon(
                             Icons.phone,
                             size: 14.w,
-                             color: AppColors.deepOrange,
+                            color: AppColors.deepOrange,
                           ),
                           Spacing.h(2),
                           AutoTranslateText(
                             voicePrice,
                             style: MyTextTheme.smallBCB
-                                 .copyWith(
-                                   color: AppColors.deepOrange,
+                                .copyWith(
+                                  color: AppColors.deepOrange,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 5.sp,
                                 )
@@ -2881,14 +3374,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           Icon(
                             Icons.chat_bubble_outline,
                             size: 14.w,
-                             color: AppColors.deepOrange,
+                            color: AppColors.deepOrange,
                           ),
                           Spacing.h(2),
                           AutoTranslateText(
                             chatPriceText,
                             style: MyTextTheme.smallBCB
-                                 .copyWith(
-                                   color: AppColors.deepOrange,
+                                .copyWith(
+                                  color: AppColors.deepOrange,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 5.sp,
                                 )
@@ -3122,8 +3615,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             ],
           ),
           Spacing.h(16),
-            SizedBox(
-              height: 360.h,
+          SizedBox(
+            height: 360.h,
             child: StreamBuilder<int>(
               stream: Stream.periodic(const Duration(seconds: 5), (x) => x),
               initialData: 0,
@@ -3415,103 +3908,100 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         );
       },
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: 255.99.w,
-          maxHeight: 220.h,
-        ),
+        constraints: BoxConstraints(maxWidth: 255.99.w, maxHeight: 220.h),
         child: Container(
           width: 255.99.w,
           decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              "#3D0C11".toColor(),
-              "#5D1C21".toColor(),
-              "#3D0C11".toColor(),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: const [0.0, 0.5, 1.0],
-          ),
-          borderRadius: BorderRadius.circular(24.r),
-        ),
-        child: Stack(
-          children: [
-            SvgAssets(
-              path: 'assets/icons/ai_astrologer_circle.svg',
-              width: 255.99.w,
-              height: 265.h,
-              colorFilter: ColorFilter.mode(
-                "#FFF6C2".toColor().withOpacity(0.1),
-                BlendMode.srcIn,
-              ),
+            gradient: LinearGradient(
+              colors: [
+                "#3D0C11".toColor(),
+                "#5D1C21".toColor(),
+                "#3D0C11".toColor(),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: const [0.0, 0.5, 1.0],
             ),
-            ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: 220.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Image with emoji overlay - moved to top
-                  SizedBox(
-                    width: 255.99.w,
-                    height: 120.h,
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(16.r),
-                          child: imagePath.isNotEmpty
-                              ? CachedNetworkImage(
-                                  imageUrl: imagePath,
-                                  width: 255.99.w,
-                                  height: 120.h,
-                                  fit: BoxFit.contain,
+            borderRadius: BorderRadius.circular(24.r),
+          ),
+          child: Stack(
+            children: [
+              SvgAssets(
+                path: 'assets/icons/ai_astrologer_circle.svg',
+                width: 255.99.w,
+                height: 265.h,
+                colorFilter: ColorFilter.mode(
+                  "#FFF6C2".toColor().withOpacity(0.1),
+                  BlendMode.srcIn,
+                ),
+              ),
+              ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: 220.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Image with emoji overlay - moved to top
+                    SizedBox(
+                      width: 255.99.w,
+                      height: 120.h,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(16.r),
+                            child: imagePath.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: imagePath,
+                                    width: 255.99.w,
+                                    height: 120.h,
+                                    fit: BoxFit.contain,
 
-                                  errorWidget: (context, url, error) {
-                                    return Container(
-                                      width: 255.99.w,
-                                      height: 120.h,
-                                      color: Colors.grey.withOpacity(0.3),
-                                      child: Icon(
-                                        Icons.person,
-                                        color: Colors.white.withOpacity(0.5),
-                                        size: 40.w,
-                                      ),
-                                    );
-                                  },
-                                )
-                              : Container(
-                                  width: 255.99.w,
-                                  height: 120.h,
-                                  color: Colors.grey.withOpacity(0.3),
-                                  child: Icon(
-                                    Icons.person,
-                                    color: Colors.white.withOpacity(0.5),
-                                    size: 40.w,
+                                    errorWidget: (context, url, error) {
+                                      return Container(
+                                        width: 255.99.w,
+                                        height: 120.h,
+                                        color: Colors.grey.withOpacity(0.3),
+                                        child: Icon(
+                                          Icons.person,
+                                          color: Colors.white.withOpacity(0.5),
+                                          size: 40.w,
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Container(
+                                    width: 255.99.w,
+                                    height: 120.h,
+                                    color: Colors.grey.withOpacity(0.3),
+                                    child: Icon(
+                                      Icons.person,
+                                      color: Colors.white.withOpacity(0.5),
+                                      size: 40.w,
+                                    ),
                                   ),
+                          ),
+                          // Gradient overlay
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              height: 50.h,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.8),
+                                  ],
                                 ),
-                        ),
-                        // Gradient overlay
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            height: 50.h,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.black.withOpacity(0.8),
-                                ],
                               ),
                             ),
                           ),
-                        ),
 
-                        // Emoji badge
+                          // Emoji badge
                           // Positioned(
                           //   top: 72.h,
                           //   right: 50.w,
@@ -3549,12 +4039,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           //     ),
                           //   ),
                           // ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  Spacing.h(1),
-                  // Title and subtitle
-                  Padding(
+                    Spacing.h(1),
+                    // Title and subtitle
+                    Padding(
                       padding: AppPaddings.symmetric(h: 10),
                       child: AutoTranslateText(
                         title,
@@ -3754,45 +4244,45 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   ],
                 ),
               ),
-            // FREE badge - positioned in top right of card
-            Positioned(
-              right: 12.w,
-              top: 12.h,
-              child: Container(
-                padding: EdgeInsets.only(
-                  left: 7.99.w,
-                  right: 7.99.w,
-                  top: 5.h,
-                  bottom: 5.h,
-                ),
-                decoration: BoxDecoration(
-                  color: "#05DF72".toColor(),
-                  borderRadius: BorderRadius.circular(17722700.r),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.auto_awesome_outlined,
-                      size: 12.w,
-                      color: "#3D0C11".toColor(),
-                    ),
-                    Spacing.w(3.99),
-                    AutoTranslateText(
-                      'FREE',
-                      style: MyTextTheme.smallBCB.copyWith(
+              // FREE badge - positioned in top right of card
+              Positioned(
+                right: 12.w,
+                top: 12.h,
+                child: Container(
+                  padding: EdgeInsets.only(
+                    left: 7.99.w,
+                    right: 7.99.w,
+                    top: 5.h,
+                    bottom: 5.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: "#05DF72".toColor(),
+                    borderRadius: BorderRadius.circular(17722700.r),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.auto_awesome_outlined,
+                        size: 12.w,
                         color: "#3D0C11".toColor(),
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Poppins',
-                        height: 1.33,
                       ),
-                    ),
-                  ],
+                      Spacing.w(3.99),
+                      AutoTranslateText(
+                        'FREE',
+                        style: MyTextTheme.smallBCB.copyWith(
+                          color: "#3D0C11".toColor(),
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Poppins',
+                          height: 1.33,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
         ),
       ),
     );
@@ -4125,9 +4615,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 ],
               ),
               Spacing.h(16),
-              const Center(
+              Center(
                 child: Padding(
-                  padding: EdgeInsets.all(20.0),
+                  padding: EdgeInsets.all(20.w),
                   child: CircularProgressIndicator(),
                 ),
               ),
@@ -4984,7 +5474,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     final isLive = stream.status == 'LIVE';
     final borderColor = isLive ? "#00C853".toColor() : Colors.red;
     final badgeColor = isLive ? "#00C853".toColor() : Colors.red;
-    
+
     return GestureDetector(
       onTap: () async {
         // Check if user is logged in before accessing live stream
@@ -4992,7 +5482,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           message: 'Please login to watch live streams.',
         );
 
-          if (isLoggedIn) {
+        if (isLoggedIn) {
           if (isLive) {
             // Navigate to live stream if it's actually live
             Get.to(
@@ -5103,10 +5593,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
   Widget _buildOfflineAstrologerProfile(int index, AstrologerModel astrologer) {
     final profilePicture = astrologer.profilePicture ?? '';
-    final astrologerName = astrologer.displayName.isNotEmpty 
-        ? astrologer.displayName 
+    final astrologerName = astrologer.displayName.isNotEmpty
+        ? astrologer.displayName
         : astrologer.name;
-    
+
     return GestureDetector(
       onTap: () async {
         // Check if user is logged in

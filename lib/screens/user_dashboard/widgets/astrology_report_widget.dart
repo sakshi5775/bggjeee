@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../app_manager/ext/hex_color_ext.dart';
@@ -19,7 +20,7 @@ class AstrologyReportWidget extends StatelessWidget {
         Get.to(() => const ComingSoonPage());
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         child: Column(
           children: [
             Row(
@@ -36,7 +37,7 @@ class AstrologyReportWidget extends StatelessWidget {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                spacing: 10,
+                spacing: 10.w,
                 children: [
                   _buildAstrologyReportCard(
                     imageUrl: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/atharvaveda.jpeg',
@@ -80,13 +81,13 @@ class AstrologyReportWidget extends StatelessWidget {
       },
       child: ClipRRect(
         borderRadius: AppRadius.only(
-          topLeft: 13,
-          topRight: 13,
-          bottomRight: 13,
+          topLeft: 13.r,
+          topRight: 13.r,
+          bottomRight: 13.r,
         ),
         child: Container(
-          width: 82,
-          height: 100,
+          width: 82.w,
+          height: 100.h,
           child: Stack(
             fit: StackFit.expand,
             children: [

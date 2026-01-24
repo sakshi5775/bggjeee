@@ -2,12 +2,11 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/dasha_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
 class YoginiMahadashaSubWidget extends StatelessWidget {
@@ -55,20 +54,54 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
       }
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
-            AutoTranslateText(
-              'Yogini Dasha Sub',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.bold,
+            Container(
+              padding: EdgeInsets.all(10.w),
+              decoration: BoxDecoration(
+                color: AppColors.cardLight,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.shadowLight,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(6.r),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.orangeGradient,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.import_contacts,
+                      color: AppColors.textLight,
+                      size: 18.w,
+                    ),
+                  ),
+                  Spacing.w(8),
+                  Expanded(
+                    child: AutoTranslateText(
+                      'Yogini Dasha Sub',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15.sp,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             
-            Spacing.h(16),
+            Spacing.h(12),
             
             // Main Dasha Items
             ...response.map((item) {
@@ -79,14 +112,15 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
               final subDashaStartDate = item['sub_dasha_start_dates'] as String? ?? '';
               
               return Container(
-                margin: EdgeInsets.only(bottom: 16.h),
+                margin: EdgeInsets.only(bottom: 12.h),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16.r),
+                  color: AppColors.cardLight,
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 8,
+                      color: AppColors.shadowLight,
+                      blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
                   ],
@@ -94,65 +128,60 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Main Dasha Header
                     Container(
-                      padding: EdgeInsets.all(16.w),
+                      padding: EdgeInsets.all(10.w),
                       decoration: BoxDecoration(
-                        color: "#ed6f30".toColor().withOpacity(0.1),
+                        color: AppColors.deepOrange.withOpacity(0.1),
                         borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(16.r),
-                          topRight: Radius.circular(16.r),
+                          topLeft: Radius.circular(12.r),
+                          topRight: Radius.circular(12.r),
                         ),
                       ),
-                      child: Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AutoTranslateText(
-                                  'Main Dasha: $mainDasha',
-                                  style: MyTextTheme.mediumBCB.copyWith(
-                                    color: "#6F221E".toColor(),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Spacing.h(4),
-                                AutoTranslateText(
-                                  'Lord: $mainDashaLord',
-                                  style: MyTextTheme.mediumBCN.copyWith(
-                                    color: "#ed6f30".toColor(),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                if (subDashaStartDate.isNotEmpty) ...[
-                                  Spacing.h(4),
-                                  AutoTranslateText(
-                                    'Start: ${_formatDate(subDashaStartDate)}',
-                                    style: MyTextTheme.smallBCN.copyWith(
-                                      color: "#6F221E".toColor().withOpacity(0.7),
-                                    ),
-                                  ),
-                                ],
-                              ],
+                          AutoTranslateText(
+                            'Main Dasha: $mainDasha',
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12.sp,
                             ),
                           ),
+                          Spacing.h(4),
+                          AutoTranslateText(
+                            'Lord: $mainDashaLord',
+                            style: MyTextTheme.smallBCN.copyWith(
+                              color: AppColors.deepOrange,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 11.sp,
+                            ),
+                          ),
+                          if (subDashaStartDate.isNotEmpty) ...[
+                            Spacing.h(4),
+                            AutoTranslateText(
+                              'Start: ${_formatDate(subDashaStartDate)}',
+                              style: MyTextTheme.smallBCN.copyWith(
+                                color: AppColors.textSecondary,
+                                fontSize: 10.sp,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
                     
-                    // Sub Dasha List
                     ...List.generate(subDashaList.length, (index) {
                       final isLast = index == subDashaList.length - 1;
                       final subDasha = subDashaList[index].toString();
                       final endDate = index < subDashaEndDates.length ? subDashaEndDates[index].toString() : '';
                       
                       return Container(
-                        padding: EdgeInsets.all(16.w),
+                        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
                         decoration: BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
-                              color: isLast ? Colors.transparent : "#ed6f30".toColor().withOpacity(0.1),
+                              color: isLast ? Colors.transparent : AppColors.deepOrange.withOpacity(0.2),
                               width: 1,
                             ),
                           ),
@@ -160,17 +189,21 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            AutoTranslateText(
-                              subDasha,
-                              style: MyTextTheme.mediumBCN.copyWith(
-                                color: "#6F221E".toColor(),
-                                fontWeight: FontWeight.w500,
+                            Expanded(
+                              child: AutoTranslateText(
+                                subDasha,
+                                style: MyTextTheme.smallBCB.copyWith(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 11.sp,
+                                ),
                               ),
                             ),
                             AutoTranslateText(
                               _formatDate(endDate),
                               style: MyTextTheme.smallBCN.copyWith(
-                                color: "#6F221E".toColor().withOpacity(0.7),
+                                color: AppColors.textSecondary,
+                                fontSize: 10.sp,
                               ),
                             ),
                           ],

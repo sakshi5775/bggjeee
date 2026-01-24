@@ -2,12 +2,11 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/dasha_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
 class YoginiMahadashaMainWidget extends StatelessWidget {
@@ -60,55 +59,93 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
       final startDate = response['start_date'] as int? ?? 0;
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
-            AutoTranslateText(
-              'Yogini Dasha Main',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.bold,
+            Container(
+              padding: EdgeInsets.all(10.w),
+              decoration: BoxDecoration(
+                color: AppColors.cardLight,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.shadowLight,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(6.r),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.orangeGradient,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.import_contacts,
+                          color: AppColors.textLight,
+                          size: 18.w,
+                        ),
+                      ),
+                      Spacing.w(8),
+                      Expanded(
+                        child: AutoTranslateText(
+                          'Yogini Dasha Main',
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15.sp,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (startDate > 0) ...[
+                    Spacing.h(6),
+                    AutoTranslateText(
+                      'Start Date: $startDate',
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: AppColors.textSecondary,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
             
-            Spacing.h(8),
-            
-            // Start Date
-            if (startDate > 0)
-              AutoTranslateText(
-                'Start Date: $startDate',
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
-                ),
-              ),
-            
-            Spacing.h(16),
+            Spacing.h(12),
             
             // Dasha List
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16.r),
+                color: AppColors.cardLight,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 8,
+                    color: AppColors.shadowLight,
+                    blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
               child: Column(
                 children: [
-                  // Header
                   Container(
-                    padding: EdgeInsets.all(16.w),
+                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
                     decoration: BoxDecoration(
-                      color: "#ed6f30".toColor().withOpacity(0.1),
+                      color: AppColors.deepOrange.withOpacity(0.1),
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16.r),
-                        topRight: Radius.circular(16.r),
+                        topLeft: Radius.circular(12.r),
+                        topRight: Radius.circular(12.r),
                       ),
                     ),
                     child: Row(
@@ -117,9 +154,10 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
                           flex: 2,
                           child: AutoTranslateText(
                             'Dasha',
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: "#6F221E".toColor(),
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.bold,
+                              fontSize: 12.sp,
                             ),
                           ),
                         ),
@@ -128,9 +166,10 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
                           child: AutoTranslateText(
                             'Lord',
                             textAlign: TextAlign.center,
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: "#6F221E".toColor(),
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.bold,
+                              fontSize: 12.sp,
                             ),
                           ),
                         ),
@@ -139,9 +178,10 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
                           child: AutoTranslateText(
                             'End Date',
                             textAlign: TextAlign.right,
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: "#6F221E".toColor(),
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.bold,
+                              fontSize: 12.sp,
                             ),
                           ),
                         ),
@@ -149,7 +189,6 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
                     ),
                   ),
                   
-                  // List Items
                   ...List.generate(dashaList.length, (index) {
                     final isLast = index == dashaList.length - 1;
                     final dasha = dashaList[index].toString();
@@ -157,11 +196,11 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
                     final endDate = index < dashaEndDates.length ? dashaEndDates[index].toString() : '';
                     
                     return Container(
-                      padding: EdgeInsets.all(16.w),
+                      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
-                            color: isLast ? Colors.transparent : "#ed6f30".toColor().withOpacity(0.1),
+                            color: isLast ? Colors.transparent : AppColors.deepOrange.withOpacity(0.2),
                             width: 1,
                           ),
                         ),
@@ -172,9 +211,10 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
                             flex: 2,
                             child: AutoTranslateText(
                               dasha,
-                              style: MyTextTheme.mediumBCN.copyWith(
-                                color: "#6F221E".toColor(),
+                              style: MyTextTheme.smallBCB.copyWith(
+                                color: AppColors.textPrimary,
                                 fontWeight: FontWeight.w500,
+                                fontSize: 11.sp,
                               ),
                             ),
                           ),
@@ -183,9 +223,10 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
                             child: AutoTranslateText(
                               lord,
                               textAlign: TextAlign.center,
-                              style: MyTextTheme.mediumBCN.copyWith(
-                                color: "#ed6f30".toColor(),
+                              style: MyTextTheme.smallBCN.copyWith(
+                                color: AppColors.deepOrange,
                                 fontWeight: FontWeight.w500,
+                                fontSize: 11.sp,
                               ),
                             ),
                           ),
@@ -195,7 +236,8 @@ class YoginiMahadashaMainWidget extends StatelessWidget {
                               _formatDate(endDate),
                               textAlign: TextAlign.right,
                               style: MyTextTheme.smallBCN.copyWith(
-                                color: "#6F221E".toColor().withOpacity(0.7),
+                                color: AppColors.textSecondary,
+                                fontSize: 10.sp,
                               ),
                             ),
                           ),

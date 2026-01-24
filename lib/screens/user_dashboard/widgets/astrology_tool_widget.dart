@@ -1,86 +1,85 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../app_manager/ext/hex_color_ext.dart';
+import '../../../app_manager/my_text_theme.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/services/login_guard.dart';
-import '../../../core/value/dimension.dart';
-import '../../../theme/app_typography.dart';
-import '../../../utils/app_constant.dart';
 import '../../../widgets/auto_translate_text.dart';
 
 class AstrologyToolWidget extends StatelessWidget {
   const AstrologyToolWidget({super.key});
 
+  final List<Map<String, String>> _astrologyTools = const [
+    {
+      'label': 'Face\nReading',
+      'route': AppRoutes.faceReading,
+      'image':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/face2.jpeg',
+    },
+    {
+      'label': 'Palm\nReading',
+      'route': AppRoutes.palmReading,
+      'image':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/hand.jpeg',
+    },
+    {
+      'label': 'Vastu\nReading',
+      'route': AppRoutes.vastuDashboard,
+      'image':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/vastu.jpeg',
+    },
+    {
+      'label': 'Ramal\nShastra',
+      'route': AppRoutes.ramalShastra,
+      'image':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/ramal.jpeg',
+    },
+    {
+      'label': 'Writing\nAstrology',
+      'route': AppRoutes.handwritingAstrology,
+      'image':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/writing.jpeg',
+    },
+    {
+      'label': 'Prashna\nKundli',
+      'route': AppRoutes.prashnaKundali,
+      'image':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/PrashanKundli.jpg',
+    },
+    {
+      'label': 'Tarot\nReading',
+      'route': AppRoutes.tarotReading,
+      'image':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/TarotReading.png',
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              AutoTranslateText(
-                'Astrology Services',
-                style: AppTypography.h2.copyWith(color: '#8B1925'.toColor()),
-              ),
-              // AutoTranslateText(
-              //   'See All',
-              //   style: AppTypography.body1.copyWith(color: '#9D4807'.toColor()),
-              // ),
-            ],
-          ),
-          Spacing.h(10),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              spacing: 10,
-              children: [
-                _buildAstrologyTools(
-                  title: 'Face\nReading',
-                  image: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/face2.jpeg',
-                  isNetworkImage: true,
-                ),
-                _buildAstrologyTools(
-                  title: 'Palm\nReading',
-                  image: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/hand.jpeg',
-                  isNetworkImage: true,
-                ),
-                _buildAstrologyTools(
-                  title: 'Vastu\nMatching',
-                  image: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/vastu.jpeg',
-                  isNetworkImage: true,
-                ),
-                _buildAstrologyTools(
-                  title: 'Ramal\nShastra',
-                  image: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/ramal.jpeg',
-                  isNetworkImage: true,
-                ),
-                _buildAstrologyTools(
-                  title: 'Writing\nAstrology',
-                  image: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/writing.jpeg',
-                  isNetworkImage: true,
-                ),
-                _buildAstrologyTools(
-                  title: 'Prshan\nKundli',
-                  image: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/PrashanKundli.jpg',
-                  isNetworkImage: true,
-                ),
-                _buildAstrologyTools(
-                  title: 'Tarot\nReading',
-                image: 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/TarotReading.png',
-                  isNetworkImage: true,
-                ),
-              ],
-            ),
-          ),
-        ],
+    return SizedBox(
+      height: 100.h,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        itemCount: _astrologyTools.length,
+        separatorBuilder: (_, __) => SizedBox(width: 12.w),
+        itemBuilder: (context, index) {
+          final tool = _astrologyTools[index];
+          final label = tool['label']!;
+          final route = tool['route']!;
+          final imageUrl = tool['image']!;
+          return _buildAstrologyToolCard(label, route, imageUrl);
+        },
       ),
     );
   }
 
-  Widget _buildAstrologyTools({required String title, required String image, bool isNetworkImage = false}) {
+  Widget _buildAstrologyToolCard(String label, String route, String imageUrl) {
+    const maroon = Color(0xFF6F221E);
+
     Future<void> _requireLogin(
       Future<void> Function() action, {
       String? message,
@@ -93,86 +92,129 @@ class AstrologyToolWidget extends StatelessWidget {
       }
     }
 
-    return Column(
-      spacing: 5,
-      children: [
-        GestureDetector(
-          onTap: () {
-            switch (title) {
-              case 'Face\nReading':
-                _requireLogin(
-                  () async => Get.toNamed(AppRoutes.faceReading),
-                  message: 'Login to start face reading.',
-                );
-                break;
-              case 'Palm\nReading':
-                _requireLogin(
-                  () async => Get.toNamed(AppRoutes.palmReading),
-                  message: 'Login to start palm reading.',
-                );
-                break;
-              case 'Vastu\nMatching':
-                _requireLogin(
-                  () async => Get.toNamed(AppRoutes.vastuDashboard),
-                  message: 'Login to explore Vastu services.',
-                );
-                break;
-              case 'Ramal\nShastra':
-                _requireLogin(
-                  () async => Get.toNamed(AppRoutes.ramalShastra),
-                  message: 'Login to explore Ramal Shastra.',
-                );
-                break;
-              case 'Writing\nAstrology':
-                _requireLogin(
-                  () async => Get.toNamed(AppRoutes.handwritingAstrology),
-                  message: 'Login to use handwriting astrology.',
-                );
-                break;
-              case 'Prshan\nKundli':
-                _requireLogin(
-                  () async => Get.toNamed(AppRoutes.prashnaKundali),
-                  message: 'Login to use Prashna Kundli.',
-                );
-                break;
-              case 'Tarot\nReading':
-                _requireLogin(
-                  () async => Get.toNamed(AppRoutes.tarotReading),
-                  message: 'Login to explore tarot reading.',
-                );
-                break;
-              default:
-                _requireLogin(() async => Get.toNamed(AppRoutes.comingSoon));
-                break;
-            }
-          },
-          child: Container(
-            height: 90,
-            width: 90,
-            decoration: BoxDecoration(
-              borderRadius: AppRadius.all(0),
-              image: isNetworkImage
-                  ? DecorationImage(
-                      image: NetworkImage(image),
+    return GestureDetector(
+      onTap: () {
+        _requireLogin(
+          () async => Get.toNamed(route),
+          message: 'Login to access this service.',
+        );
+      },
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        width: 70.w,
+        height: 80.h,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            // BoxShadow(
+            //   color: const Color.fromARGB(255, 168, 156, 155).withOpacity(0.12),
+            //   blurRadius: 12,
+            //   offset: const Offset(0, 4),
+            //   spreadRadius: 0,
+            // ),
+          ],
+        ),
+        child: Column(
+          children: [
+            // Image section - takes most of the space
+            Expanded(
+              flex: 7,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16.r),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: imageUrl,
                       fit: BoxFit.cover,
-                    )
-                  : DecorationImage(
-                      image: AssetImage(image),
-                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.grey.shade200,
+                              Colors.grey.shade300,
+                            ],
+                          ),
+                        ),
+                        child: Center(
+                          child: SizedBox(
+                            width: 20.w,
+                            height: 20.h,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(maroon),
+                            ),
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              maroon.withOpacity(0.1),
+                              maroon.withOpacity(0.2),
+                            ],
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.image_not_supported_outlined,
+                          size: 28.w,
+                          color: maroon.withOpacity(0.5),
+                        ),
+                      ),
                     ),
+                    // Subtle gradient overlay for better text readability
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 20.h,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.3),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
+            // Label section - compact at bottom with transparent background
+            Expanded(
+              flex: 3,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
+                child: Center(
+                  child: AutoTranslateText(
+                    label,
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: maroon,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 9.5.sp,
+                      height: 1.1,
+                      letterSpacing: -0.2,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-        AutoTranslateText(
-          title,
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          style: AppTypography.body2.copyWith(
-            color: '#8B1925'.toColor(),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

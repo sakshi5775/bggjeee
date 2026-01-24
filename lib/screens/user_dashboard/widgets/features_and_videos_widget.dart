@@ -176,7 +176,7 @@ class FeaturesAndVideosWidget extends BasePage<UserDashboardController> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
-                borderRadius: BorderRadius.circular(17801400.r),
+                borderRadius: BorderRadius.circular(16.r),
               ),
               child: Icon(Icons.play_arrow, color: Colors.white, size: 20.w),
             ),

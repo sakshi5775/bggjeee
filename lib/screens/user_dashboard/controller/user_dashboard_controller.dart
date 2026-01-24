@@ -185,6 +185,11 @@ class UserDashboardController extends BaseController
   final TextEditingController searchController = TextEditingController();
   bool _sttInitialized = false;
 
+  // Header search overlay (tap search icon → opens overlay; same app-wide search as dashboard bar)
+  final TextEditingController headerSearchController = TextEditingController();
+  final FocusNode headerSearchFocusNode = FocusNode();
+  final RxBool isHeaderSearchOpen = false.obs;
+
   // Typewriter animation for search bar
   final RxString animatedSearchText = ''.obs;
   final List<String> _searchPrompts = [
@@ -202,13 +207,30 @@ class UserDashboardController extends BaseController
 
   final RxBool isExpanded = false.obs;
 
+  // Header slider tabs (Home = default active)
+  final RxInt selectedSliderIndex = 0.obs;
+  final List<String> sliderTabs = [
+    'Home',
+    '2026',
+    'Digital Consultation',
+    'Digital Mart',
+    'Digital Mandir',
+    'Digital Education',
+    'Reports',
+    'Video',
+    'Panchang',
+    'Horoscope',
+  ];
+
   // Book Pooja Carousel
   final Rx<PageController> bookPoojaPageController = PageController().obs;
   final RxInt bookPoojaCurrentPage = 0.obs;
   Timer? _bookPoojaTimer;
 
   // Our Services Carousel
-  final Rx<PageController> ourServicesPageController = PageController(initialPage: 2500).obs; // Start at middle for infinite scroll (500 * 5 services)
+  final Rx<PageController> ourServicesPageController = PageController(
+    initialPage: 2500,
+  ).obs; // Start at middle for infinite scroll (500 * 5 services)
   final RxInt ourServicesCurrentPage = 0.obs;
   Timer? _ourServicesTimer;
   bool _ourServicesInitialized = false;
@@ -225,6 +247,16 @@ class UserDashboardController extends BaseController
   final RxList<YouTubeVideo> youtubeVideos = <YouTubeVideo>[].obs;
   final RxBool isLoadingYoutubeVideos = false.obs;
 
+  // Ads Carousel
+  final Rx<PageController> adsPageController = PageController().obs;
+  final RxInt adsCurrentPage = 0.obs;
+  Timer? _adsTimer;
+  final List<String> adsImages = [
+    'https://img.freepik.com/free-vector/astrology-banner-with-zodiac-signs_23-2148722830.jpg',
+    'https://img.freepik.com/free-vector/hand-drawn-zodiac-wheel-background_23-2149021200.jpg',
+    'https://img.freepik.com/free-vector/astrology-zodiac-wheel-banner_23-2148722831.jpg',
+  ];
+
   void toggleView() {
     // Only preserve scroll position if controller is properly attached
     double? offset;
@@ -237,7 +269,8 @@ class UserDashboardController extends BaseController
     // Restore scroll position AFTER layout rebuild (only if we saved it)
     if (offset != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (scrollController.hasClients && scrollController.positions.length == 1) {
+        if (scrollController.hasClients &&
+            scrollController.positions.length == 1) {
           try {
             scrollController.jumpTo(offset!);
           } catch (e) {
@@ -317,6 +350,8 @@ class UserDashboardController extends BaseController
     Future.delayed(const Duration(milliseconds: 2000), () {
       _startOurServicesAutoSlide();
     });
+    // Start Ads carousel auto-slide
+    _startAdsAutoSlide();
   }
 
   /// Load pujas from API
@@ -437,15 +472,15 @@ class UserDashboardController extends BaseController
     // Our Services has 5 items
     const int servicesCount = 5;
     if (servicesCount == 0) return;
-    
+
     // Stop any existing timer first
     _stopOurServicesAutoSlide();
     _ourServicesInitialized = false;
-    
+
     if (kDebugMode) {
       print('Our Services: Starting auto-scroll setup...');
     }
-    
+
     // Initialize PageController to middle position after PageView is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(milliseconds: 2500), () {
@@ -456,7 +491,7 @@ class UserDashboardController extends BaseController
             pageController.jumpToPage(initialPage);
             ourServicesCurrentPage.value = 0;
             _ourServicesInitialized = true;
-            
+
             if (kDebugMode) {
               print('Our Services: Initialized to page $initialPage');
             }
@@ -468,39 +503,44 @@ class UserDashboardController extends BaseController
         }
       });
     });
-    
+
     // Start timer immediately - it will wait for initialization
     if (kDebugMode) {
       print('Our Services: Creating auto-scroll timer...');
     }
-    
+
     _ourServicesTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
       final pageController = ourServicesPageController.value;
-      
+
       // Wait for PageController to be ready and initialized
-      if (!pageController.hasClients || 
-          pageController.positions.isEmpty || 
+      if (!pageController.hasClients ||
+          pageController.positions.isEmpty ||
           !_ourServicesInitialized) {
         if (kDebugMode && timer.tick == 1) {
-          print('Our Services: Waiting for PageView to be ready... (tick ${timer.tick})');
+          print(
+            'Our Services: Waiting for PageView to be ready... (tick ${timer.tick})',
+          );
         }
         return; // Wait for next tick
       }
-      
+
       // Auto-scroll logic
       if (pageController.positions.length == 1) {
         try {
           // Get current page and move to next (scroll right to left)
-          final currentPage = pageController.page?.round() ?? (500 * servicesCount);
+          final currentPage =
+              pageController.page?.round() ?? (500 * servicesCount);
           final nextPage = currentPage + 1;
-          
+
           // Update the current page index (for display purposes)
           ourServicesCurrentPage.value = nextPage % servicesCount;
-          
+
           if (kDebugMode && timer.tick % 5 == 0) {
-            print('Our Services: Auto-scrolling from page $currentPage to $nextPage (tick ${timer.tick})');
+            print(
+              'Our Services: Auto-scrolling from page $currentPage to $nextPage (tick ${timer.tick})',
+            );
           }
-          
+
           // Animate to next page (infinite scroll from right to left)
           pageController.animateToPage(
             nextPage,
@@ -516,6 +556,33 @@ class UserDashboardController extends BaseController
         }
       }
     });
+  }
+
+  /// Start Ads carousel auto-slide
+  void _startAdsAutoSlide() {
+    _stopAdsAutoSlide();
+    _adsTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      final pageController = adsPageController.value;
+      if (pageController.hasClients && pageController.positions.length == 1) {
+        int next = (adsCurrentPage.value + 1) % adsImages.length;
+        adsCurrentPage.value = next;
+        try {
+          pageController.animateToPage(
+            next,
+            duration: const Duration(milliseconds: 800),
+            curve: Curves.easeInOut,
+          );
+        } catch (e) {
+          _stopAdsAutoSlide();
+        }
+      }
+    });
+  }
+
+  /// Stop Ads carousel auto-slide
+  void _stopAdsAutoSlide() {
+    _adsTimer?.cancel();
+    _adsTimer = null;
   }
 
   /// Stop Our Services carousel auto-slide
@@ -536,16 +603,18 @@ class UserDashboardController extends BaseController
   }
 
   @override
-  @override
   void onClose() {
     _shouldAnimate = false;
     _isAnimating = false;
-    // searchController.dispose();
+    headerSearchController.dispose();
+    headerSearchFocusNode.dispose();
     _speechToText.stop();
     _stopBookPoojaAutoSlide();
     _stopOurServicesAutoSlide();
+    _stopAdsAutoSlide();
     bookPoojaPageController.value.dispose();
     ourServicesPageController.value.dispose();
+    adsPageController.value.dispose();
     liveVideoIconController.dispose();
     super.onClose();
   }
@@ -559,7 +628,7 @@ class UserDashboardController extends BaseController
         final currentLive = response.streams
             .where((stream) => stream.status == 'LIVE')
             .toList();
-        
+
         liveStreams.value = currentLive;
         // Fetch astrologer details (also needed when no one is live to show random cards)
         await _loadAstrologerDetails(liveStreams);
@@ -1023,7 +1092,7 @@ class UserDashboardController extends BaseController
       isLoadingYoutubeVideos.value = true;
       final videos = await _youtubeService.getChannelVideos(apiKey: apiKey);
       youtubeVideos.value = videos;
-      
+
       if (kDebugMode) {
         print('Loaded ${videos.length} YouTube videos');
       }
@@ -1147,14 +1216,14 @@ class UserDashboardController extends BaseController
     }
   }
 
-  /// Process text search
-  void processTextSearch(String query) {
+  /// Process text search. [fromHeaderSearch] when invoked from header search overlay.
+  void processTextSearch(String query, {bool fromHeaderSearch = false}) {
     if (query.trim().isEmpty) return;
-    _processSearch(query.trim());
+    _processSearch(query.trim(), fromHeaderSearch: fromHeaderSearch);
   }
 
   /// Process search query and navigate
-  void _processSearch(String query) {
+  void _processSearch(String query, {bool fromHeaderSearch = false}) {
     if (query.trim().isEmpty) return;
 
     debugPrint('Dashboard Search: Processing query: "$query"');
@@ -1164,18 +1233,21 @@ class UserDashboardController extends BaseController
     if (route != null) {
       debugPrint('Dashboard Search: Navigating to: $route');
       Get.toNamed(route);
-      // Clear search after navigation
-      searchController.clear();
-      searchQuery.value = '';
-      animatedSearchText.value = '';
-      // Restart animation after navigation
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (_shouldAnimate && !_isAnimating) {
-          _startTypewriterAnimation();
-        }
-      });
+      if (fromHeaderSearch) {
+        headerSearchController.clear();
+        isHeaderSearchOpen.value = false;
+        headerSearchFocusNode.unfocus();
+      } else {
+        searchController.clear();
+        searchQuery.value = '';
+        animatedSearchText.value = '';
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (_shouldAnimate && !_isAnimating) {
+            _startTypewriterAnimation();
+          }
+        });
+      }
     } else {
-      // Show message that search didn't find anything
       Get.snackbar(
         'Search',
         'No results found for "$query". Try searching for: horoscope, kundli, tarot, palm reading, etc.',
@@ -1183,6 +1255,19 @@ class UserDashboardController extends BaseController
         duration: const Duration(seconds: 3),
       );
     }
+  }
+
+  void openHeaderSearch() {
+    isHeaderSearchOpen.value = true;
+    Future.delayed(const Duration(milliseconds: 100), () {
+      headerSearchFocusNode.requestFocus();
+    });
+  }
+
+  void closeHeaderSearch() {
+    isHeaderSearchOpen.value = false;
+    headerSearchController.clear();
+    headerSearchFocusNode.unfocus();
   }
 
   /// Start typewriter animation

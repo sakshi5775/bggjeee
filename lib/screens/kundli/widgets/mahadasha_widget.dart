@@ -2,12 +2,11 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/dasha_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
 class MahadashaWidget extends StatelessWidget {
@@ -58,20 +57,20 @@ class MahadashaWidget extends StatelessWidget {
           response['dasha_remaining_at_birth'] as String? ?? '';
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(08.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: EdgeInsets.all(16.w),
+              padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: "#FFFFFF".toColor(),
+                color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: "#ed6f30".toColor(), width: 1),
+                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 8,
+                    color: AppColors.shadowLight,
+                    blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
                 ],
@@ -81,84 +80,69 @@ class MahadashaWidget extends StatelessWidget {
                   Row(
                     children: [
                       Container(
-                        height: 50.h,
-                        width: 50.w,
+                        padding: EdgeInsets.all(6.r),
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
-                          ),
-                          borderRadius: BorderRadius.circular(16.r),
+                          gradient: AppColors.orangeGradient,
+                          shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.calendar_month,
-                          color: Colors.white,
-                          size: 24.w,
+                          color: AppColors.textLight,
+                          size: 18.w,
                         ),
                       ),
-                      Spacing.w(16),
-                      AutoTranslateText(
-                        'Mahadasha',
-                        style: MyTextTheme.largeBCB.copyWith(
-                          color: "#6F221E".toColor(),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          fontFamily: 'baloo2',
+                      Spacing.w(8),
+                      Expanded(
+                        child: AutoTranslateText(
+                          'Mahadasha',
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15.sp,
+                          ),
                         ),
                       ),
                     ],
                   ),
-
-                  // Title
-                  // AutoTranslateText(
-                  //   'Mahadasha',
-                  //   style: MyTextTheme.largeBCB.copyWith(
-                  //     color: "#6F221E".toColor(),
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  // ),
-                  Spacing.h(16),
-
-                  // Info Cards
+                  Spacing.h(10),
                   if (startYear != null)
                     _buildInfoCard('Start Year', startYear.toString()),
-
                   if (dashaStartDate.isNotEmpty)
                     _buildInfoCard(
                       'Dasha Start Date',
                       _formatDate(dashaStartDate),
                     ),
-
                   if (dashaRemaining.isNotEmpty)
                     _buildInfoCard('Dasha Remaining at Birth', dashaRemaining),
                 ],
               ),
             ),
 
-            Spacing.h(16),
+            Spacing.h(12),
 
             // Mahadasha List
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16.r),
+                color: AppColors.cardLight,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 8,
+                    color: AppColors.shadowLight,
+                    blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
               child: Column(
                 children: [
-                  // Header
                   Container(
-                    padding: EdgeInsets.all(16.w),
+                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
                     decoration: BoxDecoration(
-                      color: "#ed6f30".toColor().withOpacity(0.1),
+                      color: AppColors.deepOrange.withOpacity(0.1),
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16.r),
-                        topRight: Radius.circular(16.r),
+                        topLeft: Radius.circular(12.r),
+                        topRight: Radius.circular(12.r),
                       ),
                     ),
                     child: Row(
@@ -167,28 +151,28 @@ class MahadashaWidget extends StatelessWidget {
                           flex: 2,
                           child: AutoTranslateText(
                             'Planet',
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: "#6F221E".toColor(),
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.bold,
+                              fontSize: 12.sp,
                             ),
                           ),
                         ),
                         Expanded(
                           flex: 2,
                           child: AutoTranslateText(
-                            'End Date',
+                            'Start Date',
                             textAlign: TextAlign.right,
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: "#6F221E".toColor(),
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: AppColors.textPrimary,
                               fontWeight: FontWeight.bold,
+                              fontSize: 12.sp,
                             ),
                           ),
                         ),
                       ],
                     ),
                   ),
-
-                  // List Items
                   ...List.generate(mahadashaList.length, (index) {
                     final isLast = index == mahadashaList.length - 1;
                     final planet = mahadashaList[index].toString();
@@ -197,13 +181,13 @@ class MahadashaWidget extends StatelessWidget {
                         : '';
 
                     return Container(
-                      padding: EdgeInsets.all(16.w),
+                      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
                             color: isLast
                                 ? Colors.transparent
-                                : "#ed6f30".toColor().withOpacity(0.1),
+                                : AppColors.deepOrange.withOpacity(0.2),
                             width: 1,
                           ),
                         ),
@@ -214,9 +198,10 @@ class MahadashaWidget extends StatelessWidget {
                             flex: 2,
                             child: AutoTranslateText(
                               planet,
-                              style: MyTextTheme.mediumBCN.copyWith(
-                                color: "#6F221E".toColor(),
+                              style: MyTextTheme.smallBCB.copyWith(
+                                color: AppColors.textPrimary,
                                 fontWeight: FontWeight.w500,
+                                fontSize: 11.sp,
                               ),
                             ),
                           ),
@@ -226,7 +211,8 @@ class MahadashaWidget extends StatelessWidget {
                               _formatDate(endDate),
                               textAlign: TextAlign.right,
                               style: MyTextTheme.smallBCN.copyWith(
-                                color: "#6F221E".toColor().withOpacity(0.7),
+                                color: AppColors.textSecondary,
+                                fontSize: 10.sp,
                               ),
                             ),
                           ),
@@ -245,43 +231,33 @@ class MahadashaWidget extends StatelessWidget {
 
   Widget _buildInfoCard(String label, String value) {
     return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(16.w),
+      margin: EdgeInsets.only(bottom: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: "#FFFFFF".toColor(),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: "#ed6f30".toColor(), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: AppColors.deepOrange.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: AppColors.deepOrange.withOpacity(0.3), width: 1),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            flex: 2,
             child: AutoTranslateText(
               label,
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+              style: MyTextTheme.smallBCN.copyWith(
+                color: AppColors.textSecondary,
+                fontSize: 11.sp,
               ),
             ),
           ),
           Spacing.w(8),
-          Expanded(
-            flex: 2,
-            child: AutoTranslateText(
-              value,
-              textAlign: TextAlign.right,
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: "#ed6f30".toColor(),
-                fontWeight: FontWeight.bold,
-              ),
+          AutoTranslateText(
+            value,
+            textAlign: TextAlign.right,
+            style: MyTextTheme.smallBCB.copyWith(
+              color: AppColors.deepOrange,
+              fontWeight: FontWeight.bold,
+              fontSize: 11.sp,
             ),
           ),
         ],
