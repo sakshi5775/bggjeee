@@ -3,7 +3,8 @@ import 'package:astrobharataiuser/binding/ecommerce_binding/ecommerce_binding.da
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
-import 'package:astrobharataiuser/screens/e_mandir/namaste_home_screen.dart';
+import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/view/namaste_home_view.dart';
+import 'package:astrobharataiuser/binding/e_mandir_binding/namaste_home_binding.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/ecommerce_home_view.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,8 @@ class UserMainController extends GetxController {
 
       case AppRoutes.namasteHome:
         return GetPageRoute(
-          page: () => const NamasteHomeScreen(),
+          page: () => const NamasteHomeView(),
+          binding: NamasteHomeBinding(),
         );
 
       case AppRoutes.astrologyServices:
@@ -64,7 +66,8 @@ class UserMainController extends GetxController {
             settings.name?.contains('bhakti') == true ||
             settings.name?.contains('passbook') == true) {
           return GetPageRoute(
-            page: () => const NamasteHomeScreen(),
+            page: () => const NamasteHomeView(),
+            binding: NamasteHomeBinding(),
           );
         }
         return GetPageRoute(

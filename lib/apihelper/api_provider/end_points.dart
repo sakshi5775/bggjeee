@@ -23,7 +23,15 @@ class EndPoints {
   static String tagBySlug(String slug) => 'blogs/api/tags/$slug';
 
   /// pujas
-  static const String pujas = 'pujas';
+  static const String pujas = 'sri-mandir/api/pujas';
+  static String pujaById(String pujaId) => 'sri-mandir/api/pujas/$pujaId';
+
+  /// puja addresses
+  static const String pujaAddresses = 'sri-mandir/api/addresses';
+  static String pujaAddressById(String addressId) =>
+      'sri-mandir/api/addresses/$addressId';
+  static String pujaAddressSetDefault(String addressId) =>
+      'sri-mandir/api/addresses/$addressId/default';
 
   /// ecommerce
   // Category endpoints
@@ -379,8 +387,7 @@ class EndPoints {
   static const String ramalAnalyze = 'api/users/ramal/analyze';
   static const String ramalHistory = 'api/users/ramal/history';
   static const String ramalStats = 'api/users/ramal/stats';
-  static String ramalGetById(String readingId) =>
-      'api/users/ramal/$readingId';
+  static String ramalGetById(String readingId) => 'api/users/ramal/$readingId';
   static String ramalDeleteById(String readingId) =>
       'api/users/ramal/$readingId';
 

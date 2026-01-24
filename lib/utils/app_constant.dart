@@ -228,4 +228,14 @@ class AppConstant {
       static const String eMandirPassbookOom = 'assets/images/passbook_oom.png';
       static const String eMandirChakra = 'assets/images/chakra.png';
       static const String eMandirLockChakra = 'assets/images/lock_chakra.png';
+      static const String eMandirSankhIcon = 'assets/images/sankh_icon.png';
+      static const String eMandirFlower1 = 'assets/images/flower1.png';
+      static const String eMandirFlower2 = 'assets/images/flower2.png';
+      static const String eMandirFlower3 = 'assets/images/flower3.png';
+      static const String eMandirFlower = 'assets/images/flower.png';
+      static const String eMandirShriGanesh = 'assets/images/shri_ganesh.png';
+      static const String eMandirButton1 = 'assets/images/Button (1).png';
+      static const String eMandirButton2 = 'assets/images/Button (2).png';
+      static const String eMandirButton3 = 'assets/images/Button (3).png';
+      static const String eMandirButton4 = 'assets/images/Button (4).png';
 }

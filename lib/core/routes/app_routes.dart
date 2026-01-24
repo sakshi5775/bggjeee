@@ -206,10 +206,8 @@ class AppRoutes {
   static const String ramalShastraStats = '/ramal-shastra-stats';
   static const String ramalShastraDetail = '/ramal-shastra-detail';
 
-
-  
   // E-Mandir Routes
-  static const String namasteHome = '/namaste-home';
+  static const String namasteHome = '/e-mandir-home';
   static const String punyaMudra = '/punya-mudra';
   static const String virtualDarshan = '/virtual-darshan';
   static const String devotionalLibrary = '/devotional-library';
@@ -220,4 +218,6 @@ class AppRoutes {
   static const String passbook = '/passbook';
   static const String bookPuja = '/book-puja';
   static const String pujaDetail = '/puja-detail';
+  static const String addressSelection = '/address-selection';
+  static const String addressForm = '/address-form';
 }
