@@ -3,6 +3,8 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 
+import '../../../../utils/app_constant.dart';
+
 class DevotionalCardWidget extends StatelessWidget {
   final String title;
   final String time;
@@ -33,7 +35,7 @@ class DevotionalCardWidget extends StatelessWidget {
               shape: BoxShape.circle,
               color: AppColors.deepOrange,
             ),
-            child: Image.asset("assets/images/listen_now_icon.png"),
+            child: Image.asset(AppConstant.eMandirListenNowIcon),
           ),
           const SizedBox(width: 12),
 

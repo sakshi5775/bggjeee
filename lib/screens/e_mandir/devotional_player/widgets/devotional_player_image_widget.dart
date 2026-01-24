@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 
 class DevotionalPlayerImageWidget extends StatelessWidget {
   const DevotionalPlayerImageWidget({super.key});
@@ -18,7 +19,7 @@ class DevotionalPlayerImageWidget extends StatelessWidget {
           ),
         ],
         image: const DecorationImage(
-          image: AssetImage("assets/images/ganesha.png"),
+          image: AssetImage(AppConstant.eMandirGanesha),
           fit: BoxFit.cover,
         ),
       ),

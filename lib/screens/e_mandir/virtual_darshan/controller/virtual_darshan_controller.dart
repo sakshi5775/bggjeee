@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/fa
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_data.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/offering_item.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/falling_flower_widget.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,90 +14,90 @@ class VirtualDarshanController extends GetxController
   final List<GodData> godsList = [
     GodData(
       name: "Shri Ganesh",
-      profileImage: "assets/images/ganesha.png",
+      profileImage: AppConstant.eMandirGanesha,
       galleryImages: [
-        "assets/images/ganesha.png",
-        "assets/images/shri_ganesh.png",
-        "assets/images/god_icon.png",
-        "assets/images/ganesha.png",
-        "assets/images/shri_ganesh.png",
+        AppConstant.eMandirGanesha,
+        AppConstant.eMandirShriGanesh,
+        AppConstant.eMandirGodIcon,
+        AppConstant.eMandirGanesha,
+        AppConstant.eMandirShriGanesh,
       ],
     ),
     GodData(
       name: "Tirupati Balaji",
-      profileImage: "assets/images/tirupatiBalaji.jpg",
+      profileImage: AppConstant.eMandirTirupatiBalaji,
       galleryImages: [
-        "assets/images/tirupatiBalaji.jpg",
-        "assets/images/meenakshi temple.png",
-        "assets/images/golder temple.png",
-        "assets/images/tirupatiBalaji.jpg",
-        "assets/images/meenakshi temple.png",
+        AppConstant.eMandirTirupatiBalaji,
+        AppConstant.eMandirMeenakshiTemple,
+        AppConstant.eMandirGoldenTemple,
+        AppConstant.eMandirTirupatiBalaji,
+        AppConstant.eMandirMeenakshiTemple,
       ],
     ),
     GodData(
       name: "Golden Temple",
-      profileImage: "assets/images/golder temple.png",
+      profileImage: AppConstant.eMandirGoldenTemple,
       galleryImages: [
-        "assets/images/golder temple.png",
-        "assets/images/tirupatiBalaji.jpg",
-        "assets/images/golder temple.png",
-        "assets/images/tirupatiBalaji.jpg",
-        "assets/images/golder temple.png",
+        AppConstant.eMandirGoldenTemple,
+        AppConstant.eMandirTirupatiBalaji,
+        AppConstant.eMandirGoldenTemple,
+        AppConstant.eMandirTirupatiBalaji,
+        AppConstant.eMandirGoldenTemple,
       ],
     ),
     GodData(
       name: "Meenakshi Amman",
-      profileImage: "assets/images/meenakshi temple.png",
+      profileImage: AppConstant.eMandirMeenakshiTemple,
       galleryImages: [
-        "assets/images/meenakshi temple.png",
-        "assets/images/golder temple.png",
-        "assets/images/meenakshi temple.png",
-        "assets/images/golder temple.png",
-        "assets/images/meenakshi temple.png",
+        AppConstant.eMandirMeenakshiTemple,
+        AppConstant.eMandirGoldenTemple,
+        AppConstant.eMandirMeenakshiTemple,
+        AppConstant.eMandirGoldenTemple,
+        AppConstant.eMandirMeenakshiTemple,
       ],
     ),
     GodData(
       name: "Shri Ganesh",
-      profileImage: "assets/images/ganesha.png",
+      profileImage: AppConstant.eMandirGanesha,
       galleryImages: [
-        "assets/images/ganesha.png",
-        "assets/images/shri_ganesh.png",
-        "assets/images/god_icon.png",
-        "assets/images/ganesha.png",
-        "assets/images/shri_ganesh.png",
+        AppConstant.eMandirGanesha,
+        AppConstant.eMandirShriGanesh,
+        AppConstant.eMandirGodIcon,
+        AppConstant.eMandirGanesha,
+        AppConstant.eMandirShriGanesh,
       ],
     ),
     GodData(
       name: "Tirupati Balaji",
-      profileImage: "assets/images/tirupatiBalaji.jpg",
+      profileImage: AppConstant.eMandirTirupatiBalaji,
       galleryImages: [
-        "assets/images/tirupatiBalaji.jpg",
-        "assets/images/meenakshi temple.png",
-        "assets/images/golder temple.png",
-        "assets/images/tirupatiBalaji.jpg",
-        "assets/images/meenakshi temple.png",
+        AppConstant.eMandirTirupatiBalaji,
+        AppConstant.eMandirMeenakshiTemple,
+        AppConstant.eMandirGoldenTemple,
+        AppConstant.eMandirTirupatiBalaji,
+        AppConstant.eMandirMeenakshiTemple,
       ],
     ),
     GodData(
       name: "Golden Temple",
-      profileImage: "assets/images/golder temple.png",
+      profileImage: AppConstant.eMandirGoldenTemple,
       galleryImages: [
-        "assets/images/golder temple.png",
-        "assets/images/tirupatiBalaji.jpg",
-        "assets/images/golder temple.png",
-        "assets/images/tirupatiBalaji.jpg",
-        "assets/images/golder temple.png",
+        AppConstant.eMandirGoldenTemple,
+        AppConstant.eMandirTirupatiBalaji,
+        AppConstant.eMandirGoldenTemple,
+        AppConstant.eMandirTirupatiBalaji,
+        AppConstant.eMandirGoldenTemple,
       ],
     ),
     GodData(
       name: "Meenakshi Amman",
-      profileImage: "assets/images/meenakshi temple.png",
+      profileImage: AppConstant.eMandirMeenakshiTemple,
       galleryImages: [
-        "assets/images/meenakshi temple.png",
-        "assets/images/golder temple.png",
-        "assets/images/meenakshi temple.png",
-        "assets/images/golder temple.png",
-        "assets/images/meenakshi temple.png",
+        AppConstant.eMandirMeenakshiTemple,
+        AppConstant.eMandirGoldenTemple,
+        AppConstant.eMandirMeenakshiTemple,
+        AppConstant.eMandirGoldenTemple,
+        AppConstant.eMandirMeenakshiTemple,
       ],
     ),
   ];
@@ -109,15 +110,15 @@ class VirtualDarshanController extends GetxController
   final AudioPlayer shankhPlayer = AudioPlayer();
   Timer? flowerTimer;
   final List<String> flowerAssets = [
-    "assets/images/flower1.png",
-    "assets/images/flower2.png",
-    "assets/images/flower3.png",
+    AppConstant.eMandirFlower1,
+    AppConstant.eMandirFlower2,
+    AppConstant.eMandirFlower3,
   ];
 
   // Selection State
-  final selectedOfferingIcon = "assets/images/laddu_icon.png".obs;
-  final selectedFlowerAsset = "assets/images/flower1.png".obs;
-  final selectedInstrumentAsset = "assets/images/sankh_icon.png".obs;
+  final selectedOfferingIcon = AppConstant.eMandirLadduIcon.obs;
+  final selectedFlowerAsset = AppConstant.eMandirFlower1.obs;
+  final selectedInstrumentAsset = AppConstant.eMandirSankhIcon.obs;
 
   // Offering Bottom Sheet Tab Controller
   late TabController offeringTabController;

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/offering_bottom_sheet_widget.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,7 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                     return Transform.translate(
                       offset: Offset(x, y),
                       child: Image.asset(
-                        "assets/images/aarti_icon.png",
+                        AppConstant.eMandirAartiIcon,
                         width: 50.w,
                       ),
                     );
@@ -168,7 +169,7 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
               right: 18.w,
               child: InkWell(
                 onTap: () => controller.toggleAarti(context),
-                child: Image.asset("assets/images/aarti_icon.png"),
+                child: Image.asset(AppConstant.eMandirAartiIcon),
               ),
             ),
             Positioned(
@@ -176,7 +177,7 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
               left: 18.w,
               child: InkWell(
                 onTap: controller.playShankh,
-                child: Image.asset("assets/images/sankh_icon.png"),
+                child: Image.asset(AppConstant.eMandirSankhIcon),
               ),
             ),
             Positioned(
@@ -184,7 +185,7 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
               right: 18.w,
               child: InkWell(
                 onTap: controller.navigateToDevotionalLibrary,
-                child: Image.asset("assets/images/listen_now_icon.png"),
+                child: Image.asset(AppConstant.eMandirListenNowIcon),
               ),
             ),
             Align(

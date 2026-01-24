@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/e_mandir/devotional_player/controller/devotional_player_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 
 class DevotionalPlayerControlsWidget extends GetView<DevotionalPlayerController> {
   const DevotionalPlayerControlsWidget({super.key});
@@ -11,8 +12,8 @@ class DevotionalPlayerControlsWidget extends GetView<DevotionalPlayerController>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Image.asset("assets/images/Button (1).png"),
-        Image.asset("assets/images/Button (2).png"),
+        Image.asset(AppConstant.eMandirButton1),
+        Image.asset(AppConstant.eMandirButton2),
         Obx(() => GestureDetector(
           onTap: () {
             controller.togglePlay();
@@ -31,8 +32,8 @@ class DevotionalPlayerControlsWidget extends GetView<DevotionalPlayerController>
             ),
           ),
         )),
-        Image.asset("assets/images/Button (3).png"),
-        Image.asset("assets/images/Button (4).png"),
+        Image.asset(AppConstant.eMandirButton3),
+        Image.asset(AppConstant.eMandirButton4),
       ],
     );
   }

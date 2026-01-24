@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,22 +29,22 @@ class QuickActionsWidget extends StatelessWidget {
           mainAxisSpacing: 12.h,
           children: [
             _QuickActionCard(
-              icon: Image.asset("assets/images/play_icon.png", height: 50.h),
+              icon: Image.asset(AppConstant.eMandirPlayIcon, height: 50.h),
               title: 'Live Darshan',
               subtitle: 'Just now',
             ),
             _QuickActionCard(
-              icon: Image.asset("assets/images/e_puja.png", height: 50.h),
+              icon: Image.asset(AppConstant.eMandirEPuja, height: 50.h),
               title: 'E-Puja Booking',
               subtitle: 'Book online',
             ),
             _QuickActionCard(
-              icon: Image.asset("assets/images/liberary_arti.png", height: 50.h),
+              icon: Image.asset(AppConstant.eMandirLibraryAarti, height: 50.h),
               title: 'Aarti Library',
               subtitle: '10+ devotional',
             ),
             _QuickActionCard(
-              icon: Image.asset("assets/images/liberary_arti.png", height: 50.h),
+              icon: Image.asset(AppConstant.eMandirLibraryAarti, height: 50.h),
               title: 'Wallpaper',
               subtitle: '30+ devotional',
             ),

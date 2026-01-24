@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -28,7 +29,7 @@ class TipCardWidget extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Image.asset("assets/images/light_image.png"),
+            Image.asset(AppConstant.eMandirLightImage),
             const SizedBox(width: 12),
             Expanded(
               child: Column(

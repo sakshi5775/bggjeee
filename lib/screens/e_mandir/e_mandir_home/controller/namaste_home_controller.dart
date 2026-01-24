@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 
 class NamasteHomeController extends GetxController {
   final selectedIndex = 0.obs;
@@ -7,10 +8,10 @@ class NamasteHomeController extends GetxController {
   final currentDarshanIndex = 0.obs;
 
   final List<String> darshanImages = [
-    "assets/images/live_darshan.png",
-    "assets/images/live_darshan.png",
-    "assets/images/live_darshan.png",
-    "assets/images/live_darshan.png",
+    AppConstant.eMandirLiveDarshan,
+    AppConstant.eMandirLiveDarshan,
+    AppConstant.eMandirLiveDarshan,
+    AppConstant.eMandirLiveDarshan,
   ];
 
   @override

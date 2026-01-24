@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/controller/namaste_home_controller.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,7 +15,7 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22.r),
         image: const DecorationImage(
-          image: AssetImage("assets/images/ganesha.png"),
+          image: AssetImage(AppConstant.eMandirGanesha),
           fit: BoxFit.cover,
         ),
         boxShadow: [
@@ -60,7 +61,7 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
                       children: [
                         CircleAvatar(
                           radius: 25.r,
-                          backgroundImage: const AssetImage("assets/images/ganesha.png"),
+                          backgroundImage: const AssetImage(AppConstant.eMandirGanesha),
                         ),
                         Padding(
                           padding: EdgeInsets.all(4.0.w),
@@ -86,7 +87,7 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
                     ),
                     child: CircleAvatar(
                       radius: 30.r,
-                      backgroundImage: const AssetImage("assets/images/plus_icon.png"),
+                      backgroundImage: const AssetImage(AppConstant.eMandirPlusIcon),
                     ),
                   ),
                   Expanded(
@@ -104,7 +105,7 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
                           ),
                           child: CircleAvatar(
                             radius: 30.r,
-                            backgroundImage: const AssetImage("assets/images/god_icon.png"),
+                            backgroundImage: const AssetImage(AppConstant.eMandirGodIcon),
                           ),
                         );
                       },
@@ -117,7 +118,7 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
           Positioned(
             bottom: 90.h,
             left: 18.w,
-            child: Image.asset("assets/images/aarti_icon.png"),
+            child: Image.asset(AppConstant.eMandirAartiIcon),
           ),
           Positioned(
             bottom: 22.h,
@@ -125,7 +126,7 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
             child: InkWell(
               onTap: () {},
               child: Image.asset(
-                "assets/images/laddu_icon.png",
+                AppConstant.eMandirLadduIcon,
                 width: 50.w,
                 height: 50.h,
               ),
@@ -134,7 +135,7 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
           Positioned(
             bottom: 90.h,
             right: 18.w,
-            child: Image.asset("assets/images/aarti_icon.png"),
+            child: Image.asset(AppConstant.eMandirAartiIcon),
           ),
           Positioned(
             bottom: 22.h,
@@ -142,7 +143,7 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
             child: InkWell(
               onTap: controller.navigateToDevotionalLibrary,
               child: Image.asset(
-                "assets/images/listen_now_icon.png",
+                AppConstant.eMandirListenNowIcon,
                 width: 50.w,
                 height: 50.h,
               ),

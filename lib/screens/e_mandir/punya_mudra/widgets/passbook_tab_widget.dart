@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/screens/e_mandir/punya_mudra/widgets/section_title_widget.dart';
@@ -17,7 +18,7 @@ class PassbookTabWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Image.asset("assets/images/chakraleft.png", width: 40),
+              Image.asset(AppConstant.eMandirChakraLeft, width: 40),
               AutoTranslateText(
                 "Your Passbook",
                 style: AppTypography.h1.copyWith(
@@ -25,7 +26,7 @@ class PassbookTabWidget extends StatelessWidget {
                   color: Color(0xFF4E342E),
                 ),
               ),
-              Image.asset("assets/images/chakraleft.png", width: 40),
+              Image.asset(AppConstant.eMandirChakraLeft, width: 40),
             ],
           ),
           const SizedBox(height: 16),
@@ -61,7 +62,7 @@ class PassbookTabWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.asset(
-              "assets/images/passbook_oom.png",
+              AppConstant.eMandirPassbookOom,
               width: 45,
               height: 45,
             ),

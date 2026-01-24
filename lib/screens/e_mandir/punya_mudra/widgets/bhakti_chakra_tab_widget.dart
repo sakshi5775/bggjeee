@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/screens/e_mandir/punya_mudra/widgets/section_title_widget.dart';
@@ -16,7 +17,7 @@ class BhaktiChakraTabWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Image.asset("assets/images/chakraleft.png"),
+              Image.asset(AppConstant.eMandirChakraLeft),
               AutoTranslateText(
                 "Your Chakra",
                 style: AppTypography.h1.copyWith(
@@ -24,7 +25,7 @@ class BhaktiChakraTabWidget extends StatelessWidget {
                   color: Color(0xFF4E342E),
                 ),
               ),
-              Image.asset("assets/images/chakraleft.png"),
+              Image.asset(AppConstant.eMandirChakraLeft),
             ],
           ),
           const SectionTitleWidget(text: "2 January 2025"),
@@ -122,7 +123,7 @@ class BhaktiChakraTabWidget extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(8),
-              child: Image.asset("assets/images/chakra.png"),
+              child: Image.asset(AppConstant.eMandirChakra),
             )
           ],
         ),
@@ -178,7 +179,7 @@ class BhaktiChakraTabWidget extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(8),
-              child: Image.asset("assets/images/lock_chakra.png"),
+              child: Image.asset(AppConstant.eMandirLockChakra),
             ),
           ],
         ),

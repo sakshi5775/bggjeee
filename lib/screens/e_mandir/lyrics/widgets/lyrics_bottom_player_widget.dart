@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/e_mandir/lyrics/controller/lyrics_controller.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -15,7 +16,7 @@ class LyricsBottomPlayerWidget extends GetView<LyricsController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Image.asset("assets/images/Button (2).png"),
+          Image.asset(AppConstant.eMandirButton2),
           Container(
             height: 56,
             width: 56,
@@ -27,7 +28,7 @@ class LyricsBottomPlayerWidget extends GetView<LyricsController> {
           ),
           Row(
             children: [
-              Image.asset("assets/images/Button (3).png"),
+              Image.asset(AppConstant.eMandirButton3),
               const SizedBox(width: 12),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),

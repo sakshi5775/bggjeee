@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/controller/namaste_home_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -67,7 +68,7 @@ class NamasteHeaderWidget extends GetView<NamasteHomeController> {
                   padding: EdgeInsets.all(4.0.w),
                   child: CircleAvatar(
                     radius: 20.r,
-                    backgroundImage: const AssetImage("assets/images/omm_icon.png"),
+                    backgroundImage: const AssetImage(AppConstant.eMandirOmmIcon),
                   ),
                 ),
               ],

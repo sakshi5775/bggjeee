@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -47,19 +48,19 @@ class TempleHighlightsWidget extends StatelessWidget {
         _TempleItem(
           title: 'Golden Temple',
           subtitle: 'Sri Harmandir Sahib',
-          assetPath: "assets/images/golder temple.png",
+          assetPath: AppConstant.eMandirGoldenTemple,
         ),
         SizedBox(height: 12.h),
         _TempleItem(
           title: 'Meenakshi Temple',
           subtitle: 'Madurai, Tamil Nadu',
-          assetPath: "assets/images/meenakshi temple.png",
+          assetPath: AppConstant.eMandirMeenakshiTemple,
         ),
         SizedBox(height: 12.h),
         _TempleItem(
           title: 'Tirupati Balaji',
           subtitle: 'Tirumala, Andhra Pradesh',
-          assetPath: "assets/images/tirupatiBalaji.jpg",
+          assetPath: AppConstant.eMandirTirupatiBalaji,
         ),
       ],
     );

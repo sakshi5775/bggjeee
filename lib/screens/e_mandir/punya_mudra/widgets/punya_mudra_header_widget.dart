@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -65,7 +66,7 @@ class PunyaMudraHeaderWidget extends StatelessWidget {
             padding: EdgeInsets.all(4),
             child: CircleAvatar(
               radius: 18,
-              backgroundImage: AssetImage("assets/images/omm_icon.png"),
+              backgroundImage: AssetImage(AppConstant.eMandirOmmIcon),
             ),
           ),
         ],
