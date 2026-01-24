@@ -1,12 +1,11 @@
-import 'dart:convert';
-import 'package:astrobharataiuser/app_manager/user_data.dart';
+import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
+import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/data_model/puja_model.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
 
 class PujaService {
-  /// Base URL for Pujas API
-  static const String _baseUrl = 'http://3.109.91.254:8005/api';
+  final ApiRepository _apiRepository = Get.find();
 
   /// Get all pujas with filters
   Future<PujaResponse?> getPujas({
@@ -18,92 +17,43 @@ class PujaService {
     bool? popular,
   }) async {
     try {
-      final queryParams = <String, String>{
+      final query = <String, dynamic>{
         'page': page.toString(),
         'limit': limit.toString(),
       };
 
       if (search != null && search.isNotEmpty) {
-        queryParams['search'] = search;
+        query['search'] = search;
       }
 
       if (templeId != null && templeId.isNotEmpty) {
-        queryParams['templeId'] = templeId;
+        query['templeId'] = templeId;
       }
 
       // Only add featured filter if explicitly provided (not null)
       if (featured != null) {
-        queryParams['featured'] = featured.toString();
+        query['featured'] = featured.toString();
       }
 
       // Only add popular filter if explicitly provided (not null)
       if (popular != null) {
-        queryParams['popular'] = popular.toString();
+        query['popular'] = popular.toString();
       }
 
-      final uri = Uri.parse('$_baseUrl/pujas').replace(queryParameters: queryParams);
-
-      final currentToken = UserData().accessToken?.trim();
-
-      if (kDebugMode) {
-        debugPrint('Puja API URL: ${uri.toString()}');
-      }
-
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
+      final response = await _apiRepository.getApi(
+        EndPoints.pujas,
+        query: query,
       );
 
-      if (kDebugMode) {
-        debugPrint('Puja API Status: ${response.statusCode}');
-        debugPrint('Puja API Response: ${response.body}');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.body['success'] == true) {
+          final pujaResponse = PujaResponse.fromJson(response.body);
+          return pujaResponse;
+        }
       }
 
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        
-        if (kDebugMode) {
-          debugPrint('Puja API Response Data: $jsonData');
-        }
-        
-        try {
-          final pujaResponse = PujaResponse.fromJson(jsonData);
-          
-          if (kDebugMode) {
-            debugPrint('Puja Response Success: ${pujaResponse.success}');
-            debugPrint('Puja Items Count: ${pujaResponse.data?.items?.length ?? 0}');
-          }
-          
-          return pujaResponse;
-        } catch (e, stackTrace) {
-          if (kDebugMode) {
-            debugPrint('Error parsing PujaResponse: $e');
-            debugPrint('Stack trace: $stackTrace');
-            debugPrint('Response body: ${response.body}');
-          }
-          return null;
-        }
-      } else {
-        if (kDebugMode) {
-          debugPrint('Puja API Error: ${response.statusCode} - ${response.body}');
-        }
-        return null;
-      }
-    } catch (e, stackTrace) {
-      if (kDebugMode) {
-        debugPrint('Error fetching pujas: $e');
-        debugPrint('Stack trace: $stackTrace');
-      }
+      return null;
+    } catch (e) {
       return null;
     }
   }
@@ -111,71 +61,17 @@ class PujaService {
   /// Get puja by ID
   Future<PujaModel?> getPujaById(String pujaId) async {
     try {
-      final uri = Uri.parse('$_baseUrl/pujas/$pujaId');
+      final response = await _apiRepository.getApi(EndPoints.pujaById(pujaId));
 
-      final currentToken = UserData().accessToken?.trim();
-
-      if (kDebugMode) {
-        debugPrint('Puja Detail API URL: ${uri.toString()}');
-      }
-
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
-
-      if (kDebugMode) {
-        debugPrint('Puja Detail API Status: ${response.statusCode}');
-        debugPrint('Puja Detail API Response: ${response.body}');
-      }
-
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        
-        if (kDebugMode) {
-          debugPrint('Puja Detail API Response Data: $jsonData');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.body['success'] == true && response.body['data'] != null) {
+          final pujaModel = PujaModel.fromJson(response.body['data']);
+          return pujaModel;
         }
-        
-        try {
-          if (jsonData['success'] == true && jsonData['data'] != null) {
-            final pujaModel = PujaModel.fromJson(jsonData['data']);
-            
-            if (kDebugMode) {
-              debugPrint('Puja Detail Retrieved: ${pujaModel.title}');
-            }
-            
-            return pujaModel;
-          }
-          return null;
-        } catch (e, stackTrace) {
-          if (kDebugMode) {
-            debugPrint('Error parsing PujaModel: $e');
-            debugPrint('Stack trace: $stackTrace');
-            debugPrint('Response body: ${response.body}');
-          }
-          return null;
-        }
-      } else {
-        if (kDebugMode) {
-          debugPrint('Puja Detail API Error: ${response.statusCode} - ${response.body}');
-        }
-        return null;
       }
-    } catch (e, stackTrace) {
-      if (kDebugMode) {
-        debugPrint('Error fetching puja detail: $e');
-        debugPrint('Stack trace: $stackTrace');
-      }
+
+      return null;
+    } catch (e) {
       return null;
     }
   }

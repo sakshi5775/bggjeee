@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/falling_flower_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_data.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/offering_item.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/falling_flower_widget.dart';
@@ -8,6 +7,39 @@ import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+// Falling Flower State class to hold animation data
+class FallingFlowerState {
+  final AnimationController animationController;
+  final Animation<double> fallAnimation;
+  final Animation<double> rotationAnimation;
+  final double fixedX;
+  final double size;
+  final String imagePath;
+  final double screenHeight;
+  final OverlayEntry entry;
+
+  FallingFlowerState({
+    required this.animationController,
+    required this.fallAnimation,
+    required this.rotationAnimation,
+    required this.fixedX,
+    required this.size,
+    required this.imagePath,
+    required this.screenHeight,
+    required this.entry,
+  });
+
+  double get topPosition => fallAnimation.value * screenHeight;
+  double get rotationAngle => rotationAnimation.value;
+  double get opacity {
+    final progress = fallAnimation.value;
+    if (progress > 0.85) {
+      return (1.0 - progress) / 0.15;
+    }
+    return 1.0;
+  }
+}
 
 class VirtualDarshanController extends GetxController
     with GetTickerProviderStateMixin {
@@ -105,6 +137,7 @@ class VirtualDarshanController extends GetxController
   final currentGodIndex = 0.obs;
   final ScrollController scrollController = ScrollController();
   final PageController horizontalPageController = PageController();
+  final PageController verticalPageController = PageController();
   late AnimationController aartiController;
   final AudioPlayer audioPlayer = AudioPlayer();
   final AudioPlayer shankhPlayer = AudioPlayer();
@@ -114,6 +147,7 @@ class VirtualDarshanController extends GetxController
     AppConstant.eMandirFlower2,
     AppConstant.eMandirFlower3,
   ];
+  final List<FallingFlowerState> activeFlowers = [];
 
   // Selection State
   final selectedOfferingIcon = AppConstant.eMandirLadduIcon.obs;
@@ -148,10 +182,17 @@ class VirtualDarshanController extends GetxController
   @override
   void onClose() {
     flowerTimer?.cancel();
+    // Dispose all active flowers
+    for (var flower in activeFlowers) {
+      flower.entry.remove();
+      flower.animationController.dispose();
+    }
+    activeFlowers.clear();
     aartiController.dispose();
     offeringTabController.dispose();
     scrollController.dispose();
     horizontalPageController.dispose();
+    verticalPageController.dispose();
     audioPlayer.dispose();
     shankhPlayer.dispose();
     super.onClose();
@@ -199,26 +240,73 @@ class VirtualDarshanController extends GetxController
           return;
         }
 
-        late OverlayEntry entry;
         final imagePath = flowerAssets[random.nextInt(flowerAssets.length)];
+        final fixedX = startX;
+        final size = 28 + random.nextDouble() * 20;
+        final duration = Duration(milliseconds: 14000 + random.nextInt(4000));
+
+        // Create animation controller for this flower
+        final animationController = AnimationController(
+          vsync: this,
+          duration: duration,
+        );
+
+        // Create fall animation
+        final fallAnimation = Tween<double>(
+          begin: -0.15,
+          end: 1.1,
+        ).animate(CurvedAnimation(
+          parent: animationController,
+          curve: Curves.linear,
+        ));
+
+        // Create rotation animation
+        final rotationAnimation = Tween<double>(
+          begin: 0,
+          end: (random.nextBool() ? 1 : -1) * pi,
+        ).animate(animationController);
+
+        // Create overlay entry
+        late OverlayEntry entry;
+        late FallingFlowerState flowerState;
+        
         entry = OverlayEntry(
           builder: (_) {
-            final flowerController = Get.put(
-              FallingFlowerController(
-                startX: startX,
-                entry: entry,
-                imagePath: imagePath,
-                screenHeight: screenHeight,
-              ),
-              tag:
-                  'flower_${DateTime.now().millisecondsSinceEpoch}_${random.nextInt(10000)}',
-            );
             return FallingFlowerWidget(
-              key: ValueKey(flowerController.hashCode),
+              key: ValueKey(entry.hashCode),
+              flowerState: flowerState,
             );
           },
         );
+        
+        // Create flower state with the entry reference
+        flowerState = FallingFlowerState(
+          animationController: animationController,
+          fallAnimation: fallAnimation,
+          rotationAnimation: rotationAnimation,
+          fixedX: fixedX,
+          size: size,
+          imagePath: imagePath,
+          screenHeight: screenHeight,
+          entry: entry,
+        );
 
+        // Add status listener to remove flower when animation completes
+        animationController.addStatusListener((status) {
+          if (status == AnimationStatus.completed) {
+            entry.remove();
+            activeFlowers.remove(flowerState);
+            animationController.dispose();
+          }
+        });
+
+        // Start animation
+        animationController.forward();
+
+        // Add to active flowers list
+        activeFlowers.add(flowerState);
+
+        // Insert overlay entry
         overlay.insert(entry);
       } catch (e) {
         print("FLOWER RAIN ERROR: $e");
@@ -229,6 +317,12 @@ class VirtualDarshanController extends GetxController
   void stopFlowerRain() {
     flowerTimer?.cancel();
     flowerTimer = null;
+    // Remove all active flowers
+    for (var flower in activeFlowers) {
+      flower.entry.remove();
+      flower.animationController.dispose();
+    }
+    activeFlowers.clear();
   }
 
   void playShankh() {
@@ -281,6 +375,10 @@ class VirtualDarshanController extends GetxController
         curve: Curves.easeInOut,
       );
     }
+    // Reset vertical page to first image when god changes
+    if (verticalPageController.hasClients) {
+      verticalPageController.jumpToPage(0);
+    }
   }
 
   void navigateToGod(int index) {
@@ -288,6 +386,10 @@ class VirtualDarshanController extends GetxController
     final currentMod = currentPage % godsList.length;
     final difference = index - currentMod;
     horizontalPageController.jumpToPage(currentPage + difference);
+    // Reset vertical page to first image when god changes
+    if (verticalPageController.hasClients) {
+      verticalPageController.jumpToPage(0);
+    }
   }
 
   void navigateToDevotionalLibrary() {

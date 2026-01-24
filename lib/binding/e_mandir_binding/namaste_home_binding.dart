@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 class NamasteHomeBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => NamasteHomeController());
+    // Use Get.put with permanent: false to ensure proper disposal when route is removed
+    Get.put(NamasteHomeController(), permanent: false);
   }
 }

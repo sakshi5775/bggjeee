@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../../utils/app_colors.dart';
+
 class VirtualDarshanView extends GetView<VirtualDarshanController> {
   const VirtualDarshanView({super.key});
 
@@ -17,16 +19,12 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
       body: SafeArea(
         child: Stack(
           children: [
+            // Vertical Image Reel - Center of screen
             Obx(
-              () => PageView.builder(
-                controller: controller.horizontalPageController,
-                scrollDirection: Axis.horizontal,
-                onPageChanged: controller.onHorizontalPageChanged,
-                itemBuilder: (context, index) {
-                  final god =
-                      controller.godsList[index % controller.godsList.length];
-                  return _buildVerticalImageReel(god);
-                },
+              () => Center(
+                child: _buildVerticalImageReel(
+                  controller.godsList[controller.currentGodIndex.value],
+                ),
               ),
             ),
             IgnorePointer(
@@ -67,7 +65,9 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                   SizedBox(width: 10.w),
                   AutoTranslateText(
                     'Virtual Darshan',
-                    style: AppTypography.h2.copyWith(color: Colors.white),
+                    style: AppTypography.h2.copyWith(
+                      color: AppColors.deepOrange,
+                    ),
                   ),
                 ],
               ),
@@ -217,11 +217,14 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
 
   Widget _buildVerticalImageReel(god) {
     return PageView.builder(
+      controller: controller.verticalPageController,
       scrollDirection: Axis.vertical,
+      itemCount: god.galleryImages.length,
       itemBuilder: (context, index) {
-        final imagePath = god.galleryImages[index % god.galleryImages.length];
+        final imagePath = god.galleryImages[index];
 
         return Container(
+          width: double.infinity,
           height: double.infinity,
           decoration: BoxDecoration(
             image: DecorationImage(

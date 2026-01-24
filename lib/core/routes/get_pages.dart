@@ -242,6 +242,11 @@ import 'package:astrobharataiuser/screens/ai_guider/view/ai_guider_view.dart';
 import 'package:astrobharataiuser/binding/ai_guider_binding/ai_guider_binding.dart';
 import 'package:get/get.dart';
 
+import '../../binding/e_mandir_binding/book_pooja_binding.dart';
+import '../../binding/e_mandir_binding/pooja_details_binding.dart';
+import '../../screens/e_mandir/book_puja/view/book_puja_view.dart';
+import '../../screens/e_mandir/puja_detail/view/puja_detail_view.dart';
+
 class PageRoutes {
   static const INITIAL = AppRoutes.root;
   static const leftToRight = Transition.leftToRight;
@@ -1356,7 +1361,7 @@ class PageRoutes {
       transitionDuration: Duration(milliseconds: 300),
       binding: RamalShastraBinding(),
     ),
-   // E-Mandir Routes
+    // E-Mandir Routes
     GetPage(
       name: AppRoutes.namasteHome,
       page: () => const NamasteHomeView(),
@@ -1417,6 +1422,20 @@ class PageRoutes {
       name: AppRoutes.passbook,
       page: () => const PassbookView(),
       binding: PassbookBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.bookPuja,
+      page: () => const BookPujaView(),
+      binding: BookPoojaBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.pujaDetail,
+      page: () => const PujaDetailView(),
+      binding: PoojaDetailsBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),

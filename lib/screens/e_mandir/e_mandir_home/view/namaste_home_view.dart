@@ -12,8 +12,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class NamasteHomeView extends GetView<NamasteHomeController> {
+class NamasteHomeView extends StatefulWidget {
   const NamasteHomeView({super.key});
+
+  @override
+  State<NamasteHomeView> createState() => _NamasteHomeViewState();
+}
+
+class _NamasteHomeViewState extends State<NamasteHomeView> {
+  late NamasteHomeController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<NamasteHomeController>();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Only resume audio when route is current (screen is visible)
+    // This prevents multiple calls and works in both debug and release mode
+    final route = ModalRoute.of(context);
+    if (route != null && route.isCurrent) {
+      // Small delay to ensure route is fully active
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted && route.isCurrent) {
+          controller.resumeAudioIfNeeded();
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

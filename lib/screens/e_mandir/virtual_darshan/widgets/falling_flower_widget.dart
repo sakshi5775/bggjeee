@@ -1,31 +1,32 @@
-import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/falling_flower_controller.dart';
+import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-class FallingFlowerWidget extends GetView<FallingFlowerController> {
-  const FallingFlowerWidget({super.key});
+class FallingFlowerWidget extends StatelessWidget {
+  final FallingFlowerState flowerState;
+
+  const FallingFlowerWidget({super.key, required this.flowerState});
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: controller.animationController,
+      animation: flowerState.animationController,
       builder: (_, child) {
         return Positioned(
-          top: controller.topPosition,
-          left: controller.fixedX,
+          top: flowerState.topPosition,
+          left: flowerState.fixedX,
           child: Transform.rotate(
-            angle: controller.rotationAngle,
+            angle: flowerState.rotationAngle,
             child: Opacity(
-              opacity: controller.opacity.clamp(0.0, 1.0),
+              opacity: flowerState.opacity.clamp(0.0, 1.0),
               child: child,
             ),
           ),
         );
       },
       child: Image.asset(
-        controller.imagePath,
-        width: controller.size,
-        height: controller.size,
+        flowerState.imagePath,
+        width: flowerState.size,
+        height: flowerState.size,
       ),
     );
   }
