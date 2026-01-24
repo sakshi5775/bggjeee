@@ -49,13 +49,7 @@ class MyButton extends StatelessWidget {
               )
             : null,
         borderRadius: AppRadius.all(12),
-        gradient: useGradient
-            ? LinearGradient(
-                colors: [AppColors.saffron, const Color(0xFF310400)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
-            : null,
+        gradient: useGradient ? AppColors.orangeGradient : null,
         color: useGradient ? null : color ?? AppColors.saffron,
       ),
       child: TextButton(

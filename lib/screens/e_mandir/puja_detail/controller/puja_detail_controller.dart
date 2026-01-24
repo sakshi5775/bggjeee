@@ -1,11 +1,12 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/puja_model.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/puja_service.dart';
 import 'package:get/get.dart';
 
 class PujaDetailController extends BaseController {
   final PujaService _pujaService = PujaService();
-  
+
   final Rx<PujaModel?> puja = Rx<PujaModel?>(null);
   final RxString errorMessage = ''.obs;
   final RxString selectedPackageId = ''.obs;
@@ -118,7 +119,8 @@ class PujaDetailController extends BaseController {
 
   // Get temple name for Priest info
   String getTempleName() {
-    if (puja.value?.temple?.name != null && puja.value!.temple!.name!.isNotEmpty) {
+    if (puja.value?.temple?.name != null &&
+        puja.value!.temple!.name!.isNotEmpty) {
       return puja.value!.temple!.name!;
     }
     return 'Temple Info';
@@ -126,12 +128,19 @@ class PujaDetailController extends BaseController {
 
   void onProceedToBook() {
     if (puja.value == null) return;
-    
-    // TODO: Navigate to booking page
-    Get.snackbar(
-      'Book Puja',
-      'Booking functionality will be implemented',
-      snackPosition: SnackPosition.BOTTOM,
+
+    final selectedPackage = getSelectedPackage();
+
+    // Navigate to address selection page
+    Get.toNamed(
+      AppRoutes.addressSelection,
+      arguments: {
+        'pujaId': puja.value!.id,
+        'packageId': selectedPackage?.id,
+        'price': selectedPackage?.price,
+        'packageName': selectedPackage?.packageName,
+        'pujaTitle': puja.value!.title,
+      },
     );
   }
 }

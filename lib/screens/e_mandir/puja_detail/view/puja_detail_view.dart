@@ -77,7 +77,7 @@ class PujaDetailView extends BasePage<PujaDetailController> {
                         const PujaBenefitsSectionWidget(),
                         const SizedBox(height: 24),
                         const PujaProcessStepsSectionWidget(),
-                        const SizedBox(height: 100), // Space for bottom bar
+                        const SizedBox(height: 100),
                       ],
                     ),
                   ),

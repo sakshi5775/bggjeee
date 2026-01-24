@@ -244,8 +244,12 @@ import 'package:get/get.dart';
 
 import '../../binding/e_mandir_binding/book_pooja_binding.dart';
 import '../../binding/e_mandir_binding/pooja_details_binding.dart';
+import '../../binding/e_mandir_binding/address_selection_binding.dart';
+import '../../binding/e_mandir_binding/address_form_binding.dart';
 import '../../screens/e_mandir/book_puja/view/book_puja_view.dart';
 import '../../screens/e_mandir/puja_detail/view/puja_detail_view.dart';
+import '../../screens/e_mandir/address_selection/view/address_selection_view.dart';
+import '../../screens/e_mandir/address_form/view/address_form_view.dart';
 
 class PageRoutes {
   static const INITIAL = AppRoutes.root;
@@ -1436,6 +1440,20 @@ class PageRoutes {
       name: AppRoutes.pujaDetail,
       page: () => const PujaDetailView(),
       binding: PoojaDetailsBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.addressSelection,
+      page: () => const AddressSelectionView(),
+      binding: AddressSelectionBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.addressForm,
+      page: () => const AddressFormView(),
+      binding: AddressFormBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),

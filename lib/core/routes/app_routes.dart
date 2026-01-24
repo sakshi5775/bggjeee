@@ -218,4 +218,6 @@ class AppRoutes {
   static const String passbook = '/passbook';
   static const String bookPuja = '/book-puja';
   static const String pujaDetail = '/puja-detail';
+  static const String addressSelection = '/address-selection';
+  static const String addressForm = '/address-form';
 }
