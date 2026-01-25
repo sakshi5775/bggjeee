@@ -130,16 +130,23 @@ class PujaDetailController extends BaseController {
     if (puja.value == null) return;
 
     final selectedPackage = getSelectedPackage();
+    final packageIndex =
+        puja.value!.packages?.indexWhere(
+          (p) => p.id == selectedPackageId.value,
+        ) ??
+        0;
 
     // Navigate to address selection page
     Get.toNamed(
       AppRoutes.addressSelection,
       arguments: {
         'pujaId': puja.value!.id,
+        'pujaTitle': puja.value!.title,
         'packageId': selectedPackage?.id,
+        'packageIndex': packageIndex >= 0 ? packageIndex : 0,
+        'personCount': selectedPackage?.personCount ?? 1,
         'price': selectedPackage?.price,
         'packageName': selectedPackage?.packageName,
-        'pujaTitle': puja.value!.title,
       },
     );
   }

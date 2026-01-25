@@ -33,6 +33,13 @@ class EndPoints {
   static String pujaAddressSetDefault(String addressId) =>
       'sri-mandir/api/addresses/$addressId/default';
 
+  /// puja bookings
+  static const String pujaBookings = 'sri-mandir/api/bookings';
+  static String myBookings(int page, int limit) =>
+      'sri-mandir/api/bookings/my-bookings?page=$page&limit=$limit';
+  static String bookingDetail(String bookingId) =>
+      'sri-mandir/api/bookings/$bookingId';
+
   /// ecommerce
   // Category endpoints
   static const String ecommerceCategories = 'ecommerce/api/categories';

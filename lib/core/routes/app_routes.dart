@@ -220,4 +220,7 @@ class AppRoutes {
   static const String pujaDetail = '/puja-detail';
   static const String addressSelection = '/address-selection';
   static const String addressForm = '/address-form';
+  static const String pujaBookingForm = '/puja-booking-form';
+  static const String myBookings = '/my-bookings';
+  static const String myBookingDetail = '/my-booking-detail';
 }

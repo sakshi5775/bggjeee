@@ -2,8 +2,10 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/routes/app_routes.dart';
 import '../controller/book_puja_controller.dart';
 import '../widgets/book_puja_header_widget.dart';
 import '../widgets/category_tabs_widget.dart';
@@ -18,6 +20,31 @@ class BookPujaView extends BasePage<BookPujaController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.transparent,
+          elevation: 4,
+          onPressed: () {
+            Get.toNamed(AppRoutes.myBookings);
+          },
+          child: Ink(
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              gradient: AppColors.orangeGradient,
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+            child: Container(
+              width: 56,
+              height: 56,
+
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.confirmation_number_outlined,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+
         body: SafeArea(
           child: Column(
             children: [

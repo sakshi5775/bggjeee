@@ -246,10 +246,16 @@ import '../../binding/e_mandir_binding/book_pooja_binding.dart';
 import '../../binding/e_mandir_binding/pooja_details_binding.dart';
 import '../../binding/e_mandir_binding/address_selection_binding.dart';
 import '../../binding/e_mandir_binding/address_form_binding.dart';
+import '../../binding/e_mandir_binding/puja_booking_form_binding.dart';
+import '../../binding/e_mandir_binding/my_bookings_binding.dart';
+import '../../binding/e_mandir_binding/my_booking_detail_binding.dart';
 import '../../screens/e_mandir/book_puja/view/book_puja_view.dart';
 import '../../screens/e_mandir/puja_detail/view/puja_detail_view.dart';
 import '../../screens/e_mandir/address_selection/view/address_selection_view.dart';
 import '../../screens/e_mandir/address_form/view/address_form_view.dart';
+import '../../screens/e_mandir/puja_booking_form/view/puja_booking_form_view.dart';
+import '../../screens/e_mandir/my_bookings/view/my_bookings_view.dart';
+import '../../screens/e_mandir/my_bookings/view/my_booking_detail_view.dart';
 
 class PageRoutes {
   static const INITIAL = AppRoutes.root;
@@ -1454,6 +1460,27 @@ class PageRoutes {
       name: AppRoutes.addressForm,
       page: () => const AddressFormView(),
       binding: AddressFormBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.pujaBookingForm,
+      page: () => const PujaBookingFormView(),
+      binding: PujaBookingFormBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.myBookings,
+      page: () => const MyBookingsView(),
+      binding: MyBookingsBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.myBookingDetail,
+      page: () => const MyBookingDetailView(),
+      binding: MyBookingDetailBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),

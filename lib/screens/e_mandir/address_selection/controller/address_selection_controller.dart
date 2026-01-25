@@ -15,7 +15,10 @@ class AddressSelectionController extends BaseController {
 
   // Arguments from previous page
   String? pujaId;
+  String? pujaTitle;
   String? packageId;
+  int packageIndex = 0;
+  int personCount = 1;
   double? price;
   String? packageName;
 
@@ -30,7 +33,10 @@ class AddressSelectionController extends BaseController {
     final args = Get.arguments;
     if (args is Map<String, dynamic>) {
       pujaId = args['pujaId'] as String?;
+      pujaTitle = args['pujaTitle'] as String?;
       packageId = args['packageId'] as String?;
+      packageIndex = args['packageIndex'] as int? ?? 0;
+      personCount = args['personCount'] as int? ?? 1;
       price = args['price'] as double?;
       packageName = args['packageName'] as String?;
     }
@@ -141,13 +147,19 @@ class AddressSelectionController extends BaseController {
       return;
     }
 
-    // TODO: Navigate to payment page with selected address
-    Get.snackbar(
-      'Proceed',
-      'Proceeding to payment with address: ${selectedAddress.value?.fullName}',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green.withValues(alpha: 0.9),
-      colorText: Colors.white,
+    // Navigate to booking form with all required data
+    Get.toNamed(
+      AppRoutes.pujaBookingForm,
+      arguments: {
+        'pujaId': pujaId,
+        'pujaTitle': pujaTitle,
+        'packageId': packageId,
+        'packageIndex': packageIndex,
+        'personCount': personCount,
+        'price': price,
+        'packageName': packageName,
+        'address': selectedAddress.value,
+      },
     );
   }
 

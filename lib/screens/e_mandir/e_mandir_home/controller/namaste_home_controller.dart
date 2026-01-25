@@ -229,6 +229,9 @@ class NamasteHomeController extends GetxController
       case 3:
         Get.toNamed(AppRoutes.comingSoon);
         break;
+      case 4:
+        Get.toNamed(AppRoutes.myBookings);
+        break;
       default:
     }
   }
