@@ -85,16 +85,20 @@ class AstrologerChatHistoryController extends BaseController {
         limit: _itemsPerPage,
       );
       
-      final sessions = result['sessions'] as List<AstrologerChatSession>;
+      final raw = result['sessions'];
+      final sessions = raw is List
+          ? List<AstrologerChatSession>.from(
+              raw.whereType<AstrologerChatSession>(),
+            )
+          : <AstrologerChatSession>[];
       final pagination = result['pagination'] as Map<String, dynamic>?;
-      
+
       if (reset) {
         historyList.value = sessions;
       } else {
         historyList.addAll(sessions);
       }
-      
-      // Update pagination info
+
       if (pagination != null) {
         _currentPage = (pagination['currentPage'] as num?)?.toInt() ?? _currentPage;
         _totalPages = (pagination['totalPages'] as num?)?.toInt() ?? 1;

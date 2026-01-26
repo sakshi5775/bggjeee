@@ -16,24 +16,27 @@ class AstrologyReportWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Get.to(() => const ComingSoonPage());
-      },
+     
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        padding: EdgeInsets.only(
+          left: 16.w,
+          right: 16.w,
+        //  top: 4.h,
+          bottom: 2.h,
+        ),
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 AutoTranslateText(
-                  'Digital Education',
+                  'Sacred Library',
                   style: AppTypography.h2.copyWith(color: "#820B17".toColor()),
                 ),
               
               ],
             ),
-            Spacing.h(10),
+            Spacing.h(6),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(

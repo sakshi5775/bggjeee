@@ -189,28 +189,75 @@ class AstrologerChatService {
         useAuthHeader: true,
       );
 
-      if (response.statusCode == 200) {
-        final data = response.body;
-        if (data['success'] == true) {
-          final sessions = data['data'] as List<dynamic>;
-          return {
-            'sessions': sessions
-                .map(
-                  (s) =>
-                      AstrologerChatSession.fromJson(s as Map<String, dynamic>),
-                )
-                .toList(),
-            'pagination': data['pagination'],
-          };
-        }
-        throw Exception(data['message'] ?? 'Failed to get session history');
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception(
+          'HTTP ${response.statusCode}: Failed to get session history',
+        );
       }
-      throw Exception(
-        'HTTP ${response.statusCode}: Failed to get session history',
-      );
+
+      final body = response.body;
+      if (body == null) {
+        return _emptyHistoryResult();
+      }
+      if (body is! Map<String, dynamic>) {
+        if (kDebugMode) {
+          print('Chat history API: body is not Map (${body.runtimeType})');
+        }
+        return _emptyHistoryResult();
+      }
+
+      final data = body;
+      if (data['success'] != true) {
+        throw Exception(
+          data['message']?.toString() ?? 'Failed to get session history',
+        );
+      }
+
+      List<dynamic> rawList = [];
+      final payload = data['data'] ?? data['sessions'];
+
+      if (payload is List) {
+        rawList = payload;
+      } else if (payload is Map<String, dynamic>) {
+        final inner = payload['sessions'] ?? payload['data'] ?? payload['list'];
+        if (inner is List) {
+          rawList = inner;
+        }
+      }
+
+      final List<AstrologerChatSession> sessions = [];
+      for (final s in rawList) {
+        try {
+          if (s is Map<String, dynamic>) {
+            sessions.add(AstrologerChatSession.fromJson(s));
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('Skip invalid session item: $e');
+          }
+        }
+      }
+
+      final pagination = data['pagination'];
+      return {
+        'sessions': sessions,
+        'pagination': pagination is Map<String, dynamic> ? pagination : null,
+      };
+    } on TypeError catch (e) {
+      if (kDebugMode) {
+        print('Chat history API type error (e.g. int vs Iterable): $e');
+      }
+      return _emptyHistoryResult();
     } catch (e) {
+      if (kDebugMode) {
+        print('Chat history API error: $e');
+      }
       rethrow;
     }
+  }
+
+  Map<String, dynamic> _emptyHistoryResult() {
+    return {'sessions': <AstrologerChatSession>[], 'pagination': null};
   }
 
   /// Get messages

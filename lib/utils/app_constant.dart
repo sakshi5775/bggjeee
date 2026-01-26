@@ -30,6 +30,7 @@ class AppConstant {
   static const String guruHoroscope = 'assets/app/guru_horoscope-4a9362.png';
   static const String gemstoneCard = 'assets/app/gemstone_card.png';
   static const String quoteBackground = 'assets/app/quote_background.png';
+  static const String quoteOfTheDay = 'assets/app/quote_of_the_day.png';
   static const String templeImage = 'assets/app/temple_image.png';
   static const String templeMahakaleshwar =
       'assets/app/temple_mahakaleshwar.png';
