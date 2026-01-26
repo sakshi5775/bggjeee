@@ -23,6 +23,7 @@ import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/video_player_widget.dart';
 import 'package:astrobharataiuser/widgets/language_selector.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -270,27 +271,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   }
 
   Widget _buildSlider(BuildContext context) {
-    return Container(
-      color: Colors.transparent,
-      height: 26.h,
-      child: SingleChildScrollView(
-        controller: controller.sliderTabsScrollController,
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
-        child: Obx(() {
-          final selectedIndex = controller.selectedSliderIndex.value;
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              for (int index = 0; index < controller.sliderTabs.length; index++) ...[
-                if (index > 0) Spacing.w(20),
-                _buildSliderTab(context, index, selectedIndex),
-              ],
-            ],
-          );
-        }),
-      ),
+    // Use StatefulWidget wrapper to ensure SingleChildScrollView is only created once
+    return _SliderStripWidget(
+      key: const ValueKey('dashboard_slider_strip'),
+      controller: controller,
+      buildTab: (ctx, idx, selIdx) => _buildSliderTab(ctx, idx, selIdx),
     );
   }
 
@@ -298,9 +283,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     final isSelected = selectedIndex == index;
     final label = controller.sliderTabs[index];
     return Padding(
+      key: isSelected ? controller.sliderSelectedTabKey : null,
       padding: EdgeInsets.zero,
       child: GestureDetector(
-        onTap: () => controller.selectedSliderIndex.value = index,
+        onTap: () {
+          debugPrint("SLIDER: Tab $index tapped, updating selectedSliderIndex");
+          controller.selectedSliderIndex.value = index;
+          // Direct call as backup (ever() may not fire immediately)
+          controller.scrollSliderToSelected();
+        },
         behavior: HitTestBehavior.opaque,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -346,12 +337,18 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         final v = details.velocity.pixelsPerSecond.dx;
         final cur = controller.selectedSliderIndex.value;
         if (v < -_kSwipeVelocityThreshold) {
-          // Swipe left → next tab; scroll tab strip (Kundli-style, no main scroll)
-          controller.selectedSliderIndex.value = (cur + 1).clamp(0, n - 1);
+          final newIndex = (cur + 1).clamp(0, n - 1);
+          debugPrint("SLIDER: Swipe left detected, changing index from $cur to $newIndex");
+          controller.selectedSliderIndex.value = newIndex;
+          controller.scrollMainViewToTopOnSwipe();
+          // Direct call as backup (ever() may not fire immediately)
           controller.scrollSliderToSelected();
         } else if (v > _kSwipeVelocityThreshold) {
-          // Swipe right → previous tab
-          controller.selectedSliderIndex.value = (cur - 1).clamp(0, n - 1);
+          final newIndex = (cur - 1).clamp(0, n - 1);
+          debugPrint("SLIDER: Swipe right detected, changing index from $cur to $newIndex");
+          controller.selectedSliderIndex.value = newIndex;
+          controller.scrollMainViewToTopOnSwipe();
+          // Direct call as backup (ever() may not fire immediately)
           controller.scrollSliderToSelected();
         }
       },
@@ -5570,6 +5567,51 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// StatefulWidget wrapper for slider strip to ensure SingleChildScrollView is only created once.
+/// This prevents "multiple scroll views" error when Obx rebuilds.
+class _SliderStripWidget extends StatefulWidget {
+  final UserDashboardController controller;
+  final Widget Function(BuildContext, int, int) buildTab;
+
+  const _SliderStripWidget({
+    super.key,
+    required this.controller,
+    required this.buildTab,
+  });
+
+  @override
+  State<_SliderStripWidget> createState() => _SliderStripWidgetState();
+}
+
+class _SliderStripWidgetState extends State<_SliderStripWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.transparent,
+      height: 26.h,
+      child: SingleChildScrollView(
+        controller: widget.controller.sliderTabsScrollController,
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: Obx(() {
+          final selectedIndex = widget.controller.selectedSliderIndex.value;
+          // Note: scrollSliderToSelected() is auto-called via ever() listener in controller.onInit()
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              for (int index = 0; index < widget.controller.sliderTabs.length; index++) ...[
+                if (index > 0) Spacing.w(20),
+                widget.buildTab(context, index, selectedIndex),
+              ],
+            ],
+          );
+        }),
       ),
     );
   }

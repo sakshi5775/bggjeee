@@ -210,6 +210,9 @@ class UserDashboardController extends BaseController
   // Header slider tabs (Home = default active)
   final RxInt selectedSliderIndex = 0.obs;
   final ScrollController sliderTabsScrollController = ScrollController();
+  /// Single GlobalKey for the currently selected tab only. Used with ensureVisible(alignment: 0.5) to center it.
+  final GlobalKey sliderSelectedTabKey = GlobalKey();
+  bool _isScrollingSlider = false; // Prevent multiple simultaneous scroll calls
 
   List<String> get sliderTabs => [
     'Home',
@@ -224,40 +227,145 @@ class UserDashboardController extends BaseController
     'Horoscope',
   ];
 
-  /// Scrolls the slider tab strip so the active tab is visible (centered when possible).
-  /// Kundli-style: call when tab changes via **swipe** (not tap). Use addPostFrameCallback only.
-  void scrollSliderToSelected() {
+  static const int _kScrollSliderMaxRetries = 10;
+
+  /// Scrolls the slider tab strip so the active tab is visible (Kundli-style).
+  /// Uses addPostFrameCallback so layout is ready. No GlobalKeys.
+  void scrollSliderToSelected({int retry = 0}) {
+    // Debounce: skip if already scrolling (prevents cascade from ever() + direct call)
+    if (_isScrollingSlider && retry == 0) {
+      debugPrint("SLIDER: scrollSliderToSelected() skipped (already scrolling)");
+      return;
+    }
+    debugPrint("SLIDER: scrollSliderToSelected() called, retry=$retry");
+    _isScrollingSlider = true;
+    // Use nested post-frame callbacks (Kundli-style) to ensure layout is complete
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _doScrollSliderToSelected();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _doScrollSliderToSelected(retry: retry);
+      });
     });
   }
 
-  void _doScrollSliderToSelected() {
+  void _doScrollSliderToSelected({int retry = 0}) {
+    debugPrint("SLIDER: _doScrollSliderToSelected() called, retry=$retry");
     final sc = sliderTabsScrollController;
-    if (!sc.hasClients || sc.positions.length != 1) return;
+    if (!sc.hasClients) {
+      debugPrint("SLIDER SCROLL: hasClients = false, retry = $retry");
+      if (retry < _kScrollSliderMaxRetries) {
+        scrollSliderToSelected(retry: retry + 1);
+      } else {
+        _isScrollingSlider = false;
+      }
+      return;
+    }
+    
+    // CRITICAL: Check positions.length to avoid "multiple scroll views" error
+    // If multiple positions exist (temporary during rebuild), use the first one as fallback
+    if (sc.positions.isEmpty) {
+      debugPrint("SLIDER SCROLL: No positions, retry = $retry");
+      if (retry < _kScrollSliderMaxRetries) {
+        scrollSliderToSelected(retry: retry + 1);
+      } else {
+        _isScrollingSlider = false;
+      }
+      return;
+    }
+    
+    // Use first position if multiple exist (temporary state during rebuild)
+    final position = sc.positions.length > 1 
+        ? sc.positions.first 
+        : sc.position;
+    
+    if (sc.positions.length > 1) {
+      debugPrint("SLIDER SCROLL: Multiple positions (${sc.positions.length}), using first, retry = $retry");
+    }
+    
     final i = selectedSliderIndex.value;
     final n = sliderTabs.length;
-    if (n == 0 || i < 0) return;
+    if (n == 0 || i < 0) {
+      debugPrint("SLIDER SCROLL: Invalid state (n=$n, i=$i)");
+      _isScrollingSlider = false;
+      return;
+    }
     final index = i.clamp(0, n - 1);
 
     try {
-      final pos = sc.position;
-      final viewportWidth = pos.viewportDimension;
-      final maxExtent = pos.maxScrollExtent;
-
-      // Approximate tab widths (Kundli-style fallback) and center the selected tab
-      double totalWidth = 16.0;
-      for (int j = 0; j < index; j++) {
-        totalWidth += 20.0 + (44.0 + (sliderTabs[j].length * 9.0));
+      // Prefer Scrollable.ensureVisible(alignment: 0.5) to center the active tab (Kundli-style).
+      final key = sliderSelectedTabKey;
+      if (key.currentContext != null) {
+        final ctx = key.currentContext!;
+        final scrollable = Scrollable.maybeOf(ctx);
+        if (scrollable != null) {
+          final ro = ctx.findRenderObject();
+          if (ro is RenderBox) {
+            try {
+              Scrollable.ensureVisible(
+                ctx,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                alignment: 0.5, // Center the active tab
+              );
+              _isScrollingSlider = false;
+              return;
+            } catch (_) { /* fallback to offset-based */ }
+          }
+        }
       }
-      final tabWidth = 44.0 + (sliderTabs[index].length * 9.0);
-      final target = totalWidth - (viewportWidth / 2) + (tabWidth / 2);
 
-      sc.animateTo(
-        target.clamp(0.0, maxExtent),
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      final viewportWidth = position.viewportDimension;
+      final maxExtent = position.maxScrollExtent;
+      final currentOffset = position.pixels;
+      
+      if (viewportWidth <= 0 || maxExtent <= 0) {
+        debugPrint("SLIDER SCROLL: Skipping (viewport=$viewportWidth, maxExtent=$maxExtent) - strip not scrollable");
+        _isScrollingSlider = false;
+        return;
+      }
+
+      // Fallback: approximate widths. Center formula: target = totalWidth - viewport/2 + tabWidth/2.
+      final scale = (Get.width / 375.0).clamp(0.5, 2.0);
+      final leftPadding = 16.0 * scale;
+      final gap = 20.0 * scale;
+      double totalWidth = leftPadding;
+      for (int j = 0; j < index; j++) {
+        totalWidth += gap + (44.0 * scale + (sliderTabs[j].length * 9.0 * scale));
+      }
+      final tabWidth = 44.0 * scale + (sliderTabs[index].length * 9.0 * scale);
+      final target = totalWidth - (viewportWidth / 2) + (tabWidth / 2);
+      final clamped = target.clamp(0.0, maxExtent);
+
+      if ((currentOffset - clamped).abs() < 5.0) {
+        _isScrollingSlider = false;
+        return;
+      }
+      
+      final useJump = clamped <= 0.0 || clamped >= maxExtent - 1.0;
+      if (useJump) {
+        sc.jumpTo(clamped);
+      } else {
+        try {
+          sc.animateTo(clamped, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+        } catch (_) {
+          sc.jumpTo(clamped);
+        }
+      }
+      _isScrollingSlider = false;
+    } catch (e) {
+      debugPrint("SLIDER SCROLL: ERROR - $e");
+      _isScrollingSlider = false;
+      if (retry < _kScrollSliderMaxRetries) {
+        scrollSliderToSelected(retry: retry + 1);
+      }
+    }
+  }
+
+  /// On swipe: bring tab strip into view by jumping main scroll to top. Use jumpTo to avoid animateTo crashes.
+  void scrollMainViewToTopOnSwipe() {
+    final mc = scrollController;
+    if (!mc.hasClients) return;
+    try {
+      if (mc.offset > 30) mc.jumpTo(0);
     } catch (_) {}
   }
 
@@ -378,6 +486,12 @@ class UserDashboardController extends BaseController
     loadYouTubeVideos();
     // Start Ads carousel auto-slide
     _startAdsAutoSlide();
+
+    // Listen to selectedSliderIndex changes and auto-scroll strip (works for tap, swipe, any change)
+    ever(selectedSliderIndex, (int newIndex) {
+      debugPrint("SLIDER: ever() fired - selectedSliderIndex changed to $newIndex");
+      scrollSliderToSelected();
+    });
   }
 
   /// Load pujas from API
