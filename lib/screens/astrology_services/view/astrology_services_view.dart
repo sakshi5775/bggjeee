@@ -18,7 +18,9 @@ import 'package:get/get.dart';
 import '../../../utils/app_colors.dart';
 
 class AstrologyServicesView extends StatelessWidget {
-  const AstrologyServicesView({Key? key}) : super(key: key);
+  final bool showBackButton;
+
+  const AstrologyServicesView({Key? key, this.showBackButton = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -211,14 +213,16 @@ class AstrologyServicesView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              GestureDetector(
-                onTap: () => Get.back(),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: const Color(0xFFDFB343), // #DFB343 color
-                  size: 24.w,
-                ),
-              ),
+              showBackButton
+                  ? GestureDetector(
+                      onTap: () => Get.back(),
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: const Color(0xFFDFB343), // #DFB343 color
+                        size: 24.w,
+                      ),
+                    )
+                  : SizedBox(width: 24.w),
               Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

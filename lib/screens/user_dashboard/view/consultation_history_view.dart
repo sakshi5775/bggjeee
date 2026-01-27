@@ -16,7 +16,9 @@ import 'package:get/get.dart';
 import '../../../core/routes/app_routes.dart';
 
 class ConsultationHistoryView extends StatefulWidget {
-  const ConsultationHistoryView({Key? key}) : super(key: key);
+  final bool showBackButton;
+
+  const ConsultationHistoryView({Key? key, this.showBackButton = true}) : super(key: key);
 
   @override
   State<ConsultationHistoryView> createState() => _ConsultationHistoryViewState();
@@ -94,10 +96,13 @@ class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: '#3D0C11'.toColor(), size: 24.w),
-            onPressed: () => Get.back(),
-          ),
+          leading: widget.showBackButton
+              ? IconButton(
+                  icon: Icon(Icons.arrow_back, color: '#3D0C11'.toColor(), size: 24.w),
+                  onPressed: () => Get.back(),
+                )
+              : const SizedBox.shrink(),
+          leadingWidth: widget.showBackButton ? null : 0,
           title: AutoTranslateText(
             'Consultation History',
             style: AppTypography.h3.copyWith(

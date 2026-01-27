@@ -13,7 +13,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class NamasteHomeView extends StatefulWidget {
-  const NamasteHomeView({super.key});
+  final bool hideHeader;
+
+  const NamasteHomeView({
+    super.key,
+    this.hideHeader = false,
+  });
 
   @override
   State<NamasteHomeView> createState() => _NamasteHomeViewState();
@@ -47,16 +52,19 @@ class _NamasteHomeViewState extends State<NamasteHomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
+      backgroundColor: widget.hideHeader ? Colors.transparent : AppColors.lightBackground,
       body: SafeArea(
+        top: !widget.hideHeader,
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const NamasteHeaderWidget(),
-                SizedBox(height: 10.h),
+                if (!widget.hideHeader) ...[
+                  const NamasteHeaderWidget(),
+                  SizedBox(height: 10.h),
+                ],
                 const MainBannerWidget(),
                 SizedBox(height: 15.h),
                 const QuickActionsWidget(),

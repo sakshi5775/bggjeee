@@ -1,12 +1,12 @@
+import 'package:astrobharataiuser/binding/ai_chat_binding/ai_chat_binding.dart';
 import 'package:astrobharataiuser/binding/dashboard_binding/user_dashboard_binding.dart';
-import 'package:astrobharataiuser/binding/ecommerce_binding/ecommerce_binding.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
+import 'package:astrobharataiuser/screens/ai_chat/views/ai_chat_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
-import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/view/namaste_home_view.dart';
-import 'package:astrobharataiuser/binding/e_mandir_binding/namaste_home_binding.dart';
+import 'package:astrobharataiuser/screens/live_astrologers/view/live_astrologers_view.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/consultation_history_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
-import 'package:astrobharataiuser/screens/ecommerce/view/ecommerce_home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,10 +15,10 @@ class UserMainController extends GetxController {
 
   final pages = [
     '/user-home',
-    AppRoutes.ecommerceHome,
-    AppRoutes.namasteHome,
+    AppRoutes.consultationHistory,
     AppRoutes.astrologyServices,
-    AppRoutes.courses,
+    AppRoutes.aichat,
+    AppRoutes.liveAstrologers,
   ];
 
   String get initialRoute => pages.first;
@@ -26,7 +26,7 @@ class UserMainController extends GetxController {
   // ---------------- ROUTING ----------------
   Route? onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments as Map<String, dynamic>?;
-    final showBackButton = args?['showBackButton'] ?? false;
+    final showBackButton = args?['showBackButton'] as bool? ?? false;
 
     switch (settings.name) {
       case '/user-home':
@@ -35,41 +35,28 @@ class UserMainController extends GetxController {
           binding: UserDashboardBinding(),
         );
 
-      case AppRoutes.ecommerceHome:
+      case AppRoutes.consultationHistory:
         return GetPageRoute(
-          page: () => EcommerceHomeView(showBackButton: showBackButton),
-          binding: EcommerceBinding(),
-        );
-
-      case AppRoutes.namasteHome:
-        return GetPageRoute(
-          page: () => const NamasteHomeView(),
-          binding: NamasteHomeBinding(),
+          page: () => ConsultationHistoryView(showBackButton: showBackButton),
         );
 
       case AppRoutes.astrologyServices:
         return GetPageRoute(
-          page: () => const AstrologyServicesView(),
+          page: () => AstrologyServicesView(showBackButton: showBackButton),
         );
 
-      case AppRoutes.courses:
-        // Navigate to courses route from get_pages.dart (main router)
-        return null; // Let main router handle it
+      case AppRoutes.aichat:
+        return GetPageRoute(
+          page: () => AiChatView(showBackButton: showBackButton),
+          binding: AiChatBinding(),
+        );
+
+      case AppRoutes.liveAstrologers:
+        return GetPageRoute(
+          page: () => LiveAstrologersView(showBackButton: showBackButton),
+        );
 
       default:
-        // If route not found, check if it's an e-mandir route and go to namasteHome
-        // Otherwise go to home
-        if (settings.name?.contains('mandir') == true || 
-            settings.name?.contains('darshan') == true ||
-            settings.name?.contains('punya') == true ||
-            settings.name?.contains('devotional') == true ||
-            settings.name?.contains('bhakti') == true ||
-            settings.name?.contains('passbook') == true) {
-          return GetPageRoute(
-            page: () => const NamasteHomeView(),
-            binding: NamasteHomeBinding(),
-          );
-        }
         return GetPageRoute(
           page: () => const UserDashboardView(),
           binding: UserDashboardBinding(),
@@ -81,23 +68,18 @@ class UserMainController extends GetxController {
   void changePage(int index) {
     if (index == selectedIndex.value) return;
 
-    // Protect Consult & Education
-    final requiresLogin = index == 3 || index == 4;
+    // Protect History, Consult, AI, and Live
+    final requiresLogin = index == 1 || index == 2 || index == 3 || index == 4;
     if (requiresLogin && LoginGuard.isGuest) {
       LoginGuard.showLoginRequiredModal(
-        message: index == 4
-            ? 'Please login to access courses.'
-            : 'Please login to consult astrologers.',
+        message: index == 1
+            ? 'Please login to view history.'
+            : index == 2
+                ? 'Please login to consult astrologers.'
+                : index == 3
+                    ? 'Please login to access AI chat.'
+                    : 'Please login to view live astrologers.',
       );
-      return;
-    }
-
-    // If coming from courses full page
-    if (Get.currentRoute == AppRoutes.courses && index != 4) {
-      Get.back();
-      Future.delayed(const Duration(milliseconds: 200), () {
-        _navigate(index);
-      });
       return;
     }
 
@@ -106,32 +88,20 @@ class UserMainController extends GetxController {
 
   void _navigate(int index) {
     selectedIndex.value = index;
-
-    if (index == 4) {
-      // Navigate to courses using main router (not nested navigator)
-      // Transition is set in get_pages.dart route definition
-      Get.toNamed(
-        AppRoutes.courses,
-        arguments: {'showBackButton': false},
-      );
-    } else {
-      Get.offNamed(pages[index], id: 1);
-    }
+    // All tabs use nested navigator (id: 1) so bottom nav stays visible.
+    // History, Consult, AI, Live: no back button when opened from bottom nav.
+    final noBack = index != 0;
+    final args = noBack ? {'showBackButton': false} : null;
+    Get.offNamed(pages[index], id: 1, arguments: args);
   }
 
   // ---------------- BACK HANDLER ----------------
   void handleBackNavigation() {
     final nav = Get.nestedKey(1)?.currentState;
-
     if (nav != null && nav.canPop()) {
       nav.pop();
-    } else {
-      // If at root of nested navigator, go to the current tab's main page
-      // instead of always going to home
-      final currentIndex = selectedIndex.value;
-      selectedIndex.value = currentIndex;
-      Get.offNamed(pages[currentIndex], id: 1);
     }
+    // At tab root: bottom nav visible, no back — do nothing.
   }
 }
 

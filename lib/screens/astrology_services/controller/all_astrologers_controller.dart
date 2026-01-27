@@ -20,7 +20,6 @@ class AllAstrologersController extends GetxController {
   final RxInt currentPage = 1.obs;
   final RxInt limit = 20.obs;
   final RxBool hasMoreData = false.obs;
-  final ScrollController scrollController = ScrollController();
 
   // Initial filter (can be passed from previous screen)
   String? initialFilter;
@@ -34,12 +33,13 @@ class AllAstrologersController extends GetxController {
       selectedFilter.value = initialFilter!;
     }
     loadAstrologers();
-    scrollController.addListener(_onScroll);
   }
 
-  void _onScroll() {
-    if (scrollController.position.pixels >=
-        scrollController.position.maxScrollExtent * 0.8) {
+  /// Call from view when user scrolls near bottom (NotificationListener).
+  /// Avoids ScrollController on ListView to prevent "attached to multiple scroll views".
+  void onScrollMetrics(ScrollMetrics metrics) {
+    if (isLoading.value || !hasMoreData.value) return;
+    if (metrics.pixels >= metrics.maxScrollExtent * 0.8) {
       loadMore();
     }
   }
@@ -163,7 +163,6 @@ class AllAstrologersController extends GetxController {
 
   @override
   void onClose() {
-    scrollController.dispose();
     super.onClose();
   }
 }

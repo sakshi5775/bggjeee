@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
+import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
 import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
@@ -43,9 +44,20 @@ import '../widgets/features_and_videos_widget.dart';
 import '../widgets/what_else_widget.dart';
 import '../widgets/year_tab_widget.dart';
 import '../widgets/our_services_carousel_widget.dart';
+import '../widgets/digital_mart_tab_widget.dart';
+import '../widgets/reports_tab_widget.dart';
+import '../widgets/horoscope_tab_widget.dart';
 import '../widgets/daily_astrologers_widget.dart';
 import '../widgets/quote_of_the_day_widget.dart';
 import '../widgets/history_section_widget.dart';
+import '../../e_mandir/e_mandir_home/view/namaste_home_view.dart';
+import '../../e_mandir/e_mandir_home/controller/namaste_home_controller.dart';
+import '../../courses/views/courses_view.dart';
+import '../../courses/controllers/courses_controller.dart';
+import 'all_videos_view.dart';
+import '../controller/all_videos_controller.dart';
+import '../../panchang/view/panchang_view.dart';
+import '../../panchang/controller/panchang_controller.dart';
 import '../widgets/reports_section_widget.dart';
 import '../widgets/digital_services_animated_widget.dart';
 import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
@@ -95,7 +107,35 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         children: [
                           Spacing.h(22),
                           _buildHeaderAndSliderWithChakra(context),
-                          Spacing.h(8),
+                          Obx(() {
+                            final i = controller.selectedSliderIndex.value;
+                            final tabs = controller.sliderTabs;
+                            final noGap = (i == 2 &&
+                                    tabs.length > 2 &&
+                                    tabs[2] == 'Digital Consultation') ||
+                                (i == 3 &&
+                                    tabs.length > 3 &&
+                                    tabs[3] == 'Digital Mart') ||
+                                (i == 4 &&
+                                    tabs.length > 4 &&
+                                    tabs[4] == 'Digital Mandir') ||
+                                (i == 5 &&
+                                    tabs.length > 5 &&
+                                    tabs[5] == 'Digital Education') ||
+                                (i == 6 &&
+                                    tabs.length > 6 &&
+                                    tabs[6] == 'Reports') ||
+                                (i == 7 &&
+                                    tabs.length > 7 &&
+                                    tabs[7] == 'Video') ||
+                                (i == 8 &&
+                                    tabs.length > 8 &&
+                                    tabs[8] == 'Panchang') ||
+                                (i == 9 &&
+                                    tabs.length > 9 &&
+                                    tabs[9] == 'Horoscope');
+                            return Spacing.h(noGap ? 0 : 8);
+                          }),
                           _buildSliderBodyWithSwipe(context),
                           Spacing.h(60),
                         ],
@@ -283,13 +323,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     final isSelected = selectedIndex == index;
     final label = controller.sliderTabs[index];
     return Padding(
-      key: isSelected ? controller.sliderSelectedTabKey : null,
+      key: ValueKey('slider_tab_$index'),
       padding: EdgeInsets.zero,
       child: GestureDetector(
         onTap: () {
           debugPrint("SLIDER: Tab $index tapped, updating selectedSliderIndex");
           controller.selectedSliderIndex.value = index;
-          // Direct call as backup (ever() may not fire immediately)
           controller.scrollSliderToSelected();
         },
         behavior: HitTestBehavior.opaque,
@@ -389,6 +428,72 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       }
       if (i == 1) {
         return const YearTabWidget();
+      }
+      if (i == 2 && controller.sliderTabs[i] == 'Digital Consultation') {
+        final h = MediaQuery.sizeOf(context).height;
+        return SizedBox(
+          height: (h - 240).clamp(400.0, h * 0.85),
+          child: const AllAstrologersView(hideHeader: true),
+        );
+      }
+      if (i == 3 && controller.sliderTabs[i] == 'Digital Mart') {
+        return Transform.translate(
+          offset: Offset(0, -10.h),
+          child: const DigitalMartTabWidget(),
+        );
+      }
+      if (i == 4 && controller.sliderTabs[i] == 'Digital Mandir') {
+        if (!Get.isRegistered<NamasteHomeController>()) {
+          Get.put(NamasteHomeController(), permanent: false);
+        }
+        final h = MediaQuery.sizeOf(context).height;
+        return Padding(
+          padding: EdgeInsets.only(top: 12.h),
+          child: SizedBox(
+            height: (h - 252).clamp(388.0, h * 0.85),
+            child: const NamasteHomeView(hideHeader: true),
+          ),
+        );
+      }
+      if (i == 5 && controller.sliderTabs[i] == 'Digital Education') {
+        if (!Get.isRegistered<CoursesController>()) {
+          Get.put(CoursesController(), permanent: false);
+        }
+        final h = MediaQuery.sizeOf(context).height;
+        return SizedBox(
+          height: (h - 240).clamp(400.0, h * 0.85),
+          child: const CoursesView(hideHeader: true),
+        );
+      }
+      if (i == 6 && controller.sliderTabs[i] == 'Reports') {
+        return const ReportsTabWidget();
+      }
+      if (i == 7 && controller.sliderTabs[i] == 'Video') {
+        if (!Get.isRegistered<AllVideosController>()) {
+          Get.put(AllVideosController(), permanent: false);
+        }
+        final h = MediaQuery.sizeOf(context).height;
+        return SizedBox(
+          height: (h - 240).clamp(400.0, h * 0.85),
+          child: const AllVideosView(hideHeader: true),
+        );
+      }
+      if (i == 8 && controller.sliderTabs[i] == 'Panchang') {
+        if (!Get.isRegistered<PanchangController>()) {
+          Get.put(PanchangController(), permanent: false);
+        }
+        final h = MediaQuery.sizeOf(context).height;
+        return SizedBox(
+          height: (h - 240).clamp(400.0, h * 0.85),
+          child: const PanchangView(hideHeader: true),
+        );
+      }
+      if (i == 9 && controller.sliderTabs[i] == 'Horoscope') {
+        final h = MediaQuery.sizeOf(context).height;
+        return SizedBox(
+          height: (h - 240).clamp(400.0, h * 0.85),
+          child: const HoroscopeTabWidget(),
+        );
       }
       return Padding(
         padding: EdgeInsets.symmetric(vertical: 48.h, horizontal: 24.w),
@@ -5594,24 +5699,31 @@ class _SliderStripWidgetState extends State<_SliderStripWidget> {
     return Container(
       color: Colors.transparent,
       height: 26.h,
-      child: SingleChildScrollView(
-        controller: widget.controller.sliderTabsScrollController,
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
-        child: Obx(() {
-          final selectedIndex = widget.controller.selectedSliderIndex.value;
-          // Note: scrollSliderToSelected() is auto-called via ever() listener in controller.onInit()
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              for (int index = 0; index < widget.controller.sliderTabs.length; index++) ...[
-                if (index > 0) Spacing.w(20),
-                widget.buildTab(context, index, selectedIndex),
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          if (notification is ScrollEndNotification) {
+            widget.controller.onSliderStripScrollEnd();
+          }
+          return false;
+        },
+        child: SingleChildScrollView(
+          controller: widget.controller.sliderTabsScrollController,
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Obx(() {
+            final selectedIndex = widget.controller.selectedSliderIndex.value;
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                for (int index = 0; index < widget.controller.sliderTabs.length; index++) ...[
+                  if (index > 0) Spacing.w(20),
+                  widget.buildTab(context, index, selectedIndex),
+                ],
               ],
-            ],
-          );
-        }),
+            );
+          }),
+        ),
       ),
     );
   }

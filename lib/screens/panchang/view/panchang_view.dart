@@ -14,18 +14,17 @@ import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class PanchangView extends BasePage<PanchangController> {
-  const PanchangView({super.key});
+  final bool hideHeader;
+
+  const PanchangView({super.key, this.hideHeader = false});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: "#FFF8E7".toColor(), // Cream background from Figma
+      backgroundColor: hideHeader ? Colors.transparent : "#FFF8E7".toColor(), // Cream background from Figma
       body: Column(
         children: [
-          // Header
-          const PanchangHeaderWidget(),
-
-          // Content
+          if (!hideHeader) const PanchangHeaderWidget(),
           Expanded(
             child: SingleChildScrollView(
               child: Column(

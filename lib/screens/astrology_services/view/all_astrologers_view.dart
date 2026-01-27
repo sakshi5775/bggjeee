@@ -16,13 +16,22 @@ import '../../../theme/app_typography.dart';
 
 class AllAstrologersView extends StatelessWidget {
   final String? initialFilter;
+  final bool hideHeader;
 
-  const AllAstrologersView({Key? key, this.initialFilter}) : super(key: key);
+  const AllAstrologersView({
+    Key? key,
+    this.initialFilter,
+    this.hideHeader = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(
+    // Use a separate controller for embedded tab (hideHeader) vs full-screen
+    // to avoid "ScrollController attached to multiple scroll views".
+    final tag = hideHeader ? 'consult_tab' : null;
+    final controller = Get.put<AllAstrologersController>(
       AllAstrologersController(initialFilter: initialFilter),
+      tag: tag,
     );
 
     return Container(
@@ -30,10 +39,13 @@ class AllAstrologersView extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
+          top: !hideHeader,
           child: Column(
             children: [
-              // Header and Filter Section (combined with curved bottom)
-              _buildHeaderWithFilters(context, controller),
+              if (hideHeader)
+                _buildFiltersOnly(context, controller)
+              else
+                _buildHeaderWithFilters(context, controller),
 
               // Astrologer List
               Expanded(
@@ -83,41 +95,114 @@ class AllAstrologersView extends StatelessWidget {
                     );
                   }
 
-                  return RefreshIndicator(
-                    onRefresh: controller.refresh,
-                    color: const Color(0xFFDFB343),
-                    child: ListView.builder(
-                      controller: controller.scrollController,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 16.h,
-                      ),
-                      itemCount:
-                          controller.astrologers.length +
-                          (controller.hasMoreData.value ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index == controller.astrologers.length) {
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: CircularProgressIndicator(
-                                color: Color(0xFFDFB343),
+                  return NotificationListener<ScrollNotification>(
+                    onNotification: (ScrollNotification n) {
+                      if (n is ScrollUpdateNotification ||
+                          n is ScrollEndNotification) {
+                        controller.onScrollMetrics(n.metrics);
+                      }
+                      return false;
+                    },
+                    child: RefreshIndicator(
+                      onRefresh: controller.refresh,
+                      color: const Color(0xFFDFB343),
+                      child: ListView.builder(
+                        primary: !hideHeader,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 16.h,
+                        ),
+                        itemCount:
+                            controller.astrologers.length +
+                            (controller.hasMoreData.value ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == controller.astrologers.length) {
+                            return const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: CircularProgressIndicator(
+                                  color: Color(0xFFDFB343),
+                                ),
                               ),
-                            ),
+                            );
+                          }
+                          final astrologer = controller.astrologers[index];
+                          return _buildAstrologerCard(
+                            astrologer,
+                            controller,
+                            isFirst: index == 0,
                           );
-                        }
-                        final astrologer = controller.astrologers[index];
-                        return _buildAstrologerCard(
-                          astrologer,
-                          controller,
-                          isFirst: index == 0,
-                        );
-                      },
+                        },
+                      ),
                     ),
                   );
                 }),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFiltersOnly(
+    BuildContext context,
+    AllAstrologersController controller,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(26.r),
+          bottomRight: Radius.circular(26.r),
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(16.w, 0, 0, 16.h),
+        child: SizedBox(
+          height: 36.h,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.only(right: 16.w),
+            itemCount: controller.filterOptions.length,
+            itemBuilder: (context, index) {
+              final filter = controller.filterOptions[index];
+              return Obx(() {
+                final isSelected =
+                    controller.selectedFilter.value == filter;
+                return GestureDetector(
+                  onTap: () => controller.setFilter(filter),
+                  child: Container(
+                    margin: EdgeInsets.only(right: 12.w),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 8.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected ? Colors.white : Color(0xFF5D1C21),
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: isSelected
+                          ? Border.all(color: '#DEAF3E'.toColor(), width: 1)
+                          : null,
+                    ),
+                    child: Center(
+                      child: AutoTranslateText(
+                        filter,
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13.sp,
+                          color: isSelected
+                              ? '#DDAF3E'.toColor()
+                              : Colors.white,
+                          height: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              });
+            },
           ),
         ),
       ),
@@ -516,18 +601,16 @@ class AllAstrologersView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Flexible(
-                        child: AutoTranslateText(
-                          '($totalRatings reviews)',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w400,
-                            fontSize: 11.sp,
-                            color: '#3D0C11'.toColor().withOpacity(0.5),
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      AutoTranslateText(
+                        '($totalRatings reviews)',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                          fontSize: 11.sp,
+                          color: '#3D0C11'.toColor().withOpacity(0.5),
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),

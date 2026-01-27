@@ -175,6 +175,10 @@ class UserDashboardController extends BaseController
   final RxList<CategoryModel> remedyCategories = <CategoryModel>[].obs;
   final RxBool isLoadingRemedyCategories = false.obs;
 
+  // Digital Mart tab: all product categories
+  final RxList<CategoryModel> digitalMartCategories = <CategoryModel>[].obs;
+  final RxBool isLoadingDigitalMartCategories = false.obs;
+
   // Search functionality
   final DashboardSearchService _searchService = DashboardSearchService();
   final stt.SpeechToText _speechToText = stt.SpeechToText();
@@ -210,9 +214,8 @@ class UserDashboardController extends BaseController
   // Header slider tabs (Home = default active)
   final RxInt selectedSliderIndex = 0.obs;
   final ScrollController sliderTabsScrollController = ScrollController();
-  /// Single GlobalKey for the currently selected tab only. Used with ensureVisible(alignment: 0.5) to center it.
-  final GlobalKey sliderSelectedTabKey = GlobalKey();
   bool _isScrollingSlider = false; // Prevent multiple simultaneous scroll calls
+  bool _skipNextScrollEnd = false;
 
   List<String> get sliderTabs => [
     'Home',
@@ -272,15 +275,14 @@ class UserDashboardController extends BaseController
       return;
     }
     
-    // Use first position if multiple exist (temporary state during rebuild)
-    final position = sc.positions.length > 1 
-        ? sc.positions.first 
-        : sc.position;
-    
-    if (sc.positions.length > 1) {
-      debugPrint("SLIDER SCROLL: Multiple positions (${sc.positions.length}), using first, retry = $retry");
+    // When multiple positions exist (e.g. temporary during rebuild), use first as fallback
+    // and scroll via that position to avoid controller assertion.
+    final position = sc.positions.length == 1
+        ? sc.position
+        : sc.positions.first;
+    if (sc.positions.length != 1) {
+      debugPrint("SLIDER SCROLL: Using positions.first (total=${sc.positions.length})");
     }
-    
     final i = selectedSliderIndex.value;
     final n = sliderTabs.length;
     if (n == 0 || i < 0) {
@@ -291,28 +293,7 @@ class UserDashboardController extends BaseController
     final index = i.clamp(0, n - 1);
 
     try {
-      // Prefer Scrollable.ensureVisible(alignment: 0.5) to center the active tab (Kundli-style).
-      final key = sliderSelectedTabKey;
-      if (key.currentContext != null) {
-        final ctx = key.currentContext!;
-        final scrollable = Scrollable.maybeOf(ctx);
-        if (scrollable != null) {
-          final ro = ctx.findRenderObject();
-          if (ro is RenderBox) {
-            try {
-              Scrollable.ensureVisible(
-                ctx,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                alignment: 0.5, // Center the active tab
-              );
-              _isScrollingSlider = false;
-              return;
-            } catch (_) { /* fallback to offset-based */ }
-          }
-        }
-      }
-
+      // Offset-based scroll to center the active tab (reliable, no GlobalKey issues).
       final viewportWidth = position.viewportDimension;
       final maxExtent = position.maxScrollExtent;
       final currentOffset = position.pixels;
@@ -323,7 +304,6 @@ class UserDashboardController extends BaseController
         return;
       }
 
-      // Fallback: approximate widths. Center formula: target = totalWidth - viewport/2 + tabWidth/2.
       final scale = (Get.width / 375.0).clamp(0.5, 2.0);
       final leftPadding = 16.0 * scale;
       final gap = 20.0 * scale;
@@ -340,14 +320,16 @@ class UserDashboardController extends BaseController
         return;
       }
       
+      _skipNextScrollEnd = true;
+      Future.delayed(const Duration(milliseconds: 400), () { _skipNextScrollEnd = false; });
       final useJump = clamped <= 0.0 || clamped >= maxExtent - 1.0;
       if (useJump) {
-        sc.jumpTo(clamped);
+        position.jumpTo(clamped);
       } else {
         try {
-          sc.animateTo(clamped, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          position.animateTo(clamped, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
         } catch (_) {
-          sc.jumpTo(clamped);
+          position.jumpTo(clamped);
         }
       }
       _isScrollingSlider = false;
@@ -360,10 +342,16 @@ class UserDashboardController extends BaseController
     }
   }
 
+  /// Called when user finishes dragging the tab strip. Centers the focused tab.
+  void onSliderStripScrollEnd() {
+    if (_skipNextScrollEnd) return;
+    scrollSliderToSelected();
+  }
+
   /// On swipe: bring tab strip into view by jumping main scroll to top. Use jumpTo to avoid animateTo crashes.
   void scrollMainViewToTopOnSwipe() {
     final mc = scrollController;
-    if (!mc.hasClients) return;
+    if (!mc.hasClients || mc.positions.length != 1) return;
     try {
       if (mc.offset > 30) mc.jumpTo(0);
     } catch (_) {}
@@ -464,6 +452,7 @@ class UserDashboardController extends BaseController
     loadCelebrityAstrologers();
     loadCourses();
     loadRemedyCategories(); // Load remedy categories for Astro Remedy section
+    loadDigitalMartCategories(); // Load Digital Mart tab categories
     if (requireAuth) {
       checkForLiveWebinarFromEnrolledCourses();
     }
@@ -1136,6 +1125,40 @@ class UserDashboardController extends BaseController
     }
   }
 
+  /// Load all categories for Digital Mart tab (grid of products)
+  Future<void> loadDigitalMartCategories() async {
+    try {
+      isLoadingDigitalMartCategories.value = true;
+      final categoryData = await _ecommerceService.getCategories(
+        page: 1,
+        limit: 50,
+        isActive: true,
+      );
+
+      if (categoryData != null &&
+          categoryData.items != null &&
+          categoryData.items!.isNotEmpty) {
+        digitalMartCategories.value = categoryData.items!
+            .where((cat) => cat.parent == null)
+            .toList();
+      } else {
+        final treeResult = await _ecommerceService.getCategoryTree();
+        if (treeResult != null && treeResult.isNotEmpty) {
+          digitalMartCategories.value = treeResult
+              .where((cat) => cat.parent == null && (cat.isActive ?? true))
+              .toList();
+        } else {
+          digitalMartCategories.clear();
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading Digital Mart categories: $e');
+      digitalMartCategories.clear();
+    } finally {
+      isLoadingDigitalMartCategories.value = false;
+    }
+  }
+
   /// Pull-to-refresh handler for dashboard content
   /// Load YouTube videos from channel
   Future<void> loadYouTubeVideos({String? apiKey}) async {
@@ -1174,6 +1197,7 @@ class UserDashboardController extends BaseController
     await loadAiAstrologers();
     await loadCourses();
     await loadRemedyCategories(); // Load remedy categories
+    await loadDigitalMartCategories(); // Load Digital Mart categories
   }
 
   /// Initialize Speech-to-AutoTranslateText

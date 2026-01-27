@@ -17,6 +17,10 @@ class HoroscopeMainController extends BaseController {
   // Selected sign from previous page
   final selectedSign = Rxn<String>();
   
+  // Tab widget selections (for embedded tab)
+  final selectedCategory = Rxn<String>(); // Daily, Weekly, Weekly Love, Monthly, Yearly
+  final selectedZodiac = Rxn<String>(); // Aries, Taurus, etc.
+  
   // Form data (date, time, location)
   final dateController = TextEditingController();
   final timeController = TextEditingController();
