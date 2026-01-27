@@ -13,8 +13,13 @@ import 'package:get/get.dart';
 
 class CoursesView extends BasePage<CoursesController> {
   final bool showBackButton;
+  final bool hideHeader;
 
-  const CoursesView({super.key, this.showBackButton = true});
+  const CoursesView({
+    super.key,
+    this.showBackButton = true,
+    this.hideHeader = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,42 +34,41 @@ class CoursesView extends BasePage<CoursesController> {
         return true;
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
-        bottomNavigationBar: _buildBottomNav(),
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Header Section (Dark Brown Background)
-              _buildHeader(),
+        backgroundColor: Colors.transparent,
+        bottomNavigationBar: hideHeader ? null : _buildBottomNav(),
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: hideHeader
+              ? null
+              : BoxDecoration(gradient: AppColors.gradientBackground),
+          color: hideHeader ? Colors.transparent : null,
+          child: SafeArea(
+            top: !hideHeader,
+            child: Column(
+              children: [
+                if (!hideHeader) _buildHeader(),
 
-              // Search Bar
-              // _buildSearchBar(),
-
-              // Main Content
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      // Live Webinar Banner
-                      Obx(
-                        () => controller.hasLiveWebinar.value
-                            ? _buildLiveWebinarBanner()
-                            : const SizedBox.shrink(),
-                      ),
-
-                      // Stats Cards
-                      // _buildStatsCards(),
-
-                      // Category Tabs
-                      _buildCategoryTabs(),
-
-                      // Courses Section
-                      _buildCoursesSection(),
-                    ],
+                // Main Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        if (!hideHeader) ...[
+                          Obx(
+                            () => controller.hasLiveWebinar.value
+                                ? _buildLiveWebinarBanner()
+                                : const SizedBox.shrink(),
+                          ),
+                          _buildCategoryTabs(),
+                        ],
+                        _buildCoursesSection(),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -544,53 +548,52 @@ class CoursesView extends BasePage<CoursesController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Section Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.school,
-                      color: AppColors.primaryGradient.colors.first,
-                      size: 20.w,
-                    ),
-                    SizedBox(width: 8.w),
-                    AutoTranslateText(
-                      'Courses',
-                      style: AppTypography.h2.copyWith(
-                        color: AppColors.textPrimary,
-                        fontSize: 18.sp,
-                      ),
-                    ),
-                  ],
-                ),
-                GestureDetector(
-                  onTap: () {
-                    // TODO: Navigate to all courses
-                  },
-                  child: Row(
+            if (!hideHeader) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
                     children: [
-                      AutoTranslateText(
-                        'View All',
-                        style: AppTypography.body1.copyWith(
-                          color: AppColors.primaryGradient.colors.first,
-                        ),
-                      ),
-                      SizedBox(width: 4.w),
                       Icon(
-                        Icons.arrow_forward_ios,
+                        Icons.school,
                         color: AppColors.primaryGradient.colors.first,
-                        size: 14.w,
+                        size: 20.w,
+                      ),
+                      SizedBox(width: 8.w),
+                      AutoTranslateText(
+                        'Courses',
+                        style: AppTypography.h2.copyWith(
+                          color: AppColors.textPrimary,
+                          fontSize: 18.sp,
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16.h),
-
-            // Course Grid
+                  GestureDetector(
+                    onTap: () {
+                      // TODO: Navigate to all courses
+                    },
+                    child: Row(
+                      children: [
+                        AutoTranslateText(
+                          'View All',
+                          style: AppTypography.body1.copyWith(
+                            color: AppColors.primaryGradient.colors.first,
+                          ),
+                        ),
+                        SizedBox(width: 4.w),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: AppColors.primaryGradient.colors.first,
+                          size: 14.w,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+            ],
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),

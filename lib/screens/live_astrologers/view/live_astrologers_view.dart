@@ -14,7 +14,9 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class LiveAstrologersView extends StatelessWidget {
-  const LiveAstrologersView({Key? key}) : super(key: key);
+  final bool showBackButton;
+
+  const LiveAstrologersView({Key? key, this.showBackButton = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class LiveAstrologersView extends StatelessWidget {
         child: Column(
           children: [
             // Header with dark red/maroon background
-            _buildHeader(context),
+            _buildHeader(context, controller),
             
             // Tab Navigation
             _buildTabNavigation(controller),
@@ -47,7 +49,7 @@ class LiveAstrologersView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, LiveAstrologersController controller) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
@@ -63,15 +65,18 @@ class LiveAstrologersView extends StatelessWidget {
       ),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Icon(
-              Icons.arrow_back,
-              color: const Color(0xFFDFB343), // Yellow/gold
-              size: 24.w,
-            ),
-          ),
-          Spacing.w(16),
+          if (showBackButton)
+            GestureDetector(
+              onTap: () => Get.back(),
+              child: Icon(
+                Icons.arrow_back,
+                color: const Color(0xFFDFB343), // Yellow/gold
+                size: 24.w,
+              ),
+            )
+          else
+            SizedBox(width: 24.w),
+          if (showBackButton) Spacing.w(16),
           Expanded(
             child: AutoTranslateText(
               'Live Astrologers',

@@ -35,6 +35,9 @@ android {
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        // Enable resource shrinking and code shrinking
+        resourceConfigurations += listOf("en", "hi") // Only include languages you need
     }
 
     signingConfigs {
@@ -55,6 +58,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Enable code shrinking and optimization
+            isDebuggable = false
         }
     }
 
@@ -89,7 +94,17 @@ android {
                 "META-INF/NOTICE.txt",
                 "META-INF/notice.txt",
                 "META-INF/ASL2.0",
-                "META-INF/*.kotlin_module"
+                "META-INF/*.kotlin_module",
+                "META-INF/versions/**",
+                "**/attach_hotspot_windows.dll",
+                "META-INF/licenses/**",
+                "META-INF/AL2.0",
+                "META-INF/LGPL2.1"
+            )
+            // Compress resources to reduce size
+            pickFirsts += setOf(
+                "**/libc++_shared.so",
+                "**/libfbjni.so"
             )
         }
     }
