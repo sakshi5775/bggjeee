@@ -44,6 +44,15 @@ class EndPoints {
   static const String pujaPaymentInitiate = 'sri-mandir/api/payments/initiate';
   static const String pujaPaymentVerify = 'sri-mandir/api/payments/verify';
 
+  /// god categories
+  static const String godCategories = 'sri-mandir/api/god-categories';
+
+  /// puja item categories
+  static const String pujaItemCategories =
+      'sri-mandir/api/puja-item-categories';
+  static String pujaItemCategoryById(String categoryId) =>
+      'sri-mandir/api/puja-item-categories/$categoryId';
+
   /// ecommerce
   // Category endpoints
   static const String ecommerceCategories = 'ecommerce/api/categories';

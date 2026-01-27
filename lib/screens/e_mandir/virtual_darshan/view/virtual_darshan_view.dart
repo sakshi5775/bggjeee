@@ -19,13 +19,22 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Vertical Image Reel - Center of screen
+            // Vertical Image Reel - Center of screen (like Instagram Reels)
             Obx(
-              () => Center(
-                child: _buildVerticalImageReel(
-                  controller.godsList[controller.currentGodIndex.value],
-                ),
-              ),
+              () => controller.godsCount == 0
+                  ? const Center(child: CircularProgressIndicator())
+                  : PageView.builder(
+                      controller: controller.verticalPageController,
+                      scrollDirection: Axis.vertical,
+                      itemCount: controller.godsCount,
+                      onPageChanged: (index) {
+                        controller.currentGodIndex.value = index;
+                      },
+                      itemBuilder: (context, index) {
+                        final imageUrl = controller.getGodImageAt(index);
+                        return _buildGodImageDisplay(imageUrl);
+                      },
+                    ),
             ),
             IgnorePointer(
               child: Center(
@@ -73,86 +82,118 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
               ),
             ),
             Obx(
-              () => Positioned(
-                top: 60.h,
-                left: 12.w,
-                right: 12.w,
-                child: SizedBox(
-                  height: 50.h,
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(2.w),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30.r),
-                          color: Colors.white,
-                        ),
+              () => controller.godsCount == 0
+                  ? const SizedBox.shrink()
+                  : Positioned(
+                      top: 60.h,
+                      left: 12.w,
+                      right: 2.w,
+                      child: SizedBox(
+                        height: 50.h,
                         child: Row(
                           children: [
-                            CircleAvatar(
-                              radius: 25.r,
-                              backgroundImage: AssetImage(
-                                controller
-                                    .godsList[controller.currentGodIndex.value]
-                                    .profileImage,
+                            Container(
+                              padding: EdgeInsets.all(2.w),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30.r),
+                                color: Colors.white,
+                              ),
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 20.r,
+                                    backgroundColor: Colors.grey.shade200,
+                                    backgroundImage:
+                                        controller.currentGodImage.startsWith(
+                                          'http',
+                                        )
+                                        ? NetworkImage(
+                                            controller.currentGodImage,
+                                          )
+                                        : AssetImage(controller.currentGodImage)
+                                              as ImageProvider,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(4.0.w),
+                                    child: AutoTranslateText(
+                                      controller.currentGodName,
+                                      style: AppTypography.body1.copyWith(
+                                        color: Colors.orange,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(4.0.w),
-                              child: AutoTranslateText(
-                                controller
-                                    .godsList[controller.currentGodIndex.value]
-                                    .name,
-                                style: TextStyle(
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14.sp,
-                                ),
+                            SizedBox(width: 10.w),
+                            Expanded(
+                              child: ListView.builder(
+                                controller: controller.scrollController,
+                                itemCount: controller.godsCount,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (_, index) {
+                                  final isSelected =
+                                      controller.currentGodIndex.value == index;
+                                  final godImage = controller.getGodImageAt(
+                                    index,
+                                  );
+                                  return GestureDetector(
+                                    onTap: () =>
+                                        controller.navigateToGod(index),
+                                    child: Container(
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: 4.w,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: isSelected
+                                            ? Border.all(
+                                                color: Colors.orange,
+                                                width: 3,
+                                              )
+                                            : null,
+                                        gradient: const LinearGradient(
+                                          colors: [
+                                            Colors.orange,
+                                            Colors.deepOrange,
+                                          ],
+                                        ),
+                                      ),
+                                      child: ClipOval(
+                                        child: Container(
+                                          width: 50.r,
+                                          height: 40.r,
+                                          color: Colors.grey.shade200,
+                                          child: godImage.startsWith('http')
+                                              ? Image.network(
+                                                  godImage,
+                                                  fit: BoxFit.fill,
+                                                  width: 40.r,
+                                                  height: 40.r,
+                                                  errorBuilder: (_, __, ___) =>
+                                                      Icon(
+                                                        Icons.person,
+                                                        size: 24.r,
+                                                      ),
+                                                )
+                                              : Image.asset(
+                                                  godImage,
+                                                  fit: BoxFit.cover,
+                                                  width: 50.r,
+                                                  height: 40.r,
+                                                ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(width: 10.w),
-                      Expanded(
-                        child: ListView.builder(
-                          controller: controller.scrollController,
-                          itemCount: controller.godsList.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (_, index) {
-                            final isSelected =
-                                controller.currentGodIndex.value == index;
-                            return GestureDetector(
-                              onTap: () => controller.navigateToGod(index),
-                              child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: 4.w),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: isSelected
-                                      ? Border.all(
-                                          color: Colors.orange,
-                                          width: 3,
-                                        )
-                                      : null,
-                                  gradient: const LinearGradient(
-                                    colors: [Colors.orange, Colors.deepOrange],
-                                  ),
-                                ),
-                                child: CircleAvatar(
-                                  radius: 24.r,
-                                  backgroundImage: AssetImage(
-                                    controller.godsList[index].profileImage,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
             ),
             Obx(
               () => Positioned(
@@ -160,7 +201,24 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                 left: 18.w,
                 child: InkWell(
                   onTap: () => _openOfferingBottomSheet(context),
-                  child: Image.asset(controller.selectedOfferingIcon.value),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(50.r),
+                    child: SizedBox(
+                      width: 50.w,
+                      height: 50.h,
+                      child:
+                          controller.selectedOfferingIcon.value.startsWith(
+                            'http',
+                          )
+                          ? Image.network(
+                              controller.selectedOfferingIcon.value,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) =>
+                                  Image.asset(AppConstant.eMandirLadduIcon),
+                            )
+                          : Image.asset(controller.selectedOfferingIcon.value),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -215,32 +273,58 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
     );
   }
 
-  Widget _buildVerticalImageReel(god) {
-    return PageView.builder(
-      controller: controller.verticalPageController,
-      scrollDirection: Axis.vertical,
-      itemCount: god.galleryImages.length,
-      itemBuilder: (context, index) {
-        final imagePath = god.galleryImages[index];
+  Widget _buildGodImageDisplay(String imageUrl) {
+    if (imageUrl.isEmpty) {
+      return Container(
+        color: Colors.grey.shade300,
+        child: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
-        return Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(imagePath),
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(color: Colors.black),
+      child: imageUrl.startsWith('http')
+          ? Image.network(
+              imageUrl,
               fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                        : null,
+                    color: Colors.orange,
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.error_outline, size: 48, color: Colors.white),
+                      SizedBox(height: 8),
+                      Text(
+                        'Failed to load image',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            )
+          : Image.asset(
+              imageUrl,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.25),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 
@@ -252,12 +336,14 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
-      builder: (context) => OfferingBottomSheetWidget(
+      builder: (sheetContext) => OfferingBottomSheetWidget(
         onSelect: (item) {
           controller.handleOfferingSelection(item);
-          // If flower was selected and aarti is playing, restart flower rain
-          if (item.type == "Flower" && controller.aartiController.isAnimating) {
-            controller.startFlowerRain(context);
+          // If flower/garland was selected, start a brief flower rain animation
+          final slug = controller.currentCategorySlug;
+          if (slug == 'flowers' || slug == 'garland') {
+            // Start flower rain burst (1 second animation)
+            controller.startFlowerRainBurst(context);
           }
         },
       ),

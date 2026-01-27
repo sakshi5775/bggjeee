@@ -23,11 +23,21 @@ class FallingFlowerWidget extends StatelessWidget {
           ),
         );
       },
-      child: Image.asset(
-        flowerState.imagePath,
-        width: flowerState.size,
-        height: flowerState.size,
-      ),
+      child: flowerState.imagePath.startsWith('http')
+          ? Image.network(
+              flowerState.imagePath,
+              width: flowerState.size,
+              fit: BoxFit.cover,
+              height: flowerState.size,
+              errorBuilder: (_, __, ___) =>
+                  SizedBox(width: flowerState.size, height: flowerState.size),
+            )
+          : Image.asset(
+              flowerState.imagePath,
+              width: flowerState.size,
+              fit: BoxFit.cover,
+              height: flowerState.size,
+            ),
     );
   }
 }

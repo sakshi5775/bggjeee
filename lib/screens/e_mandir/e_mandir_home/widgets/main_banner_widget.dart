@@ -51,86 +51,87 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
               ],
             ),
           ),
-          Positioned(
-            top: 70.h,
-            left: 12.w,
-            right: 12.w,
-            child: SizedBox(
-              height: 50.h,
-              child: Row(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(3.w),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30.r),
-                      color: Colors.white,
-                    ),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 13.r,
-                          backgroundImage: const AssetImage(
-                            AppConstant.eMandirGanesha,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(4.0.w),
-                          child: AutoTranslateText(
-                            'Shri Ganesh',
-                            style: AppTypography.label.copyWith(
-                              color: Colors.orange,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Spacing.w(30),
-                  Container(
-                    padding: EdgeInsets.all(2.w),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [Colors.orange, Colors.deepOrange],
-                      ),
-                    ),
-                    child: CircleAvatar(
-                      radius: 16.r,
-                      backgroundImage: const AssetImage(
-                        AppConstant.eMandirPlusIcon,
-                      ),
-                    ),
-                  ),
-                  Spacing.w(10),
-                  Expanded(
-                    child: ListView.separated(
-                      itemCount: 15,
-                      separatorBuilder: (context, index) => Spacing.w(5),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          padding: EdgeInsets.all(2.w),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: [Colors.orange, Colors.deepOrange],
-                            ),
-                          ),
-                          child: CircleAvatar(
-                            radius: 16.r,
-                            backgroundImage: const AssetImage(
-                              AppConstant.eMandirGodIcon,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+
+          // Positioned(
+          //   top: 70.h,
+          //   left: 12.w,
+          //   right: 12.w,
+          //   child: SizedBox(
+          //     height: 50.h,
+          //     child: Row(
+          //       children: [
+          //         Container(
+          //           padding: EdgeInsets.all(3.w),
+          //           decoration: BoxDecoration(
+          //             borderRadius: BorderRadius.circular(30.r),
+          //             color: Colors.white,
+          //           ),
+          //           child: Row(
+          //             children: [
+          //               CircleAvatar(
+          //                 radius: 13.r,
+          //                 backgroundImage: const AssetImage(
+          //                   AppConstant.eMandirGanesha,
+          //                 ),
+          //               ),
+          //               Padding(
+          //                 padding: EdgeInsets.all(4.0.w),
+          //                 child: AutoTranslateText(
+          //                   'Shri Ganesh',
+          //                   style: AppTypography.label.copyWith(
+          //                     color: Colors.orange,
+          //                     fontWeight: FontWeight.bold,
+          //                   ),
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //         Spacing.w(30),
+          //         Container(
+          //           padding: EdgeInsets.all(2.w),
+          //           decoration: const BoxDecoration(
+          //             shape: BoxShape.circle,
+          //             gradient: LinearGradient(
+          //               colors: [Colors.orange, Colors.deepOrange],
+          //             ),
+          //           ),
+          //           child: CircleAvatar(
+          //             radius: 16.r,
+          //             backgroundImage: const AssetImage(
+          //               AppConstant.eMandirPlusIcon,
+          //             ),
+          //           ),
+          //         ),
+          //         Spacing.w(10),
+          //         Expanded(
+          //           child: ListView.separated(
+          //             itemCount: 15,
+          //             separatorBuilder: (context, index) => Spacing.w(5),
+          //             scrollDirection: Axis.horizontal,
+          //             itemBuilder: (context, index) {
+          //               return Container(
+          //                 padding: EdgeInsets.all(2.w),
+          //                 decoration: const BoxDecoration(
+          //                   shape: BoxShape.circle,
+          //                   gradient: LinearGradient(
+          //                     colors: [Colors.orange, Colors.deepOrange],
+          //                   ),
+          //                 ),
+          //                 child: CircleAvatar(
+          //                   radius: 16.r,
+          //                   backgroundImage: const AssetImage(
+          //                     AppConstant.eMandirGodIcon,
+          //                   ),
+          //                 ),
+          //               );
+          //             },
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           Obx(
             () => controller.showVolumeSlider.value
                 ? Positioned(
