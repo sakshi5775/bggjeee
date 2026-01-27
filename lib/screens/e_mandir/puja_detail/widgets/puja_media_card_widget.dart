@@ -38,7 +38,7 @@ class PujaMediaCardWidget extends StatelessWidget {
                 child: puja.image != null && puja.image!.isNotEmpty
                     ? Image.network(
                         puja.image!,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
                             color: Colors.grey[300],
@@ -92,10 +92,7 @@ class PujaMediaCardWidget extends StatelessWidget {
                       child: const Center(
                         child: Text(
                           'ॐ',
-                          style: TextStyle(
-                            fontSize: 24,
-                            color: Colors.white,
-                          ),
+                          style: TextStyle(fontSize: 24, color: Colors.white),
                         ),
                       ),
                     ),
@@ -116,7 +113,8 @@ class PujaMediaCardWidget extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          if (puja.subheading != null && puja.subheading!.isNotEmpty) ...[
+                          if (puja.subheading != null &&
+                              puja.subheading!.isNotEmpty) ...[
                             const SizedBox(height: 8),
                             AutoTranslateText(
                               puja.subheading!,

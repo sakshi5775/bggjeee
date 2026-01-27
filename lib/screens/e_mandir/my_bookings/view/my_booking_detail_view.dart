@@ -83,6 +83,97 @@ class MyBookingDetailView extends BasePage<MyBookingDetailController> {
             ),
           ],
         ),
+        // Bottom Pay Now button for pending payment
+        bottomNavigationBar: Obx(() {
+          if (controller.isPendingPayment) {
+            return _buildPayNowButton();
+          }
+          return const SizedBox.shrink();
+        }),
+      ),
+    );
+  }
+
+  Widget _buildPayNowButton() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 24.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 16,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Obx(() {
+          return GestureDetector(
+            onTap: controller.isProcessingPayment.value
+                ? null
+                : controller.onPayPendingBooking,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 16.h),
+              decoration: BoxDecoration(
+                gradient: controller.isProcessingPayment.value
+                    ? LinearGradient(
+                        colors: [Colors.grey.shade400, Colors.grey.shade400],
+                      )
+                    : AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(14.r),
+                boxShadow: [
+                  if (!controller.isProcessingPayment.value)
+                    BoxShadow(
+                      color: AppColors.saffron.withValues(alpha: 0.35),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (controller.isProcessingPayment.value) ...[
+                    SizedBox(
+                      width: 20.w,
+                      height: 20.h,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    AutoTranslateText(
+                      'Processing...',
+                      style: AppTypography.body1.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ] else ...[
+                    Icon(
+                      Icons.payment_rounded,
+                      color: Colors.white,
+                      size: 24.sp,
+                    ),
+                    SizedBox(width: 10.w),
+                    AutoTranslateText(
+                      'Pay Pending Amount',
+                      style: AppTypography.body1.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16.sp,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          );
+        }),
       ),
     );
   }

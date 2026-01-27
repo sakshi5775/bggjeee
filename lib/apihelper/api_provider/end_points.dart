@@ -40,6 +40,10 @@ class EndPoints {
   static String bookingDetail(String bookingId) =>
       'sri-mandir/api/bookings/$bookingId';
 
+  /// puja payments
+  static const String pujaPaymentInitiate = 'sri-mandir/api/payments/initiate';
+  static const String pujaPaymentVerify = 'sri-mandir/api/payments/verify';
+
   /// ecommerce
   // Category endpoints
   static const String ecommerceCategories = 'ecommerce/api/categories';

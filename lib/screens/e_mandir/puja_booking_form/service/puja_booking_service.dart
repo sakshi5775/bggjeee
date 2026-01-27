@@ -8,7 +8,7 @@ class PujaBookingService {
   final ApiRepository _apiRepository = Get.find();
 
   /// Create a new puja booking
-  Future<PujaBookingResponse?> createBooking(PujaBookingRequest request) async {
+  Future<String?> createBooking(PujaBookingRequest request) async {
     try {
       final response = await _apiRepository.postApi(
         EndPoints.pujaBookings,
@@ -17,9 +17,9 @@ class PujaBookingService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (response.body['success'] == true && response.body['data'] != null) {
-          return PujaBookingResponse.fromJson(response.body['data']);
+          return response.body['data']['booking']['_id'];
         } else if (response.body['data'] != null) {
-          return PujaBookingResponse.fromJson(response.body['data']);
+          return response.body['data']['booking']['_id'];
         }
       }
 

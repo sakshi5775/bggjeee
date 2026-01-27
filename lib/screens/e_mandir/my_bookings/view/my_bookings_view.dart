@@ -66,6 +66,8 @@ class MyBookingsView extends BasePage<MyBookingsController> {
                             booking.status,
                           ),
                           onTap: () => controller.onBookingTap(booking),
+                          onPayNow: () =>
+                              controller.onPayPendingBooking(booking),
                         ),
                       );
                     },

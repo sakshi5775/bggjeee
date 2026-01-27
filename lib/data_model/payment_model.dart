@@ -399,3 +399,170 @@ class EcommercePaymentVerifyData {
     );
   }
 }
+
+// ============================================================================
+// Puja Booking Payment Models
+// ============================================================================
+
+/// Puja payment initiate request model
+class PujaPaymentInitiateRequest {
+  final String bookingId;
+  final String paymentProvider;
+
+  PujaPaymentInitiateRequest({
+    required this.bookingId,
+    this.paymentProvider = 'razorpay',
+  });
+
+  Map<String, dynamic> toJson() {
+    return {'bookingId': bookingId, 'paymentProvider': paymentProvider};
+  }
+}
+
+/// Puja payment initiate response model
+class PujaPaymentInitiateResponse {
+  final bool success;
+  final String message;
+  final PujaPaymentInitiateData? data;
+
+  PujaPaymentInitiateResponse({
+    required this.success,
+    required this.message,
+    this.data,
+  });
+
+  factory PujaPaymentInitiateResponse.fromJson(Map<String, dynamic> json) {
+    return PujaPaymentInitiateResponse(
+      success: json['success'] ?? false,
+      message: json['message'] ?? '',
+      data: json['data'] != null
+          ? PujaPaymentInitiateData.fromJson(
+              json['data'] as Map<String, dynamic>,
+            )
+          : null,
+    );
+  }
+}
+
+/// Puja payment initiate data model
+class PujaPaymentInitiateData {
+  final String paymentId;
+  final String razorpayKeyId;
+  final PujaPaymentOrder? order;
+  final double amount;
+  final String currency;
+  final String bookingId;
+
+  PujaPaymentInitiateData({
+    required this.paymentId,
+    required this.razorpayKeyId,
+    this.order,
+    required this.amount,
+    required this.currency,
+    required this.bookingId,
+  });
+
+  factory PujaPaymentInitiateData.fromJson(Map<String, dynamic> json) {
+    return PujaPaymentInitiateData(
+      paymentId: json['paymentId']?.toString() ?? '',
+      razorpayKeyId: json['razorpayKeyId']?.toString() ?? '',
+      order: json['order'] != null
+          ? PujaPaymentOrder.fromJson(json['order'] as Map<String, dynamic>)
+          : null,
+      amount: _toDouble(json['amount']) ?? 0,
+      currency: json['currency']?.toString() ?? 'INR',
+      bookingId: json['bookingId']?.toString() ?? '',
+    );
+  }
+}
+
+/// Puja payment order model from initiate response
+class PujaPaymentOrder {
+  final String id;
+  final int amount;
+  final String currency;
+
+  PujaPaymentOrder({
+    required this.id,
+    required this.amount,
+    required this.currency,
+  });
+
+  factory PujaPaymentOrder.fromJson(Map<String, dynamic> json) {
+    return PujaPaymentOrder(
+      id: json['id']?.toString() ?? '',
+      amount: json['amount'] is int
+          ? json['amount']
+          : int.tryParse(json['amount']?.toString() ?? '0') ?? 0,
+      currency: json['currency']?.toString() ?? 'INR',
+    );
+  }
+}
+
+/// Puja payment verify request model
+class PujaPaymentVerifyRequest {
+  final String bookingId;
+  final String razorpayOrderId;
+  final String razorpayPaymentId;
+  final String razorpaySignature;
+
+  PujaPaymentVerifyRequest({
+    required this.bookingId,
+    required this.razorpayOrderId,
+    required this.razorpayPaymentId,
+    required this.razorpaySignature,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'bookingId': bookingId,
+      'razorpay_order_id': razorpayOrderId,
+      'razorpay_payment_id': razorpayPaymentId,
+      'razorpay_signature': razorpaySignature,
+    };
+  }
+}
+
+/// Puja payment verify response model
+class PujaPaymentVerifyResponse {
+  final bool success;
+  final String message;
+  final PujaPaymentVerifyData? data;
+
+  PujaPaymentVerifyResponse({
+    required this.success,
+    required this.message,
+    this.data,
+  });
+
+  factory PujaPaymentVerifyResponse.fromJson(Map<String, dynamic> json) {
+    return PujaPaymentVerifyResponse(
+      success: json['success'] ?? false,
+      message: json['message'] ?? '',
+      data: json['data'] != null
+          ? PujaPaymentVerifyData.fromJson(json['data'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+}
+
+/// Puja payment verify data model
+class PujaPaymentVerifyData {
+  final String bookingId;
+  final String paymentId;
+  final String status;
+
+  PujaPaymentVerifyData({
+    required this.bookingId,
+    required this.paymentId,
+    required this.status,
+  });
+
+  factory PujaPaymentVerifyData.fromJson(Map<String, dynamic> json) {
+    return PujaPaymentVerifyData(
+      bookingId: json['bookingId']?.toString() ?? '',
+      paymentId: json['paymentId']?.toString() ?? '',
+      status: json['status']?.toString() ?? '',
+    );
+  }
+}

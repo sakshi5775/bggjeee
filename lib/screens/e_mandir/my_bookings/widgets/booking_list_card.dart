@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class BookingListCard extends StatelessWidget {
   final MyBookingItemModel booking;
   final VoidCallback onTap;
+  final VoidCallback? onPayNow;
   final Color statusColor;
 
   const BookingListCard({
@@ -15,7 +16,11 @@ class BookingListCard extends StatelessWidget {
     required this.booking,
     required this.onTap,
     required this.statusColor,
+    this.onPayNow,
   });
+
+  bool get isPendingPayment =>
+      booking.status?.toLowerCase() == 'pending_payment';
 
   @override
   Widget build(BuildContext context) {
@@ -157,6 +162,48 @@ class BookingListCard extends StatelessWidget {
                 ),
               ],
             ),
+            // Pay Now button for pending payment
+            if (isPendingPayment && onPayNow != null) ...[
+              SizedBox(height: 14.h),
+              Container(height: 1, color: const Color(0xFFF0F0F0)),
+              SizedBox(height: 14.h),
+              GestureDetector(
+                onTap: onPayNow,
+                child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.orangeGradient,
+                    borderRadius: BorderRadius.circular(12.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.saffron.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.payment_rounded,
+                        color: Colors.white,
+                        size: 20.sp,
+                      ),
+                      SizedBox(width: 8.w),
+                      AutoTranslateText(
+                        'Pay Now',
+                        style: AppTypography.body1.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
