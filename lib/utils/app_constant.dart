@@ -5,11 +5,11 @@ class AppConstant {
   static const String googleMapsApiKey =
       'AIzaSyBLAoT6aFAsHaFWBIvK3hha1BDbMzPFOb0';
 
-  static const String exitAppImage = 'assets/illustration/exit-app-image.svg';
-  static const String logoutImage = 'assets/illustration/logout-image.svg';
+  static const String exitAppImage = 'assets/images/exit-app-image.svg';
+  static const String logoutImage = 'assets/images/logout-image.svg';
 
   static const String noDataFoundImage = 'assets/images/NoResult.png';
-  static const String deleteImage = 'assets/illustration/delete_task.svg';
+  static const String deleteImage = 'assets/images/delete_task.svg';
   static const String closeIcon = 'assets/icons/close-icon.svg';
   static const String pickImageIcon = 'assets/icons/pick-image-icon.svg';
 

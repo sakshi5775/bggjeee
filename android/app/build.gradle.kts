@@ -57,6 +57,42 @@ android {
             )
         }
     }
+
+    // Bundle configuration to optimize app bundle size
+    // Note: splits.abi is removed because it conflicts with bundle builds
+    // When building bundles, use bundle.abi.enableSplit instead
+    bundle {
+        language {
+            // Enable language splitting to reduce base module size
+            // Languages will be downloaded on-demand by Play Store
+            enableSplit = true
+        }
+        density {
+            // Disable density splitting for app bundles (Play Store handles this automatically)
+            enableSplit = false
+        }
+        abi {
+            // Enable ABI splitting for app bundles to reduce size per architecture
+            enableSplit = true
+        }
+    }
+
+    // Additional resource optimization
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0",
+                "META-INF/*.kotlin_module"
+            )
+        }
+    }
 }
 
 flutter {
