@@ -36,39 +36,33 @@ class QuoteOfTheDayWidget extends BasePage<UserDashboardController> {
                 // Using fitWidth ensures image scales to full width without stretching
                 Positioned.fill(
                   child: Image.asset(
-                    AppConstant.quoteBackground,
+                    AppConstant.quoteOfTheDay,
                     fit: BoxFit.fitWidth,
                     alignment: Alignment.topCenter,
                     width: imageWidth,
                   ),
                 ),
-                // Text content with proper padding to stay within scroll boundaries
+                // Text content – padded to stay well within the inner red square only
                 Positioned.fill(
                   child: Padding(
-                    // Padding calculated as percentage to ensure text stays well within scroll edges
-                    // Left/Right: Accounts for rolled scroll edges
-                    // Top/Bottom: Accounts for scroll finials at top and bottom
                     padding: EdgeInsets.only(
-                      left: imageWidth * 0.10, // 10% of width from left edge
-                      right: imageWidth * 0.10, // 10% of width from right edge
-                      top: imageHeight * 0.18, // 18% of height from top (below finial)
-                      bottom: imageHeight * 0.18, // 18% of height from bottom (above finial)
+                      left: imageWidth * 0.17,
+                      right: imageWidth * 0.17,
+                      top: imageHeight * 0.17,
+                      bottom: imageHeight * 0.30,
                     ),
                     child: ClipRect(
-                      // ClipRect ensures text never overflows the padded area
                       child: SingleChildScrollView(
-                        physics: const NeverScrollableScrollPhysics(),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // Title
                             AutoTranslateText(
                               title,
                               style: MyTextTheme.mediumBCB
                                   .copyWith(
-                                    color: "#6F221E".toColor(),
+                                    color: "#F7C443".toColor(),
                                     fontWeight: FontWeight.w600,
                                     fontFamily: 'Baloo Bhai 2',
                                     fontSize: 15.sp,
@@ -77,41 +71,42 @@ class QuoteOfTheDayWidget extends BasePage<UserDashboardController> {
                               textAlign: TextAlign.center,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
+                              softWrap: true,
                             ),
-                            SizedBox(height: 10.h),
-                            // Sanskrit text
+                            SizedBox(height: 8.h),
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 4.w),
                               child: AutoTranslateText(
                                 quote?.sanskrit.text ?? '',
                                 style: MyTextTheme.mediumBCB.copyWith(
-                                  color: "#F38B3B".toColor(),
+                                  color: "#F7C443".toColor(),
                                   fontWeight: FontWeight.w900,
                                   fontFamily: 'Poppins',
                                   fontSize: 15.sp,
                                   height: 1.5,
                                 ),
                                 textAlign: TextAlign.center,
-                                maxLines: 3,
+                                maxLines: 5,
                                 overflow: TextOverflow.ellipsis,
+                                softWrap: true,
                               ),
                             ),
-                            SizedBox(height: 10.h),
-                            // Meaning/Translation
+                            SizedBox(height: 8.h),
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8.w),
                               child: AutoTranslateText(
                                 quote?.sanskrit.meaning ?? '',
                                 style: MyTextTheme.mediumBCN.copyWith(
-                                  color: "#551F23".toColor(),
+                                  color: "#F7C443".toColor(),
                                   fontWeight: FontWeight.w500,
                                   fontFamily: 'Poppins',
                                   fontSize: 14.sp,
                                   height: 1.6,
                                 ),
                                 textAlign: TextAlign.center,
-                                maxLines: 4,
+                                maxLines: 6,
                                 overflow: TextOverflow.ellipsis,
+                                softWrap: true,
                               ),
                             ),
                           ],

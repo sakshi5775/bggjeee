@@ -15,6 +15,9 @@ class AppRoutes {
   static const String chat = '/chat';
   static const String astrologerChat = '/astrologer-chat';
   static const String astrologerChatHistory = '/astrologer-chat-history';
+  static const String consultationHistory = '/consultation-history';
+  static const String allReports = '/all-reports';
+  static const String allVideos = '/all-videos';
   static const String astrologerVoiceCall = '/astrologer-voice-call';
   static const String astrologerVideoCall = '/astrologer-video-call';
   static const String aichat = '/ai-chat';

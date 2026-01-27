@@ -1,0 +1,208 @@
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
+import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+
+class YearTabWidget extends StatelessWidget {
+  const YearTabWidget({super.key});
+
+  static List<Map<String, dynamic>> _gridItems(int year) => [
+    {'title': 'Horoscope $year', 'icon': Icons.calendar_today, 'route': AppRoutes.horoscope},
+    {'title': 'Numerology $year', 'icon': Icons.numbers, 'route': AppRoutes.numerologyForm},
+    {'title': 'Love Horoscope $year', 'icon': Icons.favorite, 'route': AppRoutes.horoscope},
+    {'title': 'Education Horoscope $year', 'icon': Icons.school, 'route': AppRoutes.horoscope},
+    {'title': 'Finance Horoscope $year', 'icon': Icons.account_balance_wallet, 'route': AppRoutes.horoscope},
+    {'title': 'Vivah Muhurat $year', 'icon': Icons.favorite_border, 'route': AppRoutes.muhurat},
+    {'title': 'Griha Muhurat $year', 'icon': Icons.home, 'route': AppRoutes.muhurat},
+    {'title': 'Lal Kitab $year', 'icon': Icons.menu_book, 'route': AppRoutes.lalKitab},
+    {'title': 'Mundan Muhurat $year', 'icon': Icons.child_care, 'route': AppRoutes.muhurat},
+    {'title': 'Namkaran Muhurat $year', 'icon': Icons.badge, 'route': AppRoutes.muhurat},
+    {'title': 'Annaprashan Muhurat $year', 'icon': Icons.restaurant, 'route': AppRoutes.muhurat},
+    {'title': 'Karnavedha Muhurat $year', 'icon': Icons.hearing, 'route': AppRoutes.muhurat},
+    {'title': 'Vidyarambh Muhurat $year', 'icon': Icons.menu_book_rounded, 'route': AppRoutes.muhurat},
+    {'title': 'Ketu Transit $year', 'icon': Icons.visibility, 'route': null},
+    {'title': 'Rahu Transit $year', 'icon': Icons.visibility_outlined, 'route': null},
+    {'title': 'Lunar Eclipse $year', 'icon': Icons.dark_mode, 'route': null},
+    {'title': 'Solar Eclipse $year', 'icon': Icons.wb_sunny_outlined, 'route': null},
+    {'title': 'Mercury Retrograde $year', 'icon': Icons.rotate_right, 'route': null},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final year = DateTime.now().year;
+    final items = _gridItems(year);
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildBanner(year),
+          SizedBox(height: 2.h),
+          _buildGrid(year, items),
+          SizedBox(height: 24.h),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBanner(int year) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: ['#820B17'.toColor(), '#68171E'.toColor()],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: '#68171E'.toColor().withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AutoTranslateText(
+            '$year New Year',
+            style: AppTypography.h2.copyWith(
+              color: '#FCE5AA'.toColor(),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          AutoTranslateText(
+            'LIVE Astrologers',
+            style: AppTypography.h3.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(height: 4.h),
+          AutoTranslateText(
+            'Ask Question, Get Solution',
+            style: AppTypography.body2.copyWith(
+              color: Colors.white.withOpacity(0.9),
+            ),
+          ),
+          SizedBox(height: 12.h),
+          GestureDetector(
+            onTap: () => Get.toNamed(AppRoutes.liveAstrologers),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(12.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.deepOrange.withOpacity(0.4),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: AutoTranslateText(
+                'First Chat Free',
+                style: AppTypography.body1.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGrid(int year, List<Map<String, dynamic>> items) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 10.w,
+        mainAxisSpacing: 12.h,
+        childAspectRatio: 0.85,
+      ),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return _buildGridItem(
+          title: item['title'] as String,
+          icon: item['icon'] as IconData,
+          route: item['route'] as String?,
+        );
+      },
+    );
+  }
+
+  Widget _buildGridItem({
+    required String title,
+    required IconData icon,
+    required String? route,
+  }) {
+    final isComingSoon = route == null;
+    return GestureDetector(
+      onTap: () {
+        if (isComingSoon) {
+          Get.to(() => const ComingSoonPage());
+        } else {
+          Get.toNamed(route);
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: '#DBCCA8'.toColor().withOpacity(0.6)),
+          boxShadow: [
+            BoxShadow(
+              color: '#6F221E'.toColor().withOpacity(0.06),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 40.w,
+              height: 40.h,
+              decoration: BoxDecoration(
+                color: '#FCE5AA'.toColor().withOpacity(0.5),
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: Icon(icon, size: 22.w, color: AppColors.deepOrange),
+            ),
+            SizedBox(height: 6.h),
+            AutoTranslateText(
+              title,
+              style: AppTypography.body2.copyWith(
+                color: '#3D0C11'.toColor(),
+                fontWeight: FontWeight.w500,
+                fontSize: 10.sp,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

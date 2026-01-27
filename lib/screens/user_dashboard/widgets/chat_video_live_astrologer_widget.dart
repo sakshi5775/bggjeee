@@ -24,7 +24,7 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
       return Column(
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            padding: EdgeInsets.only(left: 16.w, right: 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -34,7 +34,7 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
                 ),
                 Spacing.w(16),
                 Padding(
-                  padding: AppPaddings.symmetric(h: 8, v: 16),
+                  padding: EdgeInsets.only(right: 6.w),
                   child: GestureDetector(
                     onTap: () {
                       Get.toNamed(AppRoutes.allAstrologers);
@@ -50,37 +50,70 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
               ],
             ),
           ),
+          Spacing.h(2),
           SizedBox(
-            height: 90.h,
+            height: 100.h,
             child: ListView.separated(
               separatorBuilder: (context, index) => Spacing.w(8),
               itemCount: controller.allAstrologer.length,
-              padding: AppPaddings.symmetric(h: 16),
+              padding: EdgeInsets.only(left: 16.w, right: 0),
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.deepOrange, width: 1.w),
-                  ),
-                  child: Row(
+                final astrologer = controller.allAstrologer[index];
+                final astrologerName = astrologer.displayName.isNotEmpty
+                    ? astrologer.displayName
+                    : astrologer.name;
+                return GestureDetector(
+                  onTap: () {
+                    Get.toNamed(
+                      AppRoutes.astrologerDetail,
+                      arguments: {"astrologer": astrologer},
+                    );
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          Get.toNamed(
-                            AppRoutes.astrologerDetail,
-                            arguments: {
-                              "astrologer": controller.allAstrologer[index],
-                            },
-                          );
-                        },
-                        child: NetworkImageWithLoader(
-                          url:
-                              controller.allAstrologer[index].profilePicture ??
-                              '',
-                          width: 70.w,
-                          height: 70.h,
-                          isCircular: true,
+                      SizedBox(
+                        width: 74.w,
+                        height: 74.h,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              width: 74.w,
+                              height: 74.h,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: AppColors.orangeGradient,
+                              ),
+                            ),
+                            ClipOval(
+                              child: SizedBox(
+                                width: 70.w,
+                                height: 70.h,
+                                child: NetworkImageWithLoader(
+                                  url: astrologer.profilePicture ?? '',
+                                  width: 70.w,
+                                  height: 70.h,
+                                  isCircular: true,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Spacing.h(4),
+                      SizedBox(
+                        width: 70.w,
+                        child: AutoTranslateText(
+                          astrologerName,
+                          style: AppTypography.body2.copyWith(
+                            color: '#3D0C11'.toColor(),
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],

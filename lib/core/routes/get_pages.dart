@@ -76,6 +76,10 @@ import 'package:astrobharataiuser/screens/courses/views/my_learning_view.dart';
 import 'package:astrobharataiuser/screens/otp/view/otp_view.dart';
 import 'package:astrobharataiuser/screens/sign_up/view/signup_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_main_view.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/consultation_history_view.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/all_reports_view.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/all_videos_view.dart';
+import 'package:astrobharataiuser/binding/dashboard_binding/all_videos_binding.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
 
 import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
@@ -359,6 +363,25 @@ class PageRoutes {
       page: () => const AstrologerChatHistoryView(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.consultationHistory,
+      page: () => const ConsultationHistoryView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.allReports,
+      page: () => const AllReportsView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.allVideos,
+      page: () => const AllVideosView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: AllVideosBinding(),
     ),
     GetPage(
       name: AppRoutes.astrologerVoiceCall,

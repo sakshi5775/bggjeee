@@ -54,7 +54,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
               ),
             ],
           ),
-          Spacing.h(16),
+         // Spacing.h(2),
           // Carousel Section
           ConstrainedBox(
             constraints: BoxConstraints(maxHeight: 120.h),

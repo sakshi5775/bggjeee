@@ -5,11 +5,11 @@ class AppConstant {
   static const String googleMapsApiKey =
       'AIzaSyBLAoT6aFAsHaFWBIvK3hha1BDbMzPFOb0';
 
-  static const String exitAppImage = 'assets/illustration/exit-app-image.svg';
-  static const String logoutImage = 'assets/illustration/logout-image.svg';
+  static const String exitAppImage = 'assets/images/exit-app-image.svg';
+  static const String logoutImage = 'assets/images/logout-image.svg';
 
   static const String noDataFoundImage = 'assets/images/NoResult.png';
-  static const String deleteImage = 'assets/illustration/delete_task.svg';
+  static const String deleteImage = 'assets/images/delete_task.svg';
   static const String closeIcon = 'assets/icons/close-icon.svg';
   static const String pickImageIcon = 'assets/icons/pick-image-icon.svg';
 
@@ -30,6 +30,7 @@ class AppConstant {
   static const String guruHoroscope = 'assets/app/guru_horoscope-4a9362.png';
   static const String gemstoneCard = 'assets/app/gemstone_card.png';
   static const String quoteBackground = 'assets/app/quote_background.png';
+  static const String quoteOfTheDay = 'assets/app/quote_of_the_day.png';
   static const String templeImage = 'assets/app/temple_image.png';
   static const String templeMahakaleshwar =
       'assets/app/temple_mahakaleshwar.png';
