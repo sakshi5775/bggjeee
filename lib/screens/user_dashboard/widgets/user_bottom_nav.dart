@@ -16,64 +16,40 @@ class UserBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = Get.find<UserMainController>();
     return Obx(
-      () => Container(
-        decoration: BoxDecoration(
-          color: Colors.white, // White background
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Container(
-            height: 70.h,
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildNavItem(
-                  icon: Icons.home,
-                  label: 'Home',
-                  index: 0,
-                  selectedIndex: c.selectedIndex.value,
-                  onTap: () => onTap(0),
+      () {
+        final items = c.navItems;
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            child: Container(
+              height: 70.h,
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(
+                  items.length,
+                  (index) => _buildNavItem(
+                    icon: items[index].icon,
+                    label: items[index].label,
+                    index: index,
+                    selectedIndex: c.selectedIndex.value,
+                    onTap: () => onTap(index),
+                  ),
                 ),
-                _buildNavItem(
-                  icon: Icons.history,
-                  label: 'History',
-                  index: 1,
-                  selectedIndex: c.selectedIndex.value,
-                  onTap: () => onTap(1),
-                ),
-                _buildNavItem(
-                  icon: Icons.person,
-                  label: 'Consult',
-                  index: 2,
-                  selectedIndex: c.selectedIndex.value,
-                  onTap: () => onTap(2),
-                ),
-                _buildNavItem(
-                  icon: Icons.smart_toy,
-                  label: 'AI',
-                  index: 3,
-                  selectedIndex: c.selectedIndex.value,
-                  onTap: () => onTap(3),
-                ),
-                _buildNavItem(
-                  icon: Icons.video_call,
-                  label: 'Live',
-                  index: 4,
-                  selectedIndex: c.selectedIndex.value,
-                  onTap: () => onTap(4),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

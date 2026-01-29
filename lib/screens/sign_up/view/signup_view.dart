@@ -37,9 +37,9 @@ class SignUpView extends BasePage<SignUpController> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Positioned.fill(
+                Positioned.fill(
                       child: Image.network(
-                        AppConstant.cardConsultation.replaceAll('+', '%2B'),
+                        AppConstant.cardConsultation,
                         fit: BoxFit.cover,
                         loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;
@@ -59,33 +59,33 @@ class SignUpView extends BasePage<SignUpController> {
                       ),
                     ),
                     // Back button overlay
-                    SafeArea(
-                      child: Padding(
-                        padding: EdgeInsets.all(16.w),
-                        child: GestureDetector(
-                          onTap: () => controller.goToLogin(),
-                          child: Container(
-                            padding: EdgeInsets.all(8.w),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.9),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.arrow_back_ios,
-                              color: AppColors.saffron,
-                              size: 18.sp,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // SafeArea(
+                    //   child: Padding(
+                    //     padding: EdgeInsets.all(16.w),
+                    //     child: GestureDetector(
+                    //       onTap: () => controller.goToLogin(),
+                    //       child: Container(
+                    //         padding: EdgeInsets.all(8.w),
+                    //         decoration: BoxDecoration(
+                    //           color: Colors.white.withOpacity(0.9),
+                    //           shape: BoxShape.circle,
+                    //           boxShadow: [
+                    //             BoxShadow(
+                    //               color: Colors.black.withOpacity(0.1),
+                    //               blurRadius: 8,
+                    //               offset: const Offset(0, 2),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //         child: Icon(
+                    //           Icons.arrow_back_ios,
+                    //           color: AppColors.saffron,
+                    //           size: 18.sp,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

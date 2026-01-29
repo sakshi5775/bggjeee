@@ -5,34 +5,18 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/role_navigation_service.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
-import 'package:astrobharataiuser/core/services/guest_session_manager.dart';
 import 'package:get_storage/get_storage.dart';
 
 class WaitingScreenController extends BaseController {
   Timer? _splashTimer;
   var _navigationTriggered = false;
   final GetStorage _storage = GetStorage();
-  Duration? _videoDuration;
 
   @override
   void onInit() {
     super.onInit();
-    // Start with a minimum delay, will be updated when video loads
+    // Show splash image for 3 seconds then navigate
     _splashTimer = Timer(const Duration(seconds: 3), () {
-      _navigateAfterSplash();
-    });
-  }
-
-  void setVideoDuration(Duration duration) {
-    if (_navigationTriggered) return;
-    
-    _videoDuration = duration;
-    // Cancel existing timer
-    _splashTimer?.cancel();
-    
-    // Wait for video duration + small buffer
-    final waitTime = duration + const Duration(milliseconds: 500);
-    _splashTimer = Timer(waitTime, () {
       _navigateAfterSplash();
     });
   }
