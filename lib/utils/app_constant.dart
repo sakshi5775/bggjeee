@@ -315,7 +315,8 @@ class AppConstant {
   static const String eMandirGanesha = 'assets/images/ganesha.png';
   static const String eMandirLiveDarshan = 'assets/images/live_darshan.png';
   static const String eMandirAartiIcon = 'assets/images/aarti_icon.png';
-  static const String eMandirThaliIcon = 'assets/images/Agarbatti thali.svg';
+  static const String eMandirThaliIcon =
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/AstroBharatAI+User+App/Sri+Mandir/Agarbatti+thali.svg';
   static const String eMandirPlayIcon = 'assets/images/play_icon.png';
   static const String eMandirEPuja = 'assets/images/e_puja.png';
   static const String eMandirLibraryAarti = 'assets/images/liberary_arti.png';

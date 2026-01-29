@@ -227,7 +227,12 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
               right: 18.w,
               child: InkWell(
                 onTap: () => controller.toggleAarti(context),
-                child: Image.asset(AppConstant.eMandirAartiIcon),
+                child: Image.network(
+                  AppConstant.eMandirThaliIcon,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) =>
+                      Image.asset(AppConstant.eMandirLadduIcon),
+                ),
               ),
             ),
             Positioned(
