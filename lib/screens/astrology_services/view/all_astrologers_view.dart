@@ -17,11 +17,13 @@ import '../../../theme/app_typography.dart';
 class AllAstrologersView extends StatelessWidget {
   final String? initialFilter;
   final bool hideHeader;
+  final bool showBackButton;
 
   const AllAstrologersView({
     Key? key,
     this.initialFilter,
     this.hideHeader = false,
+    this.showBackButton = true,
   }) : super(key: key);
 
   @override
@@ -45,7 +47,8 @@ class AllAstrologersView extends StatelessWidget {
               if (hideHeader)
                 _buildFiltersOnly(context, controller)
               else
-                _buildHeaderWithFilters(context, controller),
+                _buildHeaderWithFilters(context, controller,
+                    showBackButton: showBackButton),
 
               // Astrologer List
               Expanded(
@@ -211,8 +214,9 @@ class AllAstrologersView extends StatelessWidget {
 
   Widget _buildHeaderWithFilters(
     BuildContext context,
-    AllAstrologersController controller,
-  ) {
+    AllAstrologersController controller, {
+    bool showBackButton = true,
+  }) {
     return Container(
       decoration: BoxDecoration(
         gradient: AppColors.primaryGradient,
@@ -228,21 +232,22 @@ class AllAstrologersView extends StatelessWidget {
             padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 10.h),
             child: Row(
               children: [
-                // Back button
-                GestureDetector(
-                  onTap: () => Get.back(),
-                  child: Container(
-                    width: 32.w,
-                    height: 32.w,
-                    alignment: Alignment.center,
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: AppColors.templeGold,
-                      size: 20.w,
+                // Back button (hidden when opened from bottom nav)
+                if (showBackButton)
+                  GestureDetector(
+                    onTap: () => Get.back(),
+                    child: Container(
+                      width: 32.w,
+                      height: 32.w,
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: AppColors.templeGold,
+                        size: 20.w,
+                      ),
                     ),
                   ),
-                ),
-                Spacing.w(16),
+                if (showBackButton) Spacing.w(16),
                 // Logo/App Name - Split into three parts
                 SvgAssets(
                   path: 'assets/app/AstrobharatAi .svg',

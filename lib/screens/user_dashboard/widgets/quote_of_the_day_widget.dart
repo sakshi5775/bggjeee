@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
@@ -21,10 +23,8 @@ class QuoteOfTheDayWidget extends BasePage<UserDashboardController> {
 
       return LayoutBuilder(
         builder: (context, constraints) {
-          // Calculate full width (screen width)
           final double screenWidth = constraints.maxWidth;
           final double imageWidth = screenWidth;
-          // Maintain aspect ratio: 990 / 768
           final double imageHeight = (imageWidth * 768) / 990;
 
           return SizedBox(
@@ -32,8 +32,6 @@ class QuoteOfTheDayWidget extends BasePage<UserDashboardController> {
             height: imageHeight,
             child: Stack(
               children: [
-                // Background image - takes full width, maintains aspect ratio
-                // Using fitWidth ensures image scales to full width without stretching
                 Positioned.fill(
                   child: Image.network(
                     AppConstant.quoteOfTheDay,
@@ -42,7 +40,6 @@ class QuoteOfTheDayWidget extends BasePage<UserDashboardController> {
                     width: imageWidth,
                   ),
                 ),
-                // Text content – padded to stay well within the inner red square only
                 Positioned.fill(
                   child: Padding(
                     padding: EdgeInsets.only(
@@ -52,65 +49,10 @@ class QuoteOfTheDayWidget extends BasePage<UserDashboardController> {
                       bottom: imageHeight * 0.30,
                     ),
                     child: ClipRect(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            AutoTranslateText(
-                              title,
-                              style: MyTextTheme.mediumBCB
-                                  .copyWith(
-                                    color: "#F7C443".toColor(),
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Baloo Bhai 2',
-                                    fontSize: 15.sp,
-                                  )
-                                  .merge(AppTypography.h3),
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              softWrap: true,
-                            ),
-                            SizedBox(height: 8.h),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 4.w),
-                              child: AutoTranslateText(
-                                quote?.sanskrit.text ?? '',
-                                style: MyTextTheme.mediumBCB.copyWith(
-                                  color: "#F7C443".toColor(),
-                                  fontWeight: FontWeight.w900,
-                                  fontFamily: 'Poppins',
-                                  fontSize: 15.sp,
-                                  height: 1.5,
-                                ),
-                                textAlign: TextAlign.center,
-                                maxLines: 5,
-                                overflow: TextOverflow.ellipsis,
-                                softWrap: true,
-                              ),
-                            ),
-                            SizedBox(height: 8.h),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8.w),
-                              child: AutoTranslateText(
-                                quote?.sanskrit.meaning ?? '',
-                                style: MyTextTheme.mediumBCN.copyWith(
-                                  color: "#F7C443".toColor(),
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14.sp,
-                                  height: 1.6,
-                                ),
-                                textAlign: TextAlign.center,
-                                maxLines: 6,
-                                overflow: TextOverflow.ellipsis,
-                                softWrap: true,
-                              ),
-                            ),
-                          ],
-                        ),
+                      child: _QuoteMarqueeContent(
+                        title: title,
+                        sanskritText: quote?.sanskrit.text ?? '',
+                        meaning: quote?.sanskrit.meaning ?? '',
                       ),
                     ),
                   ),
@@ -121,5 +63,154 @@ class QuoteOfTheDayWidget extends BasePage<UserDashboardController> {
         },
       );
     });
+  }
+}
+
+/// Inner stateful widget: upward marquee + manual scroll within image bounds.
+class _QuoteMarqueeContent extends StatefulWidget {
+  final String title;
+  final String sanskritText;
+  final String meaning;
+
+  const _QuoteMarqueeContent({
+    required this.title,
+    required this.sanskritText,
+    required this.meaning,
+  });
+
+  @override
+  State<_QuoteMarqueeContent> createState() => _QuoteMarqueeContentState();
+}
+
+class _QuoteMarqueeContentState extends State<_QuoteMarqueeContent> {
+  final ScrollController _scrollController = ScrollController();
+  Timer? _marqueeTimer; // single timer for auto-scroll; canceled in dispose
+  DateTime? _manualScrollPauseUntil;
+  VoidCallback? _scrollingNotifierListener;
+  bool _disposed = false;
+
+  static const Duration _autoScrollInterval = Duration(milliseconds: 80);
+  static const double _autoScrollPixelsPerTick = 0.5;
+  static const Duration _pauseAfterManualScroll = Duration(seconds: 4);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _attachScrollListeners();
+      _startMarquee();
+    });
+  }
+
+  void _attachScrollListeners() {
+    if (!mounted || !_scrollController.hasClients) return;
+    final pos = _scrollController.position;
+    void onScrollingChanged() {
+      if (!mounted) return;
+      setState(() {
+        _manualScrollPauseUntil =
+            DateTime.now().add(_pauseAfterManualScroll);
+      });
+    }
+    _scrollingNotifierListener = onScrollingChanged;
+    pos.isScrollingNotifier.addListener(_scrollingNotifierListener!);
+  }
+
+  void _startMarquee() {
+    _marqueeTimer?.cancel();
+    _marqueeTimer = Timer.periodic(_autoScrollInterval, (_) {
+      if (_disposed || !mounted) return;
+      if (!_scrollController.hasClients) return;
+      final pos = _scrollController.position;
+      if (!pos.hasContentDimensions || pos.maxScrollExtent <= 0) return;
+      if (_manualScrollPauseUntil != null &&
+          DateTime.now().isBefore(_manualScrollPauseUntil!)) {
+        return;
+      }
+      final next = pos.pixels + _autoScrollPixelsPerTick;
+      if (next >= pos.maxScrollExtent) {
+        _scrollController.jumpTo(0);
+      } else {
+        _scrollController.jumpTo(next.clamp(0.0, pos.maxScrollExtent));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    final timer = _marqueeTimer;
+    _marqueeTimer = null;
+    timer?.cancel();
+    if (_scrollController.hasClients && _scrollingNotifierListener != null) {
+      try {
+        _scrollController.position.isScrollingNotifier
+            .removeListener(_scrollingNotifierListener!);
+      } catch (_) {}
+    }
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      controller: _scrollController,
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 4.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AutoTranslateText(
+              widget.title,
+              style: MyTextTheme.mediumBCB
+                  .copyWith(
+                    color: "#F7C443".toColor(),
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Baloo Bhai 2',
+                    fontSize: 15.sp,
+                  )
+                  .merge(AppTypography.h3),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              softWrap: true,
+            ),
+            SizedBox(height: 8.h),
+            AutoTranslateText(
+              widget.sanskritText,
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: "#F7C443".toColor(),
+                fontWeight: FontWeight.w900,
+                fontFamily: 'Poppins',
+                fontSize: 15.sp,
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+              softWrap: true,
+            ),
+            SizedBox(height: 8.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
+              child: AutoTranslateText(
+                widget.meaning,
+                style: MyTextTheme.mediumBCN.copyWith(
+                  color: "#F7C443".toColor(),
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins',
+                  fontSize: 14.sp,
+                  height: 1.6,
+                ),
+                textAlign: TextAlign.center,
+                softWrap: true,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

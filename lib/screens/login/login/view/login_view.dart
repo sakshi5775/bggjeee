@@ -42,14 +42,15 @@ class LoginView extends BasePage<LoginController> {
               //     ],
               //   ),
               // ),
-              Container(
+              SizedBox(
                 width: double.infinity,
+                height: 280.h,
                 child: Stack(
                   children: [
                     /// 🔹 Main Image
                     Positioned.fill(
                       child: Image.network(
-                        AppConstant.cardConsultation.replaceAll('+', '%2B'),
+                        AppConstant.cardConsultation,
                         fit: BoxFit.cover,
                         loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;
@@ -122,7 +123,6 @@ class LoginView extends BasePage<LoginController> {
               ),
               Container(
                 width: double.infinity,
-
                 child: SafeArea(
                   child: Column(
                     children: [
