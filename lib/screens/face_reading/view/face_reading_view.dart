@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,42 +25,38 @@ class FaceReadingView extends StatelessWidget {
             children: [
               // Header with back button
               _buildHeader(),
-              
-           
-              
+
               // Main icon
               _buildMainIcon(),
-              
-        
-              
+
               // Title
               _buildTitle(),
-              
+
               Spacing.h(8),
-              
+
               // Subtitle
               _buildSubtitle(),
-              
+
               Spacing.h(32),
-              
+
               // Unlock Your Facial Secrets section
               _buildUnlockSection(),
-              
+
               Spacing.h(32),
-              
+
               // What We Analyze section
               _buildWhatWeAnalyzeSection(),
-              
+
               Spacing.h(32),
-              
+
               // Facial Features We Read section
               _buildFacialFeaturesSection(),
-              
+
               Spacing.h(32),
-              
+
               // About Face Reading section
               _buildAboutSection(),
-              
+
               Spacing.h(32),
             ],
           ),
@@ -140,9 +137,13 @@ class FaceReadingView extends StatelessWidget {
       height: 140.w,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24.r),
-        child: Image.asset(
-          'assets/app/FaceReadingHub.png',
+        child: Image.network(
+          AppConstant.faceReadingHub,
           fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return const Center(child: CircularProgressIndicator());
+          },
           errorBuilder: (_, __, ___) => Icon(
             Icons.face_retouching_natural,
             size: 60.w,
@@ -156,10 +157,9 @@ class FaceReadingView extends StatelessWidget {
   Widget _buildTitle() {
     return AutoTranslateText(
       'Face Reading',
-      style: MyTextTheme.veryLargeBCB.copyWith(
-        color: '#3E2723'.toColor(),
-        fontWeight: FontWeight.bold,
-      ).merge(AppTypography.h1),
+      style: MyTextTheme.veryLargeBCB
+          .copyWith(color: '#3E2723'.toColor(), fontWeight: FontWeight.bold)
+          .merge(AppTypography.h1),
       textAlign: TextAlign.center,
     );
   }
@@ -169,9 +169,7 @@ class FaceReadingView extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: AutoTranslateText(
         'Ancient Chinese Physiognomy • AI-Powered Analysis',
-        style: MyTextTheme.mediumBCN.copyWith(
-          color: '#3E2723'.toColor(),
-        ),
+        style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
         textAlign: TextAlign.center,
       ),
     );
@@ -185,10 +183,7 @@ class FaceReadingView extends StatelessWidget {
         decoration: BoxDecoration(
           color: '#ffffff'.toColor(),
           borderRadius: BorderRadius.circular(18.r),
-          border: Border.all(
-            color: '#F5D7B8'.toColor(),
-            width: 1.5,
-          ),
+          border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.07),
@@ -222,10 +217,12 @@ class FaceReadingView extends StatelessWidget {
             // Heading
             AutoTranslateText(
               'Unlock Your Facial Secrets',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: '#3E2723'.toColor(),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
+              style: MyTextTheme.largeBCB
+                  .copyWith(
+                    color: '#3E2723'.toColor(),
+                    fontWeight: FontWeight.bold,
+                  )
+                  .merge(AppTypography.h2),
             ),
             Spacing.h(12),
             // Description
@@ -264,7 +261,10 @@ class FaceReadingView extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     foregroundColor: '#ffffff'.toColor(),
-                    padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 14.h,
+                      horizontal: 24.w,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.r),
                     ),
@@ -306,10 +306,12 @@ class FaceReadingView extends StatelessWidget {
         children: [
           AutoTranslateText(
             'What We Analyze',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
+            style: MyTextTheme.largeBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h2),
           ),
           Spacing.h(16),
           // Grid of 6 items in 2 columns
@@ -382,10 +384,7 @@ class FaceReadingView extends StatelessWidget {
         decoration: BoxDecoration(
           color: '#ffffff'.toColor(),
           borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(
-            color: '#F5D7B8'.toColor(),
-            width: 1.2,
-          ),
+          border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -405,11 +404,7 @@ class FaceReadingView extends StatelessWidget {
                 color: '#FFF2E8'.toColor(),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                color: "#F38B3B".toColor(),
-                size: 22.w,
-              ),
+              child: Icon(icon, color: "#F38B3B".toColor(), size: 22.w),
             ),
             Spacing.h(10),
             AutoTranslateText(
@@ -445,10 +440,12 @@ class FaceReadingView extends StatelessWidget {
         children: [
           AutoTranslateText(
             'Facial Features We Read',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
+            style: MyTextTheme.largeBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h2),
           ),
           Spacing.h(16),
           // Grid of 6 items in 3 columns
@@ -519,10 +516,7 @@ class FaceReadingView extends StatelessWidget {
       decoration: BoxDecoration(
         color: '#FFFAF0'.toColor(),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: '#F5D7B8'.toColor(),
-          width: 1.2,
-        ),
+        border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.04),
@@ -538,17 +532,19 @@ class FaceReadingView extends StatelessWidget {
           Spacing.h(8),
           AutoTranslateText(
             title,
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.body2),
+            style: MyTextTheme.mediumBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.body2),
           ),
           Spacing.h(4),
           AutoTranslateText(
             description,
-            style: MyTextTheme.smallBCN.copyWith(
-              color: '#666666'.toColor(),
-            ).merge(AppTypography.label),
+            style: MyTextTheme.smallBCN
+                .copyWith(color: '#666666'.toColor())
+                .merge(AppTypography.label),
           ),
         ],
       ),
@@ -582,7 +578,10 @@ class FaceReadingView extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: ["#DD2914".toColor().withOpacity(0.35), "#F38B3B".toColor().withOpacity(0.15)],
+                    colors: [
+                      "#DD2914".toColor().withOpacity(0.35),
+                      "#F38B3B".toColor().withOpacity(0.15),
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -629,7 +628,8 @@ class FaceReadingView extends StatelessWidget {
     final key = title.toLowerCase();
     if (key.contains('eye')) return 'assets/app/eyes.png';
     if (key.contains('nose')) return 'assets/app/nose.png';
-    if (key.contains('mouth') || key.contains('lips')) return 'assets/app/lips.png';
+    if (key.contains('mouth') || key.contains('lips'))
+      return 'assets/app/lips.png';
     if (key.contains('ear')) return 'assets/app/ear.png';
     if (key.contains('chin')) return 'assets/app/chin.png';
     return 'assets/app/face.png';
@@ -661,4 +661,3 @@ class FaceReadingView extends StatelessWidget {
     );
   }
 }
-

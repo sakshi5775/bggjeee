@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/face_reading/controller/face_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,19 +42,21 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: AutoTranslateText(
                     'Upload Your Photo',
-                      style: MyTextTheme.veryLargeBCB.copyWith(
-                        color: '#3E2723'.toColor(),
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h1),
+                    style: MyTextTheme.veryLargeBCB
+                        .copyWith(
+                          color: '#3E2723'.toColor(),
+                          fontWeight: FontWeight.bold,
+                        )
+                        .merge(AppTypography.h1),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: AutoTranslateText(
                     'For accurate face reading analysis',
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: '#3E2723'.toColor(),
-                      ).merge(AppTypography.body1),
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(color: '#3E2723'.toColor())
+                        .merge(AppTypography.body1),
                   ),
                 ),
                 Spacing.h(20),
@@ -156,9 +159,9 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: AutoTranslateText(
                   'Tap to select from gallery or take a new photo',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: '#ffffff'.toColor(),
-                  ).merge(AppTypography.body1),
+                  style: MyTextTheme.mediumBCN
+                      .copyWith(color: '#ffffff'.toColor())
+                      .merge(AppTypography.body1),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -202,17 +205,13 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 16.w,
-              color: '#ffffff'.toColor(),
-            ),
+            Icon(icon, size: 16.w, color: '#ffffff'.toColor()),
             Spacing.w(6),
             AutoTranslateText(
               label,
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: '#ffffff'.toColor(),
-              ).merge(AppTypography.body2),
+              style: MyTextTheme.mediumBCB
+                  .copyWith(color: '#ffffff'.toColor())
+                  .merge(AppTypography.body2),
             ),
           ],
         ),
@@ -259,35 +258,33 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Icon(
-                    Icons.close,
-                    size: 18.w,
-                    color: '#A14A3F'.toColor(),
-                  ),
+                  Icon(Icons.close, size: 18.w, color: '#A14A3F'.toColor()),
                 ],
               ),
               Spacing.h(12),
-              ...guidelines.map((g) => Padding(
-                    padding: EdgeInsets.only(bottom: 10.h),
-                    child: Row(
-                      children: [
-                        Icon(
-                          g.$2 ? Icons.check_circle : Icons.error_outline,
-                          size: 18.w,
-                          color: g.$2 ? '#1AAA55'.toColor() : '#D9534F'.toColor(),
-                        ),
-                        Spacing.w(10),
-                        Expanded(
-                          child: AutoTranslateText(
-                            g.$1,
-                            style: MyTextTheme.mediumBCN.copyWith(
-                              color: '#3E2723'.toColor(),
-                            ),
+              ...guidelines.map(
+                (g) => Padding(
+                  padding: EdgeInsets.only(bottom: 10.h),
+                  child: Row(
+                    children: [
+                      Icon(
+                        g.$2 ? Icons.check_circle : Icons.error_outline,
+                        size: 18.w,
+                        color: g.$2 ? '#1AAA55'.toColor() : '#D9534F'.toColor(),
+                      ),
+                      Spacing.w(10),
+                      Expanded(
+                        child: AutoTranslateText(
+                          g.$1,
+                          style: MyTextTheme.mediumBCN.copyWith(
+                            color: '#3E2723'.toColor(),
                           ),
                         ),
-                      ],
-                    ),
-                  )),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -311,11 +308,11 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
           Spacing.h(12),
           Row(
             children: [
-              _exampleCard('assets/app/face_reading_ex.png'),
+              _exampleCard(AppConstant.faceReadingEx),
               Spacing.w(8),
-              _exampleCard('assets/app/face_reading_ex_2.png'),
+              _exampleCard(AppConstant.faceReadingEx2),
               Spacing.w(8),
-              _exampleCard('assets/app/face_reading_ex_3.png'),
+              _exampleCard(AppConstant.faceReadingEx3),
             ],
           ),
         ],
@@ -330,10 +327,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
         decoration: BoxDecoration(
           color: '#ffffff'.toColor(),
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(
-            color: "#F38B3B".toColor(),
-            width: 1.5,
-          ),
+          border: Border.all(color: "#F38B3B".toColor(), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -360,20 +354,43 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
                 ],
               ),
               child: ClipOval(
-                child: Image.asset(
-                  imagePath,
-                  width: 70.w,
-                  height: 70.w,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    color: '#E8EEF6'.toColor(),
-                    child: Icon(
-                      Icons.person,
-                      size: 35.w,
-                      color: '#6C7A92'.toColor(),
-                    ),
-                  ),
-                ),
+                child:
+                    (imagePath.startsWith('http://') ||
+                        imagePath.startsWith('https://'))
+                    ? Image.network(
+                        imagePath,
+                        width: 70.w,
+                        height: 70.w,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                        errorBuilder: (_, __, ___) => Container(
+                          color: '#E8EEF6'.toColor(),
+                          child: Icon(
+                            Icons.person,
+                            size: 35.w,
+                            color: '#6C7A92'.toColor(),
+                          ),
+                        ),
+                      )
+                    : Image.asset(
+                        imagePath,
+                        width: 70.w,
+                        height: 70.w,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: '#E8EEF6'.toColor(),
+                          child: Icon(
+                            Icons.person,
+                            size: 35.w,
+                            color: '#6C7A92'.toColor(),
+                          ),
+                        ),
+                      ),
               ),
             ),
             Spacing.h(8),
@@ -383,16 +400,9 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: '#32bc3c'.toColor(),
-                border: Border.all(
-                  color: '#347f39'.toColor(),
-                  width: 1,
-                ),
+                border: Border.all(color: '#347f39'.toColor(), width: 1),
               ),
-              child: Icon(
-                Icons.check,
-                size: 14.w,
-                color: '#ffffff'.toColor(),
-              ),
+              child: Icon(Icons.check, size: 14.w, color: '#ffffff'.toColor()),
             ),
           ],
         ),
@@ -409,10 +419,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
         decoration: BoxDecoration(
           color: '#ffffff'.toColor(),
           borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(
-            color: '#1AAA55'.toColor(),
-            width: 2,
-          ),
+          border: Border.all(color: '#1AAA55'.toColor(), width: 2),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
@@ -480,9 +487,9 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
         source: ImageSource.camera,
         imageQuality: 80,
       );
-      
+
       if (!mounted) return;
-      
+
       if (pickedFile == null) {
         // User cancelled - no error needed
         return;
@@ -503,7 +510,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
       }
 
       final file = File(path);
-      
+
       // Check if file exists
       if (!await file.exists()) {
         if (mounted) {
@@ -523,7 +530,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
       setState(() {
         _selectedImage = file;
       });
-      
+
       // Navigate to scanning screen
       final controller = Get.put(FaceReadingController());
       controller.setImage(file);
@@ -555,9 +562,9 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
         source: ImageSource.gallery,
         imageQuality: 80,
       );
-      
+
       if (!mounted) return;
-      
+
       if (pickedFile == null) {
         // User cancelled - no error needed
         return;
@@ -578,7 +585,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
       }
 
       final file = File(path);
-      
+
       // Check if file exists
       if (!await file.exists()) {
         if (mounted) {
@@ -598,7 +605,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
       setState(() {
         _selectedImage = file;
       });
-      
+
       // Navigate to scanning screen
       final controller = Get.put(FaceReadingController());
       controller.setImage(file);
@@ -642,11 +649,7 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
             children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.security,
-                    color: '#ffffff'.toColor(),
-                    size: 18.w,
-                  ),
+                  Icon(Icons.security, color: '#ffffff'.toColor(), size: 18.w),
                   Spacing.w(8),
                   AutoTranslateText(
                     'Privacy & Security',
@@ -660,10 +663,9 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
               Spacing.h(10),
               AutoTranslateText(
                 'Your photo is processed securely and is not stored or shared. We respect your privacy and only use it for face reading analysis.',
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#ffffff'.toColor(),
-                  height: 1.4,
-                ).merge(AppTypography.body1),
+                style: MyTextTheme.mediumBCN
+                    .copyWith(color: '#ffffff'.toColor(), height: 1.4)
+                    .merge(AppTypography.body1),
               ),
             ],
           ),
@@ -672,4 +674,3 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
     );
   }
 }
-

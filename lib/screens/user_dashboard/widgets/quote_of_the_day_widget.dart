@@ -35,7 +35,7 @@ class QuoteOfTheDayWidget extends BasePage<UserDashboardController> {
                 // Background image - takes full width, maintains aspect ratio
                 // Using fitWidth ensures image scales to full width without stretching
                 Positioned.fill(
-                  child: Image.asset(
+                  child: Image.network(
                     AppConstant.quoteOfTheDay,
                     fit: BoxFit.fitWidth,
                     alignment: Alignment.topCenter,
@@ -123,4 +123,3 @@ class QuoteOfTheDayWidget extends BasePage<UserDashboardController> {
     });
   }
 }
-

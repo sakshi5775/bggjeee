@@ -5,10 +5,10 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/login/login/controller/login_controller.dart';
 import 'package:astrobharataiuser/screens/login/login/widgets/login_form_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 
 class LoginView extends BasePage<LoginController> {
   const LoginView({super.key});
@@ -47,11 +47,28 @@ class LoginView extends BasePage<LoginController> {
                 child: Stack(
                   children: [
                     /// 🔹 Main Image
-                    Image.asset(
-                      'assets/app/ganeshji_u.png',
-                      width: double.infinity,
-                      fit: BoxFit.fitWidth,
+                    Positioned.fill(
+                      child: Image.network(
+                        AppConstant.cardConsultation.replaceAll('+', '%2B'),
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Center(
+                            child: Icon(
+                              Icons.error,
+                              size: 48,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
+                      ),
                     ),
+
                     /// 🔹 Welcome Text Overlay
                     Positioned(
                       bottom: 0,

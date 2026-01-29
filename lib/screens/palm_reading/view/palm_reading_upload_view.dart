@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,74 +32,79 @@ class PalmReadingUploadView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                    // Back button
-                    GestureDetector(
-                      onTap: () => Get.back(),
-                      child: Container(
-                        padding: EdgeInsets.all(8.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
+                        // Back button
+                        GestureDetector(
+                          onTap: () => Get.back(),
+                          child: Container(
+                            padding: EdgeInsets.all(8.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
-                          ],
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: '#3E2723'.toColor(),
+                              size: 20.w,
+                            ),
+                          ),
                         ),
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: '#3E2723'.toColor(),
-                          size: 20.w,
+
+                        Spacing.h(24),
+
+                        // Title
+                        AutoTranslateText(
+                          'Upload Palm Photo',
+                          style: MyTextTheme.veryLargeBCB
+                              .copyWith(
+                                color: '#3E2723'.toColor(),
+                                fontWeight: FontWeight.bold,
+                              )
+                              .merge(AppTypography.h1),
                         ),
-                      ),
-                    ),
-                    
-                    Spacing.h(24),
-                    
-                    // Title
-                    AutoTranslateText(
-                      'Upload Palm Photo',
-                      style: MyTextTheme.veryLargeBCB.copyWith(
-                        color: '#3E2723'.toColor(),
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h1),
-                    ),
-                    
-                    Spacing.h(8),
-                    
-                    // Subtitle
-                    AutoTranslateText(
-                      'Take a clear photo of your palm for accurate reading',
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                    
-                    Spacing.h(32),
-                    
-                    // Upload Method Card
-                    _buildUploadMethodCard(context, controller),
-                    
-                    Spacing.h(32),
-                    
-                    // Photo Guidelines Section
-                    _buildPhotoGuidelinesSection(),
-                    
-                    Spacing.h(32),
-                    
-                    // Palm Analysis Section (shown when image is uploaded)
-                    Obx(() => controller.selectedPalmImage.value != null
-                        ? _buildPalmAnalysisSection(controller)
-                        : const SizedBox.shrink()),
-                    
-                    if (controller.selectedPalmImage.value != null) Spacing.h(32),
-                    
-                    // Continue button
-                    Obx(() => _buildContinueButton(context, controller)),
-                    
-                    Spacing.h(32),
+
+                        Spacing.h(8),
+
+                        // Subtitle
+                        AutoTranslateText(
+                          'Take a clear photo of your palm for accurate reading',
+                          style: MyTextTheme.mediumBCN.copyWith(
+                            color: Colors.grey[700],
+                          ),
+                        ),
+
+                        Spacing.h(32),
+
+                        // Upload Method Card
+                        _buildUploadMethodCard(context, controller),
+
+                        Spacing.h(32),
+
+                        // Photo Guidelines Section
+                        _buildPhotoGuidelinesSection(),
+
+                        Spacing.h(32),
+
+                        // Palm Analysis Section (shown when image is uploaded)
+                        Obx(
+                          () => controller.selectedPalmImage.value != null
+                              ? _buildPalmAnalysisSection(controller)
+                              : const SizedBox.shrink(),
+                        ),
+
+                        if (controller.selectedPalmImage.value != null)
+                          Spacing.h(32),
+
+                        // Continue button
+                        Obx(() => _buildContinueButton(context, controller)),
+
+                        Spacing.h(32),
                       ],
                     ),
                   ),
@@ -111,19 +117,19 @@ class PalmReadingUploadView extends StatelessWidget {
     );
   }
 
-  Widget _buildUploadMethodCard(BuildContext context, PalmReadingController controller) {
+  Widget _buildUploadMethodCard(
+    BuildContext context,
+    PalmReadingController controller,
+  ) {
     return Obx(() {
       final hasImage = controller.selectedPalmImage.value != null;
-      
+
       return Container(
         padding: AppPaddings.all(24),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: '#F5D7B8'.toColor(),
-            width: 1.5,
-          ),
+          border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -141,10 +147,7 @@ class PalmReadingUploadView extends StatelessWidget {
                 height: 300.h,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(
-                    color: "#F38B3B".toColor(),
-                    width: 2,
-                  ),
+                  border: Border.all(color: "#F38B3B".toColor(), width: 2),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12.r),
@@ -158,7 +161,11 @@ class PalmReadingUploadView extends StatelessWidget {
               // Change photo button
               TextButton.icon(
                 onPressed: () => controller.selectedPalmImage.value = null,
-                icon: Icon(Icons.refresh, color: '#EA632B'.toColor(), size: 20.w),
+                icon: Icon(
+                  Icons.refresh,
+                  color: '#EA632B'.toColor(),
+                  size: 20.w,
+                ),
                 label: AutoTranslateText(
                   'Change Photo',
                   style: MyTextTheme.mediumBCB.copyWith(
@@ -166,23 +173,30 @@ class PalmReadingUploadView extends StatelessWidget {
                   ),
                 ),
               ),
-             ] else ...[
-               // Icon with palmscan.png
-               SizedBox(
-                 height: 120.h,
-                 child: Center(
-                   child: Transform.scale(
-                     scale: 1.6,
-                     child: Image.asset(
-                       'assets/app/palmscan.png',
-                       fit: BoxFit.contain,
-                     ),
-                   ),
-                 ),
-               ),
-               
-               Spacing.h(20),
-              
+            ] else ...[
+              // Icon with palmscan.png
+              SizedBox(
+                height: 120.h,
+                child: Center(
+                  child: Transform.scale(
+                    scale: 1.6,
+                    child: Image.network(
+                      AppConstant.palmscan,
+                      fit: BoxFit.contain,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Center(child: Icon(Icons.error));
+                      },
+                    ),
+                  ),
+                ),
+              ),
+
+              Spacing.h(20),
+
               AutoTranslateText(
                 'Choose Upload Method',
                 style: MyTextTheme.mediumBCB.copyWith(
@@ -190,9 +204,9 @@ class PalmReadingUploadView extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              
+
               Spacing.h(2),
-              
+
               // Take Photo button
               _buildUploadButton(
                 context: context,
@@ -202,9 +216,9 @@ class PalmReadingUploadView extends StatelessWidget {
                 isPrimary: true,
                 onTap: () => controller.takePhoto(context),
               ),
-              
+
               Spacing.h(12),
-              
+
               // Upload from Gallery button
               _buildUploadButton(
                 context: context,
@@ -246,21 +260,14 @@ class PalmReadingUploadView extends StatelessWidget {
           ),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: isPrimary
-              ? "#F38B3B".toColor()
-              : Colors.white,
-          foregroundColor: isPrimary
-              ? Colors.white
-              : '#3E2723'.toColor(),
+          backgroundColor: isPrimary ? "#F38B3B".toColor() : Colors.white,
+          foregroundColor: isPrimary ? Colors.white : '#3E2723'.toColor(),
           padding: AppPaddings.symmetric(v: 16, h: 24),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.r),
             side: isPrimary
                 ? BorderSide.none
-                : BorderSide(
-                    color: Colors.grey.withOpacity(0.3),
-                    width: 1,
-                  ),
+                : BorderSide(color: Colors.grey.withOpacity(0.3), width: 1),
           ),
           elevation: isPrimary ? 4 : 0,
         ),
@@ -279,23 +286,23 @@ class PalmReadingUploadView extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        
+
         Spacing.h(16),
-        
+
         _buildGuidelineCard(
           icon: Icons.lightbulb_outline,
           text: 'Use a well-lit background',
         ),
-        
+
         Spacing.h(12),
-        
+
         _buildGuidelineCard(
           icon: Icons.pan_tool,
           text: 'Keep palm fully inside frame',
         ),
-        
+
         Spacing.h(12),
-        
+
         _buildGuidelineCard(
           icon: Icons.wb_sunny_outlined,
           text: 'Avoid shadows on the hand',
@@ -304,10 +311,7 @@ class PalmReadingUploadView extends StatelessWidget {
     );
   }
 
-  Widget _buildGuidelineCard({
-    required IconData icon,
-    required String text,
-  }) {
+  Widget _buildGuidelineCard({required IconData icon, required String text}) {
     return Container(
       padding: AppPaddings.all(16),
       decoration: BoxDecoration(
@@ -323,18 +327,12 @@ class PalmReadingUploadView extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            color: "#F38B3B".toColor(),
-            size: 24.w,
-          ),
+          Icon(icon, color: "#F38B3B".toColor(), size: 24.w),
           Spacing.w(12),
           Expanded(
             child: AutoTranslateText(
               text,
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: '#3E2723'.toColor(),
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
             ),
           ),
         ],
@@ -342,7 +340,10 @@ class PalmReadingUploadView extends StatelessWidget {
     );
   }
 
-  Widget _buildContinueButton(BuildContext context, PalmReadingController controller) {
+  Widget _buildContinueButton(
+    BuildContext context,
+    PalmReadingController controller,
+  ) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
@@ -371,11 +372,7 @@ class PalmReadingUploadView extends StatelessWidget {
               ),
             ),
             Spacing.w(8),
-            Icon(
-              Icons.arrow_forward,
-              color: Colors.white,
-              size: 20.w,
-            ),
+            Icon(Icons.arrow_forward, color: Colors.white, size: 20.w),
           ],
         ),
       ),
@@ -385,7 +382,7 @@ class PalmReadingUploadView extends StatelessWidget {
   Widget _buildPalmAnalysisSection(PalmReadingController controller) {
     return Obx(() {
       final isLeftHand = controller.selectedHand.value == 'Left';
-      
+
       return Container(
         padding: AppPaddings.all(24),
         decoration: BoxDecoration(
@@ -410,16 +407,16 @@ class PalmReadingUploadView extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             Spacing.h(24),
-            
+
             // Hand diagram
             Container(
               width: double.infinity,
               height: 300.h,
               decoration: BoxDecoration(
-                color: controller.selectedPalmImage.value != null 
-                    ? Colors.transparent 
+                color: controller.selectedPalmImage.value != null
+                    ? Colors.transparent
                     : const Color(0xFFF5F5F5),
                 borderRadius: BorderRadius.circular(12.r),
               ),
@@ -437,7 +434,7 @@ class PalmReadingUploadView extends StatelessWidget {
                         fit: BoxFit.cover,
                       ),
                     ),
-                  
+
                   // Semi-transparent overlay to make lines more visible
                   if (controller.selectedPalmImage.value != null)
                     Container(
@@ -446,21 +443,21 @@ class PalmReadingUploadView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                     ),
-                  
+
                   // Hand outline
                   CustomPaint(
                     size: Size(250.w, 300.h),
                     painter: HandDiagramPainter(isLeftHand: isLeftHand),
                   ),
-                  
+
                   // Planetary labels
                   _buildPlanetaryLabels(isLeftHand),
                 ],
               ),
             ),
-            
+
             Spacing.h(24),
-            
+
             // Palm lines buttons
             _buildPalmLinesButtons(),
           ],
@@ -518,18 +515,13 @@ class PalmReadingUploadView extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        AutoTranslateText(
-          symbol,
-          style: TextStyle(
-            color: '#EA632B'.toColor(),
-          ),
-        ),
+        AutoTranslateText(symbol, style: TextStyle(color: '#EA632B'.toColor())),
         Spacing.h(4),
         AutoTranslateText(
           name,
-          style: MyTextTheme.smallBCN.copyWith(
-            color: '#3E2723'.toColor(),
-          ).merge(AppTypography.label),
+          style: MyTextTheme.smallBCN
+              .copyWith(color: '#3E2723'.toColor())
+              .merge(AppTypography.label),
         ),
       ],
     );
@@ -540,25 +532,17 @@ class PalmReadingUploadView extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(
-              child: _buildLineButton('Life line', Colors.lightBlue),
-            ),
+            Expanded(child: _buildLineButton('Life line', Colors.lightBlue)),
             Spacing.w(12),
-            Expanded(
-              child: _buildLineButton('Head line', Colors.orange),
-            ),
+            Expanded(child: _buildLineButton('Head line', Colors.orange)),
           ],
         ),
         Spacing.h(12),
         Row(
           children: [
-            Expanded(
-              child: _buildLineButton('Fate line', Colors.purple),
-            ),
+            Expanded(child: _buildLineButton('Fate line', Colors.purple)),
             Spacing.w(12),
-            Expanded(
-              child: _buildLineButton('Heart line', Colors.red),
-            ),
+            Expanded(child: _buildLineButton('Heart line', Colors.red)),
           ],
         ),
       ],
@@ -599,7 +583,7 @@ class HandDiagramPainter extends CustomPainter {
 
     // Draw a simplified hand outline
     final path = Path();
-    
+
     // Palm base
     path.moveTo(size.width * 0.3, size.height * 0.7);
     path.quadraticBezierTo(
@@ -608,7 +592,7 @@ class HandDiagramPainter extends CustomPainter {
       size.width * 0.7,
       size.height * 0.7,
     );
-    
+
     // Thumb
     path.moveTo(size.width * 0.3, size.height * 0.7);
     path.quadraticBezierTo(
@@ -617,19 +601,19 @@ class HandDiagramPainter extends CustomPainter {
       size.width * 0.15,
       size.height * 0.3,
     );
-    
+
     // Fingers
     for (int i = 0; i < 4; i++) {
       final fingerX = size.width * (0.4 + i * 0.15);
       path.moveTo(fingerX, size.height * 0.2);
       path.lineTo(fingerX, size.height * 0.05);
     }
-    
+
     // Draw palm lines
     final linePaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
-    
+
     // Life line (curved around thumb)
     linePaint.color = Colors.lightBlue;
     final lifeLine = Path();
@@ -641,7 +625,7 @@ class HandDiagramPainter extends CustomPainter {
       size.height * 0.7,
     );
     canvas.drawPath(lifeLine, linePaint);
-    
+
     // Head line (horizontal middle)
     linePaint.color = Colors.orange;
     canvas.drawLine(
@@ -649,7 +633,7 @@ class HandDiagramPainter extends CustomPainter {
       Offset(size.width * 0.8, size.height * 0.4),
       linePaint,
     );
-    
+
     // Heart line (top horizontal)
     linePaint.color = Colors.red;
     canvas.drawLine(
@@ -657,7 +641,7 @@ class HandDiagramPainter extends CustomPainter {
       Offset(size.width * 0.8, size.height * 0.25),
       linePaint,
     );
-    
+
     // Fate line (vertical center)
     linePaint.color = Colors.purple;
     canvas.drawLine(
@@ -665,7 +649,7 @@ class HandDiagramPainter extends CustomPainter {
       Offset(size.width * 0.5, size.height * 0.7),
       linePaint,
     );
-    
+
     // Draw hand outline
     canvas.drawPath(path, paint);
   }
@@ -673,4 +657,3 @@ class HandDiagramPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-

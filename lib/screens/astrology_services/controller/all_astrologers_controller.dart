@@ -12,9 +12,18 @@ class AllAstrologersController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
 
-  // Filter variables
-  final RxString selectedFilter = 'All'.obs; // All, Vedic, Tarots, Vastu, Prashana
-  final List<String> filterOptions = ['All', 'Vedic', 'Tarots', 'Vastu', 'Prashana'];
+  // Filter variables (specialization + category)
+  final RxString selectedFilter =
+      'All'.obs; // All, Vedic, Tarots, Vastu, Prashana, Celebrity, Kids
+  final List<String> filterOptions = [
+    'All',
+    'Vedic',
+    'Tarots',
+    'Vastu',
+    'Prashana',
+    'Celebrity',
+    'Kids',
+  ];
 
   // Pagination
   final RxInt currentPage = 1.obs;
@@ -54,17 +63,22 @@ class AllAstrologersController extends GetxController {
     errorMessage.value = '';
 
     try {
-      // Map filter to specialization
+      // Map filter to specialization or astrologer category
       String? specialization;
+      String? astrologerCategory;
       if (selectedFilter.value != 'All') {
-        // Handle special cases first
-        if (selectedFilter.value == 'Tarots') {
-          specialization = 'TAROT';
-        } else if (selectedFilter.value == 'Prashana') {
-          specialization = 'PRASHANA';
+        if (selectedFilter.value == 'Celebrity') {
+          astrologerCategory = 'CELEBRITY_ASTROLOGER';
+        } else if (selectedFilter.value == 'Kids') {
+          astrologerCategory = 'KID_ASTROLOGER';
         } else {
-          // For Vedic, Vastu, etc., just uppercase
-          specialization = selectedFilter.value.toUpperCase();
+          if (selectedFilter.value == 'Tarots') {
+            specialization = 'TAROT';
+          } else if (selectedFilter.value == 'Prashana') {
+            specialization = 'PRASHANA';
+          } else {
+            specialization = selectedFilter.value.toUpperCase();
+          }
         }
       }
 
@@ -72,6 +86,7 @@ class AllAstrologersController extends GetxController {
         page: currentPage.value,
         limit: limit.value,
         specialization: specialization,
+        astrologerCategory: astrologerCategory,
       );
 
       if (response != null) {
@@ -113,33 +128,46 @@ class AllAstrologersController extends GetxController {
   // Helper method to format price (returns all three prices)
   String getPrice(AstrologerModel astrologer) {
     List<String> prices = [];
-    
+
     if (astrologer.chatPricePerMin != null && astrologer.chatPricePerMin! > 0) {
-      prices.add('Chat: ₹${astrologer.chatPricePerMin!.toStringAsFixed(0)}/min');
+      prices.add(
+        'Chat: ₹${astrologer.chatPricePerMin!.toStringAsFixed(0)}/min',
+      );
     }
-    if (astrologer.voicePricePerMin != null && astrologer.voicePricePerMin! > 0) {
-      prices.add('Call: ₹${astrologer.voicePricePerMin!.toStringAsFixed(0)}/min');
+    if (astrologer.voicePricePerMin != null &&
+        astrologer.voicePricePerMin! > 0) {
+      prices.add(
+        'Call: ₹${astrologer.voicePricePerMin!.toStringAsFixed(0)}/min',
+      );
     }
-    if (astrologer.videoPricePerMin != null && astrologer.videoPricePerMin! > 0) {
-      prices.add('Video: ₹${astrologer.videoPricePerMin!.toStringAsFixed(0)}/min');
+    if (astrologer.videoPricePerMin != null &&
+        astrologer.videoPricePerMin! > 0) {
+      prices.add(
+        'Video: ₹${astrologer.videoPricePerMin!.toStringAsFixed(0)}/min',
+      );
     }
-    
+
     if (prices.isEmpty) {
       return 'N/A';
     }
     return prices.join(' • ');
   }
-  
+
   // Helper method to get individual prices for detailed display
   Map<String, String?> getDetailedPrices(AstrologerModel astrologer) {
     return {
-      'chat': astrologer.chatPricePerMin != null && astrologer.chatPricePerMin! > 0
+      'chat':
+          astrologer.chatPricePerMin != null && astrologer.chatPricePerMin! > 0
           ? '₹${astrologer.chatPricePerMin!.toStringAsFixed(0)}/min'
           : null,
-      'voice': astrologer.voicePricePerMin != null && astrologer.voicePricePerMin! > 0
+      'voice':
+          astrologer.voicePricePerMin != null &&
+              astrologer.voicePricePerMin! > 0
           ? '₹${astrologer.voicePricePerMin!.toStringAsFixed(0)}/min'
           : null,
-      'video': astrologer.videoPricePerMin != null && astrologer.videoPricePerMin! > 0
+      'video':
+          astrologer.videoPricePerMin != null &&
+              astrologer.videoPricePerMin! > 0
           ? '₹${astrologer.videoPricePerMin!.toStringAsFixed(0)}/min'
           : null,
     };
@@ -166,4 +194,3 @@ class AllAstrologersController extends GetxController {
     super.onClose();
   }
 }
-

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:math' as math;
 import 'package:astrobharataiuser/screens/vastu/model/vastu_room_config.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 
 /// Royal & Classy Image-Based Vastu Compass
 /// Built from layered PNG images (NOT CustomPainter)
@@ -42,46 +43,40 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
   late Animation<double> _pulseAnimation;
   late AnimationController _rotationController;
   late Animation<double> _rotationAnimation;
-  
+
   double _currentRotation = 0.0;
   double _targetRotation = 0.0;
 
   @override
   void initState() {
     super.initState();
-    
+
     // Pulse animation for center mandala (1.8s loop)
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 1800),
       vsync: this,
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _pulseController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
-    
+
     // Smooth rotation animation (physics-based)
     _rotationController = AnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    
+
     _rotationAnimation = Tween<double>(begin: 0.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _rotationController,
-        curve: Curves.easeOutCubic,
-      ),
+      CurvedAnimation(parent: _rotationController, curve: Curves.easeOutCubic),
     );
-    
+
     _rotationController.addListener(() {
       setState(() {
         _currentRotation = _rotationAnimation.value;
       });
     });
-    
+
     _updateRotation();
   }
 
@@ -95,13 +90,13 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
 
   void _updateRotation() {
     if (widget.isLocked) return;
-    
+
     // Compass dial rotates opposite to heading (physics-based)
     // When heading is 0° (North), dial rotation is 0°
     // When heading is 90° (East), dial rotates -90° so East appears at bottom
     // Needle stays fixed pointing North
     _targetRotation = -widget.heading * math.pi / 180.0;
-    
+
     // Handle wrap-around for smooth rotation
     double diff = _targetRotation - _currentRotation;
     if (diff > math.pi) {
@@ -109,18 +104,16 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
     } else if (diff < -math.pi) {
       _targetRotation += 2 * math.pi;
     }
-    
+
     // Smooth interpolation
-    _rotationAnimation = Tween<double>(
-      begin: _currentRotation,
-      end: _targetRotation,
-    ).animate(
-      CurvedAnimation(
-        parent: _rotationController,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-    
+    _rotationAnimation =
+        Tween<double>(begin: _currentRotation, end: _targetRotation).animate(
+          CurvedAnimation(
+            parent: _rotationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
     _rotationController.forward(from: 0.0);
   }
 
@@ -130,7 +123,6 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
     _rotationController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -142,8 +134,8 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
     const double zoneScale = 1.00;
     const double starScale = 0.48;
     const double mandalaScale = 0.18; // small center mandala inside star
-    const double needleScale = 0.95;  // keep needle slightly inset for clarity
-    
+    const double needleScale = 0.95; // keep needle slightly inset for clarity
+
     // 3D tilt transform (subtle perspective)
     Matrix4 tiltTransform = Matrix4.identity();
     if (widget.tiltX != null && widget.tiltY != null) {
@@ -152,7 +144,7 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
         ..rotateX(widget.tiltY! * 0.1) // Subtle tilt
         ..rotateY(widget.tiltX! * 0.1);
     }
-    
+
     return Transform(
       transform: tiltTransform,
       alignment: Alignment.center,
@@ -163,7 +155,7 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
           children: [
             // 1️⃣ Outer frame (fixed)
             _buildLayer(
-              'assets/app/outer_frame.png',
+              AppConstant.outerFrame,
               size: size * outerScale,
               fixed: true,
             ),
@@ -176,19 +168,19 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
                 children: [
                   // direction_ring (rotates)
                   _buildLayer(
-                    'assets/app/direction_ring.png',
+                    AppConstant.directionRing,
                     size: size * directionScale,
                     fixed: false,
                   ),
                   // zone_ring (rotates)
                   _buildLayer(
-                    'assets/app/zone_ring.png',
+                    AppConstant.zoneRing,
                     size: size * zoneScale,
                     fixed: false,
                   ),
                   // star (rotates)
                   _buildLayer(
-                    'assets/app/star.png',
+                    AppConstant.star,
                     size: size * starScale,
                     fixed: false,
                   ),
@@ -211,7 +203,7 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
             ),
             // 3️⃣ Needle (fixed on top)
             _buildLayer(
-              'assets/app/needle.png',
+              AppConstant.needle,
               size: size * needleScale,
               fixed: true,
             ),
@@ -220,8 +212,10 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
               Positioned(
                 top: 20.h,
                 child: Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
                   decoration: BoxDecoration(
                     color: '#D4AF37'.toColor().withOpacity(0.9),
                     borderRadius: BorderRadius.circular(20.r),
@@ -236,11 +230,7 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.lock,
-                        color: Colors.white,
-                        size: 16.w,
-                      ),
+                      Icon(Icons.lock, color: Colors.white, size: 16.w),
                       SizedBox(width: 4.w),
                       Text(
                         'Locked',
@@ -260,37 +250,85 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
     );
   }
 
-  Widget _buildLayer(String assetPath, {required double size, required bool fixed}) {
-    return Image.asset(
-      assetPath,
-      width: size,
-      height: size,
-      fit: BoxFit.contain,
-      filterQuality: FilterQuality.high,
-      errorBuilder: (context, error, stackTrace) {
-        // Fallback: Show placeholder if image not found
-        debugPrint('Failed to load compass image: $assetPath - $error');
-        return Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.grey.withOpacity(0.1),
-            border: Border.all(
-              color: Colors.grey.withOpacity(0.3),
-              width: 1,
+  Widget _buildLayer(
+    String assetPath, {
+    required double size,
+    required bool fixed,
+  }) {
+    final isNetworkImage =
+        assetPath.startsWith('http://') || assetPath.startsWith('https://');
+
+    if (isNetworkImage) {
+      return Image.network(
+        assetPath,
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
+        filterQuality: FilterQuality.high,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            width: size,
+            height: size,
+            child: Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
             ),
-          ),
-          child: Center(
-            child: Icon(
-              Icons.compass_calibration,
-              size: size * 0.3,
-              color: Colors.grey.withOpacity(0.5),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          // Fallback: Show placeholder if image not found
+          debugPrint('Failed to load compass image: $assetPath - $error');
+          return Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey.withOpacity(0.1),
+              border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
             ),
-          ),
-        );
-      },
-    );
+            child: Center(
+              child: Icon(
+                Icons.compass_calibration,
+                size: size * 0.3,
+                color: Colors.grey.withOpacity(0.5),
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      return Image.asset(
+        assetPath,
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
+        filterQuality: FilterQuality.high,
+        errorBuilder: (context, error, stackTrace) {
+          // Fallback: Show placeholder if image not found
+          debugPrint('Failed to load compass image: $assetPath - $error');
+          return Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey.withOpacity(0.1),
+              border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+            ),
+            child: Center(
+              child: Icon(
+                Icons.compass_calibration,
+                size: size * 0.3,
+                color: Colors.grey.withOpacity(0.5),
+              ),
+            ),
+          );
+        },
+      );
+    }
   }
 }
-

@@ -281,7 +281,7 @@ class VirtualDarshanController extends GetxController
       aartiController.repeat();
       audioPlayer.stop();
       audioPlayer.setReleaseMode(ReleaseMode.loop);
-      audioPlayer.play(AssetSource('audio/aarti.mp3')).catchError((e) {
+      audioPlayer.play(UrlSource(AppConstant.aartiMp3)).catchError((e) {
         print("AUDIO ERROR: $e");
       });
       startFlowerRain(context);
@@ -484,7 +484,7 @@ class VirtualDarshanController extends GetxController
     } else {
       shankhPlayer.stop();
       shankhPlayer.setReleaseMode(ReleaseMode.stop);
-      shankhPlayer.play(AssetSource('audio/shankh.mp3')).catchError((e) {
+      shankhPlayer.play(UrlSource(AppConstant.shankhMp3)).catchError((e) {
         print("SHANKH AUDIO ERROR: $e");
       });
     }

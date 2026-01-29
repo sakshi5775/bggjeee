@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+2
+version: 1.0.1+7
 
 environment:
   sdk: ^3.9.2
@@ -33,14 +33,12 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
   get: ^4.6.6
   get_storage: ^2.1.1
   google_mlkit_translation: ^0.13.0
   google_mlkit_face_detection: ^0.13.1
   #  connectivity_plus: ^6.1.3
+  # shimmer: ^3.0.0
   lottie: ^3.3.1
   flutter_svg: ^2.0.17
   #  expansion_tile_group: ^2.2.0
@@ -57,7 +55,6 @@ dependencies:
   permission_handler: ^12.0.1
   geolocator: ^13.0.1
   geocoding: ^3.0.0
-  open_file: ^3.5.10
   #  fl_chart: ^0.71.0
   # syncfusion_flutter_charts: ^29.1.38
   syncfusion_flutter_pdfviewer:
@@ -71,16 +68,14 @@ dependencies:
   #  graphview: ^1.2.0
   intl:
   form_field_validator: ^1.1.0
-  smooth_page_indicator: ^1.2.1
-  animations: ^2.0.11
+  # smooth_page_indicator: ^1.2.1
   uuid: ^4.5.1
   upgrader: ^12.3.0
   socket_io_client: ^2.0.3+1
-  onesignal_flutter: ^5.3.3
   firebase_core: ^3.13.1
-  mime: ^2.0.0
+  onesignal_flutter: ^5.3.3
+  # mime: ^2.0.0
   device_info_plus:
-  mobile_scanner:
   camera: ^0.11.1
   path:
   flutter_downloader: ^1.12.0
@@ -96,7 +91,7 @@ dependencies:
   
   sensors_plus: ^4.0.2
   razorpay_flutter: ^1.4.0
-  gif_view: ^1.0.3
+  # gif_view: ^1.0.3
   audioplayers: ^6.5.1
 dev_dependencies:
   flutter_test:
@@ -137,11 +132,9 @@ flutter:
   assets:
     - assets/
     - assets/app/
-    - assets/app/ZodiacSigns/
     - assets/app/splash_video.mp4
     - assets/images/
     - assets/icons/
-    - assets/audio/
     - assets/languages.json
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

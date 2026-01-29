@@ -237,7 +237,9 @@ class UserDashboardController extends BaseController
   void scrollSliderToSelected({int retry = 0}) {
     // Debounce: skip if already scrolling (prevents cascade from ever() + direct call)
     if (_isScrollingSlider && retry == 0) {
-      debugPrint("SLIDER: scrollSliderToSelected() skipped (already scrolling)");
+      debugPrint(
+        "SLIDER: scrollSliderToSelected() skipped (already scrolling)",
+      );
       return;
     }
     debugPrint("SLIDER: scrollSliderToSelected() called, retry=$retry");
@@ -262,7 +264,7 @@ class UserDashboardController extends BaseController
       }
       return;
     }
-    
+
     // CRITICAL: Check positions.length to avoid "multiple scroll views" error
     // If multiple positions exist (temporary during rebuild), use the first one as fallback
     if (sc.positions.isEmpty) {
@@ -274,14 +276,16 @@ class UserDashboardController extends BaseController
       }
       return;
     }
-    
+
     // When multiple positions exist (e.g. temporary during rebuild), use first as fallback
     // and scroll via that position to avoid controller assertion.
     final position = sc.positions.length == 1
         ? sc.position
         : sc.positions.first;
     if (sc.positions.length != 1) {
-      debugPrint("SLIDER SCROLL: Using positions.first (total=${sc.positions.length})");
+      debugPrint(
+        "SLIDER SCROLL: Using positions.first (total=${sc.positions.length})",
+      );
     }
     final i = selectedSliderIndex.value;
     final n = sliderTabs.length;
@@ -297,9 +301,11 @@ class UserDashboardController extends BaseController
       final viewportWidth = position.viewportDimension;
       final maxExtent = position.maxScrollExtent;
       final currentOffset = position.pixels;
-      
+
       if (viewportWidth <= 0 || maxExtent <= 0) {
-        debugPrint("SLIDER SCROLL: Skipping (viewport=$viewportWidth, maxExtent=$maxExtent) - strip not scrollable");
+        debugPrint(
+          "SLIDER SCROLL: Skipping (viewport=$viewportWidth, maxExtent=$maxExtent) - strip not scrollable",
+        );
         _isScrollingSlider = false;
         return;
       }
@@ -309,7 +315,8 @@ class UserDashboardController extends BaseController
       final gap = 20.0 * scale;
       double totalWidth = leftPadding;
       for (int j = 0; j < index; j++) {
-        totalWidth += gap + (44.0 * scale + (sliderTabs[j].length * 9.0 * scale));
+        totalWidth +=
+            gap + (44.0 * scale + (sliderTabs[j].length * 9.0 * scale));
       }
       final tabWidth = 44.0 * scale + (sliderTabs[index].length * 9.0 * scale);
       final target = totalWidth - (viewportWidth / 2) + (tabWidth / 2);
@@ -319,15 +326,21 @@ class UserDashboardController extends BaseController
         _isScrollingSlider = false;
         return;
       }
-      
+
       _skipNextScrollEnd = true;
-      Future.delayed(const Duration(milliseconds: 400), () { _skipNextScrollEnd = false; });
+      Future.delayed(const Duration(milliseconds: 400), () {
+        _skipNextScrollEnd = false;
+      });
       final useJump = clamped <= 0.0 || clamped >= maxExtent - 1.0;
       if (useJump) {
         position.jumpTo(clamped);
       } else {
         try {
-          position.animateTo(clamped, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          position.animateTo(
+            clamped,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         } catch (_) {
           position.jumpTo(clamped);
         }
@@ -478,7 +491,9 @@ class UserDashboardController extends BaseController
 
     // Listen to selectedSliderIndex changes and auto-scroll strip (works for tap, swipe, any change)
     ever(selectedSliderIndex, (int newIndex) {
-      debugPrint("SLIDER: ever() fired - selectedSliderIndex changed to $newIndex");
+      debugPrint(
+        "SLIDER: ever() fired - selectedSliderIndex changed to $newIndex",
+      );
       scrollSliderToSelected();
     });
   }
@@ -670,12 +685,14 @@ class UserDashboardController extends BaseController
             .toList();
 
         liveStreams.value = currentLive;
-        // Fetch astrologer details (also needed when no one is live to show random cards)
-        await _loadAstrologerDetails(liveStreams);
       }
+      // Always load astrologers for "All Astrologers" and Live section fallback,
+      // even when live stream API fails (e.g. in release mode) so sections stay visible.
+      await _loadAstrologerDetails(liveStreams);
     } catch (e) {
       debugPrint('Error loading live streams: $e');
-      // Handle error silently or show message
+      // Still try to load astrologers so All / Live sections can show
+      await _loadAstrologerDetails(liveStreams);
     } finally {
       isLoadingLiveStreams.value = false;
     }
@@ -684,12 +701,13 @@ class UserDashboardController extends BaseController
   final RxList<AstrologerModel> allAstrologer = <AstrologerModel>[].obs;
 
   Future<void> _loadAstrologerDetails(List<LiveStreamModel> streams) async {
-    // Fetch astrologers to get profile pictures and names
+    // Fetch astrologers to get profile pictures and names (for All Astrologers + Live fallback)
     try {
       final astrologerResponse = await _astrologerService.getAstrologers(
         limit: 100,
       );
       if (astrologerResponse != null) {
+        allAstrologer.clear();
         // Create maps of astrologerId -> profilePicture and astrologerId -> name
         final Map<String, String?> profileMap = {};
         final Map<String, String?> nameMap = {};

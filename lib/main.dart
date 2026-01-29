@@ -7,13 +7,14 @@ import 'package:astrobharataiuser/core/services/custom_translation_service.dart'
 import 'package:astrobharataiuser/core/routes/get_pages.dart';
 import 'package:astrobharataiuser/firebase_options.dart';
 import 'package:astrobharataiuser/theme/app_theme.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/global_chat_banner.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+    show defaultTargetPlatform, kDebugMode, kIsWeb, TargetPlatform;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -181,15 +182,23 @@ class MyApp extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate, // WidgetsLocalizations
         ];
 
+        // Mandatory app update: users must update before proceeding (Play Store only).
+        final appUpgrader = Upgrader(
+          minAppVersion: AppConstant.minAppVersion,
+          durationUntilAlertAgain: Duration.zero,
+          debugLogging: kDebugMode,
+        );
+
         // Use GetBuilder to rebuild when language changes (lightweight)
         return UpgradeAlert(
           dialogStyle: UpgradeDialogStyle.material,
           barrierDismissible: false,
-          shouldPopScope: () => false,
           showIgnore: false,
           showLater: false,
-
-          upgrader: Upgrader(durationUntilAlertAgain: const Duration(hours: 4)),
+          // Block back/dismiss when update is available or user is below min version
+          shouldPopScope: () =>
+              !(appUpgrader.blocked() || appUpgrader.isUpdateAvailable()),
+          upgrader: appUpgrader,
           child: GetBuilder<LanguageControllerV2>(
             builder: (languageController) {
               // Get current locale from language controller

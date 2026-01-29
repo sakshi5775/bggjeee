@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 
 class ConsultationSliderController {
@@ -10,7 +11,7 @@ class ConsultationSliderController {
     {
       'title': 'Need a Consultation?',
       'buttonText': 'FREE SESSION',
-      'image': 'assets/app/ganeshji.png',
+      'image': AppConstant.cardConsultation,
     },
     {
       'title': 'Get Palm Reading',
@@ -50,5 +51,3 @@ class ConsultationSliderController {
     _timer?.cancel();
   }
 }
-
-

@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/screens/match_making/match_making/service/matc
 import 'package:astrobharataiuser/screens/match_making/match_making/widgets/astrologers_section_widget.dart';
 import 'package:astrobharataiuser/screens/match_making/match_making/widgets/compatibility_report_widget.dart';
 import 'package:astrobharataiuser/screens/match_making/match_making/widgets/kundli_chart_widget.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -50,16 +51,14 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
         body: Center(
           child: AutoTranslateText(
             'No data available',
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
-            ),
+            style: MyTextTheme.mediumBCB.copyWith(color: "#6F221E".toColor()),
           ),
         ),
       );
     }
 
     _formData ??= args['formData'] as Map<String, dynamic>?;
-    
+
     // Handle response - it can be a String (error) or Map (success)
     if (_currentResponse == null) {
       final responseValue = args['response'];
@@ -78,12 +77,12 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
         _currentResponse = args;
       }
     }
-    
+
     // If still null or if response indicates an error, show error
     if (_currentResponse == null) {
       return _buildErrorView('No data available');
     }
-    
+
     // Check for error status in the response
     final status = _currentResponse!['status'];
     if (status != null && status != 200) {
@@ -92,16 +91,16 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
         return _buildErrorView(errorMsg);
       }
     }
-    
+
     final response = _currentResponse!;
-    
+
     // Show matching animation first
     if (_showMatchingImage) {
       return Scaffold(
         backgroundColor: Colors.white,
         body: Center(
-          child: Lottie.asset(
-            'assets/app/match_making_kundli.json',
+          child: Lottie.network(
+            AppConstant.matchMakingKundliJson,
             fit: BoxFit.contain,
             width: double.infinity,
             height: double.infinity,
@@ -110,7 +109,7 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
         ),
       );
     }
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F0E8), // Pale pinkish-beige background
       body: SafeArea(
@@ -118,7 +117,7 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
           children: [
             // Header
             _buildHeader(),
-            
+
             // Content
             Expanded(
               child: SingleChildScrollView(
@@ -128,46 +127,62 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 12.h,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                        _buildMatchTabs(),
-                        if (_isFetching) ...[
-                          Spacing.h(12),
-                          const LinearProgressIndicator(minHeight: 2),
-                        ],
-                        Spacing.h(16),
+                          _buildMatchTabs(),
+                          if (_isFetching) ...[
+                            Spacing.h(12),
+                            const LinearProgressIndicator(minHeight: 2),
+                          ],
+                          Spacing.h(16),
                           // Compatibility Report with injected Kundli charts
                           CompatibilityReportWidget(
                             data: response,
                             formData: _formData,
-                            showProfile: _activeTab == 'North Match' || _activeTab == 'South Match',
-                            showGunMilan: _activeTab == 'North Match', // 36 Gun only for North
+                            showProfile:
+                                _activeTab == 'North Match' ||
+                                _activeTab == 'South Match',
+                            showGunMilan:
+                                _activeTab ==
+                                'North Match', // 36 Gun only for North
                             matchScoreTotalOverride: _resolveTotal(response),
                             showTotalSeparately: _activeTab == 'Western Match',
                             rawTotal: response['total'] as num?,
-                            kundliSection: (_activeTab == 'North Match' &&
-                                    response['boy_planetary_details'] != null && 
+                            kundliSection:
+                                (_activeTab == 'North Match' &&
+                                    response['boy_planetary_details'] != null &&
                                     response['girl_planetary_details'] != null)
                                 ? KundliChartWidget(
-                                    boyPlanetaryDetails: response['boy_planetary_details'] as Map<String, dynamic>,
-                                    girlPlanetaryDetails: response['girl_planetary_details'] as Map<String, dynamic>,
-                                    boyAstroDetails: response['boy_astro_details'] as Map<String, dynamic>?,
-                                    girlAstroDetails: response['girl_astro_details'] as Map<String, dynamic>?,
+                                    boyPlanetaryDetails:
+                                        response['boy_planetary_details']
+                                            as Map<String, dynamic>,
+                                    girlPlanetaryDetails:
+                                        response['girl_planetary_details']
+                                            as Map<String, dynamic>,
+                                    boyAstroDetails:
+                                        response['boy_astro_details']
+                                            as Map<String, dynamic>?,
+                                    girlAstroDetails:
+                                        response['girl_astro_details']
+                                            as Map<String, dynamic>?,
                                   )
                                 : null,
                           ),
                         ],
                       ),
                     ),
-                    
+
                     Spacing.h(20),
-                    
+
                     // Top Astrologers For Matchmaking
                     const AstrologersSectionWidget(),
-                    
+
                     Spacing.h(20),
                   ],
                 ),
@@ -181,9 +196,7 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
 
   Widget _buildHeader() {
     return Container(
-      decoration: BoxDecoration(
-        color: "#6F221E".toColor(),
-      ),
+      decoration: BoxDecoration(color: "#6F221E".toColor()),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         child: Row(
@@ -203,17 +216,21 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
                 children: [
                   AutoTranslateText(
                     'Compatibility Report',
-                    style: MyTextTheme.largeBCB.copyWith(
-                      color: const Color(0xFFDFB343),
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.h2),
+                    style: MyTextTheme.largeBCB
+                        .copyWith(
+                          color: const Color(0xFFDFB343),
+                          fontWeight: FontWeight.bold,
+                        )
+                        .merge(AppTypography.h2),
                   ),
                   Spacing.h(2),
                   AutoTranslateText(
                     'Based on Vedic Astrology',
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: const Color(0xFFDFB343).withOpacity(0.8),
-                    ).merge(AppTypography.body2),
+                    style: MyTextTheme.smallBCN
+                        .copyWith(
+                          color: const Color(0xFFDFB343).withOpacity(0.8),
+                        )
+                        .merge(AppTypography.body2),
                   ),
                 ],
               ),
@@ -255,9 +272,11 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
             child: ChoiceChip(
               label: AutoTranslateText(
                 t,
-                style: MyTextTheme.smallBCB.copyWith(
-                  color: isActive ? Colors.white : "#6F221E".toColor(),
-                ).merge(AppTypography.body2),
+                style: MyTextTheme.smallBCB
+                    .copyWith(
+                      color: isActive ? Colors.white : "#6F221E".toColor(),
+                    )
+                    .merge(AppTypography.body2),
               ),
               selected: isActive,
               onSelected: (_) => _onTabSelected(t),
@@ -398,7 +417,7 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
           // Check if response is an error (status != 200 or response is a String)
           final status = responseData['status'];
           final responseValue = responseData['response'];
-          
+
           if (status != null && status != 200 && responseValue is String) {
             // Error case - response is a string message
             // Don't update _currentResponse, keep showing current data or show error
@@ -471,8 +490,12 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
         (form['girlStar'] ?? '').toString().isNotEmpty) {
       return true;
     }
-    final boyCtl = TextEditingController(text: form['boyStar']?.toString() ?? '');
-    final girlCtl = TextEditingController(text: form['girlStar']?.toString() ?? '');
+    final boyCtl = TextEditingController(
+      text: form['boyStar']?.toString() ?? '',
+    );
+    final girlCtl = TextEditingController(
+      text: form['girlStar']?.toString() ?? '',
+    );
     final result = await Get.defaultDialog<bool>(
       title: 'Nakshatra Numbers',
       content: StatefulBuilder(
@@ -510,8 +533,12 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
         (form['girlSign'] ?? '').toString().isNotEmpty) {
       return true;
     }
-    final boyCtl = TextEditingController(text: form['boySign']?.toString() ?? '');
-    final girlCtl = TextEditingController(text: form['girlSign']?.toString() ?? '');
+    final boyCtl = TextEditingController(
+      text: form['boySign']?.toString() ?? '',
+    );
+    final girlCtl = TextEditingController(
+      text: form['girlSign']?.toString() ?? '',
+    );
     final result = await Get.defaultDialog<bool>(
       title: 'Western Zodiac Signs',
       content: Column(
@@ -578,18 +605,20 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
                       Spacing.h(24),
                       AutoTranslateText(
                         'Error',
-                        style: MyTextTheme.largeBCB.copyWith(
-                          color: "#6F221E".toColor(),
-                          fontWeight: FontWeight.bold,
-                        ).merge(AppTypography.h1),
+                        style: MyTextTheme.largeBCB
+                            .copyWith(
+                              color: "#6F221E".toColor(),
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.h1),
                       ),
                       Spacing.h(16),
                       AutoTranslateText(
                         errorMessage,
                         textAlign: TextAlign.center,
-                        style: MyTextTheme.mediumBCN.copyWith(
-                          color: Colors.black87,
-                        ).merge(AppTypography.h3),
+                        style: MyTextTheme.mediumBCN
+                            .copyWith(color: Colors.black87)
+                            .merge(AppTypography.h3),
                       ),
                       Spacing.h(32),
                       ElevatedButton(
@@ -619,4 +648,3 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
     );
   }
 }
-

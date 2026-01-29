@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,9 +21,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
         body: Center(
           child: AutoTranslateText(
             'No data available',
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
-            ),
+            style: MyTextTheme.mediumBCB.copyWith(color: "#6F221E".toColor()),
           ),
         ),
       );
@@ -30,7 +29,8 @@ class MatchMakingFullKundliView extends StatelessWidget {
 
     final isBoy = args['isBoy'] as bool? ?? true;
     final astroDetails = args['astroDetails'] as Map<String, dynamic>? ?? {};
-    final planetaryDetails = args['planetaryDetails'] as Map<String, dynamic>? ?? {};
+    final planetaryDetails =
+        args['planetaryDetails'] as Map<String, dynamic>? ?? {};
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F0E8),
@@ -39,7 +39,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
           children: [
             // Header
             _buildHeader(isBoy ? 'Boy' : 'Girl'),
-            
+
             // Content
             Expanded(
               child: SingleChildScrollView(
@@ -54,14 +54,14 @@ class MatchMakingFullKundliView extends StatelessWidget {
                         astroDetails: astroDetails,
                         isBoy: isBoy,
                       ),
-                    
+
                     Spacing.h(20),
-                    
+
                     // Astro Details Section
                     _buildAstroDetailsSection(astroDetails),
-                    
+
                     Spacing.h(20),
-                    
+
                     // Planetary Details Section
                     if (planetaryDetails.isNotEmpty)
                       _buildPlanetaryDetailsSection(planetaryDetails),
@@ -77,9 +77,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
 
   Widget _buildHeader(String title) {
     return Container(
-      decoration: BoxDecoration(
-        color: "#6F221E".toColor(),
-      ),
+      decoration: BoxDecoration(color: "#6F221E".toColor()),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         child: Row(
@@ -140,23 +138,53 @@ class MatchMakingFullKundliView extends StatelessWidget {
           _buildDetailRow('Paya', astroDetails['paya'] as String?),
           _buildDetailRow('Tatva', astroDetails['tatva'] as String?),
           _buildDetailRow('Birth Dasa', astroDetails['birth_dasa'] as String?),
-          _buildDetailRow('Current Dasa', astroDetails['current_dasa'] as String?),
-          _buildDetailRow('Birth Dasa Time', astroDetails['birth_dasa_time'] as String?),
-          _buildDetailRow('Current Dasa Time', astroDetails['current_dasa_time'] as String?),
+          _buildDetailRow(
+            'Current Dasa',
+            astroDetails['current_dasa'] as String?,
+          ),
+          _buildDetailRow(
+            'Birth Dasa Time',
+            astroDetails['birth_dasa_time'] as String?,
+          ),
+          _buildDetailRow(
+            'Current Dasa Time',
+            astroDetails['current_dasa_time'] as String?,
+          ),
           _buildDetailRow('Rasi', astroDetails['rasi'] as String?),
           _buildDetailRow('Nakshatra', astroDetails['nakshatra'] as String?),
-          _buildDetailRow('Nakshatra Pada', astroDetails['nakshatra_pada']?.toString()),
-          _buildDetailRow('Ascendant Sign', astroDetails['ascendant_sign'] as String?),
+          _buildDetailRow(
+            'Nakshatra Pada',
+            astroDetails['nakshatra_pada']?.toString(),
+          ),
+          _buildDetailRow(
+            'Ascendant Sign',
+            astroDetails['ascendant_sign'] as String?,
+          ),
           if (astroDetails['lucky_gem'] != null)
-            _buildListRow('Lucky Gem', astroDetails['lucky_gem'] as List<dynamic>?),
+            _buildListRow(
+              'Lucky Gem',
+              astroDetails['lucky_gem'] as List<dynamic>?,
+            ),
           if (astroDetails['lucky_num'] != null)
-            _buildListRow('Lucky Number', astroDetails['lucky_num'] as List<dynamic>?),
+            _buildListRow(
+              'Lucky Number',
+              astroDetails['lucky_num'] as List<dynamic>?,
+            ),
           if (astroDetails['lucky_colors'] != null)
-            _buildListRow('Lucky Colors', astroDetails['lucky_colors'] as List<dynamic>?),
+            _buildListRow(
+              'Lucky Colors',
+              astroDetails['lucky_colors'] as List<dynamic>?,
+            ),
           if (astroDetails['lucky_letters'] != null)
-            _buildListRow('Lucky Letters', astroDetails['lucky_letters'] as List<dynamic>?),
+            _buildListRow(
+              'Lucky Letters',
+              astroDetails['lucky_letters'] as List<dynamic>?,
+            ),
           if (astroDetails['lucky_name_start'] != null)
-            _buildListRow('Lucky Name Start', astroDetails['lucky_name_start'] as List<dynamic>?),
+            _buildListRow(
+              'Lucky Name Start',
+              astroDetails['lucky_name_start'] as List<dynamic>?,
+            ),
         ],
       ),
     );
@@ -187,8 +215,11 @@ class MatchMakingFullKundliView extends StatelessWidget {
           ...planetaryDetails.entries.map((entry) {
             final planetData = entry.value as Map<String, dynamic>?;
             if (planetData == null) return const SizedBox.shrink();
-            
-            final planetName = planetData['full_name'] as String? ?? planetData['name'] as String? ?? 'Unknown';
+
+            final planetName =
+                planetData['full_name'] as String? ??
+                planetData['name'] as String? ??
+                'Unknown';
             return _buildPlanetCard(planetName, planetData);
           }).toList(),
         ],
@@ -219,22 +250,48 @@ class MatchMakingFullKundliView extends StatelessWidget {
             ),
           ),
           Spacing.h(8),
-          _buildDetailRow('Local Degree', planetData['local_degree']?.toString()),
-          _buildDetailRow('Global Degree', planetData['global_degree']?.toString()),
+          _buildDetailRow(
+            'Local Degree',
+            planetData['local_degree']?.toString(),
+          ),
+          _buildDetailRow(
+            'Global Degree',
+            planetData['global_degree']?.toString(),
+          ),
           _buildDetailRow('House', planetData['house']?.toString()),
           _buildDetailRow('Zodiac', planetData['zodiac'] as String?),
           _buildDetailRow('Nakshatra', planetData['nakshatra'] as String?),
-          _buildDetailRow('Nakshatra Lord', planetData['nakshatra_lord'] as String?),
-          _buildDetailRow('Nakshatra Pada', planetData['nakshatra_pada']?.toString()),
+          _buildDetailRow(
+            'Nakshatra Lord',
+            planetData['nakshatra_lord'] as String?,
+          ),
+          _buildDetailRow(
+            'Nakshatra Pada',
+            planetData['nakshatra_pada']?.toString(),
+          ),
           _buildDetailRow('Zodiac Lord', planetData['zodiac_lord'] as String?),
           if (planetData['retro'] != null)
-            _buildDetailRow('Retrograde', planetData['retro'] == true ? 'Yes' : 'No'),
+            _buildDetailRow(
+              'Retrograde',
+              planetData['retro'] == true ? 'Yes' : 'No',
+            ),
           if (planetData['is_combust'] != null)
-            _buildDetailRow('Combust', planetData['is_combust'] == true ? 'Yes' : 'No'),
-          if (planetData['basic_avastha'] != null && planetData['basic_avastha'] != '-')
-            _buildDetailRow('Basic Avastha', planetData['basic_avastha'] as String?),
-          if (planetData['lord_status'] != null && planetData['lord_status'] != '-')
-            _buildDetailRow('Lord Status', planetData['lord_status'] as String?),
+            _buildDetailRow(
+              'Combust',
+              planetData['is_combust'] == true ? 'Yes' : 'No',
+            ),
+          if (planetData['basic_avastha'] != null &&
+              planetData['basic_avastha'] != '-')
+            _buildDetailRow(
+              'Basic Avastha',
+              planetData['basic_avastha'] as String?,
+            ),
+          if (planetData['lord_status'] != null &&
+              planetData['lord_status'] != '-')
+            _buildDetailRow(
+              'Lord Status',
+              planetData['lord_status'] as String?,
+            ),
         ],
       ),
     );
@@ -242,7 +299,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
 
   Widget _buildDetailRow(String label, String? value) {
     if (value == null || value.isEmpty) return const SizedBox.shrink();
-    
+
     return Padding(
       padding: EdgeInsets.only(bottom: 8.h),
       child: Row(
@@ -252,18 +309,20 @@ class MatchMakingFullKundliView extends StatelessWidget {
             width: 120.w,
             child: AutoTranslateText(
               '$label:',
-              style: MyTextTheme.smallBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.w600,
-              ).merge(AppTypography.body2),
+              style: MyTextTheme.smallBCB
+                  .copyWith(
+                    color: "#6F221E".toColor(),
+                    fontWeight: FontWeight.w600,
+                  )
+                  .merge(AppTypography.body2),
             ),
           ),
           Expanded(
             child: AutoTranslateText(
               value,
-              style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor(),
-              ).merge(AppTypography.body2),
+              style: MyTextTheme.smallBCN
+                  .copyWith(color: "#6F221E".toColor())
+                  .merge(AppTypography.body2),
             ),
           ),
         ],
@@ -273,7 +332,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
 
   Widget _buildListRow(String label, List<dynamic>? values) {
     if (values == null || values.isEmpty) return const SizedBox.shrink();
-    
+
     return Padding(
       padding: EdgeInsets.only(bottom: 8.h),
       child: Row(
@@ -283,18 +342,20 @@ class MatchMakingFullKundliView extends StatelessWidget {
             width: 120.w,
             child: AutoTranslateText(
               '$label:',
-              style: MyTextTheme.smallBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.w600,
-              ).merge(AppTypography.body2),
+              style: MyTextTheme.smallBCB
+                  .copyWith(
+                    color: "#6F221E".toColor(),
+                    fontWeight: FontWeight.w600,
+                  )
+                  .merge(AppTypography.body2),
             ),
           ),
           Expanded(
             child: AutoTranslateText(
               values.map((e) => e.toString()).join(', '),
-              style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor(),
-              ).merge(AppTypography.body2),
+              style: MyTextTheme.smallBCN
+                  .copyWith(color: "#6F221E".toColor())
+                  .merge(AppTypography.body2),
             ),
           ),
         ],
@@ -309,28 +370,33 @@ class MatchMakingFullKundliView extends StatelessWidget {
   }) {
     // Extract planets and organize by house
     final houses = <int, List<_PlanetData>>{};
-    
+
     for (int i = 0; i <= 9; i++) {
       final planetKey = i.toString();
       final planetData = planetaryDetails[planetKey] as Map<String, dynamic>?;
       if (planetData != null) {
         final house = planetData['house'] as int?;
         if (house != null && house >= 1 && house <= 12) {
-          final localDegree = (planetData['local_degree'] as num? ?? 0).toDouble();
+          final localDegree = (planetData['local_degree'] as num? ?? 0)
+              .toDouble();
           final name = planetData['name'] as String? ?? '';
           final fullName = planetData['full_name'] as String? ?? '';
           final retro = planetData['retro'] as bool? ?? false;
           final isCombust = planetData['is_combust'] as bool? ?? false;
           final isAscendant = i == 0;
-          
-          houses.putIfAbsent(house, () => []).add(_PlanetData(
-            name: name,
-            fullName: fullName,
-            localDegree: localDegree,
-            retro: retro,
-            isCombust: isCombust,
-            isAscendant: isAscendant,
-          ));
+
+          houses
+              .putIfAbsent(house, () => [])
+              .add(
+                _PlanetData(
+                  name: name,
+                  fullName: fullName,
+                  localDegree: localDegree,
+                  retro: retro,
+                  isCombust: isCombust,
+                  isAscendant: isAscendant,
+                ),
+              );
         }
       }
     }
@@ -351,9 +417,11 @@ class MatchMakingFullKundliView extends StatelessWidget {
           child: Center(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final maxWidth = constraints.maxWidth > 0 ? constraints.maxWidth : 350.w;
+                final maxWidth = constraints.maxWidth > 0
+                    ? constraints.maxWidth
+                    : 350.w;
                 final chartSize = math.min(maxWidth - 32.w, 400.w);
-                
+
                 return SizedBox(
                   width: chartSize,
                   height: chartSize,
@@ -384,18 +452,26 @@ class MatchMakingFullKundliView extends StatelessWidget {
                           },
                         ),
                       ),
-                      
+
                       // Profile image overlay
                       Positioned(
                         left: isBoy ? null : 8.w,
                         right: isBoy ? 8.w : null,
                         top: 8.h,
                         child: ClipOval(
-                          child: Image.asset(
-                            isBoy ? 'assets/app/kundliBoy.png' : 'assets/app/kundliGirl.png',
+                          child: Image.network(
+                            isBoy
+                                ? AppConstant.kundliBoy
+                                : AppConstant.kundliGirl,
                             width: 50.w,
                             height: 50.w,
                             fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
                                 width: 50.w,
@@ -414,7 +490,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
                           ),
                         ),
                       ),
-                      
+
                       // Place planets
                       ..._buildPlanetPlacements(houses, chartSize),
                     ],
@@ -428,24 +504,27 @@ class MatchMakingFullKundliView extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildPlanetPlacements(Map<int, List<_PlanetData>> houses, double size) {
+  List<Widget> _buildPlanetPlacements(
+    Map<int, List<_PlanetData>> houses,
+    double size,
+  ) {
     final widgets = <Widget>[];
     final housePositions = _getHousePositions(size);
-    
+
     houses.forEach((house, planets) {
       final position = housePositions[house];
       if (position == null) return;
-      
+
       final houseCenterX = position['x']!;
       final houseCenterY = position['y']!;
       final planetCount = planets.length;
       final spacing = 35.w;
-      
+
       for (int i = 0; i < planets.length; i++) {
         final planet = planets[i];
         double offsetX = 0;
         double offsetY = 0;
-        
+
         if (planetCount == 1) {
           offsetX = 0;
           offsetY = 0;
@@ -460,7 +539,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
           offsetX = (col - (cols - 1) / 2) * spacing * 0.7;
           offsetY = (row - (planetCount / cols - 1) / 2) * spacing * 0.6;
         }
-        
+
         widgets.add(
           Positioned(
             left: houseCenterX - 20.w + offsetX,
@@ -470,7 +549,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
         );
       }
     });
-    
+
     return widgets;
   }
 
@@ -478,7 +557,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
     final center = size / 2;
     final outerRadius = size * 0.32;
     final innerRadius = size * 0.15;
-    
+
     return {
       1: {
         'x': center + outerRadius * math.cos(270 * math.pi / 180),
@@ -533,8 +612,13 @@ class MatchMakingFullKundliView extends StatelessWidget {
 
   Widget _buildPlanetWidget(_PlanetData planet) {
     final degreeText = planet.localDegree.round().toString();
-    final planetSymbol = _getPlanetSymbol(planet.name, planet.retro, planet.isCombust, planet.isAscendant);
-    
+    final planetSymbol = _getPlanetSymbol(
+      planet.name,
+      planet.retro,
+      planet.isCombust,
+      planet.isAscendant,
+    );
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
       child: Column(
@@ -562,7 +646,12 @@ class MatchMakingFullKundliView extends StatelessWidget {
     );
   }
 
-  String _getPlanetSymbol(String name, bool retro, bool isCombust, bool isAscendant) {
+  String _getPlanetSymbol(
+    String name,
+    bool retro,
+    bool isCombust,
+    bool isAscendant,
+  ) {
     final symbols = {
       'As': 'La',
       'Su': 'Su',
@@ -575,11 +664,11 @@ class MatchMakingFullKundliView extends StatelessWidget {
       'Ra': 'Ra',
       'Ke': 'Ke',
     };
-    
+
     var symbol = symbols[name] ?? name;
     if (retro) symbol += '*';
     if (isCombust) symbol += '^';
-    
+
     return symbol;
   }
 }
@@ -601,4 +690,3 @@ class _PlanetData {
     required this.isAscendant,
   });
 }
-

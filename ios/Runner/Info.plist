@@ -52,5 +52,19 @@
 	<string>We need access to your microphone to enable voice and video calls with astrologers.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to enable video calls with astrologers.</string>
+	<!-- Photo Library Permission -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photo library to allow you to select and share images with astrologers.</string>
+	<!-- Speech Recognition Permission -->
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>We need access to speech recognition to enable voice-to-text features for better communication with astrologers.</string>
+	<!-- Calendar Permission -->
+	<key>NSCalendarsUsageDescription</key>
+	<string>We need access to your calendar to help you schedule and manage appointments with astrologers.</string>
+	<!-- Location Permissions -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need access to your location to provide location-based astrological services and accurate horoscope calculations.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We need access to your location to provide location-based astrological services and accurate horoscope calculations.</string>
 	</dict>
 </plist>

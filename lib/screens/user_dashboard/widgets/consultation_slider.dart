@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ConsultationSlider extends StatelessWidget {
-  final ConsultationSliderController controller = ConsultationSliderController();
+  final ConsultationSliderController controller =
+      ConsultationSliderController();
 
   ConsultationSlider({super.key}) {
     controller.startAutoSlide();
@@ -73,7 +74,10 @@ class ConsultationSlider extends StatelessWidget {
                   ),
                   Spacing.h(12),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 10.h,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFFF8F0),
                       borderRadius: BorderRadius.circular(20.r),
@@ -98,10 +102,21 @@ class ConsultationSlider extends StatelessWidget {
                 topRight: Radius.circular(12.r),
                 bottomRight: Radius.circular(12.r),
               ),
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
-              ),
+              child:
+                  (imagePath.startsWith('http://') ||
+                      imagePath.startsWith('https://'))
+                  ? Image.network(
+                      imagePath,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Center(child: Icon(Icons.error));
+                      },
+                    )
+                  : Image.asset(imagePath, fit: BoxFit.cover),
             ),
           ),
         ],

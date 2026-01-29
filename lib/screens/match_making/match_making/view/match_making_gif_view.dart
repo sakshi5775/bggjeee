@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -26,8 +27,8 @@ class _MatchMakingGifViewState extends State<MatchMakingGifView> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Lottie.asset(
-          'assets/app/match_making_animation.json',
+        child: Lottie.network(
+          AppConstant.matchMakingAnimationJson,
           fit: BoxFit.contain,
           width: double.infinity,
           height: double.infinity,
@@ -37,4 +38,3 @@ class _MatchMakingGifViewState extends State<MatchMakingGifView> {
     );
   }
 }
-

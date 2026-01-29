@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/onboarding/controller/onboarding_controller.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -24,9 +25,9 @@ class OnboardingView extends BasePage<OnboardingController> {
             controller: controller.pageController,
             onPageChanged: controller.onPageChanged,
             children: const [
-              _BgImage(img: "assets/images/onboarding_screen1_bgimg.png"),
-              _BgImage(img: "assets/images/onboarding_screen2_bgimg.png"),
-              _BgImage(img: "assets/images/onboarding_screen3_bgimg.png"),
+              _BgImage(img: AppConstant.onboardingScreen1Bgimg),
+              _BgImage(img: AppConstant.onboardingScreen2Bgimg),
+              _BgImage(img: AppConstant.onboardingScreen3Bgimg),
             ],
           ),
 
@@ -102,7 +103,11 @@ class OnboardingView extends BasePage<OnboardingController> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: InkWell(
-                      child: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 22,
+                      ),
                       onTap: () => controller.back(),
                     ),
                   ),
@@ -185,7 +190,10 @@ class OnboardingView extends BasePage<OnboardingController> {
                       const SizedBox(height: 12),
 
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15.0,
+                          vertical: 8.0,
+                        ),
                         child: Obx(() {
                           final pageIndex = controller.currentPage.value;
 
@@ -301,7 +309,24 @@ class _BgImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(child: Image.asset(img, fit: BoxFit.cover));
+    // Check if img is a URL (starts with http) or local asset
+    if (img.startsWith('http://') || img.startsWith('https://')) {
+      return SizedBox.expand(
+        child: Image.network(
+          img,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return const Center(child: CircularProgressIndicator());
+          },
+          errorBuilder: (context, error, stackTrace) {
+            return const Center(child: Icon(Icons.error));
+          },
+        ),
+      );
+    } else {
+      return SizedBox.expand(child: Image.asset(img, fit: BoxFit.cover));
+    }
   }
 }
 

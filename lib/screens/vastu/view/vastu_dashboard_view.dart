@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -64,7 +65,6 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
       'route': AppRoutes.arVastu,
       'color': '#9C27B0',
     },
-  
   ];
 
   @override
@@ -77,14 +77,12 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
 
     // Create staggered animations
     final categoryCount = _categories.length;
-    final intervalStep = 0.8 / categoryCount; // Use 80% of animation for staggered effect
-    
+    final intervalStep =
+        0.8 / categoryCount; // Use 80% of animation for staggered effect
+
     _fadeAnimations = List.generate(
       categoryCount,
-      (index) => Tween<double>(
-        begin: 0.0,
-        end: 1.0,
-      ).animate(
+      (index) => Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
           parent: _animationController,
           curve: Interval(
@@ -98,19 +96,18 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
 
     _slideAnimations = List.generate(
       categoryCount,
-      (index) => Tween<Offset>(
-        begin: const Offset(0, 0.3),
-        end: Offset.zero,
-      ).animate(
-        CurvedAnimation(
-          parent: _animationController,
-          curve: Interval(
-            index * intervalStep,
-            (index * intervalStep) + 0.2, // Each item gets 20% of the interval
-            curve: Curves.easeOutCubic,
+      (index) =>
+          Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+            CurvedAnimation(
+              parent: _animationController,
+              curve: Interval(
+                index * intervalStep,
+                (index * intervalStep) +
+                    0.2, // Each item gets 20% of the interval
+                curve: Curves.easeOutCubic,
+              ),
+            ),
           ),
-        ),
-      ),
     );
 
     _animationController.forward();
@@ -133,27 +130,27 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
             children: [
               // Header
               _buildHeader(),
-              
+
               Spacing.h(24),
-              
+
               // Main icon
               _buildMainIcon(),
-              
+
               Spacing.h(16),
-              
+
               // Title
               _buildTitle(),
-              
+
               Spacing.h(8),
-              
+
               // Subtitle
               _buildSubtitle(),
-              
+
               Spacing.h(24),
-              
+
               // Category cards
               _buildCategoryCards(),
-              
+
               Spacing.h(24),
             ],
           ),
@@ -211,16 +208,16 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24.r),
-        child: Image.asset(
-          'assets/app/Vastu.png',
+        child: Image.network(
+          AppConstant.vastu,
           fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return const Center(child: CircularProgressIndicator());
+          },
           errorBuilder: (_, __, ___) => Container(
             color: "#F38B3B".toColor(),
-            child: Icon(
-              Icons.explore,
-              size: 60.w,
-              color: Colors.white,
-            ),
+            child: Icon(Icons.explore, size: 60.w, color: Colors.white),
           ),
         ),
       ),
@@ -230,10 +227,9 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
   Widget _buildTitle() {
     return AutoTranslateText(
       'Vastu Reading',
-      style: MyTextTheme.veryLargeBCB.copyWith(
-        color: '#3E2723'.toColor(),
-        fontWeight: FontWeight.bold,
-      ).merge(AppTypography.h1),
+      style: MyTextTheme.veryLargeBCB
+          .copyWith(color: '#3E2723'.toColor(), fontWeight: FontWeight.bold)
+          .merge(AppTypography.h1),
       textAlign: TextAlign.center,
     );
   }
@@ -243,9 +239,9 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: AutoTranslateText(
         'Ancient Vastu Shastra • Intelligent Guidance System',
-        style: MyTextTheme.mediumBCN.copyWith(
-        color: '#3E2723'.toColor(),
-        ).merge(AppTypography.body1),
+        style: MyTextTheme.mediumBCN
+            .copyWith(color: '#3E2723'.toColor())
+            .merge(AppTypography.body1),
         textAlign: TextAlign.center,
       ),
     );
@@ -255,30 +251,27 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
-        children: List.generate(
-          _categories.length,
-          (index) {
-            final category = _categories[index];
-            return AnimatedBuilder(
-              animation: _animationController,
-              builder: (context, child) {
-                return FadeTransition(
-                  opacity: _fadeAnimations[index],
-                  child: SlideTransition(
-                    position: _slideAnimations[index],
-                    child: _buildCategoryCard(
-                      title: category['title'],
-                      subtitle: category['subtitle'],
-                      icon: category['icon'],
-                      color: category['color'],
-                      onTap: () => Get.toNamed(category['route']),
-                    ),
+        children: List.generate(_categories.length, (index) {
+          final category = _categories[index];
+          return AnimatedBuilder(
+            animation: _animationController,
+            builder: (context, child) {
+              return FadeTransition(
+                opacity: _fadeAnimations[index],
+                child: SlideTransition(
+                  position: _slideAnimations[index],
+                  child: _buildCategoryCard(
+                    title: category['title'],
+                    subtitle: category['subtitle'],
+                    icon: category['icon'],
+                    color: category['color'],
+                    onTap: () => Get.toNamed(category['route']),
                   ),
-                );
-              },
-            );
-          },
-        ),
+                ),
+              );
+            },
+          );
+        }),
       ),
     );
   }
@@ -299,10 +292,7 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
           decoration: BoxDecoration(
             color: '#ffffff'.toColor(),
             borderRadius: BorderRadius.circular(18.r),
-            border: Border.all(
-              color: '#F5D7B8'.toColor(),
-              width: 1.5,
-            ),
+            border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.07),
@@ -320,11 +310,7 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
                   color: color.toColor().withOpacity(0.1),
                   borderRadius: BorderRadius.circular(14.r),
                 ),
-                child: Icon(
-                  icon,
-                  color: color.toColor(),
-                  size: 28.w,
-                ),
+                child: Icon(icon, color: color.toColor(), size: 28.w),
               ),
               Spacing.w(16),
               Expanded(
@@ -333,17 +319,19 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
                   children: [
                     AutoTranslateText(
                       title,
-                      style: MyTextTheme.largeBCB.copyWith(
-                        color: '#3E2723'.toColor(),
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h2),
+                      style: MyTextTheme.largeBCB
+                          .copyWith(
+                            color: '#3E2723'.toColor(),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h2),
                     ),
                     Spacing.h(4),
                     AutoTranslateText(
                       subtitle,
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: '#666666'.toColor(),
-                      ).merge(AppTypography.body2),
+                      style: MyTextTheme.mediumBCN
+                          .copyWith(color: '#666666'.toColor())
+                          .merge(AppTypography.body2),
                     ),
                   ],
                 ),
@@ -360,4 +348,3 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
     );
   }
 }
-

@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,37 +32,33 @@ class PalmReadingView extends StatelessWidget {
                 children: [
                   // Header with back button and history button
                   _buildHeader(context),
-                  
-                 
-                  
+
                   // Main icon with star badge
                   _buildMainIcon(),
-                
-                
-                  
+
                   // Title
                   _buildTitle(),
-                  
+
                   Spacing.h(16),
-                  
+
                   // Description
                   _buildDescription(),
-                  
+
                   Spacing.h(32),
-                  
+
                   // Feature highlights grid
                   _buildFeatureGrid(),
-                  
+
                   Spacing.h(32),
-                  
+
                   // Start Reading button
                   _buildStartButton(context, controller),
-                  
+
                   Spacing.h(32),
-                  
+
                   // What You'll Get section
                   _buildBenefitsSection(),
-                  
+
                   Spacing.h(32),
                 ],
               ),
@@ -101,7 +98,7 @@ class PalmReadingView extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // History button
           GestureDetector(
             onTap: () => Get.toNamed(AppRoutes.palmReadingHistory),
@@ -133,10 +130,12 @@ class PalmReadingView extends StatelessWidget {
                   Spacing.w(8),
                   AutoTranslateText(
                     'History',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: '#3E2723'.toColor(),
-                      fontWeight: FontWeight.w600,
-                    ).merge(AppTypography.body1),
+                    style: MyTextTheme.mediumBCB
+                        .copyWith(
+                          color: '#3E2723'.toColor(),
+                          fontWeight: FontWeight.w600,
+                        )
+                        .merge(AppTypography.body1),
                   ),
                 ],
               ),
@@ -153,9 +152,16 @@ class PalmReadingView extends StatelessWidget {
       child: Center(
         child: Transform.scale(
           scale: 2.0,
-          child: Image.asset(
-            'assets/app/palmreadingscreen.png',
+          child: Image.network(
+            AppConstant.palmreadingscreen,
             fit: BoxFit.contain,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return const Center(child: CircularProgressIndicator());
+            },
+            errorBuilder: (context, error, stackTrace) {
+              return const Center(child: Icon(Icons.error));
+            },
           ),
         ),
       ),
@@ -167,10 +173,9 @@ class PalmReadingView extends StatelessWidget {
       padding: AppPaddings.symmetric(h: 16),
       child: AutoTranslateText(
         'Palm Reading',
-        style: MyTextTheme.veryLargeBCB.copyWith(
-          color: '#3E2723'.toColor(),
-          fontWeight: FontWeight.bold,
-        ).merge(AppTypography.h1),
+        style: MyTextTheme.veryLargeBCB
+            .copyWith(color: '#3E2723'.toColor(), fontWeight: FontWeight.bold)
+            .merge(AppTypography.h1),
         textAlign: TextAlign.center,
       ),
     );
@@ -181,10 +186,9 @@ class PalmReadingView extends StatelessWidget {
       padding: AppPaddings.symmetric(h: 24),
       child: AutoTranslateText(
         'Upload your palm photo and get an AI-generated palm reading with detailed insights about your life, personality, and future.',
-        style: MyTextTheme.mediumBCN.copyWith(
-          color: '#3E2723'.toColor(),
-          height: 1.5,
-        ).merge(AppTypography.body1),
+        style: MyTextTheme.mediumBCN
+            .copyWith(color: '#3E2723'.toColor(), height: 1.5)
+            .merge(AppTypography.body1),
         textAlign: TextAlign.center,
       ),
     );
@@ -264,26 +268,24 @@ class PalmReadingView extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(
-            icon,
-            color: iconColor,
-            size: 32.w,
-          ),
+          Icon(icon, color: iconColor, size: 32.w),
           Spacing.h(12),
           AutoTranslateText(
             title,
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.body1),
+            style: MyTextTheme.mediumBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.body1),
             textAlign: TextAlign.center,
           ),
           Spacing.h(4),
           AutoTranslateText(
             subtitle,
-            style: MyTextTheme.smallBCN.copyWith(
-              color: Colors.grey[600],
-            ).merge(AppTypography.body2),
+            style: MyTextTheme.smallBCN
+                .copyWith(color: Colors.grey[600])
+                .merge(AppTypography.body2),
             textAlign: TextAlign.center,
           ),
         ],
@@ -299,18 +301,16 @@ class PalmReadingView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.info_outline,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
+              Icon(Icons.info_outline, color: '#3E2723'.toColor(), size: 20.w),
               Spacing.w(8),
               AutoTranslateText(
                 'What You\'ll Get:',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: '#3E2723'.toColor(),
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h3),
+                style: MyTextTheme.mediumBCB
+                    .copyWith(
+                      color: '#3E2723'.toColor(),
+                      fontWeight: FontWeight.bold,
+                    )
+                    .merge(AppTypography.h3),
               ),
             ],
           ),
@@ -336,19 +336,14 @@ class PalmReadingView extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-              Icon(
-                Icons.check_circle,
-                color: "#F38B3B".toColor(),
-                size: 20.w,
-              ),
+            Icon(Icons.check_circle, color: "#F38B3B".toColor(), size: 20.w),
             Spacing.w(12),
             Expanded(
               child: AutoTranslateText(
                 benefit,
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#3E2723'.toColor(),
-                  height: 1.4,
-                ).merge(AppTypography.body1),
+                style: MyTextTheme.mediumBCN
+                    .copyWith(color: '#3E2723'.toColor(), height: 1.4)
+                    .merge(AppTypography.body1),
               ),
             ),
           ],
@@ -357,7 +352,10 @@ class PalmReadingView extends StatelessWidget {
     }).toList();
   }
 
-  Widget _buildStartButton(BuildContext context, PalmReadingController controller) {
+  Widget _buildStartButton(
+    BuildContext context,
+    PalmReadingController controller,
+  ) {
     return Padding(
       padding: AppPaddings.symmetric(h: 16),
       child: SizedBox(
@@ -386,24 +384,22 @@ class PalmReadingView extends StatelessWidget {
               elevation: 0,
               shadowColor: Colors.transparent,
             ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.camera_alt,
-                size: 20.w,
-                color: Colors.white,
-              ),
-              Spacing.w(8),
-              AutoTranslateText(
-                'Upload Photo & Analyze',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h3),
-              ),
-            ],
-          ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.camera_alt, size: 20.w, color: Colors.white),
+                Spacing.w(8),
+                AutoTranslateText(
+                  'Upload Photo & Analyze',
+                  style: MyTextTheme.mediumBCB
+                      .copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.h3),
+                ),
+              ],
+            ),
           ),
         ),
       ),

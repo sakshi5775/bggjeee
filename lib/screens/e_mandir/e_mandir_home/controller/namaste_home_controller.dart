@@ -93,7 +93,7 @@ class NamasteHomeController extends GetxController
         if (shankhPlayer.state != PlayerState.disposed) {
           shankhPlayer.setReleaseMode(ReleaseMode.loop);
           shankhPlayer.setVolume(volume.value);
-          shankhPlayer.play(AssetSource('audio/shankh.mp3')).catchError((e) {
+          shankhPlayer.play(UrlSource(AppConstant.shankhMp3)).catchError((e) {
             print("SHANKH AUDIO ERROR on resume: $e");
           });
           isShankhPlaying.value = true;
@@ -134,7 +134,7 @@ class NamasteHomeController extends GetxController
     try {
       shankhPlayer.setReleaseMode(ReleaseMode.loop);
       shankhPlayer.setVolume(volume.value);
-      shankhPlayer.play(AssetSource('audio/shankh.mp3')).catchError((e) {
+      shankhPlayer.play(UrlSource(AppConstant.shankhMp3)).catchError((e) {
         print("SHANKH AUDIO ERROR: $e");
       });
       isShankhPlaying.value = true;
@@ -150,7 +150,7 @@ class NamasteHomeController extends GetxController
     } else {
       shankhPlayer.setReleaseMode(ReleaseMode.loop);
       shankhPlayer.setVolume(volume.value);
-      shankhPlayer.play(AssetSource('audio/shankh.mp3')).catchError((e) {
+      shankhPlayer.play(UrlSource(AppConstant.shankhMp3)).catchError((e) {
         print("SHANKH AUDIO ERROR: $e");
       });
       isShankhPlaying.value = true;

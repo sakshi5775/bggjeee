@@ -90,24 +90,61 @@ class _ShopBannerCarouselWidgetState extends State<ShopBannerCarouselWidget> {
             itemBuilder: (context, index) {
               // Get the actual image index using modulo
               final imageIndex = index % actualItemCount;
+              final imageUrl = _bannerImages[imageIndex];
+              final isNetworkImage =
+                  imageUrl.startsWith('http://') ||
+                  imageUrl.startsWith('https://');
+
               return Container(
                 margin: EdgeInsets.symmetric(horizontal: 0),
-                child: Image.asset(
-                  _bannerImages[imageIndex],
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: Icon(
-                        Icons.image,
-                        size: 50.w,
-                        color: Colors.grey[600],
+                child: isNetworkImage
+                    ? Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            color: Colors.grey[200],
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                value:
+                                    loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[300],
+                            child: Icon(
+                              Icons.image,
+                              size: 50.w,
+                              color: Colors.grey[600],
+                            ),
+                          );
+                        },
+                      )
+                    : Image.asset(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[300],
+                            child: Icon(
+                              Icons.image,
+                              size: 50.w,
+                              color: Colors.grey[600],
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
               );
             },
           ),

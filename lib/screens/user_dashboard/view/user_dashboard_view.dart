@@ -12,6 +12,8 @@ import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/AnimatedChakra.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/astrology_tool_widget.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
+import 'package:astrobharataiuser/screens/ecommerce/controller/orders_controller.dart';
+import 'package:astrobharataiuser/screens/e_mandir/my_bookings/controller/my_bookings_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
@@ -28,7 +30,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:gif_view/gif_view.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -110,7 +111,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           Obx(() {
                             final i = controller.selectedSliderIndex.value;
                             final tabs = controller.sliderTabs;
-                            final noGap = (i == 2 &&
+                            final noGap =
+                                (i == 2 &&
                                     tabs.length > 2 &&
                                     tabs[2] == 'Digital Consultation') ||
                                 (i == 3 &&
@@ -156,9 +158,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     left: 0,
                     right: 0,
                     bottom: 3,
-                    child: Container(
-                      child: _buildAstrologerActionsRow(),
-                    ),
+                    child: Container(child: _buildAstrologerActionsRow()),
                   ),
                 ],
               ),
@@ -343,9 +343,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 color: isSelected
                     ? "#6F221E".toColor()
                     : "#3D0C11".toColor().withOpacity(0.75),
-                fontWeight: isSelected
-                    ? FontWeight.w700
-                    : FontWeight.w500,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
               ),
             ),
             Spacing.h(4),
@@ -377,14 +375,18 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         final cur = controller.selectedSliderIndex.value;
         if (v < -_kSwipeVelocityThreshold) {
           final newIndex = (cur + 1).clamp(0, n - 1);
-          debugPrint("SLIDER: Swipe left detected, changing index from $cur to $newIndex");
+          debugPrint(
+            "SLIDER: Swipe left detected, changing index from $cur to $newIndex",
+          );
           controller.selectedSliderIndex.value = newIndex;
           controller.scrollMainViewToTopOnSwipe();
           // Direct call as backup (ever() may not fire immediately)
           controller.scrollSliderToSelected();
         } else if (v > _kSwipeVelocityThreshold) {
           final newIndex = (cur - 1).clamp(0, n - 1);
-          debugPrint("SLIDER: Swipe right detected, changing index from $cur to $newIndex");
+          debugPrint(
+            "SLIDER: Swipe right detected, changing index from $cur to $newIndex",
+          );
           controller.selectedSliderIndex.value = newIndex;
           controller.scrollMainViewToTopOnSwipe();
           // Direct call as backup (ever() may not fire immediately)
@@ -552,6 +554,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     },
   ];
 
+  static bool _isNetworkUrl(String path) =>
+      path.startsWith('http://') || path.startsWith('https://');
+
   Widget _buildKundliTabs(BuildContext context) {
     const maroon = Color(0xFF6F221E);
 
@@ -597,6 +602,18 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     height: 40.h,
                     child: iconPath.endsWith('.svg')
                         ? SvgAssets(path: iconPath, width: 40.w, height: 40.h)
+                        : _isNetworkUrl(iconPath)
+                        ? Image.network(
+                            iconPath,
+                            width: 40.w,
+                            height: 40.h,
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => Icon(
+                              Icons.star_outline,
+                              size: 32.w,
+                              color: maroon,
+                            ),
+                          )
                         : Image.asset(
                             iconPath,
                             width: 40.w,
@@ -1166,6 +1183,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             );
           }),
 
+          // Chat/Call Section (same data as All Astrologers, reversed order)
+          const ChatCallAstrologerWidget(),
+          Spacing.h(2),
+
           // All Astrologers Section
           AllAstrologerWidget(),
           Spacing.h(2),
@@ -1176,7 +1197,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
           // Quote of the Day Section
           const QuoteOfTheDayWidget(),
-        //  Spacing.h(2),
+          //  Spacing.h(2),
 
           // History Section
           const HistorySectionWidget(),
@@ -1195,20 +1216,19 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           // Book Pooja Section
           const BookPoojaCarouselWidget(),
           Spacing.h(2),
-            // Courses Section
+          // Courses Section
           CoursesSectionWidget(),
           Spacing.h(2),
-            _buildBlogSection(),
+          _buildBlogSection(),
 
           Spacing.h(2),
           _buildVedicKundliAstrologersSection(),
           Spacing.h(4),
-          
 
           // Our Services Carousel
           const OurServicesCarouselWidget(),
           Spacing.h(2),
-        
+
           // kids specialist astrologers
           const KidsSpecialistAstrologersWidget(),
 
@@ -1241,7 +1261,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           Spacing.h(2),
 
           // Blog Section
-        
 
           // Features and Videos Section
           FeaturesAndVideosWidget(),
@@ -1259,68 +1278,68 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     );
   }
 
-  Widget _buildOurServicesPillSection() {
-    return Padding(
-      padding: AppPaddings.symmetric(h: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: _buildPillServiceCard(
-                  'Mart',
-                  'assets/app/pill_digital_mart.png',
-                  onTap: () {
-                    Get.toNamed(
-                      AppRoutes.ecommerceHome,
-                      arguments: {'showBackButton': true},
-                    );
-                  },
-                ),
-              ),
-              Spacing.w(10),
-              Expanded(
-                child: _buildPillServiceCard(
-                  'Mandir',
-                  'assets/app/pill_digital_mandir.png',
-                  onTap: () {
-                    Get.toNamed(AppRoutes.namasteHome);
-                  },
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: _buildPillServiceCard(
-                  'Consultation',
-                  'assets/app/pill_consult.png',
-                  onTap: () {
-                    Get.toNamed(AppRoutes.astrologyServices);
-                  },
-                ),
-              ),
-              Spacing.w(10),
-              Expanded(
-                child: _buildPillServiceCard(
-                  'Education',
-                  'assets/app/pill_digital_education.png',
-                  onTap: () {
-                    Get.toNamed(AppRoutes.courses);
-                  },
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildOurServicesPillSection() {
+  //   return Padding(
+  //     padding: AppPaddings.symmetric(h: 16),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: [
+  //             Expanded(
+  //               child: _buildPillServiceCard(
+  //                 'Mart',
+  //                 'assets/app/pill_digital_mart.png',
+  //                 onTap: () {
+  //                   Get.toNamed(
+  //                     AppRoutes.ecommerceHome,
+  //                     arguments: {'showBackButton': true},
+  //                   );
+  //                 },
+  //               ),
+  //             ),
+  //             Spacing.w(10),
+  //             Expanded(
+  //               child: _buildPillServiceCard(
+  //                 'Mandir',
+  //                 'assets/app/pill_digital_mandir.png',
+  //                 onTap: () {
+  //                   Get.toNamed(AppRoutes.namasteHome);
+  //                 },
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         Spacing.h(10),
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: [
+  //             Expanded(
+  //               child: _buildPillServiceCard(
+  //                 'Consultation',
+  //                 'assets/app/pill_consult.png',
+  //                 onTap: () {
+  //                   Get.toNamed(AppRoutes.astrologyServices);
+  //                 },
+  //               ),
+  //             ),
+  //             Spacing.w(10),
+  //             Expanded(
+  //               child: _buildPillServiceCard(
+  //                 'Education',
+  //                 'assets/app/pill_digital_education.png',
+  //                 onTap: () {
+  //                   Get.toNamed(AppRoutes.courses);
+  //                 },
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildTalkToAIAstrologerCard() {
     return Padding(
@@ -1840,52 +1859,52 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     );
   }
 
-  Widget _buildPillServiceCard(
-    String label,
-    String iconPath, {
-    VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        constraints: BoxConstraints(minHeight: 60.h),
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-        decoration: BoxDecoration(
-          gradient: AppColors.orangeGradient,
-          borderRadius: BorderRadius.circular(80.r),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 52.w,
-              height: 52.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 1.5),
-              ),
-              child: ClipOval(child: GifView.asset(iconPath, fit: BoxFit.fill)),
-            ),
-            SizedBox(width: 8.w),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w500,
-                  height: 1.2,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.clip,
-                textAlign: TextAlign.left,
-                softWrap: true,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildPillServiceCard(
+  //   String label,
+  //   String iconPath, {
+  //   VoidCallback? onTap,
+  // }) {
+  //   return GestureDetector(
+  //     onTap: onTap,
+  //     child: Container(
+  //       constraints: BoxConstraints(minHeight: 60.h),
+  //       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+  //       decoration: BoxDecoration(
+  //         gradient: AppColors.orangeGradient,
+  //         borderRadius: BorderRadius.circular(80.r),
+  //       ),
+  //       child: Row(
+  //         children: [
+  //           Container(
+  //             width: 52.w,
+  //             height: 52.h,
+  //             decoration: BoxDecoration(
+  //               shape: BoxShape.circle,
+  //               border: Border.all(color: Colors.white, width: 1.5),
+  //             ),
+  //             child: ClipOval(child: GifView.asset(iconPath, fit: BoxFit.fill)),
+  //           ),
+  //           SizedBox(width: 8.w),
+  //           Expanded(
+  //             child: Text(
+  //               label,
+  //               style: TextStyle(
+  //                 color: Colors.white,
+  //                 fontSize: 13.sp,
+  //                 fontWeight: FontWeight.w500,
+  //                 height: 1.2,
+  //               ),
+  //               maxLines: 2,
+  //               overflow: TextOverflow.clip,
+  //               textAlign: TextAlign.left,
+  //               softWrap: true,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   // Widget _buildLiveAstrologersSection() {
   //   return Obx(() {
@@ -2598,10 +2617,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                             width: cardWidth.w,
                             height: thumbHeight.h,
                             fit: BoxFit.cover,
-                            placeholder: (_, __) =>
-                                _blogThumbnailPlaceholder(cardWidth.w, thumbHeight.h),
+                            placeholder: (_, __) => _blogThumbnailPlaceholder(
+                              cardWidth.w,
+                              thumbHeight.h,
+                            ),
                             errorWidget: (_, __, ___) =>
-                                _blogThumbnailPlaceholder(cardWidth.w, thumbHeight.h),
+                                _blogThumbnailPlaceholder(
+                                  cardWidth.w,
+                                  thumbHeight.h,
+                                ),
                           )
                         : _blogThumbnailPlaceholder(cardWidth.w, thumbHeight.h),
                   ),
@@ -2718,8 +2742,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   child: SizedBox(
                     width: 70.w,
                     height: 70.h,
-                    child: category.image != null &&
-                            category.image!.isNotEmpty
+                    child: category.image != null && category.image!.isNotEmpty
                         ? NetworkImageWithLoader(
                             url: category.image!,
                             width: 70.w,
@@ -3771,8 +3794,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   separatorBuilder: (_, __) => Spacing.w(8),
                   itemCount: controller.aiAstrologersPersonas.length,
                   itemBuilder: (context, index) {
-                    final persona =
-                        controller.aiAstrologersPersonas[index];
+                    final persona = controller.aiAstrologersPersonas[index];
                     return _buildAIAstrologerAvatarProfile(persona, context);
                   },
                 ),
@@ -3783,7 +3805,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     });
   }
 
-  Widget _buildAIAstrologerAvatarProfile(PersonaModel persona, BuildContext context) {
+  Widget _buildAIAstrologerAvatarProfile(
+    PersonaModel persona,
+    BuildContext context,
+  ) {
     final imageUrl = persona.image ?? '';
     final displayName = persona.displayName.isNotEmpty
         ? persona.displayName
@@ -5020,322 +5045,490 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 ),
               ),
               // Profile Card
-              Container(
-                margin: AppPaddings.symmetric(h: 16),
-                padding: AppPaddings.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white, // White card background
-                  borderRadius: AppRadius.all(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Obx(() {
-                          return NetworkImageWithLoader(
-                            url:
-                                controller
-                                    ?.userProfile
-                                    .value
-                                    ?.personalInfo
-                                    ?.profilePicture ??
-                                '',
-                          );
-                        }),
-                        Spacing.w(12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              controller != null
-                                  ? Obx(
-                                      () => AutoTranslateText(
-                                        controller.userName.value.isNotEmpty
-                                            ? controller.userName.value
-                                            : 'Rajesh Kumar',
-                                        style: MyTextTheme.mediumBCB
-                                            .copyWith(
-                                              color: "#6F221E"
-                                                  .toColor(), // Dark maroon
-                                              fontWeight: FontWeight.bold,
-                                            )
-                                            .merge(AppTypography.h3),
-                                      ),
-                                    )
-                                  : AutoTranslateText(
-                                      'Rajesh Kumar',
-                                      style: MyTextTheme.mediumBCB
-                                          .copyWith(
-                                            color: "#6F221E"
-                                                .toColor(), // Dark maroon
-                                            fontWeight: FontWeight.bold,
-                                          )
-                                          .merge(AppTypography.h3),
-                                    ),
-                              Spacing.h(4),
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: AppPaddings.symmetric(h: 6, v: 2),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF9C27B0), // Purple
-                                      borderRadius: AppRadius.all(8),
-                                    ),
-                                    child: AutoTranslateText(
-                                      'Virgo',
-                                      style: MyTextTheme.smallBCN
-                                          .copyWith(color: Colors.white)
-                                          .merge(AppTypography.label),
-                                    ),
-                                  ),
-                                  Spacing.w(6),
-                                  Icon(
-                                    Icons.star,
-                                    color: const Color(0xFFFFD700), // Gold
-                                    size: 14.w,
-                                  ),
-                                  Spacing.w(4),
-                                  AutoTranslateText(
-                                    'Premium',
-                                    style: MyTextTheme.smallBCN
-                                        .copyWith(
-                                          color: const Color(
-                                            0xFFFFD700,
-                                          ), // Gold
-                                        )
-                                        .merge(AppTypography.label),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    Spacing.h(16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildStatItemStatic('12', 'Consults'),
-                        _buildStatItemStatic('4', 'Orders'),
-                        Obx(() {
-                          final walletController =
-                              Get.isRegistered<WalletController>()
-                              ? Get.find<WalletController>()
-                              : null;
-                          final balance =
-                              walletController?.walletBalance.value ?? 0.0;
-                          final formattedBalance = balance >= 1000
-                              ? '₹${(balance / 1000).toStringAsFixed(1)}K'
-                              : '₹${balance.toStringAsFixed(0)}';
-                          return _buildStatItemStatic(
-                            formattedBalance,
-                            'Wallet',
-                          );
-                        }),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Spacing.h(24),
+              // Container(
+              //   margin: AppPaddings.symmetric(h: 16),
+              //   padding: AppPaddings.all(16),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white, // White card background
+              //     borderRadius: AppRadius.all(12),
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: Colors.black.withOpacity(0.05),
+              //         blurRadius: 10,
+              //         offset: const Offset(0, 2),
+              //       ),
+              //     ],
+              //   ),
+              //   child: Column(
+              //     children: [
+              //       Row(
+              //         children: [
+              //           Obx(() {
+              //             final profilePic = controller
+              //                 ?.userProfile.value?.personalInfo?.profilePicture;
+              //             final url = profilePic ?? '';
+              //             if (url.isEmpty) {
+              //               return Container(
+              //                 width: 48.w,
+              //                 height: 48.w,
+              //                 decoration: BoxDecoration(
+              //                   shape: BoxShape.circle,
+              //                   color: "#6F221E".toColor().withOpacity(0.2),
+              //                 ),
+              //                 child: Icon(
+              //                   Icons.person,
+              //                   color: "#6F221E".toColor(),
+              //                   size: 28.w,
+              //                 ),
+              //               );
+              //             }
+              //             return SizedBox(
+              //               width: 48.w,
+              //               height: 48.w,
+              //               child: NetworkImageWithLoader(
+              //                 url: url,
+              //                 width: 48.w,
+              //                 height: 48.w,
+              //                 isCircular: true,
+              //               ),
+              //             );
+              //           }),
+              //           Spacing.w(12),
+              //           Expanded(
+              //             child: Column(
+              //               crossAxisAlignment: CrossAxisAlignment.start,
+              //               children: [
+              //                 Obx(() {
+              //                   final name = controller
+              //                           ?.userProfile.value?.personalInfo?.fullName ??
+              //                       controller?.userName.value ??
+              //                       'User';
+              //                   return AutoTranslateText(
+              //                     name.isNotEmpty ? name : 'User',
+              //                     style: MyTextTheme.mediumBCB
+              //                         .copyWith(
+              //                           color: "#6F221E".toColor(),
+              //                           fontWeight: FontWeight.bold,
+              //                         )
+              //                         .merge(AppTypography.h3),
+              //                   );
+              //                 }),
+              //                 Spacing.h(4),
+              //               ],
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //       Spacing.h(16),
+              //       Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //         children: [
+              //           // _buildStatItemStatic('12', 'Consults'),
+              //           // _buildStatItemStatic('4', 'Orders'),
+              //           Obx(() {
+              //             final walletController =
+              //                 Get.isRegistered<WalletController>()
+              //                 ? Get.find<WalletController>()
+              //                 : null;
+              //             final balance =
+              //                 walletController?.walletBalance.value ?? 0.0;
+              //             final formattedBalance = balance >= 1000
+              //                 ? '₹${(balance / 1000).toStringAsFixed(1)}K'
+              //                 : '₹${balance.toStringAsFixed(0)}';
+              //             return _buildStatItemStatic(
+              //               formattedBalance,
+              //               'Wallet',
+              //             );
+              //           }),
+              //         ],
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // Spacing.h(24),
               // EXPLORE Section
-              Padding(
-                padding: AppPaddings.symmetric(h: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AutoTranslateText(
-                      'EXPLORE',
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: const Color(
-                          0xFF5F2221,
-                        ).withOpacity(0.6), // Dark maroon with opacity
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Spacing.h(12),
-                    _buildDrawerItemStatic(
-                      context: context,
-                      icon: Icons.home,
-                      label: 'Home',
-                      isSelected: true,
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Get.offNamed('/user-home', id: 1);
-                      },
-                    ),
-                    _buildDrawerItemStatic(
-                      context: context,
-                      icon: Icons.star,
-                      label: 'AI Astrologer',
-                      hasBadge: true,
-                      badgeText: 'New',
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Get.toNamed('/ai-guider');
-                      },
-                    ),
-                    _buildDrawerItemStatic(
-                      context: context,
-                      icon: Icons.people,
-                      label: 'Consult Expert',
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Get.toNamed(AppRoutes.astrologyServices);
-                      },
-                    ),
-                    _buildDrawerItemStatic(
-                      context: context,
-                      icon: Icons.calendar_today,
-                      label: 'Horoscope',
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Get.toNamed(AppRoutes.horoscope);
-                      },
-                    ),
-                    _buildDrawerItemStatic(
-                      context: context,
-                      icon: Icons.book,
-                      label: 'Kundli',
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Get.toNamed(AppRoutes.kundliForm);
-                      },
-                    ),
-                    _buildDrawerItemStatic(
-                      context: context,
-                      icon: Icons.favorite,
-                      label: 'Virtual Temple',
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    _buildDrawerItemStatic(
-                      context: context,
-                      icon: Icons.shopping_bag,
-                      label: 'DigitalShop',
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Get.offNamed(
-                          '/user-shop',
-                          id: 1,
-                          arguments: {'showBackButton': true},
-                        );
-                      },
-                    ),
-                  ],
-                ),
+              _buildDrawerSection(
+                context: context,
+                title: 'EXPLORE',
+                children: [
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.home,
+                    label: 'Home',
+                    isSelected: true,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.offNamed('/user-home', id: 1);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.star,
+                    label: 'AI Astrologer',
+                    hasBadge: true,
+                    badgeText: 'New',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.aichat);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.video_call,
+                    label: 'Digital Consultation',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.astrologyServices);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.shopping_bag,
+                    label: 'Digital Mart',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.offNamed(
+                        '/user-shop',
+                        id: 1,
+                        arguments: {'showBackButton': true},
+                      );
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.temple_hindu,
+                    label: 'Digital Mandir',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.namasteHome);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.school,
+                    label: 'Digital Education',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.courses);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.live_tv,
+                    label: 'Live',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.liveAstrologers);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.people,
+                    label: 'Consult',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.astrologyServices);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.history,
+                    label: 'History',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.consultationHistory);
+                    },
+                  ),
+                ],
               ),
               Spacing.h(24),
               Divider(
-                color: const Color(
-                  0xFF5F2221,
-                ).withOpacity(0.2), // Dark maroon with opacity
+                color: const Color(0xFF5F2221).withOpacity(0.2),
+                thickness: 1,
+              ),
+              Spacing.h(12),
+              // SERVICES Section
+              _buildDrawerSection(
+                context: context,
+                title: 'SERVICES',
+                children: [
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.book,
+                    label: 'Kundli',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.kundliForm);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.menu_book,
+                    label: 'Lal Kitab',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.lalKitab);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.analytics,
+                    label: 'KP Astrology',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.kpSystem);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.auto_awesome,
+                    label: 'Predictions',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.predictions);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.favorite,
+                    label: 'Matching',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.matchMakingForm);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.calendar_today,
+                    label: 'Horoscope',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.horoscope);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.calendar_month,
+                    label: 'Panchang',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.panchang);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.assignment,
+                    label: 'Reports',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.allReports);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.timeline,
+                    label: 'Dasha',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.dasha);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.warning_amber,
+                    label: 'Dosh',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.dosh);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.numbers,
+                    label: 'Numerology',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.numerologyForm);
+                    },
+                  ),
+                ],
+              ),
+              Spacing.h(24),
+              Divider(
+                color: const Color(0xFF5F2221).withOpacity(0.2),
+                thickness: 1,
+              ),
+              Spacing.h(12),
+              // READINGS Section
+              _buildDrawerSection(
+                context: context,
+                title: 'READINGS',
+                children: [
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.face,
+                    label: 'Face Reading',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.faceReading);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.back_hand,
+                    label: 'Palm Reading',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.palmReading);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.home_work,
+                    label: 'Vastu',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.vastuDashboard);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.casino,
+                    label: 'Ramal',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.ramalShastra);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.edit_note,
+                    label: 'Writing',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.handwritingAstrology);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.help_outline,
+                    label: 'Prashna',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.prashnaKundali);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.style,
+                    label: 'Tarot',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.tarotReading);
+                    },
+                  ),
+                ],
+              ),
+              Spacing.h(24),
+              Divider(
+                color: const Color(0xFF5F2221).withOpacity(0.2),
+                thickness: 1,
+              ),
+              Spacing.h(12),
+              // ASTROLOGER BY CATEGORY Section
+              _buildDrawerSection(
+                context: context,
+                title: 'ASTROLOGER BY CATEGORY',
+                children: [
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.auto_awesome,
+                    label: 'Vedic',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.allAstrologers, arguments: 'Vedic');
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.style,
+                    label: 'Tarot',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(
+                        AppRoutes.allAstrologers,
+                        arguments: 'Tarots',
+                      );
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.home_work,
+                    label: 'Vastu',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.allAstrologers, arguments: 'Vastu');
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.help_outline,
+                    label: 'Prashna',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(
+                        AppRoutes.allAstrologers,
+                        arguments: 'Prashana',
+                      );
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.verified_user,
+                    label: 'Celebrity',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(
+                        AppRoutes.allAstrologers,
+                        arguments: 'Celebrity',
+                      );
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.child_care,
+                    label: 'Kids',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.allAstrologers, arguments: 'Kids');
+                    },
+                  ),
+                ],
+              ),
+              Spacing.h(24),
+              Divider(
+                color: const Color(0xFF5F2221).withOpacity(0.2),
                 thickness: 1,
               ),
               Spacing.h(12),
               // ACCOUNT Section
-              Padding(
-                padding: AppPaddings.symmetric(h: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AutoTranslateText(
-                      'ACCOUNT',
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: const Color(
-                          0xFF5F2221,
-                        ).withOpacity(0.6), // Dark maroon with opacity
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Spacing.h(12),
-                    Obx(() {
-                      final walletController =
-                          Get.isRegistered<WalletController>()
-                          ? Get.find<WalletController>()
-                          : null;
-                      final balance =
-                          walletController?.walletBalance.value ?? 0.0;
-                      return _buildDrawerItemStatic(
-                        context: context,
-                        icon: Icons.account_balance_wallet,
-                        label: 'Wallet',
-                        trailing: AutoTranslateText(
-                          walletController?.formatCurrency(balance) ?? '₹0',
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: "#F38B3B".toColor(), // Orange
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          Get.toNamed(AppRoutes.wallet);
-                        },
-                      );
-                    }),
-                    _buildDrawerItemStatic(
-                      context: context,
-                      icon: Icons.shopping_bag_outlined,
-                      label: 'My Orders',
-                      trailing: Container(
-                        padding: AppPaddings.symmetric(h: 8, v: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF38B3B), // Orange
-                          shape: BoxShape.circle,
-                        ),
-                        child: AutoTranslateText(
-                          '4',
-                          style: MyTextTheme.smallBCN
-                              .copyWith(color: Colors.white)
-                              .merge(AppTypography.label),
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Get.toNamed(AppRoutes.orders);
-                      },
-                    ),
-                    _buildDrawerItemStatic(
-                      context: context,
-                      icon: Icons.phone,
-                      label: 'My Bookings',
-                      trailing: Container(
-                        padding: AppPaddings.symmetric(h: 8, v: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF38B3B), // Orange
-                          shape: BoxShape.circle,
-                        ),
-                        child: AutoTranslateText(
-                          '0',
-                          style: MyTextTheme.smallBCN
-                              .copyWith(color: Colors.white)
-                              .merge(AppTypography.label),
-                        ),
-                      ),
-                      onTap: () {
-                        Get.back();
-                        Get.toNamed(AppRoutes.comingSoon);
-                      },
-                    ),
-                    _buildDrawerItemStatic(
-                      context: context,
-                      icon: Icons.person,
-                      label: 'Profile',
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Get.toNamed(AppRoutes.profile);
-                      },
-                    ),
-                  ],
-                ),
+              _buildDrawerSection(
+                context: context,
+                title: 'ACCOUNT',
+                children: [
+                  _buildDrawerWalletItem(context),
+                  _buildDrawerOrdersItem(context),
+
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.person,
+                    label: 'Profile',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.profile);
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -5368,6 +5561,101 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               .merge(AppTypography.label),
         ),
       ],
+    );
+  }
+
+  static Widget _buildDrawerWalletItem(BuildContext context) {
+    if (!Get.isRegistered<WalletController>()) {
+      return _buildDrawerItemStatic(
+        context: context,
+        icon: Icons.account_balance_wallet,
+        label: 'Wallet',
+        trailing: AutoTranslateText(
+          '₹0',
+          style: MyTextTheme.smallBCN.copyWith(color: "#F38B3B".toColor()),
+        ),
+        onTap: () {
+          Navigator.of(context).pop();
+          Get.toNamed(AppRoutes.wallet);
+        },
+      );
+    }
+    return Obx(() {
+      final walletController = Get.find<WalletController>();
+      final balance = walletController.walletBalance.value;
+      return _buildDrawerItemStatic(
+        context: context,
+        icon: Icons.account_balance_wallet,
+        label: 'Wallet',
+        trailing: AutoTranslateText(
+          walletController.formatCurrency(balance),
+          style: MyTextTheme.smallBCN.copyWith(color: "#F38B3B".toColor()),
+        ),
+        onTap: () {
+          Navigator.of(context).pop();
+          Get.toNamed(AppRoutes.wallet);
+        },
+      );
+    });
+  }
+
+  static Widget _buildDrawerOrdersItem(BuildContext context) {
+    if (!Get.isRegistered<OrdersController>()) {
+      return _buildDrawerItemStatic(
+        context: context,
+        icon: Icons.shopping_cart,
+        label: 'My Orders',
+        onTap: () {
+          Navigator.of(context).pop();
+          Get.toNamed(AppRoutes.orders);
+        },
+      );
+    }
+    return Obx(() {
+      final ordersController = Get.find<OrdersController>();
+      final count = ordersController.orders.length;
+      return _buildDrawerItemStatic(
+        context: context,
+        icon: Icons.shopping_cart,
+        label: 'My Orders',
+        trailing: count > 0
+            ? AutoTranslateText(
+                '$count',
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: "#6F221E".toColor(),
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            : null,
+        onTap: () {
+          Navigator.of(context).pop();
+          Get.toNamed(AppRoutes.orders);
+        },
+      );
+    });
+  }
+
+  static Widget _buildDrawerSection({
+    required BuildContext context,
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Padding(
+      padding: AppPaddings.symmetric(h: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AutoTranslateText(
+            title,
+            style: MyTextTheme.smallBCN.copyWith(
+              color: const Color(0xFF5F2221).withOpacity(0.6),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          Spacing.h(12),
+          ...children,
+        ],
+      ),
     );
   }
 
@@ -5716,7 +6004,11 @@ class _SliderStripWidgetState extends State<_SliderStripWidget> {
             return Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                for (int index = 0; index < widget.controller.sliderTabs.length; index++) ...[
+                for (
+                  int index = 0;
+                  index < widget.controller.sliderTabs.length;
+                  index++
+                ) ...[
                   if (index > 0) Spacing.w(20),
                   widget.buildTab(context, index, selectedIndex),
                 ],

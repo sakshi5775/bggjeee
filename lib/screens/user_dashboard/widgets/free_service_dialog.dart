@@ -3,7 +3,9 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -28,7 +30,7 @@ class FreeServiceDialog extends StatelessWidget {
             children: [
               // Top section with image
               _buildImageSection(),
-              
+
               // Bottom section with content
               _buildContentSection(),
             ],
@@ -45,14 +47,16 @@ class FreeServiceDialog extends StatelessWidget {
         Container(
           height: 280.h,
           width: double.infinity,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/app/freeservice.png'),
-              fit: BoxFit.cover,
-            ),
+          child: CachedNetworkImage(
+            imageUrl: AppConstant.freeservice,
+            fit: BoxFit.cover,
+            placeholder: (context, url) =>
+                const Center(child: CircularProgressIndicator()),
+            errorWidget: (context, url, error) =>
+                const Center(child: Icon(Icons.error)),
           ),
         ),
-        
+
         // Overlay gradient for better text visibility
         Container(
           height: 280.h,
@@ -61,14 +65,11 @@ class FreeServiceDialog extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.black.withOpacity(0.3),
-              ],
+              colors: [Colors.transparent, Colors.black.withOpacity(0.3)],
             ),
           ),
         ),
-        
+
         // Close button (top-right)
         Positioned(
           top: 12.h,
@@ -82,15 +83,11 @@ class FreeServiceDialog extends StatelessWidget {
                 color: Colors.black.withOpacity(0.5),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                Icons.close,
-                color: Colors.white,
-                size: 20.w,
-              ),
+              child: Icon(Icons.close, color: Colors.white, size: 20.w),
             ),
           ),
         ),
-        
+
         // Astrological chart overlay (top-left)
         Positioned(
           top: 20.h,
@@ -102,9 +99,7 @@ class FreeServiceDialog extends StatelessWidget {
               color: Color(0xFFFFD700).withOpacity(0.3),
               shape: BoxShape.circle,
             ),
-            child: CustomPaint(
-              painter: AstrologicalChartPainter(),
-            ),
+            child: CustomPaint(painter: AstrologicalChartPainter()),
           ),
         ),
       ],
@@ -149,9 +144,9 @@ class FreeServiceDialog extends StatelessWidget {
               ],
             ),
           ),
-          
+
           Spacing.h(24),
-          
+
           // CTA Button
           Container(
             width: double.infinity,
@@ -189,9 +184,9 @@ class FreeServiceDialog extends StatelessWidget {
               ),
             ),
           ),
-          
+
           Spacing.h(20),
-          
+
           // Social proof
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -211,9 +206,9 @@ class FreeServiceDialog extends StatelessWidget {
                   );
                 }),
               ),
-              
+
               Spacing.w(6),
-              
+
               // AutoTranslateText - Flexible to prevent overflow
               Flexible(
                 child: AutoTranslateText(
@@ -244,28 +239,35 @@ class AstrologicalChartPainter extends CustomPainter {
       ..strokeWidth = 2;
 
     final center = Offset(size.width / 2, size.height / 2);
-    
+
     // Draw concentric circles
     for (int i = 1; i <= 3; i++) {
       final radius = (size.width / 2) * (i / 3);
       canvas.drawCircle(center, radius, paint);
     }
-    
+
     // Draw radial lines
     for (int i = 0; i < 8; i++) {
-      final endX = center.dx + (size.width / 2) * (i.isEven ? 0.8 : 0.6) * (i % 2 == 0 ? 1 : -1);
-      final endY = center.dy + (size.height / 2) * (i.isEven ? 0.8 : 0.6) * ((i ~/ 2) % 2 == 0 ? 1 : -1);
+      final endX =
+          center.dx +
+          (size.width / 2) * (i.isEven ? 0.8 : 0.6) * (i % 2 == 0 ? 1 : -1);
+      final endY =
+          center.dy +
+          (size.height / 2) *
+              (i.isEven ? 0.8 : 0.6) *
+              ((i ~/ 2) % 2 == 0 ? 1 : -1);
       canvas.drawLine(center, Offset(endX, endY), paint);
     }
-    
+
     // Draw dots (celestial bodies)
     final dotPaint = Paint()
       ..color = Color(0xFFFFD700)
       ..style = PaintingStyle.fill;
-    
+
     for (int i = 0; i < 6; i++) {
       final radius = size.width * 0.25;
-      final x = center.dx + radius * (i % 2 == 0 ? 1 : -1) * (i < 2 ? 0.7 : 1.0);
+      final x =
+          center.dx + radius * (i % 2 == 0 ? 1 : -1) * (i < 2 ? 0.7 : 1.0);
       final y = center.dy + radius * ((i ~/ 2) % 2 == 0 ? 1 : -1) * 0.7;
       canvas.drawCircle(Offset(x, y), 3, dotPaint);
     }
@@ -274,4 +276,3 @@ class AstrologicalChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-

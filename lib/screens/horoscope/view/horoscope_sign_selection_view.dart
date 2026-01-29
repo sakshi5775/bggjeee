@@ -19,9 +19,9 @@ class HoroscopeSignSelectionView extends StatelessWidget {
     end: Alignment.bottomCenter,
   );
 
-  static final LinearGradient primaryGradient = LinearGradient(
-    colors: ["#820B17".toColor(), "#68171E".toColor(), "#5D1C21".toColor()],
-  );
+  // static final LinearGradient primaryGradient = LinearGradient(
+  //   colors: ["#820B17".toColor(), "#68171E".toColor(), "#5D1C21".toColor()],
+  // );
 
   static LinearGradient orangeGradient = LinearGradient(
     colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
@@ -47,23 +47,24 @@ class HoroscopeSignSelectionView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: gradientBackground,
-        ),
+        decoration: BoxDecoration(gradient: gradientBackground),
         child: SafeArea(
           child: Column(
             children: [
               // Header with gradient
               Container(
                 decoration: BoxDecoration(
-                  gradient: primaryGradient,
+                  gradient: orangeGradient,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(24.r),
                     bottomRight: Radius.circular(24.r),
                   ),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 12.h,
+                  ),
                   child: Row(
                     children: [
                       // Back button
@@ -79,10 +80,12 @@ class HoroscopeSignSelectionView extends StatelessWidget {
                       Expanded(
                         child: AutoTranslateText(
                           'Select Your Sign',
-                          style: MyTextTheme.largeBCB.copyWith(
-                            color: const Color(0xFFDFB343),
-                            fontWeight: FontWeight.bold,
-                          ).merge(AppTypography.h2),
+                          style: MyTextTheme.largeBCB
+                              .copyWith(
+                                color: const Color(0xFFDFB343),
+                                fontWeight: FontWeight.bold,
+                              )
+                              .merge(AppTypography.h2),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -124,7 +127,7 @@ class HoroscopeSignSelectionView extends StatelessWidget {
         // Get form data from arguments if available
         final arguments = Get.arguments as Map<String, dynamic>?;
         final formData = arguments?['formData'] as Map<String, dynamic>?;
-        
+
         // Navigate to main horoscope page with selected sign and form data
         Get.toNamed(
           AppRoutes.horoscopeMain,
@@ -144,34 +147,53 @@ class HoroscopeSignSelectionView extends StatelessWidget {
               aspectRatio: 1,
               child: Container(
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: primaryGradient,
+                  shape: BoxShape.rectangle,
+                  color: Colors.white,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.15),
                       blurRadius: 10,
                       offset: const Offset(0, 3),
                     ),
-                  
                   ],
                 ),
                 child: Padding(
-                  
                   padding: EdgeInsets.all(12.w),
-                  child: Image.asset(
-                    imagePath,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      // Debug: Print the error to help identify the issue
-                      debugPrint('Failed to load image: $imagePath');
-                      debugPrint('Error: $error');
-                      return Icon(
-                        Icons.star,
-                        size: 40.w,
-                        color: const Color(0xFFDFB343),
-                      );
-                    },
-                  ),
+                  child:
+                      (imagePath.startsWith('http://') ||
+                          imagePath.startsWith('https://'))
+                      ? Image.network(
+                          imagePath,
+                          fit: BoxFit.contain,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            debugPrint('Failed to load image: $imagePath');
+                            debugPrint('Error: $error');
+                            return Icon(
+                              Icons.star,
+                              size: 40.w,
+                              color: const Color(0xFFDFB343),
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          imagePath,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            debugPrint('Failed to load image: $imagePath');
+                            debugPrint('Error: $error');
+                            return Icon(
+                              Icons.star,
+                              size: 40.w,
+                              color: const Color(0xFFDFB343),
+                            );
+                          },
+                        ),
                 ),
               ),
             ),
@@ -181,11 +203,13 @@ class HoroscopeSignSelectionView extends StatelessWidget {
           AutoTranslateText(
             name,
             textAlign: TextAlign.center,
-            style: MyTextTheme.smallBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.w600,
-              fontSize: 11.sp,
-            ).merge(AppTypography.body2),
+            style: MyTextTheme.smallBCB
+                .copyWith(
+                  color: "#6F221E".toColor(),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11.sp,
+                )
+                .merge(AppTypography.body2),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -194,4 +218,3 @@ class HoroscopeSignSelectionView extends StatelessWidget {
     );
   }
 }
-

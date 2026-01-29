@@ -3,8 +3,9 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -152,22 +153,23 @@ class CompatibilityReportWidget extends StatelessWidget {
         response['boy_planetary_details'] as Map<String, dynamic>?;
     final girlPlanetaryDetails =
         response['girl_planetary_details'] as Map<String, dynamic>?;
-    
+
     // Extract Rashi from bhakoot section (most accurate source)
     final bhakoot = response['bhakoot'] as Map<String, dynamic>?;
     final boyRasiFromBhakoot = bhakoot?['boy_rasi_name'] as String? ?? '';
     final girlRasiFromBhakoot = bhakoot?['girl_rasi_name'] as String? ?? '';
-    
+
     // Extract data from API response - prefer formData DOB if available
     final boyName = boyDetails?['name'] as String? ?? '';
     // Use formData DOB first, then fallback to API response
-    final boyDob = formData?['boyDob'] as String? ??
+    final boyDob =
+        formData?['boyDob'] as String? ??
         boyDetails?['dob'] as String? ??
         boyDetails?['birth_dasa_time'] as String? ??
         '';
     // Prefer Rashi from bhakoot, then from astro details
-    final boyRasi = boyRasiFromBhakoot.isNotEmpty 
-        ? boyRasiFromBhakoot 
+    final boyRasi = boyRasiFromBhakoot.isNotEmpty
+        ? boyRasiFromBhakoot
         : (boyDetails?['rasi'] as String? ?? '');
     final boyAscendant =
         boyDetails?['ascendant_sign'] as String? ??
@@ -176,13 +178,14 @@ class CompatibilityReportWidget extends StatelessWidget {
 
     final girlName = girlDetails?['name'] as String? ?? '';
     // Use formData DOB first, then fallback to API response
-    final girlDob = formData?['girlDob'] as String? ??
+    final girlDob =
+        formData?['girlDob'] as String? ??
         girlDetails?['dob'] as String? ??
         girlDetails?['birth_dasa_time'] as String? ??
         '';
     // Prefer Rashi from bhakoot, then from astro details
-    final girlRasi = girlRasiFromBhakoot.isNotEmpty 
-        ? girlRasiFromBhakoot 
+    final girlRasi = girlRasiFromBhakoot.isNotEmpty
+        ? girlRasiFromBhakoot
         : (girlDetails?['rasi'] as String? ?? '');
     final girlAscendant =
         girlDetails?['ascendant_sign'] as String? ??
@@ -210,11 +213,15 @@ class CompatibilityReportWidget extends StatelessWidget {
             child: Column(
               children: [
                 ClipOval(
-                  child: Image.asset(
-                    'assets/app/kundliGirl.png',
+                  child: Image.network(
+                    AppConstant.kundliGirl,
                     width: 70.w,
                     height: 70.w,
                     fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Center(child: CircularProgressIndicator());
+                    },
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
                         width: 70.w,
@@ -318,11 +325,15 @@ class CompatibilityReportWidget extends StatelessWidget {
             child: Column(
               children: [
                 ClipOval(
-                  child: Image.asset(
-                    'assets/app/kundliBoy.png',
+                  child: Image.network(
+                    AppConstant.kundliBoy,
                     width: 70.w,
                     height: 70.w,
                     fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Center(child: CircularProgressIndicator());
+                    },
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
                         width: 70.w,

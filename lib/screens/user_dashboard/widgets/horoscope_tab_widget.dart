@@ -29,7 +29,11 @@ class HoroscopeTabWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use tag to separate tab controller from full-screen controller
-    final controller = Get.put(HoroscopeMainController(), tag: 'horoscope_tab', permanent: false);
+    final controller = Get.put(
+      HoroscopeMainController(),
+      tag: 'horoscope_tab',
+      permanent: false,
+    );
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -163,7 +167,11 @@ class HoroscopeTabWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryCard(HoroscopeMainController controller, String label, IconData icon) {
+  Widget _buildCategoryCard(
+    HoroscopeMainController controller,
+    String label,
+    IconData icon,
+  ) {
     return GestureDetector(
       onTap: () => controller.selectedCategory.value = label,
       child: Container(
@@ -223,7 +231,11 @@ class HoroscopeTabWidget extends StatelessWidget {
                   controller.selectedCategory.value = null;
                   controller.selectedZodiac.value = null;
                 },
-                child: Icon(Icons.arrow_back, color: '#3D0C11'.toColor(), size: 24.w),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: '#3D0C11'.toColor(),
+                  size: 24.w,
+                ),
               ),
               SizedBox(width: 12.w),
               Expanded(
@@ -250,7 +262,11 @@ class HoroscopeTabWidget extends StatelessWidget {
             itemCount: HoroscopeSignSelectionView.zodiacSigns.length,
             itemBuilder: (context, index) {
               final sign = HoroscopeSignSelectionView.zodiacSigns[index];
-              return _buildZodiacCard(controller, sign['name']!, sign['image']!);
+              return _buildZodiacCard(
+                controller,
+                sign['name']!,
+                sign['image']!,
+              );
             },
           ),
           SizedBox(height: 24.h),
@@ -259,7 +275,11 @@ class HoroscopeTabWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildZodiacCard(HoroscopeMainController controller, String name, String imagePath) {
+  Widget _buildZodiacCard(
+    HoroscopeMainController controller,
+    String name,
+    String imagePath,
+  ) {
     return GestureDetector(
       onTap: () {
         controller.selectedZodiac.value = name;
@@ -275,8 +295,9 @@ class HoroscopeTabWidget extends StatelessWidget {
               aspectRatio: 1,
               child: Container(
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: AppColors.primaryGradient,
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(12.r),
+                  color: Colors.white,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.15),
@@ -287,17 +308,37 @@ class HoroscopeTabWidget extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: EdgeInsets.all(12.w),
-                  child: Image.asset(
-                    imagePath,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Icon(
-                        Icons.star,
-                        size: 40.w,
-                        color: const Color(0xFFDFB343),
-                      );
-                    },
-                  ),
+                  child:
+                      (imagePath.startsWith('http://') ||
+                          imagePath.startsWith('https://'))
+                      ? Image.network(
+                          imagePath,
+                          fit: BoxFit.contain,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(
+                              Icons.star,
+                              size: 40.w,
+                              color: const Color(0xFFDFB343),
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          imagePath,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(
+                              Icons.star,
+                              size: 40.w,
+                              color: const Color(0xFFDFB343),
+                            );
+                          },
+                        ),
                 ),
               ),
             ),
@@ -306,11 +347,13 @@ class HoroscopeTabWidget extends StatelessWidget {
           AutoTranslateText(
             name,
             textAlign: TextAlign.center,
-            style: MyTextTheme.smallBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.w600,
-              fontSize: 11.sp,
-            ).merge(AppTypography.body2),
+            style: MyTextTheme.smallBCB
+                .copyWith(
+                  color: "#6F221E".toColor(),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11.sp,
+                )
+                .merge(AppTypography.body2),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -338,7 +381,11 @@ class HoroscopeTabWidget extends StatelessWidget {
                 controller.monthlyPredictionData.value = null;
                 controller.yearlyPredictionData.value = null;
               },
-              child: Icon(Icons.arrow_back, color: '#3D0C11'.toColor(), size: 24.w),
+              child: Icon(
+                Icons.arrow_back,
+                color: '#3D0C11'.toColor(),
+                size: 24.w,
+              ),
             ),
             SizedBox(width: 12.w),
             Expanded(
@@ -353,14 +400,15 @@ class HoroscopeTabWidget extends StatelessWidget {
           ],
         ),
         SizedBox(height: 16.h),
-        Expanded(
-          child: _buildCategoryContent(controller, category),
-        ),
+        Expanded(child: _buildCategoryContent(controller, category)),
       ],
     );
   }
 
-  Widget _buildCategoryContent(HoroscopeMainController controller, String category) {
+  Widget _buildCategoryContent(
+    HoroscopeMainController controller,
+    String category,
+  ) {
     switch (category) {
       case 'Daily':
         return DailyPredictionWidget(controller: controller);
