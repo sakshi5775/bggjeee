@@ -131,10 +131,14 @@ class LoginController extends BaseController {
 
           showSuccessMessage(title: "Success", message: "Login successful!");
           
-          // Navigate directly to dashboard (email login doesn't require OTP)
+          // Navigate: if we're already on dashboard (e.g. opened login from Profile), just pop
+          // to avoid duplicate GlobalKey (second UserMainView would use same Get.nestedKey(1))
           await Future.delayed(const Duration(milliseconds: 500));
-          // Use offAllNamed to clear navigation stack and go to dashboard
-          Get.offAllNamed(AppRoutes.userDashboard);
+          if (Get.nestedKey(1)?.currentState != null) {
+            Get.back();
+          } else {
+            Get.offAllNamed(AppRoutes.userDashboard);
+          }
         }
       }
     } catch (e) {

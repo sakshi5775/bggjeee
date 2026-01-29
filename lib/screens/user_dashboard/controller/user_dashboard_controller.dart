@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/data_model/daily_quote_model.dart';
 import 'package:astrobharataiuser/data_model/blog_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/live_stream_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/daily_quote_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/dashboard_search_service.dart';
 import 'package:astrobharataiuser/services/global_free_service_manager.dart';
@@ -21,6 +22,7 @@ import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart'
 import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/data_model/webinar_model.dart';
 import 'package:astrobharataiuser/data_model/category_model.dart';
+import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/data_model/puja_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/puja_service.dart';
@@ -216,6 +218,7 @@ class UserDashboardController extends BaseController
   final ScrollController sliderTabsScrollController = ScrollController();
   bool _isScrollingSlider = false; // Prevent multiple simultaneous scroll calls
   bool _skipNextScrollEnd = false;
+  bool _updatingFromStripScroll = false; // True when index was set from user dragging strip
 
   List<String> get sliderTabs => [
     'Home',
@@ -223,7 +226,7 @@ class UserDashboardController extends BaseController
     'Digital Consultation',
     'Digital Mart',
     'Digital Mandir',
-    'Digital Education',
+    'Digital Learning',
     'Reports',
     'Video',
     'Panchang',
@@ -355,10 +358,44 @@ class UserDashboardController extends BaseController
     }
   }
 
-  /// Called when user finishes dragging the tab strip. Centers the focused tab.
+  /// Returns the tab index whose center is closest to the viewport center at [scrollOffset].
+  int _getSliderIndexFromScrollOffset(double scrollOffset, double viewportWidth) {
+    final n = sliderTabs.length;
+    if (n == 0) return 0;
+    final width = Get.context != null ? Get.width : 375.0;
+    final scale = (width / 375.0).clamp(0.5, 2.0);
+    final leftPadding = 16.0 * scale;
+    final gap = 20.0 * scale;
+    final viewportCenter = scrollOffset + viewportWidth / 2;
+    double totalWidth = leftPadding;
+    for (int j = 0; j < n; j++) {
+      final tabWidth = 44.0 * scale + (sliderTabs[j].length * 9.0 * scale);
+      final tabCenter = totalWidth + tabWidth / 2;
+      if (viewportCenter <= tabCenter + gap / 2) return j.clamp(0, n - 1);
+      totalWidth += gap + tabWidth;
+    }
+    return n - 1;
+  }
+
+  /// Called when user finishes dragging the tab strip. Sync selected tab to where user scrolled.
   void onSliderStripScrollEnd() {
     if (_skipNextScrollEnd) return;
-    scrollSliderToSelected();
+    try {
+      final sc = sliderTabsScrollController;
+      if (!sc.hasClients || sc.positions.isEmpty) return;
+      final position = sc.positions.length == 1 ? sc.position : sc.positions.first;
+      if (position.viewportDimension <= 0) return;
+      final scrollOffset = position.pixels;
+      final viewportWidth = position.viewportDimension;
+      final newIndex = _getSliderIndexFromScrollOffset(scrollOffset, viewportWidth);
+      final currentValue = selectedSliderIndex.value;
+      if (newIndex != currentValue) {
+        _updatingFromStripScroll = true;
+        selectedSliderIndex.value = newIndex;
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('onSliderStripScrollEnd: $e');
+    }
   }
 
   /// On swipe: bring tab strip into view by jumping main scroll to top. Use jumpTo to avoid animateTo crashes.
@@ -387,15 +424,13 @@ class UserDashboardController extends BaseController
   final RxList<YouTubeVideo> youtubeVideos = <YouTubeVideo>[].obs;
   final RxBool isLoadingYoutubeVideos = false.obs;
 
-  // Ads Carousel
+  // Ads Carousel (dynamic from API)
+  final BannerService _bannerService = BannerService();
+  final RxList<BannerItem> adsBanners = <BannerItem>[].obs;
+  final RxBool isLoadingBanners = false.obs;
   final Rx<PageController> adsPageController = PageController().obs;
   final RxInt adsCurrentPage = 0.obs;
   Timer? _adsTimer;
-  final List<String> adsImages = [
-    'https://img.freepik.com/free-vector/astrology-banner-with-zodiac-signs_23-2148722830.jpg',
-    'https://img.freepik.com/free-vector/hand-drawn-zodiac-wheel-background_23-2149021200.jpg',
-    'https://img.freepik.com/free-vector/astrology-zodiac-wheel-banner_23-2148722831.jpg',
-  ];
 
   void toggleView() {
     // Only preserve scroll position if controller is properly attached
@@ -458,6 +493,7 @@ class UserDashboardController extends BaseController
     loadUserProfile();
     loadLiveStreams();
     loadDailyQuote(requireAuth: requireAuth);
+    loadBanners();
     loadBlogs(requireAuth: requireAuth);
     loadAiAstrologers();
     loadVedicAstrologers();
@@ -486,11 +522,15 @@ class UserDashboardController extends BaseController
     loadPujas();
     // Load YouTube videos
     loadYouTubeVideos();
-    // Start Ads carousel auto-slide
-    _startAdsAutoSlide();
+    // Ads carousel auto-slide is started in loadBanners() when banners are loaded
 
-    // Listen to selectedSliderIndex changes and auto-scroll strip (works for tap, swipe, any change)
+    // Listen to selectedSliderIndex changes and auto-scroll strip (tap or swipe on body).
+    // Skip when index was set by user dragging the strip (strip already at desired position).
     ever(selectedSliderIndex, (int newIndex) {
+      if (_updatingFromStripScroll) {
+        _updatingFromStripScroll = false;
+        return;
+      }
       debugPrint(
         "SLIDER: ever() fired - selectedSliderIndex changed to $newIndex",
       );
@@ -620,13 +660,31 @@ class UserDashboardController extends BaseController
     _bookPoojaTimer = null;
   }
 
+  /// Load home screen banners from API
+  Future<void> loadBanners() async {
+    isLoadingBanners.value = true;
+    try {
+      var list = await _bannerService.getBannersByCategory('home');
+      if (list.isEmpty) {
+        list = await _bannerService.getHomeBanners();
+      }
+      adsBanners.assignAll(list);
+      // Auto-slide is handled by BannerCarouselWidget
+    } finally {
+      isLoadingBanners.value = false;
+    }
+  }
+
   /// Start Ads carousel auto-slide
   void _startAdsAutoSlide() {
     _stopAdsAutoSlide();
+    if (adsBanners.isEmpty) return;
     _adsTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       final pageController = adsPageController.value;
       if (pageController.hasClients && pageController.positions.length == 1) {
-        int next = (adsCurrentPage.value + 1) % adsImages.length;
+        final len = adsBanners.length;
+        if (len == 0) return;
+        int next = (adsCurrentPage.value + 1) % len;
         adsCurrentPage.value = next;
         try {
           pageController.animateToPage(
@@ -1203,6 +1261,7 @@ class UserDashboardController extends BaseController
     await loadDailyQuote(
       requireAuth: requireAuth,
     ); // Refresh quote on pull-to-refresh
+    await loadBanners();
     await loadBlogs(
       requireAuth: requireAuth,
     ); // Refresh blogs on pull-to-refresh

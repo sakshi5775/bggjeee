@@ -1,6 +1,9 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/data_model/banner_model.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -9,8 +12,45 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 /// Reports tab: grid of report types matching Year tab design.
-class ReportsTabWidget extends StatelessWidget {
+class ReportsTabWidget extends StatefulWidget {
   const ReportsTabWidget({super.key});
+
+  @override
+  State<ReportsTabWidget> createState() => _ReportsTabWidgetState();
+}
+
+class _ReportsTabWidgetState extends State<ReportsTabWidget> {
+  final BannerService _bannerService = BannerService();
+  final List<BannerItem> _banners = [];
+  bool _loadingBanners = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBanners();
+  }
+
+  Future<void> _loadBanners() async {
+    if (!mounted) return;
+    setState(() => _loadingBanners = true);
+    try {
+      var list = await _bannerService.getBannersByCategory('blog');
+      if (list.isEmpty) {
+        list = await _bannerService.getHomeBanners();
+      }
+      if (mounted) {
+        setState(() {
+          _banners
+            ..clear()
+            ..addAll(list);
+        });
+      }
+    } catch (_) {
+      if (mounted) setState(() => _banners.clear());
+    } finally {
+      if (mounted) setState(() => _loadingBanners = false);
+    }
+  }
 
   static const List<Map<String, dynamic>> _reportItems = [
     {'title': 'Life Report', 'icon': Icons.description_outlined, 'route': AppRoutes.allReports},
@@ -36,91 +76,39 @@ class ReportsTabWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildBanner(),
-          SizedBox(height: 2.h),
+          _buildBannersSection(),
+          SizedBox(height: 8),
           _buildGrid(),
-          SizedBox(height: 24.h),
         ],
       ),
     );
   }
 
-  Widget _buildBanner() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#820B17'.toColor(), '#68171E'.toColor()],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+  Widget _buildBannersSection() {
+    if (_loadingBanners && _banners.isEmpty) {
+      return SizedBox(
+        height: 80.h,
+        child: Center(
+          child: SizedBox(
+            width: 24.w,
+            height: 24.w,
+            child: CircularProgressIndicator(
+              color: "#6F221E".toColor(),
+              strokeWidth: 2,
+            ),
+          ),
         ),
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: '#68171E'.toColor().withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AutoTranslateText(
-            'Astrology Reports',
-            style: AppTypography.h2.copyWith(
-              color: '#FCE5AA'.toColor(),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          AutoTranslateText(
-            'Get Detailed Insights',
-            style: AppTypography.h3.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SizedBox(height: 4.h),
-          AutoTranslateText(
-            'Comprehensive Reports for Your Future',
-            style: AppTypography.body2.copyWith(
-              color: Colors.white.withOpacity(0.9),
-            ),
-          ),
-          SizedBox(height: 12.h),
-          GestureDetector(
-            onTap: () => Get.toNamed(AppRoutes.allReports),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-              decoration: BoxDecoration(
-                gradient: AppColors.orangeGradient,
-                borderRadius: BorderRadius.circular(12.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.deepOrange.withOpacity(0.4),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: AutoTranslateText(
-                'View All Reports',
-                style: AppTypography.body1.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+      );
+    }
+    if (_banners.isEmpty) return const SizedBox.shrink();
+    return BannerCarouselWidget(
+      key: ValueKey(_banners.length),
+      banners: _banners.toList(),
     );
   }
 
@@ -128,6 +116,7 @@ class ReportsTabWidget extends StatelessWidget {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: 10.w,

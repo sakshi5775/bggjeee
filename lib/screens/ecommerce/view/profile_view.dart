@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:astrobharataiuser/app_manager/common/image_picker.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/profile_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -35,13 +36,19 @@ class ProfileView extends GetView<ProfileController> {
                 showBackButton: showBackButton,
                 actions: [
                   IconButton(
-                    onPressed: () => controller.onLogoutTap(),
+                    onPressed: () {
+                      if (LoginGuard.isLoggedIn) {
+                        controller.onLogoutTap();
+                      } else {
+                        Get.toNamed(AppRoutes.login);
+                      }
+                    },
                     icon: Icon(
-                      Icons.logout,
+                      LoginGuard.isLoggedIn ? Icons.logout : Icons.login,
                       color: AppColors.templeGold,
                       size: 22.w,
                     ),
-                    tooltip: 'Logout',
+                    tooltip: LoginGuard.isLoggedIn ? 'Logout' : 'Login',
                     padding: EdgeInsets.all(8.w),
                     constraints: const BoxConstraints(),
                   ),

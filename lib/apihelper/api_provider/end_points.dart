@@ -9,7 +9,7 @@ class EndPoints {
   static const String verifyOtp = 'auth/verify-otp';
   static const String resendOtp = 'auth/resend-otp';
   static const String checkExists = 'auth/check-exists';
-  static const String profile = 'auth/profile';
+  //static const String profile = 'auth/profile';
 
   /// blogs
   static const String blogs = 'blogs/api/blogs';
@@ -120,7 +120,8 @@ class EndPoints {
   static const String ecommercePayments = 'ecommerce/api/payments';
   static String ecommercePaymentById(String id) => 'ecommerce/api/payments/$id';
 
-  // User Profile
+  // User Profile (current user - uses Bearer token; no userId in path)
+  static const String userProfileCurrent = 'users/api/users/profile';
   static String getUserProfile(String userId) =>
       'users/api/users/profile/$userId';
   static String updateUserProfile(String userId) =>
@@ -548,6 +549,13 @@ class EndPoints {
   /// Match Making API
   static const String matchMakingAshtakoot =
       'vedic/matching/ashtakoot-with-astro-details';
+
+  /// Banners APIs
+  static const String bannersCategories =
+      'users/api/users/banners/categories';
+  static const String bannersAll = 'users/api/users/banners/all';
+  static String bannersByCategory(String category) =>
+      'users/api/users/banners/category/$category';
 
   /// Daily Quote APIs
   static const String dailyQuote = 'users/api/users/daily-quote';

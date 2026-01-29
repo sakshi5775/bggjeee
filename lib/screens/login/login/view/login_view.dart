@@ -44,7 +44,7 @@ class LoginView extends BasePage<LoginController> {
               // ),
               SizedBox(
                 width: double.infinity,
-                height: 280.h,
+                height: 300.h,
                 child: Stack(
                   children: [
                     /// 🔹 Main Image

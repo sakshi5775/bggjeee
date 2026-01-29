@@ -139,8 +139,8 @@ class ProfileController extends BaseController {
   }
 
   Future<void> _loadUserProfile() async {
-    if (userId == null) return;
-    final result = await _profileService.getProfile(userId!);
+    // Profile API uses Bearer token; userId optional (backend identifies user from token)
+    final result = await _profileService.getProfile(userId);
     if (result != null) {
       _applyProfile(result);
     }

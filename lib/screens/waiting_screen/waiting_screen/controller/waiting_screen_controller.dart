@@ -16,7 +16,7 @@ class WaitingScreenController extends BaseController {
   void onInit() {
     super.onInit();
     // Show splash image for 3 seconds then navigate
-    _splashTimer = Timer(const Duration(seconds: 3), () {
+    _splashTimer = Timer(const Duration(milliseconds: 500), () {
       _navigateAfterSplash();
     });
   }
