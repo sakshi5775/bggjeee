@@ -6,7 +6,3 @@ library record_linux;
 class RecordLinuxPlugin {
   RecordLinuxPlugin();
 }
-
-
-
-

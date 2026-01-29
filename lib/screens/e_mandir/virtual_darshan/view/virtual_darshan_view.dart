@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/widgets/offering_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
@@ -53,9 +54,14 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
 
                     return Transform.translate(
                       offset: Offset(x, y),
-                      child: Image.asset(
-                        AppConstant.eMandirAartiIcon,
+                      child: SvgAssets(
+                        path: AppConstant.eMandirThaliIcon,
+                        height: 50.h,
                         width: 50.w,
+                        colorFilter: ColorFilter.mode(
+                          AppColors.deepOrange,
+                          BlendMode.srcIn,
+                        ),
                       ),
                     );
                   },
@@ -227,7 +233,7 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
               right: 18.w,
               child: InkWell(
                 onTap: () => controller.toggleAarti(context),
-                child: Image.asset(AppConstant.eMandirAartiIcon),
+                child: SvgAssets(path: AppConstant.eMandirThali2Icon),
               ),
             ),
             Positioned(
