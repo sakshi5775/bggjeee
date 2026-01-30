@@ -59,10 +59,10 @@ android/.gradle/
 android/local.properties
 android/app/build/
 
-# iOS
-ios/Pods/
-ios/.symlinks/
-ios/Flutter/ephemeral/
+# # iOS
+# ios/Pods/
+# ios/.symlinks/
+# ios/Flutter/ephemeral/
 
 # Node / misc
 node_modules/
