@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -10,6 +13,8 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class HoroscopeFormController extends BaseController {
+  final UserProfileService _userProfileService = UserProfileService();
+
   // Form controllers
   final dateController = TextEditingController();
   final timeController = TextEditingController();
@@ -45,6 +50,7 @@ class HoroscopeFormController extends BaseController {
   void onInit() {
     super.onInit();
     _initializeForm();
+    _loadUserProfileData();
   }
 
   @override
@@ -59,19 +65,88 @@ class HoroscopeFormController extends BaseController {
   }
 
   void _initializeForm() {
-    // Set default values
+    // Set default values (may be overwritten by profile in _loadUserProfileData)
     final now = DateTime.now();
     selectedDate.value = now;
     dateController.text = DateFormat('dd/MM/yyyy').format(now);
     final currentTime = TimeOfDay.now();
     selectedTime.value = currentTime;
-    timeController.text = DateFormat('HH:mm').format(
-      DateTime(now.year, now.month, now.day, currentTime.hour, currentTime.minute),
-    );
+    timeController.text = TimePickerHelper.formatTime24To12Display(currentTime.hour, currentTime.minute);
     timezoneController.text = '5.5'; // Default IST
     
     // Try to get current location on init
     _tryGetCurrentLocation();
+  }
+
+  /// Prefill DOB, time of birth, and location from user profile when available.
+  Future<void> _loadUserProfileData() async {
+    try {
+      final userId = UserData().getLoginData.user?.userId;
+      if (userId == null) return;
+      final profile = await _userProfileService.getProfile(userId);
+      if (profile == null || _isDisposed) return;
+
+      // DOB from personalInfo.dateOfBirth or birthChart.generatedAt
+      String? dateStr = profile.personalInfo?.dateOfBirth;
+      if (dateStr == null && profile.birthChart?.generatedAt != null) {
+        dateStr = profile.birthChart!.generatedAt!;
+      }
+      if (dateStr != null && dateStr.isNotEmpty) {
+        try {
+          DateTime? dob = DateTime.tryParse(dateStr);
+          if (dob == null) {
+            final parts = dateStr.split(RegExp(r'[/\-]'));
+            if (parts.length >= 3) {
+              if (parts[0].length == 4 && int.tryParse(parts[0]) != null) {
+                final y = int.tryParse(parts[0]);
+                final m = int.tryParse(parts[1]);
+                final d = int.tryParse(parts[2]);
+                if (y != null && m != null && d != null) dob = DateTime(y, m, d);
+              } else {
+                final d = int.tryParse(parts[0]);
+                final m = int.tryParse(parts[1]);
+                final y = int.tryParse(parts[2]);
+                if (d != null && m != null && y != null) dob = DateTime(y, m, d);
+              }
+            }
+          }
+          if (dob != null && !_isDisposed) {
+            selectedDate.value = dob;
+            dateController.text = DateFormat('dd/MM/yyyy').format(dob);
+          }
+        } catch (e) {
+          debugPrint('Error parsing profile DOB for horoscope: $e');
+        }
+      }
+
+      // Time of birth from birthChart.birthTime
+      if (profile.birthChart?.birthTime != null && !_isDisposed) {
+        final bt = profile.birthChart!.birthTime!;
+        final h = (bt.hour ?? 0).clamp(0, 23);
+        final m = (bt.minute ?? 0).clamp(0, 59);
+        selectedTime.value = TimeOfDay(hour: h, minute: m);
+        timeController.text = TimePickerHelper.formatTime24To12Display(h, m);
+      }
+
+      // Location from birthChart.birthPlace
+      if (profile.birthChart?.birthPlace != null && !_isDisposed) {
+        final place = profile.birthChart!.birthPlace!;
+        if (place.latitude != null && place.longitude != null) {
+          latitudeController.text = place.latitude!.toStringAsFixed(6);
+          longitudeController.text = place.longitude!.toStringAsFixed(6);
+        }
+        if (place.timezone != null && place.timezone!.isNotEmpty) {
+          timezoneController.text = place.timezone!;
+        }
+        final city = place.city ?? '';
+        final state = place.state ?? '';
+        if (city.isNotEmpty) {
+          selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error loading profile for horoscope form: $e');
+    }
   }
 
   /// Try to get current location silently on initialization
@@ -389,17 +464,14 @@ class HoroscopeFormController extends BaseController {
   void _setSelectedTime(TimeOfDay picked) {
     if (!_isDisposed && picked != selectedTime.value) {
       selectedTime.value = picked;
-      final now = DateTime.now();
-      timeController.text = DateFormat('HH:mm').format(
-        DateTime(now.year, now.month, now.day, picked.hour, picked.minute),
-      );
+      timeController.text = TimePickerHelper.formatTime24To12Display(picked.hour, picked.minute);
     }
   }
 
   /// Show time picker
   Future<void> selectTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
+    final TimeOfDay? picked = await TimePickerHelper.showTimePicker12h(
+      context,
       initialTime: selectedTime.value,
       builder: (context, child) {
         return Theme(
@@ -452,10 +524,11 @@ class HoroscopeFormController extends BaseController {
       return;
     }
 
-    // Prepare form data
+    // Prepare form data (time sent to API as 24h)
+    final time24 = TimePickerHelper.parseTime12To24(timeController.text) ?? timeController.text;
     final formData = {
       'date': dateController.text,
-      'time': timeController.text,
+      'time': time24,
       'latitude': double.parse(latitudeController.text),
       'longitude': double.parse(longitudeController.text),
       'timezone': double.parse(timezoneController.text),

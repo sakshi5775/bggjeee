@@ -96,6 +96,7 @@ class UserProfileModel {
 class PersonalInfo {
   PersonalInfo({
     this.fullName,
+    this.dateOfBirth,
     this.gender,
     this.maritalStatus,
     this.occupation,
@@ -103,6 +104,8 @@ class PersonalInfo {
   });
 
   String? fullName;
+  /// Date of birth in yyyy-MM-dd format (for API update)
+  String? dateOfBirth;
   String? gender;
   String? maritalStatus;
   String? occupation;
@@ -110,6 +113,7 @@ class PersonalInfo {
 
   PersonalInfo.fromJson(Map<String, dynamic> json) {
     fullName = json['fullName']?.toString();
+    dateOfBirth = json['dateOfBirth']?.toString();
     gender = json['gender']?.toString();
     maritalStatus = json['maritalStatus']?.toString();
     occupation = json['occupation']?.toString();
@@ -119,6 +123,7 @@ class PersonalInfo {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['fullName'] = fullName;
+    data['dateOfBirth'] = dateOfBirth;
     data['gender'] = gender;
     data['maritalStatus'] = maritalStatus;
     data['occupation'] = occupation;
@@ -548,14 +553,9 @@ class BirthChartUpdateRequest {
       'birthPlace': birthPlace.toJson(),
       'birthTime': birthTime.toJson(),
     };
-    
-    // Add profile section with dateOfBirth if provided
     if (dateOfBirth != null && dateOfBirth!.isNotEmpty) {
-      data['profile'] = {
-        'dateOfBirth': dateOfBirth,
-      };
+      data['dateOfBirth'] = dateOfBirth;
     }
-    
     return data;
   }
 }

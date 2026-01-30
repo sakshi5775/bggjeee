@@ -55,7 +55,7 @@ class User {
   });
 
   User.fromJson(Map<String, dynamic> json) {
-    userId = json['userId'];
+    userId = json['userId']?.toString() ?? json['id']?.toString();
     username = json['username'];
     email = json['email'];
     phone = json['phone'];

@@ -523,7 +523,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     },
     {
       'label': 'Horoscope',
-      'route': AppRoutes.horoscope,
+      'route': AppRoutes.horoscopeForm,
       'icon': AppConstant.horoscope,
     },
     {

@@ -273,17 +273,35 @@ class ImagePickerHelper {
     double maxSizeInMB = 5.0,
   ]) async {
     try {
-      final cameras = await availableCameras();
-      final firstCamera = cameras.first;
+      var cameras = await availableCameras();
+      if (cameras.isEmpty) {
+        if (context.mounted) {
+          Get.showSnackbar(
+            Ui.ErrorSnackBar(message: 'No camera available'),
+          );
+        }
+        return null;
+      }
+      // Order: back first, then front, so flip button switches to front
+      cameras = List<CameraDescription>.from(cameras)
+        ..sort((a, b) {
+          const order = {
+            CameraLensDirection.back: 0,
+            CameraLensDirection.front: 1,
+            CameraLensDirection.external: 2,
+          };
+          return (order[a.lensDirection] ?? 3)
+              .compareTo(order[b.lensDirection] ?? 3);
+        });
 
-      final image = await Navigator.push(
+      final image = await Navigator.push<File?>(
         context,
         MaterialPageRoute(
-          builder: (_) => CameraCaptureScreen(camera: firstCamera),
+          builder: (_) => CameraCaptureScreen(cameras: cameras),
         ),
       );
 
-      if (image != null && image is File) {
+      if (image != null) {
         final bytes = await image.length();
         final maxSizeInBytes = maxSizeInMB * 1024 * 1024;
         if (bytes <= maxSizeInBytes) {
@@ -476,9 +494,9 @@ class ImagePickerHelper {
 }
 
 class CameraCaptureScreen extends StatefulWidget {
-  final CameraDescription camera;
+  final List<CameraDescription> cameras;
 
-  const CameraCaptureScreen({super.key, required this.camera});
+  const CameraCaptureScreen({super.key, required this.cameras});
 
   @override
   State<CameraCaptureScreen> createState() => _CameraCaptureScreenState();
@@ -487,58 +505,175 @@ class CameraCaptureScreen extends StatefulWidget {
 class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
   late CameraController _controller;
   bool _isCameraInitialized = false;
+  int _currentCameraIndex = 0;
+  bool _isSwitching = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = CameraController(widget.camera, ResolutionPreset.medium);
-    _controller.initialize().then((_) {
-      if (!mounted) return;
-      setState(() {
-        _isCameraInitialized = true;
-      });
+  CameraDescription get _currentCamera => widget.cameras[_currentCameraIndex];
+
+  Future<void> _initCamera(CameraDescription camera) async {
+    if (!mounted) return;
+    _controller = CameraController(
+      camera,
+      ResolutionPreset.high,
+      imageFormatGroup: ImageFormatGroup.jpeg,
+      enableAudio: false,
+    );
+    await _controller.initialize();
+    if (!mounted) return;
+    setState(() {
+      _isCameraInitialized = true;
+      _isSwitching = false;
     });
   }
 
   @override
+  void initState() {
+    super.initState();
+    _initCamera(_currentCamera);
+  }
+
+  @override
   void dispose() {
-    _controller.dispose();
+    if (_isCameraInitialized) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 
+  Future<void> _switchCamera() async {
+    if (widget.cameras.length < 2 || _isSwitching) return;
+    setState(() {
+      _isSwitching = true;
+      _isCameraInitialized = false;
+    });
+    await _controller.dispose();
+    if (!mounted) return;
+    _currentCameraIndex = (_currentCameraIndex + 1) % widget.cameras.length;
+    await _initCamera(_currentCamera);
+  }
+
   Future<void> _takePicture() async {
+    if (!_isCameraInitialized || _controller.value.isTakingPicture) return;
     try {
-      final image = await _controller.takePicture();
+      final XFile image = await _controller.takePicture();
       final tempDir = await getTemporaryDirectory();
       final imagePath = path.join(
         tempDir.path,
         '${DateTime.now().millisecondsSinceEpoch}.jpg',
       );
       await image.saveTo(imagePath);
-      Navigator.pop(context, File(imagePath)); // Send image back
+      if (!mounted) return;
+      Navigator.pop(context, File(imagePath));
     } catch (e) {
       debugPrint('Camera capture error: $e');
+      if (mounted) {
+        Get.showSnackbar(
+          Ui.ErrorSnackBar(message: 'Failed to capture photo'),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (!_isCameraInitialized) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(color: Colors.white),
+              if (_isSwitching) ...[
+                const SizedBox(height: 16),
+                Text(
+                  'Switching camera...',
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
     }
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          SizedBox(height: Get.height, child: CameraPreview(_controller)),
-          Positioned(
-            bottom: 40,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: FloatingActionButton(
-                onPressed: _takePicture,
-                child: const Icon(Icons.camera),
+          SizedBox.expand(
+            child: FittedBox(
+              fit: BoxFit.cover,
+              child: SizedBox(
+                width: _controller.value.previewSize?.height ?? 1,
+                height: _controller.value.previewSize?.width ?? 1,
+                child: CameraPreview(_controller),
               ),
+            ),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (widget.cameras.length >= 2)
+                          IconButton(
+                            onPressed: _isSwitching ? null : _switchCamera,
+                            icon: const Icon(
+                              Icons.flip_camera_ios,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                            tooltip: 'Switch camera',
+                          ),
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 40),
+                  child: Center(
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: _takePicture,
+                        customBorder: const CircleBorder(),
+                        child: Container(
+                          width: 72,
+                          height: 72,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 4,
+                            ),
+                            color: Colors.white24,
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 36,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

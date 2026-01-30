@@ -2,17 +2,19 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/dosh_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class PitraDoshWidget extends StatelessWidget {
   final DoshController controller;
 
   const PitraDoshWidget({super.key, required this.controller});
+
+  static const Color _orange = Color(0xFFed6f30);
+  static const Color _orangeLight = Color(0xFFFF8A3D);
+  static const Color _maroon = Color(0xFF6F221E);
 
   @override
   Widget build(BuildContext context) {
@@ -54,26 +56,19 @@ class PitraDoshWidget extends StatelessWidget {
       final remedies = response['remedies'] as List<dynamic>? ?? [];
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Bot Response
             if (botResponse.isNotEmpty) _buildBotResponseCard(botResponse),
 
-            Spacing.h(16),
-
-            // Dosh Status
+            Spacing.h(12),
             _buildStatusCard(isDoshaPresent),
 
-            Spacing.h(16),
-
-            // Effects
+            Spacing.h(12),
             if (effects.isNotEmpty) _buildEffectsCard(effects),
 
-            Spacing.h(16),
-
-            // Remedies
+            Spacing.h(12),
             if (remedies.isNotEmpty) _buildRemediesCard(remedies),
           ],
         ),
@@ -83,35 +78,31 @@ class PitraDoshWidget extends StatelessWidget {
 
   Widget _buildBotResponseCard(String botResponse) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            "#ed6f30".toColor().withOpacity(0.1),
-            "#ed6f30".toColor().withOpacity(0.05),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.2),
-          width: 1,
-        ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.chat_bubble_outline,
-            color: "#ed6f30".toColor(),
-            size: 24.w,
-          ),
-          Spacing.w(12),
+          Icon(Icons.chat_bubble_outline, color: _orange, size: 20.w),
+          Spacing.w(10),
           Expanded(
             child: AutoTranslateText(
               botResponse,
-              style: MyTextTheme.mediumBCN.copyWith(color: "#6F221E".toColor()),
+              style: MyTextTheme.smallBCN.copyWith(
+                color: _maroon,
+                fontSize: 12.sp,
+              ),
             ),
           ),
         ],
@@ -121,14 +112,15 @@ class PitraDoshWidget extends StatelessWidget {
 
   Widget _buildStatusCard(bool isDoshaPresent) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
@@ -139,23 +131,25 @@ class PitraDoshWidget extends StatelessWidget {
           AutoTranslateText(
             'Pitra Dosh Status',
             style: MyTextTheme.mediumBCB.copyWith(
-              color: "#6F221E".toColor(),
+              color: _maroon,
               fontWeight: FontWeight.bold,
+              fontSize: 13.sp,
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
             decoration: BoxDecoration(
               color: isDoshaPresent
                   ? Colors.red.withOpacity(0.1)
                   : Colors.green.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(10.r),
             ),
             child: AutoTranslateText(
               isDoshaPresent ? 'Present' : 'Not Present',
-              style: MyTextTheme.mediumBCB.copyWith(
+              style: MyTextTheme.smallBCB.copyWith(
                 color: isDoshaPresent ? Colors.red : Colors.green,
                 fontWeight: FontWeight.bold,
+                fontSize: 12.sp,
               ),
             ),
           ),
@@ -166,14 +160,15 @@ class PitraDoshWidget extends StatelessWidget {
 
   Widget _buildEffectsCard(List<dynamic> effects) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
@@ -184,113 +179,58 @@ class PitraDoshWidget extends StatelessWidget {
           Row(
             children: [
               Container(
-                height: 50.h,
-                width: 50.w,
+                padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                  gradient: const LinearGradient(
+                    colors: [_orangeLight, _orange],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.circular(16.r),
+                  borderRadius: BorderRadius.circular(10.r),
                 ),
-                child: Icon(
-                  Icons.warning_amber_rounded,
-                  color: Colors.white,
-                  size: 24.w,
-                ),
+                child: Icon(Icons.warning_amber_rounded, color: Colors.white, size: 18.w),
               ),
-
-              Spacing.w(8),
+              Spacing.w(10),
               AutoTranslateText(
                 'Effects',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: _maroon,
                   fontWeight: FontWeight.bold,
+                  fontSize: 13.sp,
                 ),
               ),
             ],
           ),
-
-          // Spacing.h(12),
-          // ...effects.map((effect) {
-          //   final effectText = effect.toString();
-          //   return Padding(
-          //     padding: EdgeInsets.only(bottom: 12.h),
-          //     child: Row(
-          //       crossAxisAlignment: CrossAxisAlignment.start,
-          //       children: [
-          //         Icon(
-          //           Icons.error_outline,
-          //           color: Colors.orange,
-          //           size: 18.w,
-          //         ),
-          //         Spacing.w(12),
-          //         Expanded(
-          //           child: AutoTranslateText(
-          //             effectText,
-          //             style: MyTextTheme.smallBCN.copyWith(
-          //               color: "#6F221E".toColor(),
-          //               height: 1.5,
-          //             ),
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   );
-          // }).toList(),
-          Spacing.h(12),
-
+          Spacing.h(10),
           ...effects.map((effect) {
             final effectText = effect.toString();
-
             return Container(
-              margin: EdgeInsets.only(bottom: 12.h),
-              padding: EdgeInsets.all(12.w),
+              margin: EdgeInsets.only(bottom: 8.h),
+              padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: Colors.orange.withOpacity(0.25)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 8,
-                    offset: Offset(0, 4),
-                  ),
-                ],
+                color: _maroon.withOpacity(0.04),
+                borderRadius: BorderRadius.circular(10.r),
+                border: Border.all(color: _orange.withOpacity(0.2)),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// Warning Icon
-                  Container(
-                    width: 28.w,
-                    height: 28.w,
-                    decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.12),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.error_outline,
-                      color: Colors.orange,
-                      size: 18.w,
-                    ),
-                  ),
-
-                  Spacing.w(12),
-
-                  /// Effect Text
+                  Icon(Icons.error_outline, color: _orange, size: 16.w),
+                  Spacing.w(8),
                   Expanded(
                     child: AutoTranslateText(
                       effectText,
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: "#6F221E".toColor(),
+                        color: _maroon,
                         height: 1.5,
+                        fontSize: 12.sp,
                       ),
                     ),
                   ),
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -298,14 +238,15 @@ class PitraDoshWidget extends StatelessWidget {
 
   Widget _buildRemediesCard(List<dynamic> remedies) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
@@ -316,100 +257,51 @@ class PitraDoshWidget extends StatelessWidget {
           Row(
             children: [
               Container(
-                height: 50.h,
-                width: 50.w,
+                padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
+                  gradient: const LinearGradient(
+                    colors: [_orangeLight, _orange],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.circular(16.r),
+                  borderRadius: BorderRadius.circular(10.r),
                 ),
-                child: Icon(
-                  Icons.healing,
-                  color: "#FFFFFF".toColor(),
-                  size: 24.w,
-                ),
+                child: Icon(Icons.healing, color: Colors.white, size: 18.w),
               ),
-
-              Spacing.w(8),
+              Spacing.w(10),
               AutoTranslateText(
                 'Remedies',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: _maroon,
                   fontWeight: FontWeight.bold,
+                  fontSize: 13.sp,
                 ),
               ),
             ],
           ),
-          Spacing.h(12),
-          // ...remedies.asMap().entries.map((entry) {
-          //   final index = entry.key;
-          //   final remedy = entry.value.toString();
-          //   return Padding(
-          //     padding: EdgeInsets.only(bottom: 12.h),
-          //     child: Row(
-          //       crossAxisAlignment: CrossAxisAlignment.start,
-          //       children: [
-          //         Container(
-          //           width: 24.w,
-          //           height: 24.w,
-          //           decoration: BoxDecoration(
-          //             color: "#ed6f30".toColor().withOpacity(0.1),
-          //             shape: BoxShape.circle,
-          //           ),
-          //           child: Center(
-          //             child: AutoTranslateText(
-          //               '${index + 1}',
-          //               style: MyTextTheme.smallBCB.copyWith(
-          //                 color: "#ed6f30".toColor(),
-          //                 fontWeight: FontWeight.bold,
-          //               ),
-          //             ),
-          //           ),
-          //         ),
-          //         Spacing.w(12),
-          //         Expanded(
-          //           child: AutoTranslateText(
-          //             remedy,
-          //             style: MyTextTheme.smallBCN.copyWith(
-          //               color: "#6F221E".toColor(),
-          //               height: 1.5,
-          //             ),
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   );
-          // }).toList(),
+          Spacing.h(10),
           ...remedies.asMap().entries.map((entry) {
             final index = entry.key;
             final remedy = entry.value.toString();
-
             return Container(
-              margin: EdgeInsets.only(bottom: 12.h),
-              padding: EdgeInsets.all(12.w),
+              margin: EdgeInsets.only(bottom: 8.h),
+              padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: "#ed6f30".toColor().withOpacity(0.2)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 8,
-                    offset: Offset(0, 4),
-                  ),
-                ],
+                color: _maroon.withOpacity(0.04),
+                borderRadius: BorderRadius.circular(10.r),
+                border: Border.all(color: _orange.withOpacity(0.2)),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// Index Circle
                   Container(
-                    width: 24.w,
-                    height: 24.w,
+                    width: 22.w,
+                    height: 22.w,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: ["#ed6f30".toColor(), "#f39c6b".toColor()],
+                      gradient: const LinearGradient(
+                        colors: [_orangeLight, _orange],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
                       shape: BoxShape.circle,
                     ),
@@ -419,27 +311,26 @@ class PitraDoshWidget extends StatelessWidget {
                         style: MyTextTheme.smallBCB.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
+                          fontSize: 11.sp,
                         ),
                       ),
                     ),
                   ),
-
-                  Spacing.w(12),
-
-                  /// Remedy Text
+                  Spacing.w(10),
                   Expanded(
                     child: AutoTranslateText(
                       remedy,
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: "#6F221E".toColor(),
+                        color: _maroon,
                         height: 1.5,
+                        fontSize: 12.sp,
                       ),
                     ),
                   ),
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

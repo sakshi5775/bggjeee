@@ -48,20 +48,28 @@ class UserProfileService with ApiHelperMixin {
       // Prepare fields for multipart/form-data
       final fields = <String, String>{};
 
-      // Add personalInfo as JSON string if provided
+      // Add personalInfo as JSON string; omit null values so backend enum validation does not fail
       if (personalInfo != null) {
-        fields['personalInfo'] = jsonEncode(personalInfo.toJson());
+        final personalInfoMap = personalInfo.toJson();
+        personalInfoMap.removeWhere((_, v) => v == null);
+        fields['personalInfo'] = jsonEncode(personalInfoMap);
       }
 
-      // Add contactInfo as JSON string if provided
-      // Exclude protected fields (email and phone) as they can only be updated through auth service
+      // Add contactInfo as JSON string; backend requires contactInfo.address to be an object (not undefined)
       if (contactInfo != null) {
-        fields['contactInfo'] = jsonEncode(contactInfo.toJson(excludeProtectedFields: true));
+        final contactInfoMap = contactInfo.toJson(excludeProtectedFields: true);
+        contactInfoMap['address'] = contactInfo.address != null
+            ? contactInfo.address!.toJson()
+            : <String, dynamic>{};
+        contactInfoMap.removeWhere((_, v) => v == null);
+        fields['contactInfo'] = jsonEncode(contactInfoMap);
       }
 
-      // Add preferences as JSON string if provided
+      // Add preferences as JSON string; omit null values
       if (preferences != null) {
-        fields['preferences'] = jsonEncode(preferences.toJson());
+        final preferencesMap = preferences.toJson();
+        preferencesMap.removeWhere((_, v) => v == null);
+        fields['preferences'] = jsonEncode(preferencesMap);
       }
 
       // Add empty birthChart as per API requirement
@@ -125,11 +133,13 @@ class UserProfileService with ApiHelperMixin {
 
       if (response.body['success'] == true &&
           response.body['data'] is Map<String, dynamic>) {
-        // The response contains birth chart data, but we can parse it
+        // The response contains birthChart and dateOfBirth
         final data = response.body['data'] as Map<String, dynamic>;
-        // Return a partial UserProfileModel with birthChart updated
+        final birthChartData = data['birthChart'] as Map<String, dynamic>?;
         final profile = UserProfileModel();
-        profile.birthChart = BirthChart.fromJson(data);
+        if (birthChartData != null) {
+          profile.birthChart = BirthChart.fromJson(birthChartData);
+        }
         return profile;
       }
       showErrorMessage(

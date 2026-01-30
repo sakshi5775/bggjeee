@@ -167,6 +167,11 @@ class AiGuiderService extends GetxService {
       intent = 'OPEN_PAGE';
       page = 'MATCH_MAKING';
       reply = _getNavigationResponse(baseLang, 'match');
+    } else if (_isAstrologyRelatedQuery(lowerQuery)) {
+      // Future, career, marriage, health, etc. - guide to app features instead of "I don't understand"
+      intent = 'NONE';
+      page = null;
+      reply = _getAstrologyGeneralResponse(baseLang);
     } else {
       // Generic response - no navigation
       intent = 'NONE';
@@ -262,6 +267,41 @@ class AiGuiderService extends GetxService {
     
     // For other languages, use English as fallback
     return responses[lang]?[page] ?? responses['en']?[page] ?? 'I\'m taking you there.';
+  }
+
+  /// Detect if query is about astrology, future, career, love, health, etc. (app-related)
+  bool _isAstrologyRelatedQuery(String query) {
+    final terms = [
+      'future', 'career', 'job', 'marriage', 'love', 'health', 'money', 'wealth',
+      'success', 'prediction', 'predict', 'lucky', 'fortune', 'destiny', 'life',
+      'भविष्य', 'करियर', 'नौकरी', 'शादी', 'विवाह', 'प्यार', 'स्वास्थ्य',
+      'पैसा', 'धन', 'किस्मत', 'भाग्य', 'जीवन', 'ज्योतिष', 'राशि', 'ग्रह', 'ग्रहण',
+      'horoscope', 'zodiac', 'rashi', 'planet', 'graha', 'mangal', 'shani',
+      'pooja', 'puja', 'पूजा', 'remedy', 'उपाय', 'dosh', 'दोष', 'muhurat', 'मुहूर्त',
+      'compatibility', 'मिलान', 'match making', 'birth chart', 'जन्म',
+    ];
+    return terms.any((term) => query.contains(term));
+  }
+
+  /// Helpful response for astrology-related questions - direct to Kundli/Horoscope/Astrologer
+  String _getAstrologyGeneralResponse(String lang) {
+    final Map<String, String> responses = {
+      'hi': 'मैं आपकी मदद कर सकता हूं! भविष्य, करियर या जीवन से जुड़े विस्तृत जवाब के लिए कृपया हमारे कुंडली, राशिफल या लाइव ज्योतिषी से बात करें।',
+      'en': 'I\'d love to help! For detailed predictions about your future, career, or life, please try our Kundli, Horoscope, or chat with a Live Astrologer.',
+      'bn': 'আমি সাহায্য করতে পারি! আপনার ভবিষ্যৎ, ক্যারিয়ার বা জীবনের বিস্তারিত জানতে কুন্ডলি, রাশিফল বা লাইভ জ্যোতিষীর সাথে কথা বলুন।',
+      'te': 'నేను సహాయం చేయగలను! మీ భవిష్యత్తు, కెరీర్ లేదా జీవితం గురించి వివరాల కోసం కుండలి, హోరోస్కోప్ లేదా లైవ్ ఎస్ట్రాలజిస్ట్‌తో మాట్లాడండి।',
+      'mr': 'मी मदत करू शकतो! तुमच्या भविष्य, कारकीर्द किंवा जीवनाबद्दल तपशीलासाठी कुंडली, राशिफल किंवा लाइव्ह ज्योतिषीशी बोला।',
+      'ta': 'நான் உதவ முடியும்! உங்கள் எதிர்காலம், தொழில் அல்லது வாழ்க்கை பற்றிய விரிவான தகவல்களுக்கு குண்டலி, ஹோரோஸ்கோப் அல்லது நேரடி ஜோதிடருடன் பேசுங்கள்।',
+      'gu': 'હું મદદ કરી શકું! તમારા ભવિષ્ય, કારકિર્દી અથવા જીવન વિશે વિગતો માટે કુંડલી, હોરોસ્કોપ અથવા લાઇવ જ્યોતિષી સાથે વાત કરો।',
+      'ur': 'میں مدد کر سکتا ہوں! آپ کے مستقبل، کیریئر یا زندگی کے بارے میں تفصیلات کے لیے کنڈلی، ہوروسکوپ یا لائیو نجومی سے بات کریں۔',
+      'kn': 'ನಾನು ಸಹಾಯ ಮಾಡಬಹುದು! ನಿಮ್ಮ ಭವಿಷ್ಯ, ವೃತ್ತಿ ಅಥವಾ ಜೀವನದ ವಿವರಗಳಿಗಾಗಿ ಕುಂಡಲಿ, ಹೋರೋಸ್ಕೋಪ್ ಅಥವಾ ಲೈವ್ ಜ್ಯೋತಿಷಿಯೊಂದಿಗೆ ಮಾತನಾಡಿ।',
+      'ml': 'എനിക്ക് സഹായിക്കാം! നിങ്ങളുടെ ഭാവി, കരിയർ അല്ലെങ്കിൽ ജീവിതത്തെക്കുറിച്ചുള്ള വിശദാംശങ്ങൾക്ക് കുണ്ഡലി, ഹോറോസ്കോപ്പ് അല്ലെങ്കിൽ ലൈവ് ജ്യോതിഷിയുമായി സംസാരിക്കുക।',
+      'or': 'ମୁଁ ସାହାଯ୍ୟ କରିପାରିବି! ଆପଣଙ୍କ ଭବିଷ୍ୟତ, କ୍ୟାରିଅର କିମ୍ବା ଜୀବନ ବିଷୟରେ ବିସ୍ତୃତ ଜାଣିବା ପାଇଁ କୁଣ୍ଡଳୀ, ହୋରୋସ୍କୋପ୍ କିମ୍ବା ଲାଇଭ୍ ଜ୍ୟୋତିଷଙ୍କ ସହିତ କଥା ହେବା।',
+      'pa': 'ਮੈਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ! ਤੁਹਾਡੇ ਭਵਿੱਖ, ਕੈਰੀਅਰ ਜਾਂ ਜੀਵਨ ਬਾਰੇ ਵਿਸਤ੍ਰਿਤ ਜਾਣਕਾਰੀ ਲਈ ਕੁੰਡਲੀ, ਹੋਰੋਸਕੋਪ ਜਾਂ ਲਾਈਵ ਜੋਤਿਸ਼ੀ ਨਾਲ ਗੱਲ ਕਰੋ।',
+      'as': 'মই সহায় কৰিব পাৰো! আপোনাৰ ভবিষ্যৎ, কেৰিয়াৰ বা জীৱনৰ বাবে কুণ্ডলী, ৰাশিফল বা লাইভ জ্যোতিষীৰ সৈতে কথা পাতক।',
+      'ne': 'म मद्दत गर्न सक्छु! तपाईंको भविष्य, क्यारियर वा जीवनको विवरणको लागि कुण्डली, राशिफल वा लाइभ ज्योतिषीसंग कुरा गर्नुहोस्।',
+    };
+    return responses[lang] ?? responses['en']!;
   }
 
   /// Get generic "I don't understand" response based on language

@@ -9,7 +9,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -71,38 +70,105 @@ class KundliFormController extends BaseController {
       targetRoute = arguments['targetRoute'] as String;
     }
     _initializeForm();
-    _loadUserProfileName();
+    _loadUserProfileData();
   }
-  
-  /// Load user profile name and gender to prefill fields
-  Future<void> _loadUserProfileName() async {
+
+  /// Load user profile (name, gender, DOB, time of birth, location) to prefill Kundli form.
+  /// Ensures saved profile DOB and TOB are used instead of current date/time when available.
+  Future<void> _loadUserProfileData() async {
     try {
       final userId = UserData().getLoginData.user?.userId;
-      if (userId != null) {
-        final profile = await _userProfileService.getProfile(userId);
-        if (profile != null && profile.personalInfo != null) {
-          // Prefill name
-          final fullName = profile.personalInfo!.fullName;
-          if (fullName != null && fullName.isNotEmpty && nameController.text.isEmpty) {
-            nameController.text = fullName;
-          }
-          
-          // Prefill gender
-          final gender = profile.personalInfo!.gender;
-          if (gender != null && gender.isNotEmpty && selectedGender.value == null) {
-            // Convert to format used in dropdown (MALE -> Male, FEMALE -> Female)
-            if (gender.toUpperCase() == 'MALE') {
-              selectedGender.value = 'Male';
-            } else if (gender.toUpperCase() == 'FEMALE') {
-              selectedGender.value = 'Female';
-            } else {
-              selectedGender.value = gender;
-            }
+      if (userId == null) return;
+      final profile = await _userProfileService.getProfile(userId);
+      if (profile == null) return;
+      if (_isDisposed) return;
+
+      // Prefill name and gender
+      if (profile.personalInfo != null) {
+        final fullName = profile.personalInfo!.fullName;
+        if (fullName != null && fullName.isNotEmpty && nameController.text.isEmpty) {
+          nameController.text = fullName;
+        }
+        final gender = profile.personalInfo!.gender;
+        if (gender != null && gender.isNotEmpty && selectedGender.value == null) {
+          if (gender.toUpperCase() == 'MALE') {
+            selectedGender.value = 'Male';
+          } else if (gender.toUpperCase() == 'FEMALE') {
+            selectedGender.value = 'Female';
+          } else {
+            selectedGender.value = gender;
           }
         }
       }
+
+      // Prefill DOB from personalInfo.dateOfBirth or birthChart.generatedAt
+      String? dateStr = profile.personalInfo?.dateOfBirth;
+      if (dateStr == null && profile.birthChart?.generatedAt != null) {
+        dateStr = profile.birthChart!.generatedAt!;
+      }
+      if (dateStr != null && dateStr.isNotEmpty) {
+        try {
+          DateTime? dob;
+          final isoDate = DateTime.tryParse(dateStr);
+          if (isoDate != null) {
+            dob = isoDate;
+          } else {
+            final parts = dateStr.split(RegExp(r'[/\-]'));
+            if (parts.length >= 3) {
+              int? day, month, year;
+              // yyyy-MM-dd (e.g. 2002-01-30) vs dd/MM/yyyy (e.g. 30/01/2002)
+              if (parts[0].length == 4 && int.tryParse(parts[0]) != null) {
+                year = int.tryParse(parts[0]);
+                month = int.tryParse(parts[1]);
+                day = int.tryParse(parts[2]);
+              } else {
+                day = int.tryParse(parts[0]);
+                month = int.tryParse(parts[1]);
+                year = int.tryParse(parts[2]);
+              }
+              if (day != null && month != null && year != null) {
+                dob = DateTime(year, month, day);
+              }
+            }
+          }
+          if (dob != null && !_isDisposed) {
+            selectedDate.value = dob;
+            dateController.text = DateFormat('dd/MM/yyyy').format(dob);
+          }
+        } catch (e) {
+          debugPrint('Error parsing profile DOB: $e');
+        }
+      }
+
+      // Prefill time of birth from birthChart.birthTime
+      if (profile.birthChart?.birthTime != null && !_isDisposed) {
+        final bt = profile.birthChart!.birthTime!;
+        final h = (bt.hour ?? 0).clamp(0, 23);
+        final m = (bt.minute ?? 0).clamp(0, 59);
+        selectedTime.value = TimeOfDay(hour: h, minute: m);
+        timeController.text = DateFormat('HH:mm').format(
+          DateTime(0, 1, 1, h, m),
+        );
+      }
+
+      // Prefill birth place / location from birthChart.birthPlace
+      if (profile.birthChart?.birthPlace != null && !_isDisposed) {
+        final place = profile.birthChart!.birthPlace!;
+        if (place.latitude != null && place.longitude != null) {
+          latitudeController.text = place.latitude!.toStringAsFixed(6);
+          longitudeController.text = place.longitude!.toStringAsFixed(6);
+        }
+        if (place.timezone != null && place.timezone!.isNotEmpty) {
+          timezoneController.text = place.timezone!;
+        }
+        final city = place.city ?? '';
+        final state = place.state ?? '';
+        if (city.isNotEmpty) {
+          selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
+        }
+      }
     } catch (e) {
-      debugPrint('Error loading user profile name: $e');
+      debugPrint('Error loading user profile for Kundli form: $e');
     }
   }
 

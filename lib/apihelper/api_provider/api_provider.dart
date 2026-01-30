@@ -453,6 +453,7 @@ class ApiClient extends GetConnect
       if (currentToken != null && currentToken.isNotEmpty) {
         request.headers['Authorization'] = "Bearer $currentToken";
       }
+      request.headers['Accept'] = 'application/json';
 
       request.fields.addAll(fields);
 
