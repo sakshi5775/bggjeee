@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/learning_journey_dialog.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -29,7 +30,7 @@ class MasteryBundlesSection extends StatelessWidget {
           ),
           SizedBox(height: 24.h),
           SizedBox(
-            height: 420.h,
+            height: 360.h,
             child: ListView(
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -145,8 +146,27 @@ class MasteryBundlesSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // 1. Image at the top (Full Width)
+            ClipRRect(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(15.r)),
+              child: Image.network(
+                image,
+                height: 150.h,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 120.h,
+                    color: Colors.grey[300],
+                    child: const Center(child: Icon(Icons.image)),
+                  );
+                },
+              ),
+            ),
+            Spacing.h(12),
+            // 2. Title and Price
             Padding(
-              padding: EdgeInsets.all(16.w),
+              padding: AppPaddings.symmetric(h: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -168,94 +188,70 @@ class MasteryBundlesSection extends StatelessWidget {
                           style: AppTypography.h3.copyWith(
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF5D2E17),
+                            fontSize: 14.sp,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 8.h),
-                  AutoTranslateText(
-                    price,
-                    style: AppTypography.h2.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF3E1212),
-                      fontSize: 20.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            Container(
-              height: 120.h, // Reduced height to prevent overflow
-              width: double.infinity,
-              margin: EdgeInsets.symmetric(horizontal: 16.w),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: Colors.white, width: 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 5,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10.r),
-                child: Image.network(
-                  image,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Center(child: Icon(Icons.image)),
-                    );
-                  },
-                ),
-              ),
-            ),
-
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(12.w), // Reduced padding
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceEvenly, // Changed to spaceEvenly
-                  children: [
-                    _buildBulletPoint('INCLUDED', includes),
-                    // Removed SizedBox(height: 12.h) to rely on spaceEvenly
-                    _buildBulletPoint('TARGET', target),
-                    if (onTap != null) ...[
-                      SizedBox(height: 8.h),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: onTap,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12.w,
-                              vertical: 6.h,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: AppColors.orangeGradient,
-                              borderRadius: BorderRadius.circular(20.r),
-                            ),
-                            child: AutoTranslateText(
-                              'Learn More',
-                              style: AppTypography.label.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10.sp,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AutoTranslateText(
+                        price,
+                        style: AppTypography.h2.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF3E1212),
+                          fontSize: 18.sp,
+                        ),
+                      ),
+                      if (onTap != null) ...[
+                        SizedBox(height: 8.h),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: GestureDetector(
+                            onTap: onTap,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12.w,
+                                vertical: 6.h,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: AppColors.orangeGradient,
+                                borderRadius: BorderRadius.circular(20.r),
+                              ),
+                              child: AutoTranslateText(
+                                'Learn More',
+                                style: AppTypography.label.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10.sp,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ],
-                  ],
-                ),
+                  ),
+                ],
+              ),
+            ),
+            Spacing.h(12),
+            // 3. Details
+            Padding(
+              padding: AppPaddings.symmetric(h: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildBulletPoint('INCLUDED', includes),
+                  Spacing.h(12),
+                  _buildBulletPoint('TARGET', target),
+                ],
               ),
             ),
           ],
