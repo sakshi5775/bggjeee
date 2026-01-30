@@ -1,7 +1,10 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/app_manager/widgets/language_selector_widget.dart';
 import 'package:astrobharataiuser/core/localization/language_controller.dart';
+import 'package:astrobharataiuser/core/localization/language_controller_v2.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/ai_guider/controller/ai_guider_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -25,6 +28,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _pulseAnimation;
+  final TextEditingController _inputController = TextEditingController();
 
   @override
   void initState() {
@@ -74,6 +78,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
 
   @override
   void dispose() {
+    _inputController.dispose();
     _fadeController.dispose();
     _slideController.dispose();
     _pulseController.dispose();
@@ -85,75 +90,46 @@ class _AiGuiderViewState extends State<AiGuiderView>
     final controller = Get.find<AiGuiderController>();
 
     return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(controller),
-            
-            // Main content
-            Expanded(
-              child: SingleChildScrollView(
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Spacing.h(20),
-                      
-                      // Main AI Icon with pulse animation
-                      _buildMainIcon(),
-                      
-                      Spacing.h(16),
-                      
-                      // Title
-                      _buildTitle(),
-                      
-                      Spacing.h(8),
-                      
-                      // Subtitle
-                      _buildSubtitle(),
-                      
-                      Spacing.h(32),
-                      
-                      // AI Animation Area
-                      SlideTransition(
-                        position: _slideAnimation,
-                        child: _buildAnimationArea(controller),
-                      ),
-                      
-                      Spacing.h(24),
-                      
-                      // Conversation Area - Always show, but content is conditional
-                      _buildConversationArea(controller),
-                      
-                      Spacing.h(24),
-                      
-                      // Features Section
-                      SlideTransition(
-                        position: _slideAnimation,
-                        child: _buildFeaturesSection(),
-                      ),
-                      
-                      Spacing.h(24),
-                      
-                      // About AI Guide Section
-                      SlideTransition(
-                        position: _slideAnimation,
-                        child: _buildAboutSection(),
-                      ),
-                      
-                      Spacing.h(32),
-                    ],
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(controller),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Spacing.h(8),
+                        _buildMainIcon(),
+                        Spacing.h(8),
+                        _buildTitle(),
+                        Spacing.h(4),
+                        _buildSubtitle(),
+                        Spacing.h(12),
+                        SlideTransition(
+                          position: _slideAnimation,
+                          child: _buildAnimationArea(controller),
+                        ),
+                        Spacing.h(12),
+                        _buildConversationArea(controller),
+                        Spacing.h(12),
+                        _buildServiceGrid(),
+                        Spacing.h(10),
+                        _buildCategoryFilters(),
+                        Spacing.h(14),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            
-            // Input area
-            _buildInputArea(controller),
-          ],
+              _buildInputArea(controller),
+            ],
+          ),
         ),
       ),
     );
@@ -161,84 +137,188 @@ class _AiGuiderViewState extends State<AiGuiderView>
 
   Widget _buildHeader(AiGuiderController controller) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
       child: Row(
         children: [
-          // Back button
           GestureDetector(
             onTap: () => controller.closeGuider(),
             child: Container(
-              width: 40.w,
-              height: 40.w,
+              width: 36.w,
+              height: 36.w,
               decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(8.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 3,
+                    offset: const Offset(0, 1),
                   ),
                 ],
               ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
+              child: Icon(Icons.arrow_back, color: '#3E2723'.toColor(), size: 18.w),
+            ),
+          ),
+          SizedBox(width: 8.w),
+          Obx(
+            () => GestureDetector(
+              onTap: () => controller.toggleSoundMuted(),
+              child: Container(
+                width: 36.w,
+                height: 36.w,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 3,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  controller.isSoundMuted.value ? Icons.volume_off : Icons.volume_up,
+                  color: controller.isSoundMuted.value ? Colors.grey : '#FF6B35'.toColor(),
+                  size: 18.w,
+                ),
               ),
             ),
           ),
           Spacer(),
-          // Language selector icon
-          Builder(
-            builder: (context) {
-              if (Get.isRegistered<LanguageController>()) {
-                return GetBuilder<LanguageController>(
-                  builder: (langController) => GestureDetector(
-                    onTap: () => _showLanguageSelector(controller),
-                    child: Container(
-                      width: 40.w,
-                      height: 40.w,
-                      decoration: BoxDecoration(
-                        color: '#ffffff'.toColor(),
-                        borderRadius: BorderRadius.circular(8.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.language,
-                        color: '#FF6B35'.toColor(),
-                        size: 20.w,
-                      ),
-                    ),
+          GestureDetector(
+            onTap: () => _showLanguageSelector(controller),
+            child: Container(
+              width: 36.w,
+              height: 36.w,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 3,
+                    offset: const Offset(0, 1),
                   ),
-                );
-              }
+                ],
+              ),
+              child: Icon(Icons.language, color: '#FF6B35'.toColor(), size: 18.w),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static const List<Map<String, dynamic>> _serviceItems = [
+    {'title': 'Talk to Astrologer', 'icon': Icons.person, 'route': AppRoutes.liveAstrologers},
+    {'title': 'View Kundali', 'icon': Icons.bar_chart, 'route': AppRoutes.kundliForm},
+    {'title': 'Shop - Gemstones', 'icon': Icons.diamond, 'route': AppRoutes.ecommerceHome},
+    {'title': 'Book Pooja', 'icon': Icons.temple_hindu, 'route': AppRoutes.bookPuja},
+    {'title': 'View Panchang', 'icon': Icons.calendar_today, 'route': AppRoutes.panchang},
+    {'title': 'Numerology', 'icon': Icons.numbers, 'route': AppRoutes.numerologyForm},
+    {'title': 'AI Astrologer', 'icon': Icons.smart_toy, 'route': AppRoutes.aiGuider},
+    {'title': 'Kundli Matching', 'icon': Icons.favorite, 'route': AppRoutes.matchMakingGif},
+    {'title': 'Palmistry', 'icon': Icons.back_hand, 'route': AppRoutes.palmReading},
+    {'title': 'Learning Portal', 'icon': Icons.menu_book, 'route': AppRoutes.courses},
+  ];
+
+  Widget _buildServiceGrid() {
+    final orangeStart = AppColors.orangeGradient.colors.first;
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 14.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(bottom: 8.h),
+            child: AutoTranslateText(
+              'Quick access',
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.bold,
+                fontSize: 12.sp,
+              ).merge(AppTypography.h3),
+            ),
+          ),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 8.h,
+              crossAxisSpacing: 8.w,
+              childAspectRatio: 1.0,
+            ),
+            itemCount: _serviceItems.length,
+            itemBuilder: (context, index) {
+              final item = _serviceItems[index];
+              final title = item['title'] as String;
+              final icon = item['icon'] as IconData;
+              final route = item['route'] as String;
+              final isCurrentPage = route == AppRoutes.aiGuider;
               return GestureDetector(
-                onTap: () => _showLanguageSelector(controller),
+                onTap: () {
+                  if (isCurrentPage) return;
+                  Get.toNamed(route);
+                },
                 child: Container(
-                  width: 40.w,
-                  height: 40.w,
+                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h),
                   decoration: BoxDecoration(
-                    color: '#ffffff'.toColor(),
-                    borderRadius: BorderRadius.circular(8.r),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.r),
+                    border: Border.all(
+                      color: isCurrentPage
+                          ? orangeStart.withOpacity(0.5)
+                          : Colors.black.withOpacity(0.05),
+                      width: 1,
+                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
+                        color: (AppColors.orangeGradient.colors.length > 1
+                                ? AppColors.orangeGradient.colors.last
+                                : orangeStart)
+                            .withOpacity(0.12),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                      BoxShadow(
+                        color: orangeStart.withOpacity(0.18),
+                        blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
                     ],
                   ),
-                  child: Icon(
-                    Icons.language,
-                    color: '#FF6B35'.toColor(),
-                    size: 20.w,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 36.w,
+                        height: 36.w,
+                        decoration: BoxDecoration(
+                          color: isCurrentPage
+                              ? orangeStart.withOpacity(0.2)
+                              : orangeStart.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        child: Icon(icon, color: orangeStart, size: 20.w),
+                      ),
+                      Spacing.h(4),
+                      AutoTranslateText(
+                        title,
+                        style: MyTextTheme.smallBCB.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 10.sp,
+                          height: 1.15,
+                        ).merge(AppTypography.body2),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -249,37 +329,91 @@ class _AiGuiderViewState extends State<AiGuiderView>
     );
   }
 
+  static const List<Map<String, String>> _categoryItems = [
+    {'label': 'Astrologer', 'route': AppRoutes.liveAstrologers},
+    {'label': 'Shop', 'route': AppRoutes.ecommerceHome},
+    {'label': 'Pooja', 'route': AppRoutes.bookPuja},
+    {'label': 'Kundli', 'route': AppRoutes.kundliForm},
+  ];
+
+  Widget _buildCategoryFilters() {
+    final orangeStart = AppColors.deepOrange;
+    final orangeEnd = AppColors.orangeGradient.colors.length > 1
+        ? AppColors.deepOrange
+        : orangeStart;
+    return SizedBox(
+      height: 28.h,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 14.w),
+        itemCount: _categoryItems.length,
+        separatorBuilder: (_, __) => SizedBox(width: 6.w),
+        itemBuilder: (context, index) {
+          final item = _categoryItems[index];
+          final label = item['label']!;
+          final route = item['route']!;
+          return GestureDetector(
+            onTap: () => Get.toNamed(route),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+              decoration: BoxDecoration(
+                color: orangeStart.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(14.r),
+                border: Border.all(color: orangeStart.withOpacity(0.35), width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: orangeEnd.withOpacity(0.1),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                  BoxShadow(
+                    color: orangeStart.withOpacity(0.12),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: AutoTranslateText(
+                label,
+                style: MyTextTheme.smallBCB.copyWith(
+                  color: AppColors.deepOrange,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11.sp,
+                ).merge(AppTypography.body2),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildMainIcon() {
+    final orangeStart = AppColors.orangeGradient.colors.first;
     return AnimatedBuilder(
       animation: _pulseAnimation,
       builder: (context, child) {
         return Transform.scale(
           scale: _pulseAnimation.value,
           child: Container(
-            width: 140.w,
-            height: 140.w,
+            width: 72.w,
+            height: 72.w,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24.r),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  '#FF6B35'.toColor(),
-                  '#FF8C42'.toColor(),
-                ],
-              ),
+              borderRadius: BorderRadius.circular(16.r),
+              gradient: AppColors.orangeGradient,
               boxShadow: [
                 BoxShadow(
-                  color: '#FF6B35'.toColor().withOpacity(0.4),
-                  blurRadius: 20,
-                  spreadRadius: 4,
+                  color: orangeStart.withOpacity(0.4),
+                  blurRadius: 10,
+                  spreadRadius: 1,
                 ),
               ],
             ),
             child: Center(
               child: Icon(
-                Icons.auto_awesome,
-                size: 70.w,
+                Icons.auto_awesome_rounded,
+                size: 36.w,
                 color: Colors.white,
               ),
             ),
@@ -291,10 +425,11 @@ class _AiGuiderViewState extends State<AiGuiderView>
 
   Widget _buildTitle() {
     return AutoTranslateText(
-      'AstroBharatAI Guide',
+      'AstroBharat AI Guide',
       style: MyTextTheme.veryLargeBCB.copyWith(
-        color: '#3E2723'.toColor(),
+        color: AppColors.textPrimary,
         fontWeight: FontWeight.bold,
+        fontSize: 16.sp,
       ).merge(AppTypography.h1),
       textAlign: TextAlign.center,
     );
@@ -302,11 +437,12 @@ class _AiGuiderViewState extends State<AiGuiderView>
 
   Widget _buildSubtitle() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: AutoTranslateText(
-        'Your Intelligent Astrology Assistant • Voice & AutoTranslateText Support',
+        'Your Intelligent Astrology Assistant',
         style: MyTextTheme.mediumBCN.copyWith(
-          color: '#3E2723'.toColor(),
+          color: AppColors.textSecondary,
+          fontSize: 11.sp,
         ).merge(AppTypography.body1),
         textAlign: TextAlign.center,
       ),
@@ -314,66 +450,79 @@ class _AiGuiderViewState extends State<AiGuiderView>
   }
 
   Widget _buildAnimationArea(AiGuiderController controller) {
+    final orangeStart = AppColors.orangeGradient.colors.first;
+    final orangeEnd = AppColors.orangeGradient.colors.length > 1
+        ? AppColors.orangeGradient.colors.last
+        : orangeStart;
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+      margin: EdgeInsets.symmetric(horizontal: 14.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: '#ffffff'.toColor(),
-        borderRadius: BorderRadius.circular(18.r),
-        border: Border.all(
-          color: '#F5D7B8'.toColor(),
-          width: 1.5,
-        ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: orangeStart.withOpacity(0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.07),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
+            color: orangeEnd.withOpacity(0.15),
+            blurRadius: 12,
+            spreadRadius: 0,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: orangeStart.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Obx(() {
         String statusText = 'Ready to help';
-        IconData statusIcon = Icons.check_circle;
-        Color statusColor = '#4CAF50'.toColor();
-        
+        IconData statusIcon = Icons.check_circle_rounded;
+        Color statusColor = AppColors.green;
         switch (controller.currentState.value) {
           case AiGuiderState.idle:
-            statusText = 'Ready to help';
-            statusIcon = Icons.check_circle;
-            statusColor = '#4CAF50'.toColor();
+            if (controller.isSoundMuted.value) {
+              statusText = 'Tap speaker to enable voice';
+              statusIcon = Icons.volume_off_rounded;
+              statusColor = AppColors.textSecondary;
+            } else {
+              statusText = 'Ready to help';
+              statusIcon = Icons.check_circle_rounded;
+              statusColor = AppColors.green;
+            }
             break;
           case AiGuiderState.listening:
             statusText = 'Listening...';
-            statusIcon = Icons.mic;
-            statusColor = '#FF6B35'.toColor();
+            statusIcon = Icons.mic_rounded;
+            statusColor = orangeStart;
             break;
           case AiGuiderState.thinking:
             statusText = 'Thinking...';
-            statusIcon = Icons.psychology;
-            statusColor = '#FF9800'.toColor();
+            statusIcon = Icons.psychology_rounded;
+            statusColor = AppColors.warning;
             break;
           case AiGuiderState.speaking:
             statusText = 'Speaking...';
-            statusIcon = Icons.volume_up;
-            statusColor = '#2196F3'.toColor();
+            statusIcon = Icons.volume_up_rounded;
+            statusColor = orangeStart;
             break;
           case AiGuiderState.interrupted:
             statusText = 'Interrupted';
-            statusIcon = Icons.pause_circle;
-            statusColor = '#9E9E9E'.toColor();
+            statusIcon = Icons.pause_circle_rounded;
+            statusColor = AppColors.textSecondary;
             break;
         }
-        
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(statusIcon, color: statusColor, size: 20.w),
-            Spacing.w(8),
+            Icon(statusIcon, color: statusColor, size: 16.w),
+            Spacing.w(5),
             AutoTranslateText(
               statusText,
               style: MyTextTheme.mediumBCN.copyWith(
                 color: statusColor,
                 fontWeight: FontWeight.w600,
+                fontSize: 12.sp,
               ).merge(AppTypography.h3),
             ),
           ],
@@ -391,36 +540,23 @@ class _AiGuiderViewState extends State<AiGuiderView>
       
       // Always show conversation area - messages will appear when available
       return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        padding: EdgeInsets.symmetric(horizontal: 14.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // User Query
             if (userQuery.isNotEmpty) ...[
-              _buildMessageCard(
-                userQuery,
-                isUser: true,
-              ),
-              Spacing.h(12),
+              _buildMessageCard(userQuery, isUser: true),
+              Spacing.h(8),
             ],
-            
-            // AI Reply
             if (aiReply.isNotEmpty) ...[
-              _buildMessageCard(
-                aiReply,
-                isUser: false,
-              ),
-              Spacing.h(12),
+              _buildMessageCard(aiReply, isUser: false),
+              Spacing.h(8),
             ],
-            
-            // Transcribed AutoTranslateText (while listening)
             if (transcribedText.isNotEmpty) ...[
               _buildTranscribedCard(transcribedText),
-              Spacing.h(12),
+              Spacing.h(8),
             ],
-            
-            // Suggestions
             if (suggestions.isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -429,34 +565,33 @@ class _AiGuiderViewState extends State<AiGuiderView>
                   AutoTranslateText(
                     'Suggestions:',
                     style: MyTextTheme.mediumBCB.copyWith(
-                      color: '#3E2723'.toColor(),
+                      color: AppColors.textPrimary,
                       fontWeight: FontWeight.bold,
+                      fontSize: 12.sp,
                     ).merge(AppTypography.h3),
                   ),
-                  Spacing.h(12),
+                  Spacing.h(6),
                   Wrap(
-                    spacing: 8.w,
-                    runSpacing: 8.h,
+                    spacing: 5.w,
+                    runSpacing: 5.h,
                     children: suggestions.map((suggestion) {
                       return GestureDetector(
                         onTap: () => controller.onSuggestionTap(suggestion),
                         child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.w,
-                            vertical: 10.h,
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
                           decoration: BoxDecoration(
-                            color: '#FFF2E8'.toColor(),
-                            borderRadius: BorderRadius.circular(20.r),
+                            color: AppColors.orangeGradient.colors.first.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(
-                              color: '#FF6B35'.toColor().withOpacity(0.3),
+                              color: AppColors.orangeGradient.colors.first.withOpacity(0.3),
                               width: 1,
                             ),
                           ),
                           child: AutoTranslateText(
                             suggestion,
                             style: MyTextTheme.smallBCN.copyWith(
-                              color: '#FF6B35'.toColor(),
+                              color: AppColors.deepOrange,
+                              fontSize: 11.sp,
                             ).merge(AppTypography.body2),
                           ),
                         ),
@@ -473,23 +608,29 @@ class _AiGuiderViewState extends State<AiGuiderView>
 
   Widget _buildMessageCard(String message, {required bool isUser}) {
     if (message.trim().isEmpty) return const SizedBox.shrink();
-    
+    final orangeStart = AppColors.orangeGradient.colors.first;
+    final orangeEnd = AppColors.orangeGradient.colors.length > 1
+        ? AppColors.orangeGradient.colors.last
+        : orangeStart;
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(bottom: 8.h),
-      padding: EdgeInsets.all(16.w),
+      margin: EdgeInsets.only(bottom: 4.h),
+      padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
-        color: isUser ? '#FFF2E8'.toColor() : '#ffffff'.toColor(),
-        borderRadius: BorderRadius.circular(12.r),
+        color: isUser ? orangeStart.withOpacity(0.08) : Colors.white,
+        borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
-          color: isUser
-              ? '#FF6B35'.toColor().withOpacity(0.5)
-              : '#F5D7B8'.toColor(),
-          width: 1.5,
+          color: isUser ? orangeStart.withOpacity(0.35) : orangeStart.withOpacity(0.2),
+          width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: orangeEnd.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+          BoxShadow(
+            color: orangeStart.withOpacity(0.18),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -499,26 +640,27 @@ class _AiGuiderViewState extends State<AiGuiderView>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(6.w),
+            padding: EdgeInsets.all(4.w),
             decoration: BoxDecoration(
-              color: (isUser ? '#FF6B35' : '#FF6B35').toColor().withOpacity(0.15),
+              gradient: AppColors.orangeGradient,
               shape: BoxShape.circle,
             ),
             child: Icon(
-              isUser ? Icons.person : Icons.auto_awesome,
-              color: '#FF6B35'.toColor(),
-              size: 18.w,
+              isUser ? Icons.person_rounded : Icons.auto_awesome_rounded,
+              color: Colors.white,
+              size: 14.w,
             ),
           ),
-          Spacing.w(12),
+          Spacing.w(8),
           Expanded(
             child: AutoTranslateText(
               message,
               style: TextStyle(
                 fontFamily: 'Poppins',
-                color: '#3E2723'.toColor(),
-                height: 1.5,
+                color: AppColors.textPrimary,
+                height: 1.35,
                 fontWeight: FontWeight.w500,
+                fontSize: 12.sp,
               ).merge(AppTypography.body1),
             ),
           ),
@@ -530,29 +672,23 @@ class _AiGuiderViewState extends State<AiGuiderView>
   Widget _buildTranscribedCard(String text) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
         color: '#F1F8E9'.toColor(),
-        borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(
-          color: '#8BC34A'.toColor().withOpacity(0.3),
-          width: 1,
-        ),
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: '#8BC34A'.toColor().withOpacity(0.3), width: 1),
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.mic,
-            color: '#8BC34A'.toColor(),
-            size: 18.w,
-          ),
-          Spacing.w(8),
+          Icon(Icons.mic, color: '#8BC34A'.toColor(), size: 16.w),
+          Spacing.w(6),
           Expanded(
             child: AutoTranslateText(
               text,
               style: MyTextTheme.smallBCN.copyWith(
                 color: '#666666'.toColor(),
                 fontStyle: FontStyle.italic,
+                fontSize: 11.sp,
               ).merge(AppTypography.body2),
             ),
           ),
@@ -561,322 +697,120 @@ class _AiGuiderViewState extends State<AiGuiderView>
     );
   }
 
-  Widget _buildFeaturesSection() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AutoTranslateText(
-            'What AI Guide Can Do',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
-          ),
-          Spacing.h(16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildFeatureCard(
-                      icon: Icons.voice_chat,
-                      title: 'Voice Commands',
-                      description: 'Speak naturally.',
-                    ),
-                    Spacing.h(12),
-                    _buildFeatureCard(
-                      icon: Icons.text_fields,
-                      title: 'AutoTranslateText Input',
-                      description: 'Type your questions.',
-                    ),
-                    Spacing.h(12),
-                    _buildFeatureCard(
-                      icon: Icons.language,
-                      title: 'Multi-Language',
-                      description: '14+ languages.',
-                    ),
-                  ],
-                ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildFeatureCard(
-                      icon: Icons.navigation,
-                      title: 'Smart Navigation',
-                      description: 'Auto-direct to pages.',
-                    ),
-                    Spacing.h(12),
-                    _buildFeatureCard(
-                      icon: Icons.psychology,
-                      title: 'AI Powered',
-                      description: 'Intelligent responses.',
-                    ),
-                    Spacing.h(12),
-                    _buildFeatureCard(
-                      icon: Icons.offline_bolt,
-                      title: 'Offline Ready',
-                      description: 'Works without internet.',
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFeatureCard({
-    required IconData icon,
-    required String title,
-    required String description,
-  }) {
-    return SizedBox(
-      height: 158.h,
-      child: Container(
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          color: '#ffffff'.toColor(),
-          borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(
-            color: '#F5D7B8'.toColor(),
-            width: 1.2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              width: 42.w,
-              height: 42.w,
-              decoration: BoxDecoration(
-                color: '#FFF2E8'.toColor(),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                color: '#FF6B35'.toColor(),
-                size: 22.w,
-              ),
-            ),
-            Spacing.h(10),
-            AutoTranslateText(
-              title,
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: '#3E2723'.toColor(),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.body1),
-            ),
-            Spacing.h(4),
-            Expanded(
-              child: AutoTranslateText(
-                description,
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: '#666666'.toColor(),
-                  height: 1.25,
-                ).merge(AppTypography.body2),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAboutSection() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Container(
-        padding: EdgeInsets.all(20.w),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              '#FF6B35'.toColor(),
-              '#FF8C42'.toColor(),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(16.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.12),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              top: -30.h,
-              right: -40.w,
-              child: Container(
-                width: 140.w,
-                height: 140.w,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [
-                      '#FF8C42'.toColor().withOpacity(0.35),
-                      '#FF6B35'.toColor().withOpacity(0.15),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.auto_awesome,
-                      color: '#ffffff'.toColor(),
-                      size: 20.w,
-                    ),
-                    Spacing.w(8),
-                    AutoTranslateText(
-                      'About AI Guide',
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: '#ffffff'.toColor(),
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h2),
-                    ),
-                  ],
-                ),
-                Spacing.h(12),
-                AutoTranslateText(
-                  'AI Guide is your intelligent astrology assistant powered by advanced AI. Ask questions naturally, get instant responses, and navigate to any astrology service with voice or text commands.',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: '#ffffff'.toColor(),
-                    height: 1.5,
-                  ).merge(AppTypography.body1),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildInputArea(AiGuiderController controller) {
-    final textController = TextEditingController();
-
+    final orangeStart = AppColors.orangeGradient.colors.first;
+    final orangeEnd = AppColors.orangeGradient.colors.length > 1
+        ? AppColors.orangeGradient.colors.last
+        : orangeStart;
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: '#ffffff'.toColor(),
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
+            color: orangeEnd.withOpacity(0.15),
+            blurRadius: 12,
+            offset: const Offset(0, -3),
+          ),
+          BoxShadow(
+            color: orangeStart.withOpacity(0.2),
+            blurRadius: 8,
             offset: const Offset(0, -2),
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: textController,
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: '#3E2723'.toColor(),
-                  ).merge(AppTypography.body1),
-                  decoration: InputDecoration(
-                    hintText: 'Type your question...',
-                    hintStyle: MyTextTheme.mediumBCN.copyWith(
-                      color: '#999999'.toColor(),
-                    ).merge(AppTypography.body1),
-                    filled: true,
-                    fillColor: '#F5F5F5'.toColor(),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.r),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 14.h,
-                    ),
-                  ),
-                  onSubmitted: (value) {
-                    if (value.trim().isNotEmpty) {
-                      controller.submitTextQuery(value);
-                      textController.clear();
-                    }
-                  },
+          Obx(
+            () => GestureDetector(
+              onTap: () => controller.toggleListening(),
+              child: Container(
+                width: 36.w,
+                height: 36.w,
+                decoration: BoxDecoration(
+                  gradient: controller.isListening.value
+                      ? AppColors.orangeGradient
+                      : null,
+                  color: controller.isListening.value
+                      ? null
+                      : AppColors.textSecondary.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Icon(
+                  controller.isListening.value
+                      ? Icons.mic_rounded
+                      : Icons.mic_off_rounded,
+                  color: controller.isListening.value
+                      ? Colors.white
+                      : AppColors.textSecondary,
+                  size: 20.w,
                 ),
               ),
-              Spacing.w(12),
-              Obx(() => GestureDetector(
-                    onTap: () => controller.toggleListening(),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      width: 56.w,
-                      height: 56.w,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: controller.isListening.value
-                              ? [
-                                  '#F44336'.toColor(),
-                                  '#E91E63'.toColor(),
-                                ]
-                              : [
-                                  '#FF6B35'.toColor(),
-                                  '#FF8C42'.toColor(),
-                                ],
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (controller.isListening.value
-                                    ? '#F44336'.toColor()
-                                    : '#FF6B35'.toColor())
-                                .withOpacity(0.5),
-                            blurRadius: 15.r,
-                            spreadRadius: 2.r,
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        controller.isListening.value
-                            ? Icons.mic
-                            : Icons.mic_none,
-                        color: Colors.white,
-                        size: 28.w,
-                      ),
-                    ),
-                  )),
-            ],
+            ),
           ),
-          Spacing.h(12),
-          AutoTranslateText(
-            'Tap mic to speak or type your question',
-            style: MyTextTheme.smallBCN.copyWith(
-              color: '#999999'.toColor(),
-            ).merge(AppTypography.label),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: TextField(
+              controller: _inputController,
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: AppColors.textPrimary,
+                fontSize: 13.sp,
+              ).merge(AppTypography.body1),
+              decoration: InputDecoration(
+                hintText: 'What can I help you with?',
+                hintStyle: MyTextTheme.mediumBCN.copyWith(
+                  color: AppColors.textSecondary,
+                  fontSize: 12.sp,
+                ).merge(AppTypography.body1),
+                filled: true,
+                fillColor: AppColors.gradientBackground.colors[1],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18.r),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 12.w,
+                  vertical: 8.h,
+                ),
+              ),
+              onSubmitted: (value) {
+                if (value.trim().isNotEmpty) {
+                  controller.submitTextQuery(value);
+                  _inputController.clear();
+                }
+              },
+            ),
+          ),
+          SizedBox(width: 10.w),
+          GestureDetector(
+            onTap: () {
+              final text = _inputController.text.trim();
+              if (text.isNotEmpty) {
+                controller.submitTextQuery(text);
+                _inputController.clear();
+              }
+            },
+            child: Container(
+              width: 36.w,
+              height: 36.w,
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(8.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: orangeStart.withOpacity(0.4),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.send_rounded,
+                color: Colors.white,
+                size: 18.w,
+              ),
+            ),
           ),
         ],
       ),
@@ -885,8 +819,14 @@ class _AiGuiderViewState extends State<AiGuiderView>
 
   void _showLanguageSelector(AiGuiderController controller) async {
     String? previousLanguage;
-    
-    if (Get.isRegistered<LanguageController>()) {
+    if (Get.isRegistered<LanguageControllerV2>()) {
+      try {
+        final c = Get.find<LanguageControllerV2>();
+        previousLanguage = c.currentLanguage.value?.code;
+      } catch (e) {
+        debugPrint('Error getting LanguageControllerV2: $e');
+      }
+    } else if (Get.isRegistered<LanguageController>()) {
       try {
         final languageController = Get.find<LanguageController>();
         previousLanguage = languageController.currentLanguage.value?.code;
@@ -894,7 +834,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
         debugPrint('Error getting LanguageController: $e');
       }
     }
-    
+
     await Get.dialog(
       Dialog(
         backgroundColor: Colors.white,
@@ -937,8 +877,18 @@ class _AiGuiderViewState extends State<AiGuiderView>
         ),
       ),
     );
-    
-    if (Get.isRegistered<LanguageController>()) {
+
+    if (Get.isRegistered<LanguageControllerV2>()) {
+      try {
+        final c = Get.find<LanguageControllerV2>();
+        final currentLanguage = c.currentLanguage.value?.code;
+        if (currentLanguage != previousLanguage) {
+          await controller.onLanguageChanged();
+        }
+      } catch (e) {
+        debugPrint('Error checking language change: $e');
+      }
+    } else if (Get.isRegistered<LanguageController>()) {
       try {
         final languageController = Get.find<LanguageController>();
         final currentLanguage = languageController.currentLanguage.value?.code;

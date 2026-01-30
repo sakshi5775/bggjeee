@@ -50,6 +50,9 @@ class AiGuiderController extends BaseController {
   final RxBool hasShownWelcome = false.obs;
   bool _shouldAutoStartListening = false; // Flag to auto-start mic after welcome
 
+  // Sound: muted by default so no voice on opening the page
+  final RxBool isSoundMuted = true.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -174,7 +177,7 @@ class AiGuiderController extends BaseController {
       
       await _flutterTts.setLanguage(ttsLang);
       await _flutterTts.setSpeechRate(0.5);
-      await _flutterTts.setVolume(1.0);
+      await _flutterTts.setVolume(isSoundMuted.value ? 0.0 : 1.0);
       await _flutterTts.setPitch(1.0);
     } catch (e) {
       debugPrint('Error updating TTS language: $e');
@@ -207,6 +210,8 @@ class AiGuiderController extends BaseController {
   }
 
   /// Show welcome message on open
+  /// When muted (default): no voice, no auto-open mic, no speaking banner; welcome text shown in chat only.
+  /// When unmuted: full experience (voice, auto mic after welcome, speaking banner).
   Future<void> showWelcomeMessage({bool force = false}) async {
     if (hasShownWelcome.value && !force) return;
     
@@ -223,9 +228,16 @@ class AiGuiderController extends BaseController {
     await Future.delayed(const Duration(milliseconds: 300));
     
     hasShownWelcome.value = true;
-    _shouldAutoStartListening = true; // Enable auto-start after welcome
-    
     final welcomeText = _getWelcomeMessage();
+
+    // Default (muted): no voice, no auto-open mic, no speaking banner; show welcome in chat only
+    if (isSoundMuted.value) {
+      aiReply.value = welcomeText;
+      return;
+    }
+
+    // Unmuted: full experience
+    _shouldAutoStartListening = true; // Enable auto-start after welcome
     await speak(welcomeText);
   }
 
@@ -238,6 +250,12 @@ class AiGuiderController extends BaseController {
     // Re-greet user in new language
     hasShownWelcome.value = false; // Reset to allow re-greeting
     await showWelcomeMessage(force: true);
+  }
+
+  /// Toggle sound mute/unmute (volume 0 when muted, 1 when unmuted)
+  Future<void> toggleSoundMuted() async {
+    isSoundMuted.value = !isSoundMuted.value;
+    await _updateTTSLanguage();
   }
 
   /// Get welcome message based on language
@@ -266,9 +284,18 @@ class AiGuiderController extends BaseController {
   }
 
   /// Speak text with TTS (interruptible)
+  /// When muted: no TTS, no speaking state/banner; state stays idle.
   Future<void> speak(String text) async {
     if (!_ttsInitialized) {
       await _initializeTTS();
+    }
+
+    // When muted: no voice, no speaking banner; stay idle
+    if (isSoundMuted.value) {
+      _shouldAutoStartListening = false;
+      currentState.value = AiGuiderState.idle;
+      isSpeaking.value = false;
+      return;
     }
 
     try {
@@ -345,12 +372,12 @@ class AiGuiderController extends BaseController {
       }
       isSpeaking.value = false;
       
-      // If welcome message was interrupted, still auto-start listening
-      if (_shouldAutoStartListening && hasShownWelcome.value) {
+      // If welcome message was interrupted, still auto-start listening only when speaker is on
+      if (_shouldAutoStartListening && hasShownWelcome.value && !isSoundMuted.value) {
         _shouldAutoStartListening = false; // Reset flag
         // Wait a moment then auto-start listening for smooth transition
         Future.delayed(const Duration(milliseconds: 200), () { // Reduced from 500ms to 200ms
-          if (!isListening.value && hasShownWelcome.value) {
+          if (!isListening.value && hasShownWelcome.value && !isSoundMuted.value) {
             debugPrint('AI Guider: Welcome message interrupted, auto-starting mic');
             startListeningWithTimeout();
           }

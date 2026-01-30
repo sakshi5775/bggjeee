@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/data_model/user_profile_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -133,9 +134,9 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
     _birthTimeController = TextEditingController();
     if (birthTime != null && birthTime.hour != null && birthTime.minute != null) {
       _selectedBirthSeconds = birthTime.second ?? 0;
-      _birthTimeController.text = _formatTime(
-        TimeOfDay(hour: birthTime.hour!, minute: birthTime.minute!),
-        seconds: _selectedBirthSeconds,
+      _birthTimeController.text = TimePickerHelper.formatTime24To12Display(
+        birthTime.hour!,
+        birthTime.minute!,
       );
       _selectedBirthTime = TimeOfDay(hour: birthTime.hour!, minute: birthTime.minute!);
     }
@@ -360,8 +361,8 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
 
   Future<void> _pickBirthTime(BuildContext context) async {
     final initial = _selectedBirthTime ?? TimeOfDay.now();
-    final picked = await showTimePicker(
-      context: context,
+    final picked = await TimePickerHelper.showTimePicker12h(
+      context,
       initialTime: initial,
       builder: (context, child) {
         if (child == null) return const SizedBox.shrink();
@@ -384,7 +385,7 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
       if (seconds != null) {
         _selectedBirthSeconds = seconds;
       }
-      _birthTimeController.text = _formatTime(picked, seconds: _selectedBirthSeconds);
+      _birthTimeController.text = TimePickerHelper.formatTime24To12Display(picked.hour, picked.minute);
     }
   }
 
@@ -393,13 +394,6 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
     final month = date.month.toString().padLeft(2, '0');
     final year = date.year.toString();
     return '$day/$month/$year';
-  }
-
-  String _formatTime(TimeOfDay time, {int seconds = 0}) {
-    final hour = time.hour.toString().padLeft(2, '0');
-    final minute = time.minute.toString().padLeft(2, '0');
-    final sec = seconds.toString().padLeft(2, '0');
-    return '$hour:$minute:$sec';
   }
 
   void _handleSubmit() {

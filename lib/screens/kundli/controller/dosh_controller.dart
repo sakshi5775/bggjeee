@@ -3,7 +3,6 @@ import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class DoshController extends BaseController {
   // Dosh table data for main page
@@ -16,14 +15,17 @@ class DoshController extends BaseController {
   // Form data
   final formData = Rxn<Map<String, dynamic>>();
 
-  // Current tab index: -1 = TABLE VIEW, 0 = MANGAL/MANGLIK DOSH, 1 = KAALSARP DOSH, 2 = PITRA DOSH
-  final selectedTabIndex = (-1).obs;
+  // Tab index: 0 = Overview (table), 1 = MANGAL/MANGLIK DOSH, 2 = KAALSARP DOSH, 3 = PITRA DOSH
+  final selectedTabIndex = 0.obs;
 
-  // PageController for swipeable tabs
+  // PageController for swipeable tabs (4 pages)
   late PageController pageController;
 
-  // Mangal/Manglik Dosh sub-tab: 0 = Classical Vedic Astrology, 1 = Extended/Modern Manglik Analysis
-  final selectedMangalSubTab = 0.obs;
+  // ScrollController for tab strip
+  final ScrollController tabsScrollController = ScrollController();
+
+  // Map to store GlobalKeys for each tab (for scroll-to-tab)
+  final Map<int, GlobalKey> tabKeys = {};
 
   // API data
   final mangalDoshData = Rxn<Map<String, dynamic>>();
@@ -43,46 +45,31 @@ class DoshController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    // Initialize PageController with 3 tabs (excluding table view)
     pageController = PageController(initialPage: 0);
     _loadData();
-    // Listen to tab changes to sync with PageView
-    ever(selectedTabIndex, (int tabIndex) {
-      if (tabIndex >= 0 && pageController.hasClients) {
-        pageController.animateToPage(
-          tabIndex,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
   }
 
   @override
   void onClose() {
     pageController.dispose();
+    tabsScrollController.dispose();
     super.onClose();
   }
 
   // Handle page change from swipe
   void onPageChanged(int index) {
-    // Map PageView index to tab index (0, 1, 2)
     selectedTabIndex.value = index;
-    // Trigger navigation based on index
-    if (index == 0) {
-      navigateToMangalDoshTab();
-    } else if (index == 1) {
-      navigateToKaalsarpDoshTab();
+    if (index == 1) {
+      if (mangalDoshData.value == null) fetchMangalDosh();
     } else if (index == 2) {
-      navigateToPitraDoshTab();
+      if (kaalsarpDoshData.value == null) fetchKaalsarpDosh();
+    } else if (index == 3) {
+      if (pitraDoshData.value == null) fetchPitraDosh();
     }
   }
 
   // Navigate to specific tab (called from tab tap)
   void onTabSelected(int index) {
-    // Map PageView index to tab index (0, 1, 2)
-    selectedTabIndex.value = index;
-
     if (pageController.hasClients) {
       pageController.animateToPage(
         index,
@@ -90,14 +77,13 @@ class DoshController extends BaseController {
         curve: Curves.easeInOut,
       );
     }
-
-    // Trigger navigation based on index
-    if (index == 0) {
-      navigateToMangalDoshTab();
-    } else if (index == 1) {
-      navigateToKaalsarpDoshTab();
+    selectedTabIndex.value = index;
+    if (index == 1) {
+      if (mangalDoshData.value == null) fetchMangalDosh();
     } else if (index == 2) {
-      navigateToPitraDoshTab();
+      if (kaalsarpDoshData.value == null) fetchKaalsarpDosh();
+    } else if (index == 3) {
+      if (pitraDoshData.value == null) fetchPitraDosh();
     }
   }
 
@@ -108,56 +94,24 @@ class DoshController extends BaseController {
     }
   }
 
-  // Navigate to table view
+  // Navigate to overview (table) tab
   void navigateToTableView() {
-    selectedTabIndex.value = -1;
+    onTabSelected(0);
   }
 
   // Navigate to Mangal/Manglik Dosh tab
   void navigateToMangalDoshTab() {
-    selectedTabIndex.value = 0;
-    selectedMangalSubTab.value = 0;
-    if (mangalDoshData.value == null) {
-      fetchMangalDosh();
-    }
-    // Sync PageController if needed
-    if (pageController.hasClients && pageController.page?.round() != 0) {
-      pageController.jumpToPage(0);
-    }
+    onTabSelected(1);
   }
 
   // Navigate to Kaalsarp Dosh tab
   void navigateToKaalsarpDoshTab() {
-    selectedTabIndex.value = 1;
-    if (kaalsarpDoshData.value == null) {
-      fetchKaalsarpDosh();
-    }
-    // Sync PageController if needed
-    if (pageController.hasClients && pageController.page?.round() != 1) {
-      pageController.jumpToPage(1);
-    }
+    onTabSelected(2);
   }
 
   // Navigate to Pitra Dosh tab
   void navigateToPitraDoshTab() {
-    selectedTabIndex.value = 2;
-    if (pitraDoshData.value == null) {
-      fetchPitraDosh();
-    }
-    // Sync PageController if needed
-    if (pageController.hasClients && pageController.page?.round() != 2) {
-      pageController.jumpToPage(2);
-    }
-  }
-
-  // Switch Mangal sub-tab
-  void switchMangalSubTab(int index) {
-    selectedMangalSubTab.value = index;
-    if (index == 0 && mangalDoshData.value == null) {
-      fetchMangalDosh();
-    } else if (index == 1 && manglikDoshData.value == null) {
-      fetchManglikDosh();
-    }
+    onTabSelected(3);
   }
 
   // Fetch Mangal Dosh (Classical Vedic Astrology)

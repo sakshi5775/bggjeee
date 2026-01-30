@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -156,13 +157,7 @@ class KundliFormView extends BasePage<KundliFormController> {
               ),
               SizedBox(width: 10.w),
               Expanded(
-                child: _buildCompactField(
-                  controller: controller.timeController,
-                  hint: 'Birth Time',
-                  icon: Icons.access_time,
-                  readOnly: true,
-                  onTap: () => _showTimePicker(),
-                ),
+                child: _buildTimeField(),
               ),
             ],
           ),
@@ -195,6 +190,54 @@ class KundliFormView extends BasePage<KundliFormController> {
           _buildSubmitButton(),
         ],
       ),
+    );
+  }
+
+  /// Birth time field showing 12-hour AM/PM; timeController still holds 24h for API.
+  Widget _buildTimeField() {
+    return Obx(
+      () {
+        final t = controller.selectedTime.value;
+        final display = TimePickerHelper.formatTime24To12Display(t.hour, t.minute);
+        return GestureDetector(
+          onTap: () => _showTimePicker(),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.deepOrange.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: InputDecorator(
+              decoration: _inputDecoration(
+                hint: 'Birth Time',
+                icon: Icons.access_time,
+                suffix: Padding(
+                  padding: EdgeInsets.only(right: 10.w),
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    color: AppColors.deepOrange,
+                    size: 12.w,
+                  ),
+                ),
+              ),
+              child: Text(
+                display,
+                style: MyTextTheme.mediumBCN.copyWith(
+                  color: AppColors.textColorMaroon,
+                  fontSize: 14.sp,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -503,8 +546,8 @@ class KundliFormView extends BasePage<KundliFormController> {
   }
 
   void _showTimePicker() async {
-    final pickedTime = await showTimePicker(
-      context: Get.context!,
+    final pickedTime = await TimePickerHelper.showTimePicker12h(
+      Get.context!,
       initialTime: controller.selectedTime.value,
       builder: (context, child) {
         return Theme(

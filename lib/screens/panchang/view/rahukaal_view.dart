@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:intl/intl.dart';
 
 class RahukaalView extends BasePage<RahukaalController> {
@@ -205,26 +206,18 @@ class RahukaalView extends BasePage<RahukaalController> {
           Spacing.h(12),
           _buildTextField(
             controller: controller.timeController,
-            label: 'Time (HH:mm)',
+            label: 'Time',
             icon: Icons.access_time,
             readOnly: true,
             onTap: () async {
               final now = DateTime.now();
-              final picked = await showTimePicker(
-                context: Get.context!,
+              final picked = await TimePickerHelper.showTimePicker12h(
+                Get.context!,
                 initialTime: TimeOfDay.fromDateTime(now),
               );
               if (picked != null) {
-                final dateTime = DateTime(
-                  now.year,
-                  now.month,
-                  now.day,
-                  picked.hour,
-                  picked.minute,
-                );
-                controller.timeController.text = DateFormat(
-                  'HH:mm',
-                ).format(dateTime);
+                controller.timeController.text =
+                    TimePickerHelper.formatTime24To12Display(picked.hour, picked.minute);
               }
             },
           ),

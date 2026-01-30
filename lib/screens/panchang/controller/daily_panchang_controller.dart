@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -75,9 +76,9 @@ class DailyPanchangController extends BaseController {
         selectedLocation.value = arguments['location'] as String;
       }
 
-      // Set current time
+      // Set current time (12h display)
       final now = DateTime.now();
-      timeController.text = DateFormat('HH:mm').format(now);
+      timeController.text = TimePickerHelper.formatTime24To12Display(now.hour, now.minute);
 
       // Auto-fetch panchang data
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -88,7 +89,7 @@ class DailyPanchangController extends BaseController {
       final now = DateTime.now();
       selectedDate.value = now;
       dateController.text = DateFormat('dd/MM/yyyy').format(now);
-      timeController.text = DateFormat('HH:mm').format(now);
+      timeController.text = TimePickerHelper.formatTime24To12Display(now.hour, now.minute);
       timezoneController.text = '5.5'; // Default IST
 
       // Try to get current location on init
@@ -506,23 +507,16 @@ class DailyPanchangController extends BaseController {
     }
   }
 
-  /// Select time
+  /// Select time (12h AM/PM picker and display)
   Future<void> selectTime() async {
     final now = DateTime.now();
-    final picked = await showTimePicker(
-      context: Get.context!,
+    final picked = await TimePickerHelper.showTimePicker12h(
+      Get.context!,
       initialTime: TimeOfDay.fromDateTime(now),
     );
 
     if (picked != null) {
-      final dateTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        picked.hour,
-        picked.minute,
-      );
-      timeController.text = DateFormat('HH:mm').format(dateTime);
+      timeController.text = TimePickerHelper.formatTime24To12Display(picked.hour, picked.minute);
     }
   }
 
@@ -549,7 +543,7 @@ class DailyPanchangController extends BaseController {
     selectedDate.value = DateTime.now();
     dateController.text = DateFormat('dd/MM/yyyy').format(selectedDate.value);
     final now = DateTime.now();
-    timeController.text = DateFormat('HH:mm').format(now);
+    timeController.text = TimePickerHelper.formatTime24To12Display(now.hour, now.minute);
     if (panchangData.value != null) {
       fetchPanchang();
     }
@@ -600,9 +594,10 @@ class DailyPanchangController extends BaseController {
         return;
       }
 
+      final time24 = TimePickerHelper.parseTime12To24(timeController.text) ?? timeController.text;
       final data = await _panchangService.getDailyPanchang(
         date: dateController.text,
-        time: timeController.text,
+        time: time24,
         latitude: latitude,
         longitude: longitude,
         tz: tz,

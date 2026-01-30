@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -352,11 +353,12 @@ class MuhuratController extends BaseController {
         return;
       }
 
-      // Fetch both APIs in parallel
+      // Fetch both APIs in parallel (convert 12h display to 24h for API)
+      final time24 = TimePickerHelper.parseTime12To24(timeController.text) ?? timeController.text;
       final results = await Future.wait([
         _panchangService.getDailyPanchang(
           date: dateController.text,
-          time: timeController.text,
+          time: time24,
           latitude: latitude,
           longitude: longitude,
           tz: tz,
@@ -364,7 +366,7 @@ class MuhuratController extends BaseController {
         ),
         _panchangService.getChoghadiyaMuhurta(
           date: dateController.text,
-          time: timeController.text,
+          time: time24,
           latitude: latitude,
           longitude: longitude,
           tz: tz,

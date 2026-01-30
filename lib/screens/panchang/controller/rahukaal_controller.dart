@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -54,7 +55,7 @@ class RahukaalController extends BaseController {
     final now = DateTime.now();
     selectedDate.value = now;
     dateController.text = DateFormat('dd/MM/yyyy').format(now);
-    timeController.text = DateFormat('HH:mm').format(now);
+    timeController.text = TimePickerHelper.formatTime24To12Display(now.hour, now.minute);
     timezoneController.text = '5.5';
 
     _tryGetCurrentLocation().then((_) {
@@ -126,10 +127,11 @@ class RahukaalController extends BaseController {
         return;
       }
 
+      final time24 = TimePickerHelper.parseTime12To24(timeController.text) ?? timeController.text;
       final results = await Future.wait([
         _panchangService.getDailyPanchang(
           date: dateController.text,
-          time: timeController.text,
+          time: time24,
           latitude: latitude,
           longitude: longitude,
           tz: tz,
@@ -137,7 +139,7 @@ class RahukaalController extends BaseController {
         ),
         _panchangService.getMonthlyPanchang(
           date: dateController.text,
-          time: timeController.text,
+          time: time24,
           latitude: latitude,
           longitude: longitude,
           tz: tz,

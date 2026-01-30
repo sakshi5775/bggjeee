@@ -82,7 +82,11 @@ class OTPController extends BaseController {
             message: 'Your registration is already complete. Redirecting...',
           );
           await Future.delayed(const Duration(milliseconds: 500));
-          Get.offAllNamed(AppRoutes.userDashboard);
+          if (Get.nestedKey(1)?.currentState != null) {
+            Get.back();
+          } else {
+            Get.offAllNamed(AppRoutes.userDashboard);
+          }
         }
       }
     } catch (e) {
@@ -95,7 +99,11 @@ class OTPController extends BaseController {
           message: 'Your registration is already complete. Redirecting...',
         );
         await Future.delayed(const Duration(milliseconds: 500));
-        Get.offAllNamed(AppRoutes.userDashboard);
+        if (Get.nestedKey(1)?.currentState != null) {
+          Get.back();
+        } else {
+          Get.offAllNamed(AppRoutes.userDashboard);
+        }
       } else {
         showErrorMessage(
           title: 'Error',
@@ -152,13 +160,20 @@ class OTPController extends BaseController {
                 : 'Verification successful.',
           );
 
-          // Navigate directly to dashboard
+          // Navigate: if already on dashboard (e.g. opened login from Profile), just pop
           await Future.delayed(const Duration(milliseconds: 300));
-          Get.offAllNamed(AppRoutes.userDashboard);
+          if (Get.nestedKey(1)?.currentState != null) {
+            Get.back();
+          } else {
+            Get.offAllNamed(AppRoutes.userDashboard);
+          }
         } catch (navError) {
-          // If navigation fails, still try to navigate
           print('Navigation error: $navError');
-          Get.offAllNamed(AppRoutes.userDashboard);
+          if (Get.nestedKey(1)?.currentState != null) {
+            Get.back();
+          } else {
+            Get.offAllNamed(AppRoutes.userDashboard);
+          }
         }
       } else {
         // Error message is already shown by the service
@@ -175,7 +190,11 @@ class OTPController extends BaseController {
         );
       } else {
         // User data is saved, just navigate
-        Get.offAllNamed(AppRoutes.userDashboard);
+        if (Get.nestedKey(1)?.currentState != null) {
+          Get.back();
+        } else {
+          Get.offAllNamed(AppRoutes.userDashboard);
+        }
       }
       isSubmitting.value = false;
     } finally {

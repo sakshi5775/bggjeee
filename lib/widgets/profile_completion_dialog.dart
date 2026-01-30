@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/controller/user_profile
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/profile_check_helper.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -165,8 +166,8 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
   }
 
   Future<void> _selectTime() async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
+    final TimeOfDay? picked = await TimePickerHelper.showTimePicker12h(
+      context,
       initialTime: _selectedTime ?? TimeOfDay.now(),
       builder: (context, child) {
         return Theme(
@@ -186,7 +187,7 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
       setState(() {
         _selectedTime = picked;
         _timeController.text =
-            '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}:00';
+            TimePickerHelper.formatTime24To12Display(picked.hour, picked.minute);
       });
     }
   }

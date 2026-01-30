@@ -12,6 +12,7 @@ import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.da
 
 import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -139,8 +140,8 @@ class ProfileController extends BaseController {
   }
 
   Future<void> _loadUserProfile() async {
-    if (userId == null) return;
-    final result = await _profileService.getProfile(userId!);
+    // Profile API uses Bearer token; userId optional (backend identifies user from token)
+    final result = await _profileService.getProfile(userId);
     if (result != null) {
       _applyProfile(result);
     }
@@ -240,17 +241,18 @@ class ProfileController extends BaseController {
       }
     }
 
-    // Populate birth date from birthChart.generatedAt
-    if (userProfile.birthChart != null && userProfile.birthChart!.generatedAt != null) {
-      final dateStr = userProfile.birthChart!.generatedAt!;
+    // Populate birth date from personalInfo.dateOfBirth first, then birthChart.generatedAt
+    String? dateStr = userProfile.personalInfo?.dateOfBirth;
+    if (dateStr == null && userProfile.birthChart?.generatedAt != null) {
+      dateStr = userProfile.birthChart!.generatedAt!;
+    }
+    if (dateStr != null && dateStr.isNotEmpty) {
       try {
-        // Try parsing as ISO date first
         final isoDate = DateTime.tryParse(dateStr);
         if (isoDate != null) {
           selectedBirthDate.value = isoDate;
           birthDateController.text = DateFormat('dd/MM/yyyy').format(isoDate);
         } else {
-          // Try parsing as DD/MM/YYYY
           final parts = dateStr.split('/');
           if (parts.length == 3) {
             final day = int.tryParse(parts[0]);
@@ -448,19 +450,30 @@ class ProfileController extends BaseController {
   }
 
   Future<bool> updateProfile() async {
-    if (userId == null) {
-      showErrorMessage(title: 'Profile', message: 'User ID not found');
+    // Use userId from login data, or fallback to profile (from GET profile response)
+    final effectiveUserId = userId ?? profile.value?.userId;
+    if (effectiveUserId == null || effectiveUserId.isEmpty) {
+      showErrorMessage(title: 'Profile', message: 'User ID not found. Please log in again.');
       return false;
     }
 
     try {
       isUpdatingProfile.value = true;
 
-      // Prepare PersonalInfo
+      // Format dateOfBirth for API (personalInfo expects yyyy-MM-dd)
+      String? dateOfBirthStr;
+      if (selectedBirthDate.value != null) {
+        dateOfBirthStr = DateFormat('yyyy-MM-dd').format(selectedBirthDate.value!);
+      } else if (profile.value?.birthChart?.generatedAt != null) {
+        dateOfBirthStr = _formatDateToISO(profile.value!.birthChart!.generatedAt!);
+      }
+
+      // Prepare PersonalInfo (API expects fullName, dateOfBirth, gender, maritalStatus, occupation)
       final personalInfo = PersonalInfo(
         fullName: fullNameController.text.trim().isNotEmpty
             ? fullNameController.text.trim()
             : null,
+        dateOfBirth: dateOfBirthStr,
         gender: selectedGender.value?.isNotEmpty == true
             ? selectedGender.value
             : (genderController.text.trim().isNotEmpty ? genderController.text.trim() : null),
@@ -513,7 +526,7 @@ class ProfileController extends BaseController {
 
       // Call PATCH API to update profile (with empty birthChart)
       final profileUpdated = await _profileService.updateProfile(
-        userId: userId!,
+        userId: effectiveUserId,
         profilePicture: profilePicture.value,
         personalInfo: personalInfo,
         contactInfo: contactInfo,
@@ -580,9 +593,36 @@ class ProfileController extends BaseController {
           dateOfBirth = _formatDateToISO(profile.value!.birthChart!.generatedAt!);
         }
 
+        if (dateOfBirth == null || dateOfBirth.isEmpty) {
+          showErrorMessage(
+            title: 'Birth Chart',
+            message: 'Please enter date of birth to update birth chart.',
+          );
+          await loadProfile();
+          showSuccessMessage(
+            title: 'Profile',
+            message: 'Profile updated successfully',
+          );
+          return true;
+        }
+
+        // Backend requires age between 13 and 120 years; skip birth chart update if invalid
+        if (!_isValidBirthDateForChart(dateOfBirth)) {
+          showErrorMessage(
+            title: 'Birth Chart',
+            message: 'Age must be between 13 and 120 years. Birth chart was not updated.',
+          );
+          await loadProfile();
+          showSuccessMessage(
+            title: 'Profile',
+            message: 'Profile updated successfully',
+          );
+          return true;
+        }
+
         // Call PUT API to update birth chart
         final birthChartUpdated = await _profileService.updateBirthChart(
-          userId: userId!,
+          userId: effectiveUserId,
           birthPlace: birthPlace,
           birthTime: birthTime,
           dateOfBirth: dateOfBirth,
@@ -617,6 +657,19 @@ class ProfileController extends BaseController {
     } finally {
       isUpdatingProfile.value = false;
     }
+  }
+
+  /// Returns true if dateOfBirth (yyyy-MM-dd) is valid for birth chart API: not in future, age 13–120.
+  bool _isValidBirthDateForChart(String dateOfBirthStr) {
+    final birth = DateTime.tryParse(dateOfBirthStr);
+    if (birth == null) return false;
+    final now = DateTime.now();
+    if (birth.isAfter(now)) return false;
+    int age = now.year - birth.year;
+    if (birth.month > now.month || (birth.month == now.month && birth.day > now.day)) {
+      age--;
+    }
+    return age >= 13 && age <= 120;
   }
 
   /// Format date to ISO format (yyyy-MM-dd)
@@ -656,12 +709,61 @@ class ProfileController extends BaseController {
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       helpText: 'Select Date of Birth',
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: const Color(0xFFed6f30),
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: const Color(0xFF6F221E),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
-    
     if (pickedDate != null) {
       selectedBirthDate.value = pickedDate;
       birthDateController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
     }
+  }
+
+  /// Select birth time (same as kundli time picker)
+  Future<void> selectBirthTime() async {
+    final hour = int.tryParse(birthHourController.text.trim()) ?? 12;
+    final minute = int.tryParse(birthMinuteController.text.trim()) ?? 0;
+    final pickedTime = await TimePickerHelper.showTimePicker12h(
+      Get.context!,
+      initialTime: TimeOfDay(hour: hour.clamp(0, 23), minute: minute.clamp(0, 59)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: const Color(0xFFed6f30),
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: const Color(0xFF6F221E),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (pickedTime != null) {
+      birthHourController.text = pickedTime.hour.toString();
+      birthMinuteController.text = pickedTime.minute.toString();
+      birthSecondController.text = '0';
+    }
+  }
+
+  /// Called when user selects birth place from location bottom sheet (city, state, country);
+  /// fills controllers and fetches lat/long/timezone.
+  Future<void> onBirthPlaceSelectedFromSheet(String city, String? state, String? country) async {
+    birthCityController.text = city;
+    birthStateController.text = state ?? '';
+    birthCountryController.text = country ?? 'India';
+    await onBirthCityChanged();
   }
 
   /// Set profile picture

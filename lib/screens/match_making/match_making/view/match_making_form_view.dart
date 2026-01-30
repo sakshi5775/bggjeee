@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/address_autocomplete_field.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:astrobharataiuser/widgets/common_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -435,8 +436,8 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
   }
 
   void _showTimePicker(BuildContext context, bool isPerson1) async {
-    final pickedTime = await showTimePicker(
-      context: context,
+    final pickedTime = await TimePickerHelper.showTimePicker12h(
+      context,
       initialTime: isPerson1
           ? (controller.person1Time.value ?? TimeOfDay.now())
           : (controller.person2Time.value ?? TimeOfDay.now()),

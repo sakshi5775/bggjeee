@@ -1,12 +1,16 @@
 import 'dart:io';
 
 import 'package:astrobharataiuser/app_manager/common/image_picker.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/profile_controller.dart';
+import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_appbar.dart';
 import 'package:flutter/material.dart';
@@ -35,13 +39,19 @@ class ProfileView extends GetView<ProfileController> {
                 showBackButton: showBackButton,
                 actions: [
                   IconButton(
-                    onPressed: () => controller.onLogoutTap(),
+                    onPressed: () {
+                      if (LoginGuard.isLoggedIn) {
+                        controller.onLogoutTap();
+                      } else {
+                        Get.toNamed(AppRoutes.login);
+                      }
+                    },
                     icon: Icon(
-                      Icons.logout,
+                      LoginGuard.isLoggedIn ? Icons.logout : Icons.login,
                       color: AppColors.templeGold,
                       size: 22.w,
                     ),
-                    tooltip: 'Logout',
+                    tooltip: LoginGuard.isLoggedIn ? 'Logout' : 'Login',
                     padding: EdgeInsets.all(8.w),
                     constraints: const BoxConstraints(),
                   ),
@@ -989,59 +999,107 @@ class ProfileView extends GetView<ProfileController> {
       context: context,
       isDismissible: true,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => Container(
-          height: MediaQuery.of(context).size.height * 0.95,
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 20.w,
-            right: 20.w,
-            top: 20.h,
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.9,
           ),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
           ),
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: [
-                // Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header (address_form_sheet style)
+              Container(
+                padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 12.h),
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(30.r),
+                  ),
+                ),
+                child: Row(
                   children: [
-                    AutoTranslateText(
-                      'Edit Profile',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AutoTranslateText(
+                            'Edit Profile',
+                            style: TextStyle(
+                              fontFamily: 'Baloo 2',
+                              fontWeight: FontWeight.w700,
+                              fontSize: 22.sp,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          AutoTranslateText(
+                            'Update your personal and birth chart details',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w400,
+                              fontSize: 13.sp,
+                              color: Colors.white.withOpacity(0.9),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.close, color: AppColors.textSecondary),
-                      onPressed: () {
-                        if (selectedImage != null) {
-                          controller.setProfilePicture(null);
-                        }
-                        if (Get.isBottomSheetOpen == true ||
-                            Get.isDialogOpen == true) {
-                          Get.back();
-                        } else {
-                          Navigator.of(context).pop();
-                        }
-                      },
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          if (selectedImage != null) {
+                            controller.setProfilePicture(null);
+                          }
+                          if (Get.isBottomSheetOpen == true ||
+                              Get.isDialogOpen == true) {
+                            Get.back();
+                          } else {
+                            Navigator.of(context).pop();
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(20.r),
+                        child: Container(
+                          padding: EdgeInsets.all(8.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: Colors.white,
+                            size: 20.sp,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                SizedBox(height: 16.h),
-                // Scrollable form
-                Expanded(
-                  child: SingleChildScrollView(
+              ),
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(
+                    20.w,
+                    20.h,
+                    20.w,
+                    MediaQuery.of(context).viewInsets.bottom + 20.h,
+                  ),
+                  child: Form(
+                    key: formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Profile Picture
+                        // Personal Information Section
+                        _editSheetSectionHeader(
+                          icon: Icons.person_rounded,
+                          title: 'Personal Information',
+                        ),
+                        SizedBox(height: 16.h),
                         Center(
                           child: GestureDetector(
                             onTap: () async {
@@ -1059,33 +1117,22 @@ class ProfileView extends GetView<ProfileController> {
                             child: Stack(
                               children: [
                                 CircleAvatar(
-                                  radius: 50.r,
-                                  backgroundColor: AppColors.lightBackground,
-                                  backgroundImage:
-                                      imageChanged && selectedImage != null
+                                  radius: 48.r,
+                                  backgroundColor: '#68171E'.toColor().withOpacity(0.1),
+                                  backgroundImage: imageChanged && selectedImage != null
                                       ? FileImage(selectedImage!)
-                                      : (controller
-                                                .profileImageUrl
-                                                .value
-                                                .isNotEmpty
-                                            ? NetworkImage(
-                                                controller
-                                                    .profileImageUrl
-                                                    .value,
-                                              )
-                                            : null),
-                                  child:
-                                      imageChanged &&
+                                      : (controller.profileImageUrl.value.isNotEmpty
+                                          ? NetworkImage(controller.profileImageUrl.value)
+                                          : null),
+                                  child: imageChanged &&
                                           selectedImage == null &&
-                                          controller
-                                              .profileImageUrl
-                                              .value
-                                              .isEmpty
+                                          controller.profileImageUrl.value.isEmpty
                                       ? AutoTranslateText(
                                           controller.userInitials,
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: AppColors.saffron,
+                                            fontSize: 24.sp,
                                           ),
                                         )
                                       : null,
@@ -1096,7 +1143,7 @@ class ProfileView extends GetView<ProfileController> {
                                   child: Container(
                                     padding: EdgeInsets.all(8.w),
                                     decoration: BoxDecoration(
-                                      color: AppColors.saffron,
+                                      gradient: AppColors.primaryGradient,
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
@@ -1110,320 +1157,148 @@ class ProfileView extends GetView<ProfileController> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 24.h),
-                        // Personal Info Section
-                        _buildSectionTitle('Personal Information'),
-                        SizedBox(height: 12.h),
-                        TextField(
+                        SizedBox(height: 16.h),
+                        _editSheetField(
+                          label: 'Full Name',
                           controller: controller.fullNameController,
-                          decoration: _inputDecoration(
-                            'Full Name',
-                            Icons.person_outline,
-                          ),
+                          icon: Icons.person_outline_rounded,
                         ),
                         SizedBox(height: 12.h),
                         Obx(
-                          () => DropdownButtonFormField<String>(
+                          () => _editSheetDropdown<String>(
+                            label: 'Gender',
                             value: controller.selectedGender.value,
-                            decoration: _inputDecoration(
-                              'Gender',
-                              Icons.wc_outlined,
-                            ),
-                            items: ProfileController.genderOptions.map((
-                              String value,
-                            ) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: AutoTranslateText(
-                                  value,
-                                  style: TextStyle(
-                                    color: AppColors.textPrimary,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              controller.selectedGender.value = newValue;
-                              if (newValue != null) {
-                                controller.genderController.text = newValue;
-                              }
+                            items: ProfileController.genderOptions,
+                            onChanged: (v) {
+                              controller.selectedGender.value = v;
+                              if (v != null) controller.genderController.text = v;
                             },
-                            hint: AutoTranslateText(
-                              'Select Gender',
-                              style: TextStyle(color: AppColors.textSecondary),
-                            ),
-                            style: TextStyle(color: AppColors.textPrimary),
-                            icon: Icon(
-                              Icons.arrow_drop_down,
-                              color: AppColors.saffron,
-                            ),
-                            dropdownColor: Colors.white,
-                            borderRadius: BorderRadius.circular(12.r),
+                            hint: 'Select Gender',
                           ),
                         ),
                         SizedBox(height: 12.h),
                         Obx(
-                          () => DropdownButtonFormField<String>(
+                          () => _editSheetDropdown<String>(
+                            label: 'Marital Status',
                             value: controller.selectedMaritalStatus.value,
-                            decoration: _inputDecoration(
-                              'Marital Status',
-                              Icons.favorite_outline,
-                            ),
-                            items: ProfileController.maritalStatusOptions.map((
-                              String value,
-                            ) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: AutoTranslateText(
-                                  value,
-                                  style: TextStyle(
-                                    color: AppColors.textPrimary,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              controller.selectedMaritalStatus.value = newValue;
-                              if (newValue != null) {
-                                controller.maritalStatusController.text =
-                                    newValue;
-                              }
+                            items: ProfileController.maritalStatusOptions,
+                            onChanged: (v) {
+                              controller.selectedMaritalStatus.value = v;
+                              if (v != null) controller.maritalStatusController.text = v;
                             },
-                            hint: AutoTranslateText(
-                              'Select Marital Status',
-                              style: TextStyle(color: AppColors.textSecondary),
-                            ),
-                            style: TextStyle(color: AppColors.textPrimary),
-                            icon: Icon(
-                              Icons.arrow_drop_down,
-                              color: AppColors.saffron,
-                            ),
-                            dropdownColor: Colors.white,
-                            borderRadius: BorderRadius.circular(12.r),
+                            hint: 'Select Marital Status',
                           ),
                         ),
                         SizedBox(height: 12.h),
-                        TextField(
+                        _editSheetField(
+                          label: 'Occupation',
                           controller: controller.occupationController,
-                          decoration: _inputDecoration(
-                            'Occupation',
-                            Icons.work_outline,
-                          ),
-                        ),
-                        SizedBox(height: 24.h),
-                        // Contact Info Section
-                        _buildSectionTitle('Contact Information'),
-                        SizedBox(height: 12.h),
-                        TextField(
-                          controller: controller.alternatePhoneController,
-                          keyboardType: TextInputType.phone,
-                          decoration: _inputDecoration(
-                            'Alternate Phone',
-                            Icons.phone_outlined,
-                          ),
-                        ),
-                        SizedBox(height: 12.h),
-                        TextField(
-                          controller: controller.cityController,
-                          decoration: _inputDecoration(
-                            'City (Type city name to auto-fill)',
-                            Icons.location_city_outlined,
-                          ),
-                          onChanged: (_) {
-                            // Debounce to avoid too many API calls while typing
-                            Future.delayed(Duration(milliseconds: 800), () {
-                              if (controller.cityController.text
-                                      .trim()
-                                      .length >=
-                                  3) {
-                                controller.onContactCityChanged();
-                              }
-                            });
-                          },
-                        ),
-                        Obx(
-                          () => controller.isFetchingCoordinates.value
-                              ? Padding(
-                                  padding: EdgeInsets.only(top: 8.h),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 16.w,
-                                        height: 16.h,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                        ),
-                                      ),
-                                      SizedBox(width: 8.w),
-                                      AutoTranslateText(
-                                        'Auto-filling address...',
-                                        style: AppTypography.body2.copyWith(
-                                          color: AppColors.textSecondary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : SizedBox.shrink(),
-                        ),
-                        SizedBox(height: 12.h),
-                        TextField(
-                          controller: controller.stateController,
-                          decoration: _inputDecoration(
-                            'State',
-                            Icons.map_outlined,
-                          ),
-                        ),
-                        SizedBox(height: 12.h),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: controller.pincodeController,
-                                keyboardType: TextInputType.number,
-                                decoration: _inputDecoration(
-                                  'Pincode/Postal Code',
-                                  Icons.pin_outlined,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: TextField(
-                                controller: controller.countryController,
-                                decoration: _inputDecoration(
-                                  'Country',
-                                  Icons.public_outlined,
-                                ),
-                              ),
-                            ),
-                          ],
+                          icon: Icons.work_outline_rounded,
                         ),
                         SizedBox(height: 24.h),
                         // Birth Chart Section
-                        _buildSectionTitle('Birth Chart Information'),
-                        SizedBox(height: 12.h),
-                        TextField(
-                          controller: controller.birthDateController,
-                          decoration: _inputDecoration(
-                            'Date of Birth (dd/mm/yyyy)',
-                            Icons.calendar_today_outlined,
-                          ),
-                          readOnly: true,
-                          onTap: () => controller.selectBirthDate(),
+                        _editSheetSectionHeader(
+                          icon: Icons.calendar_today_rounded,
+                          title: 'Birth Chart Information',
                         ),
-                        SizedBox(height: 12.h),
-                        TextField(
-                          controller: controller.birthCityController,
-                          decoration: _inputDecoration(
-                            'Birth City (Type city name to auto-fill)',
-                            Icons.location_city_outlined,
-                          ),
-                          onChanged: (_) {
-                            // Debounce to avoid too many API calls
-                            Future.delayed(Duration(milliseconds: 800), () {
-                              if (controller.birthCityController.text
-                                      .trim()
-                                      .length >=
-                                  3) {
-                                controller.onBirthCityChanged();
-                              }
-                            });
+                        SizedBox(height: 16.h),
+                        GestureDetector(
+                          onTap: () async {
+                            await controller.selectBirthDate();
+                            setState(() {});
                           },
-                        ),
-                        SizedBox(height: 12.h),
-                        TextField(
-                          controller: controller.birthStateController,
-                          decoration: _inputDecoration(
-                            'Birth State',
-                            Icons.map_outlined,
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 16.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.r),
+                              border: Border.all(
+                                color: '#68171E'.toColor().withOpacity(0.1),
+                                width: 1.5,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.03),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.calendar_today_outlined,
+                                  size: 20.sp,
+                                  color: AppColors.saffron,
+                                ),
+                                SizedBox(width: 12.w),
+                                Expanded(
+                                  child: Builder(
+                                    builder: (context) {
+                                      final text = controller.birthDateController.text;
+                                      return AutoTranslateText(
+                                        text.isEmpty ? 'Tap to select date of birth (dd/mm/yyyy)' : text,
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 14.sp,
+                                          color: text.isEmpty
+                                              ? AppColors.textSecondary
+                                              : '#68171E'.toColor(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 12.sp,
+                                  color: AppColors.saffron,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         SizedBox(height: 12.h),
-                        TextField(
-                          controller: controller.birthCountryController,
-                          decoration: _inputDecoration(
-                            'Birth Country',
-                            Icons.public_outlined,
+                        GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet<void>(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(24.r),
+                                ),
+                              ),
+                              builder: (ctx) => Container(
+                                height: MediaQuery.of(ctx).size.height * 0.8,
+                                padding: EdgeInsets.only(
+                                  bottom: MediaQuery.of(ctx).viewPadding.bottom,
+                                ),
+                                child: LocationBottomSheetWidget(
+                                  onCitySelected: (city, state, country, [lat, lng, tz]) {
+                                    controller.onBirthPlaceSelectedFromSheet(city, state, country);
+                                    Navigator.of(ctx).pop();
+                                    setState(() {});
+                                  },
+                                  selectedCity: controller.birthCityController.text,
+                                ),
+                              ),
+                            );
+                          },
+                          child: AbsorbPointer(
+                            child: _editSheetField(
+                              label: 'Birth City',
+                              controller: controller.birthCityController,
+                              icon: Icons.location_city_rounded,
+                              readOnly: true,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 12.h),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: controller.birthLatitudeController,
-                                keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true,
-                                ),
-                                decoration: _inputDecoration(
-                                  'Latitude',
-                                  Icons.navigation_outlined,
-                                ),
-                                readOnly: true,
-                              ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: TextField(
-                                controller: controller.birthLongitudeController,
-                                keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true,
-                                ),
-                                decoration: _inputDecoration(
-                                  'Longitude',
-                                  Icons.navigation_outlined,
-                                ),
-                                readOnly: true,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 12.h),
-                        TextField(
-                          controller: controller.birthTimezoneController,
-                          decoration: _inputDecoration(
-                            'Timezone',
-                            Icons.access_time_outlined,
-                          ),
-                          readOnly: true,
-                        ),
-                        SizedBox(height: 12.h),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: controller.birthHourController,
-                                keyboardType: TextInputType.number,
-                                decoration: _inputDecoration(
-                                  'Hour (0-23)',
-                                  Icons.access_time,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: TextField(
-                                controller: controller.birthMinuteController,
-                                keyboardType: TextInputType.number,
-                                decoration: _inputDecoration(
-                                  'Minute (0-59)',
-                                  Icons.access_time,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: TextField(
-                                controller: controller.birthSecondController,
-                                keyboardType: TextInputType.number,
-                                decoration: _inputDecoration(
-                                  'Second (0-59)',
-                                  Icons.access_time,
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
                         Obx(
                           () => controller.isFetchingCoordinates.value
@@ -1436,11 +1311,12 @@ class ProfileView extends GetView<ProfileController> {
                                         height: 16.h,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
+                                          color: AppColors.saffron,
                                         ),
                                       ),
                                       SizedBox(width: 8.w),
                                       AutoTranslateText(
-                                        'Fetching coordinates...',
+                                        'Fetching location details...',
                                         style: AppTypography.body2.copyWith(
                                           color: AppColors.textSecondary,
                                         ),
@@ -1450,135 +1326,145 @@ class ProfileView extends GetView<ProfileController> {
                                 )
                               : SizedBox.shrink(),
                         ),
-                        SizedBox(height: 24.h),
-                        // Preferences Section
-                        _buildSectionTitle('Preferences'),
                         SizedBox(height: 12.h),
-                        TextField(
-                          controller: controller.languageController,
-                          decoration: _inputDecoration(
-                            'Language (hi/en)',
-                            Icons.language_outlined,
-                          ),
-                        ),
-                        SizedBox(height: 16.h),
-                        AutoTranslateText(
-                          'Notification Settings',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        SizedBox(height: 8.h),
-                        Obx(
-                          () => CheckboxListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: AutoTranslateText(
-                              'Email Notifications',
-                              style: AppTypography.body1,
+                        GestureDetector(
+                          onTap: () async {
+                            await controller.selectBirthTime();
+                            setState(() {});
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 16.h,
                             ),
-                            value: controller.emailNotificationController.value,
-                            onChanged: (value) =>
-                                controller.emailNotificationController.value =
-                                    value ?? false,
-                            controlAffinity: ListTileControlAffinity.leading,
-                          ),
-                        ),
-                        Obx(
-                          () => CheckboxListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: AutoTranslateText(
-                              'SMS Notifications',
-                              style: AppTypography.body1,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.r),
+                              border: Border.all(
+                                color: '#68171E'.toColor().withOpacity(0.1),
+                                width: 1.5,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.03),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
-                            value: controller.smsNotificationController.value,
-                            onChanged: (value) =>
-                                controller.smsNotificationController.value =
-                                    value ?? false,
-                            controlAffinity: ListTileControlAffinity.leading,
-                          ),
-                        ),
-                        Obx(
-                          () => CheckboxListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: AutoTranslateText(
-                              'Push Notifications',
-                              style: AppTypography.body1,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.access_time_rounded,
+                                  size: 20.sp,
+                                  color: AppColors.saffron,
+                                ),
+                                SizedBox(width: 12.w),
+                                Builder(
+                                  builder: (context) {
+                                    final h = controller.birthHourController.text.trim();
+                                    final m = controller.birthMinuteController.text.trim();
+                                    final hour24 = int.tryParse(h) ?? 0;
+                                    final min = int.tryParse(m) ?? 0;
+                                    final display = (h.isNotEmpty || m.isNotEmpty)
+                                        ? TimePickerHelper.formatTime24To12Display(hour24, min)
+                                        : 'Tap to select birth time';
+                                    return AutoTranslateText(
+                                      display,
+                                      style: TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14.sp,
+                                        color: (h.isEmpty && m.isEmpty)
+                                            ? AppColors.textSecondary
+                                            : '#68171E'.toColor(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                Spacer(),
+                                Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 12.sp,
+                                  color: AppColors.saffron,
+                                ),
+                              ],
                             ),
-                            value: controller.pushNotificationController.value,
-                            onChanged: (value) =>
-                                controller.pushNotificationController.value =
-                                    value ?? false,
-                            controlAffinity: ListTileControlAffinity.leading,
-                          ),
-                        ),
-                        Obx(
-                          () => CheckboxListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: AutoTranslateText(
-                              'WhatsApp Notifications',
-                              style: AppTypography.body1,
-                            ),
-                            value:
-                                controller.whatsappNotificationController.value,
-                            onChanged: (value) =>
-                                controller
-                                        .whatsappNotificationController
-                                        .value =
-                                    value ?? false,
-                            controlAffinity: ListTileControlAffinity.leading,
                           ),
                         ),
                         SizedBox(height: 24.h),
-                        // Save Button
-                        SizedBox(
-                          width: double.infinity,
-                          child: Obx(
-                            () => ElevatedButton(
-                              onPressed: controller.isUpdatingProfile.value
+                        // Update Profile Button
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: AppColors.orangeGradient,
+                            borderRadius: BorderRadius.circular(20.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: '#F38B3B'.toColor().withOpacity(0.4),
+                                blurRadius: 16,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: controller.isUpdatingProfile.value
                                   ? null
                                   : () async {
-                                      final success = await controller
-                                          .updateProfile();
-                                      if (success) {
+                                      final success = await controller.updateProfile();
+                                      if (success && context.mounted) {
                                         Future.delayed(
                                           Duration(milliseconds: 300),
                                           () {
                                             if (Get.isBottomSheetOpen == true ||
                                                 Get.isDialogOpen == true) {
                                               Get.back();
-                                            } else if (Navigator.of(
-                                              context,
-                                            ).canPop()) {
+                                            } else if (Navigator.of(context).canPop()) {
                                               Navigator.of(context).pop();
                                             }
                                           },
                                         );
                                       }
                                     },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.saffron,
-                                foregroundColor: Colors.white,
-                                padding: EdgeInsets.symmetric(vertical: 14.h),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
+                              borderRadius: BorderRadius.circular(20.r),
+                              child: Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(vertical: 16.h),
+                                alignment: Alignment.center,
+                                child: Obx(
+                                  () => controller.isUpdatingProfile.value
+                                      ? SizedBox(
+                                          height: 24.h,
+                                          width: 24.w,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.check_circle_rounded,
+                                              size: 20.sp,
+                                              color: Colors.white,
+                                            ),
+                                            SizedBox(width: 8.w),
+                                            AutoTranslateText(
+                                              'Update Profile',
+                                              style: TextStyle(
+                                                fontFamily: 'Poppins',
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 16.sp,
+                                                color: Colors.white,
+                                                letterSpacing: 0.5,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                 ),
                               ),
-                              child: controller.isUpdatingProfile.value
-                                  ? SizedBox(
-                                      height: 20.h,
-                                      width: 20.w,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : AutoTranslateText(
-                                      'Update Profile',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
                             ),
                           ),
                         ),
@@ -1587,39 +1473,174 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return AutoTranslateText(
-      title,
-      style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.saffron),
+  Widget _editSheetSectionHeader(
+      {required IconData icon, required String title}) {
+    return Row(
+      children: [
+        Container(
+          padding: EdgeInsets.all(8.w),
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Icon(icon, size: 20.sp, color: '#E3B341'.toColor()),
+        ),
+        SizedBox(width: 12.w),
+        AutoTranslateText(
+          title,
+          style: TextStyle(
+            fontFamily: 'Baloo 2',
+            fontWeight: FontWeight.w700,
+            fontSize: 18.sp,
+            color: '#68171E'.toColor(),
+          ),
+        ),
+      ],
     );
   }
 
-  InputDecoration _inputDecoration(String label, IconData icon) {
-    return InputDecoration(
-      labelText: label,
-      prefixIcon: Icon(icon, color: AppColors.saffron),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.r)),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: AppColors.saffron, width: 2),
+  Widget _editSheetField({
+    required String label,
+    required TextEditingController controller,
+    required IconData icon,
+    bool readOnly = false,
+    String? hint,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: '#68171E'.toColor().withOpacity(0.1),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(
-          color: AppColors.textSecondary.withValues(alpha: 0.3),
+      child: TextFormField(
+        controller: controller,
+        readOnly: readOnly,
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.w500,
+          fontSize: 14.sp,
+          color: '#68171E'.toColor(),
+        ),
+        decoration: InputDecoration(
+          labelText: label.isEmpty ? null : label,
+          hintText: hint,
+          labelStyle: TextStyle(
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w500,
+            fontSize: 13.sp,
+            color: AppColors.textSecondary,
+          ),
+          prefixIcon: icon != Icons.access_time
+              ? Icon(icon, size: 20.sp, color: AppColors.saffron)
+              : null,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide(color: AppColors.saffron, width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 16.w,
+            vertical: 16.h,
+          ),
         ),
       ),
-      filled: true,
-      fillColor: AppColors.lightBackground,
-      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+    );
+  }
+
+  Widget _editSheetDropdown<T>({
+    required String label,
+    required T? value,
+    required List<T> items,
+    required void Function(T?) onChanged,
+    required String hint,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: '#68171E'.toColor().withOpacity(0.1),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: DropdownButtonFormField<T>(
+        value: value,
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(Icons.arrow_drop_down, size: 24.sp, color: AppColors.saffron),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.r),
+            borderSide: BorderSide(color: AppColors.saffron, width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        ),
+        items: items
+            .map((e) => DropdownMenuItem<T>(
+                  value: e,
+                  child: AutoTranslateText(
+                    e.toString(),
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 14.sp,
+                      color: '#68171E'.toColor(),
+                    ),
+                  ),
+                ))
+            .toList(),
+        onChanged: onChanged,
+        hint: AutoTranslateText(
+          hint,
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 14.sp,
+            color: AppColors.textSecondary,
+          ),
+        ),
+      ),
     );
   }
 

@@ -44,6 +44,7 @@ import '../widgets/celebrity_astrologer_widget.dart';
 import '../widgets/features_and_videos_widget.dart';
 import '../widgets/what_else_widget.dart';
 import '../widgets/year_tab_widget.dart';
+import '../widgets/banner_carousel_widget.dart';
 import '../widgets/our_services_carousel_widget.dart';
 import '../widgets/digital_mart_tab_widget.dart';
 import '../widgets/reports_tab_widget.dart';
@@ -123,7 +124,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                     tabs[4] == 'Digital Mandir') ||
                                 (i == 5 &&
                                     tabs.length > 5 &&
-                                    tabs[5] == 'Digital Education') ||
+                                    tabs[5] == 'Digital Learning') ||
                                 (i == 6 &&
                                     tabs.length > 6 &&
                                     tabs[6] == 'Reports') ||
@@ -457,7 +458,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           ),
         );
       }
-      if (i == 5 && controller.sliderTabs[i] == 'Digital Education') {
+      if (i == 5 && controller.sliderTabs[i] == 'Digital Learning') {
         if (!Get.isRegistered<CoursesController>()) {
           Get.put(CoursesController(), permanent: false);
         }
@@ -522,7 +523,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     },
     {
       'label': 'Horoscope',
-      'route': AppRoutes.horoscope,
+      'route': AppRoutes.horoscopeForm,
       'icon': AppConstant.horoscope,
     },
     {
@@ -649,128 +650,31 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   }
 
   Widget _buildAdsSection(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 100.h,
-          child: PageView.builder(
-            controller: controller.adsPageController.value,
-            onPageChanged: (index) => controller.adsCurrentPage.value = index,
-            itemCount: controller.adsImages.length,
-            itemBuilder: (context, index) {
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 16.w),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16.r),
-                  child: Stack(
-                    children: [
-                      CachedNetworkImage(
-                        imageUrl: controller.adsImages[index],
-                        width: double.infinity,
-                        height: double.infinity,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          color: "#6F221E".toColor().withOpacity(0.1),
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: "#6F221E".toColor().withOpacity(0.1),
-                          child: Center(
-                            child: Icon(
-                              Icons.ads_click,
-                              color: "#6F221E".toColor(),
-                              size: 40.w,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.4),
-                              Colors.transparent,
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(12.w),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AutoTranslateText(
-                              index == 0
-                                  ? "Detailed Kundli Analysis"
-                                  : index == 1
-                                  ? "Know Your Future"
-                                  : "Personalized Predictions",
-                              style: MyTextTheme.mediumBCB.copyWith(
-                                color: Colors.white,
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Spacing.h(2),
-                            AutoTranslateText(
-                              index == 0
-                                  ? "Get deep insights into your life"
-                                  : index == 1
-                                  ? "Understand your planetary positions"
-                                  : "Plan your path with expert guidance",
-                              style: MyTextTheme.mediumBCB.copyWith(
-                                color: Colors.white,
-                                fontSize: 9.sp,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        Spacing.h(8),
-        Obx(
-          () => Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              controller.adsImages.length,
-              (index) => AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                margin: EdgeInsets.symmetric(horizontal: 2.w),
-                height: 6.h,
-                width: controller.adsCurrentPage.value == index ? 16.w : 6.w,
-                decoration: BoxDecoration(
-                  color: controller.adsCurrentPage.value == index
-                      ? "#6F221E".toColor()
-                      : "#6F221E".toColor().withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(3.r),
-                ),
+    return Obx(() {
+      final banners = controller.adsBanners;
+      if (controller.isLoadingBanners.value && banners.isEmpty) {
+        return SizedBox(
+          height: 110.h,
+          child: Center(
+            child: SizedBox(
+              width: 24.w,
+              height: 24.w,
+              child: CircularProgressIndicator(
+                color: "#6F221E".toColor(),
+                strokeWidth: 2,
               ),
             ),
           ),
-        ),
-      ],
-    );
+        );
+      }
+      if (banners.isEmpty) {
+        return const SizedBox.shrink();
+      }
+      return BannerCarouselWidget(
+        key: ValueKey(banners.length),
+        banners: banners.toList(),
+      );
+    });
   }
 
   Widget _buildSearchBar(BuildContext context) {
@@ -5206,7 +5110,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   _buildDrawerItemStatic(
                     context: context,
                     icon: Icons.school,
-                    label: 'Digital Education',
+                    label: 'Digital Learning',
                     onTap: () {
                       Navigator.of(context).pop();
                       Get.toNamed(AppRoutes.courses);

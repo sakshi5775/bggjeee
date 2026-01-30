@@ -113,7 +113,7 @@ class CoursesView extends BasePage<CoursesController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AutoTranslateText(
-                  'Digital Education',
+                  'Digital Learning',
                   style: AppTypography.h2.copyWith(
                     color: Colors.white,
                     fontSize: 20.sp,
