@@ -1,12 +1,21 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/courses/controllers/courses_controller.dart';
-import 'package:astrobharataiuser/screens/courses/widgets/course_card.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/user_bottom_nav.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/screens/courses/widgets/digital_learning_banner_slider.dart';
+import 'package:astrobharataiuser/screens/courses/widgets/key_course_modules_section.dart';
+import 'package:astrobharataiuser/screens/courses/widgets/learning_features_section.dart';
+import 'package:astrobharataiuser/screens/courses/widgets/learning_journey_section.dart';
+import 'package:astrobharataiuser/screens/courses/widgets/mastery_bundles_section.dart';
+import 'package:astrobharataiuser/screens/courses/widgets/premium_course_card.dart';
+import 'package:astrobharataiuser/screens/courses/widgets/quick_connect_section.dart';
+import 'package:astrobharataiuser/screens/courses/widgets/spiritual_pillars_grid.dart';
+import 'package:astrobharataiuser/screens/courses/widgets/trusted_education_section.dart';
+import 'package:astrobharataiuser/screens/courses/widgets/why_choose_us_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -499,125 +508,108 @@ class CoursesView extends BasePage<CoursesController> {
   }
 
   Widget _buildCoursesSection() {
-    return Obx(() {
-      if (controller.isLoading.value && controller.courses.isEmpty) {
-        return Padding(
-          padding: EdgeInsets.all(32.w),
-          child: Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(
-                AppColors.primaryGradient.colors.first,
-              ),
-            ),
-          ),
-        );
-      }
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!hideHeader) ...[
+            // 1. Digital Learning Banner Slider (Video/Image)
+            const DigitalLearningBannerSlider(),
 
-      if (controller.courses.isEmpty) {
-        return Padding(
-          padding: EdgeInsets.all(32.w),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.school_outlined,
-                  size: 64.w,
-                  color: AppColors.primaryGradient.colors.first.withOpacity(
-                    0.5,
-                  ),
-                ),
-                SizedBox(height: 16.h),
-                AutoTranslateText(
-                  'No courses found',
-                  style: AppTypography.h2.copyWith(
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }
+            // 2. Learning Features Section
+            const LearningFeaturesSection(),
 
-      // Filter courses based on selected category
-      final filteredCourses = controller.getFilteredCourses();
+            // 3. Spiritual Pillars Grid
+            SpiritualPillarsGrid(),
 
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (!hideHeader) ...[
-              Row(
+            // 4. Learning Journey Section (Before Courses)
+            const LearningJourneySection(),
+
+            // 5. Mastery Bundles Section
+            const MasteryBundlesSection(),
+
+            // 6. Key Course Modules Section
+            const KeyCourseModulesSection(),
+
+            // 7. Why Choose Us Section
+            const WhyChooseUsSection(),
+
+            SizedBox(height: 24.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.school,
-                        color: AppColors.primaryGradient.colors.first,
-                        size: 20.w,
-                      ),
-                      SizedBox(width: 8.w),
-                      AutoTranslateText(
-                        'Courses',
-                        style: AppTypography.h2.copyWith(
-                          color: AppColors.textPrimary,
-                          fontSize: 18.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      // TODO: Navigate to all courses
-                    },
-                    child: Row(
-                      children: [
-                        AutoTranslateText(
-                          'View All',
-                          style: AppTypography.body1.copyWith(
-                            color: AppColors.primaryGradient.colors.first,
-                          ),
-                        ),
-                        SizedBox(width: 4.w),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColors.primaryGradient.colors.first,
-                          size: 14.w,
-                        ),
-                      ],
+                  AutoTranslateText(
+                    'Explore Our Premium Courses',
+                    style: AppTypography.h2.copyWith(
+                      color: const Color(0xFFD68D3C), // Orange/Gold
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 16.h),
-            ],
-            GridView.builder(
+            ),
+            SizedBox(height: 16.h),
+          ],
+
+          // 6. Premium Courses List
+          Obx(() {
+            if (controller.isLoading.value && controller.courses.isEmpty) {
+              return Padding(
+                padding: EdgeInsets.all(32.w),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColors.primaryGradient.colors.first,
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            if (controller.courses.isEmpty) {
+              return Padding(
+                padding: EdgeInsets.all(32.w),
+                child: Center(
+                  child: AutoTranslateText(
+                    'No courses found',
+                    style: AppTypography.h2.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            final filteredCourses = controller.getFilteredCourses();
+
+            return ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                mainAxisSpacing: 16.h,
-                childAspectRatio: 2.5,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               itemCount: filteredCourses.length,
+              separatorBuilder: (_, __) => SizedBox(height: 16.h),
               itemBuilder: (context, index) {
                 final course = filteredCourses[index];
-                return CourseCard(
+                return PremiumCourseCard(
                   course: course,
                   onTap: () {
                     Get.toNamed(AppRoutes.courseDetail, arguments: course.id);
                   },
                 );
               },
-            ),
-            SizedBox(height: 16.h),
-          ],
-        ),
-      );
-    });
+            );
+          }),
+
+          // 7. Trusted Education Section
+          const TrustedEducationSection(),
+          const QuickConnectSection(),
+          SizedBox(height: 20.h),
+        ],
+      ),
+    );
   }
 
   Widget _buildBottomNav() {

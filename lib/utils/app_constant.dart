@@ -7,6 +7,9 @@ class AppConstant {
   /// (full description or "What's New") so old installs get the minimum version from the store.
   static const String minAppVersion = '9.9.9';
 
+  static const String s3BaseUrl =
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com';
+
   // Google Maps API Key for Geocoding and Places Autocomplete
   static const String googleMapsApiKey =
       'AIzaSyBLAoT6aFAsHaFWBIvK3hha1BDbMzPFOb0';
@@ -347,4 +350,71 @@ class AppConstant {
   static const String eMandirButton2 = 'assets/images/Button (2).png';
   static const String eMandirButton3 = 'assets/images/Button (3).png';
   static const String eMandirButton4 = 'assets/images/Button (4).png';
+
+  /// Digital Education images
+  /// digital education Spiritual Pillars images
+
+  static const String dESpriritualPillarsLalKitab =
+      '$s3BaseUrl/Digital+Learning/laalKitab.jpeg';
+
+  static const String dESpriritualPillarsVedicAstrology =
+      '$s3BaseUrl/Digital+Learning/VedicAstrology.png';
+
+  static const String dESpriritualPillarsKPAstrology =
+      '$s3BaseUrl/Digital+Learning/KPastrology.png';
+
+  static const String dESpriritualPillarsGemstoneScience =
+      '$s3BaseUrl/Digital+Learning/gemstoneScience.png';
+
+  static const String dESpriritualPillarsNumerology =
+      '$s3BaseUrl/Digital+Learning/numerology.png';
+
+  static const String dESpriritualPillarsVaastuShastra =
+      '$s3BaseUrl/Digital+Learning/VaastuShastra.png';
+
+  static const String dESpriritualPillarsFaceReading =
+      '$s3BaseUrl/Digital+Learning/faceReading.png';
+
+  static const String dESpriritualPillarsReikiHealing =
+      '$s3BaseUrl/Digital+Learning/ReikiHealing.png';
+
+  static const String dESpriritualPillarsTarotReading =
+      '$s3BaseUrl/Digital+Learning/TarotReading.png';
+
+  static const String dESpriritualPillarsNakshatra =
+      '$s3BaseUrl/Digital+Learning/nakshtra.png';
+
+  static const String dESpriritualPillarsRudrakshScience =
+      '$s3BaseUrl/Digital+Learning/RudrakshScience.png';
+
+  static const String dESpriritualPillarsPalmistry =
+      '$s3BaseUrl/Digital+Learning/palmistry.png';
+
+  /// digital education  banners
+  static const String dEBanner1 =
+      '$s3BaseUrl/Digital+Learning/DigitalBannerVideo.mp4';
+  static const String dEBanner2 =
+      '$s3BaseUrl/Digital+Learning/LiveClasses+Banner.png';
+  static const String dEBanner3 =
+      '$s3BaseUrl/Digital+Learning/DigitalLearningBanner.png';
+
+  /// digital education key course module images
+  static const String dEKeyCourseModule1 =
+      '$s3BaseUrl/Digital+Learning/EnergyConnection.png';
+  static const String dEKeyCourseModule2 =
+      '$s3BaseUrl/Digital+Learning/RealVsFake.png';
+  static const String dEKeyCourseModule3 =
+      '$s3BaseUrl/Digital+Learning/kpusingpalmand+face.png';
+  static const String dEKeyCourseModule4 =
+      '$s3BaseUrl/Digital+Learning/ethics.png';
+
+  /// digital education Specialized Mastery Bundles
+  static const String dESpecializedMasteryBundles1 =
+      '$s3BaseUrl/Digital+Learning/astrologyMasterBundle.png';
+  static const String dESpecializedMasteryBundles2 =
+      '$s3BaseUrl/Digital+Learning/energyandhealing.png';
+  static const String dESpecializedMasteryBundles3 =
+      '$s3BaseUrl/Digital+Learning/personality.png';
+
+  ///
 }

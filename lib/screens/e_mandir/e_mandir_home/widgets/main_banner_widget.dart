@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../../theme/app_typography.dart';
+
 class MainBannerWidget extends GetView<NamasteHomeController> {
   const MainBannerWidget({super.key});
 
@@ -51,6 +53,46 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
                     height: 450.h,
                   ),
             // Overlay content
+            Positioned(
+              top: 10.h,
+              left: 10.w,
+              child: InkWell(
+                onTap: controller.navigateToPunyaMudra,
+                child: Container(
+                  height: 50.h,
+                  padding: EdgeInsets.all(2.w),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30.r),
+                    color: Colors.white,
+                    border: Border.all(color: Colors.orange),
+                  ),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(8.0.w),
+                        child: AutoTranslateText(
+                          '66',
+                          style: AppTypography.h3.copyWith(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(4.0.w),
+                        child: CircleAvatar(
+                          radius: 20.r,
+                          backgroundImage: const AssetImage(
+                            AppConstant.eMandirOmmIcon,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
             Positioned(
               top: 10.h,
               right: 10.w,

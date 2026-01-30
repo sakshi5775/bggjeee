@@ -10,7 +10,7 @@ class ErrorFormatter {
     final errorMessage = error.toString();
 
     // Network errors
-    if (errorString.contains('socketexception') || 
+    if (errorString.contains('socketexception') ||
         errorString.contains('network') ||
         errorString.contains('connection refused') ||
         errorString.contains('failed host lookup')) {
@@ -18,7 +18,7 @@ class ErrorFormatter {
     }
 
     // Timeout errors
-    if (errorString.contains('timeout') || 
+    if (errorString.contains('timeout') ||
         errorString.contains('timed out') ||
         errorString.contains('deadline exceeded')) {
       return 'Request timeout. The server took too long to respond. Please try again.';
@@ -41,43 +41,45 @@ class ErrorFormatter {
       if (errorString.contains('404') || errorString.contains('not found')) {
         return 'Service not found. Please try again later.';
       }
-      if (errorString.contains('500') || errorString.contains('internal server error')) {
+      if (errorString.contains('500') ||
+          errorString.contains('internal server error')) {
         return 'Server error. Please try again later.';
       }
-      if (errorString.contains('503') || errorString.contains('service unavailable')) {
+      if (errorString.contains('503') ||
+          errorString.contains('service unavailable')) {
         return 'Service temporarily unavailable. Please try again later.';
       }
       return 'Server error. Please try again later.';
     }
 
     // JSON parsing errors
-    if (errorString.contains('json') || 
+    if (errorString.contains('json') ||
         errorString.contains('format exception') ||
         errorString.contains('unexpected character')) {
       return 'Invalid response from server. Please try again.';
     }
 
     // File/image errors
-    if (errorString.contains('file') || 
+    if (errorString.contains('file') ||
         errorString.contains('image') ||
         errorString.contains('format')) {
       return 'Image format error. Please try with a different image.';
     }
 
     // Permission errors
-    if (errorString.contains('permission') || 
-        errorString.contains('denied')) {
+    if (errorString.contains('permission') || errorString.contains('denied')) {
       return 'Permission denied. Please check app permissions.';
     }
 
     // If error message already looks user-friendly (contains common user-friendly phrases)
-    if (errorMessage.contains('Please') || 
+    if (errorMessage.contains('Please') ||
         errorMessage.contains('try again') ||
         errorMessage.contains('check') ||
         errorMessage.contains('connection') ||
         errorMessage.contains('timeout')) {
       // Return as is if it's already user-friendly
-      return errorMessage.replaceAll('Exception: ', '')
+      return errorMessage
+          .replaceAll('Exception: ', '')
           .replaceAll('Error: ', '')
           .trim();
     }
@@ -99,6 +101,3 @@ class ErrorFormatter {
     return formatError(error);
   }
 }
-
-
-

@@ -33,9 +33,7 @@ class NamasteHeaderWidget extends GetView<NamasteHomeController> {
               ),
               AutoTranslateText(
                 'Welcome to Divine Temple',
-                style: AppTypography.body2.copyWith(
-                  color: Colors.grey,
-                ),
+                style: AppTypography.body2.copyWith(color: Colors.grey),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -68,7 +66,9 @@ class NamasteHeaderWidget extends GetView<NamasteHomeController> {
                   padding: EdgeInsets.all(4.0.w),
                   child: CircleAvatar(
                     radius: 20.r,
-                    backgroundImage: const AssetImage(AppConstant.eMandirOmmIcon),
+                    backgroundImage: const AssetImage(
+                      AppConstant.eMandirOmmIcon,
+                    ),
                   ),
                 ),
               ],
