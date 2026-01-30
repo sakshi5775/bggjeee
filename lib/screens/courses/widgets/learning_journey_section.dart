@@ -55,14 +55,6 @@ class LearningJourneySection extends StatelessWidget {
                   '₹19,999',
                   Icons.history_edu_outlined,
                 ),
-                _buildArrow(),
-                _buildJourneyStep(
-                  'Grand Master',
-                  'LIFETIME ACCESS',
-                  '₹39,999',
-                  Icons.stars,
-                  isPremium: true,
-                ),
               ],
             ),
           ),
@@ -258,49 +250,9 @@ class LearningJourneySection extends StatelessWidget {
                     ],
                   ),
                 );
-              } else if (title == 'Grand Master') {
-                Get.dialog(
-                  const LearningJourneyDialog(
-                    title: 'Grand Master',
-                    duration: 'Lifetime Access',
-                    description: 'Complete Syllabus',
-                    whoItIsFor:
-                        'Professional Astrologers, Researchers & Future Faculty',
-                    objective:
-                        'Comprehensive Knowledge Coverage & Advanced Master-Level Training',
-                    icon: Icons.stars,
-                    whatYouWillLearn: [
-                      'HEADER: 📚 Comprehensive Knowledge Coverage',
-                      'Vedic Astrology',
-                      'KP Astrology',
-                      'Lal Kitab',
-                      'Numerology',
-                      'Vastu Shastra',
-                      'Gemstone / Crystal / Rudraksha Science',
-                      'Face Reading',
-                      'Palmistry',
-                      'Tarot Reading',
-                      'Reiki Healing',
-                      'Nakshatra Analysis',
-                      'Remedies, Yantra, Mantra & Chakra Balancing',
-                      'Past Life Regression Theory (PLRT – Conceptual Framework)',
-                      'HEADER: 🎓 Advanced Master-Level Training',
-                      'Rule-based prediction systems',
-                      'Cross-validation (Astrology + Face + Palm + Numbers)',
-                      'Complex case audits (career, marriage, health, karma)',
-                      'Research-driven interpretation models',
-                      'Teaching methodology & mentorship training',
-                    ],
-                    learningOutcomes: [
-                      'Expert-level authority & Faculty eligibility',
-                      'Priority Live Q&A (“First-Row Access”)',
-                      'Lifetime alumni & professional network',
-                      'Recognition as a Modern Occult Scientist',
-                    ],
-                  ),
-                );
               }
             },
+
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(vertical: 8.h),

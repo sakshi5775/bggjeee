@@ -132,11 +132,11 @@ class CoursesController extends BaseController {
   // Get filtered courses based on selected category
   List<CourseModel> getFilteredCourses() {
     switch (selectedCategory.value) {
-      case 1: // Courses only
+      case 0: // Courses only
         // Filter courses (exclude E-Books if courseType field exists)
         // For now, return all courses as CourseModel doesn't have courseType
         return courses;
-      case 2: // E-Books only
+      case 1: // E-Books only
         // Filter E-Books if courseType field exists
         // For now, return empty as CourseModel doesn't have courseType
         return [];

@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,7 +21,7 @@ class TrustedEducationSection extends StatelessWidget {
           AutoTranslateText(
             'Trusted Education',
             style: AppTypography.h2.copyWith(
-              color: Colors.white,
+              color: AppColors.digitalEducationTextColor,
               fontSize: 22.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -57,13 +58,13 @@ class TrustedEducationSection extends StatelessWidget {
       width: 140.w,
       child: Column(
         children: [
-          Icon(icon, color: Colors.white, size: 32.w),
+          Icon(icon, color: AppColors.digitalEducationTextColor, size: 32.w),
           SizedBox(height: 12.h),
           AutoTranslateText(
             label,
             textAlign: TextAlign.center,
             style: AppTypography.body1.copyWith(
-              color: Colors.white,
+              color: AppColors.digitalEducationTextColor,
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,
             ),

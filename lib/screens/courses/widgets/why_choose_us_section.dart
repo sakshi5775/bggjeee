@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -101,7 +102,7 @@ class WhyChooseUsSection extends StatelessWidget {
                       title,
                       textAlign: TextAlign.center,
                       style: AppTypography.h3.copyWith(
-                        color: Colors.white,
+                        color: AppColors.digitalEducationTextColor,
                         fontSize: 13.sp, // Slightly smaller font
                         fontWeight: FontWeight.bold,
                         height: 1.1,
@@ -124,9 +125,11 @@ class WhyChooseUsSection extends StatelessWidget {
                       description,
                       textAlign: TextAlign.center,
                       style: AppTypography.body2.copyWith(
-                        color: Colors.white70,
+                        color: AppColors.digitalEducationTextColor.withValues(
+                          alpha: 0.5,
+                        ),
                         fontSize: 11.sp,
-                        height: 1.2, // Tighter line height
+                        height: 1.2,
                       ),
                       maxLines: 4,
                       overflow: TextOverflow.ellipsis,

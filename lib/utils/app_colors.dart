@@ -6,6 +6,7 @@ class AppColors {
   // Primary Colors
   static const Color saffron = Color(0xFF3D0C11); // Sacred saffron
   static final Color textColorMaroon = "#68171E".toColor();
+  static final Color digitalEducationTextColor = "#fbe6c8".toColor();
   static const Color saffronmix = Color(0xFF5D1C21);
   static const Color deepOrange = Color(0xFFF38B3B); // Temple orange
   static const Color deepOrangemix = Color(0xFFDD2914);

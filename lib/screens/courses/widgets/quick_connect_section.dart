@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../utils/app_colors.dart';
+
 class QuickConnectSection extends StatelessWidget {
   const QuickConnectSection({super.key});
 
@@ -29,12 +31,16 @@ class QuickConnectSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.stars, color: const Color(0xFFFFCC80), size: 24.w),
+              Icon(
+                Icons.auto_awesome,
+                color: const Color(0xFFFFCC80),
+                size: 24.w,
+              ),
               SizedBox(width: 12.w),
               AutoTranslateText(
                 'Quick Connect',
                 style: AppTypography.h2.copyWith(
-                  color: Colors.white,
+                  color: AppColors.digitalEducationTextColor,
                   fontSize: 20.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -106,7 +112,7 @@ class QuickConnectSection extends StatelessWidget {
                   AutoTranslateText(
                     title,
                     style: AppTypography.body1.copyWith(
-                      color: Colors.white,
+                      color: AppColors.digitalEducationTextColor,
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                     ),

@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/courses/controllers/courses_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/user_bottom_nav.dart';
@@ -69,8 +70,9 @@ class CoursesView extends BasePage<CoursesController> {
                                 ? _buildLiveWebinarBanner()
                                 : const SizedBox.shrink(),
                           ),
-                          _buildCategoryTabs(),
+                          // _buildCategoryTabs(),
                         ],
+                        Spacing.h(20),
                         _buildCoursesSection(),
                       ],
                     ),
@@ -139,6 +141,19 @@ class CoursesView extends BasePage<CoursesController> {
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
             tooltip: 'My Learning',
+          ),
+          IconButton(
+            onPressed: () {
+              Get.toNamed(AppRoutes.liveWebinars);
+            },
+            icon: Icon(
+              Icons.video_library,
+              color: AppColors.digitalEducationTextColor,
+              size: 24.w,
+            ),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            tooltip: 'Webinar',
           ),
 
           // Filter Icon
@@ -451,11 +466,9 @@ class CoursesView extends BasePage<CoursesController> {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            _buildTabButton('All', 0),
+            _buildTabButton('Courses', 0),
             SizedBox(width: 12.w),
-            _buildTabButton('Courses', 1),
-            SizedBox(width: 12.w),
-            _buildTabButton('Webinars', 3), // Live Webinars
+            _buildTabButton('Webinars', 1), // Live Webinars
             // SizedBox(width: 12.w),
             // _buildTabButton('E-Books', 2),
           ],
@@ -468,38 +481,40 @@ class CoursesView extends BasePage<CoursesController> {
     return Obx(
       () => GestureDetector(
         onTap: () {
-          if (index == 3) {
+          if (index == 1) {
             Get.toNamed(AppRoutes.liveWebinars);
           } else {
             controller.selectedCategory.value = index;
           }
         },
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-          decoration: BoxDecoration(
-            gradient: controller.selectedCategory.value == index
-                ? AppColors.orangeGradient
-                : null,
-            color: controller.selectedCategory.value == index
-                ? null
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(20.r),
-            border: Border.all(
+        child: Expanded(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+            decoration: BoxDecoration(
+              gradient: controller.selectedCategory.value == index
+                  ? AppColors.orangeGradient
+                  : null,
               color: controller.selectedCategory.value == index
-                  ? Colors.transparent
-                  : Colors.grey.shade300,
+                  ? null
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(20.r),
+              border: Border.all(
+                color: controller.selectedCategory.value == index
+                    ? Colors.transparent
+                    : Colors.grey.shade300,
+              ),
             ),
-          ),
-          child: AutoTranslateText(
-            label,
-            style: AppTypography.body1.copyWith(
-              color: controller.selectedCategory.value == index
-                  ? Colors.white
-                  : AppColors.textSecondary,
-              fontSize: 14.sp,
-              fontWeight: controller.selectedCategory.value == index
-                  ? FontWeight.bold
-                  : FontWeight.normal,
+            child: AutoTranslateText(
+              label,
+              style: AppTypography.body1.copyWith(
+                color: controller.selectedCategory.value == index
+                    ? Colors.white
+                    : AppColors.textSecondary,
+                fontSize: 14.sp,
+                fontWeight: controller.selectedCategory.value == index
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+              ),
             ),
           ),
         ),

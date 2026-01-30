@@ -416,5 +416,8 @@ class AppConstant {
   static const String dESpecializedMasteryBundles3 =
       '$s3BaseUrl/Digital+Learning/personality.png';
 
+  static const String dESpecializedMasteryBundles4 =
+      '$s3BaseUrl/Digital+Learning/GrandMasterImage.png';
+
   ///
 }
