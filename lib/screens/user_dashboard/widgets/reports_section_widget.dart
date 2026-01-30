@@ -19,7 +19,10 @@ class ReportsSectionWidget extends BasePage<UserDashboardController> {
     {'title': 'Raj Yoga', 'image': AppConstant.astrologyRajYogaReport},
     {'title': 'Year Book', 'image': AppConstant.astrologyYearBookReport},
     {'title': 'Horoscope', 'image': AppConstant.astrologyReportHoroscope2026},
-    {'title': 'Shani Report', 'image': AppConstant.astrologyYearBookReportShani},
+    {
+      'title': 'Shani Report',
+      'image': AppConstant.astrologyYearBookReportShani,
+    },
   ];
 
   @override
@@ -76,10 +79,7 @@ class ReportsSectionWidget extends BasePage<UserDashboardController> {
     );
   }
 
-  Widget _buildReportCard({
-    required String title,
-    required String imagePath,
-  }) {
+  Widget _buildReportCard({required String title, required String imagePath}) {
     return GestureDetector(
       onTap: () => Get.toNamed(AppRoutes.allReports),
       child: Column(
@@ -96,12 +96,12 @@ class ReportsSectionWidget extends BasePage<UserDashboardController> {
                   height: 74.h,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: AppColors.orangeGradient,
+                    color: Colors.white,
                   ),
                 ),
                 ClipOval(
                   child: SizedBox(
-                    width: 70.w,
+                    width: 85.w,
                     height: 70.h,
                     child: Image.asset(
                       imagePath,

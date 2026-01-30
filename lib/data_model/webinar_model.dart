@@ -274,7 +274,9 @@ class QuestionModel {
   DateTime? askedAt;
   DateTime? updatedAt;
   int? iV;
-  bool? isAnswered;
+  // bool? isAnswered;
+
+  AnswerModel? answer;
 
   QuestionModel({
     this.id,
@@ -292,7 +294,8 @@ class QuestionModel {
     this.askedAt,
     this.updatedAt,
     this.iV,
-    this.isAnswered,
+    // this.isAnswered,
+    this.answer,
   });
 
   QuestionModel.fromJson(Map<String, dynamic> json) {
@@ -319,7 +322,24 @@ class QuestionModel {
         ? DateTime.tryParse(json['updatedAt'])
         : null;
     iV = json['__v'];
-    isAnswered = json['isAnswered'];
+    // isAnswered = json['isAnswered'];
+    answer = json['answer'] != null
+        ? AnswerModel.fromJson(json['answer'])
+        : null;
+  }
+}
+
+class AnswerModel {
+  String? text;
+  String? answeredAt;
+  String? answeredBy;
+
+  AnswerModel({this.text, this.answeredAt, this.answeredBy});
+
+  AnswerModel.fromJson(Map<String, dynamic> json) {
+    text = json['text'];
+    answeredAt = json['answeredAt'];
+    answeredBy = json['answeredBy'];
   }
 }
 

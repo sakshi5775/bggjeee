@@ -165,7 +165,7 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
                         SizedBox(width: 6.w),
                         Obx(
                           () => AutoTranslateText(
-                            '${controller.viewerCount.value} watching',
+                            '${controller.webinar.value?.viewerStats?.totalViewers} watching',
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: Colors.white70,
@@ -243,7 +243,10 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
                 return AgoraVideoView(
                   controller: VideoViewController.remote(
                     rtcEngine: controller.agoraEngine!,
-                    canvas: VideoCanvas(uid: controller.remoteUid.value),
+                    canvas: VideoCanvas(
+                      uid: controller.remoteUid.value,
+                      renderMode: RenderModeType.renderModeHidden,
+                    ),
                     connection: RtcConnection(
                       channelId: controller.agoraChannelName,
                     ),
@@ -591,6 +594,50 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
             question.text ?? '',
             style: TextStyle(fontSize: 13.sp, color: Colors.black87),
           ),
+          if (question.answer != null &&
+              question.answer!.text != null &&
+              question.answer!.text!.isNotEmpty) ...[
+            SizedBox(height: 12.h),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(10.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(
+                  color: const Color(0xFFEAA92A).withOpacity(0.3),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        color: Colors.green,
+                        size: 14.sp,
+                      ),
+                      SizedBox(width: 6.w),
+                      Text(
+                        'Answered by Admin',
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF5F2221),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 6.h),
+                  AutoTranslateText(
+                    question.answer!.text ?? '',
+                    style: TextStyle(fontSize: 12.sp, color: Colors.black87),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );

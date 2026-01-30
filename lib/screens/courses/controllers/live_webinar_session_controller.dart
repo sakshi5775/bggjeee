@@ -58,6 +58,7 @@ class LiveWebinarSessionController extends BaseController {
   // Timer for duration tracking & token refresh
   Timer? _durationTimer;
   Timer? _tokenRefreshTimer;
+  Timer? _questionPollingTimer;
   DateTime? _joinedAt;
   final Set<String> _upvotedQuestions = {}; // Prevent duplicate upvotes locally
 
@@ -78,6 +79,7 @@ class LiveWebinarSessionController extends BaseController {
     }
 
     _tokenRefreshTimer?.cancel();
+    _questionPollingTimer?.cancel();
     _cleanupAgora();
 
     // Reset orientation on close
@@ -126,6 +128,9 @@ class LiveWebinarSessionController extends BaseController {
 
       // 5. Start duration timer
       _startDurationTimer();
+
+      // 6. Start fetching questions periodically
+      _startQuestionPolling();
     } catch (e) {
       print("Error loading webinar data: $e");
       showErrorMessage(title: "Error", message: "Failed to load session: $e");
@@ -229,24 +234,36 @@ class LiveWebinarSessionController extends BaseController {
     });
   }
 
-  void toggleFullscreen() {
+  void toggleFullscreen() async {
+    // Mark function as async
     isFullscreen.value = !isFullscreen.value;
 
     if (isFullscreen.value) {
-      // LOCK to Landscape for Fullscreen
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
+      // ENTER Fullscreen: Allow both landscape options
+      await SystemChrome.setPreferredOrientations([
         DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
       ]);
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     } else {
-      // LOCK to Portrait for Normal view
-      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      // EXIT Fullscreen:
+      // Option A: If you want to force Portrait only:
+      /* await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]); 
+    */
+
+      // Option B: If you want to allow Auto-Rotation (Normal behavior):
+      await SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
 
-    // Small delay to ensure orientation change is registered by OS before potential rebuilds
+    // The delay is still useful for waiting for the rotation animation to finish
+    // before rebuilding layout-dependent widgets.
     Future.delayed(const Duration(milliseconds: 300), () {
+      isFullscreen.refresh();
       update();
     });
   }
@@ -269,14 +286,23 @@ class LiveWebinarSessionController extends BaseController {
     try {
       // Prefer friendly webinarId for these endpoints as confirmed by logs
       final targetId = webinar.value?.webinarId ?? webinarId;
-      print("Fetching questions for webinar: $targetId");
+      // print("Fetching questions for webinar: $targetId");
       final fetchedQuestions = await _webinarService.getQuestions(targetId);
       questions.assignAll(fetchedQuestions);
       qaCount.value = questions.length;
-      print("Loaded ${questions.length} questions for $targetId");
+      // print("Loaded ${questions.length} questions for $targetId");
     } catch (e) {
       print("Error fetching questions: $e");
     }
+  }
+
+  void _startQuestionPolling() {
+    _questionPollingTimer?.cancel();
+    _questionPollingTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (hasJoined.value) {
+        fetchQuestions();
+      }
+    });
   }
 
   Future<void> submitQuestion() async {

@@ -91,7 +91,8 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
                                     height: 74.h,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      gradient: AppColors.orangeGradient,
+                                      // gradient: AppColors.orangeGradient,
+                                      color: Colors.white,
                                     ),
                                   ),
                                   ClipOval(
@@ -215,7 +216,8 @@ class ChatCallAstrologerWidget extends BasePage<UserDashboardController> {
                                     height: 74.h,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      gradient: AppColors.orangeGradient,
+                                      // gradient: AppColors.orangeGradient,
+                                      color: Colors.white,
                                     ),
                                   ),
                                   ClipOval(

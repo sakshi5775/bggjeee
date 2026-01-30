@@ -1155,7 +1155,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   // ],
                   Spacing.h(2),
                   SizedBox(
-                    height: 110.h,
+                    height: 120.h,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       padding: EdgeInsets.zero,
@@ -1204,10 +1204,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           Spacing.h(4),
 
           // Reports Section
-          const ReportsSectionWidget(),
-          Spacing.h(2),
-          AstrologyReportWidget(),
+          // const ReportsSectionWidget(),
 
+          // Spacing.h(2),
+          // AstrologyReportWidget(),
           Spacing.h(2),
 
           // Astro Remedy Section
@@ -2735,7 +2735,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   height: 74.h,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: AppColors.orangeGradient,
+                    color: Colors.white,
                   ),
                 ),
                 ClipOval(
