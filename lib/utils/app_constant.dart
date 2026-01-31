@@ -168,18 +168,18 @@ class AppConstant {
   // Service Icons (from Figma)
   static const String service2025 = 'assets/app/service_2025.svg';
   static const String serviceGenerateKundali =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/Kundli.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/Kundli.png';
   static const String serviceFaceReading =
       'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/FaceReading.svg';
   static const String servicePalmReading =
       'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/PalmReading.svg';
   static const String serviceConsult = 'assets/app/service_consult.svg';
   static const String servicePanchang =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/Panchang.svg';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/PANCHANG+3D.png';
   static const String serviceMatchMaking =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/KundliMatching.svg';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/KundliMatching.png';
   static const String serviceNumerology =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/numerology.svg';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/NUMEROLOGY+3D.png';
   static const String serviceTarot =
       'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/TarrotCard.svg';
   static const String serviceRasiChart =
@@ -198,7 +198,7 @@ class AppConstant {
   static const String tarot = 'assets/app/tarot.svg';
 
   static const String horoscope =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/Horoscope.svg';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/Horoscope.png';
   static const String vastu =
       'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/Vastu.png';
   static const String writingAstrology =
@@ -268,19 +268,20 @@ class AppConstant {
 
   static const String prashnaKundali = 'assets/app/prashnakundali.svg';
 
-  static const String lifePredictions = 'assets/app/predictions.png';
+  static const String lifePredictions =
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/LifePrediction.png';
 
   static const String dosh =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/Dosh.svg';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/DOSH+3D.png';
 
   static const String dasha =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/Dasha.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/DASHA3D+.png';
 
   static const String kPAstrology =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/KPAstrology.svg';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/KP+ASTROLOGY+.png';
 
   static const String lalKitab =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/LalKitab.svg';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/LalKitabb.png';
 
   static const String gemstone2 = 'assets/app/gemstone2.png';
   static const String pendent = 'assets/app/pendent.png';
@@ -290,29 +291,29 @@ class AppConstant {
 
   // Zodiac Sign Images
   static const String zodiacAries =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/aries.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Aries.png';
   static const String zodiacTaurus =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/taurus.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Taurus.png';
   static const String zodiacGemini =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/gemini.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Gemini.png';
   static const String zodiacCancer =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/cancerpng.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Cancer.png';
   static const String zodiacLeo =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/leo.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Leo.png';
   static const String zodiacVirgo =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/virgo.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Virgo.png';
   static const String zodiacLibra =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/libra.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Libra.png';
   static const String zodiacScorpio =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/scorpio.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Scorpio.png';
   static const String zodiacSagittarius =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/sagitarius.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Saggitarius.png';
   static const String zodiacCapricorn =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/capricorn.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Capricorn.png';
   static const String zodiacAquarius =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/aquarius.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Aquarius.png';
   static const String zodiacPisces =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/pisces.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Zodiac+Signs/Pisces.png';
 
   // E-Mandir Images
   static const String eMandirGanesha = 'assets/images/ganesha.png';

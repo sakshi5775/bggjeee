@@ -223,11 +223,11 @@ class UserDashboardController extends BaseController
   List<String> get sliderTabs => [
     'Home',
     DateTime.now().year.toString(),
-    'Digital Consultation',
+    'Astrologers',
+    'AI Astrologers',
     'Digital Mart',
     'Digital Mandir',
     'Digital Learning',
-    'Reports',
     'Video',
     'Panchang',
     'Horoscope',
@@ -282,14 +282,38 @@ class UserDashboardController extends BaseController
 
     // When multiple positions exist (e.g. temporary during rebuild), use first as fallback
     // and scroll via that position to avoid controller assertion.
-    final position = sc.positions.length == 1
-        ? sc.position
-        : sc.positions.first;
+    ScrollPosition? position;
+    try {
+      position = sc.positions.length == 1
+          ? sc.position
+          : sc.positions.first;
+    } catch (e) {
+      debugPrint("SLIDER SCROLL: Failed to get position - $e");
+      if (retry < _kScrollSliderMaxRetries) {
+        scrollSliderToSelected(retry: retry + 1);
+      } else {
+        _isScrollingSlider = false;
+      }
+      return;
+    }
+    
     if (sc.positions.length != 1) {
       debugPrint(
         "SLIDER SCROLL: Using positions.first (total=${sc.positions.length})",
       );
     }
+    
+    // Check if position is attached and has valid context
+    if (!position.hasContentDimensions || !position.hasPixels) {
+      debugPrint("SLIDER SCROLL: Position not ready (hasContentDimensions=${position.hasContentDimensions}, hasPixels=${position.hasPixels})");
+      if (retry < _kScrollSliderMaxRetries) {
+        scrollSliderToSelected(retry: retry + 1);
+      } else {
+        _isScrollingSlider = false;
+      }
+      return;
+    }
+    
     final i = selectedSliderIndex.value;
     final n = sliderTabs.length;
     if (n == 0 || i < 0) {

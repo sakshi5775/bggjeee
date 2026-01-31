@@ -23,20 +23,24 @@ import 'dart:math' as math;
 
 class AiChatView extends BasePage<AiChatController> {
   final bool showBackButton;
+  /// When true, header (logo, back, wallet, search) is hidden — e.g. when embedded below dashboard slider.
+  final bool hideHeader;
 
-  const AiChatView({super.key, this.showBackButton = true});
+  const AiChatView({super.key, this.showBackButton = true, this.hideHeader = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      decoration: hideHeader
+          ? null
+          : BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
+          top: !hideHeader,
           child: Column(
             children: [
-              // Header
-              _buildHeader(),
+              if (!hideHeader) _buildHeader(),
 
               // Category Filter Chips
               // SizedBox(height: 16.h),

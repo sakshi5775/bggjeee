@@ -47,10 +47,10 @@ import '../widgets/year_tab_widget.dart';
 import '../widgets/banner_carousel_widget.dart';
 import '../widgets/our_services_carousel_widget.dart';
 import '../widgets/digital_mart_tab_widget.dart';
-import '../widgets/reports_tab_widget.dart';
+// import '../widgets/reports_tab_widget.dart';
 import '../widgets/horoscope_tab_widget.dart';
 import '../widgets/daily_astrologers_widget.dart';
-import '../widgets/quote_of_the_day_widget.dart';
+// import '../widgets/quote_of_the_day_widget.dart';
 import '../widgets/history_section_widget.dart';
 import '../../e_mandir/e_mandir_home/view/namaste_home_view.dart';
 import '../../e_mandir/e_mandir_home/controller/namaste_home_controller.dart';
@@ -60,6 +60,8 @@ import 'all_videos_view.dart';
 import '../controller/all_videos_controller.dart';
 import '../../panchang/view/panchang_view.dart';
 import '../../panchang/controller/panchang_controller.dart';
+import 'package:astrobharataiuser/screens/ai_chat/views/ai_chat_view.dart';
+import 'package:astrobharataiuser/screens/ai_chat/controllers/ai_chat_controller.dart';
 import '../widgets/reports_section_widget.dart';
 import '../widgets/digital_services_animated_widget.dart';
 import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
@@ -115,19 +117,19 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                             final noGap =
                                 (i == 2 &&
                                     tabs.length > 2 &&
-                                    tabs[2] == 'Digital Consultation') ||
+                                    tabs[2] == 'Astrologers') ||
                                 (i == 3 &&
                                     tabs.length > 3 &&
-                                    tabs[3] == 'Digital Mart') ||
+                                    tabs[3] == 'AI Astrologers') ||
                                 (i == 4 &&
                                     tabs.length > 4 &&
-                                    tabs[4] == 'Digital Mandir') ||
+                                    tabs[4] == 'Digital Mart') ||
                                 (i == 5 &&
                                     tabs.length > 5 &&
-                                    tabs[5] == 'Digital Learning') ||
+                                    tabs[5] == 'Digital Mandir') ||
                                 (i == 6 &&
                                     tabs.length > 6 &&
-                                    tabs[6] == 'Reports') ||
+                                    tabs[6] == 'Digital Learning') ||
                                 (i == 7 &&
                                     tabs.length > 7 &&
                                     tabs[7] == 'Video') ||
@@ -204,6 +206,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Row 1 (fixed): Logo + Wallet, Language, Cart, Search — no drawer
         Container(
           height: 56.h,
           padding: AppPaddings.symmetric(h: 16, v: 6),
@@ -214,30 +217,59 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Menu icon
-                  Builder(
-                    builder: (context) => IconButton(
-                      onPressed: () {
-                        Scaffold.of(context).openDrawer();
-                      },
-                      icon: Icon(
-                        Icons.menu,
-                        size: 24.w,
-                        color: "#6F221E".toColor(),
+                  // Logo: circular icon + AstroBharatAI + tagline (per brand image)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Left: circular chakra/icon (favicon)
+                      SizedBox(
+                        width: 36.w,
+                        height: 36.w,
+                        child: CachedNetworkImage(
+                          imageUrl:
+                              'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/favicon.ico',
+                          fit: BoxFit.contain,
+                          placeholder: (_, __) => SizedBox(
+                            width: 36.w,
+                            height: 36.w,
+                            child: const Center(
+                                child: CircularProgressIndicator(strokeWidth: 2)),
+                          ),
+                          errorWidget: (_, __, ___) => Icon(
+                            Icons.star_rounded,
+                            size: 28.w,
+                            color: "#6F221E".toColor(),
+                          ),
+                        ),
                       ),
-                      style: IconButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size(36.w, 36.h),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      Spacing.w(8),
+                      // Right: main logo SVG + tagline
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgAssets(
+                            path:
+                                'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/Frame+1321314931.svg',
+                            width: 110.w,
+                            height: 26.h,
+                          ),
+                          SizedBox(height: 2.h),
+                          AutoTranslateText(
+                            'STARS ALIGN DESTINY DIVINE',
+                            style: TextStyle(
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.5,
+                              color: "#6F221E".toColor(),
+                              height: 1.2,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                  Spacing.w(8),
-                  // Logo placed near drawer
-                  SvgAssets(
-                    path: 'assets/app/AstrobharatAi .svg',
-                    width: 120.w,
-                    height: 30.h,
+                    ],
                   ),
                 ],
               ),
@@ -312,17 +344,50 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   }
 
   Widget _buildSlider(BuildContext context) {
-    // Use StatefulWidget wrapper to ensure SingleChildScrollView is only created once
-    return _SliderStripWidget(
-      key: const ValueKey('dashboard_slider_strip'),
-      controller: controller,
-      buildTab: (ctx, idx, selIdx) => _buildSliderTab(ctx, idx, selIdx),
+    // Row 2: Drawer (fixed) + Home tab (fixed) + scrollable slider tabs (2026, Digital Consultation, etc.)
+    return Container(
+      color: Colors.transparent,
+      height: 44.h,
+      padding: EdgeInsets.only(left: 4.w, right: 16.w),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Builder(
+            builder: (context) => IconButton(
+              onPressed: () => Scaffold.of(context).openDrawer(),
+              icon: Icon(
+                Icons.menu,
+                size: 24.w,
+                color: "#6F221E".toColor(),
+              ),
+              style: IconButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: Size(36.w, 36.h),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+          ),
+          Spacing.w(20),
+          // Fixed Home tab (does not scroll)
+          Obx(() => _buildSliderTab(context, 0, controller.selectedSliderIndex.value)),
+          Spacing.w(8),
+          Expanded(
+            child: _SliderStripWidget(
+              key: const ValueKey('dashboard_slider_strip'),
+              controller: controller,
+              startIndex: 1,
+              buildTab: (ctx, idx, selIdx) => _buildSliderTab(ctx, idx, selIdx),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildSliderTab(BuildContext context, int index, int selectedIndex) {
     final isSelected = selectedIndex == index;
     final label = controller.sliderTabs[index];
+    final isBold = isSelected || label == 'Home';
     return Padding(
       key: ValueKey('slider_tab_$index'),
       padding: EdgeInsets.zero,
@@ -344,7 +409,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 color: isSelected
                     ? "#6F221E".toColor()
                     : "#3D0C11".toColor().withOpacity(0.75),
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
               ),
             ),
             Spacing.h(4),
@@ -432,20 +497,31 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       if (i == 1) {
         return const YearTabWidget();
       }
-      if (i == 2 && controller.sliderTabs[i] == 'Digital Consultation') {
+      if (i == 2 && controller.sliderTabs[i] == 'Astrologers') {
         final h = MediaQuery.sizeOf(context).height;
         return SizedBox(
           height: (h - 240).clamp(400.0, h * 0.85),
           child: const AllAstrologersView(hideHeader: true),
         );
       }
-      if (i == 3 && controller.sliderTabs[i] == 'Digital Mart') {
+      if (i == 3 && controller.sliderTabs[i] == 'AI Astrologers') {
+        // AI Chat (aichat) embedded below slider like other tabs, without header
+        if (!Get.isRegistered<AiChatController>()) {
+          Get.put(AiChatController(), permanent: false);
+        }
+        final h = MediaQuery.sizeOf(context).height;
+        return SizedBox(
+          height: (h - 240).clamp(400.0, h * 0.85),
+          child: const AiChatView(hideHeader: true, showBackButton: false),
+        );
+      }
+      if (i == 4 && controller.sliderTabs[i] == 'Digital Mart') {
         return Transform.translate(
           offset: Offset(0, -10.h),
           child: const DigitalMartTabWidget(),
         );
       }
-      if (i == 4 && controller.sliderTabs[i] == 'Digital Mandir') {
+      if (i == 5 && controller.sliderTabs[i] == 'Digital Mandir') {
         if (!Get.isRegistered<NamasteHomeController>()) {
           Get.put(NamasteHomeController(), permanent: false);
         }
@@ -458,7 +534,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           ),
         );
       }
-      if (i == 5 && controller.sliderTabs[i] == 'Digital Learning') {
+      if (i == 6 && controller.sliderTabs[i] == 'Digital Learning') {
         if (!Get.isRegistered<CoursesController>()) {
           Get.put(CoursesController(), permanent: false);
         }
@@ -467,9 +543,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           height: (h - 240).clamp(400.0, h * 0.85),
           child: const CoursesView(hideHeader: true),
         );
-      }
-      if (i == 6 && controller.sliderTabs[i] == 'Reports') {
-        return const ReportsTabWidget();
       }
       if (i == 7 && controller.sliderTabs[i] == 'Video') {
         if (!Get.isRegistered<AllVideosController>()) {
@@ -560,9 +633,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
   Widget _buildKundliTabs(BuildContext context) {
     const maroon = Color(0xFF6F221E);
+    final double iconSize = 52.w;
 
     return SizedBox(
-      height: 80.h,
+      height: 92.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -577,7 +651,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             onTap: () => Get.toNamed(route),
             behavior: HitTestBehavior.opaque,
             child: Container(
-              width: 70.w,
+              width: 78.w,
               padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -599,30 +673,30 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: 40.w,
-                    height: 40.h,
+                    width: iconSize,
+                    height: iconSize,
                     child: iconPath.endsWith('.svg')
-                        ? SvgAssets(path: iconPath, width: 40.w, height: 40.h)
+                        ? SvgAssets(path: iconPath, width: iconSize, height: iconSize)
                         : _isNetworkUrl(iconPath)
                         ? Image.network(
                             iconPath,
-                            width: 40.w,
-                            height: 40.h,
+                            width: iconSize,
+                            height: iconSize,
                             fit: BoxFit.contain,
                             errorBuilder: (_, __, ___) => Icon(
                               Icons.star_outline,
-                              size: 32.w,
+                              size: 40.w,
                               color: maroon,
                             ),
                           )
                         : Image.asset(
                             iconPath,
-                            width: 40.w,
-                            height: 40.h,
+                            width: iconSize,
+                            height: iconSize,
                             fit: BoxFit.contain,
                             errorBuilder: (_, __, ___) => Icon(
                               Icons.star_outline,
-                              size: 32.w,
+                              size: 40.w,
                               color: maroon,
                             ),
                           ),
@@ -1098,10 +1172,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           // AI Astrologers Section
           _buildAIAstrologersSection(context),
           Spacing.h(2),
-
-          // Quote of the Day Section
-          const QuoteOfTheDayWidget(),
-          //  Spacing.h(2),
 
           // History Section
           const HistorySectionWidget(),
@@ -3356,9 +3426,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
   Widget _buildCircularChatButton() {
     return GestureDetector(
-      onTap: () {
-        Get.toNamed('/ai-guider');
-      },
+      onTap: () => Get.toNamed('/ai-guider'),
       child: Container(
         width: 70.w,
         height: 70.h,
@@ -3386,6 +3454,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: _goldPillButton(
             icon: 'assets/icons/chat_with_astro.png',
             label: 'Chat with Astrologer',
+            iconColor: AppColors.primaryGradient.colors.first,
+            animateIcon: true,
             onTap: () => Get.to(() => const AstrologyServicesView()),
           ),
         ),
@@ -3394,6 +3464,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: _goldPillButton(
             icon: 'assets/icons/call_with_astro.png',
             label: 'Call with Astrologer',
+            iconColor: Colors.green,
+            animateIcon: true,
             onTap: () => Get.to(() => const AstrologyServicesView()),
           ),
         ),
@@ -3405,21 +3477,38 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     required String icon,
     required String label,
     required VoidCallback onTap,
+    Color? iconColor,
+    bool animateIcon = false,
   }) {
+    final color = iconColor ?? Colors.white;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         constraints: BoxConstraints(minHeight: 52.h),
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         decoration: BoxDecoration(
-          color: "#Fbe19e".toColor(),
+          gradient: AppColors.orangeGradient,
           borderRadius: BorderRadius.circular(32.r),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(icon, width: 20.w, height: 20.h),
+            if (animateIcon)
+              _RingingIcon(
+                iconPath: icon,
+                color: color,
+                width: 15.w,
+                height: 15.h,
+              )
+            else
+              Image.asset(
+                icon,
+                width: 20.w,
+                height: 20.h,
+                color: color,
+                colorBlendMode: BlendMode.srcIn,
+              ),
             Spacing.w(2),
             Flexible(
               child: AutoTranslateText(
@@ -3430,7 +3519,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 softWrap: true,
                 style: MyTextTheme.mediumBCB
                     .copyWith(
-                      color: "#820B17".toColor(),
+                      color: "#ffffff".toColor(),
                       fontWeight: FontWeight.w500,
                       fontFamily: 'Poppins',
                       fontSize: 12.sp,
@@ -5871,14 +5960,17 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
 /// StatefulWidget wrapper for slider strip to ensure SingleChildScrollView is only created once.
 /// This prevents "multiple scroll views" error when Obx rebuilds.
+/// [startIndex] skips tabs before this index (e.g. 1 = Home is fixed outside, strip shows rest).
 class _SliderStripWidget extends StatefulWidget {
   final UserDashboardController controller;
   final Widget Function(BuildContext, int, int) buildTab;
+  final int startIndex;
 
   const _SliderStripWidget({
     super.key,
     required this.controller,
     required this.buildTab,
+    this.startIndex = 0,
   });
 
   @override
@@ -5905,15 +5997,13 @@ class _SliderStripWidgetState extends State<_SliderStripWidget> {
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Obx(() {
             final selectedIndex = widget.controller.selectedSliderIndex.value;
+            final start = widget.startIndex;
+            final length = widget.controller.sliderTabs.length;
             return Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                for (
-                  int index = 0;
-                  index < widget.controller.sliderTabs.length;
-                  index++
-                ) ...[
-                  if (index > 0) Spacing.w(20),
+                for (int index = start; index < length; index++) ...[
+                  if (index > start) Spacing.w(20),
                   widget.buildTab(context, index, selectedIndex),
                 ],
               ],
@@ -5921,6 +6011,67 @@ class _SliderStripWidgetState extends State<_SliderStripWidget> {
           }),
         ),
       ),
+    );
+  }
+}
+
+/// Ringing/moving animation for the call icon (scale pulse like a phone ringing).
+class _RingingIcon extends StatefulWidget {
+  final String iconPath;
+  final Color color;
+  final double width;
+  final double height;
+
+  const _RingingIcon({
+    required this.iconPath,
+    required this.color,
+    required this.width,
+    required this.height,
+  });
+
+  @override
+  State<_RingingIcon> createState() => _RingingIconState();
+}
+
+class _RingingIconState extends State<_RingingIcon>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    )..repeat(reverse: true);
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.25).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Image.asset(
+            widget.iconPath,
+            width: widget.width,
+            height: widget.height,
+            color: widget.color,
+            colorBlendMode: BlendMode.srcIn,
+          ),
+        );
+      },
     );
   }
 }

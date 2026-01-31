@@ -36,6 +36,18 @@ class VoiceCallController extends BaseController {
   final RxInt remainingSeconds = callMaxSeconds.obs;
   Timer? _ticker;
   WebSocket? _ws;
+  
+  // Ping/keepalive timer to prevent server from closing connection
+  Timer? _pingTimer;
+  static const int _pingIntervalSeconds = 15; // Send ping every 15 seconds
+  
+  // Reconnection state
+  bool _isReconnecting = false;
+  int _reconnectAttempts = 0;
+  static const int _maxReconnectAttempts = 3;
+  
+  // Track the working port for reconnection
+  int? _lastWorkingPort;
 
   // Audio recording
   final AudioRecorder _audioRecorder = AudioRecorder();
@@ -110,6 +122,10 @@ class VoiceCallController extends BaseController {
 
   Future<void> initiate() async {
     try {
+      // Reset reconnection state for new call
+      _isReconnecting = false;
+      _reconnectAttempts = 0;
+      
       // Always try to clean up any remote active call first (handles back / restart cases)
       await _cancelRemoteActiveIfAny();
 
@@ -302,118 +318,138 @@ class VoiceCallController extends BaseController {
     await _connectWithRetryAndFallback(wsUri.toString(), baseUri, sessionId.value);
   }
 
-  /// Connect to WebSocket with retry logic, exponential backoff, and fallback to port 8002
-  /// Port 8000: /api/users/api/users/voice/stream/{sessionId} (WITH duplication)
-  /// Port 8002: /api/users/voice/stream/{sessionId} (WITHOUT duplication)
-  Future<void> _connectWithRetryAndFallback(String wsUrl, Uri baseUri, String sessionId, {int maxRetries = 3}) async {
-    int attempt = 0;
-    bool useFallbackPort = false;
+  /// Try to connect using multiple ports - tries last working port first, then others
+  Future<void> _tryConnectWithPorts(Uri baseUri, String sessionId, String token) async {
+    final wsScheme = baseUri.scheme == 'https' ? 'wss' : 'ws';
     
-    while (attempt < maxRetries) {
-      try {
-        if (kDebugMode && attempt > 0) {
-          print('Voice WS retry attempt ${attempt + 1}/$maxRetries${useFallbackPort ? " (fallback port 8002)" : ""}');
-        }
-        
-        // If all retries failed on primary port, try fallback port 8002 (WITHOUT duplication)
-        if (attempt == maxRetries - 1 && !useFallbackPort) {
-          // For port 8002, use path WITHOUT duplication: /api/users/voice/stream/{sessionId}
-          final fallbackPath = '/api/users/voice/stream/$sessionId';
-          final fallbackUri = Uri(
-            scheme: baseUri.scheme == 'https' ? 'wss' : 'ws',
-            host: baseUri.host,
-            port: 8002, // Fallback port
-            path: fallbackPath,
-            queryParameters: Uri.parse(wsUrl).queryParameters,
-          );
-          
-          if (kDebugMode) {
-            print('Primary port 8000 failed, trying fallback port 8002 (without duplication): $fallbackUri');
-          }
-          
-          try {
-            _ws = await WebSocket.connect(fallbackUri.toString()).timeout(
-              const Duration(seconds: 10),
-              onTimeout: () {
-                throw Exception('WebSocket connection timeout');
-              },
-            );
-            connectionStatus.value = 'Connected';
-            _setupWebSocketListeners();
-            
-            if (kDebugMode) {
-              print('Voice WS connected successfully on fallback port 8002');
-            }
-            return; // Success with fallback
-          } catch (fallbackError) {
-            if (kDebugMode) {
-              print('Fallback port 8002 also failed: $fallbackError');
-            }
-            // Continue to show error message below
-          }
-        } else {
-          // Try primary port 8000 (WITH duplication)
-          _ws = await WebSocket.connect(wsUrl).timeout(
-            const Duration(seconds: 10),
+    // Port configurations: (port, path, description)
+    // Port 8002 WITHOUT duplication is more reliable based on logs, so try it first
+    final portConfigs = <Map<String, dynamic>>[];
+    
+    // If we have a last working port, prioritize it
+    if (_lastWorkingPort == 8002) {
+      portConfigs.add({
+        'port': 8002,
+        'path': '/api/users/voice/stream/$sessionId',
+        'desc': 'port 8002 (last working, without duplication)',
+      });
+      portConfigs.add({
+        'port': baseUri.hasPort ? baseUri.port : 8000,
+        'path': '/api/users/api/users/voice/stream/$sessionId',
+        'desc': 'port 8000 (with duplication)',
+      });
+    } else if (_lastWorkingPort == 8000 || _lastWorkingPort == baseUri.port) {
+      portConfigs.add({
+        'port': baseUri.hasPort ? baseUri.port : 8000,
+        'path': '/api/users/api/users/voice/stream/$sessionId',
+        'desc': 'port 8000 (last working, with duplication)',
+      });
+      portConfigs.add({
+        'port': 8002,
+        'path': '/api/users/voice/stream/$sessionId',
+        'desc': 'port 8002 (without duplication)',
+      });
+    } else {
+      // No last working port - try 8002 first as it's more reliable in logs
+      portConfigs.add({
+        'port': 8002,
+        'path': '/api/users/voice/stream/$sessionId',
+        'desc': 'port 8002 (without duplication)',
+      });
+      portConfigs.add({
+        'port': baseUri.hasPort ? baseUri.port : 8000,
+        'path': '/api/users/api/users/voice/stream/$sessionId',
+        'desc': 'port 8000 (with duplication)',
+      });
+    }
+    
+    Exception? lastError;
+    
+    for (final config in portConfigs) {
+      final port = config['port'] as int;
+      final path = config['path'] as String;
+      final desc = config['desc'] as String;
+      
+      final wsUri = Uri(
+        scheme: wsScheme,
+        host: baseUri.host,
+        port: port,
+        path: path,
+        queryParameters: {'token': token},
+      );
+      
+      if (kDebugMode) {
+        print('Trying Voice WS connection on $desc: $wsUri');
+      }
+      
+      // Try to connect with retry on this port
+      for (int attempt = 1; attempt <= 2; attempt++) {
+        try {
+          _ws = await WebSocket.connect(wsUri.toString()).timeout(
+            const Duration(seconds: 8),
             onTimeout: () {
               throw Exception('WebSocket connection timeout');
             },
           );
+          
+          // Connection successful
+          _lastWorkingPort = port;
           connectionStatus.value = 'Connected';
           _setupWebSocketListeners();
           
-          if (kDebugMode && attempt > 0) {
-            print('Voice WS connected successfully on attempt ${attempt + 1}');
-          } else if (kDebugMode) {
-            print('Voice WS connected successfully on first attempt');
-          }
-          return; // Success - exit retry loop
-        }
-      } catch (e) {
-        attempt++;
-        
-        // Check if this is a connection error that might be retryable
-        final errorStr = e.toString().toLowerCase();
-        final isRetryableError = errorStr.contains('connection closed') ||
-            errorStr.contains('connection refused') ||
-            errorStr.contains('connection reset') ||
-            errorStr.contains('connection timed out') ||
-            errorStr.contains('full header') ||
-            errorStr.contains('timeout');
-        
-        if (kDebugMode) {
-          print('Voice WS connect failed (attempt $attempt/$maxRetries): $e');
-        }
-        
-        // If this was the last attempt and we haven't tried fallback, mark for fallback
-        if (attempt >= maxRetries && !useFallbackPort) {
-          useFallbackPort = true;
-          attempt = 0; // Reset attempt counter for fallback
-          continue; // Try fallback port
-        }
-        
-        // If this was the last attempt or error is not retryable, give up
-        if (attempt >= maxRetries || !isRetryableError) {
-          connectionStatus.value = 'Connection Failed';
-          if (attempt >= maxRetries) {
-            showErrorMessage(message: 'Failed to connect after $maxRetries attempts. Please try again.');
-          } else {
-            showErrorMessage(message: 'Failed to connect: $e');
+          if (kDebugMode) {
+            print('Voice WS connected successfully on $desc (attempt $attempt)');
           }
           return;
+        } catch (e) {
+          lastError = e is Exception ? e : Exception(e.toString());
+          
+          if (kDebugMode) {
+            print('Voice WS connect failed on $desc (attempt $attempt): $e');
+          }
+          
+          // Only retry on this port if it's a potentially transient error
+          final errorStr = e.toString().toLowerCase();
+          final isRetryable = errorStr.contains('connection closed') ||
+              errorStr.contains('full header') ||
+              errorStr.contains('timeout');
+          
+          if (!isRetryable || attempt >= 2) {
+            break; // Move to next port
+          }
+          
+          // Brief delay before retry
+          await Future.delayed(const Duration(milliseconds: 300));
         }
-        
-        // Exponential backoff: 500ms, 1000ms, 2000ms
-        final delayMs = 500 * (1 << (attempt - 1));
-        if (kDebugMode) {
-          print('Retrying in ${delayMs}ms...');
-        }
-        await Future.delayed(Duration(milliseconds: delayMs));
       }
+    }
+    
+    // All ports failed
+    connectionStatus.value = 'Connection Failed';
+    throw lastError ?? Exception('Failed to connect to WebSocket');
+  }
+
+  /// Connect to WebSocket with retry logic and fallback ports
+  /// Port 8000: /api/users/api/users/voice/stream/{sessionId} (WITH duplication)
+  /// Port 8002: /api/users/voice/stream/{sessionId} (WITHOUT duplication)
+  Future<void> _connectWithRetryAndFallback(String wsUrl, Uri baseUri, String sessionId) async {
+    final token = Uri.parse(wsUrl).queryParameters['token'] ?? UserData().accessToken ?? '';
+    
+    try {
+      await _tryConnectWithPorts(baseUri, sessionId, token);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Voice WS all connection attempts failed: $e');
+      }
+      connectionStatus.value = 'Connection Failed';
+      showErrorMessage(message: 'Failed to connect. Please try again.');
     }
   }
 
   void _setupWebSocketListeners() {
+    // Start ping timer to keep connection alive
+    _startPingTimer();
+    
     _ws?.listen(
       (event) {
         _handleWebSocketMessage(event);
@@ -423,16 +459,107 @@ class VoiceCallController extends BaseController {
           print('Voice WS error: $error');
         }
         connectionStatus.value = 'Error';
-        showErrorMessage(message: 'Connection error: $error');
+        _stopPingTimer();
+        // Try to reconnect on error
+        _attemptReconnect();
       },
       onDone: () {
         if (kDebugMode) {
           print('Voice WS closed');
         }
-        connectionStatus.value = 'Disconnected';
+        _stopPingTimer();
+        // Only attempt reconnect if not intentionally disconnecting
+        if (status.value != 'CANCELLED' && status.value != 'ENDED' && callId.isNotEmpty) {
+          connectionStatus.value = 'Reconnecting...';
+          _attemptReconnect();
+        } else {
+          connectionStatus.value = 'Disconnected';
+        }
       },
       cancelOnError: false,
     );
+  }
+  
+  /// Start ping timer to keep WebSocket connection alive
+  void _startPingTimer() {
+    _stopPingTimer();
+    _pingTimer = Timer.periodic(const Duration(seconds: _pingIntervalSeconds), (timer) {
+      if (_ws != null && _ws!.readyState == WebSocket.open) {
+        try {
+          final pingMessage = json.encode({'type': 'ping', 'timestamp': DateTime.now().toIso8601String()});
+          _ws!.add(pingMessage);
+          if (kDebugMode) {
+            print('Voice WS ping sent');
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('Voice WS ping failed: $e');
+          }
+        }
+      }
+    });
+  }
+  
+  /// Stop ping timer
+  void _stopPingTimer() {
+    _pingTimer?.cancel();
+    _pingTimer = null;
+  }
+  
+  /// Attempt to reconnect the WebSocket
+  Future<void> _attemptReconnect() async {
+    if (_isReconnecting || _reconnectAttempts >= _maxReconnectAttempts) {
+      if (_reconnectAttempts >= _maxReconnectAttempts) {
+        connectionStatus.value = 'Connection Failed';
+        showErrorMessage(message: 'Connection lost. Please try again.');
+      }
+      return;
+    }
+    
+    _isReconnecting = true;
+    _reconnectAttempts++;
+    
+    if (kDebugMode) {
+      print('Voice WS reconnect attempt $_reconnectAttempts/$_maxReconnectAttempts');
+    }
+    
+    // Wait before reconnecting with exponential backoff
+    final delayMs = 500 * (1 << (_reconnectAttempts - 1));
+    await Future.delayed(Duration(milliseconds: delayMs));
+    
+    // Try to reconnect using the last working port if known
+    try {
+      final token = UserData().accessToken ?? '';
+      final apiClient = Get.find<ApiClient>();
+      final baseUrl = apiClient.appBaseUrl ?? '';
+      final baseUri = Uri.parse(baseUrl);
+      
+      await _tryConnectWithPorts(baseUri, sessionId.value, token);
+      
+      // Reset reconnect attempts on success
+      _reconnectAttempts = 0;
+      _isReconnecting = false;
+      
+      // Resume recording if it was active
+      if (!isRecording.value && !isProcessing.value && !isPlaying.value) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          startRecording();
+        });
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Voice WS reconnect failed: $e');
+      }
+      _isReconnecting = false;
+      
+      // Try again if we haven't exhausted attempts
+      if (_reconnectAttempts < _maxReconnectAttempts) {
+        _attemptReconnect();
+      } else {
+        connectionStatus.value = 'Connection Failed';
+        showErrorMessage(message: 'Connection lost. Please try again.');
+      }
+    }
   }
 
   void _handleWebSocketMessage(dynamic event) {
@@ -1108,7 +1235,11 @@ class VoiceCallController extends BaseController {
   }
 
   Future<void> cancelCall({bool auto = false}) async {
+    // Set status to CANCELLED to prevent reconnection attempts
+    status.value = 'CANCELLED';
+    
     if (callId.isEmpty) {
+      _cleanup();
       Get.back();
       return;
     }
@@ -1123,6 +1254,9 @@ class VoiceCallController extends BaseController {
   }
 
   void _cleanup() {
+    // Mark as ended to prevent reconnection attempts
+    status.value = 'ENDED';
+    
     _ticker?.cancel();
     _ticker = null;
     
@@ -1131,6 +1265,13 @@ class VoiceCallController extends BaseController {
     
     _maxRecordingTimer?.cancel();
     _maxRecordingTimer = null;
+    
+    // Stop ping timer
+    _stopPingTimer();
+    
+    // Reset reconnection state
+    _isReconnecting = false;
+    _reconnectAttempts = 0;
     
     _audioStreamSubscription?.cancel();
     _audioStreamSubscription = null;

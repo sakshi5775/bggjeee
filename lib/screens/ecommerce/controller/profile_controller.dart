@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/auth_service.dart';
+import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
@@ -129,9 +130,12 @@ class ProfileController extends BaseController {
   Future<void> loadProfile() async {
     try {
       isLoading.value = true;
-      await _loadUserProfile();
-      await _loadRecentOrders();
-      await _loadCounts();
+      // Only call auth-required APIs when user is logged in to avoid 401 and accidental force logout
+      if (LoginGuard.isLoggedIn) {
+        await _loadUserProfile();
+        await _loadRecentOrders();
+        await _loadCounts();
+      }
     } catch (e) {
       showErrorMessage(title: 'Profile', message: e.toString());
     } finally {
