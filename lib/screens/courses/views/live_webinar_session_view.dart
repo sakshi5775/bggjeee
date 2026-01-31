@@ -83,7 +83,7 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
                 child: CustomScrollView(
                   slivers: [
                     SliverToBoxAdapter(child: _buildQaTitleBar()),
-                    SliverToBoxAdapter(child: _buildToolbar()),
+               //     SliverToBoxAdapter(child: _buildToolbar()),
                     _buildQaListSliver(),
                   ],
                 ),

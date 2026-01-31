@@ -257,7 +257,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
               );
             },
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: 54.h),
         ],
       ),
     );
@@ -288,9 +288,10 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
+                      color: AppColors.deepOrange.withOpacity(0.45),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                      spreadRadius: 0,
                     ),
                   ],
                 ),

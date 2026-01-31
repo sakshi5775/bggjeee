@@ -38,23 +38,46 @@ class ProfileView extends GetView<ProfileController> {
                 titleColor: AppColors.templeGold,
                 showBackButton: showBackButton,
                 actions: [
-                  IconButton(
-                    onPressed: () {
-                      if (LoginGuard.isLoggedIn) {
-                        controller.onLogoutTap();
-                      } else {
-                        Get.toNamed(AppRoutes.login);
-                      }
-                    },
-                    icon: Icon(
-                      LoginGuard.isLoggedIn ? Icons.logout : Icons.login,
-                      color: AppColors.templeGold,
-                      size: 22.w,
+                  if (LoginGuard.isLoggedIn)
+                    IconButton(
+                      onPressed: controller.onLogoutTap,
+                      icon: Icon(
+                        Icons.logout,
+                        color: AppColors.templeGold,
+                        size: 22.w,
+                      ),
+                      tooltip: 'Logout',
+                      padding: EdgeInsets.all(8.w),
+                      constraints: const BoxConstraints(),
+                    )
+                  else
+                    Padding(
+                      padding: EdgeInsets.only(right: 4.w),
+                      child: TextButton.icon(
+                        onPressed: () => Get.toNamed(AppRoutes.login),
+                        icon: Icon(
+                          Icons.login,
+                          color: AppColors.templeGold,
+                          size: 20.w,
+                        ),
+                        label: Text(
+                          'Login',
+                          style: TextStyle(
+                            color: AppColors.templeGold,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 6.h,
+                          ),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
                     ),
-                    tooltip: LoginGuard.isLoggedIn ? 'Logout' : 'Login',
-                    padding: EdgeInsets.all(8.w),
-                    constraints: const BoxConstraints(),
-                  ),
                 ],
               ),
               Expanded(

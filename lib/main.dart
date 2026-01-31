@@ -8,7 +8,7 @@ import 'package:astrobharataiuser/core/routes/get_pages.dart';
 import 'package:astrobharataiuser/firebase_options.dart';
 import 'package:astrobharataiuser/theme/app_theme.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
-import 'package:astrobharataiuser/widgets/global_chat_banner.dart';
+// import 'package:astrobharataiuser/widgets/global_chat_banner.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -226,7 +226,7 @@ class MyApp extends StatelessWidget {
                 theme: AppTheme.lightTheme,
                 themeMode: ThemeMode.light,
                 builder: (context, child) {
-                  return Stack(children: [child!, const GlobalChatBanner()]);
+                  return Stack(children: [child! /* , const GlobalChatBanner() */]);
                 },
               );
             },
