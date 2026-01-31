@@ -16,9 +16,11 @@ class LoginController extends BaseController {
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
   late final GlobalKey<FormState> formKey;
-  
+
   final RxBool isEmailMode = false.obs;
-  final Rx<CountryCode> selectedCountryCode = CountryCode.fromCountryCode('IN').obs;
+  final Rx<CountryCode> selectedCountryCode = CountryCode.fromCountryCode(
+    'IN',
+  ).obs;
 
   @override
   void onInit() {
@@ -27,7 +29,7 @@ class LoginController extends BaseController {
     emailController = TextEditingController();
     passwordController = TextEditingController();
     formKey = GlobalKey<FormState>();
-    
+
     // Listen to phone controller to detect if user is typing email
     phoneController.addListener(_checkInputType);
     emailController.addListener(_checkInputType);
@@ -46,9 +48,10 @@ class LoginController extends BaseController {
   void _checkInputType() {
     final phoneText = phoneController.text.trim();
     final emailText = emailController.text.trim();
-    
+
     // Check if user is typing email in phone field or using email field
-    if (emailText.isNotEmpty || (phoneText.isNotEmpty && GetUtils.isEmail(phoneText))) {
+    if (emailText.isNotEmpty ||
+        (phoneText.isNotEmpty && GetUtils.isEmail(phoneText))) {
       if (!isEmailMode.value) {
         isEmailMode.value = true;
       }
@@ -56,10 +59,8 @@ class LoginController extends BaseController {
       if (isEmailMode.value) {
         isEmailMode.value = false;
       }
-    } else if (phoneText.isEmpty && emailText.isEmpty) {
-      // Reset to phone mode when both are empty
-      isEmailMode.value = false;
     }
+    // Removed automatic reset to phone mode when empty to allow toggle button to work reliably
   }
 
   void onCountryChanged(CountryCode countryCode) {
@@ -76,11 +77,15 @@ class LoginController extends BaseController {
         if (isEmailMode.value) {
           identifier = emailController.text.trim();
           if (identifier.isEmpty) {
-            identifier = phoneController.text.trim(); // Fallback if email is in phone field
+            identifier = phoneController.text
+                .trim(); // Fallback if email is in phone field
           }
           // Password is required for email login
           if (password.isEmpty) {
-            showErrorMessage(title: "Error", message: "Password is required for email login");
+            showErrorMessage(
+              title: "Error",
+              message: "Password is required for email login",
+            );
             setLoadingState(false);
             return;
           }
@@ -89,29 +94,29 @@ class LoginController extends BaseController {
           final phoneNumber = phoneController.text.trim();
           final countryCode = selectedCountryCode.value.dialCode ?? '+91';
           identifier = '$countryCode$phoneNumber';
-          
+
           if (kDebugMode) {
             print('Login: Phone login - sending OTP to: $identifier');
           }
-          
+
           // Send OTP first
           final otpSent = await _otpService.sendOtp(phone: identifier);
-          
+
           if (otpSent) {
             if (kDebugMode) {
               print('Login: OTP sent successfully, navigating to OTP page');
             }
-            
-          // Navigate to OTP page - use offNamed to replace current route
-          await Future.delayed(const Duration(milliseconds: 300));
-          Get.offNamed(
-            AppRoutes.otp,
-            arguments: {
-              'destination': identifier,
-              'userType': 'USER',
-              'isRegistration': false, // This is login, not registration
-            },
-          );
+
+            // Navigate to OTP page - use offNamed to replace current route
+            await Future.delayed(const Duration(milliseconds: 300));
+            Get.offNamed(
+              AppRoutes.otp,
+              arguments: {
+                'destination': identifier,
+                'userType': 'USER',
+                'isRegistration': false, // This is login, not registration
+              },
+            );
           } else {
             if (kDebugMode) {
               print('Login: Failed to send OTP');
@@ -130,15 +135,17 @@ class LoginController extends BaseController {
           UserData().addLoginData(loginModel.toJson());
 
           showSuccessMessage(title: "Success", message: "Login successful!");
-          
+
           // Navigate: if we're already on dashboard (e.g. opened login from Profile), just pop
           // to avoid duplicate GlobalKey (second UserMainView would use same Get.nestedKey(1))
           await Future.delayed(const Duration(milliseconds: 500));
-          if (Get.nestedKey(1)?.currentState != null) {
-            Get.back();
-          } else {
-            Get.offAllNamed(AppRoutes.userDashboard);
-          }
+          // if (Get.nestedKey(1)?.currentState != null) {
+          //   Get.back();
+          // } else {
+          //   Get.offAllNamed(AppRoutes.userDashboard);
+          // }
+
+          Get.offAllNamed(AppRoutes.userDashboard);
         }
       }
     } catch (e) {
@@ -158,16 +165,16 @@ class LoginController extends BaseController {
     }
     // Remove any non-digit characters
     final cleanNumber = value.replaceAll(RegExp(r'[^\d]'), '');
-    
+
     if (cleanNumber.isEmpty) {
       return 'Please enter a valid phone number';
     }
-    
+
     // Basic validation - at least 6 digits for international numbers
     if (cleanNumber.length < 6) {
       return 'Phone number is too short';
     }
-    
+
     // For Indian numbers, validate format
     if (selectedCountryCode.value.code == 'IN') {
       if (cleanNumber.length != 10) {
@@ -177,7 +184,7 @@ class LoginController extends BaseController {
         return 'Please provide a valid 10-digit Indian phone number';
       }
     }
-    
+
     return null;
   }
 

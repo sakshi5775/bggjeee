@@ -22,10 +22,7 @@ class VoiceCallController extends BaseController {
   final String platform;
   final VoiceCallService _service = VoiceCallService();
 
-  VoiceCallController({
-    required this.persona,
-    this.platform = 'android',
-  });
+  VoiceCallController({required this.persona, this.platform = 'android'});
 
   final RxString callId = ''.obs;
   final RxString sessionId = ''.obs;
@@ -44,31 +41,38 @@ class VoiceCallController extends BaseController {
   StreamSubscription<Uint8List>? _audioStreamSubscription;
   Timer? _silenceDetectionTimer;
   final List<Uint8List> _audioBuffer = [];
-  
+
   // VAD (Voice Activity Detection) variables
-  static const double _silenceThreshold = 0.005; // Lower threshold for better detection
-  static const int _silenceDurationMs = 2000; // 2 seconds of silence after speech
-  static const int _maxRecordingDurationMs = 15000; // 15 seconds max recording (reduced for smaller file size)
-  static const int _minRecordingDurationMs = 2000; // Minimum 2 seconds before allowing silence detection to stop
-  static const int _sampleRate = 16000; // 16kHz is sufficient for voice (reduces file size vs 44.1kHz)
+  static const double _silenceThreshold =
+      0.005; // Lower threshold for better detection
+  static const int _silenceDurationMs =
+      2000; // 2 seconds of silence after speech
+  static const int _maxRecordingDurationMs =
+      15000; // 15 seconds max recording (reduced for smaller file size)
+  static const int _minRecordingDurationMs =
+      2000; // Minimum 2 seconds before allowing silence detection to stop
+  static const int _sampleRate =
+      16000; // 16kHz is sufficient for voice (reduces file size vs 44.1kHz)
   DateTime? _lastSpeechTime;
   DateTime? _recordingStartTime;
   int _consecutiveSilentChunks = 0;
-  static const int _minChunksForSpeech = 10; // Minimum chunks before considering speech (increased)
+  static const int _minChunksForSpeech =
+      10; // Minimum chunks before considering speech (increased)
   bool _hasDetectedSpeech = false; // Track if we've detected actual speech
   Timer? _maxRecordingTimer;
 
   // Audio playback
   final AudioPlayer _audioPlayer = AudioPlayer();
   final RxBool isPlaying = false.obs;
-  final List<Uint8List> _audioResponseChunks = []; // Accumulate audio response chunks
+  final List<Uint8List> _audioResponseChunks =
+      []; // Accumulate audio response chunks
   StreamSubscription<PlayerState>? _audioPlayerStateSubscription;
 
   // UI state
   final RxString transcription = ''.obs;
   final RxString aiResponse = ''.obs;
   final RxString connectionStatus = 'Connecting...'.obs;
-  
+
   // Token tracking for deduction
   int? _lastResponseTotalTokens;
 
@@ -85,13 +89,13 @@ class VoiceCallController extends BaseController {
   /// - Maximum: 180 seconds (3 minutes)
   int _calculateDeductedSeconds(int totalTokens) {
     if (totalTokens <= 0) return 20; // Default minimum
-    
+
     // Calculate: (total_tokens / 700 * 40).ceil()
     final calculated = (totalTokens / 700 * 40).ceil();
-    
+
     // Apply min/max bounds: min(max(20, calculated), 180)
     final deducted = calculated.clamp(20, 180);
-    
+
     return deducted;
   }
 
@@ -104,7 +108,9 @@ class VoiceCallController extends BaseController {
   Future<void> _requestMicrophonePermission() async {
     final status = await Permission.microphone.request();
     if (!status.isGranted) {
-      showErrorMessage(message: 'Microphone permission is required for voice calls');
+      showErrorMessage(
+        message: 'Microphone permission is required for voice calls',
+      );
     }
   }
 
@@ -114,7 +120,7 @@ class VoiceCallController extends BaseController {
       await _cancelRemoteActiveIfAny();
 
       setLoadingState(true);
-      
+
       // Get current language code
       String? languageCode;
       try {
@@ -124,7 +130,7 @@ class VoiceCallController extends BaseController {
         debugPrint('Error getting current language: $e');
         languageCode = 'en'; // Default to English
       }
-      
+
       final data = await _service.initiateCall(
         personaId: persona.id,
         platform: platform,
@@ -166,11 +172,14 @@ class VoiceCallController extends BaseController {
         sortBy: 'createdAt',
         sortOrder: 'desc',
       );
-      final list = (data?['calls'] as List?)?.cast<Map<String, dynamic>>() ?? [];
+      final list =
+          (data?['calls'] as List?)?.cast<Map<String, dynamic>>() ?? [];
       if (list.isEmpty) return null;
       final c = list.first;
       final status = (c['status'] ?? '').toString();
-      if (status == 'INITIATED' || status == 'CONNECTED' || status == 'IN_PROGRESS') {
+      if (status == 'INITIATED' ||
+          status == 'CONNECTED' ||
+          status == 'IN_PROGRESS') {
         final id = (c['id'] ?? c['_id'] ?? '').toString();
         if (id.isNotEmpty) return id;
       }
@@ -191,9 +200,14 @@ class VoiceCallController extends BaseController {
     await Get.dialog(
       AlertDialog(
         title: const AutoTranslateText('Active Call Detected'),
-        content: const AutoTranslateText('You already have an active call. Do you want to end it now?'),
+        content: const AutoTranslateText(
+          'You already have an active call. Do you want to end it now?',
+        ),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const AutoTranslateText('No')),
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const AutoTranslateText('No'),
+          ),
           TextButton(
             onPressed: () async {
               try {
@@ -238,33 +252,43 @@ class VoiceCallController extends BaseController {
     String wsPath;
     if (websocketUrl.value.isNotEmpty) {
       // If websocketUrl is provided, check if it's a full URL or just a path
-      if (websocketUrl.value.startsWith('ws://') || websocketUrl.value.startsWith('wss://') ||
-          websocketUrl.value.startsWith('http://') || websocketUrl.value.startsWith('https://')) {
+      if (websocketUrl.value.startsWith('ws://') ||
+          websocketUrl.value.startsWith('wss://') ||
+          websocketUrl.value.startsWith('http://') ||
+          websocketUrl.value.startsWith('https://')) {
         // Full URL provided - parse it and use as-is, just add token
-        final wsUrl = websocketUrl.value.replaceFirst('http://', 'ws://').replaceFirst('https://', 'wss://');
+        final wsUrl = websocketUrl.value
+            .replaceFirst('http://', 'ws://')
+            .replaceFirst('https://', 'wss://');
         final wsUri = Uri.parse(wsUrl);
-        final finalUri = wsUri.replace(queryParameters: {
-          if (wsUri.queryParameters.isNotEmpty) ...wsUri.queryParameters,
-          'token': token,
-        });
+        final finalUri = wsUri.replace(
+          queryParameters: {
+            if (wsUri.queryParameters.isNotEmpty) ...wsUri.queryParameters,
+            'token': token,
+          },
+        );
         if (kDebugMode) {
           print('Connecting Voice WS (full URL): $finalUri');
         }
         // Retry connection with exponential backoff and fallback
-        await _connectWithRetryAndFallback(finalUri.toString(), baseUri, sessionId.value);
+        await _connectWithRetryAndFallback(
+          finalUri.toString(),
+          baseUri,
+          sessionId.value,
+        );
         return;
       } else {
         // Path provided - transform it to have duplication for port 8000
         // API returns: /api/users/voice/stream/{sessionId}
         // For port 8000, we need: /api/users/api/users/voice/stream/{sessionId}
-        String path = websocketUrl.value.startsWith('/') 
-            ? websocketUrl.value 
+        String path = websocketUrl.value.startsWith('/')
+            ? websocketUrl.value
             : '/${websocketUrl.value}';
-        
+
         // Check if path matches the pattern /api/users/voice/stream/{sessionId}
         final pattern = RegExp(r'^/api/users/voice/stream/(.+)$');
         final match = pattern.firstMatch(path);
-        
+
         if (match != null && match.groupCount > 0) {
           // Extract sessionId and reconstruct with duplication for port 8000
           final extractedSessionId = match.group(1);
@@ -295,26 +319,39 @@ class VoiceCallController extends BaseController {
 
     if (kDebugMode) {
       print('Connecting Voice WS (port 8000 with duplication): $wsUri');
-      print('Base URL: $baseUrl, SessionId: $sessionId, WebSocketUrl: ${websocketUrl.value}, Final Path: $wsPath');
+      print(
+        'Base URL: $baseUrl, SessionId: $sessionId, WebSocketUrl: ${websocketUrl.value}, Final Path: $wsPath',
+      );
     }
 
     // Retry connection with exponential backoff and fallback to port 8002 (WITHOUT duplication)
-    await _connectWithRetryAndFallback(wsUri.toString(), baseUri, sessionId.value);
+    await _connectWithRetryAndFallback(
+      wsUri.toString(),
+      baseUri,
+      sessionId.value,
+    );
   }
 
   /// Connect to WebSocket with retry logic, exponential backoff, and fallback to port 8002
   /// Port 8000: /api/users/api/users/voice/stream/{sessionId} (WITH duplication)
   /// Port 8002: /api/users/voice/stream/{sessionId} (WITHOUT duplication)
-  Future<void> _connectWithRetryAndFallback(String wsUrl, Uri baseUri, String sessionId, {int maxRetries = 3}) async {
+  Future<void> _connectWithRetryAndFallback(
+    String wsUrl,
+    Uri baseUri,
+    String sessionId, {
+    int maxRetries = 3,
+  }) async {
     int attempt = 0;
     bool useFallbackPort = false;
-    
+
     while (attempt < maxRetries) {
       try {
         if (kDebugMode && attempt > 0) {
-          print('Voice WS retry attempt ${attempt + 1}/$maxRetries${useFallbackPort ? " (fallback port 8002)" : ""}');
+          print(
+            'Voice WS retry attempt ${attempt + 1}/$maxRetries${useFallbackPort ? " (fallback port 8002)" : ""}',
+          );
         }
-        
+
         // If all retries failed on primary port, try fallback port 8002 (WITHOUT duplication)
         if (attempt == maxRetries - 1 && !useFallbackPort) {
           // For port 8002, use path WITHOUT duplication: /api/users/voice/stream/{sessionId}
@@ -326,11 +363,13 @@ class VoiceCallController extends BaseController {
             path: fallbackPath,
             queryParameters: Uri.parse(wsUrl).queryParameters,
           );
-          
+
           if (kDebugMode) {
-            print('Primary port 8000 failed, trying fallback port 8002 (without duplication): $fallbackUri');
+            print(
+              'Primary port 8000 failed, trying fallback port 8002 (without duplication): $fallbackUri',
+            );
           }
-          
+
           try {
             _ws = await WebSocket.connect(fallbackUri.toString()).timeout(
               const Duration(seconds: 10),
@@ -340,7 +379,7 @@ class VoiceCallController extends BaseController {
             );
             connectionStatus.value = 'Connected';
             _setupWebSocketListeners();
-            
+
             if (kDebugMode) {
               print('Voice WS connected successfully on fallback port 8002');
             }
@@ -361,7 +400,7 @@ class VoiceCallController extends BaseController {
           );
           connectionStatus.value = 'Connected';
           _setupWebSocketListeners();
-          
+
           if (kDebugMode && attempt > 0) {
             print('Voice WS connected successfully on attempt ${attempt + 1}');
           } else if (kDebugMode) {
@@ -371,38 +410,42 @@ class VoiceCallController extends BaseController {
         }
       } catch (e) {
         attempt++;
-        
+
         // Check if this is a connection error that might be retryable
         final errorStr = e.toString().toLowerCase();
-        final isRetryableError = errorStr.contains('connection closed') ||
+        final isRetryableError =
+            errorStr.contains('connection closed') ||
             errorStr.contains('connection refused') ||
             errorStr.contains('connection reset') ||
             errorStr.contains('connection timed out') ||
             errorStr.contains('full header') ||
             errorStr.contains('timeout');
-        
+
         if (kDebugMode) {
           print('Voice WS connect failed (attempt $attempt/$maxRetries): $e');
         }
-        
+
         // If this was the last attempt and we haven't tried fallback, mark for fallback
         if (attempt >= maxRetries && !useFallbackPort) {
           useFallbackPort = true;
           attempt = 0; // Reset attempt counter for fallback
           continue; // Try fallback port
         }
-        
+
         // If this was the last attempt or error is not retryable, give up
         if (attempt >= maxRetries || !isRetryableError) {
           connectionStatus.value = 'Connection Failed';
           if (attempt >= maxRetries) {
-            showErrorMessage(message: 'Failed to connect after $maxRetries attempts. Please try again.');
+            showErrorMessage(
+              message:
+                  'Failed to connect after $maxRetries attempts. Please try again.',
+            );
           } else {
             showErrorMessage(message: 'Failed to connect: $e');
           }
           return;
         }
-        
+
         // Exponential backoff: 500ms, 1000ms, 2000ms
         final delayMs = 500 * (1 << (attempt - 1));
         if (kDebugMode) {
@@ -440,10 +483,14 @@ class VoiceCallController extends BaseController {
       // Check if it's binary (audio data) or text (JSON)
       if (event is List<int> || event is Uint8List) {
         // Binary audio data - accumulate chunks (server may send multiple chunks)
-        final audioData = event is Uint8List ? event : Uint8List.fromList(event);
+        final audioData = event is Uint8List
+            ? event
+            : Uint8List.fromList(event);
         _audioResponseChunks.add(audioData);
         if (kDebugMode) {
-          print('Received audio chunk: ${audioData.length} bytes (total chunks: ${_audioResponseChunks.length})');
+          print(
+            'Received audio chunk: ${audioData.length} bytes (total chunks: ${_audioResponseChunks.length})',
+          );
         }
       } else if (event is String) {
         // JSON message
@@ -480,7 +527,10 @@ class VoiceCallController extends BaseController {
           case 'transcription':
             // Don't display transcription - audio only mode
             if (kDebugMode) {
-              final text = message['text']?.toString() ?? message['transcription']?.toString() ?? '';
+              final text =
+                  message['text']?.toString() ??
+                  message['transcription']?.toString() ??
+                  '';
               print('Transcription (not displayed): $text');
             }
             break;
@@ -488,7 +538,11 @@ class VoiceCallController extends BaseController {
           case 'ai_response':
             // Don't display AI response text - audio only mode
             if (kDebugMode) {
-              final text = message['text']?.toString() ?? message['response']?.toString() ?? message['message']?.toString() ?? '';
+              final text =
+                  message['text']?.toString() ??
+                  message['response']?.toString() ??
+                  message['message']?.toString() ??
+                  '';
               print('AI Response (not displayed): $text');
             }
             // Extract token count for deduction calculation
@@ -499,7 +553,9 @@ class VoiceCallController extends BaseController {
                 if (tokens != null) {
                   _lastResponseTotalTokens = tokens['total'] as int?;
                   if (kDebugMode && _lastResponseTotalTokens != null) {
-                    print('Total tokens for this response: $_lastResponseTotalTokens');
+                    print(
+                      'Total tokens for this response: $_lastResponseTotalTokens',
+                    );
                   }
                 }
               }
@@ -516,27 +572,38 @@ class VoiceCallController extends BaseController {
             // Clear transcription and response (audio only mode - no text display)
             transcription.value = '';
             aiResponse.value = '';
-            
+
             // Calculate and deduct seconds based on token count
             // Always deduct - use minimum if tokens not available
             final totalTokens = _lastResponseTotalTokens ?? 0;
             final deductedSeconds = _calculateDeductedSeconds(totalTokens);
             if (deductedSeconds > 0) {
-              remainingSeconds.value = (remainingSeconds.value - deductedSeconds).clamp(0, callMaxSeconds);
+              remainingSeconds.value =
+                  (remainingSeconds.value - deductedSeconds).clamp(
+                    0,
+                    callMaxSeconds,
+                  );
               if (kDebugMode) {
                 if (_lastResponseTotalTokens != null) {
-                  print('Deducted $deductedSeconds seconds (tokens: $_lastResponseTotalTokens, remaining: ${remainingSeconds.value}s)');
+                  print(
+                    'Deducted $deductedSeconds seconds (tokens: $_lastResponseTotalTokens, remaining: ${remainingSeconds.value}s)',
+                  );
                 } else {
-                  print('Deducted $deductedSeconds seconds (minimum, tokens not available, remaining: ${remainingSeconds.value}s)');
+                  print(
+                    'Deducted $deductedSeconds seconds (minimum, tokens not available, remaining: ${remainingSeconds.value}s)',
+                  );
                 }
               }
             }
             _lastResponseTotalTokens = null; // Reset for next response
-            
+
             // Play accumulated audio response chunks
             if (_audioResponseChunks.isNotEmpty) {
               // Combine all audio chunks
-              final totalSize = _audioResponseChunks.fold<int>(0, (sum, chunk) => sum + chunk.length);
+              final totalSize = _audioResponseChunks.fold<int>(
+                0,
+                (sum, chunk) => sum + chunk.length,
+              );
               final completeAudio = Uint8List(totalSize);
               int offset = 0;
               for (final chunk in _audioResponseChunks) {
@@ -544,13 +611,17 @@ class VoiceCallController extends BaseController {
                 offset += chunk.length;
               }
               _audioResponseChunks.clear();
-              
+
               // Play the complete audio response
               _playAudioResponse(completeAudio);
             } else {
               // No audio received, restart recording immediately
               Future.delayed(const Duration(milliseconds: 500), () {
-                if (!isRecording.value && !isProcessing.value && !isPlaying.value && _ws != null && _ws!.readyState == WebSocket.open) {
+                if (!isRecording.value &&
+                    !isProcessing.value &&
+                    !isPlaying.value &&
+                    _ws != null &&
+                    _ws!.readyState == WebSocket.open) {
                   startRecording();
                 }
               });
@@ -570,7 +641,10 @@ class VoiceCallController extends BaseController {
 
           case 'error':
             isProcessing.value = false;
-            final errorMsg = message['error']?.toString() ?? message['message']?.toString() ?? 'Unknown error';
+            final errorMsg =
+                message['error']?.toString() ??
+                message['message']?.toString() ??
+                'Unknown error';
             showErrorMessage(message: errorMsg);
             connectionStatus.value = 'Error';
             break;
@@ -604,7 +678,9 @@ class VoiceCallController extends BaseController {
 
       // Save audio to temporary file
       final tempDir = await getTemporaryDirectory();
-      final audioFile = File('${tempDir.path}/voice_response_${DateTime.now().millisecondsSinceEpoch}.mp3');
+      final audioFile = File(
+        '${tempDir.path}/voice_response_${DateTime.now().millisecondsSinceEpoch}.mp3',
+      );
       await audioFile.writeAsBytes(audioData);
 
       // Play audio
@@ -618,17 +694,23 @@ class VoiceCallController extends BaseController {
       }
 
       // Listen for completion - restart recording after audio finishes
-      _audioPlayerStateSubscription = _audioPlayer.playerStateStream.listen((state) {
+      _audioPlayerStateSubscription = _audioPlayer.playerStateStream.listen((
+        state,
+      ) {
         if (state.processingState == ProcessingState.completed) {
           isPlaying.value = false;
           connectionStatus.value = 'Ready';
-          
+
           // Clean up temp file
           audioFile.delete().catchError((_) => audioFile);
-          
+
           // Auto-start recording again after audio playback completes
           Future.delayed(const Duration(milliseconds: 300), () {
-            if (!isRecording.value && !isProcessing.value && !isPlaying.value && _ws != null && _ws!.readyState == WebSocket.open) {
+            if (!isRecording.value &&
+                !isProcessing.value &&
+                !isPlaying.value &&
+                _ws != null &&
+                _ws!.readyState == WebSocket.open) {
               startRecording();
             }
           });
@@ -640,10 +722,14 @@ class VoiceCallController extends BaseController {
       }
       isPlaying.value = false;
       connectionStatus.value = 'Ready';
-      
+
       // Restart recording even if audio playback failed
       Future.delayed(const Duration(milliseconds: 300), () {
-        if (!isRecording.value && !isProcessing.value && !isPlaying.value && _ws != null && _ws!.readyState == WebSocket.open) {
+        if (!isRecording.value &&
+            !isProcessing.value &&
+            !isPlaying.value &&
+            _ws != null &&
+            _ws!.readyState == WebSocket.open) {
           startRecording();
         }
       });
@@ -677,7 +763,9 @@ class VoiceCallController extends BaseController {
           return;
         }
         if (isProcessing.value) {
-          showInfoMessage(message: 'Please wait for current processing to complete');
+          showInfoMessage(
+            message: 'Please wait for current processing to complete',
+          );
           return;
         }
       }
@@ -697,14 +785,17 @@ class VoiceCallController extends BaseController {
 
       // Set maximum recording duration timer
       _maxRecordingTimer?.cancel();
-      _maxRecordingTimer = Timer(Duration(milliseconds: _maxRecordingDurationMs), () {
-        if (isRecording.value && !isProcessing.value) {
-          if (kDebugMode) {
-            print('Max recording duration reached, stopping recording');
+      _maxRecordingTimer = Timer(
+        Duration(milliseconds: _maxRecordingDurationMs),
+        () {
+          if (isRecording.value && !isProcessing.value) {
+            if (kDebugMode) {
+              print('Max recording duration reached, stopping recording');
+            }
+            stopRecording();
           }
-          stopRecording();
-        }
-      });
+        },
+      );
 
       // VAD: Analyze audio chunks from file for silence detection
       // We'll check the audio data we read from the file
@@ -725,7 +816,7 @@ class VoiceCallController extends BaseController {
         (audioChunk) {
           // Detect voice activity
           final hasVoice = _detectVoiceActivityFromWav(audioChunk);
-          
+
           if (hasVoice) {
             _lastSpeechTime = DateTime.now();
             _consecutiveSilentChunks = 0;
@@ -741,7 +832,7 @@ class VoiceCallController extends BaseController {
           _audioBuffer.add(audioChunk);
 
           // Calculate recording duration
-          final recordingDuration = _recordingStartTime != null 
+          final recordingDuration = _recordingStartTime != null
               ? DateTime.now().difference(_recordingStartTime!).inMilliseconds
               : 0;
 
@@ -749,26 +840,31 @@ class VoiceCallController extends BaseController {
           // 1. We've recorded for at least minimum duration
           // 2. We've accumulated enough chunks
           // 3. We've detected actual speech (not just silence from the start)
-          if (recordingDuration >= _minRecordingDurationMs && 
-              _audioBuffer.length > _minChunksForSpeech && 
+          if (recordingDuration >= _minRecordingDurationMs &&
+              _audioBuffer.length > _minChunksForSpeech &&
               _hasDetectedSpeech) {
-            final silenceDuration = _lastSpeechTime != null 
+            final silenceDuration = _lastSpeechTime != null
                 ? DateTime.now().difference(_lastSpeechTime!).inMilliseconds
                 : 0;
-            
+
             // If we have enough consecutive silent chunks OR enough silence duration after speech
-            if (_consecutiveSilentChunks > 10 || silenceDuration >= _silenceDurationMs) {
+            if (_consecutiveSilentChunks > 10 ||
+                silenceDuration >= _silenceDurationMs) {
               // Silence detected after speech, stop recording and send speech_end
               if (isRecording.value && !isProcessing.value) {
                 if (kDebugMode) {
-                  print('Silence detected after speech: consecutiveChunks=$_consecutiveSilentChunks, silenceDuration=${silenceDuration}ms, recordingDuration=${recordingDuration}ms');
+                  print(
+                    'Silence detected after speech: consecutiveChunks=$_consecutiveSilentChunks, silenceDuration=${silenceDuration}ms, recordingDuration=${recordingDuration}ms',
+                  );
                 }
                 stopRecording();
               }
             }
           } else if (kDebugMode && _audioBuffer.length % 50 == 0) {
             // Debug: log status periodically
-            print('Recording: duration=${recordingDuration}ms, chunks=${_audioBuffer.length}, hasSpeech=$_hasDetectedSpeech, consecutiveSilent=$_consecutiveSilentChunks');
+            print(
+              'Recording: duration=${recordingDuration}ms, chunks=${_audioBuffer.length}, hasSpeech=$_hasDetectedSpeech, consecutiveSilent=$_consecutiveSilentChunks',
+            );
           }
         },
         onError: (error) {
@@ -803,29 +899,41 @@ class VoiceCallController extends BaseController {
       isRecording.value = false;
 
       // Convert PCM16 chunks to WAV format and send
-      if (_ws != null && _ws!.readyState == WebSocket.open && _audioBuffer.isNotEmpty) {
+      if (_ws != null &&
+          _ws!.readyState == WebSocket.open &&
+          _audioBuffer.isNotEmpty) {
         try {
           // Combine all PCM chunks
-          final totalSize = _audioBuffer.fold<int>(0, (sum, chunk) => sum + chunk.length);
-          
+          final totalSize = _audioBuffer.fold<int>(
+            0,
+            (sum, chunk) => sum + chunk.length,
+          );
+
           // Check if we detected actual speech
           if (!_hasDetectedSpeech) {
             if (kDebugMode) {
-              print('No speech detected, skipping send (audio size: ${totalSize} bytes)');
+              print(
+                'No speech detected, skipping send (audio size: ${totalSize} bytes)',
+              );
             }
             _audioBuffer.clear();
             _hasDetectedSpeech = false;
             // Restart recording to wait for actual speech
             Future.delayed(const Duration(milliseconds: 300), () {
-              if (!isRecording.value && !isProcessing.value && !isPlaying.value && _ws != null && _ws!.readyState == WebSocket.open) {
+              if (!isRecording.value &&
+                  !isProcessing.value &&
+                  !isPlaying.value &&
+                  _ws != null &&
+                  _ws!.readyState == WebSocket.open) {
                 startRecording();
               }
             });
             return;
           }
-          
+
           // Check minimum audio size (at least 1 second of audio)
-          final minAudioSize = (_sampleRate * 2 * 1.0).round(); // 1 second at 16kHz, 16-bit, mono
+          final minAudioSize = (_sampleRate * 2 * 1.0)
+              .round(); // 1 second at 16kHz, 16-bit, mono
           if (totalSize < minAudioSize) {
             if (kDebugMode) {
               print('Audio too short (${totalSize} bytes), skipping send');
@@ -834,13 +942,17 @@ class VoiceCallController extends BaseController {
             _hasDetectedSpeech = false;
             // Restart recording
             Future.delayed(const Duration(milliseconds: 300), () {
-              if (!isRecording.value && !isProcessing.value && !isPlaying.value && _ws != null && _ws!.readyState == WebSocket.open) {
+              if (!isRecording.value &&
+                  !isProcessing.value &&
+                  !isPlaying.value &&
+                  _ws != null &&
+                  _ws!.readyState == WebSocket.open) {
                 startRecording();
               }
             });
             return;
           }
-          
+
           final pcmData = Uint8List(totalSize);
           int offset = 0;
           for (final chunk in _audioBuffer) {
@@ -850,7 +962,7 @@ class VoiceCallController extends BaseController {
 
           // Trim silence from beginning and end to reduce file size
           final trimmedPcmData = _trimSilence(pcmData);
-          
+
           if (trimmedPcmData.isEmpty) {
             if (kDebugMode) {
               print('No audio detected after trimming silence');
@@ -860,18 +972,29 @@ class VoiceCallController extends BaseController {
           }
 
           // Create WAV file with header (optimized for smaller size)
-          final wavFile = _createWavFile(trimmedPcmData, sampleRate: _sampleRate, channels: 1, bitsPerSample: 16);
-          
+          final wavFile = _createWavFile(
+            trimmedPcmData,
+            sampleRate: _sampleRate,
+            channels: 1,
+            bitsPerSample: 16,
+          );
+
           if (kDebugMode) {
             final sizeKB = (wavFile.length / 1024).toStringAsFixed(2);
-            final duration = (trimmedPcmData.length / (_sampleRate * 2)).toStringAsFixed(2);
-            print('Created WAV file: ${sizeKB} KB (${wavFile.length} bytes), duration: ${duration}s');
+            final duration = (trimmedPcmData.length / (_sampleRate * 2))
+                .toStringAsFixed(2);
+            print(
+              'Created WAV file: ${sizeKB} KB (${wavFile.length} bytes), duration: ${duration}s',
+            );
           }
-          
+
           // Send WAV file in chunks (8KB each for smooth streaming)
           const chunkSize = 8192;
           for (int i = 0; i < wavFile.length; i += chunkSize) {
-            final chunk = wavFile.sublist(i, (i + chunkSize < wavFile.length) ? i + chunkSize : wavFile.length);
+            final chunk = wavFile.sublist(
+              i,
+              (i + chunkSize < wavFile.length) ? i + chunkSize : wavFile.length,
+            );
             _ws!.add(chunk);
           }
 
@@ -879,12 +1002,14 @@ class VoiceCallController extends BaseController {
           final speechEndMessage = json.encode({'type': 'speech_end'});
           _ws!.add(speechEndMessage);
           connectionStatus.value = 'Sending...';
-          
+
           if (kDebugMode) {
-            final recordingDuration = _recordingStartTime != null 
-                ? DateTime.now().difference(_recordingStartTime!).inMilliseconds 
+            final recordingDuration = _recordingStartTime != null
+                ? DateTime.now().difference(_recordingStartTime!).inMilliseconds
                 : 0;
-            print('Sent WAV file (${wavFile.length} bytes) and speech_end signal (duration: ${recordingDuration}ms)');
+            print(
+              'Sent WAV file (${wavFile.length} bytes) and speech_end signal (duration: ${recordingDuration}ms)',
+            );
           }
         } catch (e) {
           if (kDebugMode) {
@@ -893,7 +1018,9 @@ class VoiceCallController extends BaseController {
           showErrorMessage(message: 'Failed to process audio');
         }
       } else if (kDebugMode) {
-        print('Not sending speech_end: ws=${_ws != null}, readyState=${_ws?.readyState}, bufferSize=${_audioBuffer.length}');
+        print(
+          'Not sending speech_end: ws=${_ws != null}, readyState=${_ws?.readyState}, bufferSize=${_audioBuffer.length}',
+        );
       }
 
       _audioBuffer.clear();
@@ -912,20 +1039,20 @@ class VoiceCallController extends BaseController {
   /// Trim silence from beginning and end of PCM data to reduce file size
   Uint8List _trimSilence(Uint8List pcmData) {
     if (pcmData.isEmpty || pcmData.length < 4) return pcmData;
-    
+
     const silenceThreshold = 500; // Amplitude threshold for silence
     const minSilenceDuration = _sampleRate ~/ 10; // 100ms of silence to trim
-    
+
     int startIndex = 0;
     int endIndex = pcmData.length;
-    
+
     // Find start of audio (skip initial silence)
     int consecutiveSilent = 0;
     for (int i = 0; i < pcmData.length - 1; i += 2) {
       final int16 = (pcmData[i] | (pcmData[i + 1] << 8));
       final sample = int16 > 32767 ? int16 - 65536 : int16;
       final amplitude = sample.abs();
-      
+
       if (amplitude < silenceThreshold) {
         consecutiveSilent++;
       } else {
@@ -938,14 +1065,14 @@ class VoiceCallController extends BaseController {
         consecutiveSilent = 0;
       }
     }
-    
+
     // Find end of audio (skip trailing silence)
     consecutiveSilent = 0;
     for (int i = pcmData.length - 2; i >= startIndex; i -= 2) {
       final int16 = (pcmData[i] | (pcmData[i + 1] << 8));
       final sample = int16 > 32767 ? int16 - 65536 : int16;
       final amplitude = sample.abs();
-      
+
       if (amplitude < silenceThreshold) {
         consecutiveSilent++;
       } else {
@@ -958,100 +1085,105 @@ class VoiceCallController extends BaseController {
         break; // Stop at first audio from the end
       }
     }
-    
+
     // Ensure we have at least some audio (minimum 0.5 seconds)
     final trimmedSize = endIndex - startIndex;
     final minSize = (_sampleRate * 2 * 0.5).round(); // 0.5 seconds minimum
     if (trimmedSize < minSize) {
       return pcmData; // Return original if trimmed would be too short
     }
-    
+
     return pcmData.sublist(startIndex, endIndex);
   }
 
   /// Create a WAV file from PCM16 data
-  Uint8List _createWavFile(Uint8List pcmData, {int sampleRate = 16000, int channels = 1, int bitsPerSample = 16}) {
+  Uint8List _createWavFile(
+    Uint8List pcmData, {
+    int sampleRate = 16000,
+    int channels = 1,
+    int bitsPerSample = 16,
+  }) {
     final dataSize = pcmData.length;
     final fileSize = 36 + dataSize; // 36 bytes header + data
-    
+
     final wavFile = Uint8List(44 + dataSize); // 44 bytes header + data
     int offset = 0;
-    
+
     // RIFF header
     wavFile[offset++] = 0x52; // 'R'
     wavFile[offset++] = 0x49; // 'I'
     wavFile[offset++] = 0x46; // 'F'
     wavFile[offset++] = 0x46; // 'F'
-    
+
     // File size - 8
     wavFile[offset++] = fileSize & 0xFF;
     wavFile[offset++] = (fileSize >> 8) & 0xFF;
     wavFile[offset++] = (fileSize >> 16) & 0xFF;
     wavFile[offset++] = (fileSize >> 24) & 0xFF;
-    
+
     // WAVE
     wavFile[offset++] = 0x57; // 'W'
     wavFile[offset++] = 0x41; // 'A'
     wavFile[offset++] = 0x56; // 'V'
     wavFile[offset++] = 0x45; // 'E'
-    
+
     // fmt chunk
     wavFile[offset++] = 0x66; // 'f'
     wavFile[offset++] = 0x6D; // 'm'
     wavFile[offset++] = 0x74; // 't'
     wavFile[offset++] = 0x20; // ' '
-    
+
     // Subchunk1Size (16 for PCM)
     wavFile[offset++] = 16;
     wavFile[offset++] = 0;
     wavFile[offset++] = 0;
     wavFile[offset++] = 0;
-    
+
     // AudioFormat (1 for PCM)
     wavFile[offset++] = 1;
     wavFile[offset++] = 0;
-    
+
     // NumChannels
     wavFile[offset++] = channels;
     wavFile[offset++] = 0;
-    
+
     // SampleRate
     wavFile[offset++] = sampleRate & 0xFF;
     wavFile[offset++] = (sampleRate >> 8) & 0xFF;
     wavFile[offset++] = (sampleRate >> 16) & 0xFF;
     wavFile[offset++] = (sampleRate >> 24) & 0xFF;
-    
+
     // ByteRate
     final byteRate = sampleRate * channels * (bitsPerSample ~/ 8);
     wavFile[offset++] = byteRate & 0xFF;
     wavFile[offset++] = (byteRate >> 8) & 0xFF;
     wavFile[offset++] = (byteRate >> 16) & 0xFF;
     wavFile[offset++] = (byteRate >> 24) & 0xFF;
-    
+
     // BlockAlign
     final blockAlign = channels * (bitsPerSample ~/ 8);
     wavFile[offset++] = blockAlign;
     wavFile[offset++] = 0;
-    
+
     // BitsPerSample
     wavFile[offset++] = bitsPerSample;
     wavFile[offset++] = 0;
-    
+
     // data chunk
     wavFile[offset++] = 0x64; // 'd'
     wavFile[offset++] = 0x61; // 'a'
     wavFile[offset++] = 0x74; // 't'
     wavFile[offset++] = 0x61; // 'a'
-    
+
     // Subchunk2Size (data size)
     wavFile[offset++] = dataSize & 0xFF;
     wavFile[offset++] = (dataSize >> 8) & 0xFF;
     wavFile[offset++] = (dataSize >> 16) & 0xFF;
     wavFile[offset++] = (dataSize >> 24) & 0xFF;
-    
+
     // PCM data
     wavFile.setRange(offset, offset + dataSize, pcmData);
-    
+
     return wavFile;
   }
 
@@ -1063,7 +1195,7 @@ class VoiceCallController extends BaseController {
     // Calculate RMS (Root Mean Square) for volume detection
     double sum = 0.0;
     int sampleCount = 0;
-    
+
     for (int i = 0; i < pcmData.length; i += 2) {
       if (i + 1 < pcmData.length) {
         // Convert bytes to 16-bit signed integer (little-endian)
@@ -1073,34 +1205,35 @@ class VoiceCallController extends BaseController {
         sampleCount++;
       }
     }
-    
+
     if (sampleCount == 0) return false;
-    
+
     final rms = (sum / sampleCount);
     final volume = rms / (32768.0 * 32768.0); // Normalize to 0-1 range
-    
+
     // Consider it voice if volume exceeds threshold
     final hasVoice = volume > _silenceThreshold;
-    
+
     if (kDebugMode && _audioBuffer.length % 50 == 0) {
       // Log every 50th chunk to avoid spam
-      print('VAD: volume=$volume, threshold=$_silenceThreshold, hasVoice=$hasVoice, chunks=${_audioBuffer.length}');
+      print(
+        'VAD: volume=$volume, threshold=$_silenceThreshold, hasVoice=$hasVoice, chunks=${_audioBuffer.length}',
+      );
     }
-    
+
     return hasVoice;
   }
-
 
   Future<void> sendInterrupt() async {
     if (_ws != null && _ws!.readyState == WebSocket.open) {
       final interruptMessage = json.encode({'type': 'interrupt'});
       _ws!.add(interruptMessage);
-      
+
       // Stop current recording if any
       if (isRecording.value) {
         await stopRecording();
       }
-      
+
       // Stop audio playback
       await _audioPlayer.stop();
       isPlaying.value = false;
@@ -1109,7 +1242,7 @@ class VoiceCallController extends BaseController {
 
   Future<void> cancelCall({bool auto = false}) async {
     if (callId.isEmpty) {
-      Get.back();
+      Get.back(result: {'showReviewPrompt': true});
       return;
     }
     try {
@@ -1119,35 +1252,35 @@ class VoiceCallController extends BaseController {
     if (auto) {
       showInfoMessage(message: 'Call ended automatically after 10 minutes.');
     }
-    Get.back();
+    Get.back(result: {'showReviewPrompt': true});
   }
 
   void _cleanup() {
     _ticker?.cancel();
     _ticker = null;
-    
+
     _silenceDetectionTimer?.cancel();
     _silenceDetectionTimer = null;
-    
+
     _maxRecordingTimer?.cancel();
     _maxRecordingTimer = null;
-    
+
     _audioStreamSubscription?.cancel();
     _audioStreamSubscription = null;
-    
+
     _audioPlayerStateSubscription?.cancel();
     _audioPlayerStateSubscription = null;
-    
+
     _audioResponseChunks.clear();
-    
+
     _audioRecorder.dispose();
     _audioPlayer.dispose();
-    
+
     try {
       _ws?.close();
     } catch (_) {}
     _ws = null;
-    
+
     _audioBuffer.clear();
     _consecutiveSilentChunks = 0;
     _lastSpeechTime = null;

@@ -45,7 +45,7 @@ class CoursesView extends BasePage<CoursesController> {
       },
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        bottomNavigationBar: hideHeader ? null : _buildBottomNav(),
+        // bottomNavigationBar: hideHeader ? null : _buildBottomNav(),
         body: Container(
           width: double.infinity,
           height: double.infinity,
@@ -232,126 +232,125 @@ class CoursesView extends BasePage<CoursesController> {
         timeStatus = "Live Now";
       }
 
-      return Container(
-        margin: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          gradient: AppColors.orangeGradient,
-          borderRadius: BorderRadius.circular(16.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.orange.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            // Background Image Overlay (Optional)
-            if (webinar.thumbnail != null && webinar.thumbnail!.isNotEmpty)
-              Positioned.fill(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16.r),
-                  child: Opacity(
-                    opacity: 0.1,
-                    child: Image.network(
-                      webinar.thumbnail!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const SizedBox(),
+      return GestureDetector(
+        onTap: () {
+          Get.toNamed(AppRoutes.liveWebinars);
+        },
+        child: Container(
+          margin: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            gradient: AppColors.orangeGradient,
+            borderRadius: BorderRadius.circular(16.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.orange.withOpacity(0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              // Background Image Overlay (Optional)
+              if (webinar.thumbnail != null && webinar.thumbnail!.isNotEmpty)
+                Positioned.fill(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16.r),
+                    child: Opacity(
+                      opacity: 0.1,
+                      child: Image.network(
+                        webinar.thumbnail!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const SizedBox(),
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-            Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // LIVE badge
-                  if (webinar.status == 'LIVE' ||
-                      (minutes <= 10 && minutes >= -120))
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.w,
-                        vertical: 4.h,
+              Padding(
+                padding: EdgeInsets.all(16.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // LIVE badge
+                    if (webinar.status == 'LIVE' ||
+                        (minutes <= 10 && minutes >= -120))
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 4.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(4.r),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.circle, color: Colors.white, size: 8.w),
+                            SizedBox(width: 4.w),
+                            AutoTranslateText(
+                              'LIVE NOW',
+                              style: AppTypography.label.copyWith(
+                                color: Colors.white,
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(4.r),
+                    SizedBox(height: 12.h),
+
+                    // Title
+                    AutoTranslateText(
+                      'Join Live Webinar',
+                      style: AppTypography.h2.copyWith(
+                        color: Colors.white,
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.circle, color: Colors.white, size: 8.w),
-                          SizedBox(width: 4.w),
-                          AutoTranslateText(
-                            'LIVE NOW',
-                            style: AppTypography.label.copyWith(
+                    ),
+                    SizedBox(height: 8.h),
+
+                    // Description
+                    AutoTranslateText(
+                      '"${webinar.title}" - $timeStatus',
+                      style: AppTypography.body1.copyWith(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 16.h),
+
+                    // Bottom row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // FREE button (Assuming free for now, or check pricing)
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 6.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: AutoTranslateText(
+                            'FREE', // Or Check webinar.isFree
+                            style: AppTypography.body2.copyWith(
                               color: Colors.white,
-                              fontSize: 10.sp,
+                              fontSize: 12.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  SizedBox(height: 12.h),
-
-                  // Title
-                  AutoTranslateText(
-                    'Join Live Webinar',
-                    style: AppTypography.h2.copyWith(
-                      color: Colors.white,
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-
-                  // Description
-                  AutoTranslateText(
-                    '"${webinar.title}" - $timeStatus',
-                    style: AppTypography.body1.copyWith(
-                      color: Colors.white,
-                      fontSize: 14.sp,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 16.h),
-
-                  // Bottom row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // FREE button (Assuming free for now, or check pricing)
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 6.h,
                         ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: AutoTranslateText(
-                          'FREE', // Or Check webinar.isFree
-                          style: AppTypography.body2.copyWith(
-                            color: Colors.white,
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
 
-                      // Watchers count with tap to navigate
-                      GestureDetector(
-                        onTap: () {
-                          // Pass arguments if needed or just navigate
-                          Get.toNamed(AppRoutes.liveWebinars);
-                        },
-                        child: Row(
+                        // Watchers count with tap to navigate
+                        Row(
                           children: [
                             Obx(
                               () => AutoTranslateText(
@@ -370,13 +369,13 @@ class CoursesView extends BasePage<CoursesController> {
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     });

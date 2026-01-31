@@ -24,6 +24,9 @@ class PersonaDetailController extends BaseController {
   final RxBool isFollowing = false.obs;
   final RxBool isTogglingFollow = false.obs;
 
+  // Track selected service type for review
+  final RxString selectedServiceType = "CHAT".obs;
+
   // Get follow state from storage
   bool _getFollowStateFromStorage(String personaId) {
     try {

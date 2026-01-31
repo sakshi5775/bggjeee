@@ -31,7 +31,7 @@ class NamasteHomeController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    _playShankhOnInit();
+    // _playShankhOnInit();
     _initializeFullscreenAnimation();
   }
 

@@ -25,7 +25,7 @@ class MyLearningView extends BasePage<MyLearningController> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F0),
-      bottomNavigationBar: _buildBottomNav(),
+      // bottomNavigationBar: _buildBottomNav(),
       body: SafeArea(
         child: Column(
           children: [
@@ -45,9 +45,7 @@ class MyLearningView extends BasePage<MyLearningController> {
 
   Widget _buildHeader() {
     return Container(
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-      ),
+      decoration: BoxDecoration(gradient: AppColors.primaryGradient),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Row(
         children: [

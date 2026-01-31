@@ -53,7 +53,7 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
                       color: Colors.black45,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(Icons.close, color: Colors.white, size: 24.sp),
+                    child: Icon(Icons.close, color: Colors.white, size: 20),
                   ),
                 ),
               ),
@@ -310,7 +310,7 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
                   child: Icon(
                     isFull ? Icons.fullscreen_exit : Icons.fullscreen,
                     color: Colors.white,
-                    size: 20.sp,
+                    size: 20,
                   ),
                 ),
               ),

@@ -1358,7 +1358,9 @@ class PersonaDetailView extends StatelessWidget {
                                               reviewText: reviewTextController
                                                   .text
                                                   .trim(),
-                                              serviceType: "CHAT",
+                                              serviceType: controller
+                                                  .selectedServiceType
+                                                  .value,
                                             );
 
                                       if (success) {
@@ -1475,6 +1477,8 @@ class PersonaDetailView extends StatelessWidget {
               child: GestureDetector(
                 onTap: () async {
                   if (controller.persona.value != null) {
+                    controller.selectedServiceType.value =
+                        "VOICE"; // Set service type
                     final persona = controller.persona.value!;
                     final precheckService = ChatCallPrecheckService();
                     final canProceed = await precheckService
@@ -1484,10 +1488,21 @@ class PersonaDetailView extends StatelessWidget {
                           estimatedMinutes: 15,
                         );
                     if (canProceed) {
-                      Get.toNamed(
+                      final result = await Get.toNamed(
                         AppRoutes.personaVoiceCall,
                         arguments: persona,
                       );
+                      if (result is Map && result['showReviewPrompt'] == true) {
+                        // ignore: use_build_context_synchronously
+                        if (context.mounted) {
+                          _showReviewDialog(
+                            context,
+                            controller,
+                            persona.id,
+                            persona: persona,
+                          );
+                        }
+                      }
                     }
                   }
                 },
@@ -1523,6 +1538,8 @@ class PersonaDetailView extends StatelessWidget {
             Expanded(
               child: GestureDetector(
                 onTap: () async {
+                  controller.selectedServiceType.value =
+                      "CHAT"; // Set service type
                   await _handleChatTap(context, persona);
                 },
                 child: Container(
@@ -1582,7 +1599,7 @@ class PersonaDetailView extends StatelessWidget {
     );
     if (profileResult == null) return;
 
-    Get.toNamed(
+    final result = await Get.toNamed(
       AppRoutes.personaChat,
       arguments: {
         'persona': persona,
@@ -1590,5 +1607,17 @@ class PersonaDetailView extends StatelessWidget {
         'languageCode': profileResult.languageCode,
       },
     );
+
+    if (result is Map && result['showReviewPrompt'] == true) {
+      // ignore: use_build_context_synchronously
+      if (context.mounted) {
+        _showReviewDialog(
+          context,
+          Get.find<PersonaDetailController>(tag: persona.id),
+          persona.id,
+          persona: persona,
+        );
+      }
+    }
   }
 }

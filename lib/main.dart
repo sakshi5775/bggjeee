@@ -79,6 +79,11 @@ void main() async {
       if (!Get.isRegistered<CustomTranslationService>()) {
         Get.put(CustomTranslationService(), permanent: true);
       }
+      // ✅ SET PORTRAIT MODE HERE (Global Default)
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
 
       runApp(const MyApp());
     },
@@ -164,10 +169,10 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        SystemChrome.setPreferredOrientations([
-          DeviceOrientation.portraitUp,
-          DeviceOrientation.portraitDown,
-        ]);
+        // SystemChrome.setPreferredOrientations([
+        //   DeviceOrientation.portraitUp,
+        //   DeviceOrientation.portraitDown,
+        // ]);
 
         // Get supported locales for MaterialLocalizations (use cached value)
         final materialSupportedLocales = _getMaterialSupportedLocales(

@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/routes/app_routes.dart';
+
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/chat/controllers/chat_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -37,7 +37,7 @@ class _ChatViewState extends State<ChatView> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ChatController>();
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -45,20 +45,19 @@ class _ChatViewState extends State<ChatView> {
           children: [
             // Header
             _buildHeader(controller),
-            
+
             // Chat Messages Area
-            Expanded(
-              child: _buildChatArea(controller),
-            ),
-            
+            Expanded(child: _buildChatArea(controller)),
+
             // Topic selection chips (shown after AI's first response)
             Obx(() {
-              if (!controller.showTopicChips.value || controller.messages.length < 2) {
+              if (!controller.showTopicChips.value ||
+                  controller.messages.length < 2) {
                 return const SizedBox.shrink();
               }
               return _buildTopicChips(controller);
             }),
-            
+
             // Message Input
             _buildMessageInput(controller),
           ],
@@ -87,37 +86,37 @@ class _ChatViewState extends State<ChatView> {
           IconButton(
             onPressed: () {
               // Check if user has sent messages (has conversation)
-              if (controller.messages.isNotEmpty && controller.conversationId.value.isNotEmpty) {
+              if (controller.messages.isNotEmpty &&
+                  controller.conversationId.value.isNotEmpty) {
                 // Show review popup before going back
                 _showReviewPromptOnBack(controller);
               } else {
                 Get.back();
               }
             },
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-            ),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
           ),
           SizedBox(width: 12.w),
-          
-              // Profile picture
-              Container(
-                width: 40.w,
-                height: 40.w,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
-                    width: 2,
-                  ),
-                ),
-                child: ClipOval(
-                  child: widget.persona.image != null && widget.persona.image!.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: widget.persona.image!,
+
+          // Profile picture
+          Container(
+            width: 40.w,
+            height: 40.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 2,
+              ),
+            ),
+            child: ClipOval(
+              child:
+                  widget.persona.image != null &&
+                      widget.persona.image!.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: widget.persona.image!,
                       width: 40.w,
                       height: 40.w,
                       fit: BoxFit.cover,
@@ -163,7 +162,7 @@ class _ChatViewState extends State<ChatView> {
             ),
           ),
           SizedBox(width: 12.w),
-          
+
           // Name and status
           Expanded(
             child: Column(
@@ -228,7 +227,7 @@ class _ChatViewState extends State<ChatView> {
               ],
             ),
           ),
-          
+
           // End Chat button
           TextButton(
             onPressed: () {
@@ -278,9 +277,7 @@ class _ChatViewState extends State<ChatView> {
             },
             child: AutoTranslateText(
               'End Chat',
-              style: MyTextTheme.smallBCB.copyWith(
-                color: Colors.white,
-              ),
+              style: MyTextTheme.smallBCB.copyWith(color: Colors.white),
             ),
           ),
         ],
@@ -290,28 +287,24 @@ class _ChatViewState extends State<ChatView> {
 
   Widget _buildChatArea(ChatController controller) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: AppColors.gradientBackground,
-      ),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Stack(
         children: [
           // Background pattern with golden speckles
-          CustomPaint(
-            painter: _SpecklePainter(),
-            size: Size.infinite,
-          ),
-          
+          CustomPaint(painter: _SpecklePainter(), size: Size.infinite),
+
           // Messages list
           Obx(() {
             final messageCount = controller.messages.length;
             final isTyping = controller.isTyping.value;
             final isLoading = controller.isLoading.value;
             final displayedText = controller.displayedMessage.value;
-            
+
             // Show typing indicator if loading or typing with displayed text
-            final showTypingIndicator = isLoading || (isTyping && displayedText.isNotEmpty);
+            final showTypingIndicator =
+                isLoading || (isTyping && displayedText.isNotEmpty);
             final itemCount = messageCount + (showTypingIndicator ? 1 : 0);
-            
+
             return ListView.builder(
               controller: scrollController,
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
@@ -329,12 +322,12 @@ class _ChatViewState extends State<ChatView> {
                       );
                     }
                   });
-                  
+
                   // Show typing indicator (three dots) if loading and no displayed text yet
                   if (isLoading && displayedText.isEmpty) {
                     return _buildTypingIndicator();
                   }
-                  
+
                   // Show animated message if we have displayed text
                   if (displayedText.isNotEmpty) {
                     return _buildMessageBubble(
@@ -345,15 +338,15 @@ class _ChatViewState extends State<ChatView> {
                       showAnimated: true,
                     );
                   }
-                  
+
                   // Fallback to typing indicator
                   return _buildTypingIndicator();
                 }
-                
+
                 // Show normal message
                 final message = controller.messages[index];
                 final isUser = message.role == 'user';
-                
+
                 return _buildMessageBubble(
                   content: message.content,
                   isUser: isUser,
@@ -419,8 +412,9 @@ class _ChatViewState extends State<ChatView> {
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
       child: Row(
-        mainAxisAlignment:
-            isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isUser) SizedBox(width: 0),
@@ -431,12 +425,18 @@ class _ChatViewState extends State<ChatView> {
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
             decoration: BoxDecoration(
               gradient: isUser ? AppColors.orangeGradient : null,
-              color: isUser ? null : const Color(0xFFFFF8F0), // Light beige for assistant
+              color: isUser
+                  ? null
+                  : const Color(0xFFFFF8F0), // Light beige for assistant
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16.r),
                 topRight: Radius.circular(16.r),
-                bottomLeft: isUser ? Radius.circular(16.r) : Radius.circular(4.r),
-                bottomRight: isUser ? Radius.circular(4.r) : Radius.circular(16.r),
+                bottomLeft: isUser
+                    ? Radius.circular(16.r)
+                    : Radius.circular(4.r),
+                bottomRight: isUser
+                    ? Radius.circular(4.r)
+                    : Radius.circular(16.r),
               ),
               boxShadow: [
                 BoxShadow(
@@ -450,10 +450,7 @@ class _ChatViewState extends State<ChatView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Message content with newline support
-                _buildMessageText(
-                  content: content,
-                  isUser: isUser,
-                ),
+                _buildMessageText(content: content, isUser: isUser),
                 SizedBox(height: 4.h),
                 // Timestamp
                 AutoTranslateText(
@@ -472,13 +469,10 @@ class _ChatViewState extends State<ChatView> {
     );
   }
 
-  Widget _buildMessageText({
-    required String content,
-    required bool isUser,
-  }) {
+  Widget _buildMessageText({required String content, required bool isUser}) {
     // Handle newlines properly - split by single and double newlines
     final paragraphs = content.split('\n\n');
-    
+
     return RichText(
       text: TextSpan(
         style: MyTextTheme.smallBCN.copyWith(
@@ -488,10 +482,10 @@ class _ChatViewState extends State<ChatView> {
         children: paragraphs.asMap().entries.expand((entry) {
           final isLast = entry.key == paragraphs.length - 1;
           final paragraph = entry.value;
-          
+
           // Split paragraph by single newlines
           final lines = paragraph.split('\n');
-          
+
           // Create text spans for each line
           final lineSpans = lines.asMap().entries.map((lineEntry) {
             final isLastLine = lineEntry.key == lines.length - 1;
@@ -500,12 +494,12 @@ class _ChatViewState extends State<ChatView> {
               children: isLastLine ? null : [const TextSpan(text: '\n')],
             );
           }).toList();
-          
+
           // Add double newline between paragraphs (except after last)
           if (!isLast && lineSpans.isNotEmpty) {
             lineSpans.add(const TextSpan(text: '\n\n'));
           }
-          
+
           return lineSpans;
         }).toList(),
       ),
@@ -515,16 +509,28 @@ class _ChatViewState extends State<ChatView> {
   Widget _buildTopicChips(ChatController controller) {
     final topics = [
       {'label': 'Career', 'icon': Icons.work, 'value': 'Career'},
-      {'label': 'Love & Relationships', 'icon': Icons.favorite, 'value': 'Love & Relationships'},
+      {
+        'label': 'Love & Relationships',
+        'icon': Icons.favorite,
+        'value': 'Love & Relationships',
+      },
       {'label': 'Marriage', 'icon': Icons.favorite_border, 'value': 'Marriage'},
       {'label': 'Health', 'icon': Icons.health_and_safety, 'value': 'Health'},
-      {'label': 'Finance', 'icon': Icons.account_balance_wallet, 'value': 'Finance'},
+      {
+        'label': 'Finance',
+        'icon': Icons.account_balance_wallet,
+        'value': 'Finance',
+      },
       {'label': 'Education', 'icon': Icons.school, 'value': 'Education'},
       {'label': 'Family', 'icon': Icons.people, 'value': 'Family'},
-      {'label': 'Spiritual Guidance', 'icon': Icons.auto_awesome, 'value': 'Spiritual Guidance'},
+      {
+        'label': 'Spiritual Guidance',
+        'icon': Icons.auto_awesome,
+        'value': 'Spiritual Guidance',
+      },
       {'label': 'Other', 'icon': Icons.more_horiz, 'value': 'Other'},
     ];
-    
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       decoration: BoxDecoration(
@@ -567,20 +573,25 @@ class _ChatViewState extends State<ChatView> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: topics.map((topic) {
-                final isSelected = controller.selectedTopic.value == topic['value'];
+                final isSelected =
+                    controller.selectedTopic.value == topic['value'];
                 return Padding(
                   padding: EdgeInsets.only(right: 8.w),
                   child: GestureDetector(
-                    onTap: () => controller.selectTopic(topic['value'] as String),
+                    onTap: () =>
+                        controller.selectTopic(topic['value'] as String),
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 10.h,
+                      ),
                       decoration: BoxDecoration(
                         gradient: isSelected ? AppColors.orangeGradient : null,
                         color: isSelected ? null : Colors.white,
                         borderRadius: BorderRadius.circular(20.r),
                         border: Border.all(
-                          color: isSelected 
-                              ? Colors.transparent 
+                          color: isSelected
+                              ? Colors.transparent
                               : const Color(0xFFE0E0E0),
                           width: isSelected ? 0 : 1.5,
                         ),
@@ -591,20 +602,20 @@ class _ChatViewState extends State<ChatView> {
                           Icon(
                             topic['icon'] as IconData,
                             size: 18.w,
-                            color: isSelected 
-                                ? Colors.white 
+                            color: isSelected
+                                ? Colors.white
                                 : const Color(0xFF666666),
                           ),
                           SizedBox(width: 6.w),
                           AutoTranslateText(
                             topic['label'] as String,
                             style: MyTextTheme.smallBCN.copyWith(
-                              color: isSelected 
-                                  ? Colors.white 
+                              color: isSelected
+                                  ? Colors.white
                                   : const Color(0xFF666666),
                               fontSize: 13.sp,
-                              fontWeight: isSelected 
-                                  ? FontWeight.w600 
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
                                   : FontWeight.normal,
                             ),
                           ),
@@ -674,13 +685,13 @@ class _ChatViewState extends State<ChatView> {
             ),
           ),
           SizedBox(width: 12.w),
-          
+
           // Send button
           Obx(() {
             final hasText = controller.messageText.value.trim().isNotEmpty;
             final isLoading = controller.isLoading.value;
             final isTyping = controller.isTyping.value;
-            
+
             return GestureDetector(
               onTap: (hasText && !isLoading && !isTyping)
                   ? () {
@@ -711,7 +722,8 @@ class _ChatViewState extends State<ChatView> {
                   boxShadow: (hasText && !isLoading && !isTyping)
                       ? [
                           BoxShadow(
-                            color: AppColors.orangeGradient.colors.first.withOpacity(0.3),
+                            color: AppColors.orangeGradient.colors.first
+                                .withOpacity(0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -729,11 +741,7 @@ class _ChatViewState extends State<ChatView> {
                           ),
                         ),
                       )
-                    : Icon(
-                        Icons.send,
-                        color: Colors.white,
-                        size: 22.w,
-                      ),
+                    : Icon(Icons.send, color: Colors.white, size: 22.w),
               ),
             );
           }),
@@ -792,9 +800,7 @@ extension ChatViewReviewPrompt on _ChatViewState {
         ),
         content: AutoTranslateText(
           'Would you like to rate your experience with ${widget.persona.displayName}?',
-          style: MyTextTheme.smallBCN.copyWith(
-            color: const Color(0xFF666666),
-          ),
+          style: MyTextTheme.smallBCN.copyWith(color: const Color(0xFF666666)),
         ),
         actions: [
           TextButton(
@@ -809,21 +815,13 @@ extension ChatViewReviewPrompt on _ChatViewState {
           TextButton(
             onPressed: () {
               Get.back(); // Close prompt dialog
-              Get.back(); // Go back from chat
-              // Navigate to persona detail with review prompt
-              Future.delayed(const Duration(milliseconds: 300), () {
-                Get.toNamed(AppRoutes.personaDetail, arguments: {
-                  'personaId': widget.persona.id,
-                  'persona': widget.persona,
-                  'showReviewPrompt': true,
-                });
-              });
+              Get.back(
+                result: {'showReviewPrompt': true},
+              ); // Go back from chat with result
             },
             child: AutoTranslateText(
               'Rate Now',
-              style: MyTextTheme.smallBCB.copyWith(
-                color: AppColors.saffron,
-              ),
+              style: MyTextTheme.smallBCB.copyWith(color: AppColors.saffron),
             ),
           ),
         ],
@@ -854,15 +852,15 @@ extension ChatViewReviewPrompt on _ChatViewState {
         ),
         content: AutoTranslateText(
           'Would you like to rate your experience with ${widget.persona.displayName} before ending the chat?',
-          style: MyTextTheme.smallBCN.copyWith(
-            color: const Color(0xFF666666),
-          ),
+          style: MyTextTheme.smallBCN.copyWith(color: const Color(0xFF666666)),
         ),
         actions: [
           TextButton(
             onPressed: () {
               Get.back(); // Close prompt dialog
               controller.deleteConversation();
+              // Just go back, no rating
+              Get.back();
             },
             child: AutoTranslateText(
               'End Without Rating',
@@ -874,12 +872,8 @@ extension ChatViewReviewPrompt on _ChatViewState {
           ElevatedButton(
             onPressed: () {
               Get.back(); // Close prompt dialog
-              // Navigate to persona detail with review prompt
-              Get.toNamed(AppRoutes.personaDetail, arguments: {
-                'personaId': widget.persona.id,
-                'persona': widget.persona,
-                'showReviewPrompt': true,
-              });
+              // Return result for review
+              Get.back(result: {'showReviewPrompt': true});
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.saffron,
@@ -887,9 +881,7 @@ extension ChatViewReviewPrompt on _ChatViewState {
             ),
             child: AutoTranslateText(
               'Rate & End Chat',
-              style: MyTextTheme.smallBCB.copyWith(
-                color: Colors.white,
-              ),
+              style: MyTextTheme.smallBCB.copyWith(color: Colors.white),
             ),
           ),
         ],
@@ -908,7 +900,8 @@ class _TypingDot extends StatefulWidget {
   State<_TypingDot> createState() => _TypingDotState();
 }
 
-class _TypingDotState extends State<_TypingDot> with SingleTickerProviderStateMixin {
+class _TypingDotState extends State<_TypingDot>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -919,10 +912,11 @@ class _TypingDotState extends State<_TypingDot> with SingleTickerProviderStateMi
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-    
+    _animation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
     // Start animation after delay
     Future.delayed(Duration(milliseconds: widget.delay), () {
       if (mounted) {
@@ -957,4 +951,3 @@ class _TypingDotState extends State<_TypingDot> with SingleTickerProviderStateMi
     );
   }
 }
-
