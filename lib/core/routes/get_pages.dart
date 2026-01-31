@@ -12,6 +12,10 @@ import 'package:astrobharataiuser/binding/waiting_screen_binding/waiting_screen_
 import 'package:astrobharataiuser/binding/onboarding_binding/onboarding_binding.dart';
 import 'package:astrobharataiuser/binding/ai_chat_binding/ai_chat_binding.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/view/remedies_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/bindings/remedies_binding.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_category_listing/view/remedy_category_listing_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_category_listing/bindings/remedy_category_listing_binding.dart';
 import 'package:astrobharataiuser/screens/ai_chat/views/ai_chat_view.dart';
 import 'package:astrobharataiuser/screens/blogs/view/all_blogs_view.dart';
 import 'package:astrobharataiuser/screens/blogs/view/blog_comments_view.dart';
@@ -437,6 +441,20 @@ class PageRoutes {
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
       binding: EcommerceBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.remedies,
+      page: () => const RemediesView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: RemediesBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.remedyCategoryListing,
+      page: () => const RemedyCategoryListingView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: RemedyCategoryListingBinding(),
     ),
     GetPage(
       name: AppRoutes.productList,

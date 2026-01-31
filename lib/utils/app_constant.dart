@@ -134,6 +134,11 @@ class AppConstant {
   static const String aiNumerology = 'assets/app/ai_numerology.png';
   static const String aiPalm = 'assets/app/ai_palm.png';
 
+  ///
+  static const String logo = '$s3BaseUrl/homepageVideos/favicon.ico';
+  static const String logoText =
+      '$s3BaseUrl/homepageVideos/Frame+1321314931.svg';
+
   /// astrology tool icons
   static const String astrologyToolTarotReading =
       'assets/images/tarot reading final.png';

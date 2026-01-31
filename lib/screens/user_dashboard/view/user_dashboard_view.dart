@@ -2290,10 +2290,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.toNamed(
-                      AppRoutes.ecommerceHome,
-                      arguments: {'showBackButton': true},
-                    );
+                    Get.toNamed(AppRoutes.remedies);
                   },
                   child: AutoTranslateText(
                     'View All',

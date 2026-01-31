@@ -47,6 +47,8 @@ class AppRoutes {
   static const String addresses = '/addresses';
   static const String coupons = '/coupons';
   static const String followingAstrologers = '/following-astrologers';
+  static const String remedies = '/remedies';
+  static const String remedyCategoryListing = '/remedy-category-listing';
 
   // Support Tickets Routes
   static const String supportTickets = '/support-tickets';

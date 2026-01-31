@@ -218,7 +218,8 @@ class UserDashboardController extends BaseController
   final ScrollController sliderTabsScrollController = ScrollController();
   bool _isScrollingSlider = false; // Prevent multiple simultaneous scroll calls
   bool _skipNextScrollEnd = false;
-  bool _updatingFromStripScroll = false; // True when index was set from user dragging strip
+  bool _updatingFromStripScroll =
+      false; // True when index was set from user dragging strip
 
   List<String> get sliderTabs => [
     'Home',
@@ -359,7 +360,10 @@ class UserDashboardController extends BaseController
   }
 
   /// Returns the tab index whose center is closest to the viewport center at [scrollOffset].
-  int _getSliderIndexFromScrollOffset(double scrollOffset, double viewportWidth) {
+  int _getSliderIndexFromScrollOffset(
+    double scrollOffset,
+    double viewportWidth,
+  ) {
     final n = sliderTabs.length;
     if (n == 0) return 0;
     final width = Get.context != null ? Get.width : 375.0;
@@ -383,11 +387,16 @@ class UserDashboardController extends BaseController
     try {
       final sc = sliderTabsScrollController;
       if (!sc.hasClients || sc.positions.isEmpty) return;
-      final position = sc.positions.length == 1 ? sc.position : sc.positions.first;
+      final position = sc.positions.length == 1
+          ? sc.position
+          : sc.positions.first;
       if (position.viewportDimension <= 0) return;
       final scrollOffset = position.pixels;
       final viewportWidth = position.viewportDimension;
-      final newIndex = _getSliderIndexFromScrollOffset(scrollOffset, viewportWidth);
+      final newIndex = _getSliderIndexFromScrollOffset(
+        scrollOffset,
+        viewportWidth,
+      );
       final currentValue = selectedSliderIndex.value;
       if (newIndex != currentValue) {
         _updatingFromStripScroll = true;
