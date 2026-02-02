@@ -1,12 +1,12 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/predictions_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+/// Predictions table - matches kundli_result_view feature list style.
 class PredictionsTableWidget extends StatelessWidget {
   final PredictionsController controller;
 
@@ -15,300 +15,128 @@ class PredictionsTableWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
-      child: Container(
-        decoration: BoxDecoration(
-          // color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: 50.h,
-                          width: 50.h,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: Icon(
-                            Icons.traffic,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
-                      ),
-                      Spacing.w(12),
-                      // Life Predictions Header
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 12.h),
-                        child: AutoTranslateText(
-                          'Life Predictions',
-                          style: MyTextTheme.largeBCB.copyWith(
-                            color: "#6F221E".toColor(),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            fontFamily: 'baloo2',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16.h),
-
-            // First 6 rows (Life Predictions)
-            ...controller.predictionsTableData.take(6).map((row) {
-              final leftText = row['left'] as String;
-              final rightText = row['right'] as String? ?? '';
-              final hasApiLeft = row['hasApi'] as bool? ?? false;
-              final hasApiRight = row['hasApiRight'] as bool? ?? false;
-
-              return Padding(
-                padding: EdgeInsets.only(left: 10.0, right: 10.0, bottom: 12.h),
-                child: Row(
-                  children: [
-                    // Left Column
-                    Expanded(
-                      child: _buildCard(
-                        leftText,
-                        hasApiLeft,
-                        leftText.isNotEmpty
-                            ? () => controller.navigateToTab(leftText)
-                            : null,
-                      ),
-                    ),
-                    if (rightText.isNotEmpty) ...[
-                      Spacing.w(12),
-                      // Right Column
-                      Expanded(
-                        child: _buildCard(
-                          rightText,
-                          hasApiRight,
-                          () => controller.navigateToTab(rightText),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              );
-            }).toList(),
-
-            Spacing.h(24),
-
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: 50.h,
-                          width: 50.h,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: Icon(
-                            Icons.traffic,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
-                      ),
-                      Spacing.w(12),
-                      // Monthly Predictions Header
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 12.h),
-                        child: AutoTranslateText(
-                          'Monthly Predictions',
-                          style: MyTextTheme.largeBCB.copyWith(
-                            color: "#6F221E".toColor(),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            fontFamily: 'baloo2',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16.h),
-
-            // Remaining rows (Monthly Predictions)
-            ...controller.predictionsTableData.skip(6).map((row) {
-              final leftText = row['left'] as String;
-              final rightText = row['right'] as String? ?? '';
-              final hasApiLeft = row['hasApi'] as bool? ?? false;
-              final hasApiRight = row['hasApiRight'] as bool? ?? false;
-
-              return Padding(
-                padding: EdgeInsets.only(left: 10.0, right: 10.0, bottom: 12.h),
-                child: Row(
-                  children: [
-                    // Left Column
-                    Expanded(
-                      child: _buildCard(
-                        leftText,
-                        hasApiLeft,
-                        leftText.isNotEmpty
-                            ? () => controller.navigateToTab(leftText)
-                            : null,
-                      ),
-                    ),
-                    if (rightText.isNotEmpty) ...[
-                      Spacing.w(12),
-                      // Right Column
-                      Expanded(
-                        child: _buildCard(
-                          rightText,
-                          hasApiRight,
-                          () => controller.navigateToTab(rightText),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              );
-            }).toList(),
-          ],
-        ),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeader('Life Predictions', Icons.auto_awesome),
+          Spacing.h(8),
+          ...controller.predictionsTableData.take(6).map((row) => _buildRow(row)),
+          Spacing.h(14),
+          _buildSectionHeader('Monthly Predictions', Icons.calendar_month),
+          Spacing.h(8),
+          ...controller.predictionsTableData.skip(6).map((row) => _buildRow(row)),
+        ],
       ),
     );
   }
 
-  Widget _buildCard(String title, bool hasApi, VoidCallback? onTap) {
-    return GestureDetector(
-      onTap: hasApi && onTap != null ? onTap : null,
-      // child: Container(
-      //   padding: EdgeInsets.all(16.w),
-      //   decoration: BoxDecoration(
-      //     gradient: LinearGradient(
-      //       colors: hasApi
-      //           ? [
-      //               "#ed6f30".toColor().withOpacity(0.9),
-      //               "#ed6f30".toColor().withOpacity(0.7),
-      //             ]
-      //           : [Colors.grey.withOpacity(0.3), Colors.grey.withOpacity(0.2)],
-      //       begin: Alignment.topLeft,
-      //       end: Alignment.bottomRight,
-      //     ),
-      //     borderRadius: BorderRadius.circular(16.r),
-      //     boxShadow: [
-      //       BoxShadow(
-      //         color: Colors.black.withOpacity(0.1),
-      //         blurRadius: 8,
-      //         offset: const Offset(0, 4),
-      //       ),
-      //     ],
-      //   ),
-      //   child: Column(
-      //     mainAxisSize: MainAxisSize.min,
-      //     children: [
-      //       AutoTranslateText(
-      //         title,
-      //         textAlign: TextAlign.center,
-      //         style: MyTextTheme.mediumBCB.copyWith(
-      //           color: Colors.white,
-      //           fontWeight: FontWeight.bold,
-      //         ),
-      //       ),
-      //       if (!hasApi) ...[
-      //         Spacing.h(4),
-      //         AutoTranslateText(
-      //           'Coming Soon',
-      //           textAlign: TextAlign.center,
-      //           style: AppTypography.label.copyWith(
-      //             color: Colors.white.withOpacity(0.8),
-      //           ),
-      //         ),
-      //       ],
-      //     ],
-      //   ),
-      // ),
-      child: Container(
-        // height: 100.h,
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: hasApi
-                ? ["#FF8C42".toColor(), "#E63946".toColor()]
-                : ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        gradient: AppColors.orangeGradient,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.deepOrange.withOpacity(0.2),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
-          // border: Border.all(color: Colors.deepOrange, width: 1),
-          borderRadius: BorderRadius.circular(16.r),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(6.r),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.25),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: Colors.white, size: 18.w),
+          ),
+          Spacing.w(10),
+          AutoTranslateText(
+            title,
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 14.sp,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRow(Map<String, dynamic> row) {
+    final leftText = row['left'] as String;
+    final rightText = row['right'] as String? ?? '';
+    final hasApiLeft = row['hasApi'] as bool? ?? false;
+    final hasApiRight = row['hasApiRight'] as bool? ?? false;
+
+    if (!hasApiLeft && !hasApiRight) return const SizedBox.shrink();
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8.h),
+      child: Row(
+        children: [
+          if (hasApiLeft) Expanded(child: _buildCard(leftText, () => controller.navigateToTab(leftText))),
+          if (hasApiLeft && hasApiRight && rightText.isNotEmpty) Spacing.w(8),
+          if (rightText.isNotEmpty && hasApiRight)
+            Expanded(child: _buildCard(rightText, () => controller.navigateToTab(rightText))),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCard(String title, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 2.h),
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: AppColors.cardLight,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: AppColors.deepOrange.withOpacity(0.35), width: 1),
           boxShadow: [
             BoxShadow(
-              color: hasApi
-                  ? Colors.brown.withOpacity(0.01)
-                  : Colors.brown.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 6),
+              color: AppColors.shadowLight,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Row(
           children: [
-            AutoTranslateText(
-              title,
-              textAlign: TextAlign.center,
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: hasApi ? Colors.white : Colors.black,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
+            Container(
+              padding: EdgeInsets.all(6.r),
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.deepOrange.withOpacity(0.2),
+                    blurRadius: 3,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+              ),
+              child: Icon(Icons.auto_awesome, color: Colors.white, size: 14.w),
+            ),
+            Spacing.w(12),
+            Expanded(
+              child: AutoTranslateText(
+                title,
+                style: MyTextTheme.smallBCB.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12.sp,
+                ),
               ),
             ),
-            if (!hasApi) ...[
-              Spacing.h(6),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                decoration: BoxDecoration(
-                  color: "#FFFFFF".toColor(),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: AutoTranslateText(
-                  'Coming Soon',
-                  style: AppTypography.label.copyWith(
-                    color: hasApi ? Colors.white : Colors.black,
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
+            Icon(Icons.arrow_forward_ios, color: AppColors.deepOrange, size: 12.w),
           ],
         ),
       ),

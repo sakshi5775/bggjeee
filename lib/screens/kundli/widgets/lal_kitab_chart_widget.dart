@@ -1,6 +1,8 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/lal_kitab_controller.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/consult_astrologer_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -87,6 +89,9 @@ class LalKitabChartWidget extends StatelessWidget {
                 },
               ),
             ),
+            Spacing.h(12),
+            const ConsultAstrologerCard(),
+            Spacing.h(12),
           ],
         ),
       );

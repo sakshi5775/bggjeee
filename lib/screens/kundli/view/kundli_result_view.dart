@@ -6,8 +6,11 @@ import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_contro
 import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/ascendant_report_widget.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/shad_bala_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/ashtakvarga_chart_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/ashtakvarga_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/binnashtakvarga_widget.dart';
@@ -21,7 +24,6 @@ import 'package:astrobharataiuser/screens/kundli/widgets/moon_chart_widget.dart'
 import 'package:astrobharataiuser/screens/kundli/widgets/navamsha_chart_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/sun_chart_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/transit_chart_widget.dart';
-import 'package:astrobharataiuser/screens/kundli/widgets/varshphal_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -53,7 +55,7 @@ class KundliResultView extends BasePage<KundliResultController> {
           child: SafeArea(
             child: Column(
               children: [
-                KundliHeader(),
+                KundliHeader(title: 'Kundli Report'),
                 _buildTabs(),
                 Expanded(
                   child: PageView.builder(
@@ -111,7 +113,30 @@ class KundliResultView extends BasePage<KundliResultController> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.auto_stories_rounded, size: 14.w, color: Colors.white),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6.r),
+                      child: CachedNetworkImage(
+                        imageUrl: AppConstant.serviceGenerateKundali,
+                        width: 24.w,
+                        height: 24.w,
+                        fit: BoxFit.contain,
+                        placeholder: (_, __) => SizedBox(
+                          width: 24.w,
+                          height: 24.w,
+                          child: Center(
+                            child: SizedBox(
+                              width: 12.w,
+                              height: 12.w,
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        errorWidget: (_, __, ___) => Icon(Icons.auto_stories_rounded, size: 14.w, color: Colors.white),
+                      ),
+                    ),
                     SizedBox(width: 6.w),
                     AutoTranslateText(
                       'Kundli Report',
@@ -230,6 +255,7 @@ class KundliResultView extends BasePage<KundliResultController> {
                   return _buildFeatureCard(
                     title: item['title'] as String,
                     icon: item['icon'] as IconData,
+                    imageUrl: item['imageUrl'] as String?,
                     onTap: () =>
                         controller.onFeatureTap(item['title'] as String),
                   );
@@ -245,6 +271,7 @@ class KundliResultView extends BasePage<KundliResultController> {
   Widget _buildFeatureCard({
     required String title,
     required IconData icon,
+    String? imageUrl,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
@@ -265,14 +292,35 @@ class KundliResultView extends BasePage<KundliResultController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: EdgeInsets.all(6.r),
-              decoration: BoxDecoration(
-                gradient: AppColors.orangeGradient,
-                shape: BoxShape.circle,
+            if (imageUrl != null && imageUrl.isNotEmpty)
+              SizedBox(
+                width: 40.w,
+                height: 40.w,
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  fit: BoxFit.contain,
+                  placeholder: (_, __) => Center(
+                    child: SizedBox(
+                      width: 18.w,
+                      height: 18.w,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.deepOrange,
+                      ),
+                    ),
+                  ),
+                  errorWidget: (_, __, ___) => Icon(Icons.image_not_supported, color: AppColors.textLight, size: 22.w),
+                ),
+              )
+            else
+              Container(
+                padding: EdgeInsets.all(6.r),
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: AppColors.textLight, size: 18.w),
               ),
-              child: Icon(icon, color: AppColors.textLight, size: 18.w),
-            ),
             Spacing.h(4),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4.w),
@@ -384,10 +432,17 @@ class KundliResultView extends BasePage<KundliResultController> {
     );
   }
 
+  static String? _featureListImageUrl(String title) {
+    final t = title.toLowerCase();
+    if (t == 'panchang') return AppConstant.servicePanchang;
+    return null;
+  }
+
   Widget _buildFeatureListItem({
     required String title,
     required VoidCallback onTap,
   }) {
+    final imageUrl = _featureListImageUrl(title);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -411,6 +466,20 @@ class KundliResultView extends BasePage<KundliResultController> {
         ),
         child: Row(
           children: [
+            if (imageUrl != null) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6.r),
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  width: 28.w,
+                  height: 28.w,
+                  fit: BoxFit.contain,
+                  placeholder: (_, __) => SizedBox(width: 28.w, height: 28.w),
+                  errorWidget: (_, __, ___) => SizedBox(width: 28.w, height: 28.w),
+                ),
+              ),
+              SizedBox(width: 10.w),
+            ],
             Expanded(
               child: AutoTranslateText(
                 title,
@@ -608,15 +677,16 @@ class KundliResultView extends BasePage<KundliResultController> {
       return AshtakvargaChartWidget(controller: controller);
     }
 
-    // Show Varshphal when VARSHPHAL tab is selected
-    if (tabName == 'varshphal') {
-      return VarshphalWidget(controller: controller);
+    // Varshphal opens as standalone page (see onFeatureTap)
+
+    // Show Shad Bala when Shad Bala tab is selected
+    if (tabName == 'shad bala') {
+      return ShadBalaWidget(controller: controller);
     }
 
     // Show "Coming Soon" for additional features tabs
     final additionalFeaturesTabs = [
       'bhav madhya',
-      'shad bala',
       'person details',
       'ghatak and favourable',
       'reports',

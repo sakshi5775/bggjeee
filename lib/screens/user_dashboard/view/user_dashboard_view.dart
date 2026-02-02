@@ -3451,7 +3451,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: _goldPillButton(
             icon: 'assets/icons/chat_with_astro.png',
             label: 'Chat with Astrologer',
-            iconColor: AppColors.primaryGradient.colors.first,
+            iconColor: AppColors.gradientBackground.colors.first,
             animateIcon: true,
             onTap: () => Get.to(() => const AstrologyServicesView()),
           ),

@@ -2,12 +2,12 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/predictions_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/prediction_style.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class YearlyPredictionWidget extends StatelessWidget {
   final PredictionsController controller;
@@ -18,53 +18,21 @@ class YearlyPredictionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingYearly.value) {
-        return Center(
-          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
-        );
+        return PredictionStyle.buildLoadingIndicator();
       }
 
       final data = controller.yearlyPredictionData.value;
 
       if (data == null || data.isEmpty) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.info_outline,
-                size: 48.w,
-                color: "#6F221E".toColor().withOpacity(0.5),
-              ),
-              Spacing.h(16),
-              AutoTranslateText(
-                'No data available',
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.6),
-                ),
-              ),
-              Spacing.h(8),
-              AutoTranslateText(
-                'Please select Yearly Predictions from the table',
-                textAlign: TextAlign.center,
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.5),
-                ),
-              ),
-            ],
-          ),
+        return PredictionStyle.buildEmptyState(
+          message: 'No data available',
+          submessage: 'Please select Yearly Predictions from the table',
         );
       }
 
       final response = data['response'] as Map<String, dynamic>?;
       if (response == null || response.isEmpty) {
-        return Center(
-          child: AutoTranslateText(
-            'No data available',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
-            ),
-          ),
-        );
+        return PredictionStyle.buildEmptyState(message: 'No data available');
       }
 
       // Phases
@@ -74,13 +42,13 @@ class YearlyPredictionWidget extends StatelessWidget {
       final phase4 = response['phase_4'] as Map<String, dynamic>?;
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Year Header
             Container(
-              padding: EdgeInsets.all(16.w),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
@@ -91,8 +59,8 @@ class YearlyPredictionWidget extends StatelessWidget {
               child: Row(
                 children: [
                   Container(
-                    height: 50.h,
-                    width: 50.h,
+                    height: 36.h,
+                    width: 36.h,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
@@ -115,7 +83,7 @@ class YearlyPredictionWidget extends StatelessWidget {
                       style: MyTextTheme.largeBCB.copyWith(
                         color: Color(0xFF3D0C11),
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 14.sp,
                         fontFamily: 'baloo2',
                       ),
                     ),
@@ -123,7 +91,7 @@ class YearlyPredictionWidget extends StatelessWidget {
                 ],
               ),
             ),
-            Spacing.h(16),
+            Spacing.h(10),
 
             // Phase 1
             if (phase1 != null) _buildPhaseCard('Phase 1', phase1),
@@ -131,11 +99,11 @@ class YearlyPredictionWidget extends StatelessWidget {
 
             // Phase 2
             if (phase2 != null) _buildPhaseCard('Phase 2', phase2),
-            Spacing.h(16),
+            Spacing.h(10),
 
             // Phase 3
             if (phase3 != null) _buildPhaseCard('Phase 3', phase3),
-            Spacing.h(16),
+            Spacing.h(10),
 
             // Phase 4
             if (phase4 != null) _buildPhaseCard('Phase 4', phase4),
@@ -162,7 +130,7 @@ class YearlyPredictionWidget extends StatelessWidget {
     final education = phase['education'] as Map<String, dynamic>?;
 
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
@@ -230,7 +198,7 @@ class YearlyPredictionWidget extends StatelessWidget {
                 ),
             ],
           ),
-          Spacing.h(12),
+          Spacing.h(10),
 
           // Period
           if (period.isNotEmpty) ...[
@@ -260,13 +228,13 @@ class YearlyPredictionWidget extends StatelessWidget {
                 ),
               ],
             ),
-            Spacing.h(12),
+            Spacing.h(10),
           ],
 
           // Main Prediction
           if (prediction.isNotEmpty) ...[
             Container(
-              padding: EdgeInsets.all(12.w),
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: Colors.deepOrange, width: 1),
@@ -280,7 +248,7 @@ class YearlyPredictionWidget extends StatelessWidget {
                 ),
               ),
             ),
-            Spacing.h(16),
+            Spacing.h(10),
           ],
 
           // Category Predictions
@@ -305,9 +273,9 @@ class YearlyPredictionWidget extends StatelessWidget {
     final prediction = data['prediction'] as String? ?? '';
 
     return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.only(bottom: 8.h),
       child: Container(
-        padding: EdgeInsets.all(12.w),
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
         decoration: BoxDecoration(
           color: Colors.deepOrangeAccent.withOpacity(0.10),
           borderRadius: BorderRadius.circular(8.r),

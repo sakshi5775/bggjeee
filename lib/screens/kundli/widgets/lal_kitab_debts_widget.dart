@@ -49,14 +49,14 @@ class LalKitabDebtsWidget extends StatelessWidget {
       }
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ...response.map((debt) {
               final debtData = debt as Map<String, dynamic>;
               return Padding(
-                padding: EdgeInsets.only(bottom: 16.h),
+                padding: EdgeInsets.only(bottom: 10.h),
                 child: _buildDebtCard(debtData),
               );
             }).toList(),
@@ -124,7 +124,7 @@ class LalKitabDebtsWidget extends StatelessWidget {
               ),
             ],
           ),
-          Spacing.h(16),
+          Spacing.h(10),
 
           // Planetory
           if (planetory.isNotEmpty) ...[
@@ -198,7 +198,7 @@ class LalKitabDebtsWidget extends StatelessWidget {
                   ),
                 )
                 .toList(),
-            Spacing.h(16),
+            Spacing.h(10),
           ],
 
           // Events
@@ -252,7 +252,7 @@ class LalKitabDebtsWidget extends StatelessWidget {
                   ),
                 )
                 .toList(),
-            Spacing.h(16),
+            Spacing.h(10),
           ],
 
           // Remedies

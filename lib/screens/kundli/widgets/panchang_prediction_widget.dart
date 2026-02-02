@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/predictions_controller.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/prediction_style.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -20,61 +21,14 @@ class PanchangPredictionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingPanchang.value) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: 28.w,
-                height: 28.w,
-                child: CircularProgressIndicator(
-                  color: "#ed6f30".toColor(),
-                  strokeWidth: 2,
-                ),
-              ),
-              Spacing.h(10),
-              AutoTranslateText(
-                'Loading...',
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
-                  fontSize: 12.sp,
-                ),
-              ),
-            ],
-          ),
-        );
+        return PredictionStyle.buildLoadingIndicator();
       }
 
       final data = controller.panchangPredictionData.value;
       if (data == null || data.isEmpty) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.info_outline,
-                size: 40.w,
-                color: "#ed6f30".toColor().withOpacity(0.5),
-              ),
-              Spacing.h(12),
-              AutoTranslateText(
-                'No data available',
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.6),
-                  fontSize: 13.sp,
-                ),
-              ),
-              Spacing.h(4),
-              AutoTranslateText(
-                'Please select Panchang from the table',
-                textAlign: TextAlign.center,
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.5),
-                  fontSize: 11.sp,
-                ),
-              ),
-            ],
-          ),
+        return PredictionStyle.buildEmptyState(
+          message: 'No data available',
+          submessage: 'Please select Panchang from the table',
         );
       }
 

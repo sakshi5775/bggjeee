@@ -2,13 +2,12 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/lal_kitab_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
+/// Lal Kitab Kundli – compact table form (Sign #, Sign Name, Planets).
 class LalKitabKundliWidget extends StatelessWidget {
   final LalKitabController controller;
 
@@ -19,189 +18,181 @@ class LalKitabKundliWidget extends StatelessWidget {
     return Obx(() {
       if (controller.isLoadingLalKitabHoroscope.value) {
         return Center(
-          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
+          child: CircularProgressIndicator(color: '#ed6f30'.toColor()),
         );
       }
 
       final data = controller.lalKitabHoroscopeData.value;
-
-      if (data == null || data.isEmpty) {
-        return Center(
-          child: AutoTranslateText(
-            'No data available',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
-            ),
-          ),
-        );
-      }
-
-      final response = data['data']?['response'] as List<dynamic>?;
+      final response = data?['data']?['response'] as List<dynamic>?;
       if (response == null || response.isEmpty) {
         return Center(
           child: AutoTranslateText(
             'No data available',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
-            ),
+            style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
           ),
         );
       }
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ...response.map((signData) {
-              final sign = signData as Map<String, dynamic>;
-              return Padding(
-                padding: EdgeInsets.only(bottom: 16.h),
-                child: _buildSignCard(sign),
-              );
-            }).toList(),
-          ],
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        child: _planetCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildTitleRow('Lal Kitab Kundli', Icons.menu_book_rounded),
+              _buildTableHeader(const ['Sign', 'Sign Name', 'Planets']),
+              ...response.asMap().entries.map((e) => _buildTableRow(
+                    e.value as Map<String, dynamic>,
+                    e.key,
+                  )),
+            ],
+          ),
         ),
       );
     });
   }
 
-  Widget _buildSignCard(Map<String, dynamic> sign) {
-    final signNumber = sign['sign'] as int? ?? 0;
-    final signName = sign['sign_name'] as String? ?? '';
-    final planets = sign['planet'] as List<dynamic>? ?? [];
-    final planetSmall = sign['planet_small'] as List<dynamic>? ?? [];
-
+  Widget _planetCard({required Widget child}) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6, offset: const Offset(0, 2)),
+        ],
+        border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: child,
+    );
+  }
+
+  Widget _buildTitleRow(String title, IconData icon) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: '#ed6f30'.toColor().withOpacity(0.08),
+        border: Border(
+          bottom: BorderSide(color: '#ed6f30'.toColor().withOpacity(0.25), width: 1),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 18.w, color: '#ed6f30'.toColor()),
+          Spacing.w(8),
+          AutoTranslateText(
+            title,
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: '#6F221E'.toColor(),
+              fontWeight: FontWeight.w600,
+              fontSize: 14.sp,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTableHeader(List<String> labels) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          colors: ['#FF8A3D'.toColor(), '#ed6f30'.toColor()],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
         ),
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: "#ed6f30".toColor(), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          // Sign Header
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                decoration: BoxDecoration(
-                  // color: "#ed6f30".toColor(),
-                  gradient: LinearGradient(
-                    colors: ["#FF8C42".toColor(), "#E63946".toColor()],
-                  ),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: AutoTranslateText(
-                  'Sign $signNumber: $signName',
-                  style: MyTextTheme.mediumBCB
-                      .copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      )
-                      .merge(AppTypography.h3),
-                ),
+          Expanded(
+            flex: 1,
+            child: AutoTranslateText(
+              labels[0],
+              style: MyTextTheme.smallBCB.copyWith(
+                color: Colors.white,
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w600,
               ),
-            ],
-          ),
-          Spacing.h(12),
-
-          // Planets
-          if (planets.isNotEmpty)
-            Wrap(
-              spacing: 10.w,
-              runSpacing: 10.h,
-              children: planets.asMap().entries.map((entry) {
-                final index = entry.key;
-                final planet = entry.value.toString();
-                final planetShort = index < planetSmall.length
-                    ? planetSmall[index].toString()
-                    : planet.substring(0, 2);
-
-                return Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 14.w,
-                    vertical: 8.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.r),
-                    border: Border.all(
-                      color: "#ed6f30".toColor().withOpacity(0.4),
-                      width: 1.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: "#ed6f30".toColor().withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      AutoTranslateText(
-                        planetShort,
-                        style: MyTextTheme.smallBCB
-                            .copyWith(
-                              color: "#ed6f30".toColor(),
-                              fontWeight: FontWeight.bold,
-                            )
-                            .merge(AppTypography.body1),
-                      ),
-                      Spacing.h(2),
-                      AutoTranslateText(
-                        planet,
-                        style: MyTextTheme.smallBCN
-                            .copyWith(color: "#6F221E".toColor())
-                            .merge(AppTypography.label),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            )
-          else
-            Container(
-              padding: EdgeInsets.all(12.w),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.5),
-                border: Border.all(color: Colors.deepOrange, width: 1),
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    color: "#6F221E".toColor().withOpacity(0.5),
-                    size: 16.w,
-                  ),
-                  Spacing.w(8),
-                  AutoTranslateText(
-                    'No planets',
-                    style: MyTextTheme.smallBCN
-                        .copyWith(color: "#6F221E".toColor().withOpacity(0.5))
-                        .merge(AppTypography.body2),
-                  ),
-                ],
-              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
             ),
+          ),
+          Expanded(
+            flex: 2,
+            child: AutoTranslateText(
+              labels[1],
+              style: MyTextTheme.smallBCB.copyWith(
+                color: Colors.white,
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: AutoTranslateText(
+              labels[2],
+              style: MyTextTheme.smallBCB.copyWith(
+                color: Colors.white,
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTableRow(Map<String, dynamic> sign, int index) {
+    final signNum = sign['sign'] as int? ?? 0;
+    final signName = sign['sign_name'] as String? ?? '';
+    final planetSmall = sign['planet_small'] as List<dynamic>? ?? [];
+    final planets = sign['planet'] as List<dynamic>? ?? [];
+    final planetText = planetSmall.isNotEmpty
+        ? planetSmall.map((e) => e.toString()).join(', ')
+        : (planets.isNotEmpty ? planets.map((e) => e.toString()).join(', ') : '-');
+    final isEven = index.isEven;
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: isEven ? '#ed6f30'.toColor().withOpacity(0.04) : Colors.white,
+        border: Border(
+          bottom: BorderSide(color: '#ed6f30'.toColor().withOpacity(0.12), width: 1),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(flex: 1, child: _cell('$signNum')),
+          Expanded(flex: 2, child: _cell(signName, isBold: true)),
+          Expanded(flex: 2, child: _cell(planetText)),
+        ],
+      ),
+    );
+  }
+
+  Widget _cell(String text, {bool isBold = false}) {
+    return AutoTranslateText(
+      text,
+      style: MyTextTheme.smallBCB.copyWith(
+        color: '#6F221E'.toColor(),
+        fontWeight: isBold ? FontWeight.w600 : FontWeight.w500,
+        fontSize: 10.sp,
+      ),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      textAlign: TextAlign.center,
     );
   }
 }

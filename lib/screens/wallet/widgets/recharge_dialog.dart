@@ -70,11 +70,11 @@ class _RechargeDialogState extends State<RechargeDialog> {
       return;
     }
 
-    if (amount < 1) {
+    if (amount < _minRechargeAmount) {
       Get.showSnackbar(
         GetSnackBar(
-          message: 'Minimum recharge amount is ₹1',
-          duration: const Duration(seconds: 2),
+          message: 'Minimum recharge amount is ₹$_minRechargeAmount. Please enter at least ₹$_minRechargeAmount or choose from the quick amounts.',
+          duration: const Duration(seconds: 3),
           backgroundColor: Colors.red,
         ),
       );
@@ -88,21 +88,32 @@ class _RechargeDialogState extends State<RechargeDialog> {
     );
 
     try {
-      Get.back(); // Close loading dialog
-      
       // For Razorpay, use startRazorpayRecharge which will open checkout
       await _controller.startRazorpayRecharge(amount);
-      
       // Note: Razorpay will open checkout and handle payment callback
       // The dialog will close after successful payment in _handlePaymentSuccess
     } catch (e) {
+      final errorStr = e.toString();
+      String message = 'Failed to initiate recharge. Please try again.';
+      if (errorStr.contains('Validation failed') ||
+          errorStr.toLowerCase().contains('validation')) {
+        message =
+            'Amount not accepted. Please enter at least ₹$_minRechargeAmount or choose from the quick amounts.';
+      } else if (errorStr.isNotEmpty) {
+        final cleanMessage = errorStr
+            .replaceFirst('Error During Communication: ', '')
+            .trim();
+        if (cleanMessage.isNotEmpty) message = cleanMessage;
+      }
       Get.showSnackbar(
         GetSnackBar(
-          message: 'Failed to initiate recharge: ${e.toString()}',
-          duration: const Duration(seconds: 2),
+          message: message,
+          duration: const Duration(seconds: 3),
           backgroundColor: Colors.red,
         ),
       );
+    } finally {
+      if (Get.isDialogOpen == true) Get.back(); // Close loading dialog
     }
   }
 
@@ -277,12 +288,17 @@ class _RechargeDialogState extends State<RechargeDialog> {
     );
   }
 
+  static const int _minRechargeAmount = 100;
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
       child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.85,
+        ),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -359,10 +375,12 @@ class _RechargeDialogState extends State<RechargeDialog> {
               ),
             ),
 
-            // Content
-            Padding(
-              padding: EdgeInsets.all(24.w),
-              child: Column(
+            // Content - scrollable to prevent overflow
+            Flexible(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(24.w),
+                  child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Amount input
@@ -581,6 +599,8 @@ class _RechargeDialogState extends State<RechargeDialog> {
                     ),
                   ),
                 ],
+                  ),
+                ),
               ),
             ),
           ],

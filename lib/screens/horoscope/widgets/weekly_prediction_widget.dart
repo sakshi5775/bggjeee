@@ -75,14 +75,14 @@ class WeeklyPredictionWidget extends StatelessWidget {
           gradient: gradientBackground,
         ),
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
           child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildTitleSection(),
-            Spacing.h(20),
+            Spacing.h(10),
             if (horoscopeData.isNotEmpty) _buildPredictionCard(horoscopeData),
-            Spacing.h(20),
+            Spacing.h(10),
             if (luckyColor.isNotEmpty || luckyNumbers.isNotEmpty) _buildLuckyElementsCard(luckyColor, luckyNumbers),
           ],
         ),
@@ -93,7 +93,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
 
   Widget _buildTitleSection() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
+      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
       decoration: BoxDecoration(
         gradient: primaryGradient,
         borderRadius: BorderRadius.circular(16.r),
@@ -147,7 +147,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
 
   Widget _buildPredictionCard(String prediction) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
@@ -201,7 +201,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
 
   Widget _buildLuckyElementsCard(String luckyColor, List<String> luckyNumbers) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
@@ -240,7 +240,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
               ),
             ],
           ),
-          Spacing.h(20),
+          Spacing.h(10),
           if (luckyColor.isNotEmpty) ...[
             _buildInfoRow('Lucky Color', luckyColor),
             if (luckyNumbers.isNotEmpty) _buildDivider(),

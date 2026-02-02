@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+/// Planet KP (extended-horoscope/planet-kp) – same design as KundliHeader (#6F221E / #ed6f30), table with all API fields.
 class PlanetKpWidget extends StatelessWidget {
   final HoroscopeMainController controller;
 
@@ -15,67 +16,26 @@ class PlanetKpWidget extends StatelessWidget {
     required this.controller,
   });
 
-  // Gradient definitions
-  static final LinearGradient gradientBackground = LinearGradient(
-    colors: ["#FCE5AA".toColor(), "#FFFCF3".toColor(), "#FFFFFF".toColor()],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  );
-
-  static final LinearGradient primaryGradient = LinearGradient(
-    colors: ["#820B17".toColor(), "#68171E".toColor(), "#5D1C21".toColor()],
-  );
-
-  static LinearGradient orangeGradient = LinearGradient(
-    colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
-  );
-
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingPlanetKp.value) {
-        return Container(
-          decoration: BoxDecoration(
-            gradient: gradientBackground,
-          ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(orangeGradient.colors.first),
-                ),
-                Spacing.h(16),
-                AutoTranslateText(
-                  'Loading Planet KP...',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: primaryGradient.colors.first.withOpacity(0.7),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        return Center(
+          child: CircularProgressIndicator(color: '#ed6f30'.toColor()),
         );
       }
 
       final data = controller.planetKpData.value;
-      if (data == null) {
-        return Container(
-          decoration: BoxDecoration(
-            gradient: gradientBackground,
-          ),
-          child: Center(
-            child: AutoTranslateText(
-              'No Planet KP data available',
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: primaryGradient.colors.first.withOpacity(0.7),
-              ),
-            ),
+      if (data == null || data.isEmpty) {
+        return Center(
+          child: AutoTranslateText(
+            'No Planet KP data available',
+            style: MyTextTheme.mediumBCN
+                .copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
           ),
         );
       }
 
-      // Extract planets from data (keys are "0", "1", "2", etc.)
       final planets = <Map<String, dynamic>>[];
       data.forEach((key, value) {
         if (key != 'callsRemaining' && value is Map<String, dynamic>) {
@@ -84,258 +44,94 @@ class PlanetKpWidget extends StatelessWidget {
       });
 
       if (planets.isEmpty) {
-        return Container(
-          decoration: BoxDecoration(
-            gradient: gradientBackground,
-          ),
-          child: Center(
-            child: AutoTranslateText(
-              'No planet data available',
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: primaryGradient.colors.first.withOpacity(0.7),
-              ),
-            ),
+        return Center(
+          child: AutoTranslateText(
+            'No planet data available',
+            style: MyTextTheme.mediumBCN
+                .copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
           ),
         );
       }
 
-      return Container(
-        decoration: BoxDecoration(
-          gradient: gradientBackground,
-        ),
+      return SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTitleSection(),
-              Spacing.h(20),
-              _buildMergedPlanetTable(planets),
-            ],
+          scrollDirection: Axis.horizontal,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minWidth: 1000.w, maxWidth: 1000.w),
+            child: _planetCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildTitleRow('Planet KP', Icons.auto_awesome_rounded),
+                  _buildTableHeader(const [
+                    'Planet',
+                    'Local Deg',
+                    'Local DMS',
+                    'Global Deg',
+                    'Global DMS',
+                    'Rasi No',
+                    'Zodiac',
+                    'House',
+                    'Pseudo Nakshatra',
+                    'Nakshatra Lord',
+                    'Pada',
+                    'Nakshatra No',
+                    'Pseudo Rasi',
+                    'Rasi No',
+                    'Rasi Lord',
+                    'Sub Lord',
+                    'Sub Sub Lord',
+                  ]),
+                  ...planets.asMap().entries.map((e) => _buildTableRow(e.value, e.key)),
+                ],
+              ),
+            ),
           ),
         ),
       );
     });
   }
 
-  Widget _buildTitleSection() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
-      decoration: BoxDecoration(
-        gradient: primaryGradient,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: primaryGradient.colors.first.withOpacity(0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: Icon(
-              Icons.auto_awesome_rounded,
-              color: const Color(0xFFDFB343),
-              size: 28.w,
-            ),
-          ),
-          Spacing.w(16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoTranslateText(
-                  'Planet KP',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: const Color(0xFFDFB343),
-                  ),
-                ),
-                Spacing.h(4),
-                AutoTranslateText(
-                  'Krishnamurti Paddhati Details',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: const Color(0xFFDFB343).withOpacity(0.9),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMergedPlanetTable(List<Map<String, dynamic>> planets) {
-    // Exclude metadata keys
-    final excludedKeys = ['name', 'full_name', 'id', '_id', 'callsRemaining'];
-    
-    // Collect all unique property keys across all planets
-    final allPropertyKeys = <String>{};
-    for (final planet in planets) {
-      planet.forEach((key, value) {
-        if (!excludedKeys.contains(key) && 
-            value != null && 
-            value is! Map && 
-            value is! List) {
-          allPropertyKeys.add(key);
-        }
-      });
-    }
-    
-    // Convert to sorted list for consistent column order
-    final sortedPropertyKeys = allPropertyKeys.toList()..sort();
-    
-    // Build columns: Planet name + all properties
-    final columns = <DataColumn>[
-      DataColumn(
-        label: _buildTableHeader('Planet'),
-      ),
-      ...sortedPropertyKeys.map((key) => DataColumn(
-        label: _buildTableHeader(_formatPropertyName(key)),
-      )),
-    ];
-    
-    // Build rows: one row per planet
-    final rows = planets.map((planet) {
-      final planetName = planet['full_name']?.toString() ?? 
-                        planet['name']?.toString() ?? 
-                        'Unknown';
-      
-      // Build cells: planet name + all property values
-      final cells = <DataCell>[
-        DataCell(_buildTableCell(planetName, primaryGradient.colors.first)),
-        ...sortedPropertyKeys.map((key) {
-          final value = planet[key];
-          final displayValue = (value != null && value is! Map && value is! List) 
-              ? value.toString() 
-              : '--';
-          return DataCell(_buildTableCell(displayValue, orangeGradient.colors.first));
-        }),
-      ];
-      
-      return DataRow(cells: cells);
-    }).toList();
-
-    return _buildTableCard(
-      title: 'All Planets KP Data',
-      icon: Icons.table_chart_rounded,
-      gradient: orangeGradient,
-      columns: columns,
-      rows: rows,
-    );
-  }
-
-  Widget _buildTableCard({
-    required String title,
-    String? subtitle,
-    required IconData icon,
-    required LinearGradient gradient,
-    required List<DataColumn> columns,
-    required List<DataRow> rows,
-  }) {
+  Widget _planetCard({required Widget child}) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: gradient.colors.first.withOpacity(0.2),
-          width: 1.5,
-        ),
+        borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 2)),
         ],
+        border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      clipBehavior: Clip.antiAlias,
+      child: child,
+    );
+  }
+
+  Widget _buildTitleRow(String title, IconData icon) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: '#ed6f30'.toColor().withOpacity(0.08),
+        border: Border(
+          bottom:
+              BorderSide(color: '#ed6f30'.toColor().withOpacity(0.25), width: 1),
+        ),
+      ),
+      child: Row(
         children: [
-          // Header
-          Container(
-            padding: EdgeInsets.all(16.w),
-            decoration: BoxDecoration(
-              gradient: gradient,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16.r),
-                topRight: Radius.circular(16.r),
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Icon(
-                    icon,
-                    color: Colors.white,
-                    size: 20.w,
-                  ),
-                ),
-                Spacing.w(12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AutoTranslateText(
-                        title,
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      if (subtitle != null) ...[
-                        Spacing.h(2),
-                        AutoTranslateText(
-                          subtitle,
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: Colors.white.withOpacity(0.9),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Table
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              headingRowColor: MaterialStateProperty.all(
-                gradient.colors.first.withOpacity(0.1),
-              ),
-              dataRowColor: MaterialStateProperty.resolveWith((states) {
-                if (states.contains(MaterialState.selected)) {
-                  return gradient.colors.first.withOpacity(0.2);
-                }
-                return null;
-              }),
-              columns: columns,
-              rows: rows,
-              dividerThickness: 1,
-              border: TableBorder(
-                horizontalInside: BorderSide(
-                  color: gradient.colors.first.withOpacity(0.1),
-                  width: 1,
-                ),
-                verticalInside: BorderSide(
-                  color: gradient.colors.first.withOpacity(0.1),
-                  width: 1,
-                ),
-              ),
+          Icon(icon, size: 18.w, color: '#ed6f30'.toColor()),
+          Spacing.w(8),
+          AutoTranslateText(
+            title,
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: '#6F221E'.toColor(),
+              fontWeight: FontWeight.w600,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -343,50 +139,120 @@ class PlanetKpWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTableHeader(String text) {
+  static const List<int> _headerFlex = [
+    2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+  ];
+
+  Widget _buildTableHeader(List<String> labels) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-      child: AutoTranslateText(
-        text,
-        style: MyTextTheme.smallBCB.copyWith(
-          color: primaryGradient.colors.first,
-          fontWeight: FontWeight.bold,
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: ['#FF8A3D'.toColor(), '#ed6f30'.toColor()],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
         ),
+      ),
+      child: Row(
+        children: List.generate(labels.length, (i) {
+          final flex = i < _headerFlex.length ? _headerFlex[i] : 1;
+          return Expanded(
+            flex: flex,
+            child: AutoTranslateText(
+              labels[i],
+              style: MyTextTheme.smallBCB.copyWith(
+                color: Colors.white,
+                fontSize: 8.sp,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+          );
+        }),
       ),
     );
   }
 
-  Widget _buildTableCell(String text, Color color) {
+  String _fmt(dynamic v) {
+    if (v == null) return '--';
+    if (v is num) return v is double ? v.toStringAsFixed(2) : v.toString();
+    return v.toString();
+  }
+
+  Widget _buildTableRow(Map<String, dynamic> row, int index) {
+    final name = row['full_name']?.toString() ?? row['name']?.toString() ?? '--';
+    final localDeg = row['local_degree'] != null ? _fmt(row['local_degree']) : '--';
+    final localDms = row['local_degree_dms']?.toString() ?? '--';
+    final globalDeg = row['global_degree'] != null ? _fmt(row['global_degree']) : '--';
+    final globalDms = row['global_degree_dms']?.toString() ?? '--';
+    final rasiNo = row['rasi_no']?.toString() ?? '--';
+    final zodiac = row['zodiac']?.toString() ?? '--';
+    final house = row['house']?.toString() ?? '--';
+    final pseudoNakshatra = row['pseudo_nakshatra']?.toString() ?? '--';
+    final nakshatraLord = row['pseudo_nakshatra_lord']?.toString() ?? '--';
+    final pada = row['pseudo_nakshatra_pada']?.toString() ?? '--';
+    final nakshatraNo = row['pseudo_nakshatra_no']?.toString() ?? '--';
+    final pseudoRasi = row['pseudo_rasi']?.toString() ?? '--';
+    final pseudoRasiNo = row['pseudo_rasi_no']?.toString() ?? '--';
+    final rasiLord = row['pseudo_rasi_lord']?.toString() ?? '--';
+    final subLord = row['sub_lord']?.toString() ?? '--';
+    final subSubLord = row['sub_sub_lord']?.toString() ?? '--';
+
+    final isEven = index.isEven;
+    final cells = [
+      name,
+      localDeg,
+      localDms,
+      globalDeg,
+      globalDms,
+      rasiNo,
+      zodiac,
+      house,
+      pseudoNakshatra,
+      nakshatraLord,
+      pada,
+      nakshatraNo,
+      pseudoRasi,
+      pseudoRasiNo,
+      rasiLord,
+      subLord,
+      subSubLord,
+    ];
+
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-      child: AutoTranslateText(
-        text,
-        style: MyTextTheme.smallBCN.copyWith(
-          color: color,
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: isEven ? '#ed6f30'.toColor().withOpacity(0.04) : Colors.white,
+        border: Border(
+          bottom: BorderSide(
+              color: '#ed6f30'.toColor().withOpacity(0.12), width: 1),
         ),
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
+      ),
+      child: Row(
+        children: List.generate(cells.length, (i) {
+          final flex = i < _headerFlex.length ? _headerFlex[i] : 1;
+          return Expanded(
+            flex: flex,
+            child: _cell(cells[i], isBold: i == 0),
+          );
+        }),
       ),
     );
   }
 
-  String _formatPropertyName(String key) {
-    // Convert snake_case to Title Case
-    return key
-        .split('_')
-        .map((word) => word.isEmpty 
-            ? '' 
-            : word[0].toUpperCase() + word.substring(1).toLowerCase())
-        .join(' ');
+  Widget _cell(String text, {bool isBold = false}) {
+    return AutoTranslateText(
+      text,
+      style: MyTextTheme.smallBCB.copyWith(
+        color: '#6F221E'.toColor(),
+        fontWeight: isBold ? FontWeight.w600 : FontWeight.w500,
+        fontSize: 8.sp,
+      ),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      textAlign: TextAlign.center,
+    );
   }
 }
-
-
-
-
-
-
-
-
-
-

@@ -155,8 +155,12 @@ import 'package:astrobharataiuser/screens/kundli/view/shodashvarga_view.dart';
 import 'package:astrobharataiuser/screens/kundli/view/dasha_view.dart';
 import 'package:astrobharataiuser/screens/kundli/view/yog_view.dart';
 import 'package:astrobharataiuser/screens/kundli/view/dosh_view.dart';
+import 'package:astrobharataiuser/screens/kundli/view/sade_sati_view.dart';
+import 'package:astrobharataiuser/screens/kundli/view/gemstones_report_view.dart';
+import 'package:astrobharataiuser/screens/kundli/view/transit_today_view.dart';
 import 'package:astrobharataiuser/screens/kundli/view/kp_system_view.dart';
 import 'package:astrobharataiuser/screens/kundli/view/lal_kitab_view.dart';
+import 'package:astrobharataiuser/screens/kundli/view/varshphal_view.dart';
 import 'package:astrobharataiuser/screens/kundli/view/predictions_view.dart';
 import 'package:astrobharataiuser/screens/kundli/view/planets_view.dart';
 import 'package:astrobharataiuser/binding/kundli_binding/kundli_form_binding.dart';
@@ -165,8 +169,12 @@ import 'package:astrobharataiuser/binding/kundli_binding/shodashvarga_binding.da
 import 'package:astrobharataiuser/binding/kundli_binding/dasha_binding.dart';
 import 'package:astrobharataiuser/binding/kundli_binding/yog_binding.dart';
 import 'package:astrobharataiuser/binding/kundli_binding/dosh_binding.dart';
+import 'package:astrobharataiuser/binding/kundli_binding/sade_sati_binding.dart';
+import 'package:astrobharataiuser/binding/kundli_binding/gemstones_report_binding.dart';
+import 'package:astrobharataiuser/binding/kundli_binding/transit_today_binding.dart';
 import 'package:astrobharataiuser/binding/kundli_binding/kp_system_binding.dart';
 import 'package:astrobharataiuser/binding/kundli_binding/lal_kitab_binding.dart';
+import 'package:astrobharataiuser/binding/kundli_binding/varshphal_binding.dart';
 import 'package:astrobharataiuser/binding/kundli_binding/predictions_binding.dart';
 import 'package:astrobharataiuser/binding/kundli_binding/planets_binding.dart';
 import 'package:astrobharataiuser/binding/panchang_binding/panchang_binding.dart';
@@ -1253,6 +1261,27 @@ class PageRoutes {
       transitionDuration: Duration(milliseconds: 300),
     ),
     GetPage(
+      name: AppRoutes.sadeSati,
+      page: () => const SadeSatiView(),
+      binding: SadeSatiBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.gemstonesReport,
+      page: () => const GemstonesReportView(),
+      binding: GemstonesReportBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.transitToday,
+      page: () => const TransitTodayView(),
+      binding: TransitTodayBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
       name: AppRoutes.kpSystem,
       page: () => const KpSystemView(),
       binding: KpSystemBinding(),
@@ -1263,6 +1292,13 @@ class PageRoutes {
       name: AppRoutes.lalKitab,
       page: () => const LalKitabView(),
       binding: LalKitabBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.varshphal,
+      page: () => const VarshphalView(),
+      binding: VarshphalBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),

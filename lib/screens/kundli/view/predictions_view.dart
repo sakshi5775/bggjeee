@@ -1,10 +1,11 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
-import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/predictions_controller.dart';
-import 'package:astrobharataiuser/screens/kundli/widgets/predictions_table_widget.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/numerology_widget.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/predictions_table_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/daily_prediction_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/weekly_prediction_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/monthly_prediction_widget.dart';
@@ -13,54 +14,48 @@ import 'package:astrobharataiuser/screens/kundli/widgets/ascendant_prediction_wi
 import 'package:astrobharataiuser/screens/kundli/widgets/moon_sign_prediction_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/nakshatra_prediction_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/panchang_prediction_widget.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/rudraksha_prediction_widget.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/lal_kitab_predictions_widget.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class PredictionsView extends BasePage<PredictionsController> {
   const PredictionsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // backgroundColor: '#FFF8E1'.toColor(),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              _buildHeader(),
-
-              // Tabs (always visible when not in table view)
-              Obx(() {
-                if (controller.selectedTabIndex.value == -1) {
-                  return SizedBox.shrink();
-                }
-                return _buildTabs();
-              }),
-
-              // Content
-              Expanded(
-                child: Obx(() {
-                  // Show table view if selectedTabIndex is -1
-                  if (controller.selectedTabIndex.value == -1) {
-                    return PredictionsTableWidget(controller: controller);
-                  }
-                  // Otherwise show swipeable PageView for tabs
-                  return PageView(
+      ),
+      child: Scaffold(
+        drawer: UserDashboardView.buildDrawer(context),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                KundliHeader(title: 'Predictions'),
+                _buildTabs(),
+                Expanded(
+                  child: PageView(
                     controller: controller.pageController,
                     onPageChanged: controller.onPageChanged,
                     children: [
+                      PredictionsTableWidget(controller: controller),
                       NumerologyWidget(controller: controller),
                       DailyPredictionWidget(controller: controller),
                       WeeklyPredictionWidget(controller: controller),
@@ -70,130 +65,147 @@ class PredictionsView extends BasePage<PredictionsController> {
                       MoonSignPredictionWidget(controller: controller),
                       NakshatraPredictionWidget(controller: controller),
                       PanchangPredictionWidget(controller: controller),
+                      RudrakshaPredictionWidget(controller: controller),
+                      LalKitabPredictionsWidget(controller: controller),
                     ],
-                  );
-                }),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF3D0C11), Color(0xFF5D1C21)],
-        ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Back button
-          IconButton(
-            icon: Icon(Icons.arrow_back, color: Color(0xFFF7C443), size: 24.w),
-            onPressed: () => Get.back(),
-          ),
-
-          Spacing.w(8),
-
-          // Title
-          Expanded(
-            child: AutoTranslateText(
-              'Predictions',
-              style: MyTextTheme.largeBCB
-                  .copyWith(
-                    color: Color(0xFFF7C443),
-                    fontWeight: FontWeight.bold,
-                  )
-                  .merge(AppTypography.h2),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildTabs() {
+    const maroon = Color(0xFF6F221E);
+
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
+      height: 48.h,
+      color: Colors.transparent,
+      padding: EdgeInsets.symmetric(vertical: 6.h),
+      child: Obx(() {
+        final selectedIndex = controller.selectedTabIndex.value;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToSelectedTab(selectedIndex);
+        });
+
+        return Row(
           children: [
-            _buildTab('NUMEROLOGY', 0),
-            _buildTab('DAILY', 1),
-            _buildTab('WEEKLY', 2),
-            _buildTab('MONTHLY', 3),
-            _buildTab('YEARLY', 4),
-            _buildTab('ASCENDANT', 5),
-            _buildTab('MOON SIGN', 6),
-            _buildTab('NAKSHATRA', 7),
-            _buildTab('PANCHANG', 8),
+            Padding(
+              padding: EdgeInsets.only(left: 12.w, right: 10.w),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
+                  borderRadius: BorderRadius.circular(12.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.deepOrange.withOpacity(0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.auto_awesome, size: 14.w, color: Colors.white),
+                    SizedBox(width: 6.w),
+                    AutoTranslateText(
+                      'Predictions',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                controller: controller.tabsScrollController,
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(width: 4.w),
+                    ...controller.tabNames.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final tab = entry.value;
+                      final isSelected = selectedIndex == index;
+                      if (!controller.tabKeys.containsKey(index)) {
+                        controller.tabKeys[index] = GlobalKey();
+                      }
+                      final tabKey = controller.tabKeys[index]!;
+
+                      return Padding(
+                        key: tabKey,
+                        padding: EdgeInsets.only(right: 6.w),
+                        child: GestureDetector(
+                          onTap: () => controller.onTabSelected(index),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeOut,
+                            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                            decoration: BoxDecoration(
+                              color: isSelected ? AppColors.deepOrange : Colors.transparent,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: isSelected
+                                  ? null
+                                  : Border.all(
+                                      color: maroon.withOpacity(0.2),
+                                      width: 1,
+                                    ),
+                              boxShadow: isSelected
+                                  ? [
+                                      BoxShadow(
+                                        color: AppColors.deepOrange.withOpacity(0.25),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 1),
+                                      ),
+                                    ]
+                                  : null,
+                            ),
+                            child: Center(
+                              child: AutoTranslateText(
+                                tab,
+                                textAlign: TextAlign.center,
+                                style: MyTextTheme.mediumBCB.copyWith(
+                                  color: isSelected ? Colors.white : maroon,
+                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                    SizedBox(width: 10.w),
+                  ],
+                ),
+              ),
+            ),
           ],
-        ),
-      ),
+        );
+      }),
     );
   }
 
-  Widget _buildTab(String title, int index) {
-    return Obx(() {
-      final isSelected = controller.selectedTabIndex.value == index;
-
-      return GestureDetector(
-        onTap: () {
-          controller.onTabSelected(index);
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? '#FF6B35'.toColor().withOpacity(0.1)
-                : Colors.transparent,
-            border: Border(
-              bottom: BorderSide(
-                color: isSelected ? '#FF6B35'.toColor() : Colors.transparent,
-                width: 3,
-              ),
-            ),
-          ),
-          child: AutoTranslateText(
-            title,
-            style: MyTextTheme.mediumBCB
-                .copyWith(
-                  color: isSelected
-                      ? '#FF6B35'.toColor()
-                      : '#3E2723'.toColor().withOpacity(0.6),
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                )
-                .merge(AppTypography.body2),
-          ),
-        ),
+  void _scrollToSelectedTab(int selectedIndex) {
+    final tabKey = controller.tabKeys[selectedIndex];
+    if (tabKey?.currentContext != null) {
+      Scrollable.ensureVisible(
+        tabKey!.currentContext!,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        alignment: 0.5,
       );
-    });
+    }
   }
 }

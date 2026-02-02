@@ -1,8 +1,8 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
-import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/lal_kitab_controller.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/lal_kitab_table_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/lal_kitab_kundli_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/lal_kitab_remedies_widget.dart';
@@ -11,167 +11,214 @@ import 'package:astrobharataiuser/screens/kundli/widgets/lal_kitab_varshphal_wid
 import 'package:astrobharataiuser/screens/kundli/widgets/lal_kitab_houses_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/lal_kitab_planets_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/lal_kitab_chart_widget.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
+/// Lal Kitab view – same design as Kundli Result: KundliHeader, gradient, drawer, horizontal tabs.
 class LalKitabView extends BasePage<LalKitabController> {
   const LalKitabView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(),
-            
-            // Tabs (always visible when not in table view)
-            Obx(() {
-              if (controller.selectedTabIndex.value == -1) {
-                return SizedBox.shrink();
-              }
-              return _buildTabs();
-            }),
-            
-            // Content
-            Expanded(
-              child: Obx(() {
-                // Show table view if selectedTabIndex is -1
-                if (controller.selectedTabIndex.value == -1) {
-                  return LalKitabTableWidget(controller: controller);
-                }
-                // Otherwise show swipeable PageView for tabs
-                return PageView(
-                  controller: controller.pageController,
-                  onPageChanged: controller.onPageChanged,
-                  children: [
-                    LalKitabKundliWidget(controller: controller),
-                    LalKitabRemediesWidget(controller: controller),
-                    LalKitabDebtsWidget(controller: controller),
-                    LalKitabVarshphalWidget(controller: controller),
-                    LalKitabHousesWidget(controller: controller),
-                    LalKitabPlanetsWidget(controller: controller),
-                    LalKitabChartWidget(controller: controller),
-                  ],
-                );
-              }),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF3D0C11), Color(0xFF5D1C21)],
+          colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
-      child: Row(
-        children: [
-          // Back button
-          IconButton(
-            icon: Icon(Icons.arrow_back, color: Color(0xFFF7C443), size: 24.w),
-            onPressed: () => Get.back(),
-          ),
-          
-          Spacing.w(8),
-          
-          // Title
-          Expanded(
-            child: AutoTranslateText(
-              'Lal Kitab',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: Color(0xFFF7C443),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
+      child: Scaffold(
+        drawer: UserDashboardView.buildDrawer(context),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
           ),
-        ],
+          child: SafeArea(
+            child: Column(
+              children: [
+                KundliHeader(title: 'Lal Kitab'),
+                _buildTabs(),
+                Expanded(
+                  child: PageView.builder(
+                    controller: controller.pageController,
+                    onPageChanged: controller.onPageChanged,
+                    itemCount: controller.tabNames.length,
+                    itemBuilder: (context, index) {
+                      return RefreshIndicator(
+                        onRefresh: () async {
+                          controller.onTabSelected(index);
+                        },
+                        child: _buildTabContent(index),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildTabs() {
+    const orange = Color(0xFFed6f30);
+    const orangeLight = Color(0xFFFF8A3D);
+    const maroon = Color(0xFF6F221E);
+
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
+      height: 48.h,
+      color: Colors.transparent,
+      padding: EdgeInsets.symmetric(vertical: 6.h),
+      child: Obx(() {
+        final selectedIndex = controller.selectedTabIndex.value;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToSelectedTab(selectedIndex);
+        });
+
+        return Row(
           children: [
-            _buildTab('LAL KITAB KUNDLI', 0),
-            _buildTab('PREDICTION AND REMEDIES', 1),
-            _buildTab('DEBTS', 2),
-            _buildTab('VARSHA KUNDLI', 3),
-            _buildTab('HOUSE', 4),
-            _buildTab('PLANET', 5),
-            _buildTab('CHART', 6),
+            Padding(
+              padding: EdgeInsets.only(left: 12.w, right: 10.w),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [orangeLight, orange],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.menu_book_rounded, size: 14.w, color: Colors.white),
+                    SizedBox(width: 6.w),
+                    AutoTranslateText(
+                      'Lal Kitab',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                controller: controller.tabsScrollController,
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(width: 4.w),
+                    ...controller.tabNames.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final tab = entry.value;
+                      final isSelected = selectedIndex == index;
+                      if (!controller.tabKeys.containsKey(index)) {
+                        controller.tabKeys[index] = GlobalKey();
+                      }
+                      final tabKey = controller.tabKeys[index]!;
+
+                      return Padding(
+                        key: tabKey,
+                        padding: EdgeInsets.only(right: 6.w),
+                        child: GestureDetector(
+                          onTap: () => controller.onTabSelected(index),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeOut,
+                            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                            decoration: BoxDecoration(
+                              color: isSelected ? orange : Colors.transparent,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: isSelected
+                                  ? null
+                                  : Border.all(
+                                      color: maroon.withOpacity(0.2),
+                                      width: 1,
+                                    ),
+                              boxShadow: isSelected
+                                  ? [
+                                      BoxShadow(
+                                        color: orange.withOpacity(0.25),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 1),
+                                      ),
+                                    ]
+                                  : null,
+                            ),
+                            child: Center(
+                              child: AutoTranslateText(
+                                tab,
+                                textAlign: TextAlign.center,
+                                style: MyTextTheme.mediumBCB.copyWith(
+                                  color: isSelected ? Colors.white : maroon,
+                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                    SizedBox(width: 10.w),
+                  ],
+                ),
+              ),
+            ),
           ],
-        ),
-      ),
+        );
+      }),
     );
   }
 
-  Widget _buildTab(String title, int index) {
-    return Obx(() {
-      final isSelected = controller.selectedTabIndex.value == index;
-      
-      return GestureDetector(
-        onTap: () {
-          controller.onTabSelected(index);
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-          decoration: BoxDecoration(
-            color: isSelected ? '#FF6B35'.toColor().withOpacity(0.1) : Colors.transparent,
-                    border: Border(
-                      bottom: BorderSide(
-                        color: isSelected ? '#FF6B35'.toColor() : Colors.transparent,
-                width: 3,
-              ),
-            ),
-          ),
-          child: AutoTranslateText(
-            title,
-            style: MyTextTheme.mediumBCB.copyWith(
-                      color: isSelected ? '#FF6B35'.toColor() : '#3E2723'.toColor().withOpacity(0.6),
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            ).merge(AppTypography.body2),
-          ),
-        ),
+  Widget _buildTabContent(int index) {
+    switch (index) {
+      case 0:
+        return LalKitabTableWidget(controller: controller);
+      case 1:
+        return LalKitabKundliWidget(controller: controller);
+      case 2:
+        return LalKitabRemediesWidget(controller: controller);
+      case 3:
+        return LalKitabDebtsWidget(controller: controller);
+      case 4:
+        return LalKitabVarshphalWidget(controller: controller);
+      case 5:
+        return LalKitabHousesWidget(controller: controller);
+      case 6:
+        return LalKitabPlanetsWidget(controller: controller);
+      case 7:
+        return LalKitabChartWidget(controller: controller);
+      default:
+        return LalKitabTableWidget(controller: controller);
+    }
+  }
+
+  void _scrollToSelectedTab(int selectedIndex) {
+    final tabKey = controller.tabKeys[selectedIndex];
+    if (tabKey?.currentContext != null) {
+      Scrollable.ensureVisible(
+        tabKey!.currentContext!,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        alignment: 0.5,
       );
-    });
+    }
   }
 }
-

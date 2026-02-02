@@ -2,12 +2,12 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/predictions_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/prediction_style.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class WeeklyPredictionWidget extends StatelessWidget {
   final PredictionsController controller;
@@ -18,53 +18,21 @@ class WeeklyPredictionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingWeekly.value) {
-        return Center(
-          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
-        );
+        return PredictionStyle.buildLoadingIndicator();
       }
 
       final data = controller.weeklyPredictionData.value;
 
       if (data == null || data.isEmpty) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.info_outline,
-                size: 48.w,
-                color: "#6F221E".toColor().withOpacity(0.5),
-              ),
-              Spacing.h(16),
-              AutoTranslateText(
-                'No data available',
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.6),
-                ),
-              ),
-              Spacing.h(8),
-              AutoTranslateText(
-                'Please select Weekly Predictions from the table',
-                textAlign: TextAlign.center,
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.5),
-                ),
-              ),
-            ],
-          ),
+        return PredictionStyle.buildEmptyState(
+          message: 'No data available',
+          submessage: 'Please select Weekly Predictions from the table',
         );
       }
 
       final response = data['response'] as Map<String, dynamic>?;
       if (response == null || response.isEmpty) {
-        return Center(
-          child: AutoTranslateText(
-            'No data available',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
-            ),
-          ),
-        );
+        return PredictionStyle.buildEmptyState(message: 'No data available');
       }
 
       final week = response['week'] as String? ?? '';
@@ -86,13 +54,13 @@ class WeeklyPredictionWidget extends StatelessWidget {
       final total = response['total'] as int? ?? 0;
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Week Header
             Container(
-              padding: EdgeInsets.all(16.w),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: Color(0xFFF38B3B), width: 1),
@@ -101,8 +69,8 @@ class WeeklyPredictionWidget extends StatelessWidget {
               child: Row(
                 children: [
                   Container(
-                    height: 40.h,
-                    width: 40.w,
+                    height: 36.h,
+                    width: 36.w,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(colors: [
                         Color(0xFFF38B3B), Color(0xFFDD2914)
@@ -117,7 +85,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
                       style: MyTextTheme.largeBCB.copyWith(
                         color: Color(0xFF3D0C11),
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                        fontSize: 14.sp,
                         fontFamily: 'baloo2'
                       ),
                     ),
@@ -125,11 +93,11 @@ class WeeklyPredictionWidget extends StatelessWidget {
                 ],
               ),
             ),
-            Spacing.h(16),
+            Spacing.h(10),
 
             // Total Score
             Container(
-              padding: EdgeInsets.all(16.w),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: Colors.deepOrange, width: 1),
@@ -155,7 +123,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
                 ],
               ),
             ),
-            Spacing.h(16),
+            Spacing.h(10),
 
             // Scores Grid
             _buildScoresGrid([
@@ -174,7 +142,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
             // Lucky Color
             if (luckyColor.isNotEmpty) ...[
               Container(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16.r),
@@ -225,7 +193,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
             // Lucky Numbers
             if (luckyNumbers.isNotEmpty) ...[
               Container(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(color: Colors.deepOrange, width: 1),
@@ -246,8 +214,8 @@ class WeeklyPredictionWidget extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0, bottom: 10.0),
                           child: Container(
-                            height: 50.h,
-                            width: 50.h,
+                            height: 36.h,
+                            width: 36.h,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
@@ -274,14 +242,14 @@ class WeeklyPredictionWidget extends StatelessWidget {
                       ],
                     ),
 
-                    Spacing.h(12),
+                    Spacing.h(10),
                     Wrap(
-                      spacing: 12.w,
-                      runSpacing: 12.h,
+                      spacing: 8.w,
+                      runSpacing: 8.h,
                       children: luckyNumbers.map((number) {
                         return Container(
-                          width: 50.w,
-                          height: 50.w,
+                          width: 40.w,
+                          height: 40.w,
                           decoration: BoxDecoration(
                             color: "#ed6f30".toColor().withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12.r),
@@ -305,13 +273,13 @@ class WeeklyPredictionWidget extends StatelessWidget {
                   ],
                 ),
               ),
-              Spacing.h(16),
+              Spacing.h(10),
             ],
 
             // Horoscope Data
             if (horoscopeData.isNotEmpty) ...[
               Container(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
@@ -330,8 +298,8 @@ class WeeklyPredictionWidget extends StatelessWidget {
                     Row(
                       children: [
                         Container(
-                          height: 50.h,
-                          width: 50.h,
+                          height: 36.h,
+                          width: 36.h,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [Color(0xFFFF8C42), Color(0xFFE63946)],
@@ -357,7 +325,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Spacing.h(12),
+                    Spacing.h(10),
                     AutoTranslateText(
                       horoscopeData,
                       style: MyTextTheme.smallBCN.copyWith(
@@ -381,8 +349,8 @@ class WeeklyPredictionWidget extends StatelessWidget {
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        crossAxisSpacing: 12.w,
-        mainAxisSpacing: 12.h,
+        crossAxisSpacing: 8.w,
+        mainAxisSpacing: 8.h,
         childAspectRatio: 1.2,
       ),
       itemCount: scores.length,
@@ -392,7 +360,7 @@ class WeeklyPredictionWidget extends StatelessWidget {
         final value = score['value'] as int;
 
         return Container(
-          padding: EdgeInsets.all(12.w),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: Colors.deepOrange, width: 1),

@@ -77,14 +77,14 @@ class DailyPredictionWidget extends StatelessWidget {
       return Container(
         decoration: BoxDecoration(gradient: gradientBackground),
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildTitleSection(),
-              Spacing.h(20),
+              Spacing.h(10),
               _buildDaySelector(),
-              Spacing.h(20),
+              Spacing.h(10),
               if (horoscopeData.isNotEmpty) _buildPredictionCard(horoscopeData),
               Spacing.h(20),
               if (luckyColor.isNotEmpty || luckyNumbers.isNotEmpty)
@@ -98,7 +98,7 @@ class DailyPredictionWidget extends StatelessWidget {
 
   Widget _buildTitleSection() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
+      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
       decoration: BoxDecoration(
         gradient: primaryGradient,
         borderRadius: BorderRadius.circular(16.r),
@@ -113,7 +113,7 @@ class DailyPredictionWidget extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12.r),
@@ -153,7 +153,7 @@ class DailyPredictionWidget extends StatelessWidget {
 
   Widget _buildPredictionCard(String prediction) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
@@ -207,7 +207,7 @@ class DailyPredictionWidget extends StatelessWidget {
 
   Widget _buildLuckyElementsCard(String luckyColor, List<String> luckyNumbers) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
@@ -341,7 +341,7 @@ class DailyPredictionWidget extends StatelessWidget {
   Widget _buildDaySelector() {
     return Obx(
       () => Container(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
@@ -362,7 +362,7 @@ class DailyPredictionWidget extends StatelessWidget {
                 color: primaryGradient.colors.first,
               ),
             ),
-            Spacing.h(12),
+            Spacing.h(10),
             Row(
               children: controller.dayOptions.map((day) {
                 final isSelected = controller.selectedDay.value == day;

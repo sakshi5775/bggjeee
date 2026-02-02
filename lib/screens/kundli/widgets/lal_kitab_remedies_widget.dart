@@ -49,7 +49,7 @@ class LalKitabRemediesWidget extends StatelessWidget {
       }
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -73,7 +73,7 @@ class LalKitabRemediesWidget extends StatelessWidget {
     final remedies = planetData['remedies'] as List<dynamic>? ?? [];
 
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: ["#FFFFFF".toColor(), "#FFFFFF".toColor()],
@@ -206,7 +206,7 @@ class LalKitabRemediesWidget extends StatelessWidget {
                     .merge(AppTypography.body2),
               ),
             ),
-            Spacing.h(16),
+            Spacing.h(10),
           ],
 
           // Remedies
@@ -300,7 +300,7 @@ class LalKitabRemediesWidget extends StatelessWidget {
 
               return Container(
                 padding: EdgeInsets.all(14.w),
-                margin: EdgeInsets.only(bottom: 12.h),
+                margin: EdgeInsets.only(bottom: 8.h),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(14.r),

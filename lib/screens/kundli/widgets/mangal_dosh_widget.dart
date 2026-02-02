@@ -78,6 +78,11 @@ class MangalDoshWidget extends StatelessWidget {
             Spacing.h(12),
             if (response['factors'] != null)
               _buildFactorsCard(response['factors'] as Map<String, dynamic>),
+
+            Spacing.h(12),
+            if (response['remedies'] != null) ...[
+              _buildRemediesCard(response['remedies'] as List<dynamic>),
+            ],
           ],
         ),
       );
@@ -437,6 +442,108 @@ class MangalDoshWidget extends StatelessWidget {
               );
             }).toList(),
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRemediesCard(List<dynamic> remedies) {
+    if (remedies.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [_orangeLight, _orange],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Icon(Icons.healing, color: Colors.white, size: 18.w),
+              ),
+              Spacing.w(10),
+              AutoTranslateText(
+                'Remedies',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: _maroon,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13.sp,
+                ),
+              ),
+            ],
+          ),
+          Spacing.h(10),
+          ...remedies.asMap().entries.map((entry) {
+            final index = entry.key;
+            final remedy = entry.value.toString();
+            return Container(
+              margin: EdgeInsets.only(bottom: 8.h),
+              padding: EdgeInsets.all(10.w),
+              decoration: BoxDecoration(
+                color: _maroon.withOpacity(0.04),
+                borderRadius: BorderRadius.circular(10.r),
+                border: Border.all(color: _orange.withOpacity(0.2)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 22.w,
+                    height: 22.w,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [_orangeLight, _orange],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: AutoTranslateText(
+                        '${index + 1}',
+                        style: MyTextTheme.smallBCB.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Spacing.w(10),
+                  Expanded(
+                    child: AutoTranslateText(
+                      remedy,
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: _maroon,
+                        height: 1.5,
+                        fontSize: 12.sp,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
         ],
       ),
     );

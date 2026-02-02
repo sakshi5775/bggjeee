@@ -75,14 +75,14 @@ class MonthlyPredictionWidget extends StatelessWidget {
           gradient: gradientBackground,
         ),
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
           child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildTitleSection(),
-            Spacing.h(20),
+            Spacing.h(10),
             if (horoscopeData.isNotEmpty) _buildPredictionCard(horoscopeData),
-            Spacing.h(20),
+            Spacing.h(10),
             if (luckyColor.isNotEmpty || luckyNumbers.isNotEmpty) _buildLuckyElementsCard(luckyColor, luckyNumbers),
           ],
         ),
@@ -108,7 +108,7 @@ class MonthlyPredictionWidget extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12.r),
@@ -240,7 +240,7 @@ class MonthlyPredictionWidget extends StatelessWidget {
               ),
             ],
           ),
-          Spacing.h(20),
+          Spacing.h(10),
           if (luckyColor.isNotEmpty) ...[
             _buildInfoRow('Lucky Color', luckyColor),
             if (luckyNumbers.isNotEmpty) _buildDivider(),

@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/consult_astrologer_card.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,10 +13,9 @@ class DivisionalChartWidget extends StatelessWidget {
 
   const DivisionalChartWidget({super.key, required this.controller});
 
-  // Available divisional chart types with descriptions
+  // Available divisional chart types with descriptions (D2 removed)
   static const List<Map<String, String>> divisions = [
     {'code': 'D1', 'name': 'D1', 'desc': 'Rashi'},
-    {'code': 'D2', 'name': 'D2', 'desc': 'Hora'},
     {'code': 'D3', 'name': 'D3', 'desc': 'Drekkana'},
     {'code': 'D4', 'name': 'D4', 'desc': 'Chaturthamsha'},
     {'code': 'D5', 'name': 'D5', 'desc': 'Panchamsha'},
@@ -44,34 +44,42 @@ class DivisionalChartWidget extends StatelessWidget {
 
       return SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(
-              color: "#ed6f30".toColor().withOpacity(0.2),
-              width: 1,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(
+                  color: "#ed6f30".toColor().withOpacity(0.2),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildHeader(),
+                  _buildDivisionSlider(selectedDivision),
+                  Padding(
+                    padding: EdgeInsets.all(10.w),
+                    child: _buildContent(context, selectedDivision, data),
+                  ),
+                ],
+              ),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildHeader(),
-              _buildDivisionSlider(selectedDivision),
-              Padding(
-                padding: EdgeInsets.all(10.w),
-                child: _buildContent(context, selectedDivision, data),
-              ),
-            ],
-          ),
+            Spacing.h(12),
+            const ConsultAstrologerCard(),
+            Spacing.h(12),
+          ],
         ),
       );
     });

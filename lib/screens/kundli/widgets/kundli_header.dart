@@ -3,13 +3,14 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/dashboard_search_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/language_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../../utils/app_constant.dart';
@@ -22,6 +23,130 @@ class KundliHeader extends StatelessWidget {
   final VoidCallback? onMenuTap;
 
   const KundliHeader({super.key, this.title, this.onMenuTap});
+
+  static void _showSearchDialog(BuildContext context) {
+    final controller = TextEditingController();
+    final searchService = DashboardSearchService();
+
+    Get.dialog(
+      barrierDismissible: true,
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        child: Container(
+          padding: EdgeInsets.all(20.w),
+          constraints: BoxConstraints(maxWidth: 400.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AutoTranslateText(
+                    'Search',
+                    style: MyTextTheme.largeBCB.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: '#6F221E'.toColor(),
+                    ).merge(AppTypography.h2),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close, color: '#6F221E'.toColor()),
+                    onPressed: () => Get.back(),
+                  ),
+                ],
+              ),
+              Spacing.h(16),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                style: MyTextTheme.mediumBCN.copyWith(
+                  color: '#3D0C11'.toColor(),
+                  fontWeight: FontWeight.w500,
+                ).merge(AppTypography.body1),
+                decoration: InputDecoration(
+                  hintText: 'Search horoscope, kundli, tarot, palm reading...',
+                  hintStyle: MyTextTheme.mediumBCN.copyWith(
+                    color: '#3D0C11'.toColor().withOpacity(0.5),
+                    fontWeight: FontWeight.w500,
+                  ).merge(AppTypography.body1),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(color: '#DBCCA8'.toColor()),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(color: '#DBCCA8'.toColor()),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(color: '#6F221E'.toColor(), width: 2),
+                  ),
+                  prefixIcon: Icon(Icons.search, color: '#6F221E'.toColor(), size: 22.w),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                ),
+                onSubmitted: (value) {
+                  if (value.trim().isNotEmpty) {
+                    final route = searchService.searchRoute(value.trim());
+                    if (route != null) {
+                      Get.back();
+                      Get.toNamed(route);
+                    } else {
+                      Get.snackbar(
+                        'Search',
+                        'No results found for "$value". Try: horoscope, kundli, tarot, palm reading, etc.',
+                        snackPosition: SnackPosition.BOTTOM,
+                        duration: const Duration(seconds: 3),
+                      );
+                    }
+                  }
+                },
+              ),
+              Spacing.h(20),
+              SizedBox(
+                width: double.infinity,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: AppColors.orangeGradient,
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      final query = controller.text.trim();
+                      if (query.isNotEmpty) {
+                        final route = searchService.searchRoute(query);
+                        if (route != null) {
+                          Get.back();
+                          Get.toNamed(route);
+                        } else {
+                          Get.snackbar(
+                            'Search',
+                            'No results found for "$query". Try: horoscope, kundli, tarot, palm reading, etc.',
+                            snackPosition: SnackPosition.BOTTOM,
+                            duration: const Duration(seconds: 3),
+                          );
+                        }
+                      }
+                    },
+                    icon: Icon(Icons.search, size: 20.w, color: Colors.white),
+                    label: AutoTranslateText('Search'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(vertical: 14.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,33 +162,45 @@ class KundliHeader extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    spacing: 8,
-                    children: [
-                      Image.network(
-                        AppConstant.logo,
-                        width: 40.w,
-                        height: 40.h,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SvgAssets(
-                            path: 'assets/app/AstrobharatAi .svg',
-                            width: 110.w,
-                            height: 26.h,
-                          ),
-                          AutoTranslateText(
-                            "STAR ALIGN DESTINY DIVINE",
-                            style: AppTypography.label.copyWith(
-                              color: '#6F221E'.toColor(),
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.2,
+                  Expanded(
+                    child: Row(
+                      spacing: 8,
+                      children: [
+                        Image.network(
+                          AppConstant.logo,
+                          width: 40.w,
+                          height: 40.h,
+                          fit: BoxFit.contain,
+                        ),
+                        Expanded(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SvgAssets(
+                                  path: 'assets/app/AstrobharatAi .svg',
+                                  width: 110.w,
+                                  height: 26.h,
+                                ),
+                                AutoTranslateText(
+                                  "STAR ALIGN DESTINY DIVINE",
+                                  style: AppTypography.label.copyWith(
+                                    color: '#6F221E'.toColor(),
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.2,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -100,6 +237,19 @@ class KundliHeader extends StatelessWidget {
                             '#6F221E'.toColor(),
                             BlendMode.srcIn,
                           ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => _showSearchDialog(context),
+                        style: IconButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(36.w, 36.h),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        icon: Icon(
+                          Icons.search,
+                          size: 22.w,
+                          color: '#6F221E'.toColor(),
                         ),
                       ),
                       //      Obx(

@@ -32,7 +32,7 @@ class YogView extends BasePage<YogController> {
           child: SafeArea(
             child: Column(
               children: [
-                KundliHeader(),
+                KundliHeader(title: 'Yog'),
                 Expanded(child: YogWidget(controller: controller)),
               ],
             ),

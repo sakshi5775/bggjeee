@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/consult_astrologer_card.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/planets_widget.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,8 @@ class LagnaChartWidget extends StatelessWidget {
             _buildActionButtons(controller, selectedAction),
             Spacing.h(10),
             _buildContentBelowSlider(controller, selectedAction),
+            Spacing.h(12),
+            const ConsultAstrologerCard(),
             Spacing.h(12),
           ],
         ),

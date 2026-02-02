@@ -40,7 +40,7 @@ class DashaView extends BasePage<DashaController> {
           child: SafeArea(
             child: Column(
               children: [
-                KundliHeader(),
+                KundliHeader(title: 'Dasha'),
                 _buildTabs(),
                 Expanded(
                   child: PageView(

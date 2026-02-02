@@ -3,7 +3,6 @@ import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class LalKitabController extends BaseController {
   // Lal Kitab table data for main page (removed Cloud)
@@ -18,11 +17,15 @@ class LalKitabController extends BaseController {
   // Form data
   final formData = Rxn<Map<String, dynamic>>();
   
-  // Current tab index: -1 = TABLE VIEW, 0-8 = specific tabs
-  final selectedTabIndex = (-1).obs;
+  // Current tab index: 0 = TABLE VIEW, 1-7 = specific tabs (matches kundli_result_view pattern)
+  final selectedTabIndex = 0.obs;
   
   // PageController for swipeable tabs
   late PageController pageController;
+
+  // ScrollController for tab bar (match kundli_result_view)
+  final ScrollController tabsScrollController = ScrollController();
+  final Map<int, GlobalKey> tabKeys = {};
   
   // Varshphal year selector (default to current year)
   final selectedVarshphalYear = DateTime.now().year.obs;
@@ -51,7 +54,7 @@ class LalKitabController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    // Initialize PageController with number of tabs
+    // 8 pages: 0=Table, 1=Kundli, 2=Remedies, 3=Debts, 4=Varsha, 5=House, 6=Planet, 7=Chart
     pageController = PageController(initialPage: 0);
     _loadData();
   }
@@ -59,18 +62,23 @@ class LalKitabController extends BaseController {
   @override
   void onClose() {
     pageController.dispose();
+    tabsScrollController.dispose();
     super.onClose();
   }
   
   // Handle page change from swipe
   void onPageChanged(int index) {
     selectedTabIndex.value = index;
-    // Trigger navigation based on index
-    if (index < tabNames.length) {
-      navigateToTab(tabNames[index]);
-    }
+    if (index == 0) return; // Table view
+    if (index == 1 && lalKitabHoroscopeData.value == null) fetchLalKitabHoroscope();
+    else if (index == 2 && lalKitabRemediesData.value == null) fetchLalKitabRemedies();
+    else if (index == 3 && lalKitabDebtsData.value == null) fetchLalKitabDebts();
+    else if (index == 4 && lalKitabVarshphalChartData.value == null) fetchLalKitabVarshphalChart();
+    else if (index == 5 && lalKitabHousesData.value == null) fetchLalKitabHouses();
+    else if (index == 6 && lalKitabPlanetsData.value == null) fetchLalKitabPlanets();
+    else if (index == 7 && lalKitabChartData.value == null) fetchLalKitabChart();
   }
-  
+
   // Navigate to specific tab (called from tab tap)
   void onTabSelected(int index) {
     if (pageController.hasClients) {
@@ -80,6 +88,14 @@ class LalKitabController extends BaseController {
         curve: Curves.easeInOut,
       );
     }
+    selectedTabIndex.value = index;
+    if (index == 1 && lalKitabHoroscopeData.value == null) fetchLalKitabHoroscope();
+    else if (index == 2 && lalKitabRemediesData.value == null) fetchLalKitabRemedies();
+    else if (index == 3 && lalKitabDebtsData.value == null) fetchLalKitabDebts();
+    else if (index == 4 && lalKitabVarshphalChartData.value == null) fetchLalKitabVarshphalChart();
+    else if (index == 5 && lalKitabHousesData.value == null) fetchLalKitabHouses();
+    else if (index == 6 && lalKitabPlanetsData.value == null) fetchLalKitabPlanets();
+    else if (index == 7 && lalKitabChartData.value == null) fetchLalKitabChart();
   }
 
   void _loadData() {
@@ -89,78 +105,54 @@ class LalKitabController extends BaseController {
     }
   }
 
-  // Navigate to table view
+  // Navigate to table view (index 0)
   void navigateToTableView() {
-    selectedTabIndex.value = -1;
+    selectedTabIndex.value = 0;
+    if (pageController.hasClients) {
+      pageController.animateToPage(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    }
   }
 
-  // Navigate to specific tab
+  // Navigate to specific tab by name (from table card tap)
   void navigateToTab(String tabName) {
     switch (tabName) {
+      case 'Table':
+        onTabSelected(0);
+        break;
       case 'Lal Kitab Kundli':
-        selectedTabIndex.value = 0;
-        if (lalKitabHoroscopeData.value == null) {
-          fetchLalKitabHoroscope();
-        }
+        onTabSelected(1);
         break;
       case 'Prediction and Remedies':
-        selectedTabIndex.value = 1;
-        if (lalKitabRemediesData.value == null) {
-          fetchLalKitabRemedies();
-        }
+        onTabSelected(2);
         break;
       case 'Debts':
-        selectedTabIndex.value = 2;
-        if (lalKitabDebtsData.value == null) {
-          fetchLalKitabDebts();
-        }
+        onTabSelected(3);
         break;
       case 'Varsha Kundli':
-        selectedTabIndex.value = 3;
-        if (lalKitabVarshphalChartData.value == null) {
-          fetchLalKitabVarshphalChart();
-        }
+        onTabSelected(4);
         break;
       case 'House':
-        selectedTabIndex.value = 4;
-        if (lalKitabHousesData.value == null) {
-          fetchLalKitabHouses();
-        }
+        onTabSelected(5);
         break;
       case 'Planet':
-        selectedTabIndex.value = 5;
-        if (lalKitabPlanetsData.value == null) {
-          fetchLalKitabPlanets();
-        }
+        onTabSelected(6);
         break;
       case 'Chart':
-        selectedTabIndex.value = 6;
-        if (lalKitabChartData.value == null) {
-          fetchLalKitabChart();
-        }
+        onTabSelected(7);
         break;
       case 'Lal Kitab Dasha':
       case 'Teva Type':
       case 'Ask a question':
-        // Coming soon tabs
-        selectedTabIndex.value = 7 + _getComingSoonTabIndex(tabName);
+        // Coming soon - stay on table
         break;
     }
   }
 
-  int _getComingSoonTabIndex(String tabName) {
-    final comingSoonTabs = [
-      'Lal Kitab Dasha',
-      'Teva Type',
-      'Ask a question',
-    ];
-    return comingSoonTabs.indexOf(tabName);
-  }
-  
-  // Tab names for display
+  // Tab names for display (0=Table, 1-7=content)
   final List<String> tabNames = [
+    'Table',
     'Lal Kitab Kundli',
-    'Prediction and Remedies',
+    'Remedies',
     'Debts',
     'Varsha Kundli',
     'House',

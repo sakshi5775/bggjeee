@@ -497,12 +497,9 @@ class KundliService {
         'color': encodedColor,
       };
 
-      // Map division to endpoint
+      // Map division to endpoint (D2 removed)
       String endpoint;
       switch (division.toUpperCase()) {
-        case 'D2':
-          endpoint = EndPoints.chartD2;
-          break;
         case 'D3':
           endpoint = EndPoints.chartD3;
           break;
@@ -1794,6 +1791,200 @@ class KundliService {
     }
   }
 
+  /// Get Current Sade Sati
+  Future<Map<String, dynamic>?> getCurrentSadeSati({
+    required String date,
+    required String time,
+    required double latitude,
+    required double longitude,
+    required double tz,
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'date': date,
+        'time': time,
+        'latitude': latitude.toString(),
+        'longitude': longitude.toString(),
+        'tz': tz.toString(),
+        'lang': lang,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.currentSadeSati}').replace(
+        queryParameters: queryParams,
+      );
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+          if (currentToken != null && currentToken.isNotEmpty)
+            'Authorization': 'Bearer $currentToken',
+        },
+      ).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) {
+        return json.decode(response.body) as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error fetching current sade sati: $e');
+      return null;
+    }
+  }
+
+  /// Get Sade Sati Table (Vedic)
+  Future<Map<String, dynamic>?> getSadeSatiTableVedic({
+    required String date,
+    required String time,
+    required double latitude,
+    required double longitude,
+    required double tz,
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'date': date,
+        'time': time,
+        'latitude': latitude.toString(),
+        'longitude': longitude.toString(),
+        'tz': tz.toString(),
+        'lang': lang,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.sadeSatiTableVedic}').replace(
+        queryParameters: queryParams,
+      );
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+          if (currentToken != null && currentToken.isNotEmpty)
+            'Authorization': 'Bearer $currentToken',
+        },
+      ).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) {
+        return json.decode(response.body) as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error fetching sade sati table: $e');
+      return null;
+    }
+  }
+
+  /// Get Gem Suggestion (personalized)
+  Future<Map<String, dynamic>?> getGemSuggestion({
+    required String date,
+    required String time,
+    required double latitude,
+    required double longitude,
+    required double tz,
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'date': date,
+        'time': time,
+        'latitude': latitude.toString(),
+        'longitude': longitude.toString(),
+        'tz': tz.toString(),
+        'lang': lang,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.gemSuggestion}').replace(
+        queryParameters: queryParams,
+      );
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+          if (currentToken != null && currentToken.isNotEmpty)
+            'Authorization': 'Bearer $currentToken',
+        },
+      ).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) {
+        return json.decode(response.body) as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error fetching gem suggestion: $e');
+      return null;
+    }
+  }
+
+  /// Get Rudraksh Suggestion
+  Future<Map<String, dynamic>?> getRudrakshSuggestion({
+    required String date,
+    required String time,
+    required double latitude,
+    required double longitude,
+    required double tz,
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'date': date,
+        'time': time,
+        'latitude': latitude.toString(),
+        'longitude': longitude.toString(),
+        'tz': tz.toString(),
+        'lang': lang,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.rudrakshSuggestion}').replace(
+        queryParameters: queryParams,
+      );
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+          if (currentToken != null && currentToken.isNotEmpty)
+            'Authorization': 'Bearer $currentToken',
+        },
+      ).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) {
+        return json.decode(response.body) as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error fetching rudraksh suggestion: $e');
+      return null;
+    }
+  }
+
+  /// Get Gem Details (generic gem info)
+  Future<Map<String, dynamic>?> getGemDetails({
+    required String gem,
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{'gem': gem, 'lang': lang};
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.gemDetails}').replace(
+        queryParameters: queryParams,
+      );
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+          if (currentToken != null && currentToken.isNotEmpty)
+            'Authorization': 'Bearer $currentToken',
+        },
+      ).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) {
+        return json.decode(response.body) as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error fetching gem details: $e');
+      return null;
+    }
+  }
+
   /// Get Lal Kitab Houses
   Future<Map<String, dynamic>?> getLalKitabHouses({
     required String date,
@@ -2058,15 +2249,16 @@ class KundliService {
     }
   }
 
-  /// Get Numerology Prediction
+  /// Get Numerology Prediction (date format: dd-mm-yyyy)
   Future<Map<String, dynamic>?> getNumerologyPrediction({
     required String date,
     required String name,
     String lang = 'en',
   }) async {
     try {
+      final dateFormatted = date.contains('/') ? date.replaceAll('/', '-') : date;
       final queryParams = <String, String>{
-        'date': date,
+        'date': dateFormatted,
         'name': name,
         'lang': lang,
       };
@@ -2582,6 +2774,91 @@ class KundliService {
     }
   }
 
+  /// Prokerala Daily Horoscope (sign: aries, taurus, etc.)
+  Future<Map<String, dynamic>?> getProkeralaDaily({
+    required String datetime,
+    required String sign,
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'datetime': datetime,
+        'sign': sign,
+        'lang': lang,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.prokeralaDaily}').replace(queryParameters: queryParams);
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(uri, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
+      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error Prokerala daily: $e');
+      return null;
+    }
+  }
+
+  /// Prokerala Advanced Daily Horoscope
+  Future<Map<String, dynamic>?> getProkeralaDailyAdvanced({
+    required String datetime,
+    required String sign,
+    String type = 'all',
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'datetime': datetime,
+        'sign': sign,
+        'type': type,
+        'lang': lang,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.prokeralaDailyAdvanced}').replace(queryParameters: queryParams);
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(uri, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
+      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error Prokerala daily advanced: $e');
+      return null;
+    }
+  }
+
+  /// Prokerala Love Compatibility
+  Future<Map<String, dynamic>?> getProkeralaLoveCompatibility({
+    required String datetime,
+    required String signOne,
+    required String signTwo,
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'datetime': datetime,
+        'sign_one': signOne,
+        'sign_two': signTwo,
+        'lang': lang,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.prokeralaLoveCompatibility}').replace(queryParameters: queryParams);
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(uri, headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
+      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error Prokerala love compatibility: $e');
+      return null;
+    }
+  }
+
   /// Get Planet Details
   Future<Map<String, dynamic>?> getPlanetDetails({
     required String date, // Format: dd/mm/yyyy
@@ -2641,6 +2918,270 @@ class KundliService {
       if (kDebugMode) {
         debugPrint('Error fetching Planet Details: $e');
       }
+      return null;
+    }
+  }
+
+  /// Get Planet Transit Dates
+  Future<Map<String, dynamic>?> getPlanetTransitDates({
+    required String planet,
+    required int year,
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'planet': planet,
+        'year': year.toString(),
+        'lang': lang,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.planetTransitDates}').replace(queryParameters: queryParams);
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(uri, headers: {
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
+      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error fetching planet transit dates: $e');
+      return null;
+    }
+  }
+
+  /// Get Detailed Planet Report (house + zodiac content)
+  Future<Map<String, dynamic>?> getDetailedPlanetReport({
+    required String dob,
+    required String tob,
+    required double lat,
+    required double lon,
+    required double tz,
+    required String planet,
+    String houseType = 'placidus',
+    String zodiacType = 'sidereal',
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'dob': dob,
+        'tob': tob,
+        'lat': lat.toString(),
+        'lon': lon.toString(),
+        'tz': tz.toString(),
+        'planet': planet,
+        'house_type': houseType,
+        'zodiac_type': zodiacType,
+        'lang': lang,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.detailedPlanetReport}').replace(queryParameters: queryParams);
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(uri, headers: {
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
+      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error fetching detailed planet report: $e');
+      return null;
+    }
+  }
+
+  /// Get Western Planet Details
+  Future<Map<String, dynamic>?> getWesternPlanetDetails({
+    required String dob,
+    required String tob,
+    required double lat,
+    required double lon,
+    required double tz,
+    String houseType = 'placidus',
+    String zodiacType = 'sidereal',
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'dob': dob,
+        'tob': tob,
+        'lat': lat.toString(),
+        'lon': lon.toString(),
+        'tz': tz.toString(),
+        'house_type': houseType,
+        'zodiac_type': zodiacType,
+        'lang': lang,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.westernPlanetDetails}').replace(queryParameters: queryParams);
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(uri, headers: {
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
+      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error fetching western planet details: $e');
+      return null;
+    }
+  }
+
+  /// Get Aspects (conjunction, opposition, trine, square, etc.)
+  Future<Map<String, dynamic>?> getAspects({
+    required String dob,
+    required String tob,
+    required double lat,
+    required double lon,
+    required double tz,
+    String houseType = 'placidus',
+    String zodiacType = 'sidereal',
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'dob': dob,
+        'tob': tob,
+        'lat': lat.toString(),
+        'lon': lon.toString(),
+        'tz': tz.toString(),
+        'house_type': houseType,
+        'zodiac_type': zodiacType,
+        'lang': lang,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.aspects}').replace(queryParameters: queryParams);
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(uri, headers: {
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
+      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error fetching aspects: $e');
+      return null;
+    }
+  }
+
+  /// Western Transit Chart (returns SVG string)
+  Future<String?> getWesternTransitChart({
+    required String dob,
+    required String tob,
+    required double lat,
+    required double lon,
+    required double tz,
+    required String transitDate,
+    required String transitTime,
+    required double transitLat,
+    required double transitLon,
+    required double transitTz,
+    String houseType = 'placidus',
+    String zodiacType = 'sidereal',
+    String lang = 'en',
+    int size = 400,
+    String format = 'svg',
+    String natalColor = '%2300ced1',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'dob': dob, 'tob': tob, 'lat': lat.toString(), 'lon': lon.toString(), 'tz': tz.toString(),
+        'transit_date': transitDate, 'transit_time': transitTime,
+        'transit_lat': transitLat.toString(), 'transit_lon': transitLon.toString(), 'transit_tz': transitTz.toString(),
+        'house_type': houseType, 'zodiac_type': zodiacType, 'lang': lang,
+        'size': size.toString(), 'format': format, 'natal_color': natalColor,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.westernTransitChart}').replace(queryParameters: queryParams);
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(uri, headers: {
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
+      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) {
+        final body = response.body.trim();
+        try {
+          final decoded = json.decode(body);
+          if (decoded is String) return decoded;
+          if (decoded is Map && decoded['response'] != null) return decoded['response'] as String?;
+          if (decoded is Map && decoded['data'] != null) return decoded['data'] as String?;
+        } catch (_) {}
+        if (body.startsWith('<svg')) return body;
+        return body;
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error fetching western transit chart: $e');
+      return null;
+    }
+  }
+
+  /// Daily Transits (transit events for a date/planet)
+  Future<Map<String, dynamic>?> getDailyTransits({
+    required String dob,
+    required String tob,
+    required double lat,
+    required double lon,
+    required double tz,
+    required String startDate,
+    required String planet,
+    String houseType = 'placidus',
+    String zodiacType = 'sidereal',
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'dob': dob, 'tob': tob, 'lat': lat.toString(), 'lon': lon.toString(), 'tz': tz.toString(),
+        'start_date': startDate, 'planet': planet,
+        'house_type': houseType, 'zodiac_type': zodiacType, 'lang': lang,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.dailyTransits}').replace(queryParameters: queryParams);
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(uri, headers: {
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
+      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error fetching daily transits: $e');
+      return null;
+    }
+  }
+
+  /// Daily Transit Prediction (scores for physique, health, etc.)
+  Future<Map<String, dynamic>?> getDailyTransitPrediction({
+    required String dob,
+    required String tob,
+    required double lat,
+    required double lon,
+    required double tz,
+    required String transitDate,
+    required String transitTime,
+    required double transitLat,
+    required double transitLon,
+    required double transitTz,
+    String houseType = 'placidus',
+    String zodiacType = 'sidereal',
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'dob': dob, 'tob': tob, 'lat': lat.toString(), 'lon': lon.toString(), 'tz': tz.toString(),
+        'transit_date': transitDate, 'transit_time': transitTime,
+        'transit_lat': transitLat.toString(), 'transit_lon': transitLon.toString(), 'transit_tz': transitTz.toString(),
+        'house_type': houseType, 'zodiac_type': zodiacType, 'lang': lang,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.dailyTransitPrediction}').replace(queryParameters: queryParams);
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(uri, headers: {
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
+      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error fetching daily transit prediction: $e');
       return null;
     }
   }
@@ -3114,6 +3655,53 @@ class KundliService {
       if (kDebugMode) {
         debugPrint('Error fetching Varshphal Yearly Chart: $e');
       }
+      return null;
+    }
+  }
+
+  /// Get Shad Bala (Vedic)
+  Future<Map<String, dynamic>?> getShadBalaVedic({
+    required String date,
+    required String time,
+    required double latitude,
+    required double longitude,
+    required double tz,
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'date': date,
+        'time': time,
+        'latitude': latitude.toString(),
+        'longitude': longitude.toString(),
+        'tz': tz.toString(),
+        'lang': lang,
+      };
+      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.shadBalaVedic}').replace(
+        queryParameters: queryParams,
+      );
+      final currentToken = UserData().accessToken?.trim();
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          if (currentToken != null && currentToken.isNotEmpty)
+            'Authorization': 'Bearer $currentToken',
+        },
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () => throw Exception('Request timeout'),
+      );
+      if (response.statusCode == 200) {
+        return json.decode(response.body) as Map<String, dynamic>;
+      }
+      if (kDebugMode) {
+        debugPrint('Shad Bala API Error: ${response.statusCode} - ${response.body}');
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error fetching Shad Bala: $e');
       return null;
     }
   }

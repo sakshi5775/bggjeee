@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -38,12 +39,11 @@ class KundliResultController extends BaseController {
     'Divisional Chart',
     'Shad Bala',
     'Planets',
-    'Ascendant Report',
+    'Summary(lagna) Report',
     'Panchang',
     'Binnashtakvarga',
     'Transit',
     'Ashtakvarga Chart',
-    'Varshphal',
     'Bhav Madhya',
     'Person Details',
     'Ghatak and Favourable',
@@ -56,7 +56,6 @@ class KundliResultController extends BaseController {
   /// Tab names that show "Coming Soon". These tabs are hidden from the UI.
   static const _comingSoonTabNames = [
     'bhav madhya',
-    'shad bala',
     'person details',
     'ghatak and favourable',
     'reports',
@@ -78,15 +77,15 @@ class KundliResultController extends BaseController {
   bool _isComingSoonTab(String tabName) =>
       _comingSoonTabNames.contains(tabName.toLowerCase());
 
-  // Feature grid items
+  // Feature grid items (imageUrl uses 3D logos from S3 when set)
   final featureGridItems = [
-    {'title': 'Dasha', 'icon': Icons.timeline},
+    {'title': 'Dasha', 'icon': Icons.timeline, 'imageUrl': AppConstant.dasha},
     {'title': 'Yog', 'icon': Icons.auto_awesome},
-    {'title': 'Dosh', 'icon': Icons.ac_unit},
-    {'title': 'Predictions', 'icon': Icons.auto_awesome},
-    {'title': 'KP System', 'icon': Icons.grid_view},
+    {'title': 'Dosh', 'icon': Icons.ac_unit, 'imageUrl': AppConstant.dosh},
+    {'title': 'Predictions', 'icon': Icons.auto_awesome, 'imageUrl': AppConstant.horoscope},
+    {'title': 'KP System', 'icon': Icons.grid_view, 'imageUrl': AppConstant.kpN},
     {'title': 'Shodash\nvarga', 'icon': Icons.view_module},
-    {'title': 'Lal Kitab', 'icon': Icons.menu_book},
+    {'title': 'Lal Kitab', 'icon': Icons.menu_book, 'imageUrl': AppConstant.lalKitab},
     {'title': 'Varshphal', 'icon': Icons.calendar_today},
   ];
 
@@ -100,7 +99,7 @@ class KundliResultController extends BaseController {
     'Ashtakvarga',
     'Divisional Chart',
     'Shad Bala',
-    'Ascendant Report',
+    'Summary(lagna) Report',
   ];
 
   // Feature list items (right column)
@@ -203,6 +202,10 @@ class KundliResultController extends BaseController {
   final isLoadingVarshphalDetails = false.obs;
   final isLoadingVarshphalYearlyChart = false.obs;
   final selectedVarshphalTab = 0.obs; // 0 = Details, 1 = Yearly Chart
+
+  // Shad Bala data
+  final shadBalaData = Rxn<Map<String, dynamic>>();
+  final isLoadingShadBala = false.obs;
 
   // Service
   final _kundliService = KundliService();
@@ -729,19 +732,18 @@ class KundliResultController extends BaseController {
 
     // Fetch Ascendant Report when ASCENDANT REPORT tab is selected
     final ascendantReportIndex = tabs.indexWhere(
-      (tab) => tab.toLowerCase() == 'ascendant report',
+      (tab) => tab.toLowerCase() == 'summary(lagna) report',
     );
     if (ascendantReportIndex != -1 && index == ascendantReportIndex) {
       fetchAscendantReport();
     }
 
-    // Reset Varshphal when VARSHPHAL tab is selected (user needs to select tab)
-    final varshphalIndex = tabs.indexWhere(
-      (tab) => tab.toLowerCase() == 'varshphal',
+    // Fetch Shad Bala when SHAD BALA tab is selected
+    final shadBalaIndex = tabs.indexWhere(
+      (tab) => tab.toLowerCase() == 'shad bala',
     );
-    if (varshphalIndex != -1 && index == varshphalIndex) {
-      selectedVarshphalTab.value = 0;
-      fetchVarshphalDetails();
+    if (shadBalaIndex != -1 && index == shadBalaIndex) {
+      fetchShadBalaDetails();
     }
   }
 
@@ -1053,6 +1055,85 @@ class KundliResultController extends BaseController {
     }
   }
 
+  /// Fetch Shad Bala (Vedic)
+  Future<void> fetchShadBalaDetails() async {
+    if (shadBalaData.value != null) return;
+    if (formData.value == null) {
+      debugPrint('Form data is null, cannot fetch Shad Bala');
+      return;
+    }
+    try {
+      isLoadingShadBala.value = true;
+      final form = formData.value!;
+      final date = _stringFromForm(form, 'date');
+      final time = _stringFromForm(form, 'time');
+      final latitude = _doubleFromForm(form, 'latitude');
+      final longitude = _doubleFromForm(form, 'longitude');
+      final tz = _doubleFromForm(form, 'timezone');
+      final lang = _stringFromForm(form, 'language') ?? 'en';
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
+        debugPrint('Shad Bala: missing required form fields (date=$date, time=$time, lat=$latitude, lng=$longitude, tz=$tz)');
+        isLoadingShadBala.value = false;
+        return;
+      }
+      final data = await _kundliService.getShadBalaVedic(
+        date: date,
+        time: time,
+        latitude: latitude,
+        longitude: longitude,
+        tz: tz,
+        lang: lang,
+      );
+      isLoadingShadBala.value = false;
+      if (data != null) {
+        Map<String, dynamic>? responseMap;
+        if (data['data'] is Map && (data['data'] as Map).containsKey('response')) {
+          final inner = (data['data'] as Map)['response'];
+          if (inner is Map<String, dynamic>) {
+            responseMap = inner;
+          } else if (inner is Map) {
+            responseMap = Map<String, dynamic>.from(inner);
+          }
+        } else if (data['response'] is Map<String, dynamic>) {
+          responseMap = data['response'] as Map<String, dynamic>;
+        } else if (data['response'] is Map) {
+          responseMap = Map<String, dynamic>.from(data['response'] as Map);
+        }
+        if (responseMap != null && responseMap.isNotEmpty) {
+          shadBalaData.value = responseMap;
+          debugPrint('Shad Bala data loaded successfully');
+        } else {
+          debugPrint('Shad Bala: response map empty or invalid');
+        }
+      } else {
+        debugPrint('Shad Bala API returned null');
+      }
+    } catch (e) {
+      isLoadingShadBala.value = false;
+      debugPrint('Error fetching Shad Bala: $e');
+    }
+  }
+
+  static String? _stringFromForm(Map<String, dynamic> form, String key) {
+    final v = form[key];
+    if (v == null) return null;
+    if (v is String) return v.isEmpty ? null : v;
+    return v.toString();
+  }
+
+  static double? _doubleFromForm(Map<String, dynamic> form, String key) {
+    final v = form[key];
+    if (v == null) return null;
+    if (v is double) return v;
+    if (v is int) return v.toDouble();
+    if (v is String) return double.tryParse(v);
+    return null;
+  }
+
   /// Fetch Varshphal Details
   Future<void> fetchVarshphalDetails() async {
     if (varshphalDetailsData.value != null) {
@@ -1086,27 +1167,7 @@ class KundliResultController extends BaseController {
         return;
       }
 
-      // Check if DOB is in current year
-      try {
-        final dateParts = date.split('/');
-        if (dateParts.length == 3) {
-          final dobYear = int.parse(dateParts[2]);
-          final currentYear = DateTime.now().year;
-          if (dobYear == currentYear) {
-            debugPrint(
-              'DOB is in current year, Varshphal is not completed yet',
-            );
-            isLoadingVarshphalDetails.value = false;
-            varshphalDetailsData.value = {
-              'error': 'Varshphal is not completed yet',
-            };
-            return;
-          }
-        }
-      } catch (e) {
-        debugPrint('Error parsing date: $e');
-      }
-
+      // Same logic as Lal Kitab varshphal: always call API with birth date; API returns varshphal data (e.g. next birthday year).
       final data = await _kundliService.getVarshphalDetails(
         date: date,
         time: time,
@@ -1174,27 +1235,7 @@ class KundliResultController extends BaseController {
         return;
       }
 
-      // Check if DOB is in current year
-      try {
-        final dateParts = date.split('/');
-        if (dateParts.length == 3) {
-          final dobYear = int.parse(dateParts[2]);
-          final currentYear = DateTime.now().year;
-          if (dobYear == currentYear) {
-            debugPrint(
-              'DOB is in current year, Varshphal is not completed yet',
-            );
-            isLoadingVarshphalYearlyChart.value = false;
-            varshphalYearlyChartData.value = {
-              'error': 'Varshphal is not completed yet',
-            };
-            return;
-          }
-        }
-      } catch (e) {
-        debugPrint('Error parsing date: $e');
-      }
-
+      // Same logic as Lal Kitab varshphal: always call API with birth date; API returns yearly chart data.
       final data = await _kundliService.getVarshphalYearlyChart(
         date: date,
         time: time,
@@ -1777,12 +1818,23 @@ class KundliResultController extends BaseController {
     // }
 
     // Handle Ascendant Report - switch to Ascendant Report tab
-    if (featureLower == 'ascendant report') {
+    if (featureLower == 'summary(lagna) report') {
       final ascendantReportIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'ascendant report',
+        (tab) => tab.toLowerCase() == 'summary(lagna) report',
       );
       if (ascendantReportIndex != -1) {
         onTabSelected(ascendantReportIndex);
+      }
+      return;
+    }
+
+    // Handle Shad Bala - switch to Shad Bala tab
+    if (featureLower == 'shad bala') {
+      final shadBalaIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == 'shad bala',
+      );
+      if (shadBalaIndex != -1) {
+        onTabSelected(shadBalaIndex);
       }
       return;
     }
@@ -1853,14 +1905,9 @@ class KundliResultController extends BaseController {
       return;
     }
 
-    // Handle Varshphal - switch to Varshphal tab
+    // Handle Varshphal - open standalone Varshphal page (like Dasha, Dosh)
     if (featureLower == 'varshphal') {
-      final varshphalIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'varshphal',
-      );
-      if (varshphalIndex != -1) {
-        onTabSelected(varshphalIndex);
-      }
+      Get.toNamed(AppRoutes.varshphal, arguments: {'formData': formData.value});
       return;
     }
 
@@ -1883,7 +1930,7 @@ class KundliResultController extends BaseController {
       'ashtakvarga': 'Ashtakvarga',
       'Divisional Chart': 'Divisional Chart',
       'shad bala': 'Shad Bala',
-      'ascendant report': 'Ascendant Report',
+      'summary(lagna) report': 'Summary(lagna) Report',
       'chalit table': 'Chalit Table',
       'panchang': 'Panchang',
       'Binnashtakvarga': 'Binnashtakvarga',
@@ -1914,9 +1961,9 @@ class KundliResultController extends BaseController {
       }
     }
 
-    // Handle Shodashvarga navigation
-    if (feature.toLowerCase() == 'shodashvarga') {
-      // Pass form data to Shodashvarga view
+    // Handle Shodashvarga navigation (feature grid title is "Shodash\nvarga")
+    final featureNormalized = feature.replaceAll(RegExp(r'\s'), '').toLowerCase();
+    if (featureNormalized == 'shodashvarga') {
       Get.toNamed(
         AppRoutes.shodashvarga,
         arguments: {'formData': formData.value},

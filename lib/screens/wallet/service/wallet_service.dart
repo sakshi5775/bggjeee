@@ -29,16 +29,25 @@ class WalletService with ApiHelperMixin {
       if (response.body['success'] == true) {
         return WalletRechargeInitiateResponse.fromJson(response.body);
       } else {
+        final msg = response.body['message']?.toString() ?? '';
         showErrorMessage(
           title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              "Failed to initiate recharge. Please try again.",
+          message: msg.toLowerCase().contains('validation')
+              ? "Please enter at least ₹100 or choose from the quick amounts."
+              : (msg.isNotEmpty ? msg : "Failed to initiate recharge. Please try again."),
         );
         return null;
       }
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      final errStr = e.toString();
+      final message = errStr.contains('Validation failed') ||
+              errStr.toLowerCase().contains('validation')
+          ? "Please enter at least ₹100 or choose from the quick amounts."
+          : errStr.replaceFirst('Error During Communication: ', '').trim();
+      showErrorMessage(
+        title: "Error",
+        message: message.isEmpty ? "Failed to initiate recharge. Please try again." : message,
+      );
       return null;
     } finally {
       setLoadingState(false);

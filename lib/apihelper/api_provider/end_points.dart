@@ -448,8 +448,7 @@ class EndPoints {
   static const String generateChalit = 'chart/bhav-chalit';
   static const String generateTransit = 'chart/transit-chart';
 
-  // Shodashvarga Chart APIs
-  static const String chartD2 = 'chart/d2';
+  // Shodashvarga Chart APIs (D2 removed)
   static const String chartD3 = 'chart/d3';
   static const String chartD4 = 'chart/d4';
   static const String chartD6 = 'chart/d6';
@@ -510,8 +509,20 @@ class EndPoints {
   static const String predictionNakshatra = 'prediction/nakshatra';
   static const String predictionPanchang = 'prediction/panchang';
 
+  // Prokerala Horoscope APIs
+  static const String prokeralaDaily = 'prokerala/horoscope/daily';
+  static const String prokeralaDailyAdvanced = 'prokerala/horoscope/daily/advanced';
+  static const String prokeralaLoveCompatibility = 'prokerala/horoscope/daily/love-compatibility';
+
   // Planet Details API
   static const String planetDetails = 'horoscope/planet-details';
+  static const String planetTransitDates = 'vedic/western/planet-transit-dates';
+  static const String westernTransitChart = 'vedic/western/transit-chart';
+  static const String dailyTransits = 'vedic/western/daily-transits';
+  static const String dailyTransitPrediction = 'vedic/western/daily-transit-prediction';
+  static const String detailedPlanetReport = 'vedic/western/detailed-planet-report';
+  static const String westernPlanetDetails = 'vedic/western/planet-details';
+  static const String aspects = 'vedic/western/aspects';
 
   // Ashtakvarga API
   static const String ashtakvarga = 'horoscope/ashtakvarga';
@@ -534,13 +545,18 @@ class EndPoints {
   static const String varshaphalYearlyChart =
       'extended-horoscope/varshaphal-yearly-chart';
 
+  // Shad Bala API
+  static const String shadBalaVedic = 'extended-horoscope/shad-bala-vedic';
+
   // Extended Horoscope APIs
   static const String extendedKundali = 'extended-horoscope/extended-kundali';
   static const String moonSign = 'extended-horoscope/moon-sign';
   static const String sunSign = 'extended-horoscope/sun-sign';
   static const String ascendantSign = 'extended-horoscope/ascendant-sign';
   static const String currentSadeSati = 'extended-horoscope/current-sade-sati';
+  static const String sadeSatiTableVedic = 'extended-horoscope/sade-sati-table-vedic';
   static const String gemSuggestion = 'extended-horoscope/gem-suggestion';
+  static const String gemDetails = 'vedic/utilities/gem-details';
   static const String rudrakshSuggestion =
       'extended-horoscope/rudraksh-suggestion';
   static const String friendshipTable = 'extended-horoscope/friendship-table';

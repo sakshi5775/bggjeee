@@ -2,13 +2,12 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kp_system_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
+/// KP Planet Significations – table (planet-significations API: Planet | Houses).
 class KpPlanetSignificationWidget extends StatelessWidget {
   final KpSystemController controller;
 
@@ -22,21 +21,17 @@ class KpPlanetSignificationWidget extends StatelessWidget {
     return Obx(() {
       if (controller.isLoadingKpPlanetSignifications.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: '#ed6f30'.toColor()),
         );
       }
 
       final data = controller.kpPlanetSignificationsData.value;
-      
       if (data == null || data.isEmpty) {
         return Center(
           child: AutoTranslateText(
             'No data available',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
-            ),
+            style: MyTextTheme.mediumBCN
+                .copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
           ),
         );
       }
@@ -46,157 +41,153 @@ class KpPlanetSignificationWidget extends StatelessWidget {
         return Center(
           child: AutoTranslateText(
             'No data available',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
-            ),
+            style: MyTextTheme.mediumBCN
+                .copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
           ),
         );
       }
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ...response.entries.map((entry) {
-              final planet = entry.key;
-              final houses = entry.value as List<dynamic>? ?? [];
-              return Padding(
-                padding: EdgeInsets.only(bottom: 16.h),
-                child: _buildPlanetCard(planet, houses),
-              );
-            }).toList(),
-          ],
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        child: _planetCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildTitleRow('Planet Significations', Icons.layers),
+              _buildTableHeader(const ['Planet', 'Houses']),
+              ...response.entries.toList().asMap().entries.map((e) {
+                final planet = e.value.key;
+                final houses = e.value.value as List<dynamic>? ?? [];
+                final housesStr =
+                    houses.isEmpty ? '--' : houses.map((h) => h.toString()).join(', ');
+                return _buildTableRow(planet, housesStr, e.key);
+              }),
+            ],
+          ),
         ),
       );
     });
   }
 
-  Widget _buildPlanetCard(String planet, List<dynamic> houses) {
+  Widget _planetCard({required Widget child}) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      width: double.infinity,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            "#FFFFFF".toColor(),
-            "#FFFFFF".toColor(),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.2),
-          width: 1,
-        ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 2)),
         ],
+        border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      clipBehavior: Clip.antiAlias,
+      child: child,
+    );
+  }
+
+  Widget _buildTitleRow(String title, IconData icon) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: '#ed6f30'.toColor().withOpacity(0.08),
+        border: Border(
+          bottom:
+              BorderSide(color: '#ed6f30'.toColor().withOpacity(0.25), width: 1),
+        ),
+      ),
+      child: Row(
         children: [
-          // Planet Name Header
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                decoration: BoxDecoration(
-                  // color: "#ed6f30".toColor(),
-                  gradient: LinearGradient(colors: [
-                    Color(0xFFFF8C42), Color(0xFFE63946)
-                  ]),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: AutoTranslateText(
-                  planet,
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h3),
-                ),
-              ),
-              Spacing.w(8),
-              Expanded(
-                child: Container(
-                  height: 2,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        "#ed6f30".toColor().withOpacity(0.3),
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(16),
-          
-          // Houses Grid
-          if (houses.isNotEmpty)
-            Wrap(
-              spacing: 10.w,
-              runSpacing: 10.h,
-              children: houses.map((house) {
-                return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.r),
-                    border: Border.all(
-                      color: "#ed6f30".toColor().withOpacity(0.4),
-                      width: 1.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: "#ed6f30".toColor().withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: AutoTranslateText(
-                    'House ${house.toString()}',
-                    style: MyTextTheme.smallBCB.copyWith(
-                      color: "#6F221E".toColor(),
-                      fontWeight: FontWeight.w600,
-                    ).merge(AppTypography.body2),
-                  ),
-                );
-              }).toList(),
-            )
-          else
-            Container(
-              padding: EdgeInsets.all(12.w),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    color: "#6F221E".toColor().withOpacity(0.5),
-                    size: 16.w,
-                  ),
-                  Spacing.w(8),
-                  AutoTranslateText(
-                    'No houses',
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: "#6F221E".toColor().withOpacity(0.5),
-                    ).merge(AppTypography.body2),
-                  ),
-                ],
-              ),
+          Icon(icon, size: 18.w, color: '#ed6f30'.toColor()),
+          Spacing.w(8),
+          AutoTranslateText(
+            title,
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: '#6F221E'.toColor(),
+              fontWeight: FontWeight.w600,
+              fontSize: 14.sp,
             ),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTableHeader(List<String> labels) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: ['#FF8A3D'.toColor(), '#ed6f30'.toColor()],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: AutoTranslateText(
+              labels[0],
+              style: MyTextTheme.smallBCB.copyWith(
+                color: Colors.white,
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: AutoTranslateText(
+              labels[1],
+              style: MyTextTheme.smallBCB.copyWith(
+                color: Colors.white,
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTableRow(String planet, String houses, int index) {
+    final isEven = index.isEven;
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: isEven ? '#ed6f30'.toColor().withOpacity(0.04) : Colors.white,
+        border: Border(
+          bottom: BorderSide(
+              color: '#ed6f30'.toColor().withOpacity(0.12), width: 1),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(flex: 2, child: _cell(planet, isBold: true)),
+          Expanded(flex: 3, child: _cell(houses)),
+        ],
+      ),
+    );
+  }
+
+  Widget _cell(String text, {bool isBold = false}) {
+    return AutoTranslateText(
+      text,
+      style: MyTextTheme.smallBCB.copyWith(
+        color: '#6F221E'.toColor(),
+        fontWeight: isBold ? FontWeight.w600 : FontWeight.w500,
+        fontSize: 11.sp,
+      ),
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+      textAlign: TextAlign.center,
     );
   }
 }

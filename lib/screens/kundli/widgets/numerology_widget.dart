@@ -1,13 +1,12 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/predictions_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/screens/kundli/widgets/prediction_style.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class NumerologyWidget extends StatelessWidget {
   final PredictionsController controller;
@@ -21,66 +20,32 @@ class NumerologyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingNumerology.value) {
-        return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
-        );
+        return PredictionStyle.buildLoadingIndicator();
       }
 
       final data = controller.numerologyData.value;
-      
+
       if (data == null || data.isEmpty) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.info_outline,
-                size: 48.w,
-                color: "#6F221E".toColor().withOpacity(0.5),
-              ),
-              Spacing.h(16),
-              AutoTranslateText(
-                'No data available',
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.6),
-                ),
-              ),
-              Spacing.h(8),
-              AutoTranslateText(
-                'Please select Numerology from the table to view your prediction',
-                textAlign: TextAlign.center,
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.5),
-                ),
-              ),
-            ],
-          ),
+        return PredictionStyle.buildEmptyState(
+          message: 'No data available',
+          submessage: 'Please select Numerology from the table to view your prediction',
         );
       }
 
       final response = data['data']?['response'] as Map<String, dynamic>?;
       if (response == null || response.isEmpty) {
-        return Center(
-          child: AutoTranslateText(
-            'No data available',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
-            ),
-          ),
-        );
+        return PredictionStyle.buildEmptyState(message: 'No data available');
       }
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ...response.entries.map((entry) {
               final categoryData = entry.value as Map<String, dynamic>;
               return Padding(
-                padding: EdgeInsets.only(bottom: 16.h),
+                padding: EdgeInsets.only(bottom: 10.h),
                 child: _buildCategoryCard(categoryData),
               );
             }).toList(),
@@ -99,28 +64,7 @@ class NumerologyWidget extends StatelessWidget {
 
     return Container(
       padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            "#FFFFFF".toColor(),
-            "#FFFFFF".toColor(),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.2),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: PredictionStyle.cardDecoration(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -130,10 +74,7 @@ class NumerologyWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  // color: "#ed6f30".toColor(),
-                  gradient: LinearGradient(colors: [
-                    Color(0xFFFF8C42), Color(0xFFE63946)
-                  ]),
+                  gradient: AppColors.orangeGradient,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: AutoTranslateText(
@@ -151,7 +92,7 @@ class NumerologyWidget extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: "#ed6f30".toColor().withOpacity(0.3),
+                    color: AppColors.deepOrange.withOpacity(0.3),
                     width: 1,
                   ),
                 ),
@@ -161,13 +102,13 @@ class NumerologyWidget extends StatelessWidget {
                     AutoTranslateText(
                       'Number: ',
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: "#6F221E".toColor(),
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     AutoTranslateText(
                       number,
                       style: MyTextTheme.smallBCB.copyWith(
-                        color: "#ed6f30".toColor(),
+                        color: AppColors.deepOrange,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -193,21 +134,21 @@ class NumerologyWidget extends StatelessWidget {
               ],
             ],
           ),
-          Spacing.h(16),
+          Spacing.h(10),
           
           // Description
           if (description.isNotEmpty) ...[
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.5),
-                border: Border.all(color: Colors.deepOrange, width: 1),
+                color: AppColors.deepOrange.withOpacity(0.06),
+                border: Border.all(color: AppColors.deepOrange.withOpacity(0.3), width: 1),
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: AutoTranslateText(
                 description,
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.8),
+                  color: AppColors.textSecondary,
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -220,22 +161,22 @@ class NumerologyWidget extends StatelessWidget {
             AutoTranslateText(
               'Meaning:',
               style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Spacing.h(8),
+            Spacing.h(6),
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: Colors.deepOrangeAccent.withOpacity(0.10),
-                border: Border.all(color: Colors.deepOrange, width: 1),
+                color: AppColors.deepOrange.withOpacity(0.08),
+                border: Border.all(color: AppColors.deepOrange.withOpacity(0.3), width: 1),
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: AutoTranslateText(
                 meaning,
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor(),
+                  color: AppColors.textPrimary,
                   height: 1.5,
                 ),
               ),

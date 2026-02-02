@@ -3,11 +3,11 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/predictions_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class MoonSignPredictionWidget extends StatelessWidget {
   final PredictionsController controller;
@@ -79,21 +79,19 @@ class MoonSignPredictionWidget extends StatelessWidget {
       final physical = response['physical'] as String? ?? '';
 
       return SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Zodiac Header
             Container(
-              padding: EdgeInsets.all(16.w),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    "#ed6f30".toColor(),
-                    "#ed6f30".toColor().withOpacity(0.8),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(16.r),
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(12.r),
+                boxShadow: [
+                  BoxShadow(color: AppColors.deepOrange.withOpacity(0.2), blurRadius: 6, offset: const Offset(0, 2)),
+                ],
               ),
               child: Row(
                 children: [
@@ -115,12 +113,12 @@ class MoonSignPredictionWidget extends StatelessWidget {
                 ],
               ),
             ),
-            Spacing.h(16),
+            Spacing.h(10),
             
             // Explanation
             if (explanation.isNotEmpty) ...[
               Container(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16.r),
@@ -162,7 +160,7 @@ class MoonSignPredictionWidget extends StatelessWidget {
                   ],
                 ),
               ),
-              Spacing.h(16),
+              Spacing.h(10),
             ],
             
             // Health
@@ -174,9 +172,9 @@ class MoonSignPredictionWidget extends StatelessWidget {
             // Temperament
             if (temp.isNotEmpty) ...[
               _buildSectionCard('Temperament', temp, Icons.psychology),
-              Spacing.h(16),
+              Spacing.h(10),
             ],
-            
+
             // Physical
             if (physical.isNotEmpty) ...[
               _buildSectionCard('Physical Appearance', physical, Icons.person),
@@ -189,7 +187,7 @@ class MoonSignPredictionWidget extends StatelessWidget {
 
   Widget _buildSectionCard(String title, String content, IconData icon) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -231,7 +229,7 @@ class MoonSignPredictionWidget extends StatelessWidget {
               ),
             ],
           ),
-          Spacing.h(12),
+          Spacing.h(10),
           AutoTranslateText(
             content,
             style: AppTypography.body1.copyWith(

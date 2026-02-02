@@ -165,8 +165,12 @@ class AppRoutes {
   static const String dasha = '/dasha';
   static const String yog = '/yog';
   static const String dosh = '/dosh';
+  static const String sadeSati = '/sade-sati';
+  static const String gemstonesReport = '/gemstones-report';
+  static const String transitToday = '/transit-today';
   static const String kpSystem = '/kp-system';
   static const String lalKitab = '/lal-kitab';
+  static const String varshphal = '/varshphal';
   static const String predictions = '/predictions';
   static const String planets = '/planets';
   static const String birthDetails = '/birth-details';

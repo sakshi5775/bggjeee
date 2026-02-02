@@ -211,7 +211,7 @@ class _YearlyPredictionWidgetState extends State<YearlyPredictionWidget> {
           children: [
             // Title Section
             Padding(
-              padding: EdgeInsets.all(16.w),
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
               child: _buildTitleSection(),
             ),
             
@@ -470,7 +470,7 @@ class _YearlyPredictionWidgetState extends State<YearlyPredictionWidget> {
         }
 
         return SingleChildScrollView(
-          padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -489,7 +489,7 @@ class _YearlyPredictionWidgetState extends State<YearlyPredictionWidget> {
 
   Widget _buildPhaseContent(Map<String, dynamic> phase) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       child: _buildPhaseInfoCard(phase),
     );
   }
@@ -500,7 +500,7 @@ class _YearlyPredictionWidgetState extends State<YearlyPredictionWidget> {
     final prediction = phase['prediction'] as String? ?? '';
 
     return Container(
-      padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -571,7 +571,7 @@ class _YearlyPredictionWidgetState extends State<YearlyPredictionWidget> {
           // Main Prediction
           if (prediction.isNotEmpty) ...[
             Container(
-              padding: EdgeInsets.all(14.w),
+              padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.r),
@@ -599,7 +599,7 @@ class _YearlyPredictionWidgetState extends State<YearlyPredictionWidget> {
     final prediction = data['prediction'] as String? ?? '';
     
     return Container(
-      padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -673,7 +673,7 @@ class _YearlyPredictionWidgetState extends State<YearlyPredictionWidget> {
           if (prediction.isNotEmpty) ...[
             Spacing.h(16),
             Container(
-              padding: EdgeInsets.all(14.w),
+              padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.r),

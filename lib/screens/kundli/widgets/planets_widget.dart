@@ -14,10 +14,14 @@ class PlanetsWidget extends StatelessWidget {
   /// e.g. below Lagna actions slider.
   final bool embedded;
 
+  /// Optional aspects data (from vedic/western/aspects API). Pass when available.
+  final Map<String, dynamic>? aspectsData;
+
   const PlanetsWidget({
     super.key,
     required this.controller,
     this.embedded = false,
+    this.aspectsData,
   });
 
   @override
@@ -85,6 +89,10 @@ class PlanetsWidget extends StatelessWidget {
             Spacing.h(6),
           ],
           _buildDasaSection(data),
+          if (aspectsData != null && aspectsData!.isNotEmpty) ...[
+            Spacing.h(6),
+            _buildAspectsSection(aspectsData!),
+          ],
           if (!embedded) Spacing.h(6),
         ],
       );
@@ -416,6 +424,31 @@ class PlanetsWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: rows,
       ),
+    );
+  }
+
+  Widget _buildAspectsSection(Map<String, dynamic> aspectsData) {
+    final aspectTypes = ['conjunction', 'opposition', 'trine', 'square', 'sextile', 'quincunx', 'semi-square', 'quintile', 'semi-sextile'];
+    final rows = <Widget>[];
+    for (final type in aspectTypes) {
+      final list = aspectsData[type] as List<dynamic>?;
+      if (list == null || list.isEmpty) continue;
+      for (final item in list) {
+        final m = item as Map<String, dynamic>;
+        final planetOne = m['planet_one']?.toString() ?? '';
+        final planetTwo = m['planet_two']?.toString() ?? '';
+        final orb = m['orb'];
+        final aspect = m['aspect']?.toString() ?? type;
+        final orbStr = orb != null ? (orb is num ? orb.toStringAsFixed(2) : orb.toString()) : '-';
+        rows.add(_buildDetailRow('$planetOne ↔ $planetTwo', '$aspect (orb: $orbStr°)'));
+      }
+    }
+    if (rows.isEmpty) return const SizedBox.shrink();
+    return _sectionCard(
+      title: 'Aspects',
+      icon: Icons.linear_scale,
+      compact: true,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: rows),
     );
   }
 

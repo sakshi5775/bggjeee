@@ -8,17 +8,35 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class PlanetsController extends BaseController {
   // Form data
   final formData = Rxn<Map<String, dynamic>>();
   
+  // Tab: 0=Overview, 1=Transit, 2=Detailed
+  final selectedTabIndex = 0.obs;
+  late PageController pageController;
+  final ScrollController tabsScrollController = ScrollController();
+  final Map<int, GlobalKey> tabKeys = {};
+  
+  // Planet/year for Transit & Detailed
+  final selectedPlanet = 'sun'.obs;
+  final selectedYear = DateTime.now().year.obs;
+  static const planetNames = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto'];
+  
   // API data
   final planetDetailsData = Rxn<Map<String, dynamic>>();
-  
+  final westernPlanetDetailsData = Rxn<Map<String, dynamic>>();
+  final aspectsData = Rxn<Map<String, dynamic>>();
+  final transitDatesData = Rxn<Map<String, dynamic>>();
+  final detailedReportData = Rxn<Map<String, dynamic>>();
+
   // Loading state
   final isLoadingPlanetDetails = false.obs;
+  final isLoadingWesternPlanetDetails = false.obs;
+  final isLoadingAspects = false.obs;
+  final isLoadingTransit = false.obs;
+  final isLoadingDetailedReport = false.obs;
   
   // Service
   final _kundliService = KundliService();
@@ -26,9 +44,31 @@ class PlanetsController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    pageController = PageController(initialPage: 0);
     _loadData();
-    // Fetch data automatically when controller is initialized
     fetchPlanetDetails();
+  }
+  
+  @override
+  void onClose() {
+    pageController.dispose();
+    tabsScrollController.dispose();
+    super.onClose();
+  }
+
+  void onTabSelected(int index) {
+    selectedTabIndex.value = index;
+    if (pageController.hasClients) {
+      pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    }
+    if (index == 1 && transitDatesData.value == null) fetchPlanetTransitDates(selectedPlanet.value, selectedYear.value);
+    if (index == 2 && detailedReportData.value == null) fetchDetailedPlanetReport(selectedPlanet.value);
+  }
+  
+  void onPageChanged(int index) {
+    selectedTabIndex.value = index;
+    if (index == 1 && transitDatesData.value == null) fetchPlanetTransitDates(selectedPlanet.value, selectedYear.value);
+    if (index == 2 && detailedReportData.value == null) fetchDetailedPlanetReport(selectedPlanet.value);
   }
 
   void _loadData() {
@@ -289,6 +329,8 @@ class PlanetsController extends BaseController {
       if (data != null && data['response'] != null) {
         planetDetailsData.value = data['response'] as Map<String, dynamic>;
         debugPrint('Planet Details data loaded successfully');
+        fetchAspects();
+        fetchWesternPlanetDetails();
       } else {
         debugPrint('Failed to fetch Planet Details data');
         Get.snackbar(
@@ -309,6 +351,79 @@ class PlanetsController extends BaseController {
         backgroundColor: Colors.red.withOpacity(0.8),
         colorText: Colors.white,
       );
+    }
+  }
+
+  Future<void> fetchWesternPlanetDetails() async {
+    final form = formData.value;
+    if (form == null) return;
+    final date = form['date']?.toString();
+    final time = form['time']?.toString();
+    final latRaw = form['latitude'];
+    final lonRaw = form['longitude'];
+    final tzRaw = form['timezone'];
+    final lat = latRaw is num ? latRaw.toDouble() : double.tryParse(latRaw?.toString() ?? '');
+    final lon = lonRaw is num ? lonRaw.toDouble() : double.tryParse(lonRaw?.toString() ?? '');
+    final tz = tzRaw is num ? tzRaw.toDouble() : double.tryParse(tzRaw?.toString() ?? '');
+    if (date == null || time == null || lat == null || lon == null || tz == null) return;
+    try {
+      isLoadingWesternPlanetDetails.value = true;
+      final data = await _kundliService.getWesternPlanetDetails(dob: date, tob: time, lat: lat, lon: lon, tz: tz);
+      if (data != null && data['response'] != null) {
+        westernPlanetDetailsData.value = data['response'] as Map<String, dynamic>;
+      }
+    } finally {
+      isLoadingWesternPlanetDetails.value = false;
+    }
+  }
+
+  Future<void> fetchAspects() async {
+    final form = formData.value;
+    if (form == null) return;
+    final date = form['date']?.toString();
+    final time = form['time']?.toString();
+    final lat = form['latitude'] as double?;
+    final lon = form['longitude'] as double?;
+    final tz = form['timezone'] as double?;
+    if (date == null || time == null || lat == null || lon == null || tz == null) return;
+    try {
+      isLoadingAspects.value = true;
+      final data = await _kundliService.getAspects(dob: date, tob: time, lat: lat, lon: lon, tz: tz);
+      if (data != null && data['response'] != null) {
+        aspectsData.value = data['response'] as Map<String, dynamic>;
+      }
+    } finally {
+      isLoadingAspects.value = false;
+    }
+  }
+
+  Future<void> fetchPlanetTransitDates(String planet, int year) async {
+    try {
+      isLoadingTransit.value = true;
+      final data = await _kundliService.getPlanetTransitDates(planet: planet, year: year);
+      transitDatesData.value = data;
+    } finally {
+      isLoadingTransit.value = false;
+    }
+  }
+
+  Future<void> fetchDetailedPlanetReport(String planet) async {
+    final form = formData.value;
+    if (form == null) return;
+    final date = form['date']?.toString();
+    final time = form['time']?.toString();
+    final lat = form['latitude'] as double?;
+    final lon = form['longitude'] as double?;
+    final tz = form['timezone'] as double?;
+    if (date == null || time == null || lat == null || lon == null || tz == null) return;
+    try {
+      isLoadingDetailedReport.value = true;
+      final data = await _kundliService.getDetailedPlanetReport(dob: date, tob: time, lat: lat, lon: lon, tz: tz, planet: planet);
+      if (data != null && data['response'] != null) {
+        detailedReportData.value = data['response'] as Map<String, dynamic>;
+      }
+    } finally {
+      isLoadingDetailedReport.value = false;
     }
   }
 }

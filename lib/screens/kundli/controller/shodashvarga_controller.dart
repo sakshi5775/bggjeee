@@ -3,23 +3,24 @@ import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class ShodashvargaController extends BaseController {
   // Selected tab
   final selectedTabIndex = 0.obs;
-  
+
+  // ScrollController for horizontal tab bar
+  final ScrollController tabsScrollController = ScrollController();
+
   // PageController for swipeable tabs
   late PageController pageController;
-  
+
   // Form data
   final formData = Rxn<Map<String, dynamic>>();
   
-  // Tabs - All divisions
+  // Tabs - All divisions (D2 removed)
   final tabs = [
     'SHODASHVARGA',
     'D1',
-    'D2',
     'D3',
     'D4',
     'D6',
@@ -38,10 +39,9 @@ class ShodashvargaController extends BaseController {
     'D60',
   ];
   
-  // Division data for table
+  // Division data for table (D2 removed)
   final divisions = [
     {'name': 'Lagna', 'code': 'D1', 'description': 'Rashi Chart'},
-    {'name': 'Hora', 'code': 'D2', 'description': 'Wealth Division'},
     {'name': 'Drekkana', 'code': 'D3', 'description': 'Siblings Division'},
     {'name': 'Chaturthamsha', 'code': 'D4', 'description': 'Property Division'},
     {'name': 'Shashthamsha', 'code': 'D6', 'description': 'Health Division'},
@@ -77,6 +77,7 @@ class ShodashvargaController extends BaseController {
   @override
   void onClose() {
     pageController.dispose();
+    tabsScrollController.dispose();
     super.onClose();
   }
   
@@ -87,6 +88,9 @@ class ShodashvargaController extends BaseController {
     if (index > 0 && index < tabs.length) {
       final division = tabs[index];
       _fetchChartForDivision(division);
+      // Preload adjacent divisions so next/previous swipe is instant
+      if (index > 1) _fetchChartForDivision(tabs[index - 1]);
+      if (index + 1 < tabs.length) _fetchChartForDivision(tabs[index + 1]);
     }
   }
 
@@ -121,10 +125,16 @@ class ShodashvargaController extends BaseController {
   }
 
   void onDivisionTap(String code) {
-    // Find the tab index for the division code
     final tabIndex = tabs.indexWhere((tab) => tab == code);
     if (tabIndex != -1) {
       selectedTabIndex.value = tabIndex;
+      if (pageController.hasClients) {
+        pageController.animateToPage(
+          tabIndex,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
       _fetchChartForDivision(code);
     } else {
       debugPrint('Division code not found: $code');

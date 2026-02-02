@@ -39,7 +39,7 @@ class DoshView extends BasePage<DoshController> {
           child: SafeArea(
             child: Column(
               children: [
-                KundliHeader(),
+                KundliHeader(title: 'Dosh Report'),
                 _buildTabs(),
                 Expanded(
                   child: PageView(
