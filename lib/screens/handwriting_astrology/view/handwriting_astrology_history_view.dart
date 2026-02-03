@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/screens/handwriting_astrology/service/handwrit
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,12 +17,15 @@ class HandwritingAstrologyHistoryView extends StatefulWidget {
   const HandwritingAstrologyHistoryView({Key? key}) : super(key: key);
 
   @override
-  State<HandwritingAstrologyHistoryView> createState() => _HandwritingAstrologyHistoryViewState();
+  State<HandwritingAstrologyHistoryView> createState() =>
+      _HandwritingAstrologyHistoryViewState();
 }
 
-class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHistoryView> {
-  final HandwritingAstrologyService _handwritingService = HandwritingAstrologyService();
-  
+class _HandwritingAstrologyHistoryViewState
+    extends State<HandwritingAstrologyHistoryView> {
+  final HandwritingAstrologyService _handwritingService =
+      HandwritingAstrologyService();
+
   List<HandwritingData> _readings = [];
   bool _isLoading = true;
   String? _errorMessage;
@@ -58,7 +62,7 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
           } else {
             _readings.addAll(response.data ?? []);
           }
-          
+
           _totalPages = response.pagination?.totalPages ?? 1;
           _hasMore = _currentPage < _totalPages;
           _isLoading = false;
@@ -96,7 +100,9 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
       final confirmed = await Get.dialog<bool>(
         AlertDialog(
           title: AutoTranslateText('Delete Reading'),
-          content: AutoTranslateText('Are you sure you want to delete this reading?'),
+          content: AutoTranslateText(
+            'Are you sure you want to delete this reading?',
+          ),
           actions: [
             TextButton(
               onPressed: () => Get.back(result: false),
@@ -104,7 +110,10 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
             ),
             TextButton(
               onPressed: () => Get.back(result: true),
-              child: AutoTranslateText('Delete', style: TextStyle(color: Colors.red)),
+              child: AutoTranslateText(
+                'Delete',
+                style: TextStyle(color: Colors.red),
+              ),
             ),
           ],
         ),
@@ -118,11 +127,13 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
         );
 
         try {
-          final success = await _handwritingService.deleteHandwriting(readingId);
-          
+          final success = await _handwritingService.deleteHandwriting(
+            readingId,
+          );
+
           // Close loading dialog
           Get.back();
-          
+
           if (success) {
             // Remove from list and refresh
             if (mounted) {
@@ -132,10 +143,10 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
                 }
               });
             }
-            
+
             // Refresh the list to ensure consistency
             await _loadHistory(refresh: true);
-            
+
             // Show success message with proper error handling
             if (mounted && Get.isSnackbarOpen == false) {
               try {
@@ -178,10 +189,10 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
               // Ignore dialog close errors
             }
           }
-          
+
           // Check if error is because item was already deleted
           final errorString = e.toString().toLowerCase();
-          if (errorString.contains('not_found') || 
+          if (errorString.contains('not_found') ||
               errorString.contains('not found') ||
               errorString.contains('404')) {
             // Item was already deleted, just refresh the list
@@ -193,7 +204,7 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
               });
             }
             await _loadHistory(refresh: true);
-            
+
             if (mounted && Get.isSnackbarOpen == false) {
               try {
                 Get.snackbar(
@@ -237,7 +248,7 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
           // Ignore dialog close errors
         }
       }
-      
+
       if (mounted && Get.isSnackbarOpen == false) {
         try {
           Get.snackbar(
@@ -264,9 +275,9 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
       );
 
       final reading = await _handwritingService.getHandwritingById(readingId);
-      
+
       Get.back(); // Close loading dialog
-      
+
       Get.toNamed(
         AppRoutes.handwritingAstrologyResults,
         arguments: {'result': reading},
@@ -276,9 +287,10 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
       if (Get.isDialogOpen ?? false) {
         Get.back();
       }
-      
+
       // Check if reading was deleted
-      if (e.toString().contains('NOT_FOUND') || e.toString().contains('not found')) {
+      if (e.toString().contains('NOT_FOUND') ||
+          e.toString().contains('not found')) {
         // Refresh the list to remove deleted items
         await _loadHistory(refresh: true);
         Get.snackbar(
@@ -317,53 +329,16 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
       body: SafeArea(
         child: Column(
           children: [
-            _buildTopBar(),
-            Expanded(
-              child: _buildContent(),
+            const CommonHeader(
+              title: 'Handwriting History',
+              subtitle: AutoTranslateText(
+                'Your past readings',
+                style: TextStyle(fontSize: 12, color: Color(0xFFF7EFBD)),
+              ),
             ),
+            Expanded(child: _buildContent()),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildTopBar() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: '#68171E'.toColor(),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20.r),
-          bottomRight: Radius.circular(20.r),
-        ),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back, color: AppColors.templeGold, size: 24.w),
-            onPressed: () => Get.back(),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoTranslateText(
-                  'Handwriting History',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: AppColors.templeGold,
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
-                ),
-                AutoTranslateText(
-                  'Your past readings',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: AppColors.templeGold.withOpacity(0.9),
-                  ).merge(AppTypography.body2),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -386,9 +361,7 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
             Spacing.h(16),
             AutoTranslateText(
               _errorMessage!,
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: '#3E2723'.toColor(),
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
               textAlign: TextAlign.center,
             ),
             Spacing.h(16),
@@ -410,16 +383,14 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
             Spacing.h(16),
             AutoTranslateText(
               'No reading history',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: '#3E2723'.toColor(),
-              ).merge(AppTypography.h2),
+              style: MyTextTheme.largeBCB
+                  .copyWith(color: '#3E2723'.toColor())
+                  .merge(AppTypography.h2),
             ),
             Spacing.h(8),
             AutoTranslateText(
               'Start your handwriting analysis journey',
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: '#666666'.toColor(),
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: '#666666'.toColor()),
             ),
           ],
         ),
@@ -440,7 +411,9 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
               child: Padding(
                 padding: EdgeInsets.all(16.w),
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>('#EA632B'.toColor()),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    '#EA632B'.toColor(),
+                  ),
                 ),
               ),
             );
@@ -455,8 +428,8 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
 
   Widget _buildReadingCard(HandwritingData reading, int index) {
     final score = reading.overview?.score ?? 0;
-    final status = reading.status ?? 
-                   (reading.overview != null ? 'COMPLETED' : 'FAILED');
+    final status =
+        reading.status ?? (reading.overview != null ? 'COMPLETED' : 'FAILED');
     final isCompleted = status == 'COMPLETED';
 
     return Container(
@@ -490,7 +463,8 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.r),
-                  child: reading.imageUrls != null && reading.imageUrls!.isNotEmpty
+                  child:
+                      reading.imageUrls != null && reading.imageUrls!.isNotEmpty
                       ? Image.network(
                           reading.imageUrls!.first,
                           fit: BoxFit.cover,
@@ -534,19 +508,32 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
                         ),
                         if (isCompleted)
                           PopupMenuButton(
-                            icon: Icon(Icons.more_vert, color: '#666666'.toColor()),
+                            icon: Icon(
+                              Icons.more_vert,
+                              color: '#666666'.toColor(),
+                            ),
                             itemBuilder: (context) => [
                               PopupMenuItem(
                                 child: Row(
                                   children: [
-                                    Icon(Icons.delete, color: Colors.red, size: 20.w),
+                                    Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                      size: 20.w,
+                                    ),
                                     Spacing.w(8),
-                                    AutoTranslateText('Delete', style: TextStyle(color: Colors.red)),
+                                    AutoTranslateText(
+                                      'Delete',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
                                   ],
                                 ),
                                 onTap: () {
                                   Future.delayed(Duration.zero, () {
-                                    _deleteReading(reading.readingId ?? '', index);
+                                    _deleteReading(
+                                      reading.readingId ?? '',
+                                      index,
+                                    );
                                   });
                                 },
                               ),
@@ -558,7 +545,11 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
                     Row(
                       children: [
                         if (isCompleted) ...[
-                          Icon(Icons.star, color: '#EA632B'.toColor(), size: 16.w),
+                          Icon(
+                            Icons.star,
+                            color: '#EA632B'.toColor(),
+                            size: 16.w,
+                          ),
                           Spacing.w(4),
                           AutoTranslateText(
                             '$score/100',
@@ -593,16 +584,19 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
                     if (!isCompleted) ...[
                       Spacing.h(4),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 4.h,
+                        ),
                         decoration: BoxDecoration(
                           color: "#F38B3B".toColor().withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: AutoTranslateText(
                           reading.errorMessage ?? 'Failed',
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: "#F38B3B".toColor(),
-                          ).merge(AppTypography.label),
+                          style: MyTextTheme.smallBCN
+                              .copyWith(color: "#F38B3B".toColor())
+                              .merge(AppTypography.label),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -618,4 +612,3 @@ class _HandwritingAstrologyHistoryViewState extends State<HandwritingAstrologyHi
     );
   }
 }
-

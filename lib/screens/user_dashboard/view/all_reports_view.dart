@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,12 +17,35 @@ class AllReportsView extends StatelessWidget {
     {'title': 'Raj Yoga', 'image': AppConstant.astrologyRajYogaReport},
     {'title': 'Year Book', 'image': AppConstant.astrologyYearBookReport},
     {'title': 'Horoscope', 'image': AppConstant.astrologyReportHoroscope2026},
-    {'title': 'Shani Report', 'image': AppConstant.astrologyYearBookReportShani},
-    {'title': 'Atharvaveda', 'image': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/atharvaveda.jpeg'},
-    {'title': 'Jyotish Vedang', 'image': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/jyotishVedang.jpeg'},
-    {'title': 'Rigveda', 'image': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/rigveda.jpeg'},
-    {'title': 'Samveda', 'image': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/samveda.jpeg'},
-    {'title': 'Yajurveda', 'image': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/yajurveda.jpeg'},
+    {
+      'title': 'Shani Report',
+      'image': AppConstant.astrologyYearBookReportShani,
+    },
+    {
+      'title': 'Atharvaveda',
+      'image':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/atharvaveda.jpeg',
+    },
+    {
+      'title': 'Jyotish Vedang',
+      'image':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/jyotishVedang.jpeg',
+    },
+    {
+      'title': 'Rigveda',
+      'image':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/rigveda.jpeg',
+    },
+    {
+      'title': 'Samveda',
+      'image':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/samveda.jpeg',
+    },
+    {
+      'title': 'Yajurveda',
+      'image':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Sacred+Library/yajurveda.jpeg',
+    },
   ];
 
   @override
@@ -29,49 +53,44 @@ class AllReportsView extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: ['#FCE5AA'.toColor(), '#FFFCF3'.toColor(), '#FFFFFF'.toColor()],
+          colors: [
+            '#FCE5AA'.toColor(),
+            '#FFFCF3'.toColor(),
+            '#FFFFFF'.toColor(),
+          ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: '#3D0C11'.toColor(), size: 24.w),
-            onPressed: () => Get.back(),
-          ),
-          title: AutoTranslateText(
-            'Reports',
-            style: AppTypography.h3.copyWith(
-              color: '#3D0C11'.toColor(),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          centerTitle: true,
-        ),
-        body: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        body: Column(
           children: [
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.72,
-                crossAxisSpacing: 12.w,
-                mainAxisSpacing: 12.h,
+            const CommonHeader(title: 'Reports', showSearch: false),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                children: [
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.72,
+                      crossAxisSpacing: 12.w,
+                      mainAxisSpacing: 12.h,
+                    ),
+                    itemCount: _reports.length,
+                    itemBuilder: (context, index) {
+                      final item = _reports[index];
+                      return _ReportCard(
+                        title: item['title']!,
+                        imagePath: item['image']!,
+                      );
+                    },
+                  ),
+                ],
               ),
-              itemCount: _reports.length,
-              itemBuilder: (context, index) {
-                final item = _reports[index];
-                return _ReportCard(
-                  title: item['title']!,
-                  imagePath: item['image']!,
-                );
-              },
             ),
           ],
         ),
@@ -146,11 +165,7 @@ class _ReportCard extends StatelessWidget {
   Widget _placeholder() {
     return Container(
       color: '#FCE5AA'.toColor(),
-      child: Icon(
-        Icons.menu_book,
-        size: 48.w,
-        color: AppColors.deepOrange,
-      ),
+      child: Icon(Icons.menu_book, size: 48.w, color: AppColors.deepOrange),
     );
   }
 }

@@ -3,7 +3,8 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/no_data_found_widget.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
-import 'package:astrobharataiuser/core/localization/translations.dart' as AppTranslations;
+import 'package:astrobharataiuser/core/localization/translations.dart'
+    as AppTranslations;
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/blog_model.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 
 bool _isVideoUrl(String url) {
   if (url.isEmpty) return false;
@@ -39,75 +41,33 @@ class AllBlogsView extends BasePage<AllBlogsController> {
         child: Column(
           children: [
             // Header
-            Container(
-              padding: AppPaddings.symmetric(h: 16, v: 12),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    '#FF6B35'.toColor(),
-                    '#FF8C42'.toColor(),
-                  ],
+            // Header
+            CommonHeader(
+              title: 'Blog & News',
+              showBackButton: showBack,
+              customActions: [
+                Container(
+                  padding: AppPaddings.symmetric(h: 12, v: 6),
+                  decoration: BoxDecoration(
+                    color: '#FF6B35'.toColor(),
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.trending_up, color: Colors.white, size: 16.w),
+                      Spacing.w(4),
+                      AutoTranslateText(
+                        'Trending',
+                        style: MyTextTheme.smallBCB.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  if (showBack)
-                    IconButton(
-                      onPressed: () => Get.back(),
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AutoTranslateText(
-                          'Blog & News',
-                          style: MyTextTheme.largeBCB.copyWith(
-                            color: Colors.white,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                        AutoTranslateText(
-                          'Spiritual wisdom and astrology insights',
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: Colors.white.withOpacity(0.8),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: AppPaddings.symmetric(h: 12, v: 6),
-                    decoration: BoxDecoration(
-                      color: '#FF6B35'.toColor(),
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.trending_up, color: Colors.white, size: 16.w),
-                        Spacing.w(4),
-                        AutoTranslateText(
-                          'Trending',
-                          style: MyTextTheme.smallBCB.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              ],
             ),
 
             // Search Bar
@@ -132,8 +92,16 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                     hintStyle: MyTextTheme.mediumBCN.copyWith(
                       color: Colors.grey,
                     ),
-                    prefixIcon: Icon(Icons.search, color: Colors.grey, size: 20.w),
-                    suffixIcon: Icon(Icons.tune, color: Colors.grey, size: 20.w),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Colors.grey,
+                      size: 20.w,
+                    ),
+                    suffixIcon: Icon(
+                      Icons.tune,
+                      color: Colors.grey,
+                      size: 20.w,
+                    ),
                     border: InputBorder.none,
                     contentPadding: AppPaddings.symmetric(h: 16, v: 12),
                   ),
@@ -170,7 +138,8 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                       ...controller.categories.take(5).map((category) {
                         final slug = category['slug'] ?? '';
                         final name = category['name'] ?? 'Category';
-                        final isSelected = controller.selectedCategory.value == slug;
+                        final isSelected =
+                            controller.selectedCategory.value == slug;
                         return Padding(
                           padding: EdgeInsets.only(right: 8.w),
                           child: _buildCategoryChip(
@@ -228,8 +197,13 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                                 itemBuilder: (context, index) {
                                   final blog = controller.featuredBlogs[index];
                                   return Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                    child: _buildFeaturedArticleCard(blog, Get.width * 0.85),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w,
+                                    ),
+                                    child: _buildFeaturedArticleCard(
+                                      blog,
+                                      Get.width * 0.85,
+                                    ),
                                   );
                                 },
                               ),
@@ -248,29 +222,32 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                               ),
                             ),
                           ),
-                           ListView.builder(
-                             shrinkWrap: true,
-                             physics: const NeverScrollableScrollPhysics(),
-                             padding: AppPaddings.all(16),
-                             itemCount: controller.blogs.length +
-                                 (controller.hasMoreData.value ? 1 : 0),
-                             itemBuilder: (context, index) {
-                               if (index == controller.blogs.length) {
-                                 return Container(
-                                   padding: AppPaddings.all(16),
-                                   child: const Center(child: CircularProgressIndicator()),
-                                 );
-                               }
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: AppPaddings.all(16),
+                            itemCount:
+                                controller.blogs.length +
+                                (controller.hasMoreData.value ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              if (index == controller.blogs.length) {
+                                return Container(
+                                  padding: AppPaddings.all(16),
+                                  child: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
 
-                               final blog = controller.blogs[index];
-                               return Padding(
-                                 padding: EdgeInsets.only(bottom: 16.h),
-                                 child: _buildLatestArticleCard(blog),
-                               );
-                             },
-                           ),
-                           // Add bottom padding
-                           Spacing.h(24),
+                              final blog = controller.blogs[index];
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: 16.h),
+                                child: _buildLatestArticleCard(blog),
+                              );
+                            },
+                          ),
+                          // Add bottom padding
+                          Spacing.h(24),
                         ],
                       ),
                     ),
@@ -284,7 +261,12 @@ class AllBlogsView extends BasePage<AllBlogsController> {
     );
   }
 
-  Widget _buildCategoryChip(String label, bool isSelected, IconData icon, {required VoidCallback onTap}) {
+  Widget _buildCategoryChip(
+    String label,
+    bool isSelected,
+    IconData icon, {
+    required VoidCallback onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20.r),
@@ -355,7 +337,10 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                     width: width,
                     height: 160.h,
                     color: Colors.black,
-                    child: isVideo && blog.featuredImage != null && blog.featuredImage!.isNotEmpty
+                    child:
+                        isVideo &&
+                            blog.featuredImage != null &&
+                            blog.featuredImage!.isNotEmpty
                         ? ClipRect(
                             child: OverflowBox(
                               maxWidth: width,
@@ -371,16 +356,17 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                               ),
                             ),
                           )
-                        : blog.featuredImage != null && blog.featuredImage!.isNotEmpty
-                            ? NetworkImageWithLoader(
-                                url: blog.featuredImage!,
-                                width: width,
-                                height: 160.h,
-                              )
-                            : Container(
-                                color: Colors.grey.withOpacity(0.3),
-                                child: Icon(Icons.image, size: 40.w),
-                              ),
+                        : blog.featuredImage != null &&
+                              blog.featuredImage!.isNotEmpty
+                        ? NetworkImageWithLoader(
+                            url: blog.featuredImage!,
+                            width: width,
+                            height: 160.h,
+                          )
+                        : Container(
+                            color: Colors.grey.withOpacity(0.3),
+                            child: Icon(Icons.image, size: 40.w),
+                          ),
                   ),
                 ),
                 Positioned(
@@ -410,7 +396,11 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                 Positioned(
                   top: 8.h,
                   right: 8.w,
-                  child: Icon(Icons.bookmark_border, color: Colors.white, size: 20.w),
+                  child: Icon(
+                    Icons.bookmark_border,
+                    color: Colors.white,
+                    size: 20.w,
+                  ),
                 ),
                 Positioned(
                   bottom: 8.h,
@@ -433,7 +423,11 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                           ),
                         ),
                         Spacing.w(12),
-                        Icon(Icons.access_time, color: Colors.white, size: 12.w),
+                        Icon(
+                          Icons.access_time,
+                          color: Colors.white,
+                          size: 12.w,
+                        ),
                         Spacing.w(4),
                         AutoTranslateText(
                           '${blog.readingTime ?? 0} min read',
@@ -458,7 +452,11 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                       CircleAvatar(
                         radius: 12.r,
                         backgroundColor: '#FF6B35'.toColor().withOpacity(0.2),
-                        child: Icon(Icons.person, size: 12.w, color: '#FF6B35'.toColor()),
+                        child: Icon(
+                          Icons.person,
+                          size: 12.w,
+                          color: '#FF6B35'.toColor(),
+                        ),
                       ),
                       Spacing.w(8),
                       Expanded(
@@ -564,37 +562,45 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                       topLeft: Radius.circular(16.r),
                       bottomLeft: Radius.circular(16.r),
                     ),
-                     child: isVideo && blog.featuredImage != null && blog.featuredImage!.isNotEmpty
-                         ? ClipRect(
-                             child: OverflowBox(
-                               maxWidth: 100.w,
-                               maxHeight: 100.h,
-                               alignment: Alignment.center,
-                               child: AspectRatio(
-                                 aspectRatio: 1,
-                                 child: VideoPlayerWidget(
-                                   videoUrl: blog.featuredImage!,
-                                   autoPlay: false,
-                                   showControls: false,
-                                 ),
-                               ),
-                             ),
-                           )
-                         : blog.featuredImage != null && blog.featuredImage!.isNotEmpty
-                             ? NetworkImageWithLoader(
-                                 url: blog.featuredImage!,
-                                 width: 100.w,
-                                 height: 100.h,
-                               )
-                             : Container(
-                                 color: Colors.grey.withOpacity(0.3),
-                                 child: Icon(Icons.image, size: 30.w),
-                               ),
+                    child:
+                        isVideo &&
+                            blog.featuredImage != null &&
+                            blog.featuredImage!.isNotEmpty
+                        ? ClipRect(
+                            child: OverflowBox(
+                              maxWidth: 100.w,
+                              maxHeight: 100.h,
+                              alignment: Alignment.center,
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: VideoPlayerWidget(
+                                  videoUrl: blog.featuredImage!,
+                                  autoPlay: false,
+                                  showControls: false,
+                                ),
+                              ),
+                            ),
+                          )
+                        : blog.featuredImage != null &&
+                              blog.featuredImage!.isNotEmpty
+                        ? NetworkImageWithLoader(
+                            url: blog.featuredImage!,
+                            width: 100.w,
+                            height: 100.h,
+                          )
+                        : Container(
+                            color: Colors.grey.withOpacity(0.3),
+                            child: Icon(Icons.image, size: 30.w),
+                          ),
                   ),
                   Positioned(
                     top: 4.h,
                     right: 4.w,
-                    child: Icon(Icons.bookmark_border, color: Colors.white, size: 16.w),
+                    child: Icon(
+                      Icons.bookmark_border,
+                      color: Colors.white,
+                      size: 16.w,
+                    ),
                   ),
                 ],
               ),
@@ -611,7 +617,11 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                         CircleAvatar(
                           radius: 10.r,
                           backgroundColor: '#FF6B35'.toColor().withOpacity(0.2),
-                          child: Icon(Icons.person, size: 10.w, color: '#FF6B35'.toColor()),
+                          child: Icon(
+                            Icons.person,
+                            size: 10.w,
+                            color: '#FF6B35'.toColor(),
+                          ),
                         ),
                         Spacing.w(6),
                         Expanded(
@@ -644,7 +654,11 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                     Spacing.h(6),
                     Row(
                       children: [
-                        Icon(Icons.access_time, size: 12.w, color: '#FF6B35'.toColor()),
+                        Icon(
+                          Icons.access_time,
+                          size: 12.w,
+                          color: '#FF6B35'.toColor(),
+                        ),
                         Spacing.w(4),
                         AutoTranslateText(
                           '${blog.readingTime ?? 0} min read',
@@ -653,7 +667,11 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                           ),
                         ),
                         Spacing.w(12),
-                        Icon(Icons.visibility, size: 12.w, color: '#FF6B35'.toColor()),
+                        Icon(
+                          Icons.visibility,
+                          size: 12.w,
+                          color: '#FF6B35'.toColor(),
+                        ),
                         Spacing.w(4),
                         AutoTranslateText(
                           '${blog.viewsCount ?? 0}',
@@ -738,12 +756,16 @@ class AllBlogsView extends BasePage<AllBlogsController> {
     Get.dialog(
       AlertDialog(
         title: LocalizedText(
-          text: '${AppTranslations.Translations.delete} ${AppTranslations.Translations.blogs}',
+          text:
+              '${AppTranslations.Translations.delete} ${AppTranslations.Translations.blogs}',
           style: MyTextTheme.largeBCB.copyWith(color: '#3E2723'.toColor()),
         ),
         content: LocalizedText(
-          text: 'Are you sure you want to delete "${blog.title}"? This action cannot be undone.',
-          style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor().withOpacity(0.7)),
+          text:
+              'Are you sure you want to delete "${blog.title}"? This action cannot be undone.',
+          style: MyTextTheme.mediumBCN.copyWith(
+            color: '#3E2723'.toColor().withOpacity(0.7),
+          ),
         ),
         actions: [
           TextButton(

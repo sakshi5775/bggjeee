@@ -1,7 +1,7 @@
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/controller/namaste_home_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/widgets/live_darshan_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/widgets/main_banner_widget.dart';
-import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/widgets/namaste_header_widget.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/widgets/quick_actions_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/widgets/temple_highlights_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/widgets/todays_special_widget.dart';
@@ -15,10 +15,7 @@ import 'package:get/get.dart';
 class NamasteHomeView extends StatefulWidget {
   final bool hideHeader;
 
-  const NamasteHomeView({
-    super.key,
-    this.hideHeader = false,
-  });
+  const NamasteHomeView({super.key, this.hideHeader = false});
 
   @override
   State<NamasteHomeView> createState() => _NamasteHomeViewState();
@@ -52,7 +49,9 @@ class _NamasteHomeViewState extends State<NamasteHomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: widget.hideHeader ? Colors.transparent : AppColors.lightBackground,
+      backgroundColor: widget.hideHeader
+          ? Colors.transparent
+          : AppColors.lightBackground,
       body: SafeArea(
         top: !widget.hideHeader,
         child: SingleChildScrollView(
@@ -62,7 +61,7 @@ class _NamasteHomeViewState extends State<NamasteHomeView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (!widget.hideHeader) ...[
-                  const NamasteHeaderWidget(),
+                  const CommonHeader(title: 'E-Mandir'),
                   SizedBox(height: 10.h),
                 ],
                 const MainBannerWidget(),

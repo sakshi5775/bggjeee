@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/my_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/data_model/payment_model.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/payment_detail_controller.dart';
@@ -17,39 +17,46 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
-      appBar: const MyAppbar(
-        title: 'Payment Details',
-        showLeading: true,
-      ),
-      body: Obx(() {
-        if (controller.isLoading.value && controller.payment.value == null) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      body: Column(
+        children: [
+          CommonHeader(title: 'Payment Details'),
+          Expanded(
+            child: Obx(() {
+              if (controller.isLoading.value &&
+                  controller.payment.value == null) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-        final payment = controller.payment.value;
-        if (payment == null) {
-          return Center(
-            child: AutoTranslateText(
-              'Unable to load payment details.',
-              style: AppTypography.body2.copyWith(color: AppColors.textSecondary),
-            ),
-          );
-        }
+              final payment = controller.payment.value;
+              if (payment == null) {
+                return Center(
+                  child: AutoTranslateText(
+                    'Unable to load payment details.',
+                    style: AppTypography.body2.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                );
+              }
 
-        return SingleChildScrollView(
-          padding: EdgeInsets.all(16.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSummary(payment),
-              SizedBox(height: 20.h),
-              _buildAdditionalInfo(payment),
-              SizedBox(height: 20.h),
-              if (payment.order != null) _buildOrderSnapshot(payment.order!),
-            ],
+              return SingleChildScrollView(
+                padding: EdgeInsets.all(16.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSummary(payment),
+                    SizedBox(height: 20.h),
+                    _buildAdditionalInfo(payment),
+                    SizedBox(height: 20.h),
+                    if (payment.order != null)
+                      _buildOrderSnapshot(payment.order!),
+                  ],
+                ),
+              );
+            }),
           ),
-        );
-      }),
+        ],
+      ),
     );
   }
 
@@ -96,31 +103,39 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
           SizedBox(height: 8.h),
           Row(
             children: [
-              Icon(Icons.account_balance_wallet_outlined,
-                  size: 18.sp, color: AppColors.textSecondary),
+              Icon(
+                Icons.account_balance_wallet_outlined,
+                size: 18.sp,
+                color: AppColors.textSecondary,
+              ),
               SizedBox(width: 6.w),
               AutoTranslateText(
                 payment.paymentMethod?.toUpperCase() ?? '—',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(color: AppColors.textSecondary),
               ),
             ],
           ),
           SizedBox(height: 12.h),
-          _InfoRow(label: 'Payment provider', value: payment.paymentProvider ?? '—'),
-          _InfoRow(label: 'Transaction ID', value: payment.transactionId ?? '—'),
-          _InfoRow(label: 'Gateway order ID', value: payment.gatewayOrderId ?? '—'),
+          _InfoRow(
+            label: 'Payment provider',
+            value: payment.paymentProvider ?? '—',
+          ),
+          _InfoRow(
+            label: 'Transaction ID',
+            value: payment.transactionId ?? '—',
+          ),
+          _InfoRow(
+            label: 'Gateway order ID',
+            value: payment.gatewayOrderId ?? '—',
+          ),
           _InfoRow(
             label: 'Completed at',
             value: _formatDate(payment.completedAt ?? payment.updatedAt),
           ),
           if (payment.failedAt != null)
-            _InfoRow(
-              label: 'Failed at',
-              value: _formatDate(payment.failedAt),
-            ),
-          if (payment.failureReason != null && payment.failureReason!.isNotEmpty)
+            _InfoRow(label: 'Failed at', value: _formatDate(payment.failedAt)),
+          if (payment.failureReason != null &&
+              payment.failureReason!.isNotEmpty)
             Padding(
               padding: EdgeInsets.only(top: 12.h),
               child: Container(
@@ -132,9 +147,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                 ),
                 child: AutoTranslateText(
                   'Failure reason: ${payment.failureReason}',
-                  style: TextStyle(
-                    color: AppColors.error,
-                  ),
+                  style: TextStyle(color: AppColors.error),
                 ),
               ),
             ),
@@ -178,7 +191,8 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
               _InfoRow(label: 'Card network', value: details.cardNetwork!),
             if (details.bankName != null)
               _InfoRow(label: 'Bank name', value: details.bankName!),
-            if (details.upiId != null) _InfoRow(label: 'UPI ID', value: details.upiId!),
+            if (details.upiId != null)
+              _InfoRow(label: 'UPI ID', value: details.upiId!),
             if (details.walletName != null)
               _InfoRow(label: 'Wallet name', value: details.walletName!),
             if (details.emiTenure != null)
@@ -186,7 +200,9 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
           ] else
             AutoTranslateText(
               'No additional payment details provided.',
-              style: AppTypography.body2.copyWith(color: AppColors.textSecondary),
+              style: AppTypography.body2.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
           SizedBox(height: 18.h),
           AutoTranslateText(
@@ -204,7 +220,9 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                 _InfoRow(label: 'Refund status', value: refund.status ?? '—'),
                 _InfoRow(
                   label: 'Refund amount',
-                  value: refund.amount > 0 ? '₹${refund.amount.toStringAsFixed(0)}' : '—',
+                  value: refund.amount > 0
+                      ? '₹${refund.amount.toStringAsFixed(0)}'
+                      : '—',
                 ),
                 _InfoRow(label: 'Refund ID', value: refund.refundId ?? '—'),
                 _InfoRow(
@@ -221,7 +239,9 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
           else
             AutoTranslateText(
               'No refund initiated for this payment.',
-              style: AppTypography.body2.copyWith(color: AppColors.textSecondary),
+              style: AppTypography.body2.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
         ],
       ),
@@ -261,10 +281,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
             value: '₹${order.totalAmount.toStringAsFixed(0)}',
           ),
           if (order.createdAt != null)
-            _InfoRow(
-              label: 'Order date',
-              value: _formatDate(order.createdAt),
-            ),
+            _InfoRow(label: 'Order date', value: _formatDate(order.createdAt)),
           SizedBox(height: 12.h),
           if (order.items.isNotEmpty)
             Column(
@@ -278,7 +295,9 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                         children: [
                           Expanded(
                             child: AutoTranslateText(
-                              item.productSnapshot?.name ?? item.product?.name ?? 'Product',
+                              item.productSnapshot?.name ??
+                                  item.product?.name ??
+                                  'Product',
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.textPrimary,
@@ -287,9 +306,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                           ),
                           AutoTranslateText(
                             '₹${(item.total ?? 0).toStringAsFixed(0)}',
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                            ),
+                            style: TextStyle(color: AppColors.textSecondary),
                           ),
                         ],
                       ),
@@ -328,20 +345,14 @@ class _StatusChip extends StatelessWidget {
       ),
       child: AutoTranslateText(
         label,
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          color: AppColors.saffron,
-        ),
+        style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.saffron),
       ),
     );
   }
 }
 
 class _InfoRow extends StatelessWidget {
-  const _InfoRow({
-    required this.label,
-    required this.value,
-  });
+  const _InfoRow({required this.label, required this.value});
 
   final String label;
   final String value;
@@ -357,9 +368,7 @@ class _InfoRow extends StatelessWidget {
             width: 140.w,
             child: AutoTranslateText(
               label,
-              style: TextStyle(
-                color: AppColors.textSecondary,
-              ),
+              style: TextStyle(color: AppColors.textSecondary),
             ),
           ),
           Expanded(
@@ -376,4 +385,3 @@ class _InfoRow extends StatelessWidget {
     );
   }
 }
-

@@ -1,3 +1,5 @@
+import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,8 +18,18 @@ class LiveWebinarsView extends GetView<LiveWebinarsController> {
       body: SafeArea(
         child: Column(
           children: [
-            // Dark Header with Background Arc
-            _buildHeader(),
+            Obx(
+              () => CommonHeader(
+                title: 'Live Webinars',
+                subtitle: AutoTranslateText(
+                  '${controller.liveCount} Live • ${controller.upcomingCount} Upcoming',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: const Color(0xFF5F2221).withValues(alpha: 0.7),
+                  ),
+                ),
+              ),
+            ),
 
             // Scrollable Content
             Expanded(
@@ -63,7 +75,14 @@ class LiveWebinarsView extends GetView<LiveWebinarsController> {
                       SizedBox(height: 24.h),
 
                       // Tabs (Upcoming & Recordings)
-                      _buildTabsSection(),
+                      Obx(
+                        () => CommonTabSlider(
+                          tabs: const ["Live", "Upcoming", "Recordings"],
+                          selectedIndex: controller.selectedTab.value,
+                          onTabSelected: (index) =>
+                              controller.selectedTab.value = index,
+                        ),
+                      ),
 
                       SizedBox(height: 16.h),
 
@@ -78,65 +97,6 @@ class LiveWebinarsView extends GetView<LiveWebinarsController> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(
-        left: 16.w,
-        right: 16.w,
-        top: 12.h,
-        bottom: 24.h,
-      ),
-      decoration: const BoxDecoration(
-        color: Color(0xFF5F2221), // Dark Brown
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () => Get.back(),
-                child: Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.white,
-                  size: 20.sp,
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AutoTranslateText(
-                    'Live Webinars',
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Obx(
-                    () => AutoTranslateText(
-                      '${controller.liveCount} Live • ${controller.upcomingCount} Upcoming',
-                      style: TextStyle(fontSize: 12.sp, color: Colors.white70),
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              // Icon(Icons.filter_list, color: Colors.white, size: 24.sp),
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -378,65 +338,6 @@ class LiveWebinarsView extends GetView<LiveWebinarsController> {
         ),
       );
     });
-  }
-
-  Widget _buildTabsSection() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30.r),
-        border: Border.all(color: const Color(0xffeeeeee)), // Light border
-      ),
-      child: Obx(
-        () => Row(
-          children: [
-            _buildTabItem("Upcoming", 1),
-            _buildTabItem("Recordings", 2),
-            // Could add 'My RSVPs' tab? For now stuck to design.
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTabItem(String title, int index) {
-    bool isSelected = controller.selectedTab.value == index;
-    // Special handling for Live tab if we wanted it back here, but we removed it as per updated design (Live is Hero).
-    // Actually controller.selectedTab 0 is live, but design implies below tabs are for others.
-    // If selected is 0 (Live), maybe highlight nothing or default to Upcoming if user scrolled?
-    // Let's assume user taps these to switch list below Hero.
-
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          controller.selectedTab.value = index;
-          // Optionally scroll to list
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: EdgeInsets.symmetric(vertical: 12.h),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? const Color(0xFFEAA92A)
-                : Colors.transparent, // Gold/Mustard
-            borderRadius: BorderRadius.circular(25.r),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            title,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: isSelected
-                  ? const Color(0xFF5F2221)
-                  : Colors.grey, // Dark Brown text on Gold
-              fontSize: 14.sp,
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
   Widget _buildContentList() {

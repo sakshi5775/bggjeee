@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/data_model/ramal_shastra_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,7 +17,8 @@ class RamalShastraHistoryView extends StatefulWidget {
   const RamalShastraHistoryView({Key? key}) : super(key: key);
 
   @override
-  State<RamalShastraHistoryView> createState() => _RamalShastraHistoryViewState();
+  State<RamalShastraHistoryView> createState() =>
+      _RamalShastraHistoryViewState();
 }
 
 class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
@@ -34,7 +36,9 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
     final confirmed = await Get.dialog<bool>(
       AlertDialog(
         title: AutoTranslateText('Delete Reading'),
-        content: AutoTranslateText('Are you sure you want to delete this reading?'),
+        content: AutoTranslateText(
+          'Are you sure you want to delete this reading?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
@@ -42,7 +46,10 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
-            child: AutoTranslateText('Delete', style: TextStyle(color: Colors.red)),
+            child: AutoTranslateText(
+              'Delete',
+              style: TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
@@ -70,73 +77,17 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
       body: SafeArea(
         child: Column(
           children: [
-            _buildTopBar(),
-            Expanded(
-              child: Obx(() => _buildContent()),
-            ),
+            const CommonHeader(title: 'History'),
+            Expanded(child: Obx(() => _buildContent())),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildTopBar() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            "#F38B3B".toColor(),
-            "#DD2914".toColor(),
-          ],
-        ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20.r),
-          bottomRight: Radius.circular(20.r),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.12),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
-            onPressed: () => Get.back(),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoTranslateText(
-                  'Ramal Shastra History',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
-                ),
-                AutoTranslateText(
-                  'Your past readings',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: Colors.white.withOpacity(0.9),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
 
   Widget _buildContent() {
-    if (controller.isLoadingHistory.value && controller.historyReadings.isEmpty) {
+    if (controller.isLoadingHistory.value &&
+        controller.historyReadings.isEmpty) {
       return Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>('#EA632B'.toColor()),
@@ -153,16 +104,14 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
             Spacing.h(16),
             AutoTranslateText(
               'No reading history',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: '#3E2723'.toColor(),
-              ).merge(AppTypography.h2),
+              style: MyTextTheme.largeBCB
+                  .copyWith(color: '#3E2723'.toColor())
+                  .merge(AppTypography.h2),
             ),
             Spacing.h(8),
             AutoTranslateText(
               'Start your Ramal Shastra journey',
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: '#666666'.toColor(),
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: '#666666'.toColor()),
             ),
           ],
         ),
@@ -174,7 +123,8 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
       color: '#EA632B'.toColor(),
       child: ListView.builder(
         padding: EdgeInsets.all(16.w),
-        itemCount: controller.historyReadings.length + 
+        itemCount:
+            controller.historyReadings.length +
             (controller.pagination.value?.hasNextPage == true ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == controller.historyReadings.length) {
@@ -183,7 +133,9 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
               child: Padding(
                 padding: EdgeInsets.all(16.w),
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>('#EA632B'.toColor()),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    '#EA632B'.toColor(),
+                  ),
                 ),
               ),
             );
@@ -198,7 +150,7 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
 
   Widget _buildReadingCard(RamalShastraData reading, int index) {
     final outcome = reading.judgment?.outcome ?? 'Unknown';
-    
+
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
@@ -250,28 +202,43 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
                         Expanded(
                           child: AutoTranslateText(
                             reading.question ?? 'Ramal Shastra Reading',
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: '#3E2723'.toColor(),
-                              fontWeight: FontWeight.bold,
-                            ).merge(AppTypography.h3),
+                            style: MyTextTheme.mediumBCB
+                                .copyWith(
+                                  color: '#3E2723'.toColor(),
+                                  fontWeight: FontWeight.bold,
+                                )
+                                .merge(AppTypography.h3),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         PopupMenuButton(
-                          icon: Icon(Icons.more_vert, color: '#666666'.toColor()),
+                          icon: Icon(
+                            Icons.more_vert,
+                            color: '#666666'.toColor(),
+                          ),
                           itemBuilder: (context) => [
                             PopupMenuItem(
                               child: Row(
                                 children: [
-                                  Icon(Icons.delete, color: Colors.red, size: 20.w),
+                                  Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                    size: 20.w,
+                                  ),
                                   Spacing.w(8),
-                                  AutoTranslateText('Delete', style: TextStyle(color: Colors.red)),
+                                  AutoTranslateText(
+                                    'Delete',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
                                 ],
                               ),
                               onTap: () {
                                 Future.delayed(Duration.zero, () {
-                                  _deleteReading(reading.readingId ?? '', index);
+                                  _deleteReading(
+                                    reading.readingId ?? '',
+                                    index,
+                                  );
                                 });
                               },
                             ),
@@ -283,7 +250,10 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
                     Row(
                       children: [
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 4.h,
+                          ),
                           decoration: BoxDecoration(
                             color: '#FFF2E8'.toColor(),
                             borderRadius: BorderRadius.circular(8.r),
@@ -318,5 +288,3 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
     );
   }
 }
-
-

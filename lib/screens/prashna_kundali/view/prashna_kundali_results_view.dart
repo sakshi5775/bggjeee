@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/data_model/prashna_kundali_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -38,7 +39,21 @@ class PrashnaKundaliResultsView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
+            CommonHeader(
+              title: 'Your Reading',
+              customActions: [
+                IconButton(
+                  onPressed: () {
+                    // Share functionality
+                  },
+                  icon: Icon(
+                    Icons.share,
+                    color: "#F38B3B".toColor(),
+                    size: 24.w,
+                  ),
+                ),
+              ],
+            ),
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
@@ -63,68 +78,6 @@ class PrashnaKundaliResultsView extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: '#ffffff'.toColor(),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#FFF8E1'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: '#F5D7B8'.toColor(), width: 1),
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-          AutoTranslateText(
-            'Your Reading',
-            style: MyTextTheme.largeBCB
-                .copyWith(
-                  color: '#3E2723'.toColor(),
-                  fontWeight: FontWeight.bold,
-                )
-                .merge(AppTypography.h3),
-          ),
-          GestureDetector(
-            onTap: () {
-              // Share functionality
-            },
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#FFF8E1'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: '#F5D7B8'.toColor(), width: 1),
-              ),
-              child: Icon(Icons.share, color: "#F38B3B".toColor(), size: 20.w),
-            ),
-          ),
-        ],
       ),
     );
   }

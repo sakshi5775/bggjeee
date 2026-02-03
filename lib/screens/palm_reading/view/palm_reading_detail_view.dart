@@ -5,8 +5,8 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/palm_reading_model.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -22,93 +22,82 @@ class PalmReadingDetailView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: '#FFF8E1'.toColor(), // Match Face Reading background
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: AppColors.orangeGradient,
-          ),
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
-          onPressed: () => Get.back(),
-        ),
-        title: AutoTranslateText(
-          'Your Palm Reading',
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ).merge(AppTypography.h2),
-        ),
-      ),
-      body: Obx(() {
-        if (controller.isLoadingReading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      body: Column(
+        children: [
+          const CommonHeader(title: 'Palm Reading Detail'),
+          Expanded(
+            child: Obx(() {
+              if (controller.isLoadingReading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-        if (controller.readingError.value.isNotEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.error_outline, size: 64.w, color: Colors.red),
-                Spacing.h(16),
-                AutoTranslateText(
-                  controller.readingError.value,
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: '#3E2723'.toColor(),
+              if (controller.readingError.value.isNotEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.error_outline, size: 64.w, color: Colors.red),
+                      Spacing.h(16),
+                      AutoTranslateText(
+                        controller.readingError.value,
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: '#3E2723'.toColor(),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      Spacing.h(24),
+                      ElevatedButton(
+                        onPressed: () => Get.back(),
+                        child: const AutoTranslateText('Go Back'),
+                      ),
+                    ],
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                Spacing.h(24),
-                ElevatedButton(
-                  onPressed: () => Get.back(),
-                  child: const AutoTranslateText('Go Back'),
-                ),
-              ],
-            ),
-          );
-        }
+                );
+              }
 
-        return SingleChildScrollView(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth),
-              child: Padding(
-                padding: AppPaddings.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Summary Section
-                    _buildSummarySection(controller),
-                    
-                    Spacing.h(32),
-                    
-                    // Palm Lines Analysis
-                    _buildPalmLinesSection(controller),
-                    
-                    Spacing.h(32),
-                    
-                    // Mount Analysis
-                    _buildMountAnalysisSection(controller),
-                    
-                    Spacing.h(32),
-                    
-                    // Special Markings
-                    _buildSpecialMarkingsSection(controller),
-                    
-                    Spacing.h(32),
-                    
-                    // Consult Expert Section
-                    _buildConsultExpertSection(),
-                    
-                    Spacing.h(32),
-                  ],
+              return SingleChildScrollView(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxWidth),
+                    child: Padding(
+                      padding: AppPaddings.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Summary Section
+                          _buildSummarySection(controller),
+
+                          Spacing.h(32),
+
+                          // Palm Lines Analysis
+                          _buildPalmLinesSection(controller),
+
+                          Spacing.h(32),
+
+                          // Mount Analysis
+                          _buildMountAnalysisSection(controller),
+
+                          Spacing.h(32),
+
+                          // Special Markings
+                          _buildSpecialMarkingsSection(controller),
+
+                          Spacing.h(32),
+
+                          // Consult Expert Section
+                          _buildConsultExpertSection(),
+
+                          Spacing.h(32),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            }),
           ),
-        );
-      }),
+        ],
+      ),
     );
   }
 
@@ -117,10 +106,7 @@ class PalmReadingDetailView extends StatelessWidget {
       padding: AppPaddings.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            "#F38B3B".toColor(),
-            "#F38B3B".toColor(),
-          ],
+          colors: ["#F38B3B".toColor(), "#F38B3B".toColor()],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -142,10 +128,9 @@ class PalmReadingDetailView extends StatelessWidget {
               Spacing.w(12),
               AutoTranslateText(
                 'Summary',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h2),
+                style: MyTextTheme.mediumBCB
+                    .copyWith(color: Colors.white, fontWeight: FontWeight.bold)
+                    .merge(AppTypography.h2),
               ),
             ],
           ),
@@ -166,7 +151,11 @@ class PalmReadingDetailView extends StatelessWidget {
               onPressed: () {
                 Get.toNamed(AppRoutes.astrologyServices);
               },
-              icon: Icon(Icons.chat_bubble_outline, color: "#F38B3B".toColor(), size: 20.w),
+              icon: Icon(
+                Icons.chat_bubble_outline,
+                color: "#F38B3B".toColor(),
+                size: 20.w,
+              ),
               label: AutoTranslateText(
                 'Consult Expert',
                 style: MyTextTheme.mediumBCB.copyWith(
@@ -195,8 +184,15 @@ class PalmReadingDetailView extends StatelessWidget {
 
       // Get all line categories from API
       final lineCategories = readingData.readings
-          .where((r) => ['HEART_LINE', 'HEAD_LINE', 'LIFE_LINE', 'FATE_LINE', 'SUN_LINE']
-              .contains(r.category.toUpperCase()))
+          .where(
+            (r) => [
+              'HEART_LINE',
+              'HEAD_LINE',
+              'LIFE_LINE',
+              'FATE_LINE',
+              'SUN_LINE',
+            ].contains(r.category.toUpperCase()),
+          )
           .toList();
 
       if (lineCategories.isEmpty) return const SizedBox.shrink();
@@ -206,17 +202,19 @@ class PalmReadingDetailView extends StatelessWidget {
         children: [
           AutoTranslateText(
             'Palm Lines Analysis',
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h1),
+            style: MyTextTheme.mediumBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h1),
           ),
           Spacing.h(16),
           ...lineCategories.map((reading) {
             String title;
             IconData icon;
             Color iconColor;
-            
+
             switch (reading.category.toUpperCase()) {
               case 'HEART_LINE':
                 title = 'Heart Line';
@@ -248,7 +246,7 @@ class PalmReadingDetailView extends StatelessWidget {
                 icon = Icons.linear_scale;
                 iconColor = "#F38B3B".toColor();
             }
-            
+
             return Padding(
               padding: EdgeInsets.only(bottom: 16.h),
               child: _buildLineCard(
@@ -304,10 +302,12 @@ class PalmReadingDetailView extends StatelessWidget {
               Expanded(
                 child: AutoTranslateText(
                   title,
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: '#3E2723'.toColor(),
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
+                  style: MyTextTheme.mediumBCB
+                      .copyWith(
+                        color: '#3E2723'.toColor(),
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.h2),
                 ),
               ),
             ],
@@ -333,8 +333,9 @@ class PalmReadingDetailView extends StatelessWidget {
       // Get MOUNTS reading from API
       PalmReadingItem? mountsReading;
       try {
-        mountsReading = readingData.readings
-            .firstWhere((r) => r.category.toUpperCase() == 'MOUNTS');
+        mountsReading = readingData.readings.firstWhere(
+          (r) => r.category.toUpperCase() == 'MOUNTS',
+        );
       } catch (e) {
         mountsReading = null;
       }
@@ -346,10 +347,12 @@ class PalmReadingDetailView extends StatelessWidget {
         children: [
           AutoTranslateText(
             'Mount Analysis',
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h1),
+            style: MyTextTheme.mediumBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h1),
           ),
           Spacing.h(16),
           Container(
@@ -376,7 +379,11 @@ class PalmReadingDetailView extends StatelessWidget {
                         color: Colors.green.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.landscape, color: Colors.green, size: 24.w),
+                      child: Icon(
+                        Icons.landscape,
+                        color: Colors.green,
+                        size: 24.w,
+                      ),
                     ),
                     Spacing.w(16),
                     Expanded(
@@ -414,8 +421,9 @@ class PalmReadingDetailView extends StatelessWidget {
       // Get FINGERS reading from API
       PalmReadingItem? fingersReading;
       try {
-        fingersReading = readingData.readings
-            .firstWhere((r) => r.category.toUpperCase() == 'FINGERS');
+        fingersReading = readingData.readings.firstWhere(
+          (r) => r.category.toUpperCase() == 'FINGERS',
+        );
       } catch (e) {
         fingersReading = null;
       }
@@ -427,10 +435,12 @@ class PalmReadingDetailView extends StatelessWidget {
         children: [
           AutoTranslateText(
             'Finger Analysis',
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h1),
+            style: MyTextTheme.mediumBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h1),
           ),
           Spacing.h(16),
           Container(
@@ -457,7 +467,11 @@ class PalmReadingDetailView extends StatelessWidget {
                         color: Colors.blue.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.back_hand, color: Colors.blue, size: 24.w),
+                      child: Icon(
+                        Icons.back_hand,
+                        color: Colors.blue,
+                        size: 24.w,
+                      ),
                     ),
                     Spacing.w(16),
                     Expanded(
@@ -505,17 +519,17 @@ class PalmReadingDetailView extends StatelessWidget {
         children: [
           AutoTranslateText(
             'Need Deeper Insight?',
-            style: MyTextTheme.mediumBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
+            style: MyTextTheme.mediumBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h2),
           ),
           Spacing.h(12),
           AutoTranslateText(
             'Talk to an expert astrologer for detailed palm analysis.',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: Colors.grey[700],
-            ),
+            style: MyTextTheme.mediumBCN.copyWith(color: Colors.grey[700]),
             textAlign: TextAlign.center,
           ),
           Spacing.h(20),
@@ -554,4 +568,3 @@ class PalmReadingDetailView extends StatelessWidget {
     );
   }
 }
-

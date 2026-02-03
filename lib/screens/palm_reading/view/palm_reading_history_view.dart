@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/data_model/palm_reading_model.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_history_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -20,76 +21,73 @@ class PalmReadingHistoryView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8E1), // Light yellow background
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: const Color(0xFF5F2221),
-            size: 24.w,
-          ),
-          onPressed: () => Get.back(),
-        ),
-        title: AutoTranslateText(
-          'Palm Reading History',
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: const Color(0xFF5F2221),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxWidth),
-          child: Column(
-            children: [
-              // Search and Filter Section
-              _buildSearchAndFilterSection(controller),
-              
-              // Content Section
-              Expanded(
-                child: Obx(() {
-                  if (controller.isLoading.value && controller.historyList.isEmpty) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.saffron,
-                      ),
-                    );
-                  }
+      body: Column(
+        children: [
+          const CommonHeader(title: 'History'),
+          Expanded(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: maxWidth),
+                child: Column(
+                  children: [
+                    // Search and Filter Section
+                    _buildSearchAndFilterSection(controller),
 
-                  final filteredList = controller.filteredHistoryList;
-                  
-                  if (filteredList.isEmpty && !controller.isLoading.value) {
-                    return _buildEmptyState(controller);
-                  }
-
-                  return RefreshIndicator(
-                    onRefresh: () => controller.loadHistory(reset: true),
-                    color: AppColors.saffron,
-                    child: ListView.builder(
-                      padding: AppPaddings.all(16),
-                      itemCount: filteredList.length + 
-                          (controller.hasMore && controller.searchQuery.value.isEmpty ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        // Show "Load More" button at the end (only if no search query)
-                        if (index == filteredList.length && 
-                            controller.hasMore && 
-                            controller.searchQuery.value.isEmpty) {
-                          return _buildLoadMoreButton(controller);
+                    // Content Section
+                    Expanded(
+                      child: Obx(() {
+                        if (controller.isLoading.value &&
+                            controller.historyList.isEmpty) {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.saffron,
+                            ),
+                          );
                         }
-                        
-                        final item = filteredList[index];
-                        return _buildHistoryItem(context, controller, item);
-                      },
+
+                        final filteredList = controller.filteredHistoryList;
+
+                        if (filteredList.isEmpty &&
+                            !controller.isLoading.value) {
+                          return _buildEmptyState(controller);
+                        }
+
+                        return RefreshIndicator(
+                          onRefresh: () => controller.loadHistory(reset: true),
+                          color: AppColors.saffron,
+                          child: ListView.builder(
+                            padding: AppPaddings.all(16),
+                            itemCount:
+                                filteredList.length +
+                                (controller.hasMore &&
+                                        controller.searchQuery.value.isEmpty
+                                    ? 1
+                                    : 0),
+                            itemBuilder: (context, index) {
+                              // Show "Load More" button at the end (only if no search query)
+                              if (index == filteredList.length &&
+                                  controller.hasMore &&
+                                  controller.searchQuery.value.isEmpty) {
+                                return _buildLoadMoreButton(controller);
+                              }
+
+                              final item = filteredList[index];
+                              return _buildHistoryItem(
+                                context,
+                                controller,
+                                item,
+                              );
+                            },
+                          ),
+                        );
+                      }),
                     ),
-                  );
-                }),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -123,16 +121,18 @@ class PalmReadingHistoryView extends StatelessWidget {
                 color: Colors.grey[600],
                 size: 20.w,
               ),
-              suffixIcon: Obx(() => controller.searchQuery.value.isNotEmpty
-                  ? IconButton(
-                      icon: Icon(
-                        Icons.clear,
-                        color: Colors.grey[600],
-                        size: 20.w,
-                      ),
-                      onPressed: controller.clearSearch,
-                    )
-                  : const SizedBox.shrink()),
+              suffixIcon: Obx(
+                () => controller.searchQuery.value.isNotEmpty
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.clear,
+                          color: Colors.grey[600],
+                          size: 20.w,
+                        ),
+                        onPressed: controller.clearSearch,
+                      )
+                    : const SizedBox.shrink(),
+              ),
               filled: true,
               fillColor: Colors.grey[100],
               border: OutlineInputBorder(
@@ -160,91 +160,96 @@ class PalmReadingHistoryView extends StatelessWidget {
                     color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(12.r),
                   ),
-                  child: Obx(() => DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: controller.selectedStatus.value.isEmpty
-                          ? null
-                          : controller.selectedStatus.value,
-                      isExpanded: true,
-                      hint: Row(
-                        children: [
-                          Icon(
-                            Icons.filter_list,
-                            color: Colors.grey[600],
-                            size: 18.w,
-                          ),
-                          Spacing.w(8),
-                          AutoTranslateText(
-                            controller.statusDisplayText,
-                            style: MyTextTheme.mediumBCN.copyWith(
-                              color: Colors.grey[700],
+                  child: Obx(
+                    () => DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: controller.selectedStatus.value.isEmpty
+                            ? null
+                            : controller.selectedStatus.value,
+                        isExpanded: true,
+                        hint: Row(
+                          children: [
+                            Icon(
+                              Icons.filter_list,
+                              color: Colors.grey[600],
+                              size: 18.w,
                             ),
-                          ),
-                        ],
-                      ),
-                      items: controller.statusOptions.map((status) {
-                        String displayText;
-                        switch (status) {
-                          case 'PROCESSING':
-                            displayText = 'Processing';
-                            break;
-                          case 'COMPLETED':
-                            displayText = 'Completed';
-                            break;
-                          case 'FAILED':
-                            displayText = 'Failed';
-                            break;
-                          default:
-                            displayText = 'All Status';
-                        }
-                        return DropdownMenuItem<String>(
-                          value: status.isEmpty ? null : status,
-                          child: AutoTranslateText(
-                            displayText,
-                            style: MyTextTheme.mediumBCN.copyWith(
-                              color: const Color(0xFF5F2221),
+                            Spacing.w(8),
+                            AutoTranslateText(
+                              controller.statusDisplayText,
+                              style: MyTextTheme.mediumBCN.copyWith(
+                                color: Colors.grey[700],
+                              ),
                             ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: controller.onStatusFilterChanged,
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.grey[600],
-                        size: 24.w,
+                          ],
+                        ),
+                        items: controller.statusOptions.map((status) {
+                          String displayText;
+                          switch (status) {
+                            case 'PROCESSING':
+                              displayText = 'Processing';
+                              break;
+                            case 'COMPLETED':
+                              displayText = 'Completed';
+                              break;
+                            case 'FAILED':
+                              displayText = 'Failed';
+                              break;
+                            default:
+                              displayText = 'All Status';
+                          }
+                          return DropdownMenuItem<String>(
+                            value: status.isEmpty ? null : status,
+                            child: AutoTranslateText(
+                              displayText,
+                              style: MyTextTheme.mediumBCN.copyWith(
+                                color: const Color(0xFF5F2221),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: controller.onStatusFilterChanged,
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.grey[600],
+                          size: 24.w,
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                 ),
               ),
               Spacing.w(12),
               // Clear Filters Button
-              Obx(() => (controller.searchQuery.value.isNotEmpty ||
-                      controller.selectedStatus.value.isNotEmpty)
-                  ? TextButton.icon(
-                      onPressed: controller.clearFilters,
-                      icon: Icon(
-                        Icons.clear_all,
-                        size: 18.w,
-                        color: "#F38B3B".toColor(),
-                      ),
-                      label: AutoTranslateText(
-                        'Clear',
-                        style: MyTextTheme.mediumBCB.copyWith(
+              Obx(
+                () =>
+                    (controller.searchQuery.value.isNotEmpty ||
+                        controller.selectedStatus.value.isNotEmpty)
+                    ? TextButton.icon(
+                        onPressed: controller.clearFilters,
+                        icon: Icon(
+                          Icons.clear_all,
+                          size: 18.w,
                           color: "#F38B3B".toColor(),
                         ),
-                      ),
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 12.h,
+                        label: AutoTranslateText(
+                          'Clear',
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: "#F38B3B".toColor(),
+                          ),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.r),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 12.h,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
                         ),
-                      ),
-                    )
-                  : const SizedBox.shrink()),
+                      )
+                    : const SizedBox.shrink(),
+              ),
             ],
           ),
         ],
@@ -253,9 +258,10 @@ class PalmReadingHistoryView extends StatelessWidget {
   }
 
   Widget _buildEmptyState(PalmReadingHistoryController controller) {
-    final hasFilters = controller.searchQuery.value.isNotEmpty ||
+    final hasFilters =
+        controller.searchQuery.value.isNotEmpty ||
         controller.selectedStatus.value.isNotEmpty;
-    
+
     return Center(
       child: Padding(
         padding: AppPaddings.all(32),
@@ -280,9 +286,7 @@ class PalmReadingHistoryView extends StatelessWidget {
               hasFilters
                   ? 'Try adjusting your search or filter criteria'
                   : 'Your palm reading history will appear here',
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: Colors.grey[600]),
               textAlign: TextAlign.center,
             ),
             if (hasFilters) ...[
@@ -309,9 +313,7 @@ class PalmReadingHistoryView extends StatelessWidget {
                   ),
                   child: AutoTranslateText(
                     'Clear Filters',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: Colors.white,
-                    ),
+                    style: MyTextTheme.mediumBCB.copyWith(color: Colors.white),
                   ),
                 ),
               ),
@@ -328,11 +330,11 @@ class PalmReadingHistoryView extends StatelessWidget {
     PalmReadingData item,
   ) {
     final date = item.createdAt;
-    final summary = item.summary.isNotEmpty 
-        ? item.summary 
-        : (item.overallReading.isNotEmpty 
-            ? item.overallReading 
-            : 'Palm Reading');
+    final summary = item.summary.isNotEmpty
+        ? item.summary
+        : (item.overallReading.isNotEmpty
+              ? item.overallReading
+              : 'Palm Reading');
     final handType = item.handType;
     final status = item.status ?? 'COMPLETED';
     final userName = item.userInput?.name ?? 'Unknown';
@@ -378,11 +380,7 @@ class PalmReadingHistoryView extends StatelessWidget {
                           );
                         },
                       )
-                    : Icon(
-                        Icons.pan_tool,
-                        size: 40.w,
-                        color: Colors.grey[400],
-                      ),
+                    : Icon(Icons.pan_tool, size: 40.w, color: Colors.grey[400]),
               ),
             ),
             Spacing.w(16),
@@ -407,9 +405,12 @@ class PalmReadingHistoryView extends StatelessWidget {
                       ),
                       Spacing.w(8),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 4.h,
+                        ),
                         decoration: BoxDecoration(
-                          color: isFailed 
+                          color: isFailed
                               ? Colors.red.withOpacity(0.1)
                               : "#F38B3B".toColor().withOpacity(0.1),
                           borderRadius: BorderRadius.circular(4.r),
@@ -417,9 +418,7 @@ class PalmReadingHistoryView extends StatelessWidget {
                         child: AutoTranslateText(
                           handType.isNotEmpty ? handType : 'UNKNOWN',
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: isFailed 
-                                ? Colors.red
-                                : "#F38B3B".toColor(),
+                            color: isFailed ? Colors.red : "#F38B3B".toColor(),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -459,11 +458,7 @@ class PalmReadingHistoryView extends StatelessWidget {
               ),
             ),
             // Arrow icon
-            Icon(
-              Icons.chevron_right,
-              color: Colors.grey[400],
-              size: 24.w,
-            ),
+            Icon(Icons.chevron_right, color: Colors.grey[400], size: 24.w),
           ],
         ),
       ),
@@ -478,15 +473,11 @@ class PalmReadingHistoryView extends StatelessWidget {
           alignment: Alignment.center,
           child: Column(
             children: [
-              const CircularProgressIndicator(
-                color: AppColors.saffron,
-              ),
+              const CircularProgressIndicator(color: AppColors.saffron),
               Spacing.h(8),
               AutoTranslateText(
                 'Loading more...',
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: Colors.grey[600],
-                ),
+                style: MyTextTheme.smallBCN.copyWith(color: Colors.grey[600]),
               ),
             ],
           ),
@@ -507,16 +498,15 @@ class PalmReadingHistoryView extends StatelessWidget {
               Spacing.h(8),
               AutoTranslateText(
                 'All ${controller.totalItems} items loaded',
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: Colors.grey[600],
-                ),
+                style: MyTextTheme.smallBCN.copyWith(color: Colors.grey[600]),
               ),
             ],
           ),
         );
       }
 
-      final remainingItems = controller.totalItems - controller.historyList.length;
+      final remainingItems =
+          controller.totalItems - controller.historyList.length;
       return Container(
         padding: AppPaddings.all(16),
         child: Column(
@@ -526,9 +516,7 @@ class PalmReadingHistoryView extends StatelessWidget {
                 padding: EdgeInsets.only(bottom: 8.h),
                 child: AutoTranslateText(
                   'Showing ${controller.historyList.length} of ${controller.totalItems} items',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: Colors.grey[600],
-                  ),
+                  style: MyTextTheme.smallBCN.copyWith(color: Colors.grey[600]),
                 ),
               ),
             Container(
@@ -541,7 +529,10 @@ class PalmReadingHistoryView extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 32.w,
+                    vertical: 12.h,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.r),
                   ),
@@ -549,22 +540,18 @@ class PalmReadingHistoryView extends StatelessWidget {
                   shadowColor: Colors.transparent,
                 ),
                 child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AutoTranslateText(
-                    'Load More ($remainingItems remaining)',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AutoTranslateText(
+                      'Load More ($remainingItems remaining)',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  Spacing.w(8),
-                  Icon(
-                    Icons.arrow_downward,
-                    size: 18.w,
-                    color: Colors.white,
-                  ),
-                ],
+                    Spacing.w(8),
+                    Icon(Icons.arrow_downward, size: 18.w, color: Colors.white),
+                  ],
                 ),
               ),
             ),
@@ -574,4 +561,3 @@ class PalmReadingHistoryView extends StatelessWidget {
     });
   }
 }
-

@@ -29,24 +29,45 @@ class WalletService with ApiHelperMixin {
       if (response.body['success'] == true) {
         return WalletRechargeInitiateResponse.fromJson(response.body);
       } else {
-        final msg = response.body['message']?.toString() ?? '';
+        String msg = response.body['message']?.toString() ?? '';
+
+        // Extract specific error message if available
+        if (response.body['errors'] != null &&
+            response.body['errors'] is List &&
+            (response.body['errors'] as List).isNotEmpty) {
+          final errors = response.body['errors'] as List;
+          final firstError = errors[0];
+          if (firstError is Map && firstError['message'] != null) {
+            msg = firstError['message'].toString();
+          }
+        } else if (msg.toLowerCase().contains('validation')) {
+          msg = "Please enter at least ₹10 or choose from the quick amounts.";
+        }
+
         showErrorMessage(
           title: "Error",
-          message: msg.toLowerCase().contains('validation')
-              ? "Please enter at least ₹100 or choose from the quick amounts."
-              : (msg.isNotEmpty ? msg : "Failed to initiate recharge. Please try again."),
+          message: msg.isNotEmpty
+              ? msg
+              : "Failed to initiate recharge. Please try again.",
         );
         return null;
       }
     } catch (e) {
       final errStr = e.toString();
-      final message = errStr.contains('Validation failed') ||
-              errStr.toLowerCase().contains('validation')
-          ? "Please enter at least ₹100 or choose from the quick amounts."
-          : errStr.replaceFirst('Error During Communication: ', '').trim();
+      String message = errStr
+          .replaceFirst('Error During Communication: ', '')
+          .trim();
+
+      if (errStr.contains('Validation failed') ||
+          errStr.toLowerCase().contains('validation')) {
+        message = "Please enter at least ₹10 or choose from the quick amounts.";
+      }
+
       showErrorMessage(
         title: "Error",
-        message: message.isEmpty ? "Failed to initiate recharge. Please try again." : message,
+        message: message.isEmpty
+            ? "Failed to initiate recharge. Please try again."
+            : message,
       );
       return null;
     } finally {

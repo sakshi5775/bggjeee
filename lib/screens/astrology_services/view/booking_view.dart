@@ -1,7 +1,7 @@
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/booking_controller.dart';
-import 'package:astrobharataiuser/screens/astrology_services/widgets/astrology_header_widget.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +43,28 @@ class BookingView extends StatelessWidget {
         child: Column(
           children: [
             // Header
-            _buildHeader(context, controller),
+            CommonHeader(
+              title: 'Booking',
+              subtitle: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    controller.getHeaderIcon(),
+                    color: const Color(0xFF6F221E),
+                    size: 16.w,
+                  ),
+                  Spacing.w(8),
+                  AutoTranslateText(
+                    controller.getHeaderTitle(),
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: const Color(0xFF6F221E),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
             // Main Content
             Expanded(
@@ -80,43 +101,6 @@ class BookingView extends StatelessWidget {
       ),
       // Fixed Bottom Button
       bottomNavigationBar: _buildConfirmButton(controller),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, BookingController controller) {
-    return AstrologyHeaderWidget(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      content: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Title with icon
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  controller.getHeaderIcon(),
-                  color: Colors.white,
-                  size: 20.w,
-                ),
-                Spacing.w(8),
-                AutoTranslateText(
-                  controller.getHeaderTitle(),
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Close button
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Icon(Icons.close, color: Colors.white, size: 24.w),
-          ),
-        ],
-      ),
     );
   }
 

@@ -4,9 +4,9 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrology_services_controller.dart';
-import 'package:astrobharataiuser/screens/astrology_services/widgets/astrology_header_widget.dart';
 import 'package:astrobharataiuser/screens/astrology_services/widgets/remedies_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -20,7 +20,8 @@ import '../../../utils/app_colors.dart';
 class AstrologyServicesView extends StatelessWidget {
   final bool showBackButton;
 
-  const AstrologyServicesView({Key? key, this.showBackButton = true}) : super(key: key);
+  const AstrologyServicesView({Key? key, this.showBackButton = true})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +34,11 @@ class AstrologyServicesView extends StatelessWidget {
         body: SafeArea(
           child: Column(
             children: [
-              // Header Section with Dark Red/Maroon Background (includes search bar)
-              _buildHeader(context, controller),
+              // Header with Common Header
+              const CommonHeader(title: 'Astrology Services'),
+
+              // Custom Search Bar (extracted from old header)
+              _buildSearchBar(context, controller),
 
               // Main Scrollable Content
               Expanded(
@@ -202,153 +206,111 @@ class AstrologyServicesView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(
+  Widget _buildSearchBar(
     BuildContext context,
     AstrologyServicesController controller,
   ) {
-    return AstrologyHeaderWidget(
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              showBackButton
-                  ? GestureDetector(
-                      onTap: () => Get.back(),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: const Color(0xFFDFB343), // #DFB343 color
-                        size: 24.w,
-                      ),
-                    )
-                  : SizedBox(width: 24.w),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AutoTranslateText(
-                      'Astrology & Guidance',
-                      style: MyTextTheme.largeBCB.copyWith(
-                        color: const Color(0xFFDFB343), // #DFB343 color
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    Spacing.h(4),
-                    AutoTranslateText(
-                      'Discover your cosmic destiny',
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: const Color(
-                          0xFFDFB343,
-                        ).withOpacity(0.9), // #DFB343 color
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.star,
-                color: const Color(0xFFDFB343), // #DFB343 color
-                size: 24.w,
-              ),
-            ],
+    return Container(
+      padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 10.h),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [const Color(0xFF5D1C21), Colors.transparent],
+          stops: [0.0, 1.0],
+        ),
+      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: const Color(
+            0xFFFFFFFF,
+          ).withOpacity(0.95), // White with slight opacity
+          borderRadius: BorderRadius.circular(20.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+          border: Border.all(
+            color: const Color(0xFFDFB343), // #DFB343 border
+            width: 1,
           ),
-          Spacing.h(16),
-          // Search Bar inside header - Semi-transparent maroon with gold border
-          Padding(
-            padding: EdgeInsets.only(
-              bottom: 16.h,
-            ), // Add bottom padding to search bar
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-              decoration: BoxDecoration(
-                color: const Color(
-                  0xFFFFFFFF,
-                ).withOpacity(0.2), // Semi-transparent maroon
-                borderRadius: BorderRadius.circular(20.r),
-                border: Border.all(
-                  color: const Color(0xFFDFB343), // #DFB343 border
-                  width: 1,
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.search,
+              color: const Color(0xFFDFB343), // #DFB343 color
+              size: 20.w,
+            ),
+            Spacing.w(12),
+            Expanded(
+              child: TextField(
+                controller: controller.searchController,
+                style: MyTextTheme.mediumBCN.copyWith(
+                  color: const Color(0xFF3D0C11),
                 ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.search,
-                    color: const Color(0xFFDFB343), // #DFB343 color
-                    size: 20.w,
+                decoration: InputDecoration(
+                  hintText: 'Search by Zodiac, Category...',
+                  hintStyle: MyTextTheme.mediumBCN.copyWith(
+                    color: const Color(0xFF3D0C11).withOpacity(0.6),
                   ),
-                  Spacing.w(12),
-                  Expanded(
-                    child: TextField(
-                      controller: controller.searchController,
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: const Color(0xFFDFB343), // #DFB343 color
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Search by Zodiac, Category, or Astrologer',
-                        hintStyle: MyTextTheme.mediumBCN.copyWith(
-                          color: const Color(
-                            0xFFDFB343,
-                          ).withOpacity(0.7), // #DFB343 color
-                        ),
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        filled: false,
-                        isDense: true,
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      onChanged: (value) {
-                        // Update reactive variable immediately for UI feedback
-                        controller.searchQuery.value = value;
-                        // Debounce search API call - wait 500ms after user stops typing
-                        controller.searchDebounceTimer?.cancel();
-                        controller.searchDebounceTimer = Timer(
-                          const Duration(milliseconds: 500),
-                          () {
-                            if (controller.searchController.text == value) {
-                              controller.loadAstrologers(refresh: true);
-                            }
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  Obx(
-                    () => controller.searchQuery.value.isNotEmpty
-                        ? GestureDetector(
-                            onTap: () {
-                              controller.searchDebounceTimer?.cancel();
-                              controller.searchController.clear();
-                              controller.searchQuery.value = '';
-                              controller.loadAstrologers(refresh: true);
-                            },
-                            child: Icon(
-                              Icons.clear,
-                              color: const Color(0xFFDFB343),
-                              size: 18.w,
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                  Spacing.w(8),
-                  // Filter Icon
-                  GestureDetector(
-                    onTap: () => _showFilterBottomSheet(context, controller),
-                    child: Icon(
-                      Icons.tune,
-                      color: const Color(0xFFDFB343),
-                      size: 20.w,
-                    ),
-                  ),
-                ],
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                  filled: false,
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                onChanged: (value) {
+                  // Update reactive variable immediately for UI feedback
+                  controller.searchQuery.value = value;
+                  // Debounce search API call - wait 500ms after user stops typing
+                  controller.searchDebounceTimer?.cancel();
+                  controller.searchDebounceTimer = Timer(
+                    const Duration(milliseconds: 500),
+                    () {
+                      if (controller.searchController.text == value) {
+                        controller.loadAstrologers(refresh: true);
+                      }
+                    },
+                  );
+                },
               ),
             ),
-          ),
-        ],
+            Obx(
+              () => controller.searchQuery.value.isNotEmpty
+                  ? GestureDetector(
+                      onTap: () {
+                        controller.searchDebounceTimer?.cancel();
+                        controller.searchController.clear();
+                        controller.searchQuery.value = '';
+                        controller.loadAstrologers(refresh: true);
+                      },
+                      child: Icon(
+                        Icons.clear,
+                        color: const Color(0xFFDFB343),
+                        size: 18.w,
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            Spacing.w(8),
+            // Filter Icon
+            GestureDetector(
+              onTap: () => _showFilterBottomSheet(context, controller),
+              child: Icon(
+                Icons.tune,
+                color: const Color(0xFFDFB343),
+                size: 20.w,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -411,11 +373,7 @@ class AstrologyServicesView extends StatelessWidget {
   ) {
     return GestureDetector(
       onTap: () {
-        _navigateToCategory(
-          category['name'] as String,
-          context,
-          controller,
-        );
+        _navigateToCategory(category['name'] as String, context, controller);
       },
       child: Container(
         width: 80.w,
@@ -1152,7 +1110,7 @@ class AstrologyServicesView extends StatelessWidget {
               }
             },
           );
-          
+
           if (isLoggedIn) {
             LiveStreamModel? stream;
             try {
@@ -1881,9 +1839,7 @@ class AstrologyServicesView extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => RemediesBottomSheetWidget(
-        controller: controller,
-      ),
+      builder: (context) => RemediesBottomSheetWidget(controller: controller),
     );
   }
 }

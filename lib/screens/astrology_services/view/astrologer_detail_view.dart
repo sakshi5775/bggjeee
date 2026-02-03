@@ -9,11 +9,10 @@ import 'package:astrobharataiuser/screens/astrology_services/widgets/astrologer_
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
 
 class AstrologerDetailView extends StatelessWidget {
   const AstrologerDetailView({Key? key}) : super(key: key);
@@ -153,9 +152,7 @@ class AstrologerDetailView extends StatelessWidget {
   ) {
     return CommonHeader(
       title: 'Profile',
-      subtitle: SizedBox(height: 50.h),
-      onBackPressed: () => Get.back(),
-      actions: [
+      customActions: [
         Obx(() {
           final isFollowing = controller.isFollowing.value;
           final isToggling = controller.isTogglingFollow.value;

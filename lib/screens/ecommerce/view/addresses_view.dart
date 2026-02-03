@@ -7,7 +7,7 @@ import 'package:astrobharataiuser/screens/ecommerce/widgets/address_widget/addre
 import 'package:astrobharataiuser/screens/ecommerce/widgets/address_widget/empty_addresses_widget.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -31,7 +31,7 @@ class AddressesView extends GetView<AddressController> {
               subtitle: AutoTranslateText(
                 'Manage your delivery addresses',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.9),
+                  color: '#6F221E'.toColor().withOpacity(0.7),
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                 ),

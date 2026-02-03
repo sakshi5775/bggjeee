@@ -4,7 +4,7 @@ import 'package:astrobharataiuser/screens/ecommerce/widgets/product_details_widg
 import 'package:astrobharataiuser/screens/ecommerce/widgets/product_details_widgets/product_description_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/product_details_widgets/product_specifications_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/product_details_widgets/product_reviews_widget.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/product_detail_controller.dart';
@@ -32,10 +32,10 @@ class ProductDetailView extends StatelessWidget {
         children: [
           CommonHeader(
             title: 'Product Details',
-            actions: [
+            customActions: [
               IconButton(
                 onPressed: () => controller.shareProduct(),
-                icon: Icon(Icons.share_outlined, color: AppColors.templeGold),
+                icon: Icon(Icons.share_outlined, color: '#6F221E'.toColor()),
               ),
             ],
           ),

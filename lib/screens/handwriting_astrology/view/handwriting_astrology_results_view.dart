@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/handwriting_astrology_model.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,15 +20,14 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
     if (result == null) {
       return Scaffold(
         backgroundColor: '#F7EFBD'.toColor(),
-        appBar: AppBar(
-          backgroundColor: '#8B4513'.toColor(),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Get.back(),
-          ),
-          title: const AutoTranslateText(
-            'Handwriting Analysis',
-            style: TextStyle(color: Colors.white),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(100.h),
+          child: const CommonHeader(
+            title: 'Handwriting Analysis',
+            showSearch: false,
+            showCart: false,
+            showLanguage: false,
+            showWallet: false,
           ),
         ),
         body: Center(
@@ -51,8 +51,30 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Top Navigation Bar
-            _buildTopBar(),
+            CommonHeader(
+              title: 'Your Handwriting Analysis',
+              subtitle: AutoTranslateText(
+                'AI-Powered Graphology reading',
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: const Color(0xFF5F2221).withValues(alpha: 0.7),
+                ),
+              ),
+              showSearch: false,
+              showCart: false,
+              showLanguage: false,
+              showWallet: false,
+              customActions: [
+                IconButton(
+                  icon: Icon(
+                    Icons.history,
+                    color: '#6F221E'.toColor(),
+                    size: 22.w,
+                  ),
+                  onPressed: () =>
+                      Get.toNamed(AppRoutes.handwritingAstrologyHistory),
+                ),
+              ],
+            ),
             // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
@@ -84,7 +106,8 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
                       Spacing.h(24),
                     ],
                     // Images Section
-                    if (result.imageUrls != null && result.imageUrls!.isNotEmpty) ...[
+                    if (result.imageUrls != null &&
+                        result.imageUrls!.isNotEmpty) ...[
                       _buildImagesSection(result.imageUrls!),
                       Spacing.h(24),
                     ],
@@ -101,55 +124,11 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
     );
   }
 
-  Widget _buildTopBar() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: '#68171E'.toColor(),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20.r),
-          bottomRight: Radius.circular(20.r),
-        ),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back, color: AppColors.templeGold, size: 24.w),
-            onPressed: () => Get.back(),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoTranslateText(
-                  'Your Handwriting Analysis',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: AppColors.templeGold,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                AutoTranslateText(
-                  'AI-Powered Graphology reading',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: AppColors.templeGold.withOpacity(0.9),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            icon: Icon(Icons.history, color: AppColors.templeGold, size: 24.w),
-            onPressed: () {
-              Get.toNamed(AppRoutes.handwritingAstrologyHistory);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildOverallScoreSection(
-      HandwritingData result, int score, List<String> tags) {
+    HandwritingData result,
+    int score,
+    List<String> tags,
+  ) {
     return Container(
       margin: EdgeInsets.all(16.w),
       padding: EdgeInsets.all(20.w),
@@ -259,16 +238,26 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
                   runSpacing: 8.h,
                   children: tags.take(3).map((tag) {
                     return Container(
-                      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 14.w,
+                        vertical: 8.h,
+                      ),
                       decoration: BoxDecoration(
                         color: '#FFF2E8'.toColor(),
                         borderRadius: BorderRadius.circular(25.r),
-                        border: Border.all(color: "#F38B3B".toColor().withOpacity(0.2), width: 1),
+                        border: Border.all(
+                          color: "#F38B3B".toColor().withOpacity(0.2),
+                          width: 1,
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.star, size: 16.w, color: "#F38B3B".toColor()),
+                          Icon(
+                            Icons.star,
+                            size: 16.w,
+                            color: "#F38B3B".toColor(),
+                          ),
                           Spacing.w(6),
                           AutoTranslateText(
                             tag,
@@ -338,7 +327,9 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
   }
 
   Widget _buildDetailedAnalysisSection(
-      HandwritingCategories? categories, HandwritingData result) {
+    HandwritingCategories? categories,
+    HandwritingData result,
+  ) {
     if (categories == null) return const SizedBox.shrink();
 
     return Padding(
@@ -422,84 +413,91 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
           ],
         ),
         child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(
-              color: '#FFF2E8'.toColor(),
-              shape: BoxShape.circle,
+          children: [
+            Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: '#FFF2E8'.toColor(),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: "#F38B3B".toColor(), size: 24.w),
             ),
-            child: Icon(icon, color: "#F38B3B".toColor(), size: 24.w),
-          ),
-          Spacing.w(16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Spacing.w(16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AutoTranslateText(
+                    title,
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: '#3E2723'.toColor(),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Spacing.h(4),
+                  AutoTranslateText(
+                    category.description ?? '',
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: '#666666'.toColor(),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Spacing.h(8),
+                  // Keywords
+                  Wrap(
+                    spacing: 6.w,
+                    runSpacing: 6.h,
+                    children: (category.keywords ?? []).take(3).map((keyword) {
+                      return Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 4.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: '#FFF2E8'.toColor(),
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: AutoTranslateText(
+                          keyword,
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: '#3E2723'.toColor(),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+            Column(
               children: [
                 AutoTranslateText(
-                  title,
+                  '${category.score ?? 0}',
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: '#3E2723'.toColor(),
+                    color: "#F38B3B".toColor(),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Spacing.h(4),
-                AutoTranslateText(
-                  category.description ?? '',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: '#666666'.toColor(),
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Spacing.h(8),
-                // Keywords
-                Wrap(
-                  spacing: 6.w,
-                  runSpacing: 6.h,
-                  children: (category.keywords ?? []).take(3).map((keyword) {
-                    return Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                      decoration: BoxDecoration(
-                        color: '#FFF2E8'.toColor(),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: AutoTranslateText(
-                        keyword,
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: '#3E2723'.toColor(),
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14.w,
+                  color: "#F38B3B".toColor(),
                 ),
               ],
             ),
-          ),
-          Column(
-            children: [
-              AutoTranslateText(
-                '${category.score ?? 0}',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: "#F38B3B".toColor(),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Spacing.h(4),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 14.w,
-                color: "#F38B3B".toColor(),
-              ),
-            ],
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
 
-  void _showCategoryDetails(String title, IconData icon, HandwritingCategoryDetail category) {
+  void _showCategoryDetails(
+    String title,
+    IconData icon,
+    HandwritingCategoryDetail category,
+  ) {
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -507,7 +505,9 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
         ),
         child: Container(
           padding: EdgeInsets.all(24.w),
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(Get.context!).size.height * 0.8),
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(Get.context!).size.height * 0.8,
+          ),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -567,7 +567,8 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
                   Spacing.h(12),
                 ],
                 // Description
-                if (category.description != null && category.description!.isNotEmpty) ...[
+                if (category.description != null &&
+                    category.description!.isNotEmpty) ...[
                   AutoTranslateText(
                     'Description',
                     style: MyTextTheme.mediumBCB.copyWith(
@@ -586,7 +587,8 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
                   Spacing.h(16),
                 ],
                 // Keywords
-                if (category.keywords != null && category.keywords!.isNotEmpty) ...[
+                if (category.keywords != null &&
+                    category.keywords!.isNotEmpty) ...[
                   AutoTranslateText(
                     'Keywords',
                     style: MyTextTheme.mediumBCB.copyWith(
@@ -600,16 +602,26 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
                     runSpacing: 8.h,
                     children: category.keywords!.map((keyword) {
                       return Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 8.h,
+                        ),
                         decoration: BoxDecoration(
                           color: '#FFF2E8'.toColor(),
                           borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(color: "#F38B3B".toColor().withOpacity(0.3), width: 1),
+                          border: Border.all(
+                            color: "#F38B3B".toColor().withOpacity(0.3),
+                            width: 1,
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.star, size: 14.w, color: "#F38B3B".toColor()),
+                            Icon(
+                              Icons.star,
+                              size: 14.w,
+                              color: "#F38B3B".toColor(),
+                            ),
                             Spacing.w(6),
                             AutoTranslateText(
                               keyword,
@@ -633,7 +645,9 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
   }
 
   Widget _buildHandwritingFeaturesSection(
-      HandwritingFeatures? features, HandwritingData result) {
+    HandwritingFeatures? features,
+    HandwritingData result,
+  ) {
     if (features == null) return const SizedBox.shrink();
 
     return Padding(
@@ -788,9 +802,7 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
             Spacing.h(4),
             AutoTranslateText(
               text,
-              style: MyTextTheme.smallBCN.copyWith(
-                color: '#666666'.toColor(),
-              ),
+              style: MyTextTheme.smallBCN.copyWith(color: '#666666'.toColor()),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -819,7 +831,9 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
         ),
         child: Container(
           padding: EdgeInsets.all(24.w),
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(Get.context!).size.height * 0.7),
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(Get.context!).size.height * 0.7,
+          ),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -833,7 +847,11 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
                         color: '#FFF2E8'.toColor(),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.edit_note, color: "#F38B3B".toColor(), size: 24.w),
+                      child: Icon(
+                        Icons.edit_note,
+                        color: "#F38B3B".toColor(),
+                        size: 24.w,
+                      ),
                     ),
                     Spacing.w(12),
                     Expanded(
@@ -898,26 +916,54 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (lists.strengths != null && lists.strengths!.isNotEmpty) ...[
-            _buildListCard('Strengths', Icons.check_circle, lists.strengths!, Colors.green),
+            _buildListCard(
+              'Strengths',
+              Icons.check_circle,
+              lists.strengths!,
+              Colors.green,
+            ),
             Spacing.h(12),
           ],
-          if (lists.areasForGrowth != null && lists.areasForGrowth!.isNotEmpty) ...[
-            _buildListCard('Areas for Growth', Icons.trending_up, lists.areasForGrowth!, "#F38B3B".toColor()),
+          if (lists.areasForGrowth != null &&
+              lists.areasForGrowth!.isNotEmpty) ...[
+            _buildListCard(
+              'Areas for Growth',
+              Icons.trending_up,
+              lists.areasForGrowth!,
+              "#F38B3B".toColor(),
+            ),
             Spacing.h(12),
           ],
-          if (lists.careerAptitudes != null && lists.careerAptitudes!.isNotEmpty) ...[
-            _buildListCard('Career Aptitudes', Icons.work, lists.careerAptitudes!, Colors.blue),
+          if (lists.careerAptitudes != null &&
+              lists.careerAptitudes!.isNotEmpty) ...[
+            _buildListCard(
+              'Career Aptitudes',
+              Icons.work,
+              lists.careerAptitudes!,
+              Colors.blue,
+            ),
             Spacing.h(12),
           ],
-          if (lists.recommendations != null && lists.recommendations!.isNotEmpty) ...[
-            _buildListCard('Recommendations', Icons.lightbulb, lists.recommendations!, Colors.purple),
+          if (lists.recommendations != null &&
+              lists.recommendations!.isNotEmpty) ...[
+            _buildListCard(
+              'Recommendations',
+              Icons.lightbulb,
+              lists.recommendations!,
+              Colors.purple,
+            ),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildListCard(String title, IconData icon, List<String> items, Color color) {
+  Widget _buildListCard(
+    String title,
+    IconData icon,
+    List<String> items,
+    Color color,
+  ) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -949,24 +995,26 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
             ],
           ),
           Spacing.h(12),
-          ...items.map((item) => Padding(
-                padding: EdgeInsets.only(bottom: 8.h),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.circle, size: 6.w, color: color),
-                    Spacing.w(8),
-                    Expanded(
-                      child: AutoTranslateText(
-                        item,
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: '#3E2723'.toColor(),
-                        ),
+          ...items.map(
+            (item) => Padding(
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.circle, size: 6.w, color: color),
+                  Spacing.w(8),
+                  Expanded(
+                    child: AutoTranslateText(
+                      item,
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: '#3E2723'.toColor(),
                       ),
                     ),
-                  ],
-                ),
-              )),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -1008,13 +1056,15 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
             Spacing.h(16),
             if (userInput.name != null && userInput.name!.isNotEmpty)
               _buildInfoRow('Name', userInput.name!),
-            if (userInput.dateOfBirth != null && userInput.dateOfBirth!.isNotEmpty)
+            if (userInput.dateOfBirth != null &&
+                userInput.dateOfBirth!.isNotEmpty)
               _buildInfoRow('Date of Birth', userInput.dateOfBirth!),
             if (userInput.gender != null && userInput.gender!.isNotEmpty)
               _buildInfoRow('Gender', userInput.gender!),
             if (userInput.language != null && userInput.language!.isNotEmpty)
               _buildInfoRow('Language', userInput.language!),
-            if (userInput.additionalNotes != null && userInput.additionalNotes!.isNotEmpty) ...[
+            if (userInput.additionalNotes != null &&
+                userInput.additionalNotes!.isNotEmpty) ...[
               Spacing.h(8),
               AutoTranslateText(
                 'Additional Notes',
@@ -1057,9 +1107,7 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
           Expanded(
             child: AutoTranslateText(
               value,
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: '#666666'.toColor(),
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: '#666666'.toColor()),
             ),
           ),
         ],
@@ -1117,7 +1165,10 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
                         width: 100.w,
                         height: 100.w,
                         color: '#E8E8E8'.toColor(),
-                        child: Icon(Icons.broken_image, color: '#999999'.toColor()),
+                        child: Icon(
+                          Icons.broken_image,
+                          color: '#999999'.toColor(),
+                        ),
                       );
                     },
                   ),
@@ -1129,7 +1180,6 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildDeeperInsightsSection() {
     return Container(
@@ -1192,4 +1242,3 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
     );
   }
 }
-

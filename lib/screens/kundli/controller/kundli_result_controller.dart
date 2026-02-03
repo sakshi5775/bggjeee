@@ -65,7 +65,9 @@ class KundliResultController extends BaseController {
   ];
 
   /// Indices into [tabs] for non-coming-soon tabs (visible in tab bar & PageView).
-  List<int> get visibleTabIndices => tabs.asMap().entries
+  List<int> get visibleTabIndices => tabs
+      .asMap()
+      .entries
       .where((e) => !_comingSoonTabNames.contains(e.value.toLowerCase()))
       .map((e) => e.key)
       .toList();
@@ -80,13 +82,33 @@ class KundliResultController extends BaseController {
   // Feature grid items (imageUrl uses 3D logos from S3 when set)
   final featureGridItems = [
     {'title': 'Dasha', 'icon': Icons.timeline, 'imageUrl': AppConstant.dasha},
-    {'title': 'Yog', 'icon': Icons.auto_awesome},
+    {'title': 'Yog', 'icon': Icons.auto_awesome, 'imageUrl': AppConstant.yog3d},
     {'title': 'Dosh', 'icon': Icons.ac_unit, 'imageUrl': AppConstant.dosh},
-    {'title': 'Predictions', 'icon': Icons.auto_awesome, 'imageUrl': AppConstant.horoscope},
-    {'title': 'KP System', 'icon': Icons.grid_view, 'imageUrl': AppConstant.kpN},
-    {'title': 'Shodash\nvarga', 'icon': Icons.view_module},
-    {'title': 'Lal Kitab', 'icon': Icons.menu_book, 'imageUrl': AppConstant.lalKitab},
-    {'title': 'Varshphal', 'icon': Icons.calendar_today},
+    {
+      'title': 'Predictions',
+      'icon': Icons.auto_awesome,
+      'imageUrl': AppConstant.horoscope,
+    },
+    {
+      'title': 'KP System',
+      'icon': Icons.grid_view,
+      'imageUrl': AppConstant.kpN,
+    },
+    {
+      'title': 'Shodash\nvarga',
+      'icon': Icons.view_module,
+      'imageUrl': AppConstant.shodashVarga3d,
+    },
+    {
+      'title': 'Lal Kitab',
+      'icon': Icons.menu_book,
+      'imageUrl': AppConstant.lalKitab,
+    },
+    {
+      'title': 'Varshphal',
+      'icon': Icons.calendar_today,
+      'imageUrl': AppConstant.varshpal3d,
+    },
   ];
 
   // Feature list items (left column)
@@ -1076,7 +1098,9 @@ class KundliResultController extends BaseController {
           latitude == null ||
           longitude == null ||
           tz == null) {
-        debugPrint('Shad Bala: missing required form fields (date=$date, time=$time, lat=$latitude, lng=$longitude, tz=$tz)');
+        debugPrint(
+          'Shad Bala: missing required form fields (date=$date, time=$time, lat=$latitude, lng=$longitude, tz=$tz)',
+        );
         isLoadingShadBala.value = false;
         return;
       }
@@ -1091,7 +1115,8 @@ class KundliResultController extends BaseController {
       isLoadingShadBala.value = false;
       if (data != null) {
         Map<String, dynamic>? responseMap;
-        if (data['data'] is Map && (data['data'] as Map).containsKey('response')) {
+        if (data['data'] is Map &&
+            (data['data'] as Map).containsKey('response')) {
           final inner = (data['data'] as Map)['response'];
           if (inner is Map<String, dynamic>) {
             responseMap = inner;
@@ -1962,7 +1987,9 @@ class KundliResultController extends BaseController {
     }
 
     // Handle Shodashvarga navigation (feature grid title is "Shodash\nvarga")
-    final featureNormalized = feature.replaceAll(RegExp(r'\s'), '').toLowerCase();
+    final featureNormalized = feature
+        .replaceAll(RegExp(r'\s'), '')
+        .toLowerCase();
     if (featureNormalized == 'shodashvarga') {
       Get.toNamed(
         AppRoutes.shodashvarga,

@@ -212,6 +212,14 @@ class AppConstant {
   static const String carrotAstrology =
       'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/carrotAstrology.png';
 
+  // 3D Logos for Kundli/Horoscope
+  static const String varshpal3d =
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/Varshpal.png';
+  static const String shodashVarga3d =
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/ShodashVarga.png';
+  static const String yog3d =
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/Yog3d.png';
+
   // Panchang Icons
   static const String panchangBackButton = 'assets/icons/close-icon.svg';
   static const String sunriseIcon = 'assets/app/sunrise_icon.svg';

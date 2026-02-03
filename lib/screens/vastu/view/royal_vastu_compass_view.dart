@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/vastu/model/vastu_room_config.dart';
 import 'package:astrobharataiuser/screens/vastu/controller/royal_compass_controller.dart';
 import 'package:astrobharataiuser/screens/vastu/widgets/royal_vastu_compass.dart';
@@ -21,10 +22,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 class RoyalVastuCompassView extends StatefulWidget {
   final VastuRoomConfig? roomConfig;
 
-  const RoyalVastuCompassView({
-    Key? key,
-    this.roomConfig,
-  }) : super(key: key);
+  const RoyalVastuCompassView({Key? key, this.roomConfig}) : super(key: key);
 
   @override
   State<RoyalVastuCompassView> createState() => _RoyalVastuCompassViewState();
@@ -39,15 +37,23 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    
+
     // Initialize royal compass controller
-    _controller = Get.put(RoyalCompassController(), tag: 'royal_compass', permanent: false);
-    
+    _controller = Get.put(
+      RoyalCompassController(),
+      tag: 'royal_compass',
+      permanent: false,
+    );
+
     // Verify controller is findable
     try {
       Get.find<RoyalCompassController>(tag: 'royal_compass');
     } catch (e) {
-      _controller = Get.put(RoyalCompassController(), tag: 'royal_compass', permanent: false);
+      _controller = Get.put(
+        RoyalCompassController(),
+        tag: 'royal_compass',
+        permanent: false,
+      );
     }
   }
 
@@ -68,8 +74,9 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
         _controller = Get.find<RoyalCompassController>(tag: 'royal_compass');
       }
     }
-    
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
       _controller?.pauseSensors();
     } else if (state == AppLifecycleState.resumed) {
       _controller?.resumeSensors();
@@ -79,13 +86,18 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
   @override
   Widget build(BuildContext context) {
     final arguments = Get.arguments as Map<String, dynamic>?;
-    final roomConfig = arguments?['roomConfig'] as VastuRoomConfig? ?? widget.roomConfig;
-    
+    final roomConfig =
+        arguments?['roomConfig'] as VastuRoomConfig? ?? widget.roomConfig;
+
     if (_controller == null) {
       if (Get.isRegistered<RoyalCompassController>(tag: 'royal_compass')) {
         _controller = Get.find<RoyalCompassController>(tag: 'royal_compass');
       } else {
-        _controller = Get.put(RoyalCompassController(), tag: 'royal_compass', permanent: false);
+        _controller = Get.put(
+          RoyalCompassController(),
+          tag: 'royal_compass',
+          permanent: false,
+        );
       }
     }
 
@@ -105,16 +117,32 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
                 roomConfig: roomConfig,
               );
             }
-            
+
             // History view
             if (_showHistory) {
               return _buildHistoryView(controller);
             }
-            
+
             // Main compass view
             return Column(
               children: [
-                _buildHeader(roomConfig?.displayName ?? 'Vastu Compass'),
+                CommonHeader(
+                  title: roomConfig?.displayName ?? 'Vastu Compass',
+                  customActions: [
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _showHistory = !_showHistory;
+                        });
+                      },
+                      icon: Icon(
+                        Icons.history,
+                        color: '#6F221E'.toColor(),
+                        size: 24.w,
+                      ),
+                    ),
+                  ],
+                ),
                 Expanded(
                   child: Stack(
                     alignment: Alignment.center,
@@ -139,7 +167,7 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
                         tiltY: controller.tiltY,
                         compassSize: 320.0,
                       ),
-                      
+
                       // Direction overlay
                       Positioned(
                         top: 80.h,
@@ -148,12 +176,15 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
                           heading: controller.heading,
                         ),
                       ),
-                      
+
                       // Degree indicator
                       Positioned(
                         top: 140.h,
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 8.h,
+                          ),
                           decoration: BoxDecoration(
                             color: '#D4AF37'.toColor().withOpacity(0.9),
                             borderRadius: BorderRadius.circular(20.r),
@@ -167,20 +198,19 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
                           ),
                           child: AutoTranslateText(
                             '${controller.heading.toStringAsFixed(1)}°',
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ).merge(AppTypography.h3),
+                            style: MyTextTheme.mediumBCB
+                                .copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                )
+                                .merge(AppTypography.h3),
                           ),
                         ),
                       ),
-                      
+
                       // Calibration hint
                       if (!controller.isCalibrated)
-                        Positioned(
-                          bottom: 120.h,
-                          child: CalibrationHint(),
-                        ),
+                        Positioned(bottom: 120.h, child: CalibrationHint()),
                     ],
                   ),
                 ),
@@ -193,86 +223,10 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
     );
   }
 
-  Widget _buildHeader(String title) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: '#FFF8E1'.toColor(),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-          Spacing.w(16),
-          Expanded(
-            child: AutoTranslateText(
-              title,
-              style: MyTextTheme.largeBCB.copyWith(
-                color: '#3E2723'.toColor(),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
-            ),
-          ),
-          // History button
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _showHistory = !_showHistory;
-              });
-            },
-            child: Container(
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.history,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomControls(RoyalCompassController controller, VastuRoomConfig? roomConfig) {
+  Widget _buildBottomControls(
+    RoyalCompassController controller,
+    VastuRoomConfig? roomConfig,
+  ) {
     return Container(
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
@@ -297,7 +251,9 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                controller.isCalibrated ? Icons.check_circle : Icons.info_outline,
+                controller.isCalibrated
+                    ? Icons.check_circle
+                    : Icons.info_outline,
                 size: 18.w,
                 color: controller.isCalibrated
                     ? '#2E7D32'.toColor()
@@ -305,17 +261,15 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
               ),
               Spacing.w(8),
               AutoTranslateText(
-                controller.isCalibrated
-                    ? 'High Accuracy'
-                    : 'Calibrating...',
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: '#666666'.toColor(),
-                ).merge(AppTypography.body2),
+                controller.isCalibrated ? 'High Accuracy' : 'Calibrating...',
+                style: MyTextTheme.smallBCN
+                    .copyWith(color: '#666666'.toColor())
+                    .merge(AppTypography.body2),
               ),
             ],
           ),
           Spacing.h(16),
-          
+
           // Action buttons
           Row(
             children: [
@@ -355,9 +309,9 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
                     icon: Icon(Icons.lightbulb_outline, size: 18.w),
                     label: AutoTranslateText(
                       'Remedies',
-                      style: MyTextTheme.smallBCB.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.body2),
+                      style: MyTextTheme.smallBCB
+                          .copyWith(fontWeight: FontWeight.bold)
+                          .merge(AppTypography.body2),
                     ),
                   ),
                 ),
@@ -389,16 +343,16 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
                   icon: Icon(Icons.bookmark_border, size: 18.w),
                   label: AutoTranslateText(
                     'Save',
-                    style: MyTextTheme.smallBCB.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.body2),
+                    style: MyTextTheme.smallBCB
+                        .copyWith(fontWeight: FontWeight.bold)
+                        .merge(AppTypography.body2),
                   ),
                 ),
               ),
             ],
           ),
           Spacing.h(12),
-          
+
           // AR Mode button
           SizedBox(
             width: double.infinity,
@@ -419,9 +373,9 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
               icon: Icon(Icons.view_in_ar, size: 20.w),
               label: AutoTranslateText(
                 'AR Mode',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.body1),
+                style: MyTextTheme.mediumBCB
+                    .copyWith(fontWeight: FontWeight.bold)
+                    .merge(AppTypography.body1),
               ),
             ),
           ),
@@ -432,10 +386,22 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
 
   Widget _buildHistoryView(RoyalCompassController controller) {
     final history = controller.getHistory();
-    
+
     return Column(
       children: [
-        _buildHeader('Vastu History'),
+        CommonHeader(
+          title: 'Vastu History',
+          customActions: [
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _showHistory = !_showHistory;
+                });
+              },
+              icon: Icon(Icons.close, color: '#6F221E'.toColor(), size: 24.w),
+            ),
+          ],
+        ),
         Expanded(
           child: VastuHistoryTimeline(
             history: history,
@@ -452,4 +418,3 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
     );
   }
 }
-

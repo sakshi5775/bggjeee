@@ -1,7 +1,7 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_main_controller.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,25 +10,7 @@ import 'package:get/get.dart';
 class CurrentSadeSatiWidget extends StatelessWidget {
   final HoroscopeMainController controller;
 
-  const CurrentSadeSatiWidget({
-    super.key,
-    required this.controller,
-  });
-
-  // Gradient definitions
-  static final LinearGradient gradientBackground = LinearGradient(
-    colors: ["#FCE5AA".toColor(), "#FFFCF3".toColor(), "#FFFFFF".toColor()],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  );
-
-  static final LinearGradient primaryGradient = LinearGradient(
-    colors: ["#820B17".toColor(), "#68171E".toColor(), "#5D1C21".toColor()],
-  );
-
-  static LinearGradient orangeGradient = LinearGradient(
-    colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
-  );
+  const CurrentSadeSatiWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +21,13 @@ class CurrentSadeSatiWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(orangeGradient.colors.first),
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.deepOrange),
               ),
               Spacing.h(16),
               AutoTranslateText(
-                'Loading Sade Sati...',
+                'Loading Sade Sati Status...',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: primaryGradient.colors.first.withOpacity(0.7),
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -54,48 +36,33 @@ class CurrentSadeSatiWidget extends StatelessWidget {
       }
 
       final data = controller.sadeSatiData.value;
-      if (data == null) {
+      if (data == null || data.isEmpty) {
         return Center(
           child: AutoTranslateText(
             'No Sade Sati data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: primaryGradient.colors.first.withOpacity(0.7),
+              color: AppColors.textSecondary,
             ),
           ),
         );
       }
 
-      final dateConsidered = data['date_considered']?.toString() ?? '--';
-      final isSadeSatiPeriod = data['is_sade_sati_period'] as bool? ?? false;
-      final shaniPeriodType = data['shani_period_type']?.toString() ?? '--';
-      final botResponse = data['bot_response']?.toString() ?? '';
-      final description = data['description']?.toString() ?? '';
-      final saturnRetrograde = data['saturn_retrograde'] as bool? ?? false;
-      final age = data['age']?.toString() ?? '--';
-      final remedies = (data['remedies'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
+      final isActive =
+          data['is_active'] == true ||
+          data['is_under_sade_sati'] == true ||
+          data['sade_sati_status'] == true;
 
-      return Container(
-        decoration: BoxDecoration(
-          gradient: gradientBackground,
-        ),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-          child: Column(
+      return SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildTitleSection(),
-            Spacing.h(20),
-            _buildStatusCard(isSadeSatiPeriod, shaniPeriodType, dateConsidered, saturnRetrograde, age),
-            Spacing.h(20),
-            if (botResponse.isNotEmpty) _buildBotResponseCard(botResponse),
-            Spacing.h(20),
-            if (description.isNotEmpty) _buildDescriptionCard(description),
-            if (remedies.isNotEmpty) ...[
-              Spacing.h(20),
-              _buildRemediesCard(remedies),
-            ],
+            Spacing.h(16),
+            _buildStatusCard(isActive),
+            Spacing.h(16),
+            _buildInfoCard(data),
           ],
-        ),
         ),
       );
     });
@@ -103,13 +70,13 @@ class CurrentSadeSatiWidget extends StatelessWidget {
 
   Widget _buildTitleSection() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
+      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
       decoration: BoxDecoration(
-        gradient: primaryGradient,
+        gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: primaryGradient.colors.first.withOpacity(0.3),
+            color: AppColors.deepOrange.withOpacity(0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -118,14 +85,14 @@ class CurrentSadeSatiWidget extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
               Icons.warning_rounded,
-              color: const Color(0xFFDFB343),
+              color: AppColors.golden,
               size: 28.w,
             ),
           ),
@@ -135,16 +102,17 @@ class CurrentSadeSatiWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AutoTranslateText(
-                  'Current Sade Sati',
+                  'Sade Sati Status',
                   style: MyTextTheme.largeBCB.copyWith(
-                    color: const Color(0xFFDFB343),
+                    color: AppColors.golden,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 Spacing.h(4),
                 AutoTranslateText(
-                  'Saturn Period Analysis',
+                  'Saturn\'s transit effect',
                   style: MyTextTheme.mediumBCN.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                    color: AppColors.golden.withOpacity(0.9),
                   ),
                 ),
               ],
@@ -155,111 +123,65 @@ class CurrentSadeSatiWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusCard(bool isSadeSatiPeriod, String shaniPeriodType, String dateConsidered, bool saturnRetrograde, String age) {
+  Widget _buildStatusCard(bool isActive) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: isActive ? AppColors.orangeGradient : null,
+        color: isActive ? null : Colors.green.shade50,
         borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: isActive ? Colors.transparent : Colors.green.withOpacity(0.3),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: isActive
+                ? AppColors.deepOrange.withOpacity(0.3)
+                : Colors.green.withOpacity(0.2),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  gradient: primaryGradient,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Icon(
-                  Icons.info_outline_rounded,
-                  color: const Color(0xFFDFB343),
-                  size: 20.w,
-                ),
-              ),
-              Spacing.w(12),
-              AutoTranslateText(
-                'Status Information',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: primaryGradient.colors.first,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+          Container(
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(isActive ? 0.2 : 0.8),
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: Icon(
+              isActive ? Icons.warning_rounded : Icons.check_circle,
+              color: isActive ? Colors.white : Colors.green,
+              size: 28.w,
+            ),
           ),
-          Spacing.h(20),
-          _buildInfoRow('Date Considered', dateConsidered),
-          _buildDivider(),
-          _buildInfoRow('Sade Sati Period', isSadeSatiPeriod ? 'Yes' : 'No'),
-          _buildDivider(),
-          _buildInfoRow('Shani Period Type', shaniPeriodType),
-          _buildDivider(),
-          _buildInfoRow('Saturn Retrograde', saturnRetrograde ? 'Yes' : 'No'),
-          if (age != '--') ...[
-            _buildDivider(),
-            _buildInfoRow('Age', age),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBotResponseCard(String botResponse) {
-    return Container(
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  gradient: primaryGradient,
-                  borderRadius: BorderRadius.circular(8.r),
+          Spacing.w(16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AutoTranslateText(
+                  isActive ? 'Sade Sati Active' : 'Sade Sati Not Active',
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: isActive ? Colors.white : Colors.green.shade700,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                child: Icon(
-                  Icons.chat_bubble_outline_rounded,
-                  color: const Color(0xFFDFB343),
-                  size: 20.w,
+                Spacing.h(4),
+                AutoTranslateText(
+                  isActive
+                      ? 'You are under Sade Sati influence'
+                      : 'You are not under Sade Sati influence',
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: isActive
+                        ? Colors.white.withOpacity(0.9)
+                        : Colors.green.shade600,
+                  ),
                 ),
-              ),
-              Spacing.w(12),
-              AutoTranslateText(
-                'Response',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: primaryGradient.colors.first,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(16),
-          AutoTranslateText(
-            botResponse,
-            style: MyTextTheme.smallBCN.copyWith(
-              color: primaryGradient.colors.first.withOpacity(0.8),
-              height: 1.6,
+              ],
             ),
           ),
         ],
@@ -267,12 +189,16 @@ class CurrentSadeSatiWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDescriptionCard(String description) {
+  Widget _buildInfoCard(Map<String, dynamic> data) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: AppColors.deepOrange.withOpacity(0.2),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
@@ -289,114 +215,60 @@ class CurrentSadeSatiWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  gradient: primaryGradient,
+                  gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Icon(
-                  Icons.description_rounded,
-                  color: const Color(0xFFDFB343),
+                  Icons.info_outline,
+                  color: AppColors.golden,
                   size: 20.w,
                 ),
               ),
               Spacing.w(12),
               AutoTranslateText(
-                'Description',
+                'Sade Sati Details',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: primaryGradient.colors.first,
+                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
           Spacing.h(16),
-          AutoTranslateText(
-            description,
-            style: MyTextTheme.smallBCN.copyWith(
-              color: primaryGradient.colors.first.withOpacity(0.8),
-              height: 1.6,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRemediesCard(List<String> remedies) {
-    return Container(
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  gradient: orangeGradient,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Icon(
-                  Icons.healing_rounded,
-                  color: Colors.white,
-                  size: 20.w,
-                ),
-              ),
-              Spacing.w(12),
-              AutoTranslateText(
-                'Remedies',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: primaryGradient.colors.first,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(16),
-          ...remedies.map((remedy) => Padding(
-                padding: EdgeInsets.only(bottom: 8.h),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 6.h, right: 12.w),
-                      width: 6.w,
-                      height: 6.w,
-                      decoration: BoxDecoration(
-                        color: orangeGradient.colors.first,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    Expanded(
-                      child: AutoTranslateText(
-                        remedy,
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: primaryGradient.colors.first.withOpacity(0.8),
-                          height: 1.6,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )),
+          ...data.entries
+              .where(
+                (e) =>
+                    e.key != 'is_active' &&
+                    e.key != 'is_under_sade_sati' &&
+                    e.key != 'sade_sati_status' &&
+                    e.value != null &&
+                    e.value.toString().isNotEmpty,
+              )
+              .map((entry) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 8.h),
+                  child: _buildInfoRow(
+                    _formatPropertyName(entry.key),
+                    entry.value.toString(),
+                  ),
+                );
+              }),
         ],
       ),
     );
   }
 
   Widget _buildInfoRow(String label, String value) {
-    return Padding(
+    return Container(
       padding: EdgeInsets.symmetric(vertical: 8.h),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: AppColors.deepOrange.withOpacity(0.1),
+            width: 1,
+          ),
+        ),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -405,7 +277,7 @@ class CurrentSadeSatiWidget extends StatelessWidget {
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCB.copyWith(
-                color: primaryGradient.colors.first.withOpacity(0.7),
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -416,8 +288,9 @@ class CurrentSadeSatiWidget extends StatelessWidget {
             child: AutoTranslateText(
               value,
               style: MyTextTheme.smallBCN.copyWith(
-                color: primaryGradient.colors.first,
+                color: AppColors.textPrimary.withOpacity(0.8),
               ),
+              textAlign: TextAlign.end,
             ),
           ),
         ],
@@ -425,21 +298,14 @@ class CurrentSadeSatiWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() {
-    return Divider(
-      height: 1,
-      thickness: 1,
-      color: primaryGradient.colors.first.withOpacity(0.1),
-    );
+  String _formatPropertyName(String key) {
+    return key
+        .split('_')
+        .map(
+          (word) => word.isEmpty
+              ? ''
+              : word[0].toUpperCase() + word.substring(1).toLowerCase(),
+        )
+        .join(' ');
   }
 }
-
-
-
-
-
-
-
-
-
-

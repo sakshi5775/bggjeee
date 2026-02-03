@@ -85,7 +85,20 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
           ),
         ),
         GestureDetector(
-          onTap: () => Get.toNamed(AppRoutes.courses),
+          onTap: () {
+            try {
+              final dashboardController = Get.find<UserDashboardController>();
+              dashboardController.selectedSliderIndex.value = 6;
+              dashboardController.scrollSliderToSelected();
+              dashboardController.scrollController.animateTo(
+                0,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            } catch (e) {
+              Get.toNamed(AppRoutes.courses);
+            }
+          },
           child: Padding(
             padding: EdgeInsets.only(right: 6.w),
             child: AutoTranslateText(
@@ -108,7 +121,22 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
     const double thumbHeight = 94;
 
     return GestureDetector(
-      onTap: () => Get.toNamed(AppRoutes.courseDetail, arguments: course.id),
+      onTap: () {
+        // Switch to Digital Learning tab (index 6) instead of navigating
+        try {
+          final dashboardController = Get.find<UserDashboardController>();
+          dashboardController.selectedSliderIndex.value = 6;
+          dashboardController.scrollSliderToSelected();
+          dashboardController.scrollController.animateTo(
+            0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        } catch (e) {
+          // Fallback if controller not found
+          Get.toNamed(AppRoutes.courseDetail, arguments: course.id);
+        }
+      },
       child: SizedBox(
         width: cardWidth.w,
         child: Column(
@@ -129,8 +157,14 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
                             width: cardWidth.w,
                             height: thumbHeight.h,
                             fit: BoxFit.cover,
-                            placeholder: (_, __) => _thumbnailPlaceholder(cardWidth.w, thumbHeight.h),
-                            errorWidget: (_, __, ___) => _thumbnailPlaceholder(cardWidth.w, thumbHeight.h),
+                            placeholder: (_, __) => _thumbnailPlaceholder(
+                              cardWidth.w,
+                              thumbHeight.h,
+                            ),
+                            errorWidget: (_, __, ___) => _thumbnailPlaceholder(
+                              cardWidth.w,
+                              thumbHeight.h,
+                            ),
                           )
                         : _thumbnailPlaceholder(cardWidth.w, thumbHeight.h),
                   ),

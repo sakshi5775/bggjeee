@@ -1,9 +1,9 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
-import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
@@ -34,47 +34,40 @@ class KundliResultView extends BasePage<KundliResultController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         drawer: UserDashboardView.buildDrawer(context),
-        body: Container(
-          // decoration: BoxDecoration(gradient: AppColors.appBackground),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
+        backgroundColor: Colors.transparent,
+        body: Padding(
+          padding: EdgeInsets.only(
+            top:
+                (MediaQuery.of(context).padding.top > 0
+                        ? MediaQuery.of(context).padding.top * 0.5
+                        : 0.0)
+                    .clamp(6.0, 24.0)
+                    .toDouble(),
           ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                KundliHeader(title: 'Kundli Report'),
-                _buildTabs(),
-                Expanded(
-                  child: PageView.builder(
-                    controller: controller.pageController,
-                    onPageChanged: controller.onPageChanged,
-                    itemCount: controller.visibleTabIndices.length,
-                    itemBuilder: (context, index) {
-                      final fullIndex = controller.visibleTabIndices[index];
-                      return RefreshIndicator(
-                        onRefresh: () async {
-                          controller.onTabSelected(fullIndex);
-                        },
-                        child: _buildTabContent(fullIndex),
-                      );
-                    },
-                  ),
+          child: Column(
+            children: [
+              CommonHeader(title: 'Kundli Report'),
+              _buildTabs(),
+              Expanded(
+                child: PageView.builder(
+                  controller: controller.pageController,
+                  onPageChanged: controller.onPageChanged,
+                  itemCount: controller.visibleTabIndices.length,
+                  itemBuilder: (context, index) {
+                    final fullIndex = controller.visibleTabIndices[index];
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        controller.onTabSelected(fullIndex);
+                      },
+                      child: _buildTabContent(fullIndex),
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -84,18 +77,12 @@ class KundliResultView extends BasePage<KundliResultController> {
   Widget _buildTabs() {
     const orange = Color(0xFFed6f30);
     const orangeLight = Color(0xFFFF8A3D);
-    const maroon = Color(0xFF6F221E);
 
     return Container(
       height: 48.h,
       color: Colors.transparent,
       padding: EdgeInsets.symmetric(vertical: 6.h),
       child: Obx(() {
-        final selectedIndex = controller.selectedTabIndex.value;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _scrollToSelectedTab(selectedIndex);
-        });
-
         return Row(
           children: [
             Padding(
@@ -134,7 +121,11 @@ class KundliResultView extends BasePage<KundliResultController> {
                             ),
                           ),
                         ),
-                        errorWidget: (_, __, ___) => Icon(Icons.auto_stories_rounded, size: 14.w, color: Colors.white),
+                        errorWidget: (_, __, ___) => Icon(
+                          Icons.auto_stories_rounded,
+                          size: 14.w,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     SizedBox(width: 6.w),
@@ -151,69 +142,17 @@ class KundliResultView extends BasePage<KundliResultController> {
               ),
             ),
             Expanded(
-              child: SingleChildScrollView(
-                controller: controller.tabsScrollController,
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(width: 4.w),
-                    ...controller.visibleTabIndices.asMap().entries.map((entry) {
-                      final fullIndex = entry.value;
-                      final tab = controller.tabs[fullIndex];
-                      final isSelected = selectedIndex == fullIndex;
-                      if (!controller.tabKeys.containsKey(fullIndex)) {
-                        controller.tabKeys[fullIndex] = GlobalKey();
-                      }
-                      final tabKey = controller.tabKeys[fullIndex]!;
-
-                      return Padding(
-                        key: tabKey,
-                        padding: EdgeInsets.only(right: 6.w),
-                        child: GestureDetector(
-                          onTap: () => controller.onTabSelected(fullIndex),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            curve: Curves.easeOut,
-                            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-                            decoration: BoxDecoration(
-                              color: isSelected ? orange : Colors.transparent,
-                              borderRadius: BorderRadius.circular(12.r),
-                              border: isSelected
-                                  ? null
-                                  : Border.all(
-                                      color: maroon.withOpacity(0.2),
-                                      width: 1,
-                                    ),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: orange.withOpacity(0.25),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 1),
-                                      ),
-                                    ]
-                                  : null,
-                            ),
-                            child: Center(
-                              child: AutoTranslateText(
-                                tab,
-                                textAlign: TextAlign.center,
-                                style: MyTextTheme.mediumBCB.copyWith(
-                                  color: isSelected ? Colors.white : maroon,
-                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                  fontSize: 12.sp,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                    SizedBox(width: 10.w),
-                  ],
+              child: CommonTabSlider(
+                tabs: controller.visibleTabIndices
+                    .map((i) => controller.tabs[i])
+                    .toList(),
+                selectedIndex: controller.visibleTabIndices.indexOf(
+                  controller.selectedTabIndex.value,
                 ),
+                onTabSelected: (index) {
+                  controller.onTabSelected(controller.visibleTabIndices[index]);
+                },
+                scrollController: controller.tabsScrollController,
               ),
             ),
           ],
@@ -280,7 +219,10 @@ class KundliResultView extends BasePage<KundliResultController> {
         decoration: BoxDecoration(
           color: AppColors.cardLight,
           borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+          border: Border.all(
+            color: AppColors.deepOrange.withOpacity(0.5),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
               color: AppColors.shadowLight,
@@ -309,7 +251,11 @@ class KundliResultView extends BasePage<KundliResultController> {
                       ),
                     ),
                   ),
-                  errorWidget: (_, __, ___) => Icon(Icons.image_not_supported, color: AppColors.textLight, size: 22.w),
+                  errorWidget: (_, __, ___) => Icon(
+                    Icons.image_not_supported,
+                    color: AppColors.textLight,
+                    size: 22.w,
+                  ),
                 ),
               )
             else
@@ -390,7 +336,8 @@ class KundliResultView extends BasePage<KundliResultController> {
                         gradient: AppColors.orangeGradient,
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                            color: AppColors.deepOrange.withOpacity(0.5)),
+                          color: AppColors.deepOrange.withOpacity(0.5),
+                        ),
                       ),
                       child: AutoTranslateText(
                         controller.showAllFeatures.value
@@ -419,10 +366,12 @@ class KundliResultView extends BasePage<KundliResultController> {
 
               return Column(
                 children: displayedFeatures
-                    .map((feature) => _buildFeatureListItem(
-                          title: feature,
-                          onTap: () => controller.onFeatureTap(feature),
-                        ))
+                    .map(
+                      (feature) => _buildFeatureListItem(
+                        title: feature,
+                        onTap: () => controller.onFeatureTap(feature),
+                      ),
+                    )
                     .toList(),
               );
             }),
@@ -475,7 +424,8 @@ class KundliResultView extends BasePage<KundliResultController> {
                   height: 28.w,
                   fit: BoxFit.contain,
                   placeholder: (_, __) => SizedBox(width: 28.w, height: 28.w),
-                  errorWidget: (_, __, ___) => SizedBox(width: 28.w, height: 28.w),
+                  errorWidget: (_, __, ___) =>
+                      SizedBox(width: 28.w, height: 28.w),
                 ),
               ),
               SizedBox(width: 10.w),
@@ -557,7 +507,9 @@ class KundliResultView extends BasePage<KundliResultController> {
         decoration: BoxDecoration(
           color: AppColors.cardLight,
           border: Border.all(
-              color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+            color: AppColors.deepOrange.withOpacity(0.5),
+            width: 1,
+          ),
           borderRadius: BorderRadius.circular(10.r),
           boxShadow: [
             BoxShadow(
@@ -653,7 +605,7 @@ class KundliResultView extends BasePage<KundliResultController> {
     }
 
     // Show Ascendant Report when ASCENDANT REPORT tab is selected
-    if (tabName == 'ascendant report') {
+    if (tabName == 'summary(lagna) report') {
       return AscendantReportWidget(controller: controller);
     }
 
@@ -756,91 +708,13 @@ class KundliResultView extends BasePage<KundliResultController> {
         children: [
           _buildFeatureGrid(),
           Spacing.h(12),
-         //  _buildAdditionalFeatures(),
-          
+          //  _buildAdditionalFeatures(),
+
           // Spacing.h(12),
-         _buildFeatureList(),
+          _buildFeatureList(),
           Spacing.h(12),
         ],
       ),
     );
-  }
-
-  void _scrollToSelectedTab(int selectedIndex) {
-    final scrollController = controller.tabsScrollController;
-    if (!scrollController.hasClients) return;
-
-    // Try to use Scrollable.ensureVisible for accurate scrolling
-    final tabKey = controller.tabKeys[selectedIndex];
-    if (tabKey?.currentContext != null) {
-      final context = tabKey!.currentContext!;
-      final scrollable = Scrollable.maybeOf(context);
-      if (scrollable != null) {
-        final renderObject = context.findRenderObject();
-        if (renderObject is RenderBox) {
-          // Use ensureVisible to scroll the tab into view
-          Scrollable.ensureVisible(
-            context,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            alignment: 0.5, // Center the tab
-          );
-          return;
-        }
-      }
-    }
-
-    // Fallback: Calculate position by measuring actual tab widths
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!scrollController.hasClients) return;
-
-      final visibleIdx = controller.visibleTabIndices.indexOf(selectedIndex);
-      if (visibleIdx < 0) return;
-
-      double totalWidth = 4.w; // initial SizedBox before tabs
-      for (int v = 0; v < visibleIdx; v++) {
-        final i = controller.visibleTabIndices[v];
-        final key = controller.tabKeys[i];
-        if (key?.currentContext != null) {
-          final renderBox =
-              key!.currentContext!.findRenderObject() as RenderBox?;
-          if (renderBox != null) {
-            totalWidth += renderBox.size.width;
-          } else {
-            totalWidth += 44.0 + (controller.tabs[i].length * 9.0);
-          }
-        } else {
-          totalWidth += 44.0 + (controller.tabs[i].length * 9.0);
-        }
-      }
-
-      final viewportWidth = scrollController.position.viewportDimension;
-      final selectedKey = controller.tabKeys[selectedIndex];
-      double selectedTabWidth = 0;
-
-      if (selectedKey?.currentContext != null) {
-        final renderBox =
-            selectedKey!.currentContext!.findRenderObject() as RenderBox?;
-        if (renderBox != null) {
-          selectedTabWidth = renderBox.size.width;
-        }
-      }
-
-      if (selectedTabWidth == 0) {
-        // Fallback estimation
-        final selectedTabName = controller.tabs[selectedIndex];
-        selectedTabWidth = 44.0 + (selectedTabName.length * 9.0);
-      }
-
-      // Calculate position to center the selected tab
-      final targetPosition =
-          totalWidth - (viewportWidth / 2) + (selectedTabWidth / 2);
-
-      scrollController.animateTo(
-        targetPosition.clamp(0.0, scrollController.position.maxScrollExtent),
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    });
   }
 }

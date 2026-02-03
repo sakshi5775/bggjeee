@@ -7,6 +7,8 @@ import 'package:astrobharataiuser/screens/user_dashboard/widgets/user_bottom_nav
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/digital_learning_banner_slider.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/key_course_modules_section.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/learning_features_section.dart';
@@ -57,20 +59,76 @@ class CoursesView extends BasePage<CoursesController> {
             top: !hideHeader,
             child: Column(
               children: [
-                if (!hideHeader) _buildHeader(),
+                if (!hideHeader)
+                  CommonHeader(
+                    title: 'Digital Learning',
+                    showBackButton: showBackButton,
+                    onMenuTap: showBackButton
+                        ? null
+                        : () {
+                            final scaffoldState = context
+                                .findAncestorStateOfType<ScaffoldState>();
+                            scaffoldState?.openDrawer();
+                          },
+                    customActions: [
+                      IconButton(
+                        onPressed: () {
+                          Get.toNamed(AppRoutes.myLearning);
+                        },
+                        icon: Icon(
+                          Icons.school,
+                          color: const Color(0xFF6F221E),
+                          size: 24.w,
+                        ),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        tooltip: 'My Learning',
+                      ),
+                      SizedBox(width: 8.w),
+                      IconButton(
+                        onPressed: () {
+                          Get.toNamed(AppRoutes.liveWebinars);
+                        },
+                        icon: Icon(
+                          Icons.video_library,
+                          color: const Color(0xFF6F221E),
+                          size: 24.w,
+                        ),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        tooltip: 'Webinar',
+                      ),
+                      SizedBox(width: 8.w),
+                    ],
+                  ),
 
                 // Main Content
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
+                        // Add Common Slider
+                        if (!hideHeader)
+                          Obx(
+                            () => CommonTabSlider(
+                              tabs: const ['Courses', 'Webinars'],
+                              selectedIndex: controller.selectedCategory.value,
+                              onTabSelected: (index) {
+                                if (index == 1) {
+                                  Get.toNamed(AppRoutes.liveWebinars);
+                                } else {
+                                  controller.selectedCategory.value = index;
+                                }
+                              },
+                            ),
+                          ),
+
                         if (!hideHeader) ...[
                           Obx(
                             () => controller.hasLiveWebinar.value
                                 ? _buildLiveWebinarBanner()
                                 : const SizedBox.shrink(),
                           ),
-                          // _buildCategoryTabs(),
                         ],
                         Spacing.h(20),
                         _buildCoursesSection(),
@@ -82,90 +140,6 @@ class CoursesView extends BasePage<CoursesController> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      decoration: BoxDecoration(gradient: AppColors.primaryGradient),
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          // Back Arrow (conditional)
-          if (showBackButton) ...[
-            IconButton(
-              onPressed: () => Get.back(),
-              icon: Icon(
-                Icons.arrow_back_ios_new,
-                color: Colors.white,
-                size: 20.w,
-              ),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-            ),
-            SizedBox(width: 12.w),
-          ],
-
-          // Title and Subtitle
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoTranslateText(
-                  'Digital Learning',
-                  style: AppTypography.h2.copyWith(
-                    color: Colors.white,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                AutoTranslateText(
-                  'Expand Your Knowledge',
-                  style: AppTypography.body2.copyWith(
-                    color: Colors.white70,
-                    fontSize: 12.sp,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // My Learning Icon (Progress Report)
-          IconButton(
-            onPressed: () {
-              Get.toNamed(AppRoutes.myLearning);
-            },
-            icon: Icon(Icons.school, color: Colors.white, size: 24.w),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            tooltip: 'My Learning',
-          ),
-          IconButton(
-            onPressed: () {
-              Get.toNamed(AppRoutes.liveWebinars);
-            },
-            icon: Icon(
-              Icons.video_library,
-              color: AppColors.digitalEducationTextColor,
-              size: 24.w,
-            ),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            tooltip: 'Webinar',
-          ),
-
-          // Filter Icon
-          // IconButton(
-          //   onPressed: () {
-
-          //   },
-          //   icon: Icon(Icons.filter_list, color: Colors.white, size: 24.w),
-          //   padding: EdgeInsets.zero,
-          //   constraints: const BoxConstraints(),
-          // ),
-        ],
       ),
     );
   }
@@ -458,115 +432,50 @@ class CoursesView extends BasePage<CoursesController> {
     );
   }
 
-  Widget _buildCategoryTabs() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            _buildTabButton('Courses', 0),
-            SizedBox(width: 12.w),
-            _buildTabButton('Webinars', 1), // Live Webinars
-            // SizedBox(width: 12.w),
-            // _buildTabButton('E-Books', 2),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTabButton(String label, int index) {
-    return Obx(
-      () => GestureDetector(
-        onTap: () {
-          if (index == 1) {
-            Get.toNamed(AppRoutes.liveWebinars);
-          } else {
-            controller.selectedCategory.value = index;
-          }
-        },
-        child: Expanded(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-            decoration: BoxDecoration(
-              gradient: controller.selectedCategory.value == index
-                  ? AppColors.orangeGradient
-                  : null,
-              color: controller.selectedCategory.value == index
-                  ? null
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(20.r),
-              border: Border.all(
-                color: controller.selectedCategory.value == index
-                    ? Colors.transparent
-                    : Colors.grey.shade300,
-              ),
-            ),
-            child: AutoTranslateText(
-              label,
-              style: AppTypography.body1.copyWith(
-                color: controller.selectedCategory.value == index
-                    ? Colors.white
-                    : AppColors.textSecondary,
-                fontSize: 14.sp,
-                fontWeight: controller.selectedCategory.value == index
-                    ? FontWeight.bold
-                    : FontWeight.normal,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildCoursesSection() {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!hideHeader) ...[
-            // 1. Digital Learning Banner Slider (Video/Image)
-            const DigitalLearningBannerSlider(),
+          // 1. Digital Learning Banner Slider (Video/Image)
+          const DigitalLearningBannerSlider(),
 
-            // 2. Learning Features Section
-            const LearningFeaturesSection(),
+          // 2. Learning Features Section
+          const LearningFeaturesSection(),
 
-            // 3. Spiritual Pillars Grid
-            SpiritualPillarsGrid(),
+          // 3. Spiritual Pillars Grid
+          SpiritualPillarsGrid(),
 
-            // 4. Learning Journey Section (Before Courses)
-            const LearningJourneySection(),
+          // 4. Learning Journey Section (Before Courses)
+          const LearningJourneySection(),
 
-            // 5. Mastery Bundles Section
-            const MasteryBundlesSection(),
+          // 5. Mastery Bundles Section
+          const MasteryBundlesSection(),
 
-            // 6. Key Course Modules Section
-            const KeyCourseModulesSection(),
+          // 6. Key Course Modules Section
+          const KeyCourseModulesSection(),
 
-            // 7. Why Choose Us Section
-            const WhyChooseUsSection(),
+          // 7. Why Choose Us Section
+          const WhyChooseUsSection(),
 
-            SizedBox(height: 24.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AutoTranslateText(
-                    'Explore Our Premium Courses',
-                    style: AppTypography.h2.copyWith(
-                      color: const Color(0xFFD68D3C), // Orange/Gold
-                      fontSize: 22.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
+          SizedBox(height: 24.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AutoTranslateText(
+                  'Explore Our Premium Courses',
+                  style: AppTypography.h2.copyWith(
+                    color: const Color(0xFFD68D3C), // Orange/Gold
+                    fontSize: 22.sp,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            SizedBox(height: 16.h),
-          ],
+          ),
+          SizedBox(height: 16.h),
 
           // 6. Premium Courses List
           Obx(() {

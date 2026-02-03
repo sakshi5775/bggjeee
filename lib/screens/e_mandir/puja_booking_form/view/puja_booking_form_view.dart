@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/myButton.dart';
 import 'package:astrobharataiuser/app_manager/my_text_field.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
@@ -5,7 +6,7 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/e_mandir/puja_booking_form/controller/puja_booking_form_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,7 +29,7 @@ class PujaBookingFormView extends BasePage<PujaBookingFormController> {
               subtitle: AutoTranslateText(
                 controller.pujaTitle ?? 'Complete your booking',
                 style: MyTextTheme.smallWCN.copyWith(
-                  color: Colors.white70,
+                  color: '#6F221E'.toColor().withOpacity(0.7),
                   fontSize: 12,
                 ),
               ),

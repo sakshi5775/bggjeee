@@ -46,7 +46,6 @@ import '../widgets/what_else_widget.dart';
 import '../widgets/year_tab_widget.dart';
 import '../widgets/banner_carousel_widget.dart';
 import '../widgets/our_services_carousel_widget.dart';
-import '../widgets/digital_mart_tab_widget.dart';
 // import '../widgets/reports_tab_widget.dart';
 import '../widgets/horoscope_tab_widget.dart';
 import '../widgets/daily_astrologers_widget.dart';
@@ -60,6 +59,8 @@ import 'all_videos_view.dart';
 import '../controller/all_videos_controller.dart';
 import '../../panchang/view/panchang_view.dart';
 import '../../panchang/controller/panchang_controller.dart';
+import 'package:astrobharataiuser/screens/ecommerce/view/ecommerce_home_view.dart';
+import 'package:astrobharataiuser/screens/ecommerce/controller/ecommerce_home_controller.dart';
 import 'package:astrobharataiuser/screens/ai_chat/views/ai_chat_view.dart';
 import 'package:astrobharataiuser/screens/ai_chat/controllers/ai_chat_controller.dart';
 import '../widgets/reports_section_widget.dart';
@@ -214,64 +215,76 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Logo: circular icon + AstroBharatAI + tagline (per brand image)
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Left: circular chakra/icon (favicon)
-                      SizedBox(
-                        width: 36.w,
-                        height: 36.w,
-                        child: CachedNetworkImage(
-                          imageUrl:
-                              'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/favicon.ico',
-                          fit: BoxFit.contain,
-                          placeholder: (_, __) => SizedBox(
+              Expanded(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Logo: circular icon + AstroBharatAI + tagline (per brand image)
+                    Flexible(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Left: circular chakra/icon (favicon)
+                          SizedBox(
                             width: 36.w,
                             height: 36.w,
-                            child: const Center(
-                                child: CircularProgressIndicator(strokeWidth: 2)),
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/favicon.ico',
+                              fit: BoxFit.contain,
+                              placeholder: (_, __) => SizedBox(
+                                width: 36.w,
+                                height: 36.w,
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (_, __, ___) => Icon(
+                                Icons.star_rounded,
+                                size: 28.w,
+                                color: "#6F221E".toColor(),
+                              ),
+                            ),
                           ),
-                          errorWidget: (_, __, ___) => Icon(
-                            Icons.star_rounded,
-                            size: 28.w,
-                            color: "#6F221E".toColor(),
-                          ),
-                        ),
-                      ),
-                      Spacing.w(8),
-                      // Right: main logo SVG + tagline
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SvgAssets(
-                            path:
-                                'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/Frame+1321314931.svg',
-                            width: 110.w,
-                            height: 26.h,
-                          ),
-                          SizedBox(height: 2.h),
-                          AutoTranslateText(
-                            'STARS ALIGN DESTINY DIVINE',
-                            style: TextStyle(
-                              fontSize: 9.sp,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 0.5,
-                              color: "#6F221E".toColor(),
-                              height: 1.2,
+                          Spacing.w(8),
+                          // Right: main logo SVG + tagline
+                          Flexible(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgAssets(
+                                  path:
+                                      'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/Frame+1321314931.svg',
+                                  width: 110.w,
+                                  height: 26.h,
+                                ),
+                                SizedBox(height: 2.h),
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: AutoTranslateText(
+                                    'STARS ALIGN DESTINY DIVINE',
+                                    style: TextStyle(
+                                      fontSize: 9.sp,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 0.5,
+                                      color: "#6F221E".toColor(),
+                                      height: 1.2,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
               // Wallet, Language, Cart and Search icons
               Flexible(
@@ -355,11 +368,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           Builder(
             builder: (context) => IconButton(
               onPressed: () => Scaffold.of(context).openDrawer(),
-              icon: Icon(
-                Icons.menu,
-                size: 24.w,
-                color: "#6F221E".toColor(),
-              ),
+              icon: Icon(Icons.menu, size: 24.w, color: "#6F221E".toColor()),
               style: IconButton.styleFrom(
                 padding: EdgeInsets.zero,
                 minimumSize: Size(36.w, 36.h),
@@ -369,7 +378,13 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           ),
           Spacing.w(20),
           // Fixed Home tab (does not scroll)
-          Obx(() => _buildSliderTab(context, 0, controller.selectedSliderIndex.value)),
+          Obx(
+            () => _buildSliderTab(
+              context,
+              0,
+              controller.selectedSliderIndex.value,
+            ),
+          ),
           Spacing.w(8),
           Expanded(
             child: _SliderStripWidget(
@@ -516,9 +531,13 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         );
       }
       if (i == 4 && controller.sliderTabs[i] == 'Digital Mart') {
-        return Transform.translate(
-          offset: Offset(0, -10.h),
-          child: const DigitalMartTabWidget(),
+        if (!Get.isRegistered<EcommerceHomeController>()) {
+          Get.put(EcommerceHomeController(), permanent: false);
+        }
+        final h = MediaQuery.sizeOf(context).height;
+        return SizedBox(
+          height: (h - 240).clamp(400.0, h * 0.85),
+          child: const EcommerceHomeView(hideHeader: true),
         );
       }
       if (i == 5 && controller.sliderTabs[i] == 'Digital Mandir') {
@@ -676,7 +695,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     width: iconSize,
                     height: iconSize,
                     child: iconPath.endsWith('.svg')
-                        ? SvgAssets(path: iconPath, width: iconSize, height: iconSize)
+                        ? SvgAssets(
+                            path: iconPath,
+                            width: iconSize,
+                            height: iconSize,
+                          )
                         : _isNetworkUrl(iconPath)
                         ? Image.network(
                             iconPath,
@@ -1055,39 +1078,46 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          ShaderMask(
-                            shaderCallback: (bounds) {
-                              return AppColors.orangeGradient.createShader(
-                                Rect.fromLTWH(
-                                  0,
-                                  0,
-                                  bounds.width,
-                                  bounds.height,
-                                ),
-                              );
-                            },
-                            child: AutoTranslateText(
-                              'Live Astrologers',
-                              style: AppTypography.h2.copyWith(
-                                color: '#820B17'.toColor(),
-                                letterSpacing: -0.05,
-                              ),
-                            ),
-                          ),
-                          Spacing.w(8),
-                          if (hasLiveStreams)
-                            FadeTransition(
-                              opacity: controller.liveVideoIconOpacity,
-                              child: ScaleTransition(
-                                scale: controller.liveVideoIconScale,
-                                child: SvgAssets(
-                                  path: 'assets/icons/video_icon_live.svg',
+                      Expanded(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: ShaderMask(
+                                shaderCallback: (bounds) {
+                                  return AppColors.orangeGradient.createShader(
+                                    Rect.fromLTWH(
+                                      0,
+                                      0,
+                                      bounds.width,
+                                      bounds.height,
+                                    ),
+                                  );
+                                },
+                                child: AutoTranslateText(
+                                  'Live Astrologers',
+                                  style: AppTypography.h2.copyWith(
+                                    color: '#820B17'.toColor(),
+                                    letterSpacing: -0.05,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ),
-                        ],
+                            Spacing.w(8),
+                            if (hasLiveStreams)
+                              FadeTransition(
+                                opacity: controller.liveVideoIconOpacity,
+                                child: ScaleTransition(
+                                  scale: controller.liveVideoIconScale,
+                                  child: SvgAssets(
+                                    path: 'assets/icons/video_icon_live.svg',
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(right: 6.w),
@@ -5177,11 +5207,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     label: 'Digital Mart',
                     onTap: () {
                       Navigator.of(context).pop();
-                      Get.offNamed(
-                        '/user-shop',
-                        id: 1,
-                        arguments: {'showBackButton': true},
-                      );
+                      Get.toNamed(AppRoutes.ecommerceHome);
                     },
                   ),
                   _buildDrawerItemStatic(
@@ -6042,9 +6068,10 @@ class _RingingIconState extends State<_RingingIcon>
       duration: const Duration(milliseconds: 600),
       vsync: this,
     )..repeat(reverse: true);
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.25).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.25,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override

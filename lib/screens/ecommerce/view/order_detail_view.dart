@@ -3,7 +3,7 @@ import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/order_detail_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -30,10 +30,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
             if (order == null) {
               return Column(
                 children: [
-                  CommonHeader(
-                    title: 'Order Details',
-                    titleColor: AppColors.templeGold,
-                  ),
+                  CommonHeader(title: 'Order Details'),
                   Expanded(
                     child: Center(
                       child: AutoTranslateText(
@@ -51,10 +48,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
 
             return Column(
               children: [
-                CommonHeader(
-                  title: 'Order Details',
-                  titleColor: AppColors.templeGold,
-                ),
+                CommonHeader(title: 'Order Details'),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: EdgeInsets.all(16.w),

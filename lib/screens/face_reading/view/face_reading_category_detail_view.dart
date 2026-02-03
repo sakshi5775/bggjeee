@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/data_model/face_reading_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -22,16 +23,9 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
     if (category == null || result == null) {
       return Scaffold(
         backgroundColor: '#F7EFBD'.toColor(),
-        appBar: AppBar(
-          backgroundColor: '#8B4513'.toColor(),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Get.back(),
-          ),
-          title: const AutoTranslateText(
-            'Category Detail',
-            style: TextStyle(color: Colors.white),
-          ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(100.h),
+          child: const CommonHeader(title: 'Category Detail'),
         ),
         body: Center(
           child: AutoTranslateText(
@@ -51,8 +45,19 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Top Navigation Bar
-            _buildTopBar(categoryTitle),
+            CommonHeader(
+              title: categoryTitle,
+              subtitle: AutoTranslateText(
+                'AI-Powered Physiognomy reading',
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: const Color(0xFF5F2221).withValues(alpha: 0.7),
+                ),
+              ),
+              showSearch: false,
+              showCart: false,
+              showLanguage: false,
+              showWallet: false,
+            ),
             // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
@@ -69,22 +74,26 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
                     _buildCoreCard(categoryTitle, category, lists),
                     Spacing.h(16),
                     // Strengths
-                    if (lists?.strengths != null && lists!.strengths!.isNotEmpty) ...[
+                    if (lists?.strengths != null &&
+                        lists!.strengths!.isNotEmpty) ...[
                       _buildStrengthsCard(lists.strengths!),
                       Spacing.h(16),
                     ],
                     // Areas For Growth
-                    if (lists?.areasForGrowth != null && lists!.areasForGrowth!.isNotEmpty) ...[
+                    if (lists?.areasForGrowth != null &&
+                        lists!.areasForGrowth!.isNotEmpty) ...[
                       _buildAreasForGrowthCard(lists.areasForGrowth!),
                       Spacing.h(16),
                     ],
                     // Social Traits
-                    if (lists?.socialTraits != null && lists!.socialTraits!.isNotEmpty) ...[
+                    if (lists?.socialTraits != null &&
+                        lists!.socialTraits!.isNotEmpty) ...[
                       _buildSocialTraitsCard(lists.socialTraits!),
                       Spacing.h(16),
                     ],
                     // Recommendations
-                    if (lists?.recommendations != null && lists!.recommendations!.isNotEmpty) ...[
+                    if (lists?.recommendations != null &&
+                        lists!.recommendations!.isNotEmpty) ...[
                       _buildRecommendationsCard(lists.recommendations!),
                       Spacing.h(16),
                     ],
@@ -135,49 +144,11 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
     }
   }
 
-  Widget _buildTopBar(String title) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: '#68171E'.toColor(),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20.r),
-          bottomRight: Radius.circular(20.r),
-        ),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back, color: AppColors.templeGold, size: 24.w),
-            onPressed: () => Get.back(),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoTranslateText(
-                  title,
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: AppColors.templeGold,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                AutoTranslateText(
-                  'AI-Powered Physiognomy reading',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: AppColors.templeGold.withOpacity(0.9),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildHeaderSection(
-      String title, IconData icon, FaceReadingCategoryDetail category) {
+    String title,
+    IconData icon,
+    FaceReadingCategoryDetail category,
+  ) {
     return Container(
       margin: EdgeInsets.all(16.w),
       child: Row(
@@ -267,17 +238,20 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildCoreCard(String title, FaceReadingCategoryDetail category,
-      FaceReadingLists? lists) {
+  Widget _buildCoreCard(
+    String title,
+    FaceReadingCategoryDetail category,
+    FaceReadingLists? lists,
+  ) {
     final coreTitle = title == 'Personality Traits'
         ? 'Core Personality'
         : title == 'Career & Success'
-            ? 'Career Characteristics'
-            : title == 'Love & Relationships'
-                ? 'Romantic Nature'
-                : title == 'Wealth Indicators'
-                    ? 'Wealth Characteristics'
-                    : 'Health Characteristics';
+        ? 'Career Characteristics'
+        : title == 'Love & Relationships'
+        ? 'Romantic Nature'
+        : title == 'Wealth Indicators'
+        ? 'Wealth Characteristics'
+        : 'Health Characteristics';
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
@@ -636,10 +610,9 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
           Spacing.h(12),
           AutoTranslateText(
             'Want Deeper Insights',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
+            style: MyTextTheme.largeBCB
+                .copyWith(color: Colors.white, fontWeight: FontWeight.bold)
+                .merge(AppTypography.h2),
           ),
           Spacing.h(8),
           AutoTranslateText(
@@ -676,4 +649,3 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
     );
   }
 }
-

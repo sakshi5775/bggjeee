@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/data_model/ramal_shastra_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -36,67 +37,10 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
       body: SafeArea(
         child: Column(
           children: [
-            _buildTopBar(),
-            Expanded(
-              child: Obx(() => _buildContent()),
-            ),
+            const CommonHeader(title: 'Stats'),
+            Expanded(child: Obx(() => _buildContent())),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildTopBar() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            "#F38B3B".toColor(),
-            "#DD2914".toColor(),
-          ],
-        ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20.r),
-          bottomRight: Radius.circular(20.r),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.12),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
-            onPressed: () => Get.back(),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoTranslateText(
-                  'Ramal Shastra Statistics',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
-                ),
-                AutoTranslateText(
-                  'Your reading statistics',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: Colors.white.withOpacity(0.9),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -115,9 +59,7 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
       return Center(
         child: AutoTranslateText(
           'No statistics available',
-          style: MyTextTheme.mediumBCN.copyWith(
-            color: Colors.grey,
-          ),
+          style: MyTextTheme.mediumBCN.copyWith(color: Colors.grey),
         ),
       );
     }
@@ -131,11 +73,13 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
           _buildSummaryCards(stats),
           Spacing.h(24),
           // Category Distribution Chart
-          if (stats.categoryDistribution != null && stats.categoryDistribution!.isNotEmpty)
+          if (stats.categoryDistribution != null &&
+              stats.categoryDistribution!.isNotEmpty)
             _buildCategoryChart(stats.categoryDistribution!),
           Spacing.h(24),
           // Judgment Distribution Chart
-          if (stats.judgmentDistribution != null && stats.judgmentDistribution!.isNotEmpty)
+          if (stats.judgmentDistribution != null &&
+              stats.judgmentDistribution!.isNotEmpty)
             _buildJudgmentChart(stats.judgmentDistribution!),
           Spacing.h(24),
         ],
@@ -176,7 +120,12 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
     );
   }
 
-  Widget _buildSummaryCard(String title, String value, IconData icon, Color color) {
+  Widget _buildSummaryCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -204,9 +153,7 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
           Spacing.h(4),
           AutoTranslateText(
             title,
-            style: MyTextTheme.smallBCN.copyWith(
-              color: '#666666'.toColor(),
-            ),
+            style: MyTextTheme.smallBCN.copyWith(color: '#666666'.toColor()),
             textAlign: TextAlign.center,
           ),
         ],
@@ -233,10 +180,12 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
         children: [
           AutoTranslateText(
             'Category Distribution',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
+            style: MyTextTheme.largeBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h2),
           ),
           Spacing.h(16),
           ...categories.map((category) {
@@ -256,7 +205,10 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
               decoration: BoxDecoration(
                 color: colors[index % colors.length].withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: colors[index % colors.length], width: 1),
+                border: Border.all(
+                  color: colors[index % colors.length],
+                  width: 1,
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -302,10 +254,12 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
         children: [
           AutoTranslateText(
             'Outcome Distribution',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
+            style: MyTextTheme.largeBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h2),
           ),
           Spacing.h(16),
           ...judgments.map((judgment) {
@@ -317,9 +271,13 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
               Colors.blue,
             ];
             final counts = judgments.map((j) => j.count ?? 0).toList();
-            final maxCount = counts.isNotEmpty ? counts.reduce((a, b) => a > b ? a : b) : 0;
-            final percentage = maxCount > 0 ? ((judgment.count ?? 0) / maxCount) : 0.0;
-            
+            final maxCount = counts.isNotEmpty
+                ? counts.reduce((a, b) => a > b ? a : b)
+                : 0;
+            final percentage = maxCount > 0
+                ? ((judgment.count ?? 0) / maxCount)
+                : 0.0;
+
             return Container(
               margin: EdgeInsets.only(bottom: 12.h),
               child: Column(
@@ -349,7 +307,9 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
                     child: LinearProgressIndicator(
                       value: percentage,
                       backgroundColor: Colors.grey[300],
-                      valueColor: AlwaysStoppedAnimation<Color>(colors[index % colors.length]),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        colors[index % colors.length],
+                      ),
                       minHeight: 20.h,
                     ),
                   ),
@@ -362,4 +322,3 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
     );
   }
 }
-

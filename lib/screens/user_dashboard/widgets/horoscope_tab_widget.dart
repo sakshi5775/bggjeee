@@ -1,4 +1,3 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
@@ -118,7 +117,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
             width: 24.w,
             height: 24.w,
             child: CircularProgressIndicator(
-              color: "#6F221E".toColor(),
+              color: AppColors.deepOrange,
               strokeWidth: 2,
             ),
           ),
@@ -167,11 +166,14 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: '#DBCCA8'.toColor().withOpacity(0.6)),
+          border: Border.all(
+            color: AppColors.deepOrange.withOpacity(0.2),
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
-              color: '#6F221E'.toColor().withOpacity(0.06),
-              blurRadius: 6,
+              color: AppColors.deepOrange.withOpacity(0.08),
+              blurRadius: 8,
               offset: const Offset(0, 2),
             ),
           ],
@@ -183,7 +185,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
               width: 40.w,
               height: 40.h,
               decoration: BoxDecoration(
-                color: '#FCE5AA'.toColor().withOpacity(0.5),
+                gradient: AppColors.orangeGradient.scale(0.15),
                 borderRadius: BorderRadius.circular(10.r),
               ),
               child: Icon(icon, size: 22.w, color: AppColors.deepOrange),
@@ -192,7 +194,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
             AutoTranslateText(
               label,
               style: AppTypography.body2.copyWith(
-                color: '#3D0C11'.toColor(),
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w500,
                 fontSize: 10.sp,
               ),
@@ -221,7 +223,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
                 },
                 child: Icon(
                   Icons.arrow_back,
-                  color: '#3D0C11'.toColor(),
+                  color: AppColors.textPrimary,
                   size: 24.w,
                 ),
               ),
@@ -230,14 +232,14 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
                 child: AutoTranslateText(
                   'Select Your Sign',
                   style: AppTypography.h2.copyWith(
-                    color: '#3D0C11'.toColor(),
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ],
           ),
-          //SizedBox(height: 16.h),
+          SizedBox(height: 8.h),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -286,9 +288,13 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
                   shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.circular(12.r),
                   color: Colors.white,
+                  border: Border.all(
+                    color: AppColors.deepOrange.withOpacity(0.2),
+                    width: 1.5,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.deepOrange.withOpacity(0.45),
+                      color: AppColors.deepOrange.withOpacity(0.15),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                       spreadRadius: 0,
@@ -305,15 +311,20 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
                           fit: BoxFit.contain,
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) return child;
-                            return const Center(
-                              child: CircularProgressIndicator(),
+                            return Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.deepOrange,
+                                ),
+                              ),
                             );
                           },
                           errorBuilder: (context, error, stackTrace) {
                             return Icon(
                               Icons.star,
                               size: 40.w,
-                              color: const Color(0xFFDFB343),
+                              color: AppColors.deepOrange,
                             );
                           },
                         )
@@ -324,7 +335,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
                             return Icon(
                               Icons.star,
                               size: 40.w,
-                              color: const Color(0xFFDFB343),
+                              color: AppColors.deepOrange,
                             );
                           },
                         ),
@@ -338,7 +349,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
             textAlign: TextAlign.center,
             style: MyTextTheme.smallBCB
                 .copyWith(
-                  color: "#6F221E".toColor(),
+                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
                   fontSize: 11.sp,
                 )
@@ -372,7 +383,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
               },
               child: Icon(
                 Icons.arrow_back,
-                color: '#3D0C11'.toColor(),
+                color: AppColors.textPrimary,
                 size: 24.w,
               ),
             ),
@@ -381,7 +392,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
               child: AutoTranslateText(
                 '$category - $zodiac',
                 style: AppTypography.h2.copyWith(
-                  color: '#3D0C11'.toColor(),
+                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -412,7 +423,7 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
         return Center(
           child: AutoTranslateText(
             'Category not supported',
-            style: AppTypography.body1.copyWith(color: '#3D0C11'.toColor()),
+            style: AppTypography.body1.copyWith(color: AppColors.textPrimary),
           ),
         );
     }

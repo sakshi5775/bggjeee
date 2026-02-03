@@ -3,7 +3,7 @@ import 'package:astrobharataiuser/data_model/support_ticket_model.dart';
 import 'package:astrobharataiuser/screens/support/controller/support_ticket_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,7 +16,8 @@ class SupportTicketDetailView extends StatefulWidget {
   const SupportTicketDetailView({super.key, required this.ticketId});
 
   @override
-  State<SupportTicketDetailView> createState() => _SupportTicketDetailViewState();
+  State<SupportTicketDetailView> createState() =>
+      _SupportTicketDetailViewState();
 }
 
 class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
@@ -48,58 +49,56 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
         body: SafeArea(
           child: Column(
             children: [
-              CommonHeader(
-                title: 'Ticket Details',
-                titleColor: AppColors.templeGold,
-              ),
+              CommonHeader(title: 'Ticket Details'),
               Expanded(
                 child: Obx(() {
-        if (controller.isLoadingTicketDetails.value && controller.selectedTicket.value == null) {
-          return const Center(child: CircularProgressIndicator());
-        }
+                  if (controller.isLoadingTicketDetails.value &&
+                      controller.selectedTicket.value == null) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-        final ticket = controller.selectedTicket.value;
-        if (ticket == null) {
-          return Center(
-            child: AutoTranslateText(
-              'Ticket not found',
-              style: TextStyle(
-                color: AppColors.textSecondary,
-              ).merge(AppTypography.h3),
-            ),
-          );
-        }
+                  final ticket = controller.selectedTicket.value;
+                  if (ticket == null) {
+                    return Center(
+                      child: AutoTranslateText(
+                        'Ticket not found',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                        ).merge(AppTypography.h3),
+                      ),
+                    );
+                  }
 
-        final isClosed = controller.isTicketClosed(ticket.status);
+                  final isClosed = controller.isTicketClosed(ticket.status);
 
-        return Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                controller: scrollController,
-                padding: EdgeInsets.all(16.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTicketHeader(ticket, controller),
-                    SizedBox(height: 16.h),
-                    _buildTicketInfo(ticket, controller),
-                    SizedBox(height: 16.h),
-                    _buildDescription(ticket),
-                    if (ticket.attachments.isNotEmpty) ...[
-                      SizedBox(height: 16.h),
-                      _buildAttachments(ticket.attachments),
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          padding: EdgeInsets.all(16.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildTicketHeader(ticket, controller),
+                              SizedBox(height: 16.h),
+                              _buildTicketInfo(ticket, controller),
+                              SizedBox(height: 16.h),
+                              _buildDescription(ticket),
+                              if (ticket.attachments.isNotEmpty) ...[
+                                SizedBox(height: 16.h),
+                                _buildAttachments(ticket.attachments),
+                              ],
+                              SizedBox(height: 24.h),
+                              _buildActivitiesSection(controller),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (!isClosed) _buildReplySection(controller),
                     ],
-                    SizedBox(height: 24.h),
-                    _buildActivitiesSection(controller),
-                  ],
-                ),
-              ),
-            ),
-                  if (!isClosed) _buildReplySection(controller),
-                ],
-              );
-            }),
+                  );
+                }),
               ),
             ],
           ),
@@ -108,12 +107,13 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
     );
   }
 
-  Widget _buildTicketHeader(SupportTicketModel ticket, SupportTicketController controller) {
+  Widget _buildTicketHeader(
+    SupportTicketModel ticket,
+    SupportTicketController controller,
+  ) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: Padding(
         padding: EdgeInsets.all(16.w),
         child: Column(
@@ -149,10 +149,7 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
                   color: controller.getStatusColor(ticket.status),
                 ),
                 SizedBox(width: 8.w),
-                _buildChip(
-                  label: ticket.category,
-                  color: AppColors.info,
-                ),
+                _buildChip(label: ticket.category, color: AppColors.info),
                 SizedBox(width: 8.w),
                 _buildChip(
                   label: ticket.priority,
@@ -174,12 +171,13 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
     );
   }
 
-  Widget _buildTicketInfo(SupportTicketModel ticket, SupportTicketController controller) {
+  Widget _buildTicketInfo(
+    SupportTicketModel ticket,
+    SupportTicketController controller,
+  ) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: Padding(
         padding: EdgeInsets.all(16.w),
         child: Column(
@@ -216,9 +214,7 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
           Expanded(
             child: AutoTranslateText(
               value,
-              style: TextStyle(
-                color: AppColors.textPrimary,
-              ),
+              style: TextStyle(color: AppColors.textPrimary),
             ),
           ),
         ],
@@ -229,9 +225,7 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
   Widget _buildDescription(SupportTicketModel ticket) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: Padding(
         padding: EdgeInsets.all(16.w),
         child: Column(
@@ -247,10 +241,7 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
             SizedBox(height: 8.h),
             AutoTranslateText(
               ticket.description,
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                height: 1.5,
-              ),
+              style: TextStyle(color: AppColors.textPrimary, height: 1.5),
             ),
           ],
         ),
@@ -261,9 +252,7 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
   Widget _buildAttachments(List<Attachment> attachments) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: Padding(
         padding: EdgeInsets.all(16.w),
         child: Column(
@@ -277,7 +266,9 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
               ).merge(AppTypography.h3),
             ),
             SizedBox(height: 12.h),
-            ...attachments.map((attachment) => _buildAttachmentItem(attachment)),
+            ...attachments.map(
+              (attachment) => _buildAttachmentItem(attachment),
+            ),
           ],
         ),
       ),
@@ -286,7 +277,7 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
 
   Widget _buildAttachmentItem(Attachment attachment) {
     final isImage = attachment.mimeType.startsWith('image/');
-    
+
     return Container(
       margin: EdgeInsets.only(bottom: 8.h),
       padding: EdgeInsets.all(12.w),
@@ -318,9 +309,7 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
                 ),
                 AutoTranslateText(
                   _formatFileSize(attachment.size),
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                  ),
+                  style: TextStyle(color: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -353,14 +342,16 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
           ),
         ),
         SizedBox(height: 12.h),
-        ...controller.ticketActivities.map((activity) => _buildActivityItem(activity)),
+        ...controller.ticketActivities.map(
+          (activity) => _buildActivityItem(activity),
+        ),
       ],
     );
   }
 
   Widget _buildActivityItem(TicketActivity activity) {
     final isReporter = activity.senderModel == 'User';
-    
+
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(16.w),
@@ -368,7 +359,9 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
         color: isReporter ? AppColors.saffron.withOpacity(0.1) : Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: isReporter ? AppColors.saffron.withOpacity(0.3) : AppColors.dividerLight,
+          color: isReporter
+              ? AppColors.saffron.withOpacity(0.3)
+              : AppColors.dividerLight,
         ),
       ),
       child: Column(
@@ -386,23 +379,20 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
               ),
               AutoTranslateText(
                 _formatDate(activity.createdAt),
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(color: AppColors.textSecondary),
               ),
             ],
           ),
           SizedBox(height: 8.h),
           AutoTranslateText(
             activity.message,
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              height: 1.5,
-            ),
+            style: TextStyle(color: AppColors.textPrimary, height: 1.5),
           ),
           if (activity.attachments.isNotEmpty) ...[
             SizedBox(height: 12.h),
-            ...activity.attachments.map((attachment) => _buildAttachmentItem(attachment)),
+            ...activity.attachments.map(
+              (attachment) => _buildAttachmentItem(attachment),
+            ),
           ],
         ],
       ),
@@ -460,7 +450,8 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
                             top: 4,
                             right: 4,
                             child: GestureDetector(
-                              onTap: () => controller.removeReplyAttachment(index),
+                              onTap: () =>
+                                  controller.removeReplyAttachment(index),
                               child: Container(
                                 padding: EdgeInsets.all(4.w),
                                 decoration: const BoxDecoration(
@@ -496,7 +487,10 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
                         borderRadius: BorderRadius.circular(12.r),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 12.h,
+                      ),
                     ),
                     maxLines: 3,
                     maxLength: 5000,
@@ -519,76 +513,81 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
             SizedBox(height: 8.h),
             SizedBox(
               width: double.infinity,
-              child: Obx(() => Container(
-                    decoration: BoxDecoration(
-                      gradient: controller.isSendingReply.value
-                          ? null
-                          : AppColors.orangeGradient,
-                      color: controller.isSendingReply.value
-                          ? Colors.grey[300]
-                          : null,
-                      borderRadius: BorderRadius.circular(12.r),
-                      boxShadow: controller.isSendingReply.value
-                          ? null
-                          : [
-                              BoxShadow(
-                                color: AppColors.deepOrange.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: controller.isSendingReply.value
-                          ? null
-                          : () async {
-                              controller.replyMessageController.text =
-                                  replyController.text;
-                              final success =
-                                  await controller.replyToTicket(widget.ticketId);
-                              if (success) {
-                                replyController.clear();
-                                // Scroll to bottom
-                                Future.delayed(const Duration(milliseconds: 300),
-                                    () {
+              child: Obx(
+                () => Container(
+                  decoration: BoxDecoration(
+                    gradient: controller.isSendingReply.value
+                        ? null
+                        : AppColors.orangeGradient,
+                    color: controller.isSendingReply.value
+                        ? Colors.grey[300]
+                        : null,
+                    borderRadius: BorderRadius.circular(12.r),
+                    boxShadow: controller.isSendingReply.value
+                        ? null
+                        : [
+                            BoxShadow(
+                              color: AppColors.deepOrange.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: controller.isSendingReply.value
+                        ? null
+                        : () async {
+                            controller.replyMessageController.text =
+                                replyController.text;
+                            final success = await controller.replyToTicket(
+                              widget.ticketId,
+                            );
+                            if (success) {
+                              replyController.clear();
+                              // Scroll to bottom
+                              Future.delayed(
+                                const Duration(milliseconds: 300),
+                                () {
                                   if (scrollController.hasClients) {
                                     scrollController.animateTo(
                                       scrollController.position.maxScrollExtent,
-                                      duration: const Duration(milliseconds: 300),
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
                                       curve: Curves.easeOut,
                                     );
                                   }
-                                });
-                              }
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        foregroundColor: Colors.white,
-                        shadowColor: Colors.transparent,
-                        padding: EdgeInsets.symmetric(vertical: 14.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
+                                },
+                              );
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: Colors.white,
+                      shadowColor: Colors.transparent,
+                      padding: EdgeInsets.symmetric(vertical: 14.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
                       ),
-                      child: controller.isSendingReply.value
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              ),
-                            )
-                          : AutoTranslateText(
-                              'Send Reply',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
+                    ),
+                    child: controller.isSendingReply.value
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
                               ),
                             ),
-                    ),
-                  )),
+                          )
+                        : AutoTranslateText(
+                            'Send Reply',
+                            style: TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -629,7 +628,10 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
     return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
   }
 
-  Future<void> _pickReplyAttachment(BuildContext context, SupportTicketController controller) async {
+  Future<void> _pickReplyAttachment(
+    BuildContext context,
+    SupportTicketController controller,
+  ) async {
     try {
       final file = await ImagePickerHelper.pickDocument(
         context: context,
@@ -661,4 +663,3 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
     }
   }
 }
-

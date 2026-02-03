@@ -1,7 +1,7 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/varshphal_controller.dart';
-import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/varshphal_content_widget.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:flutter/material.dart';
@@ -32,10 +32,8 @@ class VarshphalView extends BasePage<VarshphalController> {
           child: SafeArea(
             child: Column(
               children: [
-                KundliHeader(title: 'Varshphal'),
-                Expanded(
-                  child: VarshphalContentWidget(controller: controller),
-                ),
+                const CommonHeader(title: 'Varshphal'),
+                Expanded(child: VarshphalContentWidget(controller: controller)),
               ],
             ),
           ),

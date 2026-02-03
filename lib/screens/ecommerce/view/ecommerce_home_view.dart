@@ -21,6 +21,8 @@ import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widg
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -28,8 +30,13 @@ import 'package:intl/intl.dart';
 
 class EcommerceHomeView extends BasePage<EcommerceHomeController> {
   final bool showBackButton;
+  final bool hideHeader;
 
-  const EcommerceHomeView({super.key, this.showBackButton = true});
+  const EcommerceHomeView({
+    super.key,
+    this.showBackButton = true,
+    this.hideHeader = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +44,98 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
       Get.lazyPut(() => WishlistController(), fenix: true);
     }
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
+      backgroundColor: hideHeader
+          ? Colors.transparent
+          : AppColors.lightBackground,
       body: SafeArea(
+        top: !hideHeader,
         child: Obx(
           () => CustomScrollView(
             slivers: [
               // Header
-              _buildHeader(context),
+              // Header
+              if (!hideHeader)
+                SliverToBoxAdapter(
+                  child: CommonHeader(
+                    title: 'Digital Mart',
+                    showBackButton: showBackButton,
+                    customActions: [
+                      // Wishlist Icon
+                      GestureDetector(
+                        onTap: () => Get.toNamed(AppRoutes.wishlist),
+                        child: Obx(() {
+                          final wishlistController =
+                              Get.isRegistered<WishlistController>()
+                              ? Get.find<WishlistController>()
+                              : null;
+                          final wishCount =
+                              wishlistController?.items.length ?? 0;
+                          return Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Icon(
+                                wishCount > 0
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: '#6F221E'.toColor(),
+                                size: 22.w,
+                              ),
+                              if (wishCount > 0)
+                                Positioned(
+                                  right: -2,
+                                  top: -2,
+                                  child: Container(
+                                    width: 8.w,
+                                    height: 8.w,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.red,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        }),
+                      ),
+                      SizedBox(width: 8.w),
+                    ],
+                  ),
+                ),
+
+              // Helper to map categories to slider
+              SliverToBoxAdapter(
+                child: Obx(() {
+                  if (controller.isLoadingCategories.value)
+                    return const SizedBox.shrink();
+
+                  final tabs = [
+                    'All',
+                    ...controller.categories.map((c) => c.name ?? 'Unknown'),
+                  ];
+                  // Determine selected index
+                  int selectedIndex = 0;
+                  if (controller.selectedCategory.value != null) {
+                    final index = controller.categories.indexWhere(
+                      (c) => c.id == controller.selectedCategory.value!.id,
+                    );
+                    if (index != -1) selectedIndex = index + 1;
+                  }
+
+                  return CommonTabSlider(
+                    tabs: tabs,
+                    selectedIndex: selectedIndex,
+                    onTabSelected: (index) {
+                      if (index == 0) {
+                        controller.selectCategory(null);
+                      } else {
+                        controller.selectCategory(
+                          controller.categories[index - 1],
+                        );
+                      }
+                    },
+                  );
+                }),
+              ),
 
               // Search Bar
               _buildSearchBar(context),
@@ -106,265 +198,6 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
               SliverToBoxAdapter(child: SizedBox(height: 20.h)),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    final cartController = Get.isRegistered<CartController>()
-        ? Get.find<CartController>()
-        : Get.put(CartController());
-    final wishlistController = Get.isRegistered<WishlistController>()
-        ? Get.find<WishlistController>()
-        : null;
-
-    return SliverToBoxAdapter(
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 14.71.w, vertical: 14.71.h),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              '#820B17'.toColor(),
-              '#68171E'.toColor(),
-              '#5D1C21'.toColor(),
-            ],
-          ),
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(11.04.r),
-            bottomRight: Radius.circular(11.04.r),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.35),
-              blurRadius: 15,
-              offset: Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Back button (conditional)
-            if (showBackButton) ...[
-              IconButton(
-                onPressed: () {
-                  Get.back();
-                },
-                icon: Icon(
-                  Icons.arrow_back_ios_new,
-                  color: Colors.white,
-                  size: 20.w,
-                ),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-              SizedBox(width: 8.w),
-            ],
-            // Logo/Brand Name and Subtitle
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AutoTranslateText(
-                    'Digital Mart',
-                    style: TextStyle(
-                      fontFamily: 'Baloo 2',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 27.59.sp,
-                      color: '#DFB343'.toColor(),
-                      height: 1.2,
-                    ),
-                  ),
-                  AutoTranslateText(
-                    'Certified • Authentic • Blessed',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 11.04.sp,
-                      color: Colors.white.withOpacity(0.6),
-                      height: 1.33,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Right side icons
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Wishlist Icon
-                GestureDetector(
-                  onTap: () => Get.toNamed(AppRoutes.wishlist),
-                  child: wishlistController != null
-                      ? Obx(() {
-                          final wishCount = wishlistController.items.length;
-                          return Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              Container(
-                                width: 36.79.w,
-                                height: 36.79.h,
-                                padding: EdgeInsets.all(9.2.w),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      '#E3B341'.toColor(),
-                                      '#C9A033'.toColor(),
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(
-                                    15429.03.r,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 5.52,
-                                      offset: Offset(0, -2.76),
-                                    ),
-                                  ],
-                                ),
-                                child: Icon(
-                                  wishCount > 0
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: '#3D0C11'.toColor(),
-                                  size: 18.39.w,
-                                ),
-                              ),
-                              if (wishCount > 0)
-                                Positioned(
-                                  right: -3.68,
-                                  top: -3.68,
-                                  child: Container(
-                                    width: 18.39.w,
-                                    height: 18.39.h,
-                                    decoration: BoxDecoration(
-                                      color: '#3D0C11'.toColor(),
-                                      borderRadius: BorderRadius.circular(
-                                        15429.03.r,
-                                      ),
-                                      border: Border.all(
-                                        color: Colors.white,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: AutoTranslateText(
-                                        wishCount > 99
-                                            ? '99+'
-                                            : wishCount.toString(),
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 9.2.sp,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          );
-                        })
-                      : Container(
-                          width: 36.79.w,
-                          height: 36.79.h,
-                          padding: EdgeInsets.all(9.2.w),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                '#E3B341'.toColor(),
-                                '#C9A033'.toColor(),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(15429.03.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 5.52,
-                                offset: Offset(0, -2.76),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.favorite_border,
-                            color: '#3D0C11'.toColor(),
-                            size: 18.39.w,
-                          ),
-                        ),
-                ),
-                Spacing.w(5.52),
-                // Cart Icon
-                GestureDetector(
-                  onTap: () => Get.toNamed(AppRoutes.cart),
-                  child: Obx(() {
-                    final count = cartController.itemCount;
-                    return Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Container(
-                          width: 36.79.w,
-                          height: 36.79.h,
-                          padding: EdgeInsets.all(9.2.w),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                '#E3B341'.toColor(),
-                                '#C9A033'.toColor(),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(15429.03.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 5.52,
-                                offset: Offset(0, -2.76),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.shopping_cart,
-                            color: '#3D0C11'.toColor(),
-                            size: 18.39.w,
-                          ),
-                        ),
-                        if (count > 0)
-                          Positioned(
-                            right: -3.68,
-                            top: -3.68,
-                            child: Container(
-                              width: 18.39.w,
-                              height: 18.39.h,
-                              decoration: BoxDecoration(
-                                color: '#3D0C11'.toColor(),
-                                borderRadius: BorderRadius.circular(15429.03.r),
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 2,
-                                ),
-                              ),
-                              child: Center(
-                                child: AutoTranslateText(
-                                  count > 99 ? '99+' : count.toString(),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 9.2.sp,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    );
-                  }),
-                ),
-              ],
-            ),
-          ],
         ),
       ),
     );

@@ -2,7 +2,7 @@ import 'package:astrobharataiuser/app_manager/common/image_picker.dart';
 import 'package:astrobharataiuser/screens/support/controller/support_ticket_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,10 +20,7 @@ class CreateSupportTicketView extends GetView<SupportTicketController> {
         body: SafeArea(
           child: Column(
             children: [
-              CommonHeader(
-                title: 'Create Support Ticket',
-                titleColor: AppColors.templeGold,
-              ),
+              CommonHeader(title: 'Create Support Ticket'),
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(16.w),

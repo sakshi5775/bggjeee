@@ -3,7 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/predictions_controller.dart';
-import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/numerology_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/predictions_table_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/daily_prediction_widget.dart';
@@ -48,7 +48,7 @@ class PredictionsView extends BasePage<PredictionsController> {
           child: SafeArea(
             child: Column(
               children: [
-                KundliHeader(title: 'Predictions'),
+                const CommonHeader(title: 'Predictions'),
                 _buildTabs(),
                 Expanded(
                   child: PageView(
@@ -151,9 +151,14 @@ class PredictionsView extends BasePage<PredictionsController> {
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             curve: Curves.easeOut,
-                            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 14.w,
+                              vertical: 8.h,
+                            ),
                             decoration: BoxDecoration(
-                              color: isSelected ? AppColors.deepOrange : Colors.transparent,
+                              color: isSelected
+                                  ? AppColors.deepOrange
+                                  : Colors.transparent,
                               borderRadius: BorderRadius.circular(12.r),
                               border: isSelected
                                   ? null
@@ -164,7 +169,9 @@ class PredictionsView extends BasePage<PredictionsController> {
                               boxShadow: isSelected
                                   ? [
                                       BoxShadow(
-                                        color: AppColors.deepOrange.withOpacity(0.25),
+                                        color: AppColors.deepOrange.withOpacity(
+                                          0.25,
+                                        ),
                                         blurRadius: 4,
                                         offset: const Offset(0, 1),
                                       ),
@@ -177,7 +184,9 @@ class PredictionsView extends BasePage<PredictionsController> {
                                 textAlign: TextAlign.center,
                                 style: MyTextTheme.mediumBCB.copyWith(
                                   color: isSelected ? Colors.white : maroon,
-                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
                                   fontSize: 12.sp,
                                 ),
                               ),

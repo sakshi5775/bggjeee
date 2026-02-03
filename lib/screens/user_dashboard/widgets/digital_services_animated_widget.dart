@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/ecommerce/view/ecommerce_home_view.dart';
 import 'package:astrobharataiuser/binding/ecommerce_binding/ecommerce_binding.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
 
 class DigitalServicesAnimatedWidget extends StatefulWidget {
@@ -18,7 +19,6 @@ class DigitalServicesAnimatedWidget extends StatefulWidget {
 
 class _DigitalServicesAnimatedWidgetState
     extends State<DigitalServicesAnimatedWidget> {
-
   final List<Map<String, dynamic>> _imageData = [
     {
       'path': 'assets/app/DIGITALPOOJA.png',
@@ -26,7 +26,16 @@ class _DigitalServicesAnimatedWidgetState
     },
     {
       'path': 'assets/app/DIGITALEDUCATION.png',
-      'route': () => Get.toNamed(AppRoutes.courses),
+      'route': () {
+        try {
+          final dashboardController = Get.find<UserDashboardController>();
+          dashboardController.selectedSliderIndex.value = 6;
+          dashboardController.scrollSliderToSelected();
+          dashboardController.scrollController.jumpTo(0);
+        } catch (e) {
+          Get.toNamed(AppRoutes.courses);
+        }
+      },
     },
     {
       'path': 'assets/app/ASTROLOGYSERVICE.png',
@@ -34,10 +43,19 @@ class _DigitalServicesAnimatedWidgetState
     },
     {
       'path': 'assets/app/DIGITALMART.png',
-      'route': () => Get.to(
+      'route': () {
+        try {
+          final dashboardController = Get.find<UserDashboardController>();
+          dashboardController.selectedSliderIndex.value = 4;
+          dashboardController.scrollSliderToSelected();
+          dashboardController.scrollController.jumpTo(0);
+        } catch (e) {
+          Get.to(
             () => const EcommerceHomeView(showBackButton: true),
             binding: EcommerceBinding(),
-          ),
+          );
+        }
+      },
     },
   ];
 
@@ -72,33 +90,27 @@ class _DigitalServicesAnimatedWidgetState
     final imageData = _imageData[_currentIndex];
 
     return Padding(
-      padding: EdgeInsets.only(
-        top: 20.h,
-        left: 16.w,
-        right: 16.w,
-      ),
+      padding: EdgeInsets.only(top: 20.h, left: 16.w, right: 16.w),
       child: SizedBox(
         height: 195.h,
         child: GestureDetector(
           onTap: _navigateToRoute,
           child: AnimatedSwitcher(
-  duration: const Duration(milliseconds: 450),
-  transitionBuilder: (child, animation) {
-    return FadeTransition(
-      opacity: animation,
-      child: SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 0.08),
-          end: Offset.zero,
-        ).animate(animation),
-        child: child,
-      ),
-    );
-  },
-   child: _buildImageCard(imageData['path'], _currentIndex),
-
-)
-
+            duration: const Duration(milliseconds: 450),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.08),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: child,
+                ),
+              );
+            },
+            child: _buildImageCard(imageData['path'], _currentIndex),
+          ),
         ),
       ),
     );

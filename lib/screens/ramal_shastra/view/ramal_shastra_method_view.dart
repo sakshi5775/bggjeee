@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,16 +25,18 @@ class RamalShastraMethodView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
+              CommonHeader(title: 'Ramal Shastra'),
               Spacing.h(24),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: AutoTranslateText(
                   'Choose Casting Method',
-                  style: MyTextTheme.veryLargeBCB.copyWith(
-                    color: '#3E2723'.toColor(),
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h1),
+                  style: MyTextTheme.veryLargeBCB
+                      .copyWith(
+                        color: '#3E2723'.toColor(),
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.h1),
                 ),
               ),
               Padding(
@@ -54,7 +57,8 @@ class RamalShastraMethodView extends StatelessWidget {
                       icon: Icons.casino,
                       emoji: '🎲',
                       title: 'Dice',
-                      description: 'Roll 4 dice × 4 rounds to generate 16 values',
+                      description:
+                          'Roll 4 dice × 4 rounds to generate 16 values',
                       onTap: () {
                         controller.setCastingMethod('dice');
                         Get.toNamed(AppRoutes.ramalShastraCastingDice);
@@ -76,7 +80,8 @@ class RamalShastraMethodView extends StatelessWidget {
                       icon: Icons.brightness_1,
                       emoji: '●●',
                       title: 'Dots',
-                      description: 'Tap randomly on screen 16 times - Odd taps = 1, Even taps = 0',
+                      description:
+                          'Tap randomly on screen 16 times - Odd taps = 1, Even taps = 0',
                       onTap: () {
                         controller.setCastingMethod('dots');
                         Get.toNamed(AppRoutes.ramalShastraCastingDots);
@@ -89,39 +94,6 @@ class RamalShastraMethodView extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -140,10 +112,7 @@ class RamalShastraMethodView extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: '#F5D7B8'.toColor(),
-            width: 1.5,
-          ),
+          border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.07),
@@ -162,10 +131,7 @@ class RamalShastraMethodView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Center(
-                child: Text(
-                  emoji,
-                  style: TextStyle(fontSize: 32.sp),
-                ),
+                child: Text(emoji, style: TextStyle(fontSize: 32.sp)),
               ),
             ),
             Spacing.w(16),
@@ -175,10 +141,12 @@ class RamalShastraMethodView extends StatelessWidget {
                 children: [
                   AutoTranslateText(
                     title,
-                    style: MyTextTheme.largeBCB.copyWith(
-                      color: '#3E2723'.toColor(),
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.h3),
+                    style: MyTextTheme.largeBCB
+                        .copyWith(
+                          color: '#3E2723'.toColor(),
+                          fontWeight: FontWeight.bold,
+                        )
+                        .merge(AppTypography.h3),
                   ),
                   Spacing.h(4),
                   AutoTranslateText(
@@ -202,5 +170,3 @@ class RamalShastraMethodView extends StatelessWidget {
     );
   }
 }
-
-

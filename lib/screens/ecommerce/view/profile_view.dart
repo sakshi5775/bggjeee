@@ -12,7 +12,7 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -35,15 +35,14 @@ class ProfileView extends GetView<ProfileController> {
               // Header using CommonHeader
               CommonHeader(
                 title: 'My Profile',
-                titleColor: AppColors.templeGold,
                 showBackButton: showBackButton,
-                actions: [
+                customActions: [
                   if (LoginGuard.isLoggedIn)
                     IconButton(
                       onPressed: controller.onLogoutTap,
                       icon: Icon(
                         Icons.logout,
-                        color: AppColors.templeGold,
+                        color: '#6F221E'.toColor(),
                         size: 22.w,
                       ),
                       tooltip: 'Logout',
@@ -57,13 +56,13 @@ class ProfileView extends GetView<ProfileController> {
                         onPressed: () => Get.toNamed(AppRoutes.login),
                         icon: Icon(
                           Icons.login,
-                          color: AppColors.templeGold,
+                          color: '#6F221E'.toColor(),
                           size: 20.w,
                         ),
                         label: Text(
                           'Login',
                           style: TextStyle(
-                            color: AppColors.templeGold,
+                            color: '#6F221E'.toColor(),
                             fontWeight: FontWeight.w600,
                             fontSize: 14.sp,
                           ),
@@ -1141,15 +1140,29 @@ class ProfileView extends GetView<ProfileController> {
                               children: [
                                 CircleAvatar(
                                   radius: 48.r,
-                                  backgroundColor: '#68171E'.toColor().withOpacity(0.1),
-                                  backgroundImage: imageChanged && selectedImage != null
+                                  backgroundColor: '#68171E'
+                                      .toColor()
+                                      .withOpacity(0.1),
+                                  backgroundImage:
+                                      imageChanged && selectedImage != null
                                       ? FileImage(selectedImage!)
-                                      : (controller.profileImageUrl.value.isNotEmpty
-                                          ? NetworkImage(controller.profileImageUrl.value)
-                                          : null),
-                                  child: imageChanged &&
+                                      : (controller
+                                                .profileImageUrl
+                                                .value
+                                                .isNotEmpty
+                                            ? NetworkImage(
+                                                controller
+                                                    .profileImageUrl
+                                                    .value,
+                                              )
+                                            : null),
+                                  child:
+                                      imageChanged &&
                                           selectedImage == null &&
-                                          controller.profileImageUrl.value.isEmpty
+                                          controller
+                                              .profileImageUrl
+                                              .value
+                                              .isEmpty
                                       ? AutoTranslateText(
                                           controller.userInitials,
                                           style: TextStyle(
@@ -1194,7 +1207,8 @@ class ProfileView extends GetView<ProfileController> {
                             items: ProfileController.genderOptions,
                             onChanged: (v) {
                               controller.selectedGender.value = v;
-                              if (v != null) controller.genderController.text = v;
+                              if (v != null)
+                                controller.genderController.text = v;
                             },
                             hint: 'Select Gender',
                           ),
@@ -1207,7 +1221,8 @@ class ProfileView extends GetView<ProfileController> {
                             items: ProfileController.maritalStatusOptions,
                             onChanged: (v) {
                               controller.selectedMaritalStatus.value = v;
-                              if (v != null) controller.maritalStatusController.text = v;
+                              if (v != null)
+                                controller.maritalStatusController.text = v;
                             },
                             hint: 'Select Marital Status',
                           ),
@@ -1262,9 +1277,12 @@ class ProfileView extends GetView<ProfileController> {
                                 Expanded(
                                   child: Builder(
                                     builder: (context) {
-                                      final text = controller.birthDateController.text;
+                                      final text =
+                                          controller.birthDateController.text;
                                       return AutoTranslateText(
-                                        text.isEmpty ? 'Tap to select date of birth (dd/mm/yyyy)' : text,
+                                        text.isEmpty
+                                            ? 'Tap to select date of birth (dd/mm/yyyy)'
+                                            : text,
                                         style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontWeight: FontWeight.w500,
@@ -1304,12 +1322,19 @@ class ProfileView extends GetView<ProfileController> {
                                   bottom: MediaQuery.of(ctx).viewPadding.bottom,
                                 ),
                                 child: LocationBottomSheetWidget(
-                                  onCitySelected: (city, state, country, [lat, lng, tz]) {
-                                    controller.onBirthPlaceSelectedFromSheet(city, state, country);
-                                    Navigator.of(ctx).pop();
-                                    setState(() {});
-                                  },
-                                  selectedCity: controller.birthCityController.text,
+                                  onCitySelected:
+                                      (city, state, country, [lat, lng, tz]) {
+                                        controller
+                                            .onBirthPlaceSelectedFromSheet(
+                                              city,
+                                              state,
+                                              country,
+                                            );
+                                        Navigator.of(ctx).pop();
+                                        setState(() {});
+                                      },
+                                  selectedCity:
+                                      controller.birthCityController.text,
                                 ),
                               ),
                             );
@@ -1385,12 +1410,22 @@ class ProfileView extends GetView<ProfileController> {
                                 SizedBox(width: 12.w),
                                 Builder(
                                   builder: (context) {
-                                    final h = controller.birthHourController.text.trim();
-                                    final m = controller.birthMinuteController.text.trim();
+                                    final h = controller
+                                        .birthHourController
+                                        .text
+                                        .trim();
+                                    final m = controller
+                                        .birthMinuteController
+                                        .text
+                                        .trim();
                                     final hour24 = int.tryParse(h) ?? 0;
                                     final min = int.tryParse(m) ?? 0;
-                                    final display = (h.isNotEmpty || m.isNotEmpty)
-                                        ? TimePickerHelper.formatTime24To12Display(hour24, min)
+                                    final display =
+                                        (h.isNotEmpty || m.isNotEmpty)
+                                        ? TimePickerHelper.formatTime24To12Display(
+                                            hour24,
+                                            min,
+                                          )
                                         : 'Tap to select birth time';
                                     return AutoTranslateText(
                                       display,
@@ -1435,7 +1470,8 @@ class ProfileView extends GetView<ProfileController> {
                               onTap: controller.isUpdatingProfile.value
                                   ? null
                                   : () async {
-                                      final success = await controller.updateProfile();
+                                      final success = await controller
+                                          .updateProfile();
                                       if (success && context.mounted) {
                                         Future.delayed(
                                           Duration(milliseconds: 300),
@@ -1443,7 +1479,9 @@ class ProfileView extends GetView<ProfileController> {
                                             if (Get.isBottomSheetOpen == true ||
                                                 Get.isDialogOpen == true) {
                                               Get.back();
-                                            } else if (Navigator.of(context).canPop()) {
+                                            } else if (Navigator.of(
+                                              context,
+                                            ).canPop()) {
                                               Navigator.of(context).pop();
                                             }
                                           },
@@ -1466,7 +1504,8 @@ class ProfileView extends GetView<ProfileController> {
                                           ),
                                         )
                                       : Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Icon(
                                               Icons.check_circle_rounded,
@@ -1504,8 +1543,10 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  Widget _editSheetSectionHeader(
-      {required IconData icon, required String title}) {
+  Widget _editSheetSectionHeader({
+    required IconData icon,
+    required String title,
+  }) {
     return Row(
       children: [
         Container(
@@ -1624,7 +1665,11 @@ class ProfileView extends GetView<ProfileController> {
         value: value,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(Icons.arrow_drop_down, size: 24.sp, color: AppColors.saffron),
+          prefixIcon: Icon(
+            Icons.arrow_drop_down,
+            size: 24.sp,
+            color: AppColors.saffron,
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16.r),
             borderSide: BorderSide.none,
@@ -1639,20 +1684,25 @@ class ProfileView extends GetView<ProfileController> {
           ),
           filled: true,
           fillColor: Colors.white,
-          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 16.w,
+            vertical: 16.h,
+          ),
         ),
         items: items
-            .map((e) => DropdownMenuItem<T>(
-                  value: e,
-                  child: AutoTranslateText(
-                    e.toString(),
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 14.sp,
-                      color: '#68171E'.toColor(),
-                    ),
+            .map(
+              (e) => DropdownMenuItem<T>(
+                value: e,
+                child: AutoTranslateText(
+                  e.toString(),
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14.sp,
+                    color: '#68171E'.toColor(),
                   ),
-                ))
+                ),
+              ),
+            )
             .toList(),
         onChanged: onChanged,
         hint: AutoTranslateText(

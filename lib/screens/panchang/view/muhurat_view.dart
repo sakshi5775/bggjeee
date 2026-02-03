@@ -6,7 +6,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/muhurat_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -65,7 +65,7 @@ class MuhuratView extends BasePage<MuhuratController> {
           AutoTranslateText(
             'Auspicious timings for the selected date',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: Colors.white.withValues(alpha: 0.9),
+              color: Colors.white.withOpacity(0.9),
               fontSize: 14.sp,
             ),
           ),
@@ -222,7 +222,10 @@ class MuhuratView extends BasePage<MuhuratController> {
               );
               if (picked != null) {
                 controller.timeController.text =
-                    TimePickerHelper.formatTime24To12Display(picked.hour, picked.minute);
+                    TimePickerHelper.formatTime24To12Display(
+                      picked.hour,
+                      picked.minute,
+                    );
               }
             },
           ),

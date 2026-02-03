@@ -2,14 +2,12 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
-import 'package:astrobharataiuser/screens/astrology_services/widgets/astrology_header_widget.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 
 class NumerologyResultView extends StatelessWidget {
   const NumerologyResultView({super.key});
@@ -25,7 +23,7 @@ class NumerologyResultView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
+            CommonHeader(title: _getTitle(type)),
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(16.w),
@@ -34,45 +32,6 @@ class NumerologyResultView extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return AstrologyHeaderWidget(
-      padding: EdgeInsets.only(
-        left: 16.w,
-        right: 16.w,
-        top: 24.h,
-        bottom: 20.h,
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Spacing.h(8),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () => Get.back(),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: const Color(0xFFDFB343),
-                  size: 24.w,
-                ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: AutoTranslateText(
-                  _getTitle(Get.arguments?['type'] as String? ?? ''),
-                  style: MyTextTheme.veryLarge20.copyWith(
-                    color: const Color(0xFFDFB343),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

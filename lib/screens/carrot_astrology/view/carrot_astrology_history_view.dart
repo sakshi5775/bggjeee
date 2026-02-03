@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/carrot_astrology/controller/carrot_ast
 import 'package:astrobharataiuser/screens/carrot_astrology/utils/carrot_astrology_colors.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -25,7 +26,13 @@ class CarrotAstrologyHistoryView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
+            const CommonHeader(
+              title: 'Carrot Astrology History',
+              subtitle: AutoTranslateText(
+                'View all your readings',
+                style: TextStyle(fontSize: 12, color: Color(0xFF6F221E)),
+              ),
+            ),
             Expanded(
               child: Center(
                 child: ConstrainedBox(
@@ -35,24 +42,31 @@ class CarrotAstrologyHistoryView extends StatelessWidget {
                       _buildFilterSection(controller),
                       Expanded(
                         child: Obx(() {
-                          if (controller.isLoading.value && controller.historyList.isEmpty) {
+                          if (controller.isLoading.value &&
+                              controller.historyList.isEmpty) {
                             return Center(
                               child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(CarrotAstrologyColors.orangeColor),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  CarrotAstrologyColors.orangeColor,
+                                ),
                               ),
                             );
                           }
 
-                          if (controller.historyList.isEmpty && !controller.isLoading.value) {
+                          if (controller.historyList.isEmpty &&
+                              !controller.isLoading.value) {
                             return _buildEmptyState(controller);
                           }
 
                           return RefreshIndicator(
-                            onRefresh: () => controller.loadHistory(reset: true),
+                            onRefresh: () =>
+                                controller.loadHistory(reset: true),
                             color: CarrotAstrologyColors.orangeColor,
                             child: ListView.builder(
                               padding: EdgeInsets.all(16.w),
-                              itemCount: controller.historyList.length + (controller.hasMore ? 1 : 0),
+                              itemCount:
+                                  controller.historyList.length +
+                                  (controller.hasMore ? 1 : 0),
                               itemBuilder: (context, index) {
                                 if (index == controller.historyList.length) {
                                   controller.loadMore();
@@ -60,7 +74,10 @@ class CarrotAstrologyHistoryView extends StatelessWidget {
                                     child: Padding(
                                       padding: EdgeInsets.all(16.w),
                                       child: CircularProgressIndicator(
-                                        valueColor: AlwaysStoppedAnimation<Color>(CarrotAstrologyColors.orangeColor),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              CarrotAstrologyColors.orangeColor,
+                                            ),
                                       ),
                                     ),
                                   );
@@ -80,47 +97,6 @@ class CarrotAstrologyHistoryView extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        gradient: CarrotAstrologyColors.primaryGradient,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20.r),
-          bottomRight: Radius.circular(20.r),
-        ),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
-            onPressed: () => Get.back(),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoTranslateText(
-                  'Carrot Astrology History',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                AutoTranslateText(
-                  'View all your readings',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: Colors.white.withOpacity(0.9),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -149,61 +125,63 @@ class CarrotAstrologyHistoryView extends StatelessWidget {
                     color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(12.r),
                   ),
-                  child: Obx(() => DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: controller.selectedStatus.value.isEmpty
-                          ? null
-                          : controller.selectedStatus.value,
-                      isExpanded: true,
-                      hint: Row(
-                        children: [
-                          Icon(
-                            Icons.filter_list,
-                            color: Colors.grey[600],
-                            size: 18.w,
-                          ),
-                          Spacing.w(8),
-                          AutoTranslateText(
-                            controller.statusDisplayText,
-                            style: MyTextTheme.mediumBCN.copyWith(
-                              color: Colors.grey[700],
+                  child: Obx(
+                    () => DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: controller.selectedStatus.value.isEmpty
+                            ? null
+                            : controller.selectedStatus.value,
+                        isExpanded: true,
+                        hint: Row(
+                          children: [
+                            Icon(
+                              Icons.filter_list,
+                              color: Colors.grey[600],
+                              size: 18.w,
                             ),
-                          ),
-                        ],
-                      ),
-                      items: controller.statusOptions.map((status) {
-                        String displayText;
-                        switch (status) {
-                          case 'PROCESSING':
-                            displayText = 'Processing';
-                            break;
-                          case 'COMPLETED':
-                            displayText = 'Completed';
-                            break;
-                          case 'FAILED':
-                            displayText = 'Failed';
-                            break;
-                          default:
-                            displayText = 'All Status';
-                        }
-                        return DropdownMenuItem<String>(
-                          value: status.isEmpty ? null : status,
-                          child: AutoTranslateText(
-                            displayText,
-                            style: MyTextTheme.mediumBCN.copyWith(
-                              color: '#3E2723'.toColor(),
+                            Spacing.w(8),
+                            AutoTranslateText(
+                              controller.statusDisplayText,
+                              style: MyTextTheme.mediumBCN.copyWith(
+                                color: Colors.grey[700],
+                              ),
                             ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: controller.onStatusFilterChanged,
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.grey[600],
-                        size: 24.w,
+                          ],
+                        ),
+                        items: controller.statusOptions.map((status) {
+                          String displayText;
+                          switch (status) {
+                            case 'PROCESSING':
+                              displayText = 'Processing';
+                              break;
+                            case 'COMPLETED':
+                              displayText = 'Completed';
+                              break;
+                            case 'FAILED':
+                              displayText = 'Failed';
+                              break;
+                            default:
+                              displayText = 'All Status';
+                          }
+                          return DropdownMenuItem<String>(
+                            value: status.isEmpty ? null : status,
+                            child: AutoTranslateText(
+                              displayText,
+                              style: MyTextTheme.mediumBCN.copyWith(
+                                color: '#3E2723'.toColor(),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: controller.onStatusFilterChanged,
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.grey[600],
+                          size: 24.w,
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                 ),
               ),
               Spacing.w(12),
@@ -214,68 +192,77 @@ class CarrotAstrologyHistoryView extends StatelessWidget {
                     color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(12.r),
                   ),
-                  child: Obx(() => DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: controller.selectedZodiacSign.value.isEmpty
-                          ? null
-                          : controller.selectedZodiacSign.value,
-                      isExpanded: true,
-                      hint: Row(
-                        children: [
-                          Icon(
-                            Icons.star,
-                            color: Colors.grey[600],
-                            size: 18.w,
-                          ),
-                          Spacing.w(8),
-                          AutoTranslateText(
-                            controller.zodiacSignDisplayText,
-                            style: MyTextTheme.mediumBCN.copyWith(
-                              color: Colors.grey[700],
+                  child: Obx(
+                    () => DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: controller.selectedZodiacSign.value.isEmpty
+                            ? null
+                            : controller.selectedZodiacSign.value,
+                        isExpanded: true,
+                        hint: Row(
+                          children: [
+                            Icon(
+                              Icons.star,
+                              color: Colors.grey[600],
+                              size: 18.w,
                             ),
-                          ),
-                        ],
-                      ),
-                      items: ['', ...controller.zodiacSigns].map((sign) {
-                        return DropdownMenuItem<String>(
-                          value: sign.isEmpty ? null : sign,
-                          child: AutoTranslateText(
-                            sign.isEmpty ? 'All Zodiac Signs' : sign,
-                            style: MyTextTheme.mediumBCN.copyWith(
-                              color: '#3E2723'.toColor(),
+                            Spacing.w(8),
+                            AutoTranslateText(
+                              controller.zodiacSignDisplayText,
+                              style: MyTextTheme.mediumBCN.copyWith(
+                                color: Colors.grey[700],
+                              ),
                             ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: controller.onZodiacSignFilterChanged,
-                      icon: Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.grey[600],
-                        size: 24.w,
+                          ],
+                        ),
+                        items: ['', ...controller.zodiacSigns].map((sign) {
+                          return DropdownMenuItem<String>(
+                            value: sign.isEmpty ? null : sign,
+                            child: AutoTranslateText(
+                              sign.isEmpty ? 'All Zodiac Signs' : sign,
+                              style: MyTextTheme.mediumBCN.copyWith(
+                                color: '#3E2723'.toColor(),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: controller.onZodiacSignFilterChanged,
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.grey[600],
+                          size: 24.w,
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                 ),
               ),
             ],
           ),
           Spacing.h(12),
-          Obx(() => (controller.selectedStatus.value.isNotEmpty ||
-                  controller.selectedZodiacSign.value.isNotEmpty)
-              ? SizedBox(
-                  width: double.infinity,
-                  child: TextButton.icon(
-                    onPressed: controller.clearFilters,
-                    icon: Icon(Icons.clear, size: 18.w, color: CarrotAstrologyColors.orangeColor),
-                    label: AutoTranslateText(
-                      'Clear Filters',
-                      style: MyTextTheme.mediumBCN.copyWith(
+          Obx(
+            () =>
+                (controller.selectedStatus.value.isNotEmpty ||
+                    controller.selectedZodiacSign.value.isNotEmpty)
+                ? SizedBox(
+                    width: double.infinity,
+                    child: TextButton.icon(
+                      onPressed: controller.clearFilters,
+                      icon: Icon(
+                        Icons.clear,
+                        size: 18.w,
                         color: CarrotAstrologyColors.orangeColor,
                       ),
+                      label: AutoTranslateText(
+                        'Clear Filters',
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: CarrotAstrologyColors.orangeColor,
+                        ),
+                      ),
                     ),
-                  ),
-                )
-              : const SizedBox.shrink()),
+                  )
+                : const SizedBox.shrink(),
+          ),
         ],
       ),
     );
@@ -288,24 +275,16 @@ class CarrotAstrologyHistoryView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.history,
-              size: 64.w,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.history, size: 64.w, color: Colors.grey[400]),
             Spacing.h(16),
             AutoTranslateText(
               'No readings found',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: MyTextTheme.largeBCB.copyWith(color: Colors.grey[600]),
             ),
             Spacing.h(8),
             AutoTranslateText(
               'Your carrot astrology readings will appear here',
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: Colors.grey[500],
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: Colors.grey[500]),
               textAlign: TextAlign.center,
             ),
           ],
@@ -314,13 +293,17 @@ class CarrotAstrologyHistoryView extends StatelessWidget {
     );
   }
 
-  Widget _buildHistoryCard(CarrotAstrologyHistoryController controller, CarrotAstrologyData reading) {
-    final zodiacSign = reading.userInput?.zodiacSign ?? reading.zodiacInfo?.sign ?? 'Unknown';
+  Widget _buildHistoryCard(
+    CarrotAstrologyHistoryController controller,
+    CarrotAstrologyData reading,
+  ) {
+    final zodiacSign =
+        reading.userInput?.zodiacSign ?? reading.zodiacInfo?.sign ?? 'Unknown';
     final status = reading.status ?? 'UNKNOWN';
     final isCompleted = status == 'COMPLETED';
     final isProcessing = status == 'PROCESSING';
     final isFailed = status == 'FAILED';
-    
+
     final dateStr = _formatDate(reading.createdAt);
     final vegetableName = reading.vegetableMatch?.name ?? 'N/A';
 
@@ -363,17 +346,19 @@ class CarrotAstrologyHistoryView extends StatelessWidget {
                     children: [
                       AutoTranslateText(
                         zodiacSign,
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: '#3E2723'.toColor(),
-                          fontWeight: FontWeight.bold,
-                        ).merge(AppTypography.body2),
+                        style: MyTextTheme.mediumBCB
+                            .copyWith(
+                              color: '#3E2723'.toColor(),
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.body2),
                       ),
                       Spacing.h(4),
                       AutoTranslateText(
                         vegetableName,
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: '#666666'.toColor(),
-                        ).merge(AppTypography.body2),
+                        style: MyTextTheme.smallBCN
+                            .copyWith(color: '#666666'.toColor())
+                            .merge(AppTypography.body2),
                       ),
                     ],
                   ),
@@ -403,24 +388,16 @@ class CarrotAstrologyHistoryView extends StatelessWidget {
             Spacing.h(12),
             Row(
               children: [
-                Icon(
-                  Icons.calendar_today,
-                  size: 14.w,
-                  color: Colors.grey[600],
-                ),
+                Icon(Icons.calendar_today, size: 14.w, color: Colors.grey[600]),
                 Spacing.w(4),
                 AutoTranslateText(
                   dateStr,
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: Colors.grey[600],
-                  ).merge(AppTypography.label),
+                  style: MyTextTheme.smallBCN
+                      .copyWith(color: Colors.grey[600])
+                      .merge(AppTypography.label),
                 ),
                 Spacer(),
-                Icon(
-                  Icons.chevron_right,
-                  size: 20.w,
-                  color: Colors.grey[400],
-                ),
+                Icon(Icons.chevron_right, size: 20.w, color: Colors.grey[400]),
               ],
             ),
           ],
@@ -429,10 +406,15 @@ class CarrotAstrologyHistoryView extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusChip(String status, bool isCompleted, bool isProcessing, bool isFailed) {
+  Widget _buildStatusChip(
+    String status,
+    bool isCompleted,
+    bool isProcessing,
+    bool isFailed,
+  ) {
     Color color;
     String text;
-    
+
     if (isCompleted) {
       color = Colors.green;
       text = 'Completed';
@@ -456,11 +438,13 @@ class CarrotAstrologyHistoryView extends StatelessWidget {
       ),
       child: AutoTranslateText(
         text,
-        style: MyTextTheme.smallBCN.copyWith(
-          color: color,
-          fontWeight: FontWeight.bold,
-          fontSize: 10.sp,
-        ).merge(AppTypography.label),
+        style: MyTextTheme.smallBCN
+            .copyWith(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 10.sp,
+            )
+            .merge(AppTypography.label),
       ),
     );
   }
@@ -492,4 +476,3 @@ class CarrotAstrologyHistoryView extends StatelessWidget {
     }
   }
 }
-

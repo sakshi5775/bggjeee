@@ -3,8 +3,10 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -121,73 +123,51 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: SingleChildScrollView(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Padding(
+          padding: EdgeInsets.only(
+            top:
+                (MediaQuery.of(context).padding.top > 0
+                        ? MediaQuery.of(context).padding.top * 0.5
+                        : 0.0)
+                    .clamp(6.0, 24.0)
+                    .toDouble(),
+          ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Header
-              _buildHeader(),
+              CommonHeader(title: 'Vastu Reading'),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Spacing.h(24),
 
-              Spacing.h(24),
+                      // Main icon
+                      _buildMainIcon(),
 
-              // Main icon
-              _buildMainIcon(),
+                      Spacing.h(16),
 
-              Spacing.h(16),
+                      Spacing.h(8),
 
-              // Title
-              _buildTitle(),
+                      // Subtitle
+                      _buildSubtitle(),
 
-              Spacing.h(8),
+                      Spacing.h(24),
 
-              // Subtitle
-              _buildSubtitle(),
+                      // Category cards
+                      _buildCategoryCards(),
 
-              Spacing.h(24),
-
-              // Category cards
-              _buildCategoryCards(),
-
-              Spacing.h(24),
+                      Spacing.h(24),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -221,16 +201,6 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTitle() {
-    return AutoTranslateText(
-      'Vastu Reading',
-      style: MyTextTheme.veryLargeBCB
-          .copyWith(color: '#3E2723'.toColor(), fontWeight: FontWeight.bold)
-          .merge(AppTypography.h1),
-      textAlign: TextAlign.center,
     );
   }
 

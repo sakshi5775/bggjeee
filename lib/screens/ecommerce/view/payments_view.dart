@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/my_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/data_model/payment_model.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/payments_controller.dart';
@@ -16,50 +16,54 @@ class PaymentsView extends GetView<PaymentsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
-      appBar: const MyAppbar(
-        title: 'Payments',
-        showLeading: true,
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.w),
-        child: Column(
-          children: [
-            _buildFilters(),
-            SizedBox(height: 16.h),
-            Expanded(
-              child: Obx(() {
-                if (controller.isLoading.value && controller.payments.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (controller.payments.isEmpty) {
-                  return Center(
-                    child: AutoTranslateText(
-                      'No payments found for the selected filters.',
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                      ).merge(AppTypography.body2),
-                    ),
-                  );
-                }
-                return RefreshIndicator(
-                  onRefresh: controller.refreshList,
-                  child: ListView.separated(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: controller.payments.length,
-                    separatorBuilder: (_, __) => SizedBox(height: 12.h),
-                    itemBuilder: (context, index) {
-                      final payment = controller.payments[index];
-                      return _PaymentTile(
-                        payment: payment,
-                        controller: controller,
+      body: Column(
+        children: [
+          CommonHeader(title: 'Payments'),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(16.w),
+              child: Column(
+                children: [
+                  _buildFilters(),
+                  SizedBox(height: 16.h),
+                  Expanded(
+                    child: Obx(() {
+                      if (controller.isLoading.value &&
+                          controller.payments.isEmpty) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (controller.payments.isEmpty) {
+                        return Center(
+                          child: AutoTranslateText(
+                            'No payments found for the selected filters.',
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                            ).merge(AppTypography.body2),
+                          ),
+                        );
+                      }
+                      return RefreshIndicator(
+                        onRefresh: controller.refreshList,
+                        child: ListView.separated(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: controller.payments.length,
+                          separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                          itemBuilder: (context, index) {
+                            final payment = controller.payments[index];
+                            return _PaymentTile(
+                              payment: payment,
+                              controller: controller,
+                            );
+                          },
+                        ),
                       );
-                    },
+                    }),
                   ),
-                );
-              }),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -117,10 +121,7 @@ class PaymentsView extends GetView<PaymentsController> {
 }
 
 class _PaymentTile extends StatelessWidget {
-  const _PaymentTile({
-    required this.payment,
-    required this.controller,
-  });
+  const _PaymentTile({required this.payment, required this.controller});
 
   final PaymentModel payment;
   final PaymentsController controller;
@@ -247,11 +248,12 @@ class _InfoChip extends StatelessWidget {
       avatar: Icon(icon, size: 16.sp, color: AppColors.saffron),
       label: AutoTranslateText(
         text,
-        style: TextStyle(color: AppColors.textPrimary).merge(AppTypography.label),
+        style: TextStyle(
+          color: AppColors.textPrimary,
+        ).merge(AppTypography.label),
       ),
       backgroundColor: AppColors.saffron.withOpacity(0.08),
       visualDensity: VisualDensity.compact,
     );
   }
 }
-

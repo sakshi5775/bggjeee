@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -20,128 +21,85 @@ class PalmReadingView extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 768;
     final maxWidth = isMobile ? double.infinity : 600.w;
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(), // Match face reading background
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Header with back button and history button
-                  _buildHeader(context),
-
-                  // Main icon with star badge
-                  _buildMainIcon(),
-
-                  // Title
-                  _buildTitle(),
-
-                  Spacing.h(16),
-
-                  // Description
-                  _buildDescription(),
-
-                  Spacing.h(32),
-
-                  // Feature highlights grid
-                  _buildFeatureGrid(),
-
-                  Spacing.h(32),
-
-                  // Start Reading button
-                  _buildStartButton(context, controller),
-
-                  Spacing.h(32),
-
-                  // What You'll Get section
-                  _buildBenefitsSection(),
-
-                  Spacing.h(32),
-                ],
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Padding(
+          padding: EdgeInsets.only(
+            top:
+                (MediaQuery.of(context).padding.top > 0
+                        ? MediaQuery.of(context).padding.top * 0.5
+                        : 0.0)
+                    .clamp(6.0, 24.0)
+                    .toDouble(),
+          ),
+          child: Column(
+            children: [
+              // Fixed Header
+              Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: maxWidth),
+                  child: CommonHeader(
+                    title: 'Palm Reading',
+                    customActions: [
+                      IconButton(
+                        onPressed: () =>
+                            Get.toNamed(AppRoutes.palmReadingHistory),
+                        icon: Icon(
+                          Icons.access_time,
+                          color: '#3E2723'.toColor(),
+                          size: 24.w,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: maxWidth),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Main icon with star badge
+                          _buildMainIcon(),
+
+                          // Title
+                          _buildTitle(),
+
+                          Spacing.h(16),
+
+                          // Description
+                          _buildDescription(),
+
+                          Spacing.h(32),
+
+                          // Feature highlights grid
+                          _buildFeatureGrid(),
+
+                          Spacing.h(32),
+
+                          // Start Reading button
+                          _buildStartButton(context, controller),
+
+                          Spacing.h(32),
+
+                          // What You'll Get section
+                          _buildBenefitsSection(),
+
+                          Spacing.h(32),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: AppPaddings.symmetric(h: 16, v: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Back button
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-
-          // History button
-          GestureDetector(
-            onTap: () => Get.toNamed(AppRoutes.palmReadingHistory),
-            child: Container(
-              padding: AppPaddings.symmetric(h: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20.r),
-                border: Border.all(
-                  color: const Color(0xFF5F2221).withOpacity(0.3),
-                  width: 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.access_time,
-                    color: '#3E2723'.toColor(),
-                    size: 18.w,
-                  ),
-                  Spacing.w(8),
-                  AutoTranslateText(
-                    'History',
-                    style: MyTextTheme.mediumBCB
-                        .copyWith(
-                          color: '#3E2723'.toColor(),
-                          fontWeight: FontWeight.w600,
-                        )
-                        .merge(AppTypography.body1),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/widgets/ramal_shastra_loading_widget.dart';
 import 'package:flutter/material.dart';
@@ -24,14 +25,16 @@ class RamalShastraConfirmationView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _buildHeader(),
+              const CommonHeader(title: 'Confirmation'),
               Spacing.h(24),
               AutoTranslateText(
                 'Generated Matrix',
-                style: MyTextTheme.veryLargeBCB.copyWith(
-                  color: '#3E2723'.toColor(),
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h1),
+                style: MyTextTheme.veryLargeBCB
+                    .copyWith(
+                      color: '#3E2723'.toColor(),
+                      fontWeight: FontWeight.bold,
+                    )
+                    .merge(AppTypography.h1),
               ),
               Spacing.h(32),
               Obx(() => _buildMatrix(controller.generatedPoints)),
@@ -82,11 +85,12 @@ class RamalShastraConfirmationView extends StatelessWidget {
                             // Show loading widget
                             Get.dialog(
                               RamalShastraLoadingWidget(
-                                message: 'Ramal Shastra is analyzing your question...',
+                                message:
+                                    'Ramal Shastra is analyzing your question...',
                               ),
                               barrierDismissible: false,
                             );
-                            
+
                             try {
                               await controller.analyzeRamal();
                               // Dialog will be closed by navigation in controller
@@ -130,47 +134,12 @@ class RamalShastraConfirmationView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildMatrix(List<int> points) {
     if (points.length != 16) {
       return Center(
         child: AutoTranslateText(
           'Invalid matrix',
-          style: MyTextTheme.mediumBCN.copyWith(
-            color: Colors.red,
-          ),
+          style: MyTextTheme.mediumBCN.copyWith(color: Colors.red),
         ),
       );
     }
@@ -181,10 +150,7 @@ class RamalShastraConfirmationView extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: '#F5D7B8'.toColor(),
-          width: 1.5,
-        ),
+        border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.07),
@@ -229,4 +195,3 @@ class RamalShastraConfirmationView extends StatelessWidget {
     );
   }
 }
-

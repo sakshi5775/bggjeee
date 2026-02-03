@@ -2,7 +2,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/lal_kitab_controller.dart';
-import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/lal_kitab_table_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/lal_kitab_kundli_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/lal_kitab_remedies_widget.dart';
@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-/// Lal Kitab view – same design as Kundli Result: KundliHeader, gradient, drawer, horizontal tabs.
+/// Lal Kitab view – same design as Kundli Result: CommonHeader, gradient, drawer, horizontal tabs.
 class LalKitabView extends BasePage<LalKitabController> {
   const LalKitabView({super.key});
 
@@ -44,7 +44,7 @@ class LalKitabView extends BasePage<LalKitabController> {
           child: SafeArea(
             child: Column(
               children: [
-                KundliHeader(title: 'Lal Kitab'),
+                const CommonHeader(title: 'Lal Kitab'),
                 _buildTabs(),
                 Expanded(
                   child: PageView.builder(
@@ -101,7 +101,11 @@ class LalKitabView extends BasePage<LalKitabController> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.menu_book_rounded, size: 14.w, color: Colors.white),
+                    Icon(
+                      Icons.menu_book_rounded,
+                      size: 14.w,
+                      color: Colors.white,
+                    ),
                     SizedBox(width: 6.w),
                     AutoTranslateText(
                       'Lal Kitab',
@@ -141,7 +145,10 @@ class LalKitabView extends BasePage<LalKitabController> {
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             curve: Curves.easeOut,
-                            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 14.w,
+                              vertical: 8.h,
+                            ),
                             decoration: BoxDecoration(
                               color: isSelected ? orange : Colors.transparent,
                               borderRadius: BorderRadius.circular(12.r),
@@ -167,7 +174,9 @@ class LalKitabView extends BasePage<LalKitabController> {
                                 textAlign: TextAlign.center,
                                 style: MyTextTheme.mediumBCB.copyWith(
                                   color: isSelected ? Colors.white : maroon,
-                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
                                   fontSize: 12.sp,
                                 ),
                               ),

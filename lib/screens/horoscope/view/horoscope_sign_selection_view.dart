@@ -1,7 +1,8 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -12,21 +13,6 @@ import 'package:get/get.dart';
 
 class HoroscopeSignSelectionView extends StatelessWidget {
   const HoroscopeSignSelectionView({super.key});
-
-  // Gradient definitions
-  static final LinearGradient gradientBackground = LinearGradient(
-    colors: ["#FCE5AA".toColor(), "#FFFCF3".toColor(), "#FFFFFF".toColor()],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  );
-
-  // static final LinearGradient primaryGradient = LinearGradient(
-  //   colors: ["#820B17".toColor(), "#68171E".toColor(), "#5D1C21".toColor()],
-  // );
-
-  static LinearGradient orangeGradient = LinearGradient(
-    colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
-  );
 
   // Zodiac signs with their image paths
   static const List<Map<String, String>> zodiacSigns = [
@@ -46,56 +32,15 @@ class HoroscopeSignSelectionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(gradient: gradientBackground),
-        child: SafeArea(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        drawer: UserDashboardView.buildDrawer(context),
+        body: SafeArea(
           child: Column(
             children: [
-              // Header with gradient
-              Container(
-                decoration: BoxDecoration(
-                  gradient: orangeGradient,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(24.r),
-                    bottomRight: Radius.circular(24.r),
-                  ),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 12.h,
-                  ),
-                  child: Row(
-                    children: [
-                      // Back button
-                      IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: const Color(0xFFDFB343),
-                          size: 24.w,
-                        ),
-                        onPressed: () => Get.back(),
-                      ),
-                      // Title
-                      Expanded(
-                        child: AutoTranslateText(
-                          'Select Your Sign',
-                          style: MyTextTheme.largeBCB
-                              .copyWith(
-                                color: const Color(0xFFDFB343),
-                                fontWeight: FontWeight.bold,
-                              )
-                              .merge(AppTypography.h2),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      // Spacer to balance the back button
-                      SizedBox(width: 48.w),
-                    ],
-                  ),
-                ),
-              ),
+              const CommonHeader(title: 'Daily Horoscope'),
               // Zodiac signs grid
               Expanded(
                 child: Padding(
@@ -142,18 +87,21 @@ class HoroscopeSignSelectionView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Circular Card with Image
+          // Card with Image
           Flexible(
             child: AspectRatio(
               aspectRatio: 1,
               child: Container(
                 decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(
+                    color: AppColors.deepOrange.withOpacity(0.2),
+                    width: 1.5,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.deepOrange.withOpacity(0.35),
+                      color: AppColors.deepOrange.withOpacity(0.15),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                       spreadRadius: 0,
@@ -170,17 +118,20 @@ class HoroscopeSignSelectionView extends StatelessWidget {
                           fit: BoxFit.contain,
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) return child;
-                            return const Center(
-                              child: CircularProgressIndicator(),
+                            return Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.deepOrange,
+                                ),
+                              ),
                             );
                           },
                           errorBuilder: (context, error, stackTrace) {
-                            debugPrint('Failed to load image: $imagePath');
-                            debugPrint('Error: $error');
                             return Icon(
                               Icons.star,
                               size: 40.w,
-                              color: const Color(0xFFDFB343),
+                              color: AppColors.deepOrange,
                             );
                           },
                         )
@@ -188,12 +139,10 @@ class HoroscopeSignSelectionView extends StatelessWidget {
                           imagePath,
                           fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) {
-                            debugPrint('Failed to load image: $imagePath');
-                            debugPrint('Error: $error');
                             return Icon(
                               Icons.star,
                               size: 40.w,
-                              color: const Color(0xFFDFB343),
+                              color: AppColors.deepOrange,
                             );
                           },
                         ),
@@ -202,13 +151,13 @@ class HoroscopeSignSelectionView extends StatelessWidget {
             ),
           ),
           Spacing.h(4),
-          // Zodiac Name below the circle
+          // Zodiac Name below the card
           AutoTranslateText(
             name,
             textAlign: TextAlign.center,
             style: MyTextTheme.smallBCB
                 .copyWith(
-                  color: "#6F221E".toColor(),
+                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
                   fontSize: 11.sp,
                 )

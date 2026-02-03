@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -53,25 +54,27 @@ class RamalShastraQuestionView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(),
-                Spacing.h(12),
+                const CommonHeader(title: 'Ramal Shastra'),
+                Spacing.h(8),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: AutoTranslateText(
                     'Enter Your Question',
-                    style: MyTextTheme.veryLargeBCB.copyWith(
-                      color: '#3E2723'.toColor(),
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.h1),
+                    style: MyTextTheme.veryLargeBCB
+                        .copyWith(
+                          color: '#3E2723'.toColor(),
+                          fontWeight: FontWeight.bold,
+                        )
+                        .merge(AppTypography.h1),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: AutoTranslateText(
                     'For accurate Ramal Shastra analysis',
-                    style: MyTextTheme.mediumBCN.copyWith(
-                      color: '#3E2723'.toColor(),
-                    ).merge(AppTypography.body1),
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(color: '#3E2723'.toColor())
+                        .merge(AppTypography.body1),
                   ),
                 ),
                 Spacing.h(20),
@@ -121,7 +124,10 @@ class RamalShastraQuestionView extends StatelessWidget {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 foregroundColor: '#ffffff'.toColor(),
-                                padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 14.h,
+                                  horizontal: 24.w,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12.r),
                                 ),
@@ -147,39 +153,6 @@ class RamalShastraQuestionView extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -220,11 +193,12 @@ class RamalShastraQuestionView extends StatelessWidget {
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide(color: Colors.red, width: 1),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 16.w,
+              vertical: 16.h,
+            ),
           ),
-          style: MyTextTheme.mediumBCN.copyWith(
-            color: '#3E2723'.toColor(),
-          ),
+          style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
           maxLines: 4,
           controller: TextEditingController(text: controller.question.value)
             ..selection = TextSelection.fromPosition(
@@ -242,7 +216,10 @@ class RamalShastraQuestionView extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryDropdown(RamalShastraController controller, List<String> categories) {
+  Widget _buildCategoryDropdown(
+    RamalShastraController controller,
+    List<String> categories,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -254,47 +231,55 @@ class RamalShastraQuestionView extends StatelessWidget {
           ),
         ),
         Spacing.h(8),
-        Obx(() => DropdownButtonFormField<String>(
-          value: controller.selectedCategory.value,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: "#F38B3B".toColor(), width: 2),
-            ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-          ),
-          items: categories.map((category) {
-            return DropdownMenuItem(
-              value: category,
-              child: AutoTranslateText(
-                category,
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#3E2723'.toColor(),
-                ),
+        Obx(
+          () => DropdownButtonFormField<String>(
+            value: controller.selectedCategory.value,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
               ),
-            );
-          }).toList(),
-          onChanged: (value) {
-            if (value != null) {
-              controller.setCategory(value);
-            }
-          },
-        )),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(color: "#F38B3B".toColor(), width: 2),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 16.h,
+              ),
+            ),
+            items: categories.map((category) {
+              return DropdownMenuItem(
+                value: category,
+                child: AutoTranslateText(
+                  category,
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    color: '#3E2723'.toColor(),
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                controller.setCategory(value);
+              }
+            },
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildLanguageDropdown(RamalShastraController controller, List<String> languages) {
+  Widget _buildLanguageDropdown(
+    RamalShastraController controller,
+    List<String> languages,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -306,42 +291,47 @@ class RamalShastraQuestionView extends StatelessWidget {
           ),
         ),
         Spacing.h(8),
-        Obx(() => DropdownButtonFormField<String>(
-          value: controller.selectedLanguage.value,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: "#F38B3B".toColor(), width: 2),
-            ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-          ),
-          items: languages.map((language) {
-            return DropdownMenuItem(
-              value: language,
-              child: AutoTranslateText(
-                language.toUpperCase(),
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#3E2723'.toColor(),
-                ),
+        Obx(
+          () => DropdownButtonFormField<String>(
+            value: controller.selectedLanguage.value,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
               ),
-            );
-          }).toList(),
-          onChanged: (value) {
-            if (value != null) {
-              controller.setLanguage(value);
-            }
-          },
-        )),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(color: '#F5D7B8'.toColor(), width: 1),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide(color: "#F38B3B".toColor(), width: 2),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 16.h,
+              ),
+            ),
+            items: languages.map((language) {
+              return DropdownMenuItem(
+                value: language,
+                child: AutoTranslateText(
+                  language.toUpperCase(),
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    color: '#3E2723'.toColor(),
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                controller.setLanguage(value);
+              }
+            },
+          ),
+        ),
       ],
     );
   }
@@ -378,11 +368,12 @@ class RamalShastraQuestionView extends StatelessWidget {
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide(color: "#F38B3B".toColor(), width: 2),
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 16.w,
+              vertical: 16.h,
+            ),
           ),
-          style: MyTextTheme.mediumBCN.copyWith(
-            color: '#3E2723'.toColor(),
-          ),
+          style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
           controller: TextEditingController(text: controller.name.value)
             ..selection = TextSelection.fromPosition(
               TextPosition(offset: controller.name.value.length),
@@ -393,7 +384,10 @@ class RamalShastraQuestionView extends StatelessWidget {
     );
   }
 
-  Widget _buildDateOfBirthField(RamalShastraController controller, BuildContext context) {
+  Widget _buildDateOfBirthField(
+    RamalShastraController controller,
+    BuildContext context,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -405,52 +399,55 @@ class RamalShastraQuestionView extends StatelessWidget {
           ),
         ),
         Spacing.h(8),
-        Obx(() => InkWell(
-          onTap: () async {
-            final date = await showDatePicker(
-              context: context,
-              initialDate: controller.dateOfBirth.value.isNotEmpty
-                  ? DateTime.tryParse(controller.dateOfBirth.value) ?? DateTime.now()
-                  : DateTime.now(),
-              firstDate: DateTime(1900),
-              lastDate: DateTime.now(),
-            );
-            if (date != null) {
-              controller.setDateOfBirth(DateFormat('yyyy-MM-dd').format(date));
-            }
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: '#F5D7B8'.toColor(), width: 1),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                AutoTranslateText(
-                  controller.dateOfBirth.value.isNotEmpty
-                      ? controller.dateOfBirth.value
-                      : 'Select date of birth',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: controller.dateOfBirth.value.isNotEmpty
-                        ? '#3E2723'.toColor()
-                        : '#999999'.toColor(),
+        Obx(
+          () => InkWell(
+            onTap: () async {
+              final date = await showDatePicker(
+                context: context,
+                initialDate: controller.dateOfBirth.value.isNotEmpty
+                    ? DateTime.tryParse(controller.dateOfBirth.value) ??
+                          DateTime.now()
+                    : DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+              );
+              if (date != null) {
+                controller.setDateOfBirth(
+                  DateFormat('yyyy-MM-dd').format(date),
+                );
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: '#F5D7B8'.toColor(), width: 1),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AutoTranslateText(
+                    controller.dateOfBirth.value.isNotEmpty
+                        ? controller.dateOfBirth.value
+                        : 'Select date of birth',
+                    style: MyTextTheme.mediumBCN.copyWith(
+                      color: controller.dateOfBirth.value.isNotEmpty
+                          ? '#3E2723'.toColor()
+                          : '#999999'.toColor(),
+                    ),
                   ),
-                ),
-                Icon(
-                  Icons.calendar_today,
-                  color: "#F38B3B".toColor(),
-                  size: 20.w,
-                ),
-              ],
+                  Icon(
+                    Icons.calendar_today,
+                    color: "#F38B3B".toColor(),
+                    size: 20.w,
+                  ),
+                ],
+              ),
             ),
           ),
-        )),
+        ),
       ],
     );
   }
 }
-
-

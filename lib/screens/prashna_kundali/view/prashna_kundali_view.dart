@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -18,117 +19,84 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: SingleChildScrollView(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Padding(
+          padding: EdgeInsets.only(
+            top:
+                (MediaQuery.of(context).padding.top > 0
+                        ? MediaQuery.of(context).padding.top * 0.5
+                        : 0.0)
+                    .clamp(6.0, 24.0)
+                    .toDouble(),
+          ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Header with back button and history
-              _buildHeader(),
+              CommonHeader(
+                title: 'Prashna kundli',
+                customActions: [
+                  IconButton(
+                    onPressed: () async {
+                      final ok = await LoginGuard.ensureLoggedIn(
+                        message: 'Login to view your Prashna kundli history.',
+                      );
+                      if (ok) {
+                        Get.toNamed(AppRoutes.prashnaKundaliHistory);
+                      }
+                    },
+                    icon: Icon(
+                      Icons.history,
+                      color: '#EA632B'.toColor(),
+                      size: 24.w,
+                    ),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Main icon
+                      _buildMainIcon(),
 
-              // Main icon
-              _buildMainIcon(),
+                      // Title
+                      _buildTitle(),
 
-              // Title
-              _buildTitle(),
+                      Spacing.h(8),
 
-              Spacing.h(8),
+                      // Subtitle
+                      _buildSubtitle(),
 
-              // Subtitle
-              _buildSubtitle(),
+                      Spacing.h(32),
 
-              Spacing.h(32),
+                      // Start Your Reading section
+                      _buildStartReadingSection(),
 
-              // Start Your Reading section
-              _buildStartReadingSection(),
+                      Spacing.h(32),
 
-              Spacing.h(32),
+                      // How Prashna Kundali Works section
+                      _buildHowItWorksSection(),
 
-              // How Prashna Kundali Works section
-              _buildHowItWorksSection(),
+                      Spacing.h(32),
 
-              Spacing.h(32),
+                      // Key Features section
+                      _buildKeyFeaturesSection(),
 
-              // Key Features section
-              _buildKeyFeaturesSection(),
+                      Spacing.h(32),
 
-              Spacing.h(32),
-
-              // About Prashna Kundali section
-              _buildAboutSection(),
-
-              Spacing.h(32),
+                      // About Prashna Kundali section
+                      _buildAboutSection(),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          // Back button
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-          Spacer(),
-          // History button
-          GestureDetector(
-            onTap: () async {
-              final ok = await LoginGuard.ensureLoggedIn(
-                message: 'Login to view your Prashna kundli history.',
-              );
-              if (ok) {
-                Get.toNamed(AppRoutes.prashnaKundaliHistory);
-              }
-            },
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.history,
-                color: '#EA632B'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

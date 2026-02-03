@@ -4,7 +4,7 @@ import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/voice_call/controllers/persona_voice_history_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -30,10 +30,7 @@ class PersonaVoiceHistoryView extends StatelessWidget {
           child: Column(
             children: [
               // Header using CommonHeader
-              CommonHeader(
-                title: 'Voice Call History',
-                titleColor: AppColors.templeGold,
-              ),
+              const CommonHeader(title: 'Voice Call History'),
               // Filters
               _filters(controller),
               // List

@@ -3,7 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/dosh_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/dosh_table_widget.dart';
-import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/kaalsarp_dosh_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/mangal_dosh_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/pitra_dosh_widget.dart';
@@ -39,7 +39,7 @@ class DoshView extends BasePage<DoshController> {
           child: SafeArea(
             child: Column(
               children: [
-                KundliHeader(title: 'Dosh Report'),
+                const CommonHeader(title: 'Dosh Report'),
                 _buildTabs(),
                 Expanded(
                   child: PageView(
@@ -93,7 +93,11 @@ class DoshView extends BasePage<DoshController> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.warning_amber_rounded, size: 14.w, color: Colors.white),
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      size: 14.w,
+                      color: Colors.white,
+                    ),
                     SizedBox(width: 6.w),
                     AutoTranslateText(
                       'Dosh Report',
@@ -118,9 +122,21 @@ class DoshView extends BasePage<DoshController> {
                     SizedBox(width: 4.w),
                     _buildTab('Overview', 0, selectedIndex, orange, maroon),
                     SizedBox(width: 6.w),
-                    _buildTab('MANGAL/MANGLIK DOSH', 1, selectedIndex, orange, maroon),
+                    _buildTab(
+                      'MANGAL/MANGLIK DOSH',
+                      1,
+                      selectedIndex,
+                      orange,
+                      maroon,
+                    ),
                     SizedBox(width: 6.w),
-                    _buildTab('KAALSARP DOSH', 2, selectedIndex, orange, maroon),
+                    _buildTab(
+                      'KAALSARP DOSH',
+                      2,
+                      selectedIndex,
+                      orange,
+                      maroon,
+                    ),
                     SizedBox(width: 6.w),
                     _buildTab('PITRA DOSH', 3, selectedIndex, orange, maroon),
                     SizedBox(width: 10.w),
@@ -134,7 +150,13 @@ class DoshView extends BasePage<DoshController> {
     );
   }
 
-  Widget _buildTab(String title, int index, int selectedIndex, Color orange, Color maroon) {
+  Widget _buildTab(
+    String title,
+    int index,
+    int selectedIndex,
+    Color orange,
+    Color maroon,
+  ) {
     final isSelected = selectedIndex == index;
     if (!controller.tabKeys.containsKey(index)) {
       controller.tabKeys[index] = GlobalKey();
@@ -155,10 +177,7 @@ class DoshView extends BasePage<DoshController> {
             borderRadius: BorderRadius.circular(12.r),
             border: isSelected
                 ? null
-                : Border.all(
-                    color: maroon.withOpacity(0.2),
-                    width: 1,
-                  ),
+                : Border.all(color: maroon.withOpacity(0.2), width: 1),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
@@ -202,12 +221,18 @@ class DoshView extends BasePage<DoshController> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!scrollController.hasClients) return;
-      final tabs = ['Overview', 'MANGAL/MANGLIK DOSH', 'KAALSARP DOSH', 'PITRA DOSH'];
+      final tabs = [
+        'Overview',
+        'MANGAL/MANGLIK DOSH',
+        'KAALSARP DOSH',
+        'PITRA DOSH',
+      ];
       double totalWidth = 4.w;
       for (int i = 0; i < selectedIndex; i++) {
         final key = controller.tabKeys[i];
         if (key?.currentContext != null) {
-          final renderBox = key!.currentContext!.findRenderObject() as RenderBox?;
+          final renderBox =
+              key!.currentContext!.findRenderObject() as RenderBox?;
           if (renderBox != null) {
             totalWidth += renderBox.size.width + 6.w;
           } else {
@@ -221,13 +246,15 @@ class DoshView extends BasePage<DoshController> {
       final selectedKey = controller.tabKeys[selectedIndex];
       double selectedTabWidth = 0;
       if (selectedKey?.currentContext != null) {
-        final renderBox = selectedKey!.currentContext!.findRenderObject() as RenderBox?;
+        final renderBox =
+            selectedKey!.currentContext!.findRenderObject() as RenderBox?;
         if (renderBox != null) selectedTabWidth = renderBox.size.width;
       }
       if (selectedTabWidth == 0) {
         selectedTabWidth = 44.0 + (tabs[selectedIndex].length * 9.0);
       }
-      final targetPosition = totalWidth - (viewportWidth / 2) + (selectedTabWidth / 2);
+      final targetPosition =
+          totalWidth - (viewportWidth / 2) + (selectedTabWidth / 2);
       scrollController.animateTo(
         targetPosition.clamp(0.0, scrollController.position.maxScrollExtent),
         duration: const Duration(milliseconds: 300),

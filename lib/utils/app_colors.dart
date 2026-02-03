@@ -11,6 +11,7 @@ class AppColors {
   static const Color deepOrange = Color(0xFFF38B3B); // Temple orange
   static const Color deepOrangemix = Color(0xFFDD2914);
   static const Color templeGold = Color(0xFFE3B341); // Golden
+  static const Color golden = Color(0xFFDFB343); // Kundli golden accent
   static const Color turmericYellow = Color(0xFFC9A033); // Turmeric
   //secondary colors
   static const Color cream = Color(0xFFFAEAAF); // Turmeric

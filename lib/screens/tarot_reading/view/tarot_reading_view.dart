@@ -1,7 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
-import 'package:astrobharataiuser/core/models/app_language_model.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/controller/tarot_controller.dart';
@@ -19,7 +18,7 @@ import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_selection_
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_yes_no_popup.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/widgets/tarot_card_unsuitable_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -42,20 +41,36 @@ class TarotReadingView extends BasePage<TarotController> {
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          body: SafeArea(
-            child: Stack(
+          body: Padding(
+            padding: EdgeInsets.only(
+              top:
+                  (MediaQuery.of(context).padding.top > 0
+                          ? MediaQuery.of(context).padding.top * 0.5
+                          : 0.0)
+                      .clamp(6.0, 24.0)
+                      .toDouble(),
+            ),
+            child: Column(
               children: [
-                SingleChildScrollView(child: _buildMainContent()),
-                // Reading overlays
-                const TarotYesNoPopup(),
-                const TarotCareerWidget(),
-                const TarotLoveWidget(),
-                const TarotDailyWidget(),
-                const TarotBreakupWidget(isRomantic: true),
-                const TarotBreakupWidget(isRomantic: false),
-                const TarotFortuneCookieWidget(),
-                // Card unsuitable message overlay (should be on top)
-                _buildUnsuitableCardMessage(),
+                // Fixed Header
+                const CommonHeader(title: 'CARD READING'),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      SingleChildScrollView(child: _buildMainContentBody()),
+                      // Reading overlays
+                      const TarotYesNoPopup(),
+                      const TarotCareerWidget(),
+                      const TarotLoveWidget(),
+                      const TarotDailyWidget(),
+                      const TarotBreakupWidget(isRomantic: true),
+                      const TarotBreakupWidget(isRomantic: false),
+                      const TarotFortuneCookieWidget(),
+                      // Card unsuitable message overlay (should be on top)
+                      _buildUnsuitableCardMessage(),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -64,14 +79,11 @@ class TarotReadingView extends BasePage<TarotController> {
     );
   }
 
-  Widget _buildMainContent() {
+  Widget _buildMainContentBody() {
     return GetBuilder<TarotController>(
       builder: (controller) {
         return Column(
           children: [
-            // Header using CommonHeader
-            _buildHeaderSection(),
-
             Spacing.h(16),
 
             // Consultation Card
@@ -252,105 +264,6 @@ class TarotReadingView extends BasePage<TarotController> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildHeaderSection() {
-    return GetBuilder<TarotController>(
-      builder: (controller) {
-        return CommonHeader(
-          title: 'CARD READING',
-          titleColor: AppColors.templeGold,
-          actions: [
-            // Language selector
-            FutureBuilder<List<dynamic>>(
-              future: _loadLanguages(),
-              builder: (context, snapshot) {
-                final languages =
-                    snapshot.data ??
-                    [
-                      {'code': 'en', 'name': 'English'},
-                      {'code': 'hi', 'name': 'Hindi'},
-                      {'code': 'bn', 'name': 'Bengali'},
-                      {'code': 'te', 'name': 'Telugu'},
-                      {'code': 'mr', 'name': 'Marathi'},
-                      {'code': 'ta', 'name': 'Tamil'},
-                      {'code': 'gu', 'name': 'Gujarati'},
-                    ];
-
-                return PopupMenuButton<String>(
-                  icon: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      gradient: AppColors.orangeGradient,
-                      borderRadius: BorderRadius.circular(8.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: "#F38B3B".toColor().withOpacity(0.3),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      Icons.language,
-                      color: Colors.white,
-                      size: 20.w,
-                    ),
-                  ),
-                  constraints: BoxConstraints(maxWidth: 200.w),
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  itemBuilder: (context) => languages.map((lang) {
-                    final code = lang['code'] as String;
-                    final name = lang['name'] as String;
-                    final isSelected =
-                        controller.selectedLanguage.value == code;
-                    return PopupMenuItem(
-                      value: code,
-                      child: Row(
-                        children: [
-                          if (isSelected)
-                            Icon(
-                              Icons.check,
-                              color: "#F38B3B".toColor(),
-                              size: 18.w,
-                            )
-                          else
-                            SizedBox(width: 18.w),
-                          SizedBox(width: 8.w),
-                          Expanded(
-                            child: AutoTranslateText(
-                              name,
-                              style: TextStyle(
-                                color: '#68171E'.toColor(),
-                                fontWeight: isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  onSelected: (value) async {
-                    if (controller.selectedLanguage.value != value) {
-                      controller.selectedLanguage.value = value;
-                      // If cards are already loaded, reshuffle with new language
-                      if (controller.cards.isNotEmpty) {
-                        await controller.shuffleCards();
-                      }
-                    }
-                  },
-                );
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 
@@ -672,30 +585,6 @@ class TarotReadingView extends BasePage<TarotController> {
         ],
       ),
     );
-  }
-
-  /// Load languages for selector
-  Future<List<Map<String, String>>> _loadLanguages() async {
-    try {
-      final languages = await LanguageModelService.getLanguages();
-      return languages
-          .map((lang) => {'code': lang.code, 'name': lang.nameEn})
-          .toList();
-    } catch (e) {
-      // Fallback to common languages
-      return [
-        {'code': 'en', 'name': 'English'},
-        {'code': 'hi', 'name': 'Hindi'},
-        {'code': 'bn', 'name': 'Bengali'},
-        {'code': 'te', 'name': 'Telugu'},
-        {'code': 'mr', 'name': 'Marathi'},
-        {'code': 'ta', 'name': 'Tamil'},
-        {'code': 'gu', 'name': 'Gujarati'},
-        {'code': 'ur', 'name': 'Urdu'},
-        {'code': 'kn', 'name': 'Kannada'},
-        {'code': 'ml', 'name': 'Malayalam'},
-      ];
-    }
   }
 
   Widget _buildUnsuitableCardMessage() {

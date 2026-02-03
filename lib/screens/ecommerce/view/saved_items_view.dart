@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.d
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,44 +20,39 @@ class SavedItemsView extends GetView<CartController> {
 
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.lightBackground,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: AppColors.textPrimary, size: 20.sp),
-          onPressed: () => Get.back(),
-        ),
-        title: AutoTranslateText(
-          'Saved Items',
-          style: AppTypography.h2.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
+      body: Column(
+        children: [
+          CommonHeader(title: 'Saved Items'),
+          Expanded(
+            child: Obx(() {
+              final savedItems = controller.savedItems;
+
+              if ((controller.isLoading.value ||
+                      controller.isUpdatingCart.value) &&
+                  savedItems.isEmpty) {
+                return Center(
+                  child: CircularProgressIndicator(color: AppColors.saffron),
+                );
+              }
+
+              if (savedItems.isEmpty) {
+                return _EmptySavedItems(onShopNow: () => Get.back());
+              }
+
+              return ListView.separated(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                itemCount: savedItems.length,
+                separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                itemBuilder: (_, index) => _SavedItemTile(
+                  item: savedItems[index],
+                  currencyFormat: currencyFormat,
+                  controller: controller,
+                ),
+              );
+            }),
           ),
-        ),
+        ],
       ),
-      body: Obx(() {
-        final savedItems = controller.savedItems;
-
-        if ((controller.isLoading.value || controller.isUpdatingCart.value) && savedItems.isEmpty) {
-          return Center(child: CircularProgressIndicator(color: AppColors.saffron));
-        }
-
-        if (savedItems.isEmpty) {
-          return _EmptySavedItems(onShopNow: () => Get.back());
-        }
-
-        return ListView.separated(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-          itemCount: savedItems.length,
-          separatorBuilder: (_, __) => SizedBox(height: 12.h),
-          itemBuilder: (_, index) => _SavedItemTile(
-            item: savedItems[index],
-            currencyFormat: currencyFormat,
-            controller: controller,
-          ),
-        );
-      }),
     );
   }
 }
@@ -75,7 +71,8 @@ class _SavedItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = item.product;
-    final productRef = product ??
+    final productRef =
+        product ??
         ProductModel(
           id: item.productSnapshot?.productId,
           slug: item.productSnapshot?.sku,
@@ -84,7 +81,8 @@ class _SavedItemTile extends StatelessWidget {
 
     final name = product?.name ?? item.productSnapshot?.name ?? 'Product';
     final subtitle = product?.shortDescription ?? item.productSnapshot?.sku;
-    final price = item.discountedPrice ??
+    final price =
+        item.discountedPrice ??
         item.price ??
         product?.currentPrice ??
         product?.discountedPrice ??
@@ -134,7 +132,11 @@ class _SavedItemTile extends StatelessWidget {
                       height: 80.h,
                       width: 80.w,
                       color: AppColors.textSecondary.withOpacity(0.08),
-                      child: Icon(Icons.image, size: 28.sp, color: AppColors.textSecondary),
+                      child: Icon(
+                        Icons.image,
+                        size: 28.sp,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
             ),
             SizedBox(width: 12.w),
@@ -175,7 +177,9 @@ class _SavedItemTile extends StatelessWidget {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: isProcessing ? null : () => controller.moveSavedItemToCart(item),
+                          onPressed: isProcessing
+                              ? null
+                              : () => controller.moveSavedItemToCart(item),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.saffron,
                             foregroundColor: Colors.white,
@@ -226,7 +230,11 @@ class _EmptySavedItems extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.favorite_border, size: 72.sp, color: AppColors.textSecondary),
+            Icon(
+              Icons.favorite_border,
+              size: 72.sp,
+              color: AppColors.textSecondary,
+            ),
             SizedBox(height: 16.h),
             AutoTranslateText(
               'No saved items yet',
@@ -267,5 +275,3 @@ class _EmptySavedItems extends StatelessWidget {
     );
   }
 }
-
-

@@ -1,7 +1,7 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_main_controller.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,25 +10,7 @@ import 'package:get/get.dart';
 class RudrakshSuggestionWidget extends StatelessWidget {
   final HoroscopeMainController controller;
 
-  const RudrakshSuggestionWidget({
-    super.key,
-    required this.controller,
-  });
-
-  // Gradient definitions
-  static final LinearGradient gradientBackground = LinearGradient(
-    colors: ["#FCE5AA".toColor(), "#FFFCF3".toColor(), "#FFFFFF".toColor()],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  );
-
-  static final LinearGradient primaryGradient = LinearGradient(
-    colors: ["#820B17".toColor(), "#68171E".toColor(), "#5D1C21".toColor()],
-  );
-
-  static LinearGradient orangeGradient = LinearGradient(
-    colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
-  );
+  const RudrakshSuggestionWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -39,13 +21,13 @@ class RudrakshSuggestionWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(orangeGradient.colors.first),
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.deepOrange),
               ),
               Spacing.h(16),
               AutoTranslateText(
-                'Loading Rudraksh Suggestion...',
+                'Loading Rudraksh Suggestions...',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: primaryGradient.colors.first.withOpacity(0.7),
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -54,46 +36,26 @@ class RudrakshSuggestionWidget extends StatelessWidget {
       }
 
       final data = controller.rudrakshSuggestionData.value;
-      if (data == null) {
+      if (data == null || data.isEmpty) {
         return Center(
           child: AutoTranslateText(
             'No Rudraksh Suggestion data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: primaryGradient.colors.first.withOpacity(0.7),
+              color: AppColors.textSecondary,
             ),
           ),
         );
       }
 
-      final rudraksh = (data['rudraksh'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
-      final name = (data['name'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
-      final qualities = (data['qualities'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
-      final howToWear = data['how_to_wear']?.toString() ?? '';
-      final timeToWear = data['time_to_wear']?.toString() ?? '';
-      final mantra = (data['mantra'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [];
-      final personalizedResponse = data['personalized_response']?.toString() ?? '';
-      final purification = data['purification']?.toString() ?? '';
-
-      return Container(
-        decoration: BoxDecoration(
-          gradient: gradientBackground,
-        ),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-          child: Column(
+      return SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildTitleSection(),
-            Spacing.h(20),
-            if (rudraksh.isNotEmpty) _buildRudrakshListCard(rudraksh, name, qualities, mantra),
-            Spacing.h(20),
-            if (howToWear.isNotEmpty || timeToWear.isNotEmpty) _buildWearingInfoCard(howToWear, timeToWear),
-            Spacing.h(20),
-            if (personalizedResponse.isNotEmpty) _buildPersonalizedCard(personalizedResponse),
-            Spacing.h(20),
-            if (purification.isNotEmpty) _buildPurificationCard(purification),
+            Spacing.h(16),
+            _buildSuggestionCard(data),
           ],
-        ),
         ),
       );
     });
@@ -101,13 +63,13 @@ class RudrakshSuggestionWidget extends StatelessWidget {
 
   Widget _buildTitleSection() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
+      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
       decoration: BoxDecoration(
-        gradient: primaryGradient,
+        gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: primaryGradient.colors.first.withOpacity(0.3),
+            color: AppColors.deepOrange.withOpacity(0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -116,16 +78,12 @@ class RudrakshSuggestionWidget extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12.r),
             ),
-            child: Icon(
-              Icons.self_improvement_rounded,
-              color: const Color(0xFFDFB343),
-              size: 28.w,
-            ),
+            child: Icon(Icons.spa_rounded, color: AppColors.golden, size: 28.w),
           ),
           Spacing.w(16),
           Expanded(
@@ -135,14 +93,15 @@ class RudrakshSuggestionWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Rudraksh Suggestion',
                   style: MyTextTheme.largeBCB.copyWith(
-                    color: const Color(0xFFDFB343),
+                    color: AppColors.golden,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 Spacing.h(4),
                 AutoTranslateText(
-                  'Spiritual beads recommendation',
+                  'Recommended Rudraksh',
                   style: MyTextTheme.mediumBCN.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                    color: AppColors.golden.withOpacity(0.9),
                   ),
                 ),
               ],
@@ -153,12 +112,16 @@ class RudrakshSuggestionWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildRudrakshListCard(List<String> rudraksh, List<String> name, List<String> qualities, List<String> mantra) {
+  Widget _buildSuggestionCard(Map<String, dynamic> data) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: AppColors.deepOrange.withOpacity(0.2),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
@@ -175,12 +138,12 @@ class RudrakshSuggestionWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  gradient: primaryGradient,
+                  gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Icon(
-                  Icons.auto_awesome_rounded,
-                  color: const Color(0xFFDFB343),
+                  Icons.auto_awesome,
+                  color: AppColors.golden,
                   size: 20.w,
                 ),
               ),
@@ -188,245 +151,40 @@ class RudrakshSuggestionWidget extends StatelessWidget {
               AutoTranslateText(
                 'Recommended Rudraksh',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  color: primaryGradient.colors.first,
+                  color: AppColors.textPrimary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          Spacing.h(20),
-          ...List.generate(rudraksh.length, (index) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: 16.h),
-              child: Container(
-                padding: EdgeInsets.all(16.w),
-                decoration: BoxDecoration(
-                  color: primaryGradient.colors.first.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(
-                    color: primaryGradient.colors.first.withOpacity(0.1),
-                    width: 1,
+          Spacing.h(16),
+          ...data.entries
+              .where((e) => e.value != null && e.value.toString().isNotEmpty)
+              .map((entry) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 8.h),
+                  child: _buildInfoRow(
+                    _formatPropertyName(entry.key),
+                    entry.value.toString(),
                   ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (index < rudraksh.length)
-                      AutoTranslateText(
-                        rudraksh[index],
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: primaryGradient.colors.first,
-                        ),
-                      ),
-                    if (index < name.length) ...[
-                      Spacing.h(8),
-                      AutoTranslateText(
-                        name[index],
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: primaryGradient.colors.first.withOpacity(0.8),
-                        ),
-                      ),
-                    ],
-                    if (index < qualities.length) ...[
-                      Spacing.h(8),
-                      AutoTranslateText(
-                        qualities[index],
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: primaryGradient.colors.first.withOpacity(0.7),
-                        ),
-                      ),
-                    ],
-                    if (index < mantra.length) ...[
-                      Spacing.h(8),
-                      Container(
-                        padding: EdgeInsets.all(12.w),
-                        decoration: BoxDecoration(
-                          color: "#DFB343".toColor().withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: AutoTranslateText(
-                          mantra[index],
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: primaryGradient.colors.first,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWearingInfoCard(String howToWear, String timeToWear) {
-    return Container(
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  gradient: orangeGradient,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Icon(
-                  Icons.access_time_rounded,
-                  color: Colors.white,
-                  size: 20.w,
-                ),
-              ),
-              Spacing.w(12),
-              AutoTranslateText(
-                'Wearing Information',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: primaryGradient.colors.first,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(20),
-          if (howToWear.isNotEmpty) ...[
-            _buildInfoRow('How to Wear', howToWear),
-            if (timeToWear.isNotEmpty) _buildDivider(),
-          ],
-          if (timeToWear.isNotEmpty)
-            _buildInfoRow('Time to Wear', timeToWear),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPersonalizedCard(String personalizedResponse) {
-    return Container(
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  gradient: primaryGradient,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Icon(
-                  Icons.person_outline_rounded,
-                  color: const Color(0xFFDFB343),
-                  size: 20.w,
-                ),
-              ),
-              Spacing.w(12),
-              AutoTranslateText(
-                'Personalized Response',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: primaryGradient.colors.first,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(16),
-          AutoTranslateText(
-            personalizedResponse,
-            style: MyTextTheme.smallBCN.copyWith(
-              color: primaryGradient.colors.first.withOpacity(0.8),
-              height: 1.6,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPurificationCard(String purification) {
-    return Container(
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  gradient: orangeGradient,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Icon(
-                  Icons.cleaning_services_rounded,
-                  color: Colors.white,
-                  size: 20.w,
-                ),
-              ),
-              Spacing.w(12),
-              AutoTranslateText(
-                'Purification',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: primaryGradient.colors.first,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(16),
-          AutoTranslateText(
-            purification,
-            style: MyTextTheme.smallBCN.copyWith(
-              color: primaryGradient.colors.first.withOpacity(0.8),
-              height: 1.6,
-            ),
-          ),
+                );
+              }),
         ],
       ),
     );
   }
 
   Widget _buildInfoRow(String label, String value) {
-    return Padding(
+    return Container(
       padding: EdgeInsets.symmetric(vertical: 8.h),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: AppColors.deepOrange.withOpacity(0.1),
+            width: 1,
+          ),
+        ),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -435,7 +193,7 @@ class RudrakshSuggestionWidget extends StatelessWidget {
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCB.copyWith(
-                color: primaryGradient.colors.first.withOpacity(0.7),
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -446,8 +204,9 @@ class RudrakshSuggestionWidget extends StatelessWidget {
             child: AutoTranslateText(
               value,
               style: MyTextTheme.smallBCN.copyWith(
-                color: primaryGradient.colors.first,
+                color: AppColors.textPrimary.withOpacity(0.8),
               ),
+              textAlign: TextAlign.end,
             ),
           ),
         ],
@@ -455,21 +214,14 @@ class RudrakshSuggestionWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() {
-    return Divider(
-      height: 1,
-      thickness: 1,
-      color: primaryGradient.colors.first.withOpacity(0.1),
-    );
+  String _formatPropertyName(String key) {
+    return key
+        .split('_')
+        .map(
+          (word) => word.isEmpty
+              ? ''
+              : word[0].toUpperCase() + word.substring(1).toLowerCase(),
+        )
+        .join(' ');
   }
 }
-
-
-
-
-
-
-
-
-
-

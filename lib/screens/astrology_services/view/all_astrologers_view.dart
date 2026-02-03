@@ -1,6 +1,5 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
@@ -13,6 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../theme/app_typography.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 
 class AllAstrologersView extends StatelessWidget {
   final String? initialFilter;
@@ -46,9 +46,18 @@ class AllAstrologersView extends StatelessWidget {
             children: [
               if (hideHeader)
                 _buildFiltersOnly(context, controller)
-              else
-                _buildHeaderWithFilters(context, controller,
-                    showBackButton: showBackButton),
+              else ...[
+                CommonHeader(
+                  title:
+                      'Chat with Astrologer', // Or dynamic title if needed, but 'All Astrologers' or 'Chat with Astrologer' is standard
+                  showBackButton: showBackButton,
+                  showWallet: true,
+                  showCart: true,
+                  showSearch:
+                      true, // Assuming we want search here too, or disable if not appropriate. Original had wallet/cart.
+                ),
+                _buildFiltersOnly(context, controller),
+              ],
 
               // Astrologer List
               Expanded(
@@ -154,7 +163,7 @@ class AllAstrologersView extends StatelessWidget {
   ) {
     return Container(
       decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
+        color: AppColors.primaryGradient.colors.first,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(26.r),
           bottomRight: Radius.circular(26.r),
@@ -171,8 +180,7 @@ class AllAstrologersView extends StatelessWidget {
             itemBuilder: (context, index) {
               final filter = controller.filterOptions[index];
               return Obx(() {
-                final isSelected =
-                    controller.selectedFilter.value == filter;
+                final isSelected = controller.selectedFilter.value == filter;
                 return GestureDetector(
                   onTap: () => controller.setFilter(filter),
                   child: Container(
@@ -208,143 +216,6 @@ class AllAstrologersView extends StatelessWidget {
             },
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeaderWithFilters(
-    BuildContext context,
-    AllAstrologersController controller, {
-    bool showBackButton = true,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(26.r),
-          bottomRight: Radius.circular(26.r),
-        ),
-      ),
-      child: Column(
-        children: [
-          // Header Row
-          Padding(
-            padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 10.h),
-            child: Row(
-              children: [
-                // Back button (hidden when opened from bottom nav)
-                if (showBackButton)
-                  GestureDetector(
-                    onTap: () => Get.back(),
-                    child: Container(
-                      width: 32.w,
-                      height: 32.w,
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: AppColors.templeGold,
-                        size: 20.w,
-                      ),
-                    ),
-                  ),
-                if (showBackButton) Spacing.w(16),
-                // Logo/App Name - Split into three parts
-                SvgAssets(
-                  path: 'assets/app/AstrobharatAi .svg',
-                  width: 150.w,
-                  height: 30.h,
-                  colorFilter: ColorFilter.mode(
-                    '#D9AB3B'.toColor(),
-                    BlendMode.srcIn,
-                  ),
-                ),
-                Spacer(),
-                // Right Accessory (Wallet and Cart)
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => Get.toNamed(AppRoutes.wallet),
-                      child: Container(
-                        width: 32.w,
-                        height: 32.w,
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.account_balance_wallet_outlined,
-                          color: AppColors.templeGold,
-                          size: 20.w,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 4.w),
-                    GestureDetector(
-                      onTap: () => Get.toNamed(AppRoutes.cart),
-                      child: Container(
-                        width: 32.w,
-                        height: 32.w,
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.shopping_cart_outlined,
-                          color: AppColors.templeGold,
-                          size: 20.w,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          // Filter Section
-          Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 20.h, 0, 20.h),
-            child: SizedBox(
-              height: 36.h,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.only(right: 16.w),
-                itemCount: controller.filterOptions.length,
-                itemBuilder: (context, index) {
-                  final filter = controller.filterOptions[index];
-                  return Obx(() {
-                    final isSelected =
-                        controller.selectedFilter.value == filter;
-                    return GestureDetector(
-                      onTap: () => controller.setFilter(filter),
-                      child: Container(
-                        margin: EdgeInsets.only(right: 12.w),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isSelected ? Colors.white : Color(0xFF5D1C21),
-                          borderRadius: BorderRadius.circular(8.r),
-                          border: isSelected
-                              ? Border.all(color: '#DEAF3E'.toColor(), width: 1)
-                              : null,
-                        ),
-                        child: Center(
-                          child: AutoTranslateText(
-                            filter,
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13.sp,
-                              color: isSelected
-                                  ? '#DDAF3E'.toColor()
-                                  : Colors.white,
-                              height: 1,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  });
-                },
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -2,7 +2,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_form_controller.dart';
-import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -11,7 +11,6 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
 
 class KundliFormView extends BasePage<KundliFormController> {
   const KundliFormView({super.key});
@@ -26,10 +25,13 @@ class KundliFormView extends BasePage<KundliFormController> {
         body: SafeArea(
           child: Column(
             children: [
-              KundliHeader(title: 'Generate Kundli'),
+              const CommonHeader(title: 'Generate Kundli'),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 0.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 0.h,
+                  ),
                   child: _buildFormSection(),
                 ),
               ),
@@ -124,7 +126,7 @@ class KundliFormView extends BasePage<KundliFormController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-              //  flex: 2,
+                //  flex: 2,
                 child: SizedBox(
                   height: 50.h,
                   child: _buildCompactField(
@@ -136,10 +138,7 @@ class KundliFormView extends BasePage<KundliFormController> {
               ),
               SizedBox(width: 10.w),
               Expanded(
-                child: SizedBox(
-                  height: 50.h,
-                  child: _buildGenderDropdown(),
-                ),
+                child: SizedBox(height: 50.h, child: _buildGenderDropdown()),
               ),
             ],
           ),
@@ -156,9 +155,7 @@ class KundliFormView extends BasePage<KundliFormController> {
                 ),
               ),
               SizedBox(width: 10.w),
-              Expanded(
-                child: _buildTimeField(),
-              ),
+              Expanded(child: _buildTimeField()),
             ],
           ),
           Spacing.h(6),
@@ -177,13 +174,9 @@ class KundliFormView extends BasePage<KundliFormController> {
           Spacing.h(12),
           Row(
             children: [
-              Expanded(
-                child: _buildLanguageDropdown(),
-              ),
+              Expanded(child: _buildLanguageDropdown()),
               SizedBox(width: 10.w),
-              Expanded(
-                child: _buildStyleDropdown(),
-              ),
+              Expanded(child: _buildStyleDropdown()),
             ],
           ),
           Spacing.h(20),
@@ -195,50 +188,51 @@ class KundliFormView extends BasePage<KundliFormController> {
 
   /// Birth time field showing 12-hour AM/PM; timeController still holds 24h for API.
   Widget _buildTimeField() {
-    return Obx(
-      () {
-        final t = controller.selectedTime.value;
-        final display = TimePickerHelper.formatTime24To12Display(t.hour, t.minute);
-        return GestureDetector(
-          onTap: () => _showTimePicker(),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.deepOrange.withOpacity(0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: InputDecorator(
-              decoration: _inputDecoration(
-                hint: 'Birth Time',
-                icon: Icons.access_time,
-                suffix: Padding(
-                  padding: EdgeInsets.only(right: 10.w),
-                  child: Icon(
-                    Icons.arrow_forward_ios,
-                    color: AppColors.deepOrange,
-                    size: 12.w,
-                  ),
+    return Obx(() {
+      final t = controller.selectedTime.value;
+      final display = TimePickerHelper.formatTime24To12Display(
+        t.hour,
+        t.minute,
+      );
+      return GestureDetector(
+        onTap: () => _showTimePicker(),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.deepOrange.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: InputDecorator(
+            decoration: _inputDecoration(
+              hint: 'Birth Time',
+              icon: Icons.access_time,
+              suffix: Padding(
+                padding: EdgeInsets.only(right: 10.w),
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  color: AppColors.deepOrange,
+                  size: 12.w,
                 ),
               ),
-              child: Text(
-                display,
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: AppColors.textColorMaroon,
-                  fontSize: 14.sp,
-                ),
+            ),
+            child: Text(
+              display,
+              style: MyTextTheme.mediumBCN.copyWith(
+                color: AppColors.textColorMaroon,
+                fontSize: 14.sp,
               ),
             ),
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
   }
 
   Widget _buildCompactField({
@@ -361,10 +355,12 @@ class KundliFormView extends BasePage<KundliFormController> {
         hint: 'Language',
         icon: Icons.language,
         items: controller.languages.entries
-            .map((e) => DropdownMenuItem(
-                  value: e.key,
-                  child: AutoTranslateText(e.value),
-                ))
+            .map(
+              (e) => DropdownMenuItem(
+                value: e.key,
+                child: AutoTranslateText(e.value),
+              ),
+            )
             .toList(),
         onChanged: (v) {
           if (v != null) controller.selectedLanguage.value = v;
@@ -380,10 +376,12 @@ class KundliFormView extends BasePage<KundliFormController> {
         hint: 'Chart Style',
         icon: Icons.style,
         items: controller.styles
-            .map((s) => DropdownMenuItem(
-                  value: s,
-                  child: AutoTranslateText(s.toUpperCase()),
-                ))
+            .map(
+              (s) => DropdownMenuItem(
+                value: s,
+                child: AutoTranslateText(s.toUpperCase()),
+              ),
+            )
             .toList(),
         onChanged: (v) {
           if (v != null) controller.selectedStyle.value = v;
@@ -425,7 +423,11 @@ class KundliFormView extends BasePage<KundliFormController> {
         decoration: _inputDecoration(
           hint: hint,
           icon: icon,
-          suffix: Icon(Icons.arrow_drop_down, color: AppColors.deepOrange, size: 24.w),
+          suffix: Icon(
+            Icons.arrow_drop_down,
+            color: AppColors.deepOrange,
+            size: 24.w,
+          ),
         ),
         isExpanded: true,
         items: items,

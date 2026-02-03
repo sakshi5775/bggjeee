@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/screens/astrology_services/controllers/astrolo
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -20,76 +21,73 @@ class AstrologerChatHistoryView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8E1), // Light yellow background
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: const Color(0xFF5F2221),
-            size: 24.w,
-          ),
-          onPressed: () => Get.back(),
-        ),
-        title: AutoTranslateText(
-          'Chat History',
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: const Color(0xFF5F2221),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxWidth),
-          child: Column(
-            children: [
-              // Search Section
-              _buildSearchSection(controller),
-              
-              // Content Section
-              Expanded(
-                child: Obx(() {
-                  if (controller.isLoading.value && controller.historyList.isEmpty) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.saffron,
-                      ),
-                    );
-                  }
+      body: Column(
+        children: [
+          const CommonHeader(title: 'Chat History', showSearch: false),
+          Expanded(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: maxWidth),
+                child: Column(
+                  children: [
+                    // Search Section
+                    _buildSearchSection(controller),
 
-                  final filteredList = controller.filteredHistoryList;
-                  
-                  if (filteredList.isEmpty && !controller.isLoading.value) {
-                    return _buildEmptyState(controller);
-                  }
-
-                  return RefreshIndicator(
-                    onRefresh: () => controller.loadHistory(reset: true),
-                    color: AppColors.saffron,
-                    child: ListView.builder(
-                      padding: AppPaddings.all(16),
-                      itemCount: filteredList.length + 
-                          (controller.hasMore && controller.searchQuery.value.isEmpty ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        // Show "Load More" button at the end
-                        if (index == filteredList.length && 
-                            controller.hasMore && 
-                            controller.searchQuery.value.isEmpty) {
-                          return _buildLoadMoreButton(controller);
+                    // Content Section
+                    Expanded(
+                      child: Obx(() {
+                        if (controller.isLoading.value &&
+                            controller.historyList.isEmpty) {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.saffron,
+                            ),
+                          );
                         }
-                        
-                        final session = filteredList[index];
-                        return _buildHistoryItem(context, controller, session);
-                      },
+
+                        final filteredList = controller.filteredHistoryList;
+
+                        if (filteredList.isEmpty &&
+                            !controller.isLoading.value) {
+                          return _buildEmptyState(controller);
+                        }
+
+                        return RefreshIndicator(
+                          onRefresh: () => controller.loadHistory(reset: true),
+                          color: AppColors.saffron,
+                          child: ListView.builder(
+                            padding: AppPaddings.all(16),
+                            itemCount:
+                                filteredList.length +
+                                (controller.hasMore &&
+                                        controller.searchQuery.value.isEmpty
+                                    ? 1
+                                    : 0),
+                            itemBuilder: (context, index) {
+                              // Show "Load More" button at the end
+                              if (index == filteredList.length &&
+                                  controller.hasMore &&
+                                  controller.searchQuery.value.isEmpty) {
+                                return _buildLoadMoreButton(controller);
+                              }
+
+                              final session = filteredList[index];
+                              return _buildHistoryItem(
+                                context,
+                                controller,
+                                session,
+                              );
+                            },
+                          ),
+                        );
+                      }),
                     ),
-                  );
-                }),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -114,10 +112,7 @@ class AstrologerChatHistoryView extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xFFFFF8F0),
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(
-                  color: const Color(0xFFE0E0E0),
-                  width: 1,
-                ),
+                border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
               ),
               child: TextField(
                 controller: controller.searchController,
@@ -132,12 +127,14 @@ class AstrologerChatHistoryView extends StatelessWidget {
                     color: Colors.grey[600],
                     size: 20.w,
                   ),
-                  suffixIcon: Obx(() => controller.searchQuery.value.isNotEmpty
-                      ? IconButton(
-                          icon: Icon(Icons.clear, size: 20.w),
-                          onPressed: controller.clearSearch,
-                        )
-                      : const SizedBox.shrink()),
+                  suffixIcon: Obx(
+                    () => controller.searchQuery.value.isNotEmpty
+                        ? IconButton(
+                            icon: Icon(Icons.clear, size: 20.w),
+                            onPressed: controller.clearSearch,
+                          )
+                        : const SizedBox.shrink(),
+                  ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 16.w,
@@ -154,7 +151,7 @@ class AstrologerChatHistoryView extends StatelessWidget {
 
   Widget _buildEmptyState(AstrologerChatHistoryController controller) {
     final hasSearch = controller.searchQuery.value.isNotEmpty;
-    
+
     return Center(
       child: Padding(
         padding: AppPaddings.all(32),
@@ -169,19 +166,19 @@ class AstrologerChatHistoryView extends StatelessWidget {
             Spacing.h(24),
             AutoTranslateText(
               hasSearch ? 'No Results Found' : 'No Chat History Yet',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: const Color(0xFF5F2221),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
+              style: MyTextTheme.largeBCB
+                  .copyWith(
+                    color: const Color(0xFF5F2221),
+                    fontWeight: FontWeight.bold,
+                  )
+                  .merge(AppTypography.h2),
             ),
             Spacing.h(8),
             AutoTranslateText(
               hasSearch
                   ? 'Try adjusting your search criteria'
                   : 'Your chat session history will appear here',
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: Colors.grey[600]),
               textAlign: TextAlign.center,
             ),
             if (hasSearch) ...[
@@ -201,9 +198,7 @@ class AstrologerChatHistoryView extends StatelessWidget {
                 ),
                 child: AutoTranslateText(
                   'Clear Search',
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: Colors.white,
-                  ),
+                  style: MyTextTheme.mediumBCB.copyWith(color: Colors.white),
                 ),
               ),
             ],
@@ -253,22 +248,19 @@ class AstrologerChatHistoryView extends StatelessWidget {
                 ),
                 child: AutoTranslateText(
                   status.toUpperCase(),
-                  style: MyTextTheme.smallBCB.copyWith(
-                    color: statusColor,
-                    fontWeight: FontWeight.w600,
-                  ).merge(AppTypography.label),
+                  style: MyTextTheme.smallBCB
+                      .copyWith(color: statusColor, fontWeight: FontWeight.w600)
+                      .merge(AppTypography.label),
                 ),
               ),
               AutoTranslateText(
                 controller.formatDate(date),
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: Colors.grey[600],
-                ),
+                style: MyTextTheme.smallBCN.copyWith(color: Colors.grey[600]),
               ),
             ],
           ),
           Spacing.h(12),
-          
+
           // Chat ID
           AutoTranslateText(
             'Chat ID: ${session.chatId}',
@@ -277,7 +269,7 @@ class AstrologerChatHistoryView extends StatelessWidget {
             ),
           ),
           Spacing.h(12),
-          
+
           // Message Stats
           Container(
             padding: EdgeInsets.all(12.w),
@@ -290,13 +282,17 @@ class AstrologerChatHistoryView extends StatelessWidget {
               children: [
                 _buildStatItem('Total', '${stats.totalMessages}', Icons.chat),
                 _buildStatItem('You', '${stats.userMessages}', Icons.person),
-                _buildStatItem('Astrologer', '${stats.astrologerMessages}', Icons.psychology),
+                _buildStatItem(
+                  'Astrologer',
+                  '${stats.astrologerMessages}',
+                  Icons.psychology,
+                ),
                 _buildStatItem('Images', '${stats.imagesShared}', Icons.image),
               ],
             ),
           ),
           Spacing.h(12),
-          
+
           // Action Buttons
           Row(
             children: [
@@ -315,7 +311,9 @@ class AstrologerChatHistoryView extends StatelessWidget {
                   icon: Icon(Icons.chat, size: 18.w),
                   label: AutoTranslateText(
                     'View Chat',
-                    style: MyTextTheme.smallBCB.copyWith().merge(AppTypography.body2),
+                    style: MyTextTheme.smallBCB.copyWith().merge(
+                      AppTypography.body2,
+                    ),
                   ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.saffron,
@@ -327,13 +325,14 @@ class AstrologerChatHistoryView extends StatelessWidget {
               Spacing.w(12),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () => controller.downloadChatTranscript(session.chatId),
+                  onPressed: () =>
+                      controller.downloadChatTranscript(session.chatId),
                   icon: Icon(Icons.download, size: 18.w),
                   label: AutoTranslateText(
                     'Download',
-                    style: MyTextTheme.smallBCB.copyWith(
-                      color: Colors.white,
-                    ).merge(AppTypography.body2),
+                    style: MyTextTheme.smallBCB
+                        .copyWith(color: Colors.white)
+                        .merge(AppTypography.body2),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.saffron,
@@ -364,47 +363,41 @@ class AstrologerChatHistoryView extends StatelessWidget {
         Spacing.h(2),
         AutoTranslateText(
           label,
-          style: MyTextTheme.smallBCN.copyWith(
-            color: Colors.grey[600],
-          ).merge(AppTypography.label),
+          style: MyTextTheme.smallBCN
+              .copyWith(color: Colors.grey[600])
+              .merge(AppTypography.label),
         ),
       ],
     );
   }
 
   Widget _buildLoadMoreButton(AstrologerChatHistoryController controller) {
-    return Obx(() => Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.h),
-      child: Center(
-        child: controller.isLoadingMore.value
-            ? const CircularProgressIndicator(color: AppColors.saffron)
-            : ElevatedButton(
-                onPressed: controller.loadMore,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.saffron,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 32.w,
-                    vertical: 12.h,
+    return Obx(
+      () => Padding(
+        padding: EdgeInsets.symmetric(vertical: 16.h),
+        child: Center(
+          child: controller.isLoadingMore.value
+              ? const CircularProgressIndicator(color: AppColors.saffron)
+              : ElevatedButton(
+                  onPressed: controller.loadMore,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.saffron,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 32.w,
+                      vertical: 12.h,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
+                  child: AutoTranslateText(
+                    'Load More',
+                    style: MyTextTheme.mediumBCB.copyWith(color: Colors.white),
                   ),
                 ),
-                child: AutoTranslateText(
-                  'Load More',
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+        ),
       ),
-    ));
+    );
   }
 }
-
-
-
-
-
-

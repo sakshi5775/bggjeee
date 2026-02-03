@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/vastu/model/vastu_room_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,33 +23,25 @@ class HomeVastuListView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
-            _buildHeader(),
-            
+            CommonHeader(title: 'Home Vastu'),
+
             // Title section
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AutoTranslateText(
-                    'Home Vastu',
-                    style: MyTextTheme.veryLargeBCB.copyWith(
-                      color: '#3E2723'.toColor(),
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.h1),
-                  ),
                   Spacing.h(8),
                   AutoTranslateText(
                     'Select a room to get Vastu guidance',
-                    style: MyTextTheme.mediumBCN.copyWith(
-                      color: '#666666'.toColor(),
-                    ).merge(AppTypography.body1),
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(color: '#666666'.toColor())
+                        .merge(AppTypography.body1),
                   ),
                 ],
               ),
             ),
-            
+
             // Room list
             Expanded(
               child: ListView.builder(
@@ -62,39 +55,6 @@ class HomeVastuListView extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -114,10 +74,7 @@ class HomeVastuListView extends StatelessWidget {
           decoration: BoxDecoration(
             color: '#ffffff'.toColor(),
             borderRadius: BorderRadius.circular(14.r),
-            border: Border.all(
-              color: '#F5D7B8'.toColor(),
-              width: 1.2,
-            ),
+            border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -148,17 +105,19 @@ class HomeVastuListView extends StatelessWidget {
                   children: [
                     AutoTranslateText(
                       room.displayName,
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: '#3E2723'.toColor(),
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h3),
+                      style: MyTextTheme.mediumBCB
+                          .copyWith(
+                            color: '#3E2723'.toColor(),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h3),
                     ),
                     Spacing.h(4),
                     AutoTranslateText(
                       room.shortExplanation,
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: '#666666'.toColor(),
-                      ).merge(AppTypography.body2),
+                      style: MyTextTheme.smallBCN
+                          .copyWith(color: '#666666'.toColor())
+                          .merge(AppTypography.body2),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -207,12 +166,3 @@ class HomeVastuListView extends StatelessWidget {
     }
   }
 }
-
-
-
-
-
-
-
-
-

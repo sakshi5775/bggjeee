@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/vastu/model/vastu_room_config.dart';
 import 'package:astrobharataiuser/screens/vastu/controller/vastu_reading_controller.dart';
 import 'package:astrobharataiuser/screens/vastu/widgets/royal_vastu_compass.dart';
@@ -26,24 +27,33 @@ class OfficeVastuCompassView extends StatefulWidget {
   State<OfficeVastuCompassView> createState() => _OfficeVastuCompassViewState();
 }
 
-class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView> with WidgetsBindingObserver {
+class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView>
+    with WidgetsBindingObserver {
   VastuReadingController? _controller;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    
+
     // CRITICAL: Initialize controller in initState before widget builds
     // Get.put() creates/registers the controller
-    _controller = Get.put(VastuReadingController(), tag: 'vastu_compass', permanent: false);
-    
+    _controller = Get.put(
+      VastuReadingController(),
+      tag: 'vastu_compass',
+      permanent: false,
+    );
+
     // Verify controller can be found (GetBuilder will try to find it)
     try {
       Get.find<VastuReadingController>(tag: 'vastu_compass');
     } catch (e) {
       // Controller not findable, recreate it
-      _controller = Get.put(VastuReadingController(), tag: 'vastu_compass', permanent: false);
+      _controller = Get.put(
+        VastuReadingController(),
+        tag: 'vastu_compass',
+        permanent: false,
+      );
     }
   }
 
@@ -61,8 +71,9 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView> with Wi
         _controller = Get.find<VastuReadingController>(tag: 'vastu_compass');
       }
     }
-    
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
       _controller?.pauseSensors();
     } else if (state == AppLifecycleState.resumed) {
       _controller?.resumeSensors();
@@ -76,28 +87,33 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView> with Wi
     final roomConfig = VastuRoomData.getRoomConfig(roomType);
 
     if (roomConfig == null) {
-      return Scaffold(
-        body: Center(
-          child: AutoTranslateText('Room not found'),
-        ),
-      );
+      return Scaffold(body: Center(child: AutoTranslateText('Room not found')));
     }
 
     // CRITICAL: Ensure controller is findable before GetBuilder tries to access it
     // Use Get.put() which will reuse existing or create new
-    _controller = Get.put(VastuReadingController(), tag: 'vastu_compass', permanent: false);
-    
+    _controller = Get.put(
+      VastuReadingController(),
+      tag: 'vastu_compass',
+      permanent: false,
+    );
+
     // Safety: Verify controller can be found (GetBuilder will try to find it)
     // If not findable immediately, recreate it synchronously
     if (!Get.isRegistered<VastuReadingController>(tag: 'vastu_compass')) {
-      _controller = Get.put(VastuReadingController(), tag: 'vastu_compass', permanent: false);
+      _controller = Get.put(
+        VastuReadingController(),
+        tag: 'vastu_compass',
+        permanent: false,
+      );
     }
 
     return Scaffold(
       backgroundColor: '#FFF8E1'.toColor(),
       body: SafeArea(
         child: SafeVastuGetBuilder(
-          controllerInstance: _controller, // Pass controller instance to avoid duplicate creation
+          controllerInstance:
+              _controller, // Pass controller instance to avoid duplicate creation
           builder: (controller) {
             // Camera mode - Enhanced AR with room-aware features
             if (controller.isCameraMode) {
@@ -106,15 +122,31 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView> with Wi
                 direction: controller.currentDirection,
                 isCalibrated: controller.isCalibrated,
                 onClose: () => controller.toggleCameraMode(),
-                roomConfig: roomConfig, // Pass room config for enhanced AR features
+                roomConfig:
+                    roomConfig, // Pass room config for enhanced AR features
               );
             }
 
             return Column(
               children: [
                 // Header
-                _buildHeader(roomConfig.displayName, roomConfig, controller),
-                
+                CommonHeader(
+                  title: '${roomConfig.displayName} Vastu',
+                  customActions: [
+                    IconButton(
+                      onPressed: () {
+                        final args = {'roomConfig': roomConfig};
+                        Get.toNamed(AppRoutes.arVastu, arguments: args);
+                      },
+                      icon: Icon(
+                        Icons.camera_alt,
+                        color: '#6F221E'.toColor(),
+                        size: 24.w,
+                      ),
+                    ),
+                  ],
+                ),
+
                 // Main compass area (same layout as home Vastu)
                 Expanded(
                   child: Center(
@@ -132,7 +164,8 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView> with Wi
                               currentDirection: controller.currentDirection,
                               isLocked: false,
                               onCenterTap: () {},
-                              compassSize: 300.0, // keep compass size consistent
+                              compassSize:
+                                  300.0, // keep compass size consistent
                             ),
                           ),
                           // Contextual overlay (currently no colors)
@@ -165,7 +198,7 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView> with Wi
                     ),
                   ),
                 ),
-                
+
                 // Bottom controls
                 _buildBottomControls(controller, roomConfig),
               ],
@@ -176,86 +209,15 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView> with Wi
     );
   }
 
-  Widget _buildHeader(String roomName, VastuRoomConfig roomConfig, VastuReadingController controller) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-          Spacing.w(12),
-          Expanded(
-            child: AutoTranslateText(
-              '$roomName Vastu',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: '#3E2723'.toColor(),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
-            ),
-          ),
-          GetBuilder<VastuReadingController>(
-            builder: (controller) {
-              return GestureDetector(
-                onTap: () {
-                  final args = {'roomConfig': roomConfig};
-                  Get.toNamed(AppRoutes.arVastu, arguments: args);
-                },
-                child: Container(
-                  width: 40.w,
-                  height: 40.w,
-                  decoration: BoxDecoration(
-                    color: "#F38B3B".toColor(),
-                    borderRadius: BorderRadius.circular(8.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.camera_alt,
-                    color: Colors.white,
-                    size: 20.w,
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildBottomControls(
     VastuReadingController controller,
     VastuRoomConfig roomConfig,
   ) {
     final isIdeal = roomConfig.isIdealDirection(controller.currentDirection);
     final isAvoid = roomConfig.isAvoidDirection(controller.currentDirection);
-    final guidance = roomConfig.getGuidanceForDirection(controller.currentDirection);
+    final guidance = roomConfig.getGuidanceForDirection(
+      controller.currentDirection,
+    );
 
     return Container(
       padding: EdgeInsets.all(20.w),
@@ -296,15 +258,15 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView> with Wi
               color: isIdeal
                   ? '#E8F5E9'.toColor()
                   : isAvoid
-                      ? '#FFEBEE'.toColor()
-                      : '#E3F2FD'.toColor(),
+                  ? '#FFEBEE'.toColor()
+                  : '#E3F2FD'.toColor(),
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
                 color: isIdeal
                     ? '#4CAF50'.toColor()
                     : isAvoid
-                        ? '#F44336'.toColor()
-                        : '#4A90E2'.toColor(),
+                    ? '#F44336'.toColor()
+                    : '#4A90E2'.toColor(),
                 width: 1.5,
               ),
             ),
@@ -317,31 +279,33 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView> with Wi
                       isIdeal
                           ? Icons.check_circle
                           : isAvoid
-                              ? Icons.warning
-                              : Icons.info,
+                          ? Icons.warning
+                          : Icons.info,
                       color: isIdeal
                           ? '#4CAF50'.toColor()
                           : isAvoid
-                              ? '#F44336'.toColor()
-                              : '#4A90E2'.toColor(),
+                          ? '#F44336'.toColor()
+                          : '#4A90E2'.toColor(),
                       size: 24.w,
                     ),
                     Spacing.w(8),
                     AutoTranslateText(
                       controller.currentDirection,
-                      style: MyTextTheme.largeBCB.copyWith(
-                        color: '#3E2723'.toColor(),
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h2),
+                      style: MyTextTheme.largeBCB
+                          .copyWith(
+                            color: '#3E2723'.toColor(),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h2),
                     ),
                   ],
                 ),
                 Spacing.h(8),
                 AutoTranslateText(
                   guidance,
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: '#666666'.toColor(),
-                  ).merge(AppTypography.body1),
+                  style: MyTextTheme.mediumBCN
+                      .copyWith(color: '#666666'.toColor())
+                      .merge(AppTypography.body1),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -390,7 +354,10 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView> with Wi
                   style: ElevatedButton.styleFrom(
                     backgroundColor: '#4A90E2'.toColor(),
                     foregroundColor: '#ffffff'.toColor(),
-                    padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 14.h,
+                      horizontal: 16.w,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.r),
                     ),
@@ -404,10 +371,12 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView> with Wi
                   ),
                   label: AutoTranslateText(
                     'Guide',
-                    style: MyTextTheme.smallBCB.copyWith(
-                      color: '#ffffff'.toColor(),
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.body2),
+                    style: MyTextTheme.smallBCB
+                        .copyWith(
+                          color: '#ffffff'.toColor(),
+                          fontWeight: FontWeight.bold,
+                        )
+                        .merge(AppTypography.body2),
                   ),
                 ),
               ),
@@ -447,4 +416,3 @@ class _OfficeVastuCompassViewState extends State<OfficeVastuCompassView> with Wi
     );
   }
 }
-

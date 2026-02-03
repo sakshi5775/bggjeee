@@ -5,7 +5,9 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/screens/vastu/model/vastu_room_config.dart';
 import 'package:astrobharataiuser/screens/vastu/model/vastu_energy_model.dart';
 import 'package:astrobharataiuser/screens/vastu/widgets/correction_step_card.dart';
@@ -18,13 +20,9 @@ class VastuCorrectionView extends StatelessWidget {
   Widget build(BuildContext context) {
     final arguments = Get.arguments as Map<String, dynamic>?;
     final roomConfig = arguments?['roomConfig'] as VastuRoomConfig?;
-    
+
     if (roomConfig == null) {
-      return Scaffold(
-        body: Center(
-          child: AutoTranslateText('Room not found'),
-        ),
-      );
+      return Scaffold(body: Center(child: AutoTranslateText('Room not found')));
     }
 
     // Get controller safely - may not exist if navigated directly
@@ -33,118 +31,87 @@ class VastuCorrectionView extends StatelessWidget {
       final controller = Get.find<VastuReadingController>(tag: 'vastu_compass');
       currentDirection = controller.currentDirection;
     }
-    
+
     final energyModel = VastuIntelligenceEngine.analyzeRoom(
       roomConfig,
       currentDirection,
     );
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(roomConfig.displayName),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(16.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Energy status card
-                    _buildEnergyStatusCard(energyModel),
-                    Spacing.h(24),
-                    
-                    // Dosh warnings
-                    if (energyModel.hasDosh) ...[
-                      _buildDoshWarningCard(energyModel),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Padding(
+          padding: EdgeInsets.only(
+            top:
+                (MediaQuery.of(context).padding.top > 0
+                        ? MediaQuery.of(context).padding.top * 0.5
+                        : 0.0)
+                    .clamp(6.0, 24.0)
+                    .toDouble(),
+          ),
+          child: Column(
+            children: [
+              CommonHeader(title: '${roomConfig.displayName} Correction Guide'),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(16.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Energy status card
+                      _buildEnergyStatusCard(energyModel),
+                      Spacing.h(24),
+
+                      // Dosh warnings
+                      if (energyModel.hasDosh) ...[
+                        _buildDoshWarningCard(energyModel),
+                        Spacing.h(24),
+                      ],
+
+                      // Correction steps
+                      AutoTranslateText(
+                        'Correction Steps',
+                        style: MyTextTheme.largeBCB
+                            .copyWith(
+                              color: '#3E2723'.toColor(),
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.h2),
+                      ),
+                      Spacing.h(16),
+                      ...energyModel.correctionSteps.asMap().entries.map((
+                        entry,
+                      ) {
+                        return CorrectionStepCard(
+                          stepNumber: entry.key + 1,
+                          title: _extractStepTitle(entry.value),
+                          description: entry.value,
+                          icon: _getStepIcon(entry.key),
+                        );
+                      }),
+
                       Spacing.h(24),
                     ],
-                    
-                    // Correction steps
-                    AutoTranslateText(
-                      'Correction Steps',
-                      style: MyTextTheme.largeBCB.copyWith(
-                        color: '#3E2723'.toColor(),
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h2),
-                    ),
-                    Spacing.h(16),
-                    ...energyModel.correctionSteps.asMap().entries.map((entry) {
-                      return CorrectionStepCard(
-                        stepNumber: entry.key + 1,
-                        title: _extractStepTitle(entry.value),
-                        description: entry.value,
-                        icon: _getStepIcon(entry.key),
-                      );
-                    }),
-                    
-                    Spacing.h(24),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(String roomName) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-          Spacing.w(12),
-          Expanded(
-            child: AutoTranslateText(
-              '$roomName Correction Guide',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: '#3E2723'.toColor(),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
-            ),
-          ),
-        ],
       ),
     );
   }
 
   Widget _buildEnergyStatusCard(VastuEnergyModel energyModel) {
     final statusColor = _getStatusColor(energyModel.energyStatus);
-    
+
     return Container(
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         color: statusColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: statusColor,
-          width: 2,
-        ),
+        border: Border.all(color: statusColor, width: 2),
       ),
       child: Column(
         children: [
@@ -159,19 +126,18 @@ class VastuCorrectionView extends StatelessWidget {
               Spacing.w(12),
               AutoTranslateText(
                 energyModel.energyStatus,
-                style: MyTextTheme.veryLargeBCB.copyWith(
-                  color: statusColor,
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h1),
+                style: MyTextTheme.veryLargeBCB
+                    .copyWith(color: statusColor, fontWeight: FontWeight.bold)
+                    .merge(AppTypography.h1),
               ),
             ],
           ),
           Spacing.h(12),
           AutoTranslateText(
             'Vastu Score: ${(energyModel.vastuScore * 100).toInt()}%',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: '#666666'.toColor(),
-            ).merge(AppTypography.body1),
+            style: MyTextTheme.mediumBCN
+                .copyWith(color: '#666666'.toColor())
+                .merge(AppTypography.body1),
           ),
         ],
       ),
@@ -184,54 +150,51 @@ class VastuCorrectionView extends StatelessWidget {
       decoration: BoxDecoration(
         color: '#FFEBEE'.toColor(),
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: '#F44336'.toColor(),
-          width: 2,
-        ),
+        border: Border.all(color: '#F44336'.toColor(), width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.warning_amber,
-                color: '#F44336'.toColor(),
-                size: 24.w,
-              ),
+              Icon(Icons.warning_amber, color: '#F44336'.toColor(), size: 24.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Vastu Dosh Detected',
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: '#F44336'.toColor(),
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h2),
+                style: MyTextTheme.largeBCB
+                    .copyWith(
+                      color: '#F44336'.toColor(),
+                      fontWeight: FontWeight.bold,
+                    )
+                    .merge(AppTypography.h2),
               ),
             ],
           ),
           Spacing.h(12),
-          ...energyModel.doshWarnings.map((warning) => Padding(
-            padding: EdgeInsets.only(bottom: 8.h),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  color: '#F44336'.toColor(),
-                  size: 16.w,
-                ),
-                Spacing.w(8),
-                Expanded(
-                  child: AutoTranslateText(
-                    warning,
-                    style: MyTextTheme.mediumBCN.copyWith(
-                      color: '#666666'.toColor(),
-                    ).merge(AppTypography.body1),
+          ...energyModel.doshWarnings.map(
+            (warning) => Padding(
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    color: '#F44336'.toColor(),
+                    size: 16.w,
                   ),
-                ),
-              ],
+                  Spacing.w(8),
+                  Expanded(
+                    child: AutoTranslateText(
+                      warning,
+                      style: MyTextTheme.mediumBCN
+                          .copyWith(color: '#666666'.toColor())
+                          .merge(AppTypography.body1),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -283,4 +246,3 @@ class VastuCorrectionView extends StatelessWidget {
     return icons[index % icons.length];
   }
 }
-

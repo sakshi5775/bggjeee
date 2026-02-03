@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.da
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -18,10 +19,12 @@ import '../../../core/routes/app_routes.dart';
 class ConsultationHistoryView extends StatefulWidget {
   final bool showBackButton;
 
-  const ConsultationHistoryView({Key? key, this.showBackButton = true}) : super(key: key);
+  const ConsultationHistoryView({Key? key, this.showBackButton = true})
+    : super(key: key);
 
   @override
-  State<ConsultationHistoryView> createState() => _ConsultationHistoryViewState();
+  State<ConsultationHistoryView> createState() =>
+      _ConsultationHistoryViewState();
 }
 
 class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
@@ -86,88 +89,81 @@ class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: ['#FCE5AA'.toColor(), '#FFFCF3'.toColor(), '#FFFFFF'.toColor()],
+          colors: [
+            '#FCE5AA'.toColor(),
+            '#FFFCF3'.toColor(),
+            '#FFFFFF'.toColor(),
+          ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: widget.showBackButton
-              ? IconButton(
-                  icon: Icon(Icons.arrow_back, color: '#3D0C11'.toColor(), size: 24.w),
-                  onPressed: () => Get.back(),
-                )
-              : const SizedBox.shrink(),
-          leadingWidth: widget.showBackButton ? null : 0,
-          title: AutoTranslateText(
-            'Consultation History',
-            style: AppTypography.h3.copyWith(
-              color: '#3D0C11'.toColor(),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          centerTitle: true,
-          actions: [
-            GestureDetector(
-              onTap: () => Get.toNamed(AppRoutes.wallet),
-              child: Padding(
-                padding: EdgeInsets.only(right: 16.w),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.account_balance_wallet_outlined,
-                      color: '#3D0C11'.toColor(),
-                      size: 22.w,
-                    ),
-                    Spacing.w(6),
-                    Obx(
-                      () => AutoTranslateText(
-                        '₹${walletController.walletBalance.value.toStringAsFixed(0)}',
-                        style: AppTypography.body1.copyWith(
-                          color: '#3D0C11'.toColor(),
-                          fontWeight: FontWeight.w600,
+        body: Column(
+          children: [
+            CommonHeader(
+              title: 'Consultation History',
+              showBackButton: widget.showBackButton,
+              customActions: [
+                GestureDetector(
+                  onTap: () => Get.toNamed(AppRoutes.wallet),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.account_balance_wallet_outlined,
+                        color: '#3D0C11'.toColor(),
+                        size: 22.w,
+                      ),
+                      Spacing.w(6),
+                      Obx(
+                        () => AutoTranslateText(
+                          '₹${walletController.walletBalance.value.toStringAsFixed(0)}',
+                          style: AppTypography.body1.copyWith(
+                            color: '#3D0C11'.toColor(),
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+                SizedBox(width: 16.w),
+              ],
+            ),
+            TabBar(
+              controller: _tabController,
+              indicatorColor: AppColors.deepOrange,
+              indicatorWeight: 3,
+              labelColor: '#3D0C11'.toColor(),
+              unselectedLabelColor: '#6F221E'.toColor().withOpacity(0.6),
+              labelStyle: MyTextTheme.mediumBCB.copyWith(
+                fontWeight: FontWeight.w600,
+                color: '#3D0C11'.toColor(),
               ),
+              unselectedLabelStyle: MyTextTheme.mediumBCN.copyWith(
+                color: '#6F221E'.toColor().withOpacity(0.6),
+              ),
+              tabs: const [
+                Tab(text: 'Chat History'),
+                Tab(text: 'Call History'),
+                Tab(text: 'Video History'),
+              ],
             ),
-          ],
-          bottom: TabBar(
-            controller: _tabController,
-            indicatorColor: AppColors.deepOrange,
-            indicatorWeight: 3,
-            labelColor: '#3D0C11'.toColor(),
-            unselectedLabelColor: '#6F221E'.toColor().withOpacity(0.6),
-            labelStyle: MyTextTheme.mediumBCB.copyWith(
-              fontWeight: FontWeight.w600,
-              color: '#3D0C11'.toColor(),
-            ),
-            unselectedLabelStyle: MyTextTheme.mediumBCN.copyWith(
-              color: '#6F221E'.toColor().withOpacity(0.6),
-            ),
-            tabs: const [
-              Tab(text: 'Chat History'),
-              Tab(text: 'Call History'),
-              Tab(text: 'Video History'),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            _ChatHistoryTab(),
-            _EmptyHistoryTab(
-              onTap: () => Get.to(() => const AstrologyServicesView()),
-            ),
-            _EmptyHistoryTab(
-              onTap: () => Get.to(() => const AstrologyServicesView()),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _ChatHistoryTab(),
+                  _EmptyHistoryTab(
+                    onTap: () => Get.to(() => const AstrologyServicesView()),
+                  ),
+                  _EmptyHistoryTab(
+                    onTap: () => Get.to(() => const AstrologyServicesView()),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -198,8 +194,11 @@ class _ChatHistoryTab extends StatelessWidget {
         color: AppColors.deepOrange,
         child: ListView.builder(
           padding: AppPaddings.all(16),
-          itemCount: list.length +
-              (controller.hasMore && controller.searchQuery.value.isEmpty ? 1 : 0),
+          itemCount:
+              list.length +
+              (controller.hasMore && controller.searchQuery.value.isEmpty
+                  ? 1
+                  : 0),
           itemBuilder: (context, index) {
             if (index == list.length) {
               return Padding(
@@ -262,10 +261,9 @@ class _ChatHistoryTab extends StatelessWidget {
                 ),
                 child: AutoTranslateText(
                   session.status.toUpperCase(),
-                  style: MyTextTheme.smallBCB.copyWith(
-                    color: statusColor,
-                    fontWeight: FontWeight.w600,
-                  ).merge(AppTypography.label),
+                  style: MyTextTheme.smallBCB
+                      .copyWith(color: statusColor, fontWeight: FontWeight.w600)
+                      .merge(AppTypography.label),
                 ),
               ),
               AutoTranslateText(
@@ -294,7 +292,10 @@ class _ChatHistoryTab extends StatelessWidget {
                     snackPosition: SnackPosition.BOTTOM,
                   ),
                   icon: Icon(Icons.chat_bubble_outline, size: 16.w),
-                  label: AutoTranslateText('View Chat', style: AppTypography.label),
+                  label: AutoTranslateText(
+                    'View Chat',
+                    style: AppTypography.label,
+                  ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.deepOrange,
                     side: BorderSide(color: AppColors.deepOrange),
@@ -304,9 +305,13 @@ class _ChatHistoryTab extends StatelessWidget {
               Spacing.w(12),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () => controller.downloadChatTranscript(session.chatId),
+                  onPressed: () =>
+                      controller.downloadChatTranscript(session.chatId),
                   icon: Icon(Icons.download, size: 16.w),
-                  label: AutoTranslateText('Download', style: AppTypography.label),
+                  label: AutoTranslateText(
+                    'Download',
+                    style: AppTypography.label,
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.deepOrange,
                     foregroundColor: Colors.white,

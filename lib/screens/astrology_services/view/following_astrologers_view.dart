@@ -1,9 +1,9 @@
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/following_astrologers_controller.dart';
-import 'package:astrobharataiuser/screens/astrology_services/widgets/astrology_header_widget.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -23,16 +23,41 @@ class FollowingAstrologersView extends StatelessWidget {
         child: Column(
           children: [
             // Header Section
-            _buildHeader(context),
-            
+            CommonHeader(
+              title: 'Following',
+              customActions: [
+                Obx(() {
+                  final controller = Get.find<FollowingAstrologersController>();
+                  return Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 6.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDFB343),
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: AutoTranslateText(
+                      '${controller.totalFollowing.value}',
+                      style: MyTextTheme.smallBCB
+                          .copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.body1),
+                    ),
+                  );
+                }),
+              ],
+            ),
+
             // Astrologer List
             Expanded(
               child: Obx(() {
-                if (controller.isLoading.value && controller.followingAstrologers.isEmpty) {
+                if (controller.isLoading.value &&
+                    controller.followingAstrologers.isEmpty) {
                   return const Center(
-                    child: CircularProgressIndicator(
-                      color: Color(0xFFDFB343),
-                    ),
+                    child: CircularProgressIndicator(color: Color(0xFFDFB343)),
                   );
                 }
 
@@ -84,7 +109,9 @@ class FollowingAstrologersView extends StatelessWidget {
                       horizontal: 16.w,
                       vertical: 16.h,
                     ),
-                    itemCount: controller.followingAstrologers.length + (controller.hasMore.value ? 1 : 0),
+                    itemCount:
+                        controller.followingAstrologers.length +
+                        (controller.hasMore.value ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == controller.followingAstrologers.length) {
                         // Load more when reaching the end
@@ -113,56 +140,6 @@ class FollowingAstrologersView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return AstrologyHeaderWidget(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      content: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Back button
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
-                  size: 24.w,
-                ),
-                Spacing.w(8),
-                AutoTranslateText(
-                  'Following',
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
-                ),
-              ],
-            ),
-          ),
-          // Count badge
-          Obx(() {
-            final controller = Get.find<FollowingAstrologersController>();
-            return Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-              decoration: BoxDecoration(
-                color: const Color(0xFFDFB343),
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              child: AutoTranslateText(
-                '${controller.totalFollowing.value}',
-                style: MyTextTheme.smallBCB.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.body1),
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
   Widget _buildAstrologerCard(AstrologerModel astrologer) {
     final isOnline = astrologer.isOnline;
     final rating = astrologer.rating;
@@ -170,12 +147,14 @@ class FollowingAstrologersView extends StatelessWidget {
     final specializations = astrologer.specializations.take(2).join(', ');
     final languages = astrologer.languages.take(2).join(', ');
     final experience = '${astrologer.experienceYears} years';
-    
+
     // Get price
     String price = 'N/A';
-    if (astrologer.voicePricePerMin != null && astrologer.voicePricePerMin! > 0) {
+    if (astrologer.voicePricePerMin != null &&
+        astrologer.voicePricePerMin! > 0) {
       price = '₹${astrologer.voicePricePerMin!.toStringAsFixed(0)}/min';
-    } else if (astrologer.videoPricePerMin != null && astrologer.videoPricePerMin! > 0) {
+    } else if (astrologer.videoPricePerMin != null &&
+        astrologer.videoPricePerMin! > 0) {
       price = '₹${astrologer.videoPricePerMin!.toStringAsFixed(0)}/min';
     } else if (astrologer.chatPrice != null && astrologer.chatPrice! > 0) {
       price = '₹${astrologer.chatPrice!.toStringAsFixed(0)}/msg';
@@ -252,11 +231,7 @@ class FollowingAstrologersView extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.star,
-                        color: Colors.white,
-                        size: 12.w,
-                      ),
+                      Icon(Icons.star, color: Colors.white, size: 12.w),
                       SizedBox(width: 4.w),
                       AutoTranslateText(
                         rating.toStringAsFixed(1),
@@ -290,11 +265,7 @@ class FollowingAstrologersView extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      Icon(
-                        Icons.verified,
-                        color: Colors.blue,
-                        size: 18.w,
-                      ),
+                      Icon(Icons.verified, color: Colors.blue, size: 18.w),
                     ],
                   ),
                   Spacing.h(4),
@@ -302,9 +273,9 @@ class FollowingAstrologersView extends StatelessWidget {
                   if (specializations.isNotEmpty)
                     AutoTranslateText(
                       specializations,
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: const Color(0xFF666666),
-                      ).merge(AppTypography.body2),
+                      style: MyTextTheme.smallBCN
+                          .copyWith(color: const Color(0xFF666666))
+                          .merge(AppTypography.body2),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -323,9 +294,9 @@ class FollowingAstrologersView extends StatelessWidget {
                           SizedBox(width: 4.w),
                           AutoTranslateText(
                             experience,
-                            style: MyTextTheme.smallBCN.copyWith(
-                              color: const Color(0xFF666666),
-                            ).merge(AppTypography.label),
+                            style: MyTextTheme.smallBCN
+                                .copyWith(color: const Color(0xFF666666))
+                                .merge(AppTypography.label),
                           ),
                         ],
                       ),
@@ -341,9 +312,9 @@ class FollowingAstrologersView extends StatelessWidget {
                           SizedBox(width: 4.w),
                           AutoTranslateText(
                             '$totalRatings reviews',
-                            style: MyTextTheme.smallBCN.copyWith(
-                              color: const Color(0xFF666666),
-                            ).merge(AppTypography.label),
+                            style: MyTextTheme.smallBCN
+                                .copyWith(color: const Color(0xFF666666))
+                                .merge(AppTypography.label),
                           ),
                         ],
                       ),
@@ -363,9 +334,9 @@ class FollowingAstrologersView extends StatelessWidget {
                         Expanded(
                           child: AutoTranslateText(
                             languages,
-                            style: MyTextTheme.smallBCN.copyWith(
-                              color: const Color(0xFF666666),
-                            ).merge(AppTypography.label),
+                            style: MyTextTheme.smallBCN
+                                .copyWith(color: const Color(0xFF666666))
+                                .merge(AppTypography.label),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -386,11 +357,17 @@ class FollowingAstrologersView extends StatelessWidget {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Get.toNamed(AppRoutes.astrologerDetail, arguments: astrologer);
+                          Get.toNamed(
+                            AppRoutes.astrologerDetail,
+                            arguments: astrologer,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFDFB343),
-                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 8.h,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.r),
                           ),
@@ -448,7 +425,7 @@ class FollowingAstrologersView extends StatelessWidget {
               child: CircularProgressIndicator(
                 value: loadingProgress.expectedTotalBytes != null
                     ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
+                          loadingProgress.expectedTotalBytes!
                     : null,
                 color: const Color(0xFFDFB343),
               ),
@@ -474,4 +451,3 @@ class FollowingAstrologersView extends StatelessWidget {
     }
   }
 }
-

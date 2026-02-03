@@ -3,7 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/transit_today_controller.dart';
-import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +37,7 @@ class TransitTodayView extends BasePage<TransitTodayController> {
           child: SafeArea(
             child: Column(
               children: [
-                KundliHeader(title: 'Transit Today'),
+                const CommonHeader(title: 'Transit Today'),
                 _buildTabs(),
                 Expanded(
                   child: PageView(
@@ -76,7 +76,11 @@ class TransitTodayView extends BasePage<TransitTodayController> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [orangeLight, orange], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                  gradient: const LinearGradient(
+                    colors: [orangeLight, orange],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Row(
@@ -84,7 +88,14 @@ class TransitTodayView extends BasePage<TransitTodayController> {
                   children: [
                     Icon(Icons.date_range, size: 14.w, color: Colors.white),
                     SizedBox(width: 6.w),
-                    AutoTranslateText('Transit', style: MyTextTheme.mediumBCB.copyWith(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 11.sp)),
+                    AutoTranslateText(
+                      'Transit',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 11.sp,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -98,7 +109,8 @@ class TransitTodayView extends BasePage<TransitTodayController> {
                   children: [
                     SizedBox(width: 4.w),
                     ...List.generate(tabs.length, (i) {
-                      if (!controller.tabKeys.containsKey(i)) controller.tabKeys[i] = GlobalKey();
+                      if (!controller.tabKeys.containsKey(i))
+                        controller.tabKeys[i] = GlobalKey();
                       final isSelected = selectedIndex == i;
                       return Padding(
                         key: controller.tabKeys[i],
@@ -107,14 +119,36 @@ class TransitTodayView extends BasePage<TransitTodayController> {
                           onTap: () => controller.onTabSelected(i),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
-                            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 14.w,
+                              vertical: 8.h,
+                            ),
                             decoration: BoxDecoration(
                               color: isSelected ? orange : Colors.transparent,
                               borderRadius: BorderRadius.circular(12.r),
-                              border: isSelected ? null : Border.all(color: maroon.withOpacity(0.2)),
-                              boxShadow: isSelected ? [BoxShadow(color: orange.withOpacity(0.25), blurRadius: 4, offset: const Offset(0, 1))] : null,
+                              border: isSelected
+                                  ? null
+                                  : Border.all(color: maroon.withOpacity(0.2)),
+                              boxShadow: isSelected
+                                  ? [
+                                      BoxShadow(
+                                        color: orange.withOpacity(0.25),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 1),
+                                      ),
+                                    ]
+                                  : null,
                             ),
-                            child: AutoTranslateText(tabs[i], style: MyTextTheme.mediumBCB.copyWith(color: isSelected ? Colors.white : maroon, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500, fontSize: 12.sp)),
+                            child: AutoTranslateText(
+                              tabs[i],
+                              style: MyTextTheme.mediumBCB.copyWith(
+                                color: isSelected ? Colors.white : maroon,
+                                fontWeight: isSelected
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                                fontSize: 12.sp,
+                              ),
+                            ),
                           ),
                         ),
                       );
@@ -141,14 +175,29 @@ class TransitTodayView extends BasePage<TransitTodayController> {
       final data = controller.dailyPredictionData.value;
       if (data == null) {
         return Center(
-          child: AutoTranslateText('Generate Kundli first to view transit prediction.', style: MyTextTheme.mediumBCN.copyWith(color: maroon.withOpacity(0.6))),
+          child: AutoTranslateText(
+            'Generate Kundli first to view transit prediction.',
+            style: MyTextTheme.mediumBCN.copyWith(
+              color: maroon.withOpacity(0.6),
+            ),
+          ),
         );
       }
 
       final planetSentence = data['planet_sentence']?.toString() ?? '';
       final totalScore = data['total_score'] as Map<String, dynamic>?;
       final totalText = totalScore?['split_response']?.toString() ?? '';
-      final keys = ['physique', 'health', 'relationship', 'career', 'travel', 'family', 'friends', 'finances', 'status'];
+      final keys = [
+        'physique',
+        'health',
+        'relationship',
+        'career',
+        'travel',
+        'family',
+        'friends',
+        'finances',
+        'status',
+      ];
 
       return SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
@@ -170,7 +219,11 @@ class TransitTodayView extends BasePage<TransitTodayController> {
               final label = k[0].toUpperCase() + k.substring(1);
               return Padding(
                 padding: EdgeInsets.only(bottom: 8.h),
-                child: _compactCard(Icons.star, '$label${score != null ? ' ($score)' : ''}', text),
+                child: _compactCard(
+                  Icons.star,
+                  '$label${score != null ? ' ($score)' : ''}',
+                  text,
+                ),
               );
             }),
           ],
@@ -195,7 +248,13 @@ class TransitTodayView extends BasePage<TransitTodayController> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(color: maroon.withOpacity(0.2)),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 4, offset: const Offset(0, 2))],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
@@ -204,10 +263,24 @@ class TransitTodayView extends BasePage<TransitTodayController> {
                       value: controller.selectedPlanet.value,
                       decoration: InputDecoration(
                         labelText: 'Planet',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 8.h,
+                        ),
                       ),
-                      items: TransitTodayController.planetNames.map((p) => DropdownMenuItem(value: p, child: AutoTranslateText(p[0].toUpperCase() + p.substring(1)))).toList(),
+                      items: TransitTodayController.planetNames
+                          .map(
+                            (p) => DropdownMenuItem(
+                              value: p,
+                              child: AutoTranslateText(
+                                p[0].toUpperCase() + p.substring(1),
+                              ),
+                            ),
+                          )
+                          .toList(),
                       onChanged: (v) {
                         if (v != null) {
                           controller.selectedPlanet.value = v;
@@ -218,13 +291,21 @@ class TransitTodayView extends BasePage<TransitTodayController> {
                     ),
                   ),
                   Spacing.w(10),
-                  IconButton(icon: Icon(Icons.refresh, color: orange), onPressed: controller.refreshTransits),
+                  IconButton(
+                    icon: Icon(Icons.refresh, color: orange),
+                    onPressed: controller.refreshTransits,
+                  ),
                 ],
               ),
             ),
             Spacing.h(10),
             if (controller.isLoadingTransits.value)
-              Center(child: Padding(padding: EdgeInsets.all(24.h), child: CircularProgressIndicator(color: orange)))
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.all(24.h),
+                  child: CircularProgressIndicator(color: orange),
+                ),
+              )
             else
               _buildTransitsContent(),
           ],
@@ -237,13 +318,19 @@ class TransitTodayView extends BasePage<TransitTodayController> {
     const maroon = Color(0xFF6F221E);
     const orange = Color(0xFFed6f30);
     final data = controller.dailyTransitsData.value;
-    final list = data?['response'] as List<dynamic>? ?? data as List<dynamic>? ?? [];
+    final list =
+        data?['response'] as List<dynamic>? ?? data as List<dynamic>? ?? [];
 
     if (list.isEmpty) {
       return Center(
         child: Padding(
           padding: EdgeInsets.all(24.h),
-          child: AutoTranslateText('Select planet and tap refresh to load daily transits.', style: MyTextTheme.mediumBCN.copyWith(color: maroon.withOpacity(0.6))),
+          child: AutoTranslateText(
+            'Select planet and tap refresh to load daily transits.',
+            style: MyTextTheme.mediumBCN.copyWith(
+              color: maroon.withOpacity(0.6),
+            ),
+          ),
         ),
       );
     }
@@ -264,10 +351,15 @@ class TransitTodayView extends BasePage<TransitTodayController> {
         final startDegreeZodiac = m['start_degree_zodiac']?.toString() ?? '';
         final endDegreeZodiac = m['end_degree_zodiac']?.toString() ?? '';
         final isRetrograde = m['is_retrograde'] as bool? ?? false;
-        final sd = startDegree is num ? startDegree.toStringAsFixed(1) : startDegree?.toString() ?? '';
-        final ed = endDegree is num ? endDegree.toStringAsFixed(1) : endDegree?.toString() ?? '';
+        final sd = startDegree is num
+            ? startDegree.toStringAsFixed(1)
+            : startDegree?.toString() ?? '';
+        final ed = endDegree is num
+            ? endDegree.toStringAsFixed(1)
+            : endDegree?.toString() ?? '';
         final degreeStr = (sd.isNotEmpty || ed.isNotEmpty)
-            ? '${sd.isNotEmpty ? '$sd°' : ''}${startDegreeZodiac.isNotEmpty ? ' $startDegreeZodiac' : ''}${sd.isNotEmpty && ed.isNotEmpty ? ' – ' : ''}${ed.isNotEmpty ? '$ed°' : ''}${endDegreeZodiac.isNotEmpty ? ' $endDegreeZodiac' : ''}'.trim()
+            ? '${sd.isNotEmpty ? '$sd°' : ''}${startDegreeZodiac.isNotEmpty ? ' $startDegreeZodiac' : ''}${sd.isNotEmpty && ed.isNotEmpty ? ' – ' : ''}${ed.isNotEmpty ? '$ed°' : ''}${endDegreeZodiac.isNotEmpty ? ' $endDegreeZodiac' : ''}'
+                  .trim()
             : '';
         return Container(
           margin: EdgeInsets.only(bottom: 8.h),
@@ -276,40 +368,87 @@ class TransitTodayView extends BasePage<TransitTodayController> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(color: maroon.withOpacity(0.15)),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 4, offset: const Offset(0, 2))],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  if (isRetrograde) Padding(padding: EdgeInsets.only(right: 6.w), child: Icon(Icons.replay, size: 14.w, color: orange)),
+                  if (isRetrograde)
+                    Padding(
+                      padding: EdgeInsets.only(right: 6.w),
+                      child: Icon(Icons.replay, size: 14.w, color: orange),
+                    ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 4.h,
+                    ),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(colors: [Color(0xFFFF8A3D), orange]),
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFF8A3D), orange],
+                      ),
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: AutoTranslateText(
-                      natalPlanetZodiac.isNotEmpty ? '$transitPlanet → $natalPlanet ($natalPlanetZodiac)' : '$transitPlanet → $natalPlanet',
-                      style: MyTextTheme.smallBCB.copyWith(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 11.sp),
+                      natalPlanetZodiac.isNotEmpty
+                          ? '$transitPlanet → $natalPlanet ($natalPlanetZodiac)'
+                          : '$transitPlanet → $natalPlanet',
+                      style: MyTextTheme.smallBCB.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11.sp,
+                      ),
                     ),
                   ),
                   Spacing.w(8),
-                  AutoTranslateText(aspect, style: MyTextTheme.smallBCN.copyWith(color: maroon, fontSize: 11.sp)),
+                  AutoTranslateText(
+                    aspect,
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: maroon,
+                      fontSize: 11.sp,
+                    ),
+                  ),
                 ],
               ),
               if (startTime.isNotEmpty || endTime.isNotEmpty) ...[
                 Spacing.h(6),
-                AutoTranslateText('$startTime – $endTime', style: MyTextTheme.smallBCN.copyWith(color: maroon.withOpacity(0.8), fontSize: 10.sp)),
+                AutoTranslateText(
+                  '$startTime – $endTime',
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: maroon.withOpacity(0.8),
+                    fontSize: 10.sp,
+                  ),
+                ),
               ],
               if (exactTime.isNotEmpty) ...[
                 Spacing.h(4),
-                AutoTranslateText('Exact: $exactTime', style: MyTextTheme.smallBCN.copyWith(color: orange, fontSize: 10.sp)),
+                AutoTranslateText(
+                  'Exact: $exactTime',
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: orange,
+                    fontSize: 10.sp,
+                  ),
+                ),
               ],
-              if (degreeStr.isNotEmpty && !degreeStr.contains('° – °') && degreeStr.length > 2) ...[
+              if (degreeStr.isNotEmpty &&
+                  !degreeStr.contains('° – °') &&
+                  degreeStr.length > 2) ...[
                 Spacing.h(4),
-                AutoTranslateText('Degrees: $degreeStr', style: MyTextTheme.smallBCN.copyWith(color: maroon.withOpacity(0.7), fontSize: 10.sp)),
+                AutoTranslateText(
+                  'Degrees: $degreeStr',
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: maroon.withOpacity(0.7),
+                    fontSize: 10.sp,
+                  ),
+                ),
               ],
             ],
           ),
@@ -334,8 +473,12 @@ class TransitTodayView extends BasePage<TransitTodayController> {
             mainAxisSize: MainAxisSize.min,
             children: [
               AutoTranslateText(
-                hasForm ? 'Unable to load chart. Tap refresh to try again.' : 'Generate Kundli first to view transit chart.',
-                style: MyTextTheme.mediumBCN.copyWith(color: maroon.withOpacity(0.6)),
+                hasForm
+                    ? 'Unable to load chart. Tap refresh to try again.'
+                    : 'Generate Kundli first to view transit chart.',
+                style: MyTextTheme.mediumBCN.copyWith(
+                  color: maroon.withOpacity(0.6),
+                ),
                 textAlign: TextAlign.center,
               ),
               if (hasForm) ...[
@@ -363,7 +506,12 @@ class TransitTodayView extends BasePage<TransitTodayController> {
         );
       } catch (e) {
         return Center(
-          child: AutoTranslateText('Unable to display chart.', style: MyTextTheme.mediumBCN.copyWith(color: const Color(0xFF6F221E).withOpacity(0.6))),
+          child: AutoTranslateText(
+            'Unable to display chart.',
+            style: MyTextTheme.mediumBCN.copyWith(
+              color: const Color(0xFF6F221E).withOpacity(0.6),
+            ),
+          ),
         );
       }
     });
@@ -378,7 +526,13 @@ class TransitTodayView extends BasePage<TransitTodayController> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: maroon.withOpacity(0.2)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 4, offset: const Offset(0, 2))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -388,17 +542,35 @@ class TransitTodayView extends BasePage<TransitTodayController> {
               Container(
                 padding: EdgeInsets.all(6.w),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [Color(0xFFFF8A3D), orange]),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFF8A3D), orange],
+                  ),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Icon(icon, color: Colors.white, size: 16.w),
               ),
               Spacing.w(8),
-              Expanded(child: AutoTranslateText(title, style: MyTextTheme.mediumBCB.copyWith(color: maroon, fontWeight: FontWeight.bold, fontSize: 12.sp))),
+              Expanded(
+                child: AutoTranslateText(
+                  title,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: maroon,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12.sp,
+                  ),
+                ),
+              ),
             ],
           ),
           Spacing.h(8),
-          AutoTranslateText(content, style: MyTextTheme.smallBCN.copyWith(color: maroon, fontSize: 11.sp, height: 1.5)),
+          AutoTranslateText(
+            content,
+            style: MyTextTheme.smallBCN.copyWith(
+              color: maroon,
+              fontSize: 11.sp,
+              height: 1.5,
+            ),
+          ),
         ],
       ),
     );

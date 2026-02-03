@@ -6,7 +6,8 @@ import 'package:astrobharataiuser/screens/e_mandir/address_selection/widgets/add
 import 'package:astrobharataiuser/screens/e_mandir/address_selection/widgets/empty_address_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -25,7 +26,7 @@ class AddressSelectionView extends BasePage<AddressSelectionController> {
             // Header
             CommonHeader(
               title: 'Select Address',
-              actions: [
+              customActions: [
                 GestureDetector(
                   onTap: () => controller.onAddNewAddress(),
                   child: Container(
@@ -34,18 +35,22 @@ class AddressSelectionView extends BasePage<AddressSelectionController> {
                       vertical: 6.h,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: '#6F221E'.toColor().withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.add, color: Colors.white, size: 18.sp),
+                        Icon(
+                          Icons.add,
+                          color: '#6F221E'.toColor(),
+                          size: 18.sp,
+                        ),
                         SizedBox(width: 4.w),
                         AutoTranslateText(
                           'Add New',
                           style: MyTextTheme.smallBCB.copyWith(
-                            color: Colors.white,
+                            color: '#6F221E'.toColor(),
                             fontSize: 12,
                           ),
                         ),
@@ -53,6 +58,7 @@ class AddressSelectionView extends BasePage<AddressSelectionController> {
                     ),
                   ),
                 ),
+                SizedBox(width: 8.w),
               ],
             ),
             // Content

@@ -10,7 +10,7 @@ import 'package:astrobharataiuser/screens/kundli/widgets/kp_cusps_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/kp_planet_signification_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/kp_house_significators_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/kp_planet_signification_level_wise_widget.dart';
-import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +47,7 @@ class KpSystemView extends BasePage<KpSystemController> {
           child: SafeArea(
             child: Column(
               children: [
-                KundliHeader(title: 'KP System'),
+                const CommonHeader(title: 'KP System'),
                 _buildTabs(orange, orangeLight, maroon),
                 Expanded(
                   child: PageView(
@@ -146,11 +146,11 @@ class KpSystemView extends BasePage<KpSystemController> {
                             duration: const Duration(milliseconds: 200),
                             curve: Curves.easeOut,
                             padding: EdgeInsets.symmetric(
-                                horizontal: 14.w, vertical: 8.h),
+                              horizontal: 14.w,
+                              vertical: 8.h,
+                            ),
                             decoration: BoxDecoration(
-                              color: isSelected
-                                  ? orange
-                                  : Colors.transparent,
+                              color: isSelected ? orange : Colors.transparent,
                               borderRadius: BorderRadius.circular(12.r),
                               border: isSelected
                                   ? null
@@ -173,9 +173,7 @@ class KpSystemView extends BasePage<KpSystemController> {
                                 tab,
                                 textAlign: TextAlign.center,
                                 style: MyTextTheme.mediumBCB.copyWith(
-                                  color: isSelected
-                                      ? Colors.white
-                                      : maroon,
+                                  color: isSelected ? Colors.white : maroon,
                                   fontWeight: isSelected
                                       ? FontWeight.w700
                                       : FontWeight.w500,

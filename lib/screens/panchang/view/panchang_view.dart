@@ -5,8 +5,8 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/panchang_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/celestial_info_card_widget.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/celestial_time_card_widget.dart';
-import 'package:astrobharataiuser/screens/panchang/widgets/panchang_header_widget.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/panchang_tool_button_widget.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,10 +21,12 @@ class PanchangView extends BasePage<PanchangController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: hideHeader ? Colors.transparent : "#FFF8E7".toColor(), // Cream background from Figma
+      backgroundColor: hideHeader
+          ? Colors.transparent
+          : "#FFF8E7".toColor(), // Cream background from Figma
       body: Column(
         children: [
-          if (!hideHeader) const PanchangHeaderWidget(),
+          if (!hideHeader) const CommonHeader(title: 'Panchang'),
           Expanded(
             child: SingleChildScrollView(
               child: Column(

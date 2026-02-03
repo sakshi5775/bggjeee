@@ -5,8 +5,8 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/face_reading_model.dart';
 import 'package:astrobharataiuser/screens/face_reading/service/face_reading_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -21,7 +21,7 @@ class FaceReadingHistoryView extends StatefulWidget {
 
 class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
   final FaceReadingService _faceReadingService = FaceReadingService();
-  
+
   List<FaceReadingData> _readings = [];
   bool _isLoading = true;
   String? _errorMessage;
@@ -58,7 +58,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
           } else {
             _readings.addAll(response.data?.readings ?? []);
           }
-          
+
           _totalPages = response.data?.pagination?.pages ?? 1;
           _hasMore = _currentPage < _totalPages;
           _isLoading = false;
@@ -96,7 +96,9 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
       final confirmed = await Get.dialog<bool>(
         AlertDialog(
           title: AutoTranslateText('Delete Reading'),
-          content: AutoTranslateText('Are you sure you want to delete this reading?'),
+          content: AutoTranslateText(
+            'Are you sure you want to delete this reading?',
+          ),
           actions: [
             TextButton(
               onPressed: () => Get.back(result: false),
@@ -104,7 +106,10 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
             ),
             TextButton(
               onPressed: () => Get.back(result: true),
-              child: AutoTranslateText('Delete', style: TextStyle(color: Colors.red)),
+              child: AutoTranslateText(
+                'Delete',
+                style: TextStyle(color: Colors.red),
+              ),
             ),
           ],
         ),
@@ -112,7 +117,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
 
       if (confirmed == true) {
         final success = await _faceReadingService.deleteFaceReading(readingId);
-        
+
         if (success) {
           setState(() {
             _readings.removeAt(index);
@@ -153,13 +158,10 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
       );
 
       final reading = await _faceReadingService.getFaceReadingById(readingId);
-      
+
       Get.back(); // Close loading dialog
-      
-      Get.toNamed(
-        AppRoutes.faceReadingResults,
-        arguments: {'result': reading},
-      );
+
+      Get.toNamed(AppRoutes.faceReadingResults, arguments: {'result': reading});
     } catch (e) {
       Get.back(); // Close loading dialog if still open
       Get.snackbar(
@@ -189,53 +191,10 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
       body: SafeArea(
         child: Column(
           children: [
-            _buildTopBar(),
-            Expanded(
-              child: _buildContent(),
-            ),
+            const CommonHeader(title: 'History'),
+            Expanded(child: _buildContent()),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildTopBar() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: '#68171E'.toColor(),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20.r),
-          bottomRight: Radius.circular(20.r),
-        ),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back, color: AppColors.templeGold, size: 24.w),
-            onPressed: () => Get.back(),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoTranslateText(
-                  'Face Reading History',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: AppColors.templeGold,
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
-                ),
-                AutoTranslateText(
-                  'Your past readings',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: AppColors.templeGold.withOpacity(0.9),
-                  ).merge(AppTypography.body2),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -258,9 +217,7 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
             Spacing.h(16),
             AutoTranslateText(
               _errorMessage!,
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: '#3E2723'.toColor(),
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
               textAlign: TextAlign.center,
             ),
             Spacing.h(16),
@@ -282,16 +239,14 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
             Spacing.h(16),
             AutoTranslateText(
               'No reading history',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: '#3E2723'.toColor(),
-              ).merge(AppTypography.h2),
+              style: MyTextTheme.largeBCB
+                  .copyWith(color: '#3E2723'.toColor())
+                  .merge(AppTypography.h2),
             ),
             Spacing.h(8),
             AutoTranslateText(
               'Start your face reading journey',
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: '#666666'.toColor(),
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: '#666666'.toColor()),
             ),
           ],
         ),
@@ -312,7 +267,9 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
               child: Padding(
                 padding: EdgeInsets.all(16.w),
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>("#F38B3B".toColor()),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    "#F38B3B".toColor(),
+                  ),
                 ),
               ),
             );
@@ -327,9 +284,11 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
 
   Widget _buildReadingCard(FaceReadingData reading, int index) {
     final score = reading.detailedAnalysis?.overview?.score ?? 0;
-    final status = reading.status ?? 
-                   (reading.detailedAnalysis != null && 
-                    reading.readings.isNotEmpty ? 'COMPLETED' : 'FAILED');
+    final status =
+        reading.status ??
+        (reading.detailedAnalysis != null && reading.readings.isNotEmpty
+            ? 'COMPLETED'
+            : 'FAILED');
     final isCompleted = status == 'COMPLETED';
 
     return Container(
@@ -397,29 +356,44 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                         Expanded(
                           child: AutoTranslateText(
                             reading.summary ?? 'Face Reading',
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: '#3E2723'.toColor(),
-                              fontWeight: FontWeight.bold,
-                            ).merge(AppTypography.h3),
+                            style: MyTextTheme.mediumBCB
+                                .copyWith(
+                                  color: '#3E2723'.toColor(),
+                                  fontWeight: FontWeight.bold,
+                                )
+                                .merge(AppTypography.h3),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         if (isCompleted)
                           PopupMenuButton(
-                            icon: Icon(Icons.more_vert, color: '#666666'.toColor()),
+                            icon: Icon(
+                              Icons.more_vert,
+                              color: '#666666'.toColor(),
+                            ),
                             itemBuilder: (context) => [
                               PopupMenuItem(
                                 child: Row(
                                   children: [
-                                    Icon(Icons.delete, color: Colors.red, size: 20.w),
+                                    Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                      size: 20.w,
+                                    ),
                                     Spacing.w(8),
-                                    AutoTranslateText('Delete', style: TextStyle(color: Colors.red)),
+                                    AutoTranslateText(
+                                      'Delete',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
                                   ],
                                 ),
                                 onTap: () {
                                   Future.delayed(Duration.zero, () {
-                                    _deleteReading(reading.readingId ?? '', index);
+                                    _deleteReading(
+                                      reading.readingId ?? '',
+                                      index,
+                                    );
                                   });
                                 },
                               ),
@@ -431,14 +405,20 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                     Row(
                       children: [
                         if (isCompleted) ...[
-                          Icon(Icons.star, color: "#F38B3B".toColor(), size: 16.w),
+                          Icon(
+                            Icons.star,
+                            color: "#F38B3B".toColor(),
+                            size: 16.w,
+                          ),
                           Spacing.w(4),
                           AutoTranslateText(
                             '$score/100',
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: "#F38B3B".toColor(),
-                              fontWeight: FontWeight.bold,
-                            ).merge(AppTypography.body1),
+                            style: MyTextTheme.mediumBCB
+                                .copyWith(
+                                  color: "#F38B3B".toColor(),
+                                  fontWeight: FontWeight.bold,
+                                )
+                                .merge(AppTypography.body1),
                           ),
                           Spacing.w(8),
                           Container(
@@ -454,9 +434,9 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                         Expanded(
                           child: AutoTranslateText(
                             _formatDate(reading.createdAt),
-                            style: MyTextTheme.smallBCN.copyWith(
-                              color: '#666666'.toColor(),
-                            ).merge(AppTypography.body2),
+                            style: MyTextTheme.smallBCN
+                                .copyWith(color: '#666666'.toColor())
+                                .merge(AppTypography.body2),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -466,16 +446,19 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
                     if (!isCompleted) ...[
                       Spacing.h(4),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 4.h,
+                        ),
                         decoration: BoxDecoration(
                           color: "#F38B3B".toColor().withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: AutoTranslateText(
                           reading.errorMessage ?? 'Failed',
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: "#F38B3B".toColor(),
-                          ).merge(AppTypography.label),
+                          style: MyTextTheme.smallBCN
+                              .copyWith(color: "#F38B3B".toColor())
+                              .merge(AppTypography.label),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -491,4 +474,3 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
     );
   }
 }
-

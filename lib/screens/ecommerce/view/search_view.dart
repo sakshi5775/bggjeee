@@ -1,10 +1,12 @@
 import 'package:astrobharataiuser/app_manager/network_image.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/data_model/search_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/search_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -18,118 +20,97 @@ class EcommerceSearchView extends StatelessWidget {
     final controller = Get.find<EcommerceSearchController>();
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(70.h),
-        child: _buildSearchAppBar(context, controller),
-      ),
       body: SafeArea(
-        child: Obx(
-          () => NotificationListener<ScrollNotification>(
-            onNotification: (notification) {
-              if (notification.metrics.pixels >=
-                      notification.metrics.maxScrollExtent - 120 &&
-                  !controller.isLoadingMore.value &&
-                  controller.hasMoreResults.value) {
-                controller.loadMore();
-              }
-              return false;
-            },
-            child: _buildBody(context, controller),
-          ),
+        child: Column(
+          children: [
+            CommonHeader(
+              title: 'Search Products',
+              customActions: [
+                IconButton(
+                  icon: Icon(Icons.close, color: '#6F221E'.toColor()),
+                  onPressed: () => Get.back(),
+                ),
+              ],
+            ),
+            _buildSearchBar(controller),
+            Expanded(
+              child: Obx(
+                () => NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    if (notification.metrics.pixels >=
+                            notification.metrics.maxScrollExtent - 120 &&
+                        !controller.isLoadingMore.value &&
+                        controller.hasMoreResults.value) {
+                      controller.loadMore();
+                    }
+                    return false;
+                  },
+                  child: _buildBody(context, controller),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  PreferredSizeWidget _buildSearchAppBar(
-    BuildContext context,
-    EcommerceSearchController controller,
-  ) {
-    return AppBar(
-      automaticallyImplyLeading: false,
-      backgroundColor: AppColors.lightBackground,
-      elevation: 0,
-      flexibleSpace: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-          child: Row(
-            children: [
-              Expanded(
-                child: Obx(
-                  () {
-                    final hasText = controller.query.value.isNotEmpty;
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 6,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 40.w,
-                            child: Icon(Icons.search, color: AppColors.textSecondary),
-                          ),
-                          Expanded(
-                            child: TextField(
-                              controller: controller.searchController,
-                              focusNode: controller.searchFocusNode,
-                              onChanged: controller.onQueryChanged,
-                              onSubmitted: (_) => controller.performSearch(reset: true),
-                              textInputAction: TextInputAction.search,
-                              decoration: const InputDecoration(
-                                hintText: 'Search for products, categories...',
-                                border: InputBorder.none,
-                              ),
-                            ),
-                          ),
-                          if (hasText)
-                            IconButton(
-                              icon: Icon(Icons.close, color: AppColors.textSecondary),
-                              onPressed: () {
-                                controller.searchController.clear();
-                                controller.onQueryChanged('');
-                                controller.searchResults.clear();
-                              },
-                            ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 6,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: IconButton(
-                  icon: Icon(Icons.close, color: AppColors.textPrimary),
-                  onPressed: () => Get.back(),
-                ),
+  Widget _buildSearchBar(EcommerceSearchController controller) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      child: Obx(() {
+        final hasText = controller.query.value.isNotEmpty;
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 6,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
-        ),
-      ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 40.w,
+                child: Icon(Icons.search, color: AppColors.textSecondary),
+              ),
+              Expanded(
+                child: TextField(
+                  controller: controller.searchController,
+                  focusNode: controller.searchFocusNode,
+                  onChanged: controller.onQueryChanged,
+                  onSubmitted: (_) => controller.performSearch(reset: true),
+                  textInputAction: TextInputAction.search,
+                  decoration: const InputDecoration(
+                    hintText: 'Search for products, categories...',
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+              if (hasText)
+                IconButton(
+                  icon: Icon(Icons.close, color: AppColors.textSecondary),
+                  onPressed: () {
+                    controller.searchController.clear();
+                    controller.onQueryChanged('');
+                    controller.searchResults.clear();
+                  },
+                ),
+            ],
+          ),
+        );
+      }),
     );
   }
 
-  Widget _buildBody(BuildContext context, EcommerceSearchController controller) {
+  Widget _buildBody(
+    BuildContext context,
+    EcommerceSearchController controller,
+  ) {
     final hasResults = controller.searchResults.isNotEmpty;
     final isLoadingInitial = controller.isLoading.value && !hasResults;
 
@@ -152,7 +133,8 @@ class EcommerceSearchView extends StatelessWidget {
                   padding: EdgeInsets.only(bottom: 12.h),
                   child: _SearchResultCard(
                     product: product,
-                    onTap: () => controller.onSuggestionProductSelected(product),
+                    onTap: () =>
+                        controller.onSuggestionProductSelected(product),
                   ),
                 ),
               )
@@ -185,9 +167,7 @@ class EcommerceSearchView extends StatelessWidget {
         SizedBox(height: 4.h),
         AutoTranslateText(
           controller.buildResultSummary(),
-          style: TextStyle(
-            color: AppColors.textSecondary,
-          ),
+          style: TextStyle(color: AppColors.textSecondary),
         ),
       ],
     );
@@ -214,11 +194,16 @@ class EcommerceSearchView extends StatelessWidget {
                 (term) => GestureDetector(
                   onTap: () => controller.onPopularTermSelected(term),
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 14.w,
+                      vertical: 8.h,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20.r),
-                      border: Border.all(color: AppColors.textSecondary.withOpacity(0.2)),
+                      border: Border.all(
+                        color: AppColors.textSecondary.withOpacity(0.2),
+                      ),
                     ),
                     child: AutoTranslateText(
                       term.term ?? '',
@@ -240,7 +225,8 @@ class EcommerceSearchView extends StatelessWidget {
     EcommerceSearchController controller,
     SearchSuggestions suggestionData,
   ) {
-    final hasSuggestions = suggestionData.products.isNotEmpty ||
+    final hasSuggestions =
+        suggestionData.products.isNotEmpty ||
         suggestionData.categories.isNotEmpty;
 
     if (!hasSuggestions && controller.isLoadingSuggestions.value) {
@@ -264,7 +250,9 @@ class EcommerceSearchView extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8.h),
-          ...suggestionData.products.take(3).map(
+          ...suggestionData.products
+              .take(3)
+              .map(
                 (product) => ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: _SuggestionThumbnail(product: product),
@@ -293,17 +281,17 @@ class EcommerceSearchView extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           ...suggestionData.categories.map(
-                (category) => ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.category_outlined),
-                  title: AutoTranslateText(
-                    category.name ?? '',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  onTap: () => controller.onSuggestionCategorySelected(category),
-                ),
+            (category) => ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.category_outlined),
+              title: AutoTranslateText(
+                category.name ?? '',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
+              onTap: () => controller.onSuggestionCategorySelected(category),
+            ),
+          ),
         ],
         SizedBox(height: 12.h),
         Divider(color: AppColors.textSecondary.withOpacity(0.1)),
@@ -367,11 +355,7 @@ class _SuggestionThumbnail extends StatelessWidget {
         width: 48.w,
         height: 48.w,
         child: imageUrl != null
-            ? NetworkImageWithLoader(
-                url: imageUrl,
-                height: 48.w,
-                width: 48.w,
-              )
+            ? NetworkImageWithLoader(url: imageUrl, height: 48.w, width: 48.w)
             : Container(
                 color: AppColors.lightBackground,
                 alignment: Alignment.center,
@@ -411,7 +395,8 @@ class _SearchResultCard extends StatelessWidget {
     }
 
     final formatter = NumberFormat.currency(symbol: '₹', decimalDigits: 0);
-    final price = product.currentPrice ?? product.discountedPrice ?? product.basePrice;
+    final price =
+        product.currentPrice ?? product.discountedPrice ?? product.basePrice;
 
     return GestureDetector(
       onTap: onTap,
@@ -430,7 +415,9 @@ class _SearchResultCard extends StatelessWidget {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.horizontal(left: Radius.circular(16.r)),
+              borderRadius: BorderRadius.horizontal(
+                left: Radius.circular(16.r),
+              ),
               child: SizedBox(
                 width: 110.w,
                 height: 110.w,
@@ -470,9 +457,7 @@ class _SearchResultCard extends StatelessWidget {
                       product.shortDescription ?? product.productType ?? '',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                      ),
+                      style: TextStyle(color: AppColors.textSecondary),
                     ),
                     SizedBox(height: 8.h),
                     if (price != null)
@@ -493,4 +478,3 @@ class _SearchResultCard extends StatelessWidget {
     );
   }
 }
-

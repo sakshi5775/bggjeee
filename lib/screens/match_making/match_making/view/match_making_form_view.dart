@@ -8,7 +8,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/address_autocomplete_field.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/time_picker_helper.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -26,10 +26,7 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
           child: Column(
             children: [
               // Header using CommonHeader
-              CommonHeader(
-                title: 'Match Making',
-                titleColor: AppColors.templeGold,
-              ),
+              CommonHeader(title: 'Match Making'),
 
               // Form Content
               Expanded(

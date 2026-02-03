@@ -4,7 +4,7 @@ import 'package:astrobharataiuser/data_model/address_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/address_form_sheet.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/cart_widgets/cart_checkout_button_widget.dart';
-import 'package:astrobharataiuser/screens/ecommerce/widgets/cart_widgets/cart_header_widget.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/cart_widgets/cart_items_list_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/cart_widgets/cart_price_summary_widget.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -51,12 +51,50 @@ class CartView extends GetView<CartController> {
 
           return Column(
             children: [
-              // Header matching Figma design
-              CartHeaderWidget(
+              CommonHeader(
                 title: 'Shopping Cart',
-                subtitle: firstItemName,
-                totalAmount: totalAmount,
-                onClose: () => Get.back(),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AutoTranslateText(
+                      firstItemName,
+                      style: AppTypography.body2.copyWith(
+                        color: '#6F221E'.toColor().withOpacity(0.7),
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: '#6F221E'.toColor().withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: '#6F221E'.toColor().withOpacity(0.1),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AutoTranslateText(
+                            'Total Amount',
+                            style: AppTypography.label.copyWith(
+                              color: '#6F221E'.toColor().withOpacity(0.6),
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          AutoTranslateText(
+                            totalAmount,
+                            style: AppTypography.h1.copyWith(
+                              color: '#6F221E'.toColor(),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
               // Content
               Expanded(
@@ -156,7 +194,6 @@ class CartView extends GetView<CartController> {
   void _showAddressSelectionDialog(BuildContext context) {
     final selectedAddress = controller.selectedAddress.value;
 
-    // Always show address selection dialog to allow user to choose or add address
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

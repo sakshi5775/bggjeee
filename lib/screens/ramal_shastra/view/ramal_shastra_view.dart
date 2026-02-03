@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,103 +17,68 @@ class RamalShastraView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: SingleChildScrollView(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Padding(
+          padding: EdgeInsets.only(
+            top:
+                (MediaQuery.of(context).padding.top > 0
+                        ? MediaQuery.of(context).padding.top * 0.5
+                        : 0.0)
+                    .clamp(6.0, 24.0)
+                    .toDouble(),
+          ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Header with back button
-              _buildHeader(),
-              Spacing.h(32),
-              // Main icon
-              _buildMainIcon(),
-              Spacing.h(24),
-              // Title
-              _buildTitle(),
-              Spacing.h(8),
-              // Subtitle
-              _buildSubtitle(),
-              Spacing.h(32),
-              // Start Your Reading section
-              _buildStartReadingSection(),
-              Spacing.h(32),
-              // What We Analyze section
-              _buildWhatWeAnalyzeSection(),
-              Spacing.h(32),
-              // About Ramal Shastra section
-              _buildAboutSection(),
-              Spacing.h(32),
+              CommonHeader(
+                title: 'Ramal Shastra',
+                customActions: [
+                  IconButton(
+                    onPressed: () async {
+                      final ok = await LoginGuard.ensureLoggedIn(
+                        message: 'Login to view your Ramal Shastra history.',
+                      );
+                      if (ok) {
+                        Get.toNamed(AppRoutes.ramalShastraHistory);
+                      }
+                    },
+                    icon: Icon(
+                      Icons.history,
+                      color: '#6F221E'.toColor(),
+                      size: 24.w,
+                    ),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Spacing.h(32),
+                      // Main icon
+                      _buildMainIcon(),
+                      Spacing.h(24),
+                      // Subtitle
+                      _buildSubtitle(),
+                      Spacing.h(32),
+                      // Start Your Reading section
+                      _buildStartReadingSection(),
+                      Spacing.h(32),
+                      // What We Analyze section
+                      _buildWhatWeAnalyzeSection(),
+                      Spacing.h(32),
+                      // About Ramal Shastra section
+                      _buildAboutSection(),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          // Back button
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-          Spacer(),
-          // History button
-          GestureDetector(
-            onTap: () async {
-              final ok = await LoginGuard.ensureLoggedIn(
-                message: 'Login to view your Ramal Shastra history.',
-              );
-              if (ok) {
-                Get.toNamed(AppRoutes.ramalShastraHistory);
-              }
-            },
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.history,
-                color: '#EA632B'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -128,25 +94,10 @@ class RamalShastraView extends StatelessWidget {
           fit: BoxFit.cover,
           errorBuilder: (_, __, ___) => Container(
             color: '#EA632B'.toColor(),
-            child: Icon(
-              Icons.casino,
-              size: 60.w,
-              color: '#ffffff'.toColor(),
-            ),
+            child: Icon(Icons.casino, size: 60.w, color: '#ffffff'.toColor()),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTitle() {
-    return AutoTranslateText(
-      'Ramal Shastra',
-      style: MyTextTheme.veryLargeBCB.copyWith(
-        color: '#3E2723'.toColor(),
-        fontWeight: FontWeight.bold,
-      ).merge(AppTypography.h1),
-      textAlign: TextAlign.center,
     );
   }
 
@@ -155,9 +106,7 @@ class RamalShastraView extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: AutoTranslateText(
         'Ancient Binary Divination System',
-        style: MyTextTheme.mediumBCN.copyWith(
-          color: '#3E2723'.toColor(),
-        ),
+        style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
         textAlign: TextAlign.center,
       ),
     );
@@ -171,10 +120,7 @@ class RamalShastraView extends StatelessWidget {
         decoration: BoxDecoration(
           color: '#ffffff'.toColor(),
           borderRadius: BorderRadius.circular(18.r),
-          border: Border.all(
-            color: '#F5D7B8'.toColor(),
-            width: 1.5,
-          ),
+          border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.07),
@@ -208,10 +154,12 @@ class RamalShastraView extends StatelessWidget {
             // Heading
             AutoTranslateText(
               'Instant Question Prediction',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: '#3E2723'.toColor(),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
+              style: MyTextTheme.largeBCB
+                  .copyWith(
+                    color: '#3E2723'.toColor(),
+                    fontWeight: FontWeight.bold,
+                  )
+                  .merge(AppTypography.h2),
             ),
             Spacing.h(12),
             // Description
@@ -241,7 +189,8 @@ class RamalShastraView extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () async {
                     final ok = await LoginGuard.ensureLoggedIn(
-                      message: 'Please login to continue with Ramal Shastra reading.',
+                      message:
+                          'Please login to continue with Ramal Shastra reading.',
                     );
                     if (ok) {
                       Get.toNamed(AppRoutes.ramalShastraQuestion);
@@ -250,31 +199,34 @@ class RamalShastraView extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     foregroundColor: '#ffffff'.toColor(),
-                    padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 14.h,
+                      horizontal: 24.w,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     elevation: 0,
                     shadowColor: Colors.transparent,
                   ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.casino,
-                      size: 20.w,
-                      color: '#ffffff'.toColor(),
-                    ),
-                    Spacing.w(8),
-                    AutoTranslateText(
-                      'Start Reading',
-                      style: MyTextTheme.mediumBCB.copyWith(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.casino,
+                        size: 20.w,
                         color: '#ffffff'.toColor(),
-                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-                  ],
-                ),
+                      Spacing.w(8),
+                      AutoTranslateText(
+                        'Start Reading',
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: '#ffffff'.toColor(),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -292,10 +244,12 @@ class RamalShastraView extends StatelessWidget {
         children: [
           AutoTranslateText(
             'What We Analyze',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
+            style: MyTextTheme.largeBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h2),
           ),
           Spacing.h(16),
           // Grid of 6 items in 2 columns
@@ -368,10 +322,7 @@ class RamalShastraView extends StatelessWidget {
         decoration: BoxDecoration(
           color: '#ffffff'.toColor(),
           borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(
-            color: '#F5D7B8'.toColor(),
-            width: 1.2,
-          ),
+          border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -391,11 +342,7 @@ class RamalShastraView extends StatelessWidget {
                 color: '#FFF2E8'.toColor(),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                color: '#E85C0D'.toColor(),
-                size: 22.w,
-              ),
+              child: Icon(icon, color: '#E85C0D'.toColor(), size: 22.w),
             ),
             Spacing.h(10),
             AutoTranslateText(
@@ -450,7 +397,10 @@ class RamalShastraView extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: ["#DD2914".toColor().withOpacity(0.35), "#F38B3B".toColor().withOpacity(0.15)],
+                    colors: [
+                      "#DD2914".toColor().withOpacity(0.35),
+                      "#F38B3B".toColor().withOpacity(0.15),
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -493,5 +443,3 @@ class RamalShastraView extends StatelessWidget {
     );
   }
 }
-
-

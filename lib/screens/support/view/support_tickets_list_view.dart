@@ -3,7 +3,7 @@ import 'package:astrobharataiuser/data_model/support_ticket_model.dart';
 import 'package:astrobharataiuser/screens/support/controller/support_ticket_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -45,71 +45,73 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
         body: SafeArea(
           child: Column(
             children: [
-              CommonHeader(
-                title: 'Support Tickets',
-                titleColor: AppColors.templeGold,
-              ),
+              CommonHeader(title: 'Support Tickets'),
               _buildFilters(),
               Expanded(
-            child: Obx(() {
-              if (controller.isLoadingTickets.value && controller.tickets.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
-              }
+                child: Obx(() {
+                  if (controller.isLoadingTickets.value &&
+                      controller.tickets.isEmpty) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-              if (controller.tickets.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.support_agent_outlined,
-                        size: 64.sp,
-                        color: AppColors.textSecondary,
+                  if (controller.tickets.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.support_agent_outlined,
+                            size: 64.sp,
+                            color: AppColors.textSecondary,
+                          ),
+                          SizedBox(height: 16.h),
+                          AutoTranslateText(
+                            'No tickets found',
+                            style: AppTypography.h2.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          SizedBox(height: 8.h),
+                          AutoTranslateText(
+                            'Create a new ticket to get support',
+                            style: AppTypography.body1.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 16.h),
-                      AutoTranslateText(
-                        'No tickets found',
-                        style: AppTypography.h2.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      AutoTranslateText(
-                        'Create a new ticket to get support',
-                        style: AppTypography.body1.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
+                    );
+                  }
 
-              return RefreshIndicator(
-                onRefresh: () => controller.loadTickets(refresh: true),
-                child: ListView.separated(
-                  padding: EdgeInsets.all(16.w),
-                  itemCount: controller.tickets.length + (controller.pagination.value?.hasNextPage == true ? 1 : 0),
-                  separatorBuilder: (_, __) => SizedBox(height: 12.h),
-                  itemBuilder: (context, index) {
-                    if (index == controller.tickets.length) {
-                      // Load more indicator
-                      controller.loadMoreTickets();
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    }
+                  return RefreshIndicator(
+                    onRefresh: () => controller.loadTickets(refresh: true),
+                    child: ListView.separated(
+                      padding: EdgeInsets.all(16.w),
+                      itemCount:
+                          controller.tickets.length +
+                          (controller.pagination.value?.hasNextPage == true
+                              ? 1
+                              : 0),
+                      separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                      itemBuilder: (context, index) {
+                        if (index == controller.tickets.length) {
+                          // Load more indicator
+                          controller.loadMoreTickets();
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
 
-                    final ticket = controller.tickets[index];
-                    return _TicketCard(ticket: ticket);
-                  },
-                ),
-              );
-            }),
+                        final ticket = controller.tickets[index];
+                        return _TicketCard(ticket: ticket);
+                      },
+                    ),
+                  );
+                }),
               ),
             ],
           ),
@@ -132,7 +134,9 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
                   value: controller.selectedStatus.value,
                   items: ['All', ...SupportTicketController.statusOptions],
                   onChanged: (value) {
-                    controller.selectedStatus.value = value == 'All' ? null : value;
+                    controller.selectedStatus.value = value == 'All'
+                        ? null
+                        : value;
                     controller.applyFilters();
                   },
                 ),
@@ -144,23 +148,24 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
                   value: controller.selectedCategory.value,
                   items: ['All', ...SupportTicketController.categoryOptions],
                   onChanged: (value) {
-                    controller.selectedCategory.value = value == 'All' ? null : value;
+                    controller.selectedCategory.value = value == 'All'
+                        ? null
+                        : value;
                     controller.applyFilters();
                   },
                 ),
               ),
             ],
           ),
-          if (controller.selectedStatus.value != null || controller.selectedCategory.value != null)
+          if (controller.selectedStatus.value != null ||
+              controller.selectedCategory.value != null)
             Padding(
               padding: EdgeInsets.only(top: 12.h),
               child: TextButton.icon(
                 onPressed: controller.clearFilters,
                 icon: const Icon(Icons.clear, size: 18),
                 label: const AutoTranslateText('Clear Filters'),
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.saffron,
-                ),
+                style: TextButton.styleFrom(foregroundColor: AppColors.saffron),
               ),
             ),
         ],
@@ -189,10 +194,7 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
           items: items.map((item) {
             return DropdownMenuItem<String>(
               value: item,
-              child: AutoTranslateText(
-                item,
-                style: AppTypography.body1,
-              ),
+              child: AutoTranslateText(item, style: AppTypography.body1),
             );
           }).toList(),
           onChanged: onChanged,
@@ -210,12 +212,10 @@ class _TicketCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<SupportTicketController>();
-    
+
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: InkWell(
         onTap: () => Get.toNamed(
           AppRoutes.supportTicketDetail,
@@ -259,10 +259,7 @@ class _TicketCard extends StatelessWidget {
                     color: controller.getStatusColor(ticket.status),
                   ),
                   SizedBox(width: 8.w),
-                  _buildChip(
-                    label: ticket.category,
-                    color: AppColors.info,
-                  ),
+                  _buildChip(label: ticket.category, color: AppColors.info),
                   SizedBox(width: 8.w),
                   _buildChip(
                     label: ticket.priority,
@@ -344,4 +341,3 @@ class _TicketCard extends StatelessWidget {
     }
   }
 }
-

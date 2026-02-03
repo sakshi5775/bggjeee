@@ -14,22 +14,62 @@ class WhatElseWidget extends StatelessWidget {
   const WhatElseWidget({super.key});
 
   static const List<Map<String, dynamic>> _items = [
-    {'title': 'Daily Panchang', 'icon': Icons.calendar_today, 'route': AppRoutes.dailyPanchang},
-    {'title': 'Talk to Astrologer', 'icon': Icons.phone_in_talk, 'route': AppRoutes.astrologyServices},
-    {'title': 'Brihat Kundli', 'icon': Icons.menu_book, 'route': AppRoutes.allReports},
+    {
+      'title': 'Daily Panchang',
+      'icon': Icons.calendar_today,
+      'route': AppRoutes.dailyPanchang,
+    },
+    {
+      'title': 'Talk to Astrologer',
+      'icon': Icons.phone_in_talk,
+      'route': AppRoutes.astrologyServices,
+    },
+    // {
+    //   'title': 'Brihat Kundli',
+    //   'icon': Icons.menu_book,
+    //   'route': AppRoutes.allReports,
+    // },
     // {'title': 'Daily Notes', 'icon': Icons.note_alt_outlined, 'route': null},
-    {'title': 'Astro Shop', 'icon': Icons.shopping_bag_outlined, 'route': AppRoutes.ecommerceHome},
+    {
+      'title': 'Digital Mart',
+      'icon': Icons.shopping_bag_outlined,
+      'route': AppRoutes.ecommerceHome,
+    },
     // {'title': 'Ask A Question', 'icon': Icons.help_outline, 'route': AppRoutes.prashnaKundali},
     // {'title': 'Kundli AI+', 'icon': Icons.auto_awesome, 'route': null},
-    {'title': 'Numerology', 'icon': Icons.numbers, 'route': AppRoutes.numerologyForm},
+    {
+      'title': 'Numerology',
+      'icon': Icons.numbers,
+      'route': AppRoutes.numerologyForm,
+    },
     // {'title': 'Free 50+ Pages', 'icon': Icons.picture_as_pdf_outlined, 'route': null},
-    {'title': 'AstroSage AI TV', 'icon': Icons.play_circle_outline, 'route': AppRoutes.allVideos},
+    {
+      'title': 'Videos',
+      'icon': Icons.play_circle_outline,
+      'route': AppRoutes.allVideos,
+    },
     {'title': 'KP System', 'icon': Icons.grid_on, 'route': AppRoutes.kpSystem},
-    {'title': 'Varshphal', 'icon': Icons.calendar_month, 'route': AppRoutes.kundliForm},
-    {'title': 'Lal Kitab', 'icon': Icons.menu_book_rounded, 'route': AppRoutes.lalKitab},
-    {'title': 'Learn Astrology', 'icon': Icons.school_outlined, 'route': AppRoutes.courses},
-   
-    {'title': 'Match Making', 'icon': Icons.favorite_border, 'route': AppRoutes.matchMakingForm},
+    {
+      'title': 'Varshphal',
+      'icon': Icons.calendar_month,
+      'route': AppRoutes.kundliForm,
+    },
+    {
+      'title': 'Lal Kitab',
+      'icon': Icons.menu_book_rounded,
+      'route': AppRoutes.lalKitab,
+    },
+    {
+      'title': 'Digital Learning',
+      'icon': Icons.school_outlined,
+      'route': AppRoutes.courses,
+    },
+
+    {
+      'title': 'Match Making',
+      'icon': Icons.favorite_border,
+      'route': AppRoutes.matchMakingForm,
+    },
   ];
 
   @override
@@ -150,11 +190,7 @@ class WhatElseWidget extends StatelessWidget {
                       color: '#FFFCF3'.toColor(),
                       border: Border.all(color: '#FCE5AA'.toColor(), width: 1),
                     ),
-                    child: Icon(
-                      icon,
-                      size: 20.w,
-                      color: AppColors.deepOrange,
-                    ),
+                    child: Icon(icon, size: 20.w, color: AppColors.deepOrange),
                   ),
                 ],
               ),
@@ -225,7 +261,10 @@ Discover astrology, Kundli, and more with AstroBharatAI!
 
 Explore daily panchang, chat with astrologers, courses, and much more.
 ''';
-      await Share.share(message, subject: 'AstroBharatAI - Astrology & Kundli App');
+      await Share.share(
+        message,
+        subject: 'AstroBharatAI - Astrology & Kundli App',
+      );
     } catch (e) {
       Get.snackbar(
         'Error',

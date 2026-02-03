@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/prashna_kundali/controller/prashna_kun
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -24,7 +25,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
+            CommonHeader(title: 'Reading History'),
             Expanded(
               child: Obx(() {
                 if (controller.isLoadingHistory.value &&
@@ -59,67 +60,6 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: '#ffffff'.toColor(),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#FFF8E1'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: '#F5D7B8'.toColor(), width: 1),
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-          Spacing.w(16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoTranslateText(
-                  'Reading History',
-                  style: MyTextTheme.largeBCB
-                      .copyWith(
-                        color: '#3E2723'.toColor(),
-                        fontWeight: FontWeight.bold,
-                      )
-                      .merge(AppTypography.h3),
-                ),
-                Spacing.h(2),
-                AutoTranslateText(
-                  'Your past Prashna kundli readings',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: '#666666'.toColor(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -183,7 +123,10 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   foregroundColor: '#ffffff'.toColor(),
-                  padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 32.w),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 12.h,
+                    horizontal: 32.w,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.r),
                   ),
@@ -191,18 +134,18 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                   shadowColor: Colors.transparent,
                 ),
                 child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.psychology_alt, size: 18.w),
-                  Spacing.w(8),
-                  AutoTranslateText(
-                    "Ask Your Question",
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.psychology_alt, size: 18.w),
+                    Spacing.w(8),
+                    AutoTranslateText(
+                      "Ask Your Question",
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
                 ),
               ),
             ),

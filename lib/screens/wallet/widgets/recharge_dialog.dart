@@ -18,7 +18,7 @@ class RechargeDialog extends StatefulWidget {
 class _RechargeDialogState extends State<RechargeDialog> {
   late final WalletController _controller;
   final TextEditingController _amountController = TextEditingController();
-  final List<int> _quickAmounts = [100, 500, 1000, 2000, 5000, 10000];
+  final List<int> _quickAmounts = [10, 50, 100, 500, 1000, 2000];
   int? _selectedQuickAmount;
 
   @override
@@ -73,7 +73,8 @@ class _RechargeDialogState extends State<RechargeDialog> {
     if (amount < _minRechargeAmount) {
       Get.showSnackbar(
         GetSnackBar(
-          message: 'Minimum recharge amount is ₹$_minRechargeAmount. Please enter at least ₹$_minRechargeAmount or choose from the quick amounts.',
+          message:
+              'Minimum recharge amount is ₹$_minRechargeAmount. Please enter at least ₹$_minRechargeAmount or choose from the quick amounts.',
           duration: const Duration(seconds: 3),
           backgroundColor: Colors.red,
         ),
@@ -288,7 +289,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
     );
   }
 
-  static const int _minRechargeAmount = 100;
+  static const int _minRechargeAmount = 10;
 
   @override
   Widget build(BuildContext context) {
@@ -381,224 +382,230 @@ class _RechargeDialogState extends State<RechargeDialog> {
                 child: Padding(
                   padding: EdgeInsets.all(24.w),
                   child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Amount input
-                  AutoTranslateText(
-                    'Enter Amount',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: '#68171E'.toColor(),
-                    ),
-                  ),
-                  Spacing.h(12),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(
-                        color: AppColors.templeGold.withOpacity(0.3),
-                        width: 2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.templeGold.withOpacity(0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: _amountController,
-                      keyboardType: TextInputType.number,
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w600,
-                        color: '#68171E'.toColor(),
-                      ),
-                      decoration: InputDecoration(
-                        hintText: '0',
-                        hintStyle: TextStyle(color: Colors.grey[400]),
-                        prefixText: '₹ ',
-                        prefixStyle: TextStyle(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Amount input
+                      AutoTranslateText(
+                        'Enter Amount',
+                        style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 20.sp,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.templeGold,
+                          color: '#68171E'.toColor(),
                         ),
-                        border: OutlineInputBorder(
+                      ),
+                      Spacing.h(12),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(16.r),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16.r),
-                          borderSide: BorderSide(
-                            color: AppColors.templeGold,
+                          border: Border.all(
+                            color: AppColors.templeGold.withOpacity(0.3),
                             width: 2,
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.templeGold.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 18.h,
+                        child: TextField(
+                          controller: _amountController,
+                          keyboardType: TextInputType.number,
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w600,
+                            color: '#68171E'.toColor(),
+                          ),
+                          decoration: InputDecoration(
+                            hintText: '0',
+                            hintStyle: TextStyle(color: Colors.grey[400]),
+                            prefixText: '₹ ',
+                            prefixStyle: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.templeGold,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16.r),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16.r),
+                              borderSide: BorderSide(
+                                color: AppColors.templeGold,
+                                width: 2,
+                              ),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20.w,
+                              vertical: 18.h,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
 
-                  Spacing.h(24),
+                      Spacing.h(24),
 
-                  // Quick amounts
-                  AutoTranslateText(
-                    'Quick Amounts',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: '#68171E'.toColor(),
-                    ),
-                  ),
-                  Spacing.h(12),
-                  Wrap(
-                    spacing: 12.w,
-                    runSpacing: 12.h,
-                    children: _quickAmounts.map((amount) {
-                      final isSelected = _selectedQuickAmount == amount;
-                      return GestureDetector(
-                        onTap: () => _selectQuickAmount(amount),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20.w,
-                            vertical: 12.h,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: isSelected
-                                ? AppColors.orangeGradient
-                                : null,
-                            color: isSelected ? null : Colors.white,
-                            borderRadius: BorderRadius.circular(16.r),
-                            border: Border.all(
-                              color: isSelected
-                                  ? AppColors.orangeGradient.colors.first
-                                  : AppColors.templeGold.withOpacity(0.3),
-                              width: isSelected ? 2 : 1.5,
+                      // Quick amounts
+                      AutoTranslateText(
+                        'Quick Amounts',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: '#68171E'.toColor(),
+                        ),
+                      ),
+                      Spacing.h(12),
+                      Wrap(
+                        spacing: 12.w,
+                        runSpacing: 12.h,
+                        children: _quickAmounts.map((amount) {
+                          final isSelected = _selectedQuickAmount == amount;
+                          return GestureDetector(
+                            onTap: () => _selectQuickAmount(amount),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20.w,
+                                vertical: 12.h,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: isSelected
+                                    ? AppColors.orangeGradient
+                                    : null,
+                                color: isSelected ? null : Colors.white,
+                                borderRadius: BorderRadius.circular(16.r),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? AppColors.orangeGradient.colors.first
+                                      : AppColors.templeGold.withOpacity(0.3),
+                                  width: isSelected ? 2 : 1.5,
+                                ),
+                                boxShadow: isSelected
+                                    ? [
+                                        BoxShadow(
+                                          color: AppColors
+                                              .orangeGradient
+                                              .colors
+                                              .first
+                                              .withOpacity(0.3),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ]
+                                    : null,
+                              ),
+                              child: AutoTranslateText(
+                                '₹${amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : '#68171E'.toColor(),
+                                ),
+                              ),
                             ),
-                            boxShadow: isSelected
-                                ? [
+                          );
+                        }).toList(),
+                      ),
+
+                      Spacing.h(28),
+
+                      // Recharge button
+                      Obx(
+                        () => Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            gradient:
+                                _controller.isInitiatingRecharge.value ||
+                                    _controller.isVerifyingRecharge.value
+                                ? null
+                                : AppColors.orangeGradient,
+                            color:
+                                _controller.isInitiatingRecharge.value ||
+                                    _controller.isVerifyingRecharge.value
+                                ? Colors.grey[300]
+                                : null,
+                            borderRadius: BorderRadius.circular(20.r),
+                            boxShadow:
+                                _controller.isInitiatingRecharge.value ||
+                                    _controller.isVerifyingRecharge.value
+                                ? null
+                                : [
                                     BoxShadow(
                                       color: AppColors
                                           .orangeGradient
                                           .colors
                                           .first
-                                          .withOpacity(0.3),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 4),
+                                          .withOpacity(0.4),
+                                      blurRadius: 16,
+                                      offset: const Offset(0, 8),
                                     ),
-                                  ]
-                                : null,
+                                  ],
                           ),
-                          child: AutoTranslateText(
-                            '₹${amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                              color: isSelected
-                                  ? Colors.white
-                                  : '#68171E'.toColor(),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap:
+                                  _controller.isInitiatingRecharge.value ||
+                                      _controller.isVerifyingRecharge.value
+                                  ? null
+                                  : _initiateRecharge,
+                              borderRadius: BorderRadius.circular(20.r),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 18.h),
+                                alignment: Alignment.center,
+                                child:
+                                    _controller.isInitiatingRecharge.value ||
+                                        _controller.isVerifyingRecharge.value
+                                    ? SizedBox(
+                                        height: 24.h,
+                                        width: 24.w,
+                                        child: const CircularProgressIndicator(
+                                          strokeWidth: 2.5,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                Colors.white,
+                                              ),
+                                        ),
+                                      )
+                                    : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons
+                                                .account_balance_wallet_rounded,
+                                            color: Colors.white,
+                                            size: 22.w,
+                                          ),
+                                          Spacing.w(10),
+                                          AutoTranslateText(
+                                            'Add Money',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 18.sp,
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.white,
+                                              letterSpacing: 0.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                              ),
                             ),
                           ),
                         ),
-                      );
-                    }).toList(),
-                  ),
-
-                  Spacing.h(28),
-
-                  // Recharge button
-                  Obx(
-                    () => Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        gradient:
-                            _controller.isInitiatingRecharge.value ||
-                                _controller.isVerifyingRecharge.value
-                            ? null
-                            : AppColors.orangeGradient,
-                        color:
-                            _controller.isInitiatingRecharge.value ||
-                                _controller.isVerifyingRecharge.value
-                            ? Colors.grey[300]
-                            : null,
-                        borderRadius: BorderRadius.circular(20.r),
-                        boxShadow:
-                            _controller.isInitiatingRecharge.value ||
-                                _controller.isVerifyingRecharge.value
-                            ? null
-                            : [
-                                BoxShadow(
-                                  color: AppColors.orangeGradient.colors.first
-                                      .withOpacity(0.4),
-                                  blurRadius: 16,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap:
-                              _controller.isInitiatingRecharge.value ||
-                                  _controller.isVerifyingRecharge.value
-                              ? null
-                              : _initiateRecharge,
-                          borderRadius: BorderRadius.circular(20.r),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 18.h),
-                            alignment: Alignment.center,
-                            child:
-                                _controller.isInitiatingRecharge.value ||
-                                    _controller.isVerifyingRecharge.value
-                                ? SizedBox(
-                                    height: 24.h,
-                                    width: 24.w,
-                                    child: const CircularProgressIndicator(
-                                      strokeWidth: 2.5,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  )
-                                : Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.account_balance_wallet_rounded,
-                                        color: Colors.white,
-                                        size: 22.w,
-                                      ),
-                                      Spacing.w(10),
-                                      AutoTranslateText(
-                                        'Add Money',
-                                        style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontSize: 18.sp,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.white,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                    ],
                   ),
                 ),
               ),

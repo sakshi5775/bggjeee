@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,10 +15,12 @@ class RamalShastraCastingDotsView extends StatefulWidget {
   const RamalShastraCastingDotsView({Key? key}) : super(key: key);
 
   @override
-  State<RamalShastraCastingDotsView> createState() => _RamalShastraCastingDotsViewState();
+  State<RamalShastraCastingDotsView> createState() =>
+      _RamalShastraCastingDotsViewState();
 }
 
-class _RamalShastraCastingDotsViewState extends State<RamalShastraCastingDotsView> {
+class _RamalShastraCastingDotsViewState
+    extends State<RamalShastraCastingDotsView> {
   final RamalShastraController controller = Get.find<RamalShastraController>();
   final List<int> tapCounts = List.generate(16, (_) => 0);
   int currentTapIndex = 0;
@@ -60,21 +63,21 @@ class _RamalShastraCastingDotsViewState extends State<RamalShastraCastingDotsVie
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
+            CommonHeader(title: 'Ramal Shastra'),
             Spacing.h(24),
             AutoTranslateText(
               'Tap Randomly on Screen',
-              style: MyTextTheme.veryLargeBCB.copyWith(
-                color: '#3E2723'.toColor(),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h1),
+              style: MyTextTheme.veryLargeBCB
+                  .copyWith(
+                    color: '#3E2723'.toColor(),
+                    fontWeight: FontWeight.bold,
+                  )
+                  .merge(AppTypography.h1),
             ),
             Spacing.h(8),
             AutoTranslateText(
               'Tap ${currentTapIndex + 1} of 16',
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: '#666666'.toColor(),
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: '#666666'.toColor()),
             ),
             Spacing.h(32),
             Expanded(
@@ -85,10 +88,7 @@ class _RamalShastraCastingDotsViewState extends State<RamalShastraCastingDotsVie
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16.r),
-                    border: Border.all(
-                      color: '#F5D7B8'.toColor(),
-                      width: 2,
-                    ),
+                    border: Border.all(color: '#F5D7B8'.toColor(), width: 2),
                   ),
                   child: Center(
                     child: Column(
@@ -124,18 +124,19 @@ class _RamalShastraCastingDotsViewState extends State<RamalShastraCastingDotsVie
               padding: EdgeInsets.all(16.w),
               child: Row(
                 children: [
-                  Expanded(
-                    child: _buildDotGrid(),
-                  ),
+                  Expanded(child: _buildDotGrid()),
                   Spacing.w(16),
                   ElevatedButton(
                     onPressed: _confirmTap,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: tapCounts[currentTapIndex] > 0 
-                          ? '#4CAF50'.toColor() 
+                      backgroundColor: tapCounts[currentTapIndex] > 0
+                          ? '#4CAF50'.toColor()
                           : Colors.grey,
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 24.w,
+                        vertical: 14.h,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -158,39 +159,6 @@ class _RamalShastraCastingDotsViewState extends State<RamalShastraCastingDotsVie
     );
   }
 
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildDotGrid() {
     return GridView.builder(
       shrinkWrap: true,
@@ -206,19 +174,17 @@ class _RamalShastraCastingDotsViewState extends State<RamalShastraCastingDotsVie
         final tapCount = tapCounts[index];
         final isCompleted = index < currentTapIndex;
         final isCurrent = index == currentTapIndex;
-        
+
         return Container(
           decoration: BoxDecoration(
-            color: isCurrent 
+            color: isCurrent
                 ? "#F38B3B".toColor().withOpacity(0.2)
                 : isCompleted
-                    ? '#4CAF50'.toColor().withOpacity(0.2)
-                    : Colors.grey[200],
+                ? '#4CAF50'.toColor().withOpacity(0.2)
+                : Colors.grey[200],
             borderRadius: BorderRadius.circular(4.r),
             border: Border.all(
-              color: isCurrent 
-                  ? "#F38B3B".toColor()
-                  : Colors.transparent,
+              color: isCurrent ? "#F38B3B".toColor() : Colors.transparent,
               width: 2,
             ),
           ),
@@ -242,5 +208,3 @@ class _RamalShastraCastingDotsViewState extends State<RamalShastraCastingDotsVie
     );
   }
 }
-
-

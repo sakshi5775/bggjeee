@@ -1,6 +1,5 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
-
 import 'package:astrobharataiuser/screens/courses/controllers/my_learning_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/user_bottom_nav.dart';
@@ -8,6 +7,7 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/data_model/my_learning_model.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,7 +30,18 @@ class MyLearningView extends BasePage<MyLearningController> {
         child: Column(
           children: [
             // Header
-            _buildHeader(),
+            Obx(
+              () => CommonHeader(
+                title: 'My Learning',
+                subtitle: AutoTranslateText(
+                  '${controller.enrolledCourses.length} courses enrolled',
+                  style: AppTypography.body2.copyWith(
+                    color: const Color(0xFF5F2221).withOpacity(0.7),
+                    fontSize: 12.sp,
+                  ),
+                ),
+              ),
+            ),
 
             // Progress Overview
             _buildProgressOverview(),
@@ -39,53 +50,6 @@ class MyLearningView extends BasePage<MyLearningController> {
             Expanded(child: _buildEnrolledCourses()),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      decoration: BoxDecoration(gradient: AppColors.primaryGradient),
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () => Get.back(),
-            icon: Icon(
-              Icons.arrow_back_ios_new,
-              color: Colors.white,
-              size: 20.w,
-            ),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoTranslateText(
-                  'My Learning',
-                  style: AppTypography.h2.copyWith(
-                    color: Colors.white,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                Obx(
-                  () => AutoTranslateText(
-                    '${controller.enrolledCourses.length} courses enrolled',
-                    style: AppTypography.body2.copyWith(
-                      color: Colors.white70,
-                      fontSize: 12.sp,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

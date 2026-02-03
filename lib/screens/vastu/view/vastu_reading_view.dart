@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -20,7 +21,8 @@ class VastuReadingView extends StatefulWidget {
   State<VastuReadingView> createState() => _VastuReadingViewState();
 }
 
-class _VastuReadingViewState extends State<VastuReadingView> with WidgetsBindingObserver {
+class _VastuReadingViewState extends State<VastuReadingView>
+    with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
@@ -38,7 +40,8 @@ class _VastuReadingViewState extends State<VastuReadingView> with WidgetsBinding
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final controller = Get.find<VastuReadingController>(tag: 'vastu_compass');
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
       controller.pauseSensors();
     } else if (state == AppLifecycleState.resumed) {
       controller.resumeSensors();
@@ -50,135 +53,94 @@ class _VastuReadingViewState extends State<VastuReadingView> with WidgetsBinding
     // CRITICAL: Always ensure controller exists BEFORE GetBuilder tries to access it
     VastuReadingController controllerRef;
     if (!Get.isRegistered<VastuReadingController>(tag: 'vastu_compass')) {
-      controllerRef = Get.put(VastuReadingController(), tag: 'vastu_compass', permanent: false);
+      controllerRef = Get.put(
+        VastuReadingController(),
+        tag: 'vastu_compass',
+        permanent: false,
+      );
     } else {
       controllerRef = Get.find<VastuReadingController>(tag: 'vastu_compass');
       controllerRef.resumeSensors();
     }
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: GetBuilder<VastuReadingController>(
-          tag: 'vastu_compass',
-          init: controllerRef, // Explicitly provide controller instance
-          builder: (controller) {
-            // Camera mode
-            if (controller.isCameraMode) {
-              return CameraCompassOverlay(
-                heading: controller.heading,
-                direction: controller.currentDirection,
-                isCalibrated: controller.isCalibrated,
-                onClose: () => controller.toggleCameraMode(),
-              );
-            }
-            
-            // Normal compass mode
-            return Column(
-              children: [
-                // Header
-                _buildHeader(),
-                
-                // Main compass area
-                Expanded(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Compass dial
-                      CompassDial(
-                        heading: controller.heading,
-                        isCalibrated: controller.isCalibrated,
-                      ),
-                      
-                      // Direction overlay
-                      DirectionOverlay(
-                        direction: controller.currentDirection,
-                        heading: controller.heading,
-                      ),
-                      
-                      // Calibration hint
-                      if (!controller.isCalibrated)
-                        Positioned(
-                          bottom: 100.h,
-                          child: CalibrationHint(),
-                        ),
-                    ],
-                  ),
-                ),
-                
-                // Bottom controls
-                _buildBottomControls(controller),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          // Back button
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Padding(
+          padding: EdgeInsets.only(
+            top:
+                (MediaQuery.of(context).padding.top > 0
+                        ? MediaQuery.of(context).padding.top * 0.5
+                        : 0.0)
+                    .clamp(6.0, 24.0)
+                    .toDouble(),
           ),
-          Spacer(),
-          // Camera toggle button
-          GetBuilder<VastuReadingController>(
+          child: GetBuilder<VastuReadingController>(
+            tag: 'vastu_compass',
+            init: controllerRef, // Explicitly provide controller instance
             builder: (controller) {
-              return GestureDetector(
-                onTap: () => controller.toggleCameraMode(),
-                child: Container(
-                  width: 40.w,
-                  height: 40.w,
-                  decoration: BoxDecoration(
-                    color: controller.isCameraMode 
-                        ? "#F38B3B".toColor() 
-                        : '#ffffff'.toColor(),
-                    borderRadius: BorderRadius.circular(8.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
+              // Camera mode
+              if (controller.isCameraMode) {
+                return CameraCompassOverlay(
+                  heading: controller.heading,
+                  direction: controller.currentDirection,
+                  isCalibrated: controller.isCalibrated,
+                  onClose: () => controller.toggleCameraMode(),
+                );
+              }
+
+              // Normal compass mode
+              return Column(
+                children: [
+                  // Header
+                  CommonHeader(
+                    title: 'Vastu Reading',
+                    customActions: [
+                      IconButton(
+                        onPressed: () => controller.toggleCameraMode(),
+                        icon: Icon(
+                          Icons.camera_alt,
+                          color: controller.isCameraMode
+                              ? "#F38B3B".toColor()
+                              : '#6F221E'.toColor(),
+                          size: 24.w,
+                        ),
                       ),
                     ],
                   ),
-                  child: Icon(
-                    Icons.camera_alt,
-                    color: controller.isCameraMode 
-                        ? '#ffffff'.toColor() 
-                        : '#3E2723'.toColor(),
-                    size: 20.w,
+
+                  // Main compass area
+                  Expanded(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Compass dial
+                        CompassDial(
+                          heading: controller.heading,
+                          isCalibrated: controller.isCalibrated,
+                        ),
+
+                        // Direction overlay
+                        DirectionOverlay(
+                          direction: controller.currentDirection,
+                          heading: controller.heading,
+                        ),
+
+                        // Calibration hint
+                        if (!controller.isCalibrated)
+                          Positioned(bottom: 100.h, child: CalibrationHint()),
+                      ],
+                    ),
                   ),
-                ),
+
+                  // Bottom controls
+                  _buildBottomControls(controller),
+                ],
               );
             },
           ),
-        ],
+        ),
       ),
     );
   }
@@ -209,27 +171,26 @@ class _VastuReadingViewState extends State<VastuReadingView> with WidgetsBinding
             decoration: BoxDecoration(
               color: '#FFF2E8'.toColor(),
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(
-                color: '#F5D7B8'.toColor(),
-                width: 1.5,
-              ),
+              border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
             ),
             child: Column(
               children: [
                 AutoTranslateText(
                   controller.currentDirection,
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: '#3E2723'.toColor(),
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
+                  style: MyTextTheme.largeBCB
+                      .copyWith(
+                        color: '#3E2723'.toColor(),
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.h2),
                   textAlign: TextAlign.center,
                 ),
                 Spacing.h(8),
                 AutoTranslateText(
                   'Heading: ${controller.heading.toStringAsFixed(1)}°',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: '#666666'.toColor(),
-                  ).merge(AppTypography.body1),
+                  style: MyTextTheme.mediumBCN
+                      .copyWith(color: '#666666'.toColor())
+                      .merge(AppTypography.body1),
                 ),
               ],
             ),
@@ -255,7 +216,10 @@ class _VastuReadingViewState extends State<VastuReadingView> with WidgetsBinding
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   foregroundColor: '#ffffff'.toColor(),
-                  padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 14.h,
+                    horizontal: 24.w,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.r),
                   ),
@@ -263,22 +227,24 @@ class _VastuReadingViewState extends State<VastuReadingView> with WidgetsBinding
                   shadowColor: Colors.transparent,
                 ),
                 child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.info_outline,
-                    size: 20.w,
-                    color: '#ffffff'.toColor(),
-                  ),
-                  Spacing.w(8),
-                  AutoTranslateText(
-                    'Vastu Information',
-                    style: MyTextTheme.mediumBCB.copyWith(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      size: 20.w,
                       color: '#ffffff'.toColor(),
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.body1),
-                  ),
-                ],
+                    ),
+                    Spacing.w(8),
+                    AutoTranslateText(
+                      'Vastu Information',
+                      style: MyTextTheme.mediumBCB
+                          .copyWith(
+                            color: '#ffffff'.toColor(),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.body1),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -288,4 +254,3 @@ class _VastuReadingViewState extends State<VastuReadingView> with WidgetsBinding
     );
   }
 }
-

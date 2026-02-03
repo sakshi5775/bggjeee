@@ -1,10 +1,12 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_form_controller.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,96 +15,249 @@ import 'package:get/get.dart';
 class HoroscopeFormView extends BasePage<HoroscopeFormController> {
   const HoroscopeFormView({super.key});
 
-  // Gradient definitions
-  static final LinearGradient gradientBackground = LinearGradient(
-    colors: ["#FCE5AA".toColor(), "#FFFCF3".toColor(), "#FFFFFF".toColor()],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  );
-
-  static final LinearGradient primaryGradient = LinearGradient(
-    colors: ["#820B17".toColor(), "#68171E".toColor(), "#5D1C21".toColor()],
-  );
-
-  static LinearGradient orangeGradient = LinearGradient(
-    colors: ["#F38B3B".toColor(), "#DD2914".toColor()],
-  );
-
-  // Helper method to apply gradient to icons
-  Widget _buildGradientIcon(IconData icon, double size) {
-    return ShaderMask(
-      shaderCallback: (bounds) => orangeGradient.createShader(bounds),
-      child: Icon(
-        icon,
-        color: Colors.white,
-        size: size,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: gradientBackground,
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                // Header
-                _buildHeader(),
-                
-                // Location Selector
-                _buildLocationSelector(),
-                
-                Spacing.h(20),
-                
-                // Form Section
-                _buildFormSection(),
-                
-                Spacing.h(20),
-              ],
-            ),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        drawer: UserDashboardView.buildDrawer(context),
+        body: SafeArea(
+          child: Column(
+            children: [
+              const CommonHeader(title: 'Horoscope'),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 0.h,
+                  ),
+                  child: _buildFormSection(),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: primaryGradient,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
-        ),
+  BoxDecoration _formCardDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16.r),
+      border: Border.all(
+        color: AppColors.deepOrange.withOpacity(0.2),
+        width: 1.5,
       ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Row(
-          children: [
-            // Back button
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: Icon(
-                Icons.arrow_back,
-                color: const Color(0xFFDFB343),
-                size: 24.w,
+      boxShadow: [
+        BoxShadow(
+          color: AppColors.deepOrange.withOpacity(0.08),
+          blurRadius: 16,
+          offset: const Offset(0, 4),
+        ),
+        BoxShadow(
+          color: Colors.black.withOpacity(0.04),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    );
+  }
+
+  InputDecoration _inputDecoration({
+    required String hint,
+    required IconData icon,
+    Widget? suffix,
+  }) {
+    return InputDecoration(
+      isDense: true,
+      contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.w),
+      hintText: hint,
+      hintStyle: MyTextTheme.smallBCN.copyWith(
+        color: AppColors.textSecondary.withOpacity(0.6),
+        fontSize: 13.sp,
+      ),
+      prefixIcon: Padding(
+        padding: EdgeInsets.only(left: 12.w, right: 8.w),
+        child: Icon(icon, color: AppColors.deepOrange, size: 20.w),
+      ),
+      suffixIcon: suffix,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(color: AppColors.deepOrange.withOpacity(0.2)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(color: AppColors.deepOrange.withOpacity(0.2)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(color: AppColors.deepOrange, width: 1.5),
+      ),
+      filled: true,
+      fillColor: Colors.white,
+    );
+  }
+
+  Widget _buildFormSection() {
+    return Container(
+      decoration: _formCardDecoration(),
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: ShaderMask(
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (bounds) =>
+                  AppColors.orangeGradient.createShader(bounds),
+              child: AutoTranslateText(
+                'Get your daily horoscope predictions',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  fontSize: 14.sp,
+                  color: Colors.white,
+                ),
               ),
             ),
-            Spacing.w(16),
-            // Title
-            Expanded(
-              child: AutoTranslateText(
-                'Horoscope Form',
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: const Color(0xFFDFB343),
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h2),
+          ),
+          Spacing.h(16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildCompactField(
+                  controller: controller.dateController,
+                  hint: 'DOB (dd/mm/yyyy)',
+                  icon: Icons.calendar_today,
+                  readOnly: true,
+                  onTap: () => _showDatePicker(),
+                ),
               ),
+              SizedBox(width: 10.w),
+              Expanded(child: _buildTimeField()),
+            ],
+          ),
+          Spacing.h(6),
+          Padding(
+            padding: EdgeInsets.only(left: 4.w),
+            child: AutoTranslateText(
+              'Accurate birth time improves horoscope accuracy.',
+              style: MyTextTheme.smallBCN.copyWith(
+                color: AppColors.textSecondary.withOpacity(0.7),
+                fontSize: 11.sp,
+              ),
+            ),
+          ),
+          Spacing.h(12),
+          _buildCompactLocation(),
+          Spacing.h(12),
+          _buildLanguageDropdown(),
+          Spacing.h(20),
+          _buildSubmitButton(),
+        ],
+      ),
+    );
+  }
+
+  /// Birth time field showing 12-hour AM/PM
+  Widget _buildTimeField() {
+    return Obx(() {
+      final t = controller.selectedTime.value;
+      String display = controller.timeController.text.isEmpty
+          ? ''
+          : TimePickerHelper.formatTime24To12Display(t.hour, t.minute);
+
+      return GestureDetector(
+        onTap: () => _showTimePicker(),
+        child: AbsorbPointer(
+          child: TextFormField(
+            controller: TextEditingController(text: display),
+            decoration: _inputDecoration(
+              hint: 'Time of Birth',
+              icon: Icons.access_time,
+              suffix: Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: AppColors.deepOrange,
+                size: 22.w,
+              ),
+            ),
+            style: MyTextTheme.smallBCN.copyWith(
+              color: AppColors.textPrimary,
+              fontSize: 13.sp,
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buildCompactField({
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+    bool readOnly = false,
+    VoidCallback? onTap,
+  }) {
+    return TextFormField(
+      controller: controller,
+      readOnly: readOnly,
+      onTap: onTap,
+      style: MyTextTheme.smallBCN.copyWith(
+        color: AppColors.textPrimary,
+        fontSize: 13.sp,
+      ),
+      decoration: _inputDecoration(hint: hint, icon: icon),
+    );
+  }
+
+  Widget _buildCompactLocation() {
+    return GestureDetector(
+      onTap: () => _showLocationBottomSheet(),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.location_on, color: AppColors.deepOrange, size: 20.w),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Obx(
+                () => AutoTranslateText(
+                  controller.selectedLocation.value.isEmpty
+                      ? 'Select Birth Place'
+                      : controller.selectedLocation.value,
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: controller.selectedLocation.value.isEmpty
+                        ? AppColors.textSecondary.withOpacity(0.6)
+                        : AppColors.textPrimary,
+                    fontSize: 13.sp,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+            Obx(
+              () => controller.isFetchingLocation.value
+                  ? SizedBox(
+                      width: 16.w,
+                      height: 16.w,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.deepOrange,
+                        ),
+                      ),
+                    )
+                  : Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: AppColors.deepOrange,
+                      size: 22.w,
+                    ),
             ),
           ],
         ),
@@ -110,253 +265,83 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
     );
   }
 
-  Widget _buildLocationSelector() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: GestureDetector(
-        onTap: () => _showLocationBottomSheet(),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12.r),
-            gradient: orangeGradient,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          padding: EdgeInsets.all(2),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.r),
+  Widget _buildLanguageDropdown() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 14.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+      ),
+      child: Obx(
+        () => DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: controller.selectedLanguage.value,
+            isExpanded: true,
+            icon: Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: AppColors.deepOrange,
+              size: 22.w,
             ),
-            child: Row(
+            style: MyTextTheme.smallBCN.copyWith(
+              color: AppColors.textPrimary,
+              fontSize: 13.sp,
+            ),
+            hint: Row(
               children: [
-                _buildGradientIcon(Icons.location_on, 24.w),
-                Spacing.w(12),
-                Expanded(
-                  child: Obx(() => AutoTranslateText(
-                    controller.selectedLocation.value,
-                    style: MyTextTheme.mediumBCN.copyWith(
-                      color: "#6F221E".toColor(),
-                    ).merge(AppTypography.body1),
-                  )),
+                Icon(Icons.language, color: AppColors.deepOrange, size: 20.w),
+                SizedBox(width: 12.w),
+                AutoTranslateText(
+                  'Select Language',
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: AppColors.textSecondary.withOpacity(0.6),
+                    fontSize: 13.sp,
+                  ),
                 ),
-                Obx(() => controller.isFetchingLocation.value
-                    ? SizedBox(
-                        width: 20.w,
-                        height: 20.w,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            const Color(0xFFDFB343),
-                          ),
-                        ),
-                      )
-                    : _buildGradientIcon(Icons.arrow_forward_ios, 16.w)),
               ],
             ),
+            items: controller.languages.entries.map((entry) {
+              return DropdownMenuItem<String>(
+                value: entry.key,
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.language,
+                      color: AppColors.deepOrange,
+                      size: 20.w,
+                    ),
+                    SizedBox(width: 12.w),
+                    AutoTranslateText(
+                      entry.value,
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: AppColors.textPrimary,
+                        fontSize: 13.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                controller.selectedLanguage.value = value;
+              }
+            },
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildFormSection() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AutoTranslateText(
-            'Birth Details',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: "#6F221E".toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
-          ),
-          Spacing.h(16),
-          
-          // Date field
-          _buildTextField(
-            controller: controller.dateController,
-            label: 'Date of Birth',
-            icon: Icons.calendar_today,
-            onTap: () => controller.selectDate(Get.context!),
-          ),
-          Spacing.h(12),
-          
-          // Time field
-          _buildTextField(
-            controller: controller.timeController,
-            label: 'Time of Birth',
-            icon: Icons.access_time,
-            onTap: () => controller.selectTime(Get.context!),
-          ),
-          Spacing.h(12),
-          
-          // Language dropdown
-          _buildLanguageField(),
-          Spacing.h(20),
-          
-          // Submit button
-          _buildSubmitButton(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    bool readOnly = false,
-    VoidCallback? onTap,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: TextFormField(
-        controller: controller,
-        readOnly: readOnly,
-        onTap: onTap,
-        style: MyTextTheme.mediumBCN.copyWith(
-          color: "#6F221E".toColor(),
-        ).merge(AppTypography.body1),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: MyTextTheme.smallBCN.copyWith(
-            color: "#6F221E".toColor().withValues(alpha: 0.6),
-          ).merge(AppTypography.body2),
-          floatingLabelStyle: MyTextTheme.smallBCN.copyWith(
-            color: "#6F221E".toColor(),
-            backgroundColor: Colors.white,
-          ).merge(AppTypography.body2),
-          prefixIcon: _buildGradientIcon(icon, 20.w),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(
-              color: "#F38B3B".toColor(),
-              width: 1.5,
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(
-              color: "#F38B3B".toColor().withOpacity(0.5),
-              width: 1.5,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(
-              color: "#DD2914".toColor(),
-              width: 2,
-            ),
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          floatingLabelAlignment: FloatingLabelAlignment.start,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLanguageField() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Obx(() => DropdownButtonFormField<String>(
-        value: controller.selectedLanguage.value,
-        decoration: InputDecoration(
-          labelText: 'Language',
-          labelStyle: MyTextTheme.smallBCN.copyWith(
-            color: "#6F221E".toColor().withValues(alpha: 0.6),
-          ).merge(AppTypography.body2),
-          floatingLabelStyle: MyTextTheme.smallBCN.copyWith(
-            color: "#6F221E".toColor(),
-            backgroundColor: Colors.white,
-          ).merge(AppTypography.body2),
-          prefixIcon: _buildGradientIcon(Icons.language, 20.w),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(
-              color: "#F38B3B".toColor(),
-              width: 1.5,
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(
-              color: "#F38B3B".toColor().withOpacity(0.5),
-              width: 1.5,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: BorderSide(
-              color: "#DD2914".toColor(),
-              width: 2,
-            ),
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          floatingLabelAlignment: FloatingLabelAlignment.start,
-        ),
-        items: controller.languages.entries.map((entry) {
-          return DropdownMenuItem<String>(
-            value: entry.key,
-            child: AutoTranslateText(
-              entry.value,
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: "#6F221E".toColor(),
-              ).merge(AppTypography.body1),
-            ),
-          );
-        }).toList(),
-        onChanged: (value) {
-          if (value != null) {
-            controller.selectedLanguage.value = value;
-          }
-        },
-      )),
     );
   }
 
   Widget _buildSubmitButton() {
-    return Obx(() => SizedBox(
-      width: double.infinity,
-      child: Container(
+    return Obx(
+      () => Container(
         decoration: BoxDecoration(
-          gradient: orangeGradient,
+          gradient: AppColors.orangeGradient,
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: AppColors.deepOrange.withOpacity(0.3),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -373,25 +358,33 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
             ),
             elevation: 0,
           ),
-        child: controller.isLoading.value
-            ? SizedBox(
-                height: 20.h,
-                width: 20.w,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          child: controller.isLoading.value
+              ? SizedBox(
+                  height: 20.h,
+                  width: 20.w,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+              : AutoTranslateText(
+                  'Continue to Sign Selection',
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              )
-            : AutoTranslateText(
-                'Continue to Sign Selection',
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h3),
-              ),
         ),
       ),
-    ));
+    );
+  }
+
+  void _showDatePicker() {
+    controller.selectDate(Get.context!);
+  }
+
+  void _showTimePicker() {
+    controller.selectTime(Get.context!);
   }
 
   void _showLocationBottomSheet() {
@@ -406,17 +399,18 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
-            controller.fetchLocationFromCity(
-              city,
-              state: state,
-              country: country,
-              latitude: latitude,
-              longitude: longitude,
-              timezone: timezone,
-            );
-            Get.back();
-          },
+          onCitySelected:
+              (city, state, country, [latitude, longitude, timezone]) {
+                controller.fetchLocationFromCity(
+                  city,
+                  state: state,
+                  country: country,
+                  latitude: latitude,
+                  longitude: longitude,
+                  timezone: timezone,
+                );
+                Get.back();
+              },
           selectedCity: controller.selectedLocation.value,
           onUseCurrentLocation: () => controller.useCurrentLocation(),
         ),
@@ -426,13 +420,3 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-

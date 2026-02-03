@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/data_model/ramal_shastra_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/service/ramal_shastra_service.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,77 @@ class RamalShastraResultsView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            _buildTopBar(),
+            CommonHeader(
+              title: 'Results',
+              customActions: [
+                IconButton(
+                  onPressed: () => Get.toNamed(AppRoutes.ramalShastraStats),
+                  icon: Icon(
+                    Icons.bar_chart,
+                    color: '#6F221E'.toColor(),
+                    size: 24.w,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Get.toNamed(AppRoutes.ramalShastraHistory),
+                  icon: Icon(
+                    Icons.history,
+                    color: '#6F221E'.toColor(),
+                    size: 24.w,
+                  ),
+                ),
+                if (result.readingId != null)
+                  PopupMenuButton<String>(
+                    icon: Icon(
+                      Icons.more_vert,
+                      color: '#6F221E'.toColor(),
+                      size: 24.w,
+                    ),
+                    onSelected: (value) {
+                      if (value == 'delete') {
+                        _showDeleteDialog(result.readingId!);
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 'delete',
+                        child: Text(
+                          'Delete Reading',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+            if (result.readingId != null)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20.r),
+                    border: Border.all(color: '#F5D7B8'.toColor()),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.tag, color: "#F38B3B".toColor(), size: 14.w),
+                      Spacing.w(4),
+                      AutoTranslateText(
+                        'Reading ID: ${result.readingId}',
+                        style: MyTextTheme.smallBCB.copyWith(
+                          color: '#3E2723'.toColor(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -46,10 +117,15 @@ class RamalShastraResultsView extends StatelessWidget {
                     _buildQuestionHeader(result),
                     Spacing.h(24),
                     // Section 1: Final Judgment Card (includes judgmentSummary)
-                    _buildJudgmentCard(result.judgment, result.interpretation?.judgmentSummary),
+                    _buildJudgmentCard(
+                      result.judgment,
+                      result.interpretation?.judgmentSummary,
+                    ),
                     Spacing.h(24),
                     // Section 2: Answer to Question
-                    _buildAnswerToQuestion(result.interpretation?.answerToQuestion),
+                    _buildAnswerToQuestion(
+                      result.interpretation?.answerToQuestion,
+                    ),
                     Spacing.h(24),
                     // Section 3: Ramal Chart (4×4 Grid) - with chartData details if available
                     if (result.chart != null || result.chartData != null) ...[
@@ -57,34 +133,45 @@ class RamalShastraResultsView extends StatelessWidget {
                       Spacing.h(24),
                     ],
                     // Element Distribution
-                    if (result.chart?.relationships?.elementDistribution != null || 
-                        result.chartData?.relationships?.elementDistribution != null) ...[
+                    if (result.chart?.relationships?.elementDistribution !=
+                            null ||
+                        result.chartData?.relationships?.elementDistribution !=
+                            null) ...[
                       _buildElementDistribution(
-                        result.chart?.relationships?.elementDistribution ?? 
-                        result.chartData?.relationships?.elementDistribution
+                        result.chart?.relationships?.elementDistribution ??
+                            result
+                                .chartData
+                                ?.relationships
+                                ?.elementDistribution,
                       ),
                       Spacing.h(24),
                     ],
                     // House Relationships (Strong/Weak/Neutral)
-                    if (result.chart?.relationships != null || result.chartData?.relationships != null) ...[
+                    if (result.chart?.relationships != null ||
+                        result.chartData?.relationships != null) ...[
                       _buildHouseRelationships(
-                        result.chart?.relationships ?? result.chartData?.relationships
+                        result.chart?.relationships ??
+                            result.chartData?.relationships,
                       ),
                       Spacing.h(24),
                     ],
                     // Section 4: Key Houses
-                    if (result.interpretation?.keyHouses != null && result.interpretation!.keyHouses!.isNotEmpty) ...[
+                    if (result.interpretation?.keyHouses != null &&
+                        result.interpretation!.keyHouses!.isNotEmpty) ...[
                       _buildKeyHouses(result.interpretation!.keyHouses!),
                       Spacing.h(24),
                     ],
                     // Section 5: Summary
-                    if (result.interpretation?.summary != null && result.interpretation!.summary!.isNotEmpty) ...[
+                    if (result.interpretation?.summary != null &&
+                        result.interpretation!.summary!.isNotEmpty) ...[
                       _buildSummary(result.interpretation!.summary!),
                       Spacing.h(24),
                     ],
                     // Section 6: Detailed Analysis
                     if (result.interpretation?.detailedAnalysis != null) ...[
-                      _buildDetailedAnalysis(result.interpretation!.detailedAnalysis!),
+                      _buildDetailedAnalysis(
+                        result.interpretation!.detailedAnalysis!,
+                      ),
                       Spacing.h(24),
                     ],
                     // Section 7: Timing
@@ -93,7 +180,8 @@ class RamalShastraResultsView extends StatelessWidget {
                       Spacing.h(24),
                     ],
                     // Section 8: Strengths & Challenges
-                    if (result.interpretation?.strengths != null || result.interpretation?.challenges != null) ...[
+                    if (result.interpretation?.strengths != null ||
+                        result.interpretation?.challenges != null) ...[
                       _buildStrengthsChallenges(
                         result.interpretation?.strengths,
                         result.interpretation?.challenges,
@@ -101,7 +189,8 @@ class RamalShastraResultsView extends StatelessWidget {
                       Spacing.h(24),
                     ],
                     // Section 9: Advice
-                    if (result.interpretation?.advice != null && result.interpretation!.advice!.isNotEmpty) ...[
+                    if (result.interpretation?.advice != null &&
+                        result.interpretation!.advice!.isNotEmpty) ...[
                       _buildAdvice(result.interpretation!.advice!),
                       Spacing.h(24),
                     ],
@@ -126,193 +215,13 @@ class RamalShastraResultsView extends StatelessWidget {
     );
   }
 
-  Widget _buildTopBar() {
-    final RamalShastraData? result = Get.arguments?['result'];
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            "#F38B3B".toColor(),
-            "#DD2914".toColor(),
-          ],
-        ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20.r),
-          bottomRight: Radius.circular(20.r),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.12),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
-                onPressed: () => Get.back(),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AutoTranslateText(
-                      'Ramal Shastra Reading',
-                      style: MyTextTheme.largeBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    AutoTranslateText(
-                      'Your analysis results',
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: Colors.white.withOpacity(0.9),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Stats Button
-              Container(
-                margin: EdgeInsets.only(right: 4.w),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: IconButton(
-                  icon: Icon(Icons.bar_chart, color: Colors.white, size: 22.w),
-                  tooltip: 'Statistics',
-                  onPressed: () => Get.toNamed(AppRoutes.ramalShastraStats),
-                ),
-              ),
-              // History Button
-              Container(
-                margin: EdgeInsets.only(right: 4.w),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: IconButton(
-                  icon: Icon(Icons.history, color: Colors.white, size: 22.w),
-                  tooltip: 'History',
-                  onPressed: () => Get.toNamed(AppRoutes.ramalShastraHistory),
-                ),
-              ),
-              // Delete Menu Button
-              if (result?.readingId != null)
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: PopupMenuButton<String>(
-                    icon: Icon(Icons.more_vert, color: Colors.white, size: 22.w),
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'delete',
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(6.w),
-                              decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(6.r),
-                              ),
-                              child: Icon(Icons.delete, color: Colors.red, size: 18.w),
-                            ),
-                            Spacing.w(12),
-                            AutoTranslateText(
-                              'Delete Reading',
-                              style: MyTextTheme.mediumBCB.copyWith(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                    onSelected: (value) {
-                      if (value == 'delete' && result?.readingId != null) {
-                        _showDeleteDialog(result!.readingId!);
-                      }
-                    },
-                  ),
-                ),
-            ],
-          ),
-          if (result?.readingId != null) ...[
-            Spacing.h(12),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.25),
-                borderRadius: BorderRadius.circular(20.r),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(4.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.3),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.tag, color: Colors.white, size: 12.w),
-                  ),
-                  Spacing.w(8),
-                  AutoTranslateText(
-                    'Reading ID',
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 10.sp,
-                    ),
-                  ),
-                  Spacing.w(6),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: AutoTranslateText(
-                      result?.readingId ?? '',
-                      style: MyTextTheme.smallBCB.copyWith(
-                        color: "#F38B3B".toColor(),
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
   void _showDeleteDialog(String readingId) {
     Get.dialog<bool>(
       AlertDialog(
         backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
         title: AutoTranslateText(
           'Delete Reading',
           style: MyTextTheme.largeBCB.copyWith(
@@ -322,18 +231,14 @@ class RamalShastraResultsView extends StatelessWidget {
         ),
         content: AutoTranslateText(
           'Are you sure you want to delete this reading? This action cannot be undone.',
-          style: MyTextTheme.mediumBCN.copyWith(
-            color: '#666666'.toColor(),
-          ),
+          style: MyTextTheme.mediumBCN.copyWith(color: '#666666'.toColor()),
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
             child: AutoTranslateText(
               'Cancel',
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: '#666666'.toColor(),
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: '#666666'.toColor()),
             ),
           ),
           TextButton(
@@ -341,7 +246,9 @@ class RamalShastraResultsView extends StatelessWidget {
               Get.back(result: true);
               try {
                 final controller = Get.find<RamalShastraController>();
-                final index = controller.historyReadings.indexWhere((r) => r.readingId == readingId);
+                final index = controller.historyReadings.indexWhere(
+                  (r) => r.readingId == readingId,
+                );
                 if (index >= 0) {
                   await controller.deleteReading(readingId, index);
                   Get.snackbar(
@@ -414,7 +321,11 @@ class RamalShastraResultsView extends StatelessWidget {
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
-                child: Icon(Icons.help_outline, color: Colors.white, size: 20.w),
+                child: Icon(
+                  Icons.help_outline,
+                  color: Colors.white,
+                  size: 20.w,
+                ),
               ),
               Spacing.w(12),
               Expanded(
@@ -430,10 +341,12 @@ class RamalShastraResultsView extends StatelessWidget {
                     Spacing.h(4),
                     AutoTranslateText(
                       result.question ?? 'N/A',
-                      style: MyTextTheme.largeBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h2),
+                      style: MyTextTheme.largeBCB
+                          .copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h2),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -452,9 +365,7 @@ class RamalShastraResultsView extends StatelessWidget {
               ),
               child: AutoTranslateText(
                 result.category!,
-                style: MyTextTheme.smallBCB.copyWith(
-                  color: Colors.white,
-                ),
+                style: MyTextTheme.smallBCB.copyWith(color: Colors.white),
               ),
             ),
           ],
@@ -463,23 +374,28 @@ class RamalShastraResultsView extends StatelessWidget {
     );
   }
 
-  Widget _buildJudgmentCard(RamalJudgment? judgment, RamalJudgmentSummary? judgmentSummary) {
+  Widget _buildJudgmentCard(
+    RamalJudgment? judgment,
+    RamalJudgmentSummary? judgmentSummary,
+  ) {
     // Use judgmentSummary if judgment is null, create a compatible object
     final displayOutcome = judgment?.outcome ?? judgmentSummary?.outcome;
-    final displayConfidence = judgment?.confidence ?? judgmentSummary?.confidence;
-    final displayExplanation = judgment?.explanation ?? judgmentSummary?.explanation;
-    
+    final displayConfidence =
+        judgment?.confidence ?? judgmentSummary?.confidence;
+    final displayExplanation =
+        judgment?.explanation ?? judgmentSummary?.explanation;
+
     if (displayOutcome == null) return SizedBox.shrink();
-    
+
     Color outcomeColor = '#EA632B'.toColor();
-    if (displayOutcome.toLowerCase() == 'positive' || 
+    if (displayOutcome.toLowerCase() == 'positive' ||
         displayOutcome.toLowerCase() == 'yes') {
       outcomeColor = Colors.green;
-    } else if (displayOutcome.toLowerCase() == 'negative' || 
-               displayOutcome.toLowerCase() == 'no') {
+    } else if (displayOutcome.toLowerCase() == 'negative' ||
+        displayOutcome.toLowerCase() == 'no') {
       outcomeColor = Colors.red;
     }
-    
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(20.w),
@@ -519,10 +435,12 @@ class RamalShastraResultsView extends StatelessWidget {
               Expanded(
                 child: AutoTranslateText(
                   'Final Judgment',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: '#3E2723'.toColor(),
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
+                  style: MyTextTheme.largeBCB
+                      .copyWith(
+                        color: '#3E2723'.toColor(),
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.h2),
                 ),
               ),
             ],
@@ -542,7 +460,10 @@ class RamalShastraResultsView extends StatelessWidget {
                     ),
                     Spacing.h(8),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 10.h,
+                      ),
                       decoration: BoxDecoration(
                         color: outcomeColor,
                         borderRadius: BorderRadius.circular(12.r),
@@ -569,20 +490,23 @@ class RamalShastraResultsView extends StatelessWidget {
                     ),
                   ),
                   Spacing.h(8),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-                      decoration: BoxDecoration(
-                        color: outcomeColor.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: AutoTranslateText(
-                        '${((displayConfidence ?? 0) * 100).toStringAsFixed(0)}%',
-                        style: MyTextTheme.largeBCB.copyWith(
-                          color: outcomeColor,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 10.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: outcomeColor.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: AutoTranslateText(
+                      '${((displayConfidence ?? 0) * 100).toStringAsFixed(0)}%',
+                      style: MyTextTheme.largeBCB.copyWith(
+                        color: outcomeColor,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
+                  ),
                 ],
               ),
             ],
@@ -624,7 +548,9 @@ class RamalShastraResultsView extends StatelessWidget {
             ),
           ],
           // Show judge/reconciler strength if available from judgment
-          if (judgment != null && (judgment.judgeStrength != null || judgment.reconcilerStrength != null)) ...[
+          if (judgment != null &&
+              (judgment.judgeStrength != null ||
+                  judgment.reconcilerStrength != null)) ...[
             Spacing.h(16),
             Divider(),
             Spacing.h(12),
@@ -679,7 +605,7 @@ class RamalShastraResultsView extends StatelessWidget {
 
   Widget _buildAnswerToQuestion(String? answer) {
     if (answer == null || answer.isEmpty) return SizedBox.shrink();
-    
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(20.w),
@@ -703,10 +629,9 @@ class RamalShastraResultsView extends StatelessWidget {
               Spacing.w(8),
               AutoTranslateText(
                 'Answer to Question',
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h2),
+                style: MyTextTheme.largeBCB
+                    .copyWith(color: Colors.white, fontWeight: FontWeight.bold)
+                    .merge(AppTypography.h2),
               ),
             ],
           ),
@@ -727,25 +652,29 @@ class RamalShastraResultsView extends StatelessWidget {
     // Use chartData if available, otherwise use chart
     List<RamalHouse> houses = [];
     if (chartData?.houses != null && chartData!.houses!.isNotEmpty) {
-      houses = chartData.houses!.map((h) => RamalHouse(
-        houseNumber: h.houseNumber,
-        name: h.name,
-        strength: h.strength,
-        element: h.element,
-        isJudge: false,
-        isReconciler: false,
-      )).toList();
+      houses = chartData.houses!
+          .map(
+            (h) => RamalHouse(
+              houseNumber: h.houseNumber,
+              name: h.name,
+              strength: h.strength,
+              element: h.element,
+              isJudge: false,
+              isReconciler: false,
+            ),
+          )
+          .toList();
     } else if (chart?.houses != null && chart!.houses!.isNotEmpty) {
       houses = chart.houses!;
     } else {
       return SizedBox.shrink();
     }
-    
+
     if (houses.isEmpty) return SizedBox.shrink();
-    
+
     // Get matrix from chartData if available
     final matrix = chartData?.matrix;
-    
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(20.w),
@@ -753,10 +682,7 @@ class RamalShastraResultsView extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Colors.white,
-            '#FFF8E1'.toColor().withOpacity(0.3),
-          ],
+          colors: [Colors.white, '#FFF8E1'.toColor().withOpacity(0.3)],
         ),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
@@ -779,16 +705,22 @@ class RamalShastraResultsView extends StatelessWidget {
                   color: '#FFF2E8'.toColor(),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Icon(Icons.grid_view, color: '#EA632B'.toColor(), size: 24.w),
+                child: Icon(
+                  Icons.grid_view,
+                  color: '#EA632B'.toColor(),
+                  size: 24.w,
+                ),
               ),
               Spacing.w(12),
               Expanded(
                 child: AutoTranslateText(
                   'Ramal Chart (4×4 Grid)',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: '#3E2723'.toColor(),
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
+                  style: MyTextTheme.largeBCB
+                      .copyWith(
+                        color: '#3E2723'.toColor(),
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.h2),
                 ),
               ),
             ],
@@ -823,7 +755,9 @@ class RamalShastraResultsView extends StatelessWidget {
                             width: 40.w,
                             height: 40.w,
                             decoration: BoxDecoration(
-                              color: value == 1 ? "#F38B3B".toColor() : Colors.grey[300],
+                              color: value == 1
+                                  ? "#F38B3B".toColor()
+                                  : Colors.grey[300],
                               borderRadius: BorderRadius.circular(4.r),
                             ),
                             child: Center(
@@ -831,7 +765,9 @@ class RamalShastraResultsView extends StatelessWidget {
                                 value == 1 ? '●' : '○',
                                 style: TextStyle(
                                   fontSize: 20.sp,
-                                  color: value == 1 ? Colors.white : Colors.grey[700],
+                                  color: value == 1
+                                      ? Colors.white
+                                      : Colors.grey[700],
                                 ),
                               ),
                             ),
@@ -867,16 +803,25 @@ class RamalShastraResultsView extends StatelessWidget {
                   return Row(
                     children: List.generate(4, (col) {
                       final index = row * 4 + col;
-                      if (index >= houses.length) return Expanded(child: SizedBox.shrink());
+                      if (index >= houses.length)
+                        return Expanded(child: SizedBox.shrink());
                       final house = houses[index];
-                      final isJudge = house.isJudge ?? (house.houseNumber == 15);
-                      final isReconciler = house.isReconciler ?? (house.houseNumber == 16);
+                      final isJudge =
+                          house.isJudge ?? (house.houseNumber == 15);
+                      final isReconciler =
+                          house.isReconciler ?? (house.houseNumber == 16);
                       RamalHouseDetailed? detailedHouse;
-                      if (chartData?.houses != null && index < (chartData!.houses?.length ?? 0)) {
+                      if (chartData?.houses != null &&
+                          index < (chartData!.houses?.length ?? 0)) {
                         detailedHouse = chartData.houses?[index];
                       }
                       return Expanded(
-                        child: _buildHouseCell(house, isJudge, isReconciler, detailedHouse),
+                        child: _buildHouseCell(
+                          house,
+                          isJudge,
+                          isReconciler,
+                          detailedHouse,
+                        ),
                       );
                     }),
                   );
@@ -901,46 +846,52 @@ class RamalShastraResultsView extends StatelessWidget {
                   child: Wrap(
                     spacing: 8.w,
                     runSpacing: 8.h,
-                    children: (chartData.shakals?.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final shakal = entry.value;
-                      return Container(
-                        padding: EdgeInsets.all(8.w),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(8.r),
-                          border: Border.all(color: '#F5D7B8'.toColor()),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            AutoTranslateText(
-                              'H${index + 1}',
-                              style: MyTextTheme.smallBCB.copyWith(
-                                color: '#3E2723'.toColor(),
-                                fontWeight: FontWeight.bold,
-                              ),
+                    children:
+                        (chartData.shakals?.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final shakal = entry.value;
+                          return Container(
+                            padding: EdgeInsets.all(8.w),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[100],
+                              borderRadius: BorderRadius.circular(8.r),
+                              border: Border.all(color: '#F5D7B8'.toColor()),
                             ),
-                            Spacing.h(4),
-                            Row(
+                            child: Column(
                               mainAxisSize: MainAxisSize.min,
-                              children: shakal.map((val) {
-                                return Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                  child: Text(
-                                    val == 1 ? '●' : '○',
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: val == 1 ? "#F38B3B".toColor() : Colors.grey[600],
-                                    ),
+                              children: [
+                                AutoTranslateText(
+                                  'H${index + 1}',
+                                  style: MyTextTheme.smallBCB.copyWith(
+                                    color: '#3E2723'.toColor(),
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                );
-                              }).toList(),
+                                ),
+                                Spacing.h(4),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: shakal.map((val) {
+                                    return Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 2.w,
+                                      ),
+                                      child: Text(
+                                        val == 1 ? '●' : '○',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: val == 1
+                                              ? "#F38B3B".toColor()
+                                              : Colors.grey[600],
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      );
-                    }).toList() ?? []),
+                          );
+                        }).toList() ??
+                        []),
                   ),
                 ),
               ],
@@ -951,7 +902,12 @@ class RamalShastraResultsView extends StatelessWidget {
     );
   }
 
-  Widget _buildHouseCell(RamalHouse house, bool isJudge, bool isReconciler, RamalHouseDetailed? detailedHouse) {
+  Widget _buildHouseCell(
+    RamalHouse house,
+    bool isJudge,
+    bool isReconciler,
+    RamalHouseDetailed? detailedHouse,
+  ) {
     Color borderColor = '#F5D7B8'.toColor();
     Color bgColor = _getElementColor(house.element).withOpacity(0.1);
     if (isJudge) {
@@ -962,9 +918,9 @@ class RamalShastraResultsView extends StatelessWidget {
       borderColor = Colors.grey[600]!;
       bgColor = Colors.grey[100]!;
     }
-    
+
     final shakal = detailedHouse?.shakal;
-    
+
     return GestureDetector(
       onTap: () {
         // Show house details dialog
@@ -977,7 +933,7 @@ class RamalShastraResultsView extends StatelessWidget {
           color: bgColor,
           borderRadius: BorderRadius.circular(10.r),
           border: Border.all(
-            color: borderColor, 
+            color: borderColor,
             width: isJudge || isReconciler ? 3 : 1.5,
           ),
           boxShadow: isJudge || isReconciler
@@ -1025,7 +981,9 @@ class RamalShastraResultsView extends StatelessWidget {
                       val == 1 ? '●' : '○',
                       style: TextStyle(
                         fontSize: 8.sp,
-                        color: val == 1 ? _getElementColor(house.element) : Colors.grey[400],
+                        color: val == 1
+                            ? _getElementColor(house.element)
+                            : Colors.grey[400],
                       ),
                     ),
                   );
@@ -1081,7 +1039,11 @@ class RamalShastraResultsView extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.trending_up, size: 12.w, color: _getStrengthColor(house.strength ?? 0)),
+                Icon(
+                  Icons.trending_up,
+                  size: 12.w,
+                  color: _getStrengthColor(house.strength ?? 0),
+                ),
                 Spacing.w(2),
                 Text(
                   '${house.strength ?? 0}/4',
@@ -1162,10 +1124,12 @@ class RamalShastraResultsView extends StatelessWidget {
                     Expanded(
                       child: AutoTranslateText(
                         'House ${house.houseNumber ?? 0} Details',
-                        style: MyTextTheme.largeBCB.copyWith(
-                          color: '#3E2723'.toColor(),
-                          fontWeight: FontWeight.bold,
-                        ).merge(AppTypography.h2),
+                        style: MyTextTheme.largeBCB
+                            .copyWith(
+                              color: '#3E2723'.toColor(),
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.h2),
                       ),
                     ),
                     IconButton(
@@ -1180,12 +1144,16 @@ class RamalShastraResultsView extends StatelessWidget {
                   _buildDetailRow('Type', detailed.type ?? 'N/A'),
                   _buildDetailRow('Element', detailed.element ?? 'N/A'),
                   _buildDetailRow('Gender', detailed.gender ?? 'N/A'),
-                  _buildDetailRow('Strength', '${detailed.strength ?? house.strength ?? 0}/4'),
+                  _buildDetailRow(
+                    'Strength',
+                    '${detailed.strength ?? house.strength ?? 0}/4',
+                  ),
                   if (detailed.meaning != null)
                     _buildDetailRow('Meaning', detailed.meaning!),
                   if (detailed.domain != null)
                     _buildDetailRow('Domain', detailed.domain!),
-                  if (detailed.shakal != null && detailed.shakal!.length == 4) ...[
+                  if (detailed.shakal != null &&
+                      detailed.shakal!.length == 4) ...[
                     Spacing.h(12),
                     AutoTranslateText(
                       'Shakal Pattern',
@@ -1203,7 +1171,9 @@ class RamalShastraResultsView extends StatelessWidget {
                             width: 40.w,
                             height: 40.w,
                             decoration: BoxDecoration(
-                              color: val == 1 ? "#F38B3B".toColor() : Colors.grey[300],
+                              color: val == 1
+                                  ? "#F38B3B".toColor()
+                                  : Colors.grey[300],
                               borderRadius: BorderRadius.circular(8.r),
                             ),
                             child: Center(
@@ -1211,7 +1181,9 @@ class RamalShastraResultsView extends StatelessWidget {
                                 val == 1 ? '●' : '○',
                                 style: TextStyle(
                                   fontSize: 24.sp,
-                                  color: val == 1 ? Colors.white : Colors.grey[700],
+                                  color: val == 1
+                                      ? Colors.white
+                                      : Colors.grey[700],
                                 ),
                               ),
                             ),
@@ -1220,7 +1192,8 @@ class RamalShastraResultsView extends StatelessWidget {
                       }).toList(),
                     ),
                   ],
-                  if (detailed.keywords != null && detailed.keywords!.isNotEmpty) ...[
+                  if (detailed.keywords != null &&
+                      detailed.keywords!.isNotEmpty) ...[
                     Spacing.h(12),
                     AutoTranslateText(
                       'Keywords',
@@ -1235,7 +1208,10 @@ class RamalShastraResultsView extends StatelessWidget {
                       runSpacing: 6.h,
                       children: detailed.keywords!.map((keyword) {
                         return Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10.w,
+                            vertical: 6.h,
+                          ),
                           decoration: BoxDecoration(
                             color: '#FFF2E8'.toColor(),
                             borderRadius: BorderRadius.circular(12.r),
@@ -1299,9 +1275,7 @@ class RamalShastraResultsView extends StatelessWidget {
           Expanded(
             child: AutoTranslateText(
               value,
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: '#3E2723'.toColor(),
-              ),
+              style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
             ),
           ),
         ],
@@ -1337,10 +1311,12 @@ class RamalShastraResultsView extends StatelessWidget {
         children: [
           AutoTranslateText(
             'Key Houses',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
+            style: MyTextTheme.largeBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h2),
           ),
           Spacing.h(16),
           ...keyHouses.map((house) => _buildKeyHouseCard(house)),
@@ -1442,10 +1418,9 @@ class RamalShastraResultsView extends StatelessWidget {
       child: ExpansionTile(
         title: AutoTranslateText(
           'Detailed Analysis',
-          style: MyTextTheme.largeBCB.copyWith(
-            color: '#3E2723'.toColor(),
-            fontWeight: FontWeight.bold,
-          ).merge(AppTypography.h2),
+          style: MyTextTheme.largeBCB
+              .copyWith(color: '#3E2723'.toColor(), fontWeight: FontWeight.bold)
+              .merge(AppTypography.h2),
         ),
         children: [
           Padding(
@@ -1487,10 +1462,12 @@ class RamalShastraResultsView extends StatelessWidget {
               Spacing.w(8),
               AutoTranslateText(
                 'Timing Prediction',
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: '#3E2723'.toColor(),
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h2),
+                style: MyTextTheme.largeBCB
+                    .copyWith(
+                      color: '#3E2723'.toColor(),
+                      fontWeight: FontWeight.bold,
+                    )
+                    .merge(AppTypography.h2),
               ),
             ],
           ),
@@ -1507,21 +1484,20 @@ class RamalShastraResultsView extends StatelessWidget {
     );
   }
 
-  Widget _buildStrengthsChallenges(List<String>? strengths, List<String>? challenges) {
+  Widget _buildStrengthsChallenges(
+    List<String>? strengths,
+    List<String>? challenges,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (strengths != null && strengths.isNotEmpty)
-            Expanded(
-              child: _buildStrengthsCard(strengths),
-            ),
+            Expanded(child: _buildStrengthsCard(strengths)),
           if (strengths != null && challenges != null) Spacing.w(12),
           if (challenges != null && challenges.isNotEmpty)
-            Expanded(
-              child: _buildChallengesCard(challenges),
-            ),
+            Expanded(child: _buildChallengesCard(challenges)),
         ],
       ),
     );
@@ -1546,24 +1522,30 @@ class RamalShastraResultsView extends StatelessWidget {
             ),
           ),
           Spacing.h(8),
-          ...strengths.map((item) => Padding(
-            padding: EdgeInsets.only(bottom: 4.h),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.check_circle, size: 16.w, color: Colors.green[700]),
-                Spacing.w(8),
-                Expanded(
-                  child: AutoTranslateText(
-                    item,
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: '#3E2723'.toColor(),
+          ...strengths.map(
+            (item) => Padding(
+              padding: EdgeInsets.only(bottom: 4.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    size: 16.w,
+                    color: Colors.green[700],
+                  ),
+                  Spacing.w(8),
+                  Expanded(
+                    child: AutoTranslateText(
+                      item,
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: '#3E2723'.toColor(),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -1575,7 +1557,10 @@ class RamalShastraResultsView extends StatelessWidget {
       decoration: BoxDecoration(
         color: "#F38B3B".toColor().withOpacity(0.1),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: "#F38B3B".toColor().withOpacity(0.3), width: 1),
+        border: Border.all(
+          color: "#F38B3B".toColor().withOpacity(0.3),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1588,24 +1573,26 @@ class RamalShastraResultsView extends StatelessWidget {
             ),
           ),
           Spacing.h(8),
-          ...challenges.map((item) => Padding(
-            padding: EdgeInsets.only(bottom: 4.h),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.warning, size: 16.w, color: "#F38B3B".toColor()),
-                Spacing.w(8),
-                Expanded(
-                  child: AutoTranslateText(
-                    item,
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: '#3E2723'.toColor(),
+          ...challenges.map(
+            (item) => Padding(
+              padding: EdgeInsets.only(bottom: 4.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.warning, size: 16.w, color: "#F38B3B".toColor()),
+                  Spacing.w(8),
+                  Expanded(
+                    child: AutoTranslateText(
+                      item,
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: '#3E2723'.toColor(),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -1631,38 +1618,42 @@ class RamalShastraResultsView extends StatelessWidget {
         children: [
           AutoTranslateText(
             'Advice',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
+            style: MyTextTheme.largeBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h2),
           ),
           Spacing.h(16),
-          ...advice.map((item) => Padding(
-            padding: EdgeInsets.only(bottom: 8.h),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: 6.h, right: 12.w),
-                  width: 6.w,
-                  height: 6.w,
-                  decoration: BoxDecoration(
-                    color: '#EA632B'.toColor(),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                Expanded(
-                  child: AutoTranslateText(
-                    item,
-                    style: MyTextTheme.mediumBCN.copyWith(
-                      color: '#3E2723'.toColor(),
-                      height: 1.5,
+          ...advice.map(
+            (item) => Padding(
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: 6.h, right: 12.w),
+                    width: 6.w,
+                    height: 6.w,
+                    decoration: BoxDecoration(
+                      color: '#EA632B'.toColor(),
+                      shape: BoxShape.circle,
                     ),
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: AutoTranslateText(
+                      item,
+                      style: MyTextTheme.mediumBCN.copyWith(
+                        color: '#3E2723'.toColor(),
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -1689,10 +1680,12 @@ class RamalShastraResultsView extends StatelessWidget {
           children: [
             AutoTranslateText(
               'Remedies',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: '#3E2723'.toColor(),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
+              style: MyTextTheme.largeBCB
+                  .copyWith(
+                    color: '#3E2723'.toColor(),
+                    fontWeight: FontWeight.bold,
+                  )
+                  .merge(AppTypography.h2),
             ),
             Spacing.h(16),
             TabBar(
@@ -1732,13 +1725,11 @@ class RamalShastraResultsView extends StatelessWidget {
       return Center(
         child: AutoTranslateText(
           'No remedies available',
-          style: MyTextTheme.mediumBCN.copyWith(
-            color: Colors.grey,
-          ),
+          style: MyTextTheme.mediumBCN.copyWith(color: Colors.grey),
         ),
       );
     }
-    
+
     return ListView.builder(
       itemCount: items.length,
       itemBuilder: (context, index) {
@@ -1773,8 +1764,9 @@ class RamalShastraResultsView extends StatelessWidget {
   }
 
   Widget _buildElementDistribution(Map<String, int>? elementDistribution) {
-    if (elementDistribution == null || elementDistribution.isEmpty) return SizedBox.shrink();
-    
+    if (elementDistribution == null || elementDistribution.isEmpty)
+      return SizedBox.shrink();
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(20.w),
@@ -1798,10 +1790,12 @@ class RamalShastraResultsView extends StatelessWidget {
               Spacing.w(8),
               AutoTranslateText(
                 'Element Distribution',
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: '#3E2723'.toColor(),
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h2),
+                style: MyTextTheme.largeBCB
+                    .copyWith(
+                      color: '#3E2723'.toColor(),
+                      fontWeight: FontWeight.bold,
+                    )
+                    .merge(AppTypography.h2),
               ),
             ],
           ),
@@ -1815,7 +1809,10 @@ class RamalShastraResultsView extends StatelessWidget {
               decoration: BoxDecoration(
                 color: _getElementColor(element).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: _getElementColor(element), width: 1.5),
+                border: Border.all(
+                  color: _getElementColor(element),
+                  width: 1.5,
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1847,7 +1844,10 @@ class RamalShastraResultsView extends StatelessWidget {
                     ],
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
+                    ),
                     decoration: BoxDecoration(
                       color: _getElementColor(element),
                       borderRadius: BorderRadius.circular(20.r),
@@ -1871,7 +1871,7 @@ class RamalShastraResultsView extends StatelessWidget {
 
   Widget _buildHouseRelationships(RamalRelationships? relationships) {
     if (relationships == null) return SizedBox.shrink();
-    
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(20.w),
@@ -1891,13 +1891,16 @@ class RamalShastraResultsView extends StatelessWidget {
         children: [
           AutoTranslateText(
             'House Relationships',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
+            style: MyTextTheme.largeBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h2),
           ),
           Spacing.h(16),
-          if (relationships.strongHouses != null && relationships.strongHouses!.isNotEmpty) ...[
+          if (relationships.strongHouses != null &&
+              relationships.strongHouses!.isNotEmpty) ...[
             _buildRelationshipSection(
               'Strong Houses',
               relationships.strongHouses!,
@@ -1906,7 +1909,8 @@ class RamalShastraResultsView extends StatelessWidget {
             ),
             Spacing.h(12),
           ],
-          if (relationships.weakHouses != null && relationships.weakHouses!.isNotEmpty) ...[
+          if (relationships.weakHouses != null &&
+              relationships.weakHouses!.isNotEmpty) ...[
             _buildRelationshipSection(
               'Weak Houses',
               relationships.weakHouses!,
@@ -1915,7 +1919,8 @@ class RamalShastraResultsView extends StatelessWidget {
             ),
             Spacing.h(12),
           ],
-          if (relationships.neutralHouses != null && relationships.neutralHouses!.isNotEmpty) ...[
+          if (relationships.neutralHouses != null &&
+              relationships.neutralHouses!.isNotEmpty) ...[
             _buildRelationshipSection(
               'Neutral Houses',
               relationships.neutralHouses!,
@@ -1923,7 +1928,8 @@ class RamalShastraResultsView extends StatelessWidget {
               Icons.remove,
             ),
           ],
-          if (relationships.fireHouses != null && relationships.fireHouses!.isNotEmpty) ...[
+          if (relationships.fireHouses != null &&
+              relationships.fireHouses!.isNotEmpty) ...[
             Spacing.h(12),
             _buildRelationshipSection(
               'Fire Houses',
@@ -1932,7 +1938,8 @@ class RamalShastraResultsView extends StatelessWidget {
               Icons.whatshot,
             ),
           ],
-          if (relationships.waterHouses != null && relationships.waterHouses!.isNotEmpty) ...[
+          if (relationships.waterHouses != null &&
+              relationships.waterHouses!.isNotEmpty) ...[
             Spacing.h(12),
             _buildRelationshipSection(
               'Water Houses',
@@ -1946,7 +1953,12 @@ class RamalShastraResultsView extends StatelessWidget {
     );
   }
 
-  Widget _buildRelationshipSection(String title, List<int> houses, Color color, IconData icon) {
+  Widget _buildRelationshipSection(
+    String title,
+    List<int> houses,
+    Color color,
+    IconData icon,
+  ) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -2041,10 +2053,12 @@ class RamalShastraResultsView extends StatelessWidget {
               Spacing.w(8),
               AutoTranslateText(
                 'Summary',
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: '#3E2723'.toColor(),
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h2),
+                style: MyTextTheme.largeBCB
+                    .copyWith(
+                      color: '#3E2723'.toColor(),
+                      fontWeight: FontWeight.bold,
+                    )
+                    .merge(AppTypography.h2),
               ),
             ],
           ),
@@ -2095,8 +2109,14 @@ class RamalShastraResultsView extends StatelessWidget {
               '${(metadata.responseTime! / 1000).toStringAsFixed(2)}s',
             ),
           if (metadata.tokens != null) ...[
-            _buildMetadataRow('Prompt Tokens', '${metadata.tokens!.prompt ?? 0}'),
-            _buildMetadataRow('Completion Tokens', '${metadata.tokens!.completion ?? 0}'),
+            _buildMetadataRow(
+              'Prompt Tokens',
+              '${metadata.tokens!.prompt ?? 0}',
+            ),
+            _buildMetadataRow(
+              'Completion Tokens',
+              '${metadata.tokens!.completion ?? 0}',
+            ),
             _buildMetadataRow('Total Tokens', '${metadata.tokens!.total ?? 0}'),
           ],
         ],
@@ -2112,9 +2132,7 @@ class RamalShastraResultsView extends StatelessWidget {
         children: [
           AutoTranslateText(
             label,
-            style: MyTextTheme.smallBCN.copyWith(
-              color: Colors.grey[600],
-            ),
+            style: MyTextTheme.smallBCN.copyWith(color: Colors.grey[600]),
           ),
           AutoTranslateText(
             value,
@@ -2128,4 +2146,3 @@ class RamalShastraResultsView extends StatelessWidget {
     );
   }
 }
-

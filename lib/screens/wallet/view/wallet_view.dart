@@ -5,7 +5,7 @@ import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.da
 import 'package:astrobharataiuser/screens/wallet/widgets/recharge_dialog.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -74,10 +74,10 @@ class WalletView extends StatelessWidget {
         style: TextStyle(
           fontFamily: 'Poppins',
           fontSize: 12.sp,
-          color: Colors.white.withOpacity(0.9),
+          color: '#6F221E'.toColor().withOpacity(0.9),
         ),
       ),
-      onBackPressed: () => Get.back(),
+      onMenuTap: () => Get.back(),
     );
   }
 

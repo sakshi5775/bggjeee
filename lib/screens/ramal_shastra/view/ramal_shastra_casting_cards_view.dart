@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,12 +15,17 @@ class RamalShastraCastingCardsView extends StatefulWidget {
   const RamalShastraCastingCardsView({Key? key}) : super(key: key);
 
   @override
-  State<RamalShastraCastingCardsView> createState() => _RamalShastraCastingCardsViewState();
+  State<RamalShastraCastingCardsView> createState() =>
+      _RamalShastraCastingCardsViewState();
 }
 
-class _RamalShastraCastingCardsViewState extends State<RamalShastraCastingCardsView> {
+class _RamalShastraCastingCardsViewState
+    extends State<RamalShastraCastingCardsView> {
   final RamalShastraController controller = Get.find<RamalShastraController>();
-  final List<bool> cardResults = List.generate(16, (_) => false); // Red = true, Black = false
+  final List<bool> cardResults = List.generate(
+    16,
+    (_) => false,
+  ); // Red = true, Black = false
   int currentIndex = 0;
 
   @override
@@ -31,14 +37,16 @@ class _RamalShastraCastingCardsViewState extends State<RamalShastraCastingCardsV
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _buildHeader(),
+              CommonHeader(title: 'Ramal Shastra'),
               Spacing.h(24),
               AutoTranslateText(
                 'Draw 16 Cards',
-                style: MyTextTheme.veryLargeBCB.copyWith(
-                  color: '#3E2723'.toColor(),
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h1),
+                style: MyTextTheme.veryLargeBCB
+                    .copyWith(
+                      color: '#3E2723'.toColor(),
+                      fontWeight: FontWeight.bold,
+                    )
+                    .merge(AppTypography.h1),
               ),
               Spacing.h(8),
               AutoTranslateText(
@@ -60,7 +68,10 @@ class _RamalShastraCastingCardsViewState extends State<RamalShastraCastingCardsV
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 14.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 32.w,
+                          vertical: 14.h,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.r),
                         ),
@@ -79,7 +90,10 @@ class _RamalShastraCastingCardsViewState extends State<RamalShastraCastingCardsV
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black87,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 14.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 32.w,
+                          vertical: 14.h,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.r),
                         ),
@@ -103,7 +117,10 @@ class _RamalShastraCastingCardsViewState extends State<RamalShastraCastingCardsV
                   style: ElevatedButton.styleFrom(
                     backgroundColor: '#4CAF50'.toColor(),
                     foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 14.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 32.w,
+                      vertical: 14.h,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.r),
                     ),
@@ -124,39 +141,6 @@ class _RamalShastraCastingCardsViewState extends State<RamalShastraCastingCardsV
     );
   }
 
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildCardGrid() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -172,27 +156,23 @@ class _RamalShastraCastingCardsViewState extends State<RamalShastraCastingCardsV
         itemBuilder: (context, index) {
           final isDrawn = index < currentIndex;
           final isRed = isDrawn ? cardResults[index] : null;
-          
+
           return Container(
             decoration: BoxDecoration(
-              color: isDrawn 
+              color: isDrawn
                   ? (isRed! ? Colors.red : Colors.black87)
                   : Colors.grey[300],
               borderRadius: BorderRadius.circular(8.r),
               border: Border.all(
-                color: index == currentIndex 
-                    ? "#F38B3B".toColor() 
+                color: index == currentIndex
+                    ? "#F38B3B".toColor()
                     : Colors.transparent,
                 width: 2,
               ),
             ),
             child: Center(
               child: isDrawn
-                  ? Icon(
-                      Icons.style,
-                      color: Colors.white,
-                      size: 24.w,
-                    )
+                  ? Icon(Icons.style, color: Colors.white, size: 24.w)
                   : Icon(
                       Icons.help_outline,
                       color: Colors.grey[600],
@@ -214,4 +194,3 @@ class _RamalShastraCastingCardsViewState extends State<RamalShastraCastingCardsV
     }
   }
 }
-

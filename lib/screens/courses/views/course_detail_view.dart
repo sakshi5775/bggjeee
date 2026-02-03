@@ -4,6 +4,8 @@ import 'package:astrobharataiuser/screens/courses/controllers/course_detail_cont
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,12 +19,13 @@ class CourseDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(CourseDetailController(courseId: courseId));
-    
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Obx(() {
-          if (controller.isLoading.value && controller.courseDetail.value == null) {
+          if (controller.isLoading.value &&
+              controller.courseDetail.value == null) {
             return Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(
@@ -60,36 +63,42 @@ class CourseDetailView extends StatelessWidget {
 
           return Column(
             children: [
+              const CommonHeader(title: 'Course Detail'),
               // Scrollable Content
               Expanded(
                 child: SingleChildScrollView(
-              child: Column(
-                children: [
+                  child: Column(
+                    children: [
                       // Hero Section with Video Thumbnail
                       _buildHeroSection(course, controller),
-                      
-                      // Course Title and Rating
-                      _buildTitleSection(course),
-                      
+
+                      // Course Info Section (Rating etc)
+                      _buildRatingSection(course),
+
                       // Instructor Card
                       _buildInstructorCard(course),
-                      
+
                       // Course Meta Cards
                       _buildCourseMetaCards(courseDetail),
-                      
+
                       // Navigation Tabs
-                      _buildTabs(controller),
-                          
+                      CommonTabSlider(
+                        tabs: const ['Overview', 'Course Content'],
+                        selectedIndex: controller.selectedTab.value,
+                        onTabSelected: (index) =>
+                            controller.selectedTab.value = index,
+                      ),
+
                       // Tab Content
                       _buildTabContent(courseDetail, controller),
-                          
+
                       // Add bottom padding to account for fixed CTA button
                       SizedBox(height: 80.h),
-                        ],
-                      ),
-                    ),
+                    ],
                   ),
-                  
+                ),
+              ),
+
               // Bottom CTA Button (Fixed at bottom)
               _buildBottomCTA(course, isEnrolled, controller),
             ],
@@ -99,7 +108,10 @@ class CourseDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroSection(CourseModel course, CourseDetailController controller) {
+  Widget _buildHeroSection(
+    CourseModel course,
+    CourseDetailController controller,
+  ) {
     return Stack(
       children: [
         // Thumbnail/Video Background
@@ -114,14 +126,12 @@ class CourseDetailView extends StatelessWidget {
                   placeholder: (context, url) => Container(
                     color: Colors.black,
                     child: const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
+                      child: CircularProgressIndicator(color: Colors.white),
                     ),
                   ),
                   errorWidget: (context, url, error) => Container(
                     color: Colors.black,
-                        child: Icon(
+                    child: Icon(
                       Icons.school,
                       color: Colors.white54,
                       size: 48.w,
@@ -130,14 +140,10 @@ class CourseDetailView extends StatelessWidget {
                 )
               : Container(
                   color: Colors.black,
-                  child: Icon(
-                    Icons.school,
-                    color: Colors.white54,
-                    size: 48.w,
-                  ),
-                              ),
-                            ),
-        
+                  child: Icon(Icons.school, color: Colors.white54, size: 48.w),
+                ),
+        ),
+
         // Gradient overlay
         Container(
           height: 220.h,
@@ -145,62 +151,11 @@ class CourseDetailView extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.black.withOpacity(0.6),
-                          ],
-                        ),
-                      ),
-        ),
-        
-        // Top controls
-        Positioned(
-          top: 8.h,
-          left: 8.w,
-          child: IconButton(
-            onPressed: () => Get.back(),
-            icon: Container(
-              padding: EdgeInsets.all(8.w),
-                        decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                Icons.arrow_back_ios_new,
-                color: Colors.white,
-                size: 20.w,
-                            ),
-                        ),
-                      ),
-        ),
-        
-        Positioned(
-          top: 8.h,
-          right: 8.w,
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: () {
-                  // TODO: Share functionality
-                },
-                icon: Container(
-                  padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.share,
-                    color: Colors.white,
-                    size: 20.w,
-                  ),
-                ),
-              ),
-            
-            ],
+              colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+            ),
           ),
         ),
-        
+
         // Bestseller badge
         Positioned(
           bottom: 16.h,
@@ -213,29 +168,29 @@ class CourseDetailView extends StatelessWidget {
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
+              children: [
+                Icon(
                   Icons.local_fire_department,
                   color: Colors.white,
                   size: 16.w,
-        ),
+                ),
                 SizedBox(width: 4.w),
-        AutoTranslateText(
+                AutoTranslateText(
                   'Bestseller',
                   style: AppTypography.label.copyWith(
                     color: Colors.white,
                     fontSize: 12.sp,
-            fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ],
-          ),
-        ),
-      ),
-        
+
         // Play button overlay (center)
         Positioned.fill(
-            child: Center(
+          child: Center(
             child: GestureDetector(
               onTap: () {
                 // TODO: Play preview video
@@ -244,63 +199,48 @@ class CourseDetailView extends StatelessWidget {
                 width: 64.w,
                 height: 64.w,
                 decoration: BoxDecoration(
-                    color: Colors.white,
+                  color: Colors.white,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
                 child: Icon(
                   Icons.play_arrow,
                   color: AppColors.primaryGradient.colors.first,
                   size: 36.w,
+                ),
+              ),
             ),
           ),
-        ),
-      ),
         ),
       ],
     );
   }
 
-  Widget _buildTitleSection(CourseModel course) {
+  Widget _buildRatingSection(CourseModel course) {
     return Container(
-            padding: EdgeInsets.all(16.w),
-                  color: Colors.white,
+      padding: EdgeInsets.all(16.w),
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Course Title (Yellow text)
-          AutoTranslateText(
-            course.title,
-            style: AppTypography.h1.copyWith(
-              color: AppColors.templeGold, // Yellow/Gold
-              fontSize: 24.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-          ),
-          SizedBox(height: 8.h),
-          
           // Rating and Student Count
           Row(
-                  children: [
-                    Icon(
-                Icons.star,
-                color: AppColors.templeGold,
-                size: 18.w,
-                    ),
+            children: [
+              Icon(Icons.star, color: AppColors.templeGold, size: 18.w),
               SizedBox(width: 4.w),
-                    AutoTranslateText(
+              AutoTranslateText(
                 '4.8',
                 style: AppTypography.body1.copyWith(
                   color: AppColors.textPrimary,
                   fontSize: 14.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(width: 4.w),
               AutoTranslateText(
@@ -309,7 +249,7 @@ class CourseDetailView extends StatelessWidget {
                   color: AppColors.textSecondary,
                   fontSize: 12.sp,
                 ),
-                    ),
+              ),
               SizedBox(width: 8.w),
               Container(
                 width: 4.w,
@@ -325,9 +265,9 @@ class CourseDetailView extends StatelessWidget {
                 style: AppTypography.body2.copyWith(
                   color: AppColors.textSecondary,
                   fontSize: 12.sp,
-                      ),
-                    ),
-                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -342,27 +282,29 @@ class CourseDetailView extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
       ),
-                child: Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+        children: [
           Row(
             children: [
               // Profile Picture
-                    Container(
+              Container(
                 width: 56.w,
                 height: 56.w,
-                      decoration: BoxDecoration(
-                  color: AppColors.primaryGradient.colors.first.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
+                decoration: BoxDecoration(
+                  color: AppColors.primaryGradient.colors.first.withOpacity(
+                    0.2,
+                  ),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
                   Icons.person,
                   color: AppColors.primaryGradient.colors.first,
                   size: 32.w,
-                      ),
-                    ),
+                ),
+              ),
               SizedBox(width: 12.w),
-              
+
               // Instructor Info
               Expanded(
                 child: Column(
@@ -385,25 +327,21 @@ class CourseDetailView extends StatelessWidget {
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                ),
+                    ),
                   ],
-            ),
+                ),
+              ),
+            ],
           ),
-        ],
-          ),
-          
+
           SizedBox(height: 12.h),
-          
+
           // Instructor Stats
           Row(
-                  children: [
+            children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.star,
-                    color: AppColors.templeGold,
-                    size: 16.w,
-                      ),
+                  Icon(Icons.star, color: AppColors.templeGold, size: 16.w),
                   SizedBox(width: 4.w),
                   AutoTranslateText(
                     '4.9',
@@ -413,44 +351,44 @@ class CourseDetailView extends StatelessWidget {
                     ),
                   ),
                 ],
-                    ),
+              ),
               SizedBox(width: 16.w),
-                    AutoTranslateText(
+              AutoTranslateText(
                 '25,430 students',
                 style: AppTypography.body2.copyWith(
                   color: AppColors.textSecondary,
                   fontSize: 12.sp,
-                      ),
-                    ),
+                ),
+              ),
               SizedBox(width: 16.w),
-                    AutoTranslateText(
+              AutoTranslateText(
                 '12 courses',
                 style: AppTypography.body2.copyWith(
                   color: AppColors.textSecondary,
                   fontSize: 12.sp,
-                      ),
-                    ),
-                  ],
                 ),
+              ),
+            ],
+          ),
         ],
-            ),
-      );
+      ),
+    );
   }
 
   Widget _buildCourseMetaCards(CourseDetailModel courseDetail) {
     final lectures = courseDetail.lectures;
-    
+
     // Calculate total hours (estimate: 15 min per content item)
     int totalContent = 0;
     for (var lecture in lectures) {
       totalContent += lecture.content.length;
     }
     final totalHours = (totalContent * 15 / 60).toStringAsFixed(0);
-    
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Row(
-      children: [
+        children: [
           Expanded(
             child: _buildMetaCard(
               icon: Icons.access_time,
@@ -469,121 +407,61 @@ class CourseDetailView extends StatelessWidget {
             child: _buildMetaCard(
               icon: Icons.school,
               label: 'Beginner to Advanced',
-                ),
-              ),
-              SizedBox(width: 8.w),
-          Expanded(
-            child: _buildMetaCard(
-              icon: Icons.download,
-              label: 'Lifetime',
-                ),
-              ),
-            ],
+            ),
           ),
-    );
-  }
-
-  Widget _buildMetaCard({
-    required IconData icon,
-    required String label,
-  }) {
-              return Container(
-      padding: EdgeInsets.all(12.w),
-                decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(
-          color: AppColors.templeGold.withOpacity(0.3),
-                      width: 1,
-                  ),
-                ),
-                child: Column(
-                  children: [
-          Icon(
-            icon,
-            color: AppColors.templeGold,
-            size: 24.w,
-                                  ),
-          SizedBox(height: 8.h),
-                                    AutoTranslateText(
-            label,
-            style: AppTypography.body2.copyWith(
-              color: AppColors.textPrimary,
-              fontSize: 11.sp,
-                                      ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-      ),
-    );
-  }
-
-  Widget _buildTabs(CourseDetailController controller) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-      child: Row(
-        children: [
-          _buildTab('Overview', 0, controller),
-          _buildTab('Course Content', 1, controller),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: _buildMetaCard(icon: Icons.download, label: 'Lifetime'),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTab(String label, int index, CourseDetailController controller) {
-    return Obx(
-      () => Expanded(
-        child: GestureDetector(
-          onTap: () => controller.selectedTab.value = index,
-                          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 12.h),
-                            decoration: BoxDecoration(
-              gradient: controller.selectedTab.value == index
-                  ? AppColors.orangeGradient
-                  : null,
-              color: controller.selectedTab.value == index
-                  ? null
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(8.r),
-                            ),
-            child: AutoTranslateText(
-              label,
-              style: AppTypography.body1.copyWith(
-                color: controller.selectedTab.value == index
-                    ? Colors.white
-                    : AppColors.textSecondary,
-                fontSize: 14.sp,
-                fontWeight: controller.selectedTab.value == index
-                    ? FontWeight.bold
-                    : FontWeight.normal,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
+  Widget _buildMetaCard({required IconData icon, required String label}) {
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(
+          color: AppColors.templeGold.withOpacity(0.3),
+          width: 1,
         ),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: AppColors.templeGold, size: 24.w),
+          SizedBox(height: 8.h),
+          AutoTranslateText(
+            label,
+            style: AppTypography.body2.copyWith(
+              color: AppColors.textPrimary,
+              fontSize: 11.sp,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildTabContent(CourseDetailModel courseDetail, CourseDetailController controller) {
-    return Obx(
-      () {
-        switch (controller.selectedTab.value) {
-          case 0:
-            return _buildOverviewTab(courseDetail);
-          case 1:
-            return _buildCurriculumTab(courseDetail, controller);
-          default:
-            return _buildOverviewTab(courseDetail);
-        }
-      },
-    );
+  Widget _buildTabContent(
+    CourseDetailModel courseDetail,
+    CourseDetailController controller,
+  ) {
+    return Obx(() {
+      switch (controller.selectedTab.value) {
+        case 0:
+          return _buildOverviewTab(courseDetail);
+        case 1:
+          return _buildCurriculumTab(courseDetail, controller);
+        default:
+          return _buildOverviewTab(courseDetail);
+      }
+    });
   }
 
   Widget _buildOverviewTab(CourseDetailModel courseDetail) {
@@ -595,46 +473,50 @@ class CourseDetailView extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
         ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      AutoTranslateText(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AutoTranslateText(
               'About This Course',
               style: AppTypography.h2.copyWith(
                 color: AppColors.textPrimary,
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
-                                        ),
+              ),
             ),
             SizedBox(height: 12.h),
-                                        AutoTranslateText(
+            AutoTranslateText(
               courseDetail.course.description,
               style: AppTypography.body1.copyWith(
                 color: AppColors.textPrimary,
                 fontSize: 14.sp,
                 height: 1.5,
               ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        );
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  Widget _buildCurriculumTab(CourseDetailModel courseDetail, CourseDetailController controller) {
+  Widget _buildCurriculumTab(
+    CourseDetailModel courseDetail,
+    CourseDetailController controller,
+  ) {
     final lectures = courseDetail.lectures;
     final isEnrolled = controller.isEnrolled.value;
-    
+
     // Sort lectures by order
-    final sortedLectures = lectures.toList()..sort((a, b) => a.order.compareTo(b.order));
-    
+    final sortedLectures = lectures.toList()
+      ..sort((a, b) => a.order.compareTo(b.order));
+
     return Padding(
       padding: EdgeInsets.all(16.w),
       child: Column(
         children: sortedLectures.map((lecture) {
           return _buildLectureAccordion(lecture, isEnrolled, controller);
         }).toList(),
-          ),
+      ),
     );
   }
 
@@ -643,68 +525,73 @@ class CourseDetailView extends StatelessWidget {
     bool isEnrolled,
     CourseDetailController controller,
   ) {
-          final isExpanded = controller.lectureExpandedStates[lecture.id] ?? false;
+    final isExpanded = controller.lectureExpandedStates[lecture.id] ?? false;
 
-          return Container(
-            margin: EdgeInsets.only(bottom: 12.h),
-            decoration: BoxDecoration(
-              color: Colors.white,
+    return Container(
+      margin: EdgeInsets.only(bottom: 12.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(
+        border: Border.all(
           color: AppColors.templeGold.withOpacity(0.2),
           width: 1,
-              ),
-            ),
-            child: Column(
-              children: [
-                // Lecture Header
+        ),
+      ),
+      child: Column(
+        children: [
+          // Lecture Header
           GestureDetector(
-                  onTap: () => controller.toggleLecture(lecture.id),
-                  child: Container(
-                    padding: EdgeInsets.all(16.w),
-                    child: Row(
+            onTap: () => controller.toggleLecture(lecture.id),
+            child: Container(
+              padding: EdgeInsets.all(16.w),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AutoTranslateText(
-                                lecture.title,
+                        AutoTranslateText(
+                          lecture.title,
                           style: AppTypography.h3.copyWith(
                             color: AppColors.textPrimary,
                             fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.bold,
                           ),
-                              ),
-                              if (lecture.description.isNotEmpty) ...[
-                                SizedBox(height: 4.h),
-                                AutoTranslateText(
-                                  lecture.description,
+                        ),
+                        if (lecture.description.isNotEmpty) ...[
+                          SizedBox(height: 4.h),
+                          AutoTranslateText(
+                            lecture.description,
                             style: AppTypography.body2.copyWith(
                               color: AppColors.textSecondary,
                               fontSize: 12.sp,
-                                  ),
+                            ),
                             maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ],
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                  SizedBox(width: 8.w),
-                        Icon(
-                          isExpanded ? Icons.expand_less : Icons.expand_more,
-                    color: AppColors.primaryGradient.colors.first,
-                        ),
+                        ],
                       ],
                     ),
                   ),
-                ),
-                
+                  SizedBox(width: 8.w),
+                  Icon(
+                    isExpanded ? Icons.expand_less : Icons.expand_more,
+                    color: AppColors.primaryGradient.colors.first,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           // Lecture Content (when expanded)
-                if (isExpanded)
-                  ...lecture.content.map((content) {
-              return _buildContentItem(content, isEnrolled, lecture, controller);
+          if (isExpanded)
+            ...lecture.content.map((content) {
+              return _buildContentItem(
+                content,
+                isEnrolled,
+                lecture,
+                controller,
+              );
             }).toList(),
         ],
       ),
@@ -720,52 +607,60 @@ class CourseDetailView extends StatelessWidget {
     // 🔒 UDEMY PRINCIPLE: Content TITLES are always visible
     // Access Rules: Preview content bypasses enrollment, non-preview requires enrollment
     final canAccess = isEnrolled || content.isPreview;
-                    
+
     return GestureDetector(
       onTap: canAccess
           ? () async {
               // Step 4: Enrollment Check Flow (Security Layer) - Final confirmation before unlocking
-              final verifiedEnrolled = await controller.verifyEnrollmentBeforeAccess();
-                        
+              final verifiedEnrolled = await controller
+                  .verifyEnrollmentBeforeAccess();
+
               // If not enrolled and not preview, block access
               if (!verifiedEnrolled && !content.isPreview) {
                 // Show purchase CTA
                 _showPurchaseDialog(controller);
                 return;
               }
-              
+
               controller.selectContent(lecture, content);
-              Get.toNamed(AppRoutes.contentPlayer, arguments: {
-                'contentId': content.id,
-                'lectureId': lecture.id,
-                'content': content, // Pass full content object with URL
-                'isEnrolled': verifiedEnrolled,
-                'isPreview': content.isPreview,
-                'courseId': controller.courseId,
-              });
-                          }
+              Get.toNamed(
+                AppRoutes.contentPlayer,
+                arguments: {
+                  'contentId': content.id,
+                  'lectureId': lecture.id,
+                  'content': content, // Pass full content object with URL
+                  'isEnrolled': verifiedEnrolled,
+                  'isPreview': content.isPreview,
+                  'courseId': controller.courseId,
+                },
+              );
+            }
           : () {
               // Show purchase CTA for locked content
               _showPurchaseDialog(controller);
-                      },
-                      child: Container(
+            },
+      child: Container(
         margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
         padding: EdgeInsets.all(12.w),
-                        decoration: BoxDecoration(
+        decoration: BoxDecoration(
           color: canAccess ? Colors.white : Colors.grey.shade100,
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(
             color: canAccess
                 ? AppColors.templeGold.withOpacity(0.3)
                 : Colors.grey.shade300,
-                              width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
             Icon(
-              content.type == 'video' ? Icons.play_circle_outline : Icons.picture_as_pdf,
-              color: canAccess ? AppColors.primaryGradient.colors.first : Colors.grey,
+              content.type == 'video'
+                  ? Icons.play_circle_outline
+                  : Icons.picture_as_pdf,
+              color: canAccess
+                  ? AppColors.primaryGradient.colors.first
+                  : Colors.grey,
               size: 24.w,
             ),
             SizedBox(width: 12.w),
@@ -779,12 +674,12 @@ class CourseDetailView extends StatelessWidget {
               ),
             ),
             if (content.isPreview)
-                            Container(
+              Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                              decoration: BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.templeGold.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(4.r),
-                              ),
+                ),
                 child: AutoTranslateText(
                   'Preview',
                   style: AppTypography.label.copyWith(
@@ -792,22 +687,21 @@ class CourseDetailView extends StatelessWidget {
                     fontSize: 10.sp,
                     fontWeight: FontWeight.bold,
                   ),
-                              ),
-                            ),
-            if (!canAccess)
-              Icon(
-                Icons.lock,
-                color: Colors.grey,
-                size: 20.w,
+                ),
               ),
+            if (!canAccess) Icon(Icons.lock, color: Colors.grey, size: 20.w),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBottomCTA(CourseModel course, bool isEnrolled, CourseDetailController controller) {
-      return SafeArea(
+  Widget _buildBottomCTA(
+    CourseModel course,
+    bool isEnrolled,
+    CourseDetailController controller,
+  ) {
+    return SafeArea(
       child: Padding(
         padding: EdgeInsets.all(16.w),
         child: Container(
@@ -820,7 +714,10 @@ class CourseDetailView extends StatelessWidget {
             onPressed: isEnrolled
                 ? () {
                     // Continue Learning - Open Course Player (Udemy behavior)
-                    Get.toNamed(AppRoutes.coursePlayer, arguments: controller.courseId);
+                    Get.toNamed(
+                      AppRoutes.coursePlayer,
+                      arguments: controller.courseId,
+                    );
                   }
                 : () {
                     // Not enrolled - Start purchase flow
@@ -837,7 +734,7 @@ class CourseDetailView extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                              Icon(
+                Icon(
                   isEnrolled ? Icons.play_arrow : Icons.shopping_cart,
                   color: Colors.white,
                   size: 24.w,
@@ -851,15 +748,15 @@ class CourseDetailView extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                  ),
+                ),
               ],
             ),
           ),
         ),
       ),
     );
-}
+  }
 
   // Show purchase dialog when content is locked
   void _showPurchaseDialog(CourseDetailController controller) {

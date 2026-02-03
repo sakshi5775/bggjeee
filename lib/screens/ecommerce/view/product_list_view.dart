@@ -7,7 +7,7 @@ import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.d
 import 'package:astrobharataiuser/screens/ecommerce/controller/product_list_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -61,11 +61,11 @@ class _ProductListViewState extends State<ProductListView> {
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w400,
                   fontSize: 11.sp,
-                  color: Colors.white.withOpacity(0.6),
+                  color: '#6F221E'.toColor().withOpacity(0.6),
                   height: 1.33,
                 ),
               ),
-              actions: [
+              customActions: [
                 // Cart Icon with Badge
                 Obx(() {
                   final cartItemCount = cartController.itemCount;
@@ -77,8 +77,8 @@ class _ProductListViewState extends State<ProductListView> {
                       count: cartItemCount,
                       child: Icon(
                         Icons.shopping_cart,
-                        size: 32,
-                        color: AppColors.templeGold,
+                        size: 22.w,
+                        color: '#6F221E'.toColor(),
                       ),
                     ),
                   );

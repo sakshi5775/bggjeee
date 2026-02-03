@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/handwriting_astrology/controller/handw
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,18 +17,32 @@ class HandwritingAstrologyUploadView extends StatefulWidget {
   const HandwritingAstrologyUploadView({Key? key}) : super(key: key);
 
   @override
-  State<HandwritingAstrologyUploadView> createState() => _HandwritingAstrologyUploadViewState();
+  State<HandwritingAstrologyUploadView> createState() =>
+      _HandwritingAstrologyUploadViewState();
 }
 
-class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUploadView> {
-  final HandwritingAstrologyController controller = Get.put(HandwritingAstrologyController());
+class _HandwritingAstrologyUploadViewState
+    extends State<HandwritingAstrologyUploadView> {
+  final HandwritingAstrologyController controller = Get.put(
+    HandwritingAstrologyController(),
+  );
   final ImagePicker _picker = ImagePicker();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
   DateTime? _selectedDate;
   final List<String> _languages = [
-    'english', 'hindi', 'bengali', 'telugu', 'marathi', 'tamil', 
-    'gujarati', 'urdu', 'kannada', 'malayalam', 'odia', 'punjabi'
+    'english',
+    'hindi',
+    'bengali',
+    'telugu',
+    'marathi',
+    'tamil',
+    'gujarati',
+    'urdu',
+    'kannada',
+    'malayalam',
+    'odia',
+    'punjabi',
   ];
   final List<String> _genders = ['male', 'female', 'other'];
 
@@ -49,35 +64,39 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(),
+                const CommonHeader(title: 'Upload Handwriting'),
                 Spacing.h(12),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: AutoTranslateText(
                     'Upload Your Handwriting',
-                      style: MyTextTheme.veryLargeBCB.copyWith(
-                        color: '#3E2723'.toColor(),
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h1),
+                    style: MyTextTheme.veryLargeBCB
+                        .copyWith(
+                          color: '#3E2723'.toColor(),
+                          fontWeight: FontWeight.bold,
+                        )
+                        .merge(AppTypography.h1),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: AutoTranslateText(
                     'For accurate handwriting analysis',
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: '#3E2723'.toColor(),
-                      ).merge(AppTypography.body1),
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(color: '#3E2723'.toColor())
+                        .merge(AppTypography.body1),
                   ),
                 ),
                 Spacing.h(20),
                 _buildUploadCard(),
-                Obx(() => controller.selectedImages.isNotEmpty
-                    ? Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w),
-                        child: _buildSelectedImagesPreview(),
-                      )
-                    : SizedBox.shrink()),
+                Obx(
+                  () => controller.selectedImages.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12.w),
+                          child: _buildSelectedImagesPreview(),
+                        )
+                      : SizedBox.shrink(),
+                ),
                 Spacing.h(20),
                 _buildFormCard(),
                 Spacing.h(20),
@@ -91,39 +110,6 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(12.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -175,9 +161,9 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: AutoTranslateText(
                   'Tap to select from gallery or take a new photo',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: '#ffffff'.toColor(),
-                  ).merge(AppTypography.body1),
+                  style: MyTextTheme.mediumBCN
+                      .copyWith(color: '#ffffff'.toColor())
+                      .merge(AppTypography.body1),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -221,17 +207,13 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 16.w,
-              color: '#ffffff'.toColor(),
-            ),
+            Icon(icon, size: 16.w, color: '#ffffff'.toColor()),
             Spacing.w(6),
             AutoTranslateText(
               label,
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: '#ffffff'.toColor(),
-              ).merge(AppTypography.body2),
+              style: MyTextTheme.mediumBCB
+                  .copyWith(color: '#ffffff'.toColor())
+                  .merge(AppTypography.body2),
             ),
           ],
         ),
@@ -242,7 +224,7 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
   Widget _buildSelectedImagesPreview() {
     return Obx(() {
       if (controller.selectedImages.isEmpty) return SizedBox.shrink();
-      
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -253,10 +235,7 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
             decoration: BoxDecoration(
               color: '#ffffff'.toColor(),
               borderRadius: BorderRadius.circular(14.r),
-              border: Border.all(
-                color: '#1AAA55'.toColor(),
-                width: 2,
-              ),
+              border: Border.all(color: '#1AAA55'.toColor(), width: 2),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.08),
@@ -289,7 +268,9 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
                 Wrap(
                   spacing: 8.w,
                   runSpacing: 8.h,
-                  children: controller.selectedImages.asMap().entries.map((entry) {
+                  children: controller.selectedImages.asMap().entries.map((
+                    entry,
+                  ) {
                     final index = entry.key;
                     final image = entry.value;
                     return Stack(
@@ -299,14 +280,14 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
                           height: 80.w,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.r),
-                            border: Border.all(color: '#EA632B'.toColor(), width: 2),
+                            border: Border.all(
+                              color: '#EA632B'.toColor(),
+                              width: 2,
+                            ),
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(6.r),
-                            child: Image.file(
-                              image,
-                              fit: BoxFit.cover,
-                            ),
+                            child: Image.file(image, fit: BoxFit.cover),
                           ),
                         ),
                         Positioned(
@@ -403,7 +384,9 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
                               ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
                               : 'Date of Birth (Optional)',
                           style: MyTextTheme.mediumBCN.copyWith(
-                            color: _selectedDate != null ? '#3E2723'.toColor() : Colors.grey,
+                            color: _selectedDate != null
+                                ? '#3E2723'.toColor()
+                                : Colors.grey,
                           ),
                         ),
                       ),
@@ -413,46 +396,50 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
               ),
               Spacing.h(16),
               // Gender dropdown
-              Obx(() => DropdownButtonFormField<String>(
-                value: controller.selectedGender.value,
-                decoration: InputDecoration(
-                  labelText: 'Gender',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
+              Obx(
+                () => DropdownButtonFormField<String>(
+                  value: controller.selectedGender.value,
+                  decoration: InputDecoration(
+                    labelText: 'Gender',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    prefixIcon: Icon(Icons.person_outline),
                   ),
-                  prefixIcon: Icon(Icons.person_outline),
+                  items: _genders.map((gender) {
+                    return DropdownMenuItem(
+                      value: gender,
+                      child: AutoTranslateText(gender.toUpperCase()),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    if (value != null) controller.setGender(value);
+                  },
                 ),
-                items: _genders.map((gender) {
-                  return DropdownMenuItem(
-                    value: gender,
-                    child: AutoTranslateText(gender.toUpperCase()),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  if (value != null) controller.setGender(value);
-                },
-              )),
+              ),
               Spacing.h(16),
               // Language dropdown
-              Obx(() => DropdownButtonFormField<String>(
-                value: controller.selectedLanguage.value,
-                decoration: InputDecoration(
-                  labelText: 'Language',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
+              Obx(
+                () => DropdownButtonFormField<String>(
+                  value: controller.selectedLanguage.value,
+                  decoration: InputDecoration(
+                    labelText: 'Language',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    prefixIcon: Icon(Icons.language),
                   ),
-                  prefixIcon: Icon(Icons.language),
+                  items: _languages.map((lang) {
+                    return DropdownMenuItem(
+                      value: lang,
+                      child: AutoTranslateText(lang.toUpperCase()),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    if (value != null) controller.setLanguage(value);
+                  },
                 ),
-                items: _languages.map((lang) {
-                  return DropdownMenuItem(
-                    value: lang,
-                    child: AutoTranslateText(lang.toUpperCase()),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  if (value != null) controller.setLanguage(value);
-                },
-              )),
+              ),
               Spacing.h(16),
               // Additional Notes
               TextField(
@@ -511,27 +498,29 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
                 ),
               ),
               Spacing.h(12),
-              ...guidelines.map((g) => Padding(
-                    padding: EdgeInsets.only(bottom: 10.h),
-                    child: Row(
-                      children: [
-                        Icon(
-                          g.$2 ? Icons.check_circle : Icons.error_outline,
-                          size: 18.w,
-                          color: g.$2 ? '#1AAA55'.toColor() : '#D9534F'.toColor(),
-                        ),
-                        Spacing.w(10),
-                        Expanded(
-                          child: AutoTranslateText(
-                            g.$1,
-                            style: MyTextTheme.mediumBCN.copyWith(
-                              color: '#3E2723'.toColor(),
-                            ),
+              ...guidelines.map(
+                (g) => Padding(
+                  padding: EdgeInsets.only(bottom: 10.h),
+                  child: Row(
+                    children: [
+                      Icon(
+                        g.$2 ? Icons.check_circle : Icons.error_outline,
+                        size: 18.w,
+                        color: g.$2 ? '#1AAA55'.toColor() : '#D9534F'.toColor(),
+                      ),
+                      Spacing.w(10),
+                      Expanded(
+                        child: AutoTranslateText(
+                          g.$1,
+                          style: MyTextTheme.mediumBCN.copyWith(
+                            color: '#3E2723'.toColor(),
                           ),
                         ),
-                      ],
-                    ),
-                  )),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -562,11 +551,7 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
             children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.security,
-                    color: '#ffffff'.toColor(),
-                    size: 18.w,
-                  ),
+                  Icon(Icons.security, color: '#ffffff'.toColor(), size: 18.w),
                   Spacing.w(8),
                   AutoTranslateText(
                     'Privacy & Security',
@@ -580,10 +565,9 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
               Spacing.h(10),
               AutoTranslateText(
                 'Your handwriting image is processed securely and is not stored or shared. We respect your privacy and only use it for handwriting analysis.',
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#ffffff'.toColor(),
-                  height: 1.4,
-                ).merge(AppTypography.body1),
+                style: MyTextTheme.mediumBCN
+                    .copyWith(color: '#ffffff'.toColor(), height: 1.4)
+                    .merge(AppTypography.body1),
               ),
             ],
           ),
@@ -593,63 +577,65 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
   }
 
   Widget _buildAnalyzeButton() {
-    return Obx(() => Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.w),
-          child: SizedBox(
-            width: double.infinity,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: AppColors.orangeGradient,
-                borderRadius: BorderRadius.circular(12.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: "#F38B3B".toColor().withOpacity(0.35),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: ElevatedButton(
-                onPressed: controller.isAnalyzing.value
-                    ? null
-                    : () {
-                        if (controller.selectedImages.isEmpty) {
-                          Get.snackbar(
-                            'Error',
-                            'Please select at least one handwriting image',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.red,
-                            colorText: Colors.white,
-                          );
-                          return;
-                        }
-                        controller.analyzeHandwriting();
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  foregroundColor: '#ffffff'.toColor(),
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  elevation: 0,
-                  shadowColor: Colors.transparent,
+    return Obx(
+      () => Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
+        child: SizedBox(
+          width: double.infinity,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: AppColors.orangeGradient,
+              borderRadius: BorderRadius.circular(12.r),
+              boxShadow: [
+                BoxShadow(
+                  color: "#F38B3B".toColor().withOpacity(0.35),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
                 ),
-                child: controller.isAnalyzing.value
-                    ? CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      )
-                    : AutoTranslateText(
-                        'Analyze Handwriting',
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: '#ffffff'.toColor(),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+              ],
+            ),
+            child: ElevatedButton(
+              onPressed: controller.isAnalyzing.value
+                  ? null
+                  : () {
+                      if (controller.selectedImages.isEmpty) {
+                        Get.snackbar(
+                          'Error',
+                          'Please select at least one handwriting image',
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.red,
+                          colorText: Colors.white,
+                        );
+                        return;
+                      }
+                      controller.analyzeHandwriting();
+                    },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                foregroundColor: '#ffffff'.toColor(),
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                elevation: 0,
+                shadowColor: Colors.transparent,
               ),
+              child: controller.isAnalyzing.value
+                  ? CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                  : AutoTranslateText(
+                      'Analyze Handwriting',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: '#ffffff'.toColor(),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Future<void> _pickFromCamera() async {
@@ -658,9 +644,9 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
         source: ImageSource.camera,
         imageQuality: 80,
       );
-      
+
       if (!mounted) return;
-      
+
       if (pickedFile == null) return;
 
       final file = File(pickedFile.path);
@@ -698,9 +684,9 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
         source: ImageSource.gallery,
         imageQuality: 80,
       );
-      
+
       if (!mounted) return;
-      
+
       if (pickedFile == null) return;
 
       final file = File(pickedFile.path);
@@ -747,4 +733,3 @@ class _HandwritingAstrologyUploadViewState extends State<HandwritingAstrologyUpl
     }
   }
 }
-

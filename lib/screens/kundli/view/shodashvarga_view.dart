@@ -5,7 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/shodashvarga_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/consult_astrologer_card.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/division_chart_widget.dart';
-import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +38,7 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
           child: SafeArea(
             child: Column(
               children: [
-                KundliHeader(title: 'Shodashvarga'),
+                const CommonHeader(title: 'Shodashvarga'),
                 _buildTabs(),
                 Expanded(
                   child: PageView.builder(
@@ -48,7 +48,10 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
                     itemBuilder: (context, index) {
                       if (index == 0) {
                         return SingleChildScrollView(
-                          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 8.h,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
@@ -63,7 +66,9 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
                       final division = controller.tabs[index];
                       // Obx ensures chart appears as soon as fetch completes (svgDataMap updates)
                       return Obx(() {
-                        final svgData = controller.getSvgDataForDivision(division);
+                        final svgData = controller.getSvgDataForDivision(
+                          division,
+                        );
                         return DivisionChartWidget(
                           svgData: svgData,
                           divisionName: division,
@@ -142,7 +147,10 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             curve: Curves.easeOut,
-                            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 8.h,
+                            ),
                             decoration: BoxDecoration(
                               color: isSelected ? orange : Colors.transparent,
                               borderRadius: BorderRadius.circular(12.r),
@@ -158,7 +166,9 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
                                 tab,
                                 style: MyTextTheme.mediumBCB.copyWith(
                                   color: isSelected ? Colors.white : maroon,
-                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
                                   fontSize: 11.sp,
                                 ),
                               ),
@@ -191,7 +201,10 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
+        border: Border.all(
+          color: '#ed6f30'.toColor().withOpacity(0.2),
+          width: 1,
+        ),
       ),
       clipBehavior: Clip.antiAlias,
       child: child,
@@ -204,7 +217,10 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
       decoration: BoxDecoration(
         color: '#ed6f30'.toColor().withOpacity(0.08),
         border: Border(
-          bottom: BorderSide(color: '#ed6f30'.toColor().withOpacity(0.25), width: 1),
+          bottom: BorderSide(
+            color: '#ed6f30'.toColor().withOpacity(0.25),
+            width: 1,
+          ),
         ),
       ),
       child: Row(
@@ -304,21 +320,43 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
         decoration: BoxDecoration(
           color: isEven ? '#ed6f30'.toColor().withOpacity(0.04) : Colors.white,
           border: Border(
-            bottom: BorderSide(color: '#ed6f30'.toColor().withOpacity(0.12), width: 1),
+            bottom: BorderSide(
+              color: '#ed6f30'.toColor().withOpacity(0.12),
+              width: 1,
+            ),
           ),
         ),
         child: Row(
           children: [
-            Expanded(flex: 2, child: _cell(division['name'] as String, isBold: true)),
-            Expanded(flex: 1, child: _cell(division['code'] as String, textAlign: TextAlign.center)),
-            Expanded(flex: 2, child: _cell(division['description'] as String, textAlign: TextAlign.center)),
+            Expanded(
+              flex: 2,
+              child: _cell(division['name'] as String, isBold: true),
+            ),
+            Expanded(
+              flex: 1,
+              child: _cell(
+                division['code'] as String,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: _cell(
+                division['description'] as String,
+                textAlign: TextAlign.center,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _cell(String text, {bool isBold = false, TextAlign textAlign = TextAlign.left}) {
+  Widget _cell(
+    String text, {
+    bool isBold = false,
+    TextAlign textAlign = TextAlign.left,
+  }) {
     return AutoTranslateText(
       text,
       style: MyTextTheme.smallBCB.copyWith(

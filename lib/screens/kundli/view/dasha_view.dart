@@ -7,7 +7,7 @@ import 'package:astrobharataiuser/screens/kundli/widgets/vimshottari_dasha_widge
 import 'package:astrobharataiuser/screens/kundli/widgets/mahadasha_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/current_mahadasha_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/yogini_dasha_widget.dart';
-import 'package:astrobharataiuser/screens/kundli/widgets/kundli_header.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +40,7 @@ class DashaView extends BasePage<DashaController> {
           child: SafeArea(
             child: Column(
               children: [
-                KundliHeader(title: 'Dasha'),
+                const CommonHeader(title: 'Dasha'),
                 _buildTabs(),
                 Expanded(
                   child: PageView(
@@ -120,11 +120,23 @@ class DashaView extends BasePage<DashaController> {
                     SizedBox(width: 4.w),
                     _buildTab('DASHA', 0, selectedIndex, orange, maroon),
                     SizedBox(width: 6.w),
-                    _buildTab('VIMSHOTTARI DASHA', 1, selectedIndex, orange, maroon),
+                    _buildTab(
+                      'VIMSHOTTARI DASHA',
+                      1,
+                      selectedIndex,
+                      orange,
+                      maroon,
+                    ),
                     SizedBox(width: 6.w),
                     _buildTab('MAHADASHA', 2, selectedIndex, orange, maroon),
                     SizedBox(width: 6.w),
-                    _buildTab('CURRENT MAHADASHA', 3, selectedIndex, orange, maroon),
+                    _buildTab(
+                      'CURRENT MAHADASHA',
+                      3,
+                      selectedIndex,
+                      orange,
+                      maroon,
+                    ),
                     SizedBox(width: 6.w),
                     _buildTab('YOGINI DASHA', 4, selectedIndex, orange, maroon),
                     SizedBox(width: 10.w),
@@ -138,7 +150,13 @@ class DashaView extends BasePage<DashaController> {
     );
   }
 
-  Widget _buildTab(String title, int index, int selectedIndex, Color orange, Color maroon) {
+  Widget _buildTab(
+    String title,
+    int index,
+    int selectedIndex,
+    Color orange,
+    Color maroon,
+  ) {
     final isSelected = selectedIndex == index;
     if (!controller.tabKeys.containsKey(index)) {
       controller.tabKeys[index] = GlobalKey();
@@ -159,10 +177,7 @@ class DashaView extends BasePage<DashaController> {
             borderRadius: BorderRadius.circular(12.r),
             border: isSelected
                 ? null
-                : Border.all(
-                    color: maroon.withOpacity(0.2),
-                    width: 1,
-                  ),
+                : Border.all(color: maroon.withOpacity(0.2), width: 1),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
@@ -217,13 +232,20 @@ class DashaView extends BasePage<DashaController> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!scrollController.hasClients) return;
 
-      final tabs = ['DASHA', 'VIMSHOTTARI DASHA', 'MAHADASHA', 'CURRENT MAHADASHA', 'YOGINI DASHA'];
-      
+      final tabs = [
+        'DASHA',
+        'VIMSHOTTARI DASHA',
+        'MAHADASHA',
+        'CURRENT MAHADASHA',
+        'YOGINI DASHA',
+      ];
+
       double totalWidth = 4.w; // initial SizedBox before tabs
       for (int i = 0; i < selectedIndex; i++) {
         final key = controller.tabKeys[i];
         if (key?.currentContext != null) {
-          final renderBox = key!.currentContext!.findRenderObject() as RenderBox?;
+          final renderBox =
+              key!.currentContext!.findRenderObject() as RenderBox?;
           if (renderBox != null) {
             totalWidth += renderBox.size.width + 6.w; // tab width + spacing
           } else {
@@ -239,7 +261,8 @@ class DashaView extends BasePage<DashaController> {
       double selectedTabWidth = 0;
 
       if (selectedKey?.currentContext != null) {
-        final renderBox = selectedKey!.currentContext!.findRenderObject() as RenderBox?;
+        final renderBox =
+            selectedKey!.currentContext!.findRenderObject() as RenderBox?;
         if (renderBox != null) {
           selectedTabWidth = renderBox.size.width;
         }
@@ -252,7 +275,8 @@ class DashaView extends BasePage<DashaController> {
       }
 
       // Calculate position to center the selected tab
-      final targetPosition = totalWidth - (viewportWidth / 2) + (selectedTabWidth / 2);
+      final targetPosition =
+          totalWidth - (viewportWidth / 2) + (selectedTabWidth / 2);
 
       scrollController.animateTo(
         targetPosition.clamp(0.0, scrollController.position.maxScrollExtent),

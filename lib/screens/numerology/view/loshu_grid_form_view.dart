@@ -2,15 +2,14 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
-import 'package:astrobharataiuser/screens/astrology_services/widgets/astrology_header_widget.dart';
 import 'package:astrobharataiuser/screens/numerology/controller/loshu_grid_form_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
 class LoShuGridFormView extends BasePage<LoShuGridFormController> {
@@ -24,7 +23,7 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
         child: Column(
           children: [
             // Header
-            _buildHeader(),
+            CommonHeader(title: 'Lo Shu Grid'),
             // Content
             Expanded(
               child: SingleChildScrollView(
@@ -45,40 +44,6 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return AstrologyHeaderWidget(
-      padding: EdgeInsets.only(left: 16.w, right: 16.w, top: 24.h, bottom: 20.h),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Spacing.h(8),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () => Get.back(),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: const Color(0xFFDFB343),
-                  size: 24.w,
-                ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: AutoTranslateText(
-                  'Lo Shu Grid',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: const Color(0xFFDFB343),
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -177,10 +142,12 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
               Expanded(
                 child: AutoTranslateText(
                   'Enter Your Details',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: "#6F221E".toColor(),
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
+                  style: MyTextTheme.largeBCB
+                      .copyWith(
+                        color: "#6F221E".toColor(),
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.h2),
                 ),
               ),
             ],
@@ -208,91 +175,93 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
       children: [
         Row(
           children: [
-            Icon(
-              Icons.calendar_today,
-              color: "#DFB343".toColor(),
-              size: 18.w,
-            ),
+            Icon(Icons.calendar_today, color: "#DFB343".toColor(), size: 18.w),
             Spacing.w(8),
             AutoTranslateText(
               'Date of Birth',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.w600,
-              ).merge(AppTypography.body1),
+              style: MyTextTheme.mediumBCB
+                  .copyWith(
+                    color: "#6F221E".toColor(),
+                    fontWeight: FontWeight.w600,
+                  )
+                  .merge(AppTypography.body1),
             ),
           ],
         ),
         Spacing.h(10),
-        Obx(() => GestureDetector(
-          onTap: () async {
-            final picked = await showDatePicker(
-              context: Get.context!,
-              initialDate: controller.selectedDate.value ?? DateTime.now(),
-              firstDate: DateTime(1900),
-              lastDate: DateTime.now(),
-              builder: (context, child) {
-                return Theme(
-                  data: Theme.of(context).copyWith(
-                    colorScheme: ColorScheme.light(
-                      primary: "#DFB343".toColor(),
-                      onPrimary: Colors.white,
-                      surface: Colors.white,
-                      onSurface: "#6F221E".toColor(),
+        Obx(
+          () => GestureDetector(
+            onTap: () async {
+              final picked = await showDatePicker(
+                context: Get.context!,
+                initialDate: controller.selectedDate.value ?? DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+                builder: (context, child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      colorScheme: ColorScheme.light(
+                        primary: "#DFB343".toColor(),
+                        onPrimary: Colors.white,
+                        surface: Colors.white,
+                        onSurface: "#6F221E".toColor(),
+                      ),
                     ),
-                  ),
-                  child: child!,
-                );
-              },
-            );
-            if (picked != null) {
-              controller.selectDate(picked);
-            }
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-            decoration: BoxDecoration(
-              color: controller.selectedDate.value != null
-                  ? "#DFB343".toColor().withOpacity(0.05)
-                  : Colors.grey.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(14.r),
-              border: Border.all(
+                    child: child!,
+                  );
+                },
+              );
+              if (picked != null) {
+                controller.selectDate(picked);
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              decoration: BoxDecoration(
                 color: controller.selectedDate.value != null
-                    ? "#DFB343".toColor()
-                    : Colors.grey.withOpacity(0.3),
-                width: controller.selectedDate.value != null ? 2 : 1,
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: AutoTranslateText(
-                    controller.selectedDate.value != null
-                        ? DateFormat('dd/MM/yyyy').format(controller.selectedDate.value!)
-                        : 'Select Date of Birth (DD/MM/YYYY)',
-                    style: MyTextTheme.mediumBCN.copyWith(
-                      color: controller.selectedDate.value != null
-                          ? "#6F221E".toColor()
-                          : Colors.grey,
-                      fontWeight: controller.selectedDate.value != null
-                          ? FontWeight.w600
-                          : FontWeight.normal,
-                    ),
-                  ),
-                ),
-                Spacing.w(8),
-                Icon(
-                  Icons.arrow_forward_ios,
+                    ? "#DFB343".toColor().withOpacity(0.05)
+                    : Colors.grey.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(14.r),
+                border: Border.all(
                   color: controller.selectedDate.value != null
                       ? "#DFB343".toColor()
-                      : Colors.grey,
-                  size: 16.w,
+                      : Colors.grey.withOpacity(0.3),
+                  width: controller.selectedDate.value != null ? 2 : 1,
                 ),
-              ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: AutoTranslateText(
+                      controller.selectedDate.value != null
+                          ? DateFormat(
+                              'dd/MM/yyyy',
+                            ).format(controller.selectedDate.value!)
+                          : 'Select Date of Birth (DD/MM/YYYY)',
+                      style: MyTextTheme.mediumBCN.copyWith(
+                        color: controller.selectedDate.value != null
+                            ? "#6F221E".toColor()
+                            : Colors.grey,
+                        fontWeight: controller.selectedDate.value != null
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                  Spacing.w(8),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: controller.selectedDate.value != null
+                        ? "#DFB343".toColor()
+                        : Colors.grey,
+                    size: 16.w,
+                  ),
+                ],
+              ),
             ),
           ),
-        )),
+        ),
       ],
     );
   }
@@ -303,27 +272,23 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
       children: [
         Row(
           children: [
-            Icon(
-              Icons.person,
-              color: "#DFB343".toColor(),
-              size: 18.w,
-            ),
+            Icon(Icons.person, color: "#DFB343".toColor(), size: 18.w),
             Spacing.w(8),
             AutoTranslateText(
               'Gender',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.w600,
-              ).merge(AppTypography.body1),
+              style: MyTextTheme.mediumBCB
+                  .copyWith(
+                    color: "#6F221E".toColor(),
+                    fontWeight: FontWeight.w600,
+                  )
+                  .merge(AppTypography.body1),
             ),
           ],
         ),
         Spacing.h(10),
         Row(
           children: [
-            Expanded(
-              child: _buildGenderOption('male', 'Male', Icons.male),
-            ),
+            Expanded(child: _buildGenderOption('male', 'Male', Icons.male)),
             Spacing.w(12),
             Expanded(
               child: _buildGenderOption('female', 'Female', Icons.female),
@@ -357,9 +322,7 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
             children: [
               Icon(
                 icon,
-                color: isSelected
-                    ? "#DFB343".toColor()
-                    : Colors.grey,
+                color: isSelected ? "#DFB343".toColor() : Colors.grey,
                 size: 28.w,
               ),
               Spacing.h(8),
@@ -370,18 +333,14 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
                     isSelected
                         ? Icons.radio_button_checked
                         : Icons.radio_button_unchecked,
-                    color: isSelected
-                        ? "#DFB343".toColor()
-                        : Colors.grey,
+                    color: isSelected ? "#DFB343".toColor() : Colors.grey,
                     size: 18.w,
                   ),
                   Spacing.w(6),
                   AutoTranslateText(
                     label,
                     style: MyTextTheme.mediumBCN.copyWith(
-                      color: isSelected
-                          ? "#6F221E".toColor()
-                          : Colors.grey,
+                      color: isSelected ? "#6F221E".toColor() : Colors.grey,
                       fontWeight: isSelected
                           ? FontWeight.w600
                           : FontWeight.normal,
@@ -402,133 +361,125 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
       children: [
         Row(
           children: [
-            Icon(
-              Icons.language,
-              color: "#DFB343".toColor(),
-              size: 18.w,
-            ),
+            Icon(Icons.language, color: "#DFB343".toColor(), size: 18.w),
             Spacing.w(8),
             AutoTranslateText(
               'Language',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: "#6F221E".toColor(),
-                fontWeight: FontWeight.w600,
-              ).merge(AppTypography.body1),
+              style: MyTextTheme.mediumBCB
+                  .copyWith(
+                    color: "#6F221E".toColor(),
+                    fontWeight: FontWeight.w600,
+                  )
+                  .merge(AppTypography.body1),
             ),
           ],
         ),
         Spacing.h(10),
-        Obx(() => Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(14.r),
-            border: Border.all(
-              color: "#DFB343".toColor().withOpacity(0.3),
-              width: 1,
+        Obx(
+          () => Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            decoration: BoxDecoration(
+              color: Colors.grey.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(14.r),
+              border: Border.all(
+                color: "#DFB343".toColor().withOpacity(0.3),
+                width: 1,
+              ),
             ),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: controller.selectedLanguage.value,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 16.h),
-            ),
-            items: controller.languages.entries.map((entry) {
-              return DropdownMenuItem(
-                value: entry.key,
-                child: AutoTranslateText(
-                  entry.value,
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: "#6F221E".toColor(),
+            child: DropdownButtonFormField<String>(
+              value: controller.selectedLanguage.value,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(vertical: 16.h),
+              ),
+              items: controller.languages.entries.map((entry) {
+                return DropdownMenuItem(
+                  value: entry.key,
+                  child: AutoTranslateText(
+                    entry.value,
+                    style: MyTextTheme.mediumBCN.copyWith(
+                      color: "#6F221E".toColor(),
+                    ),
                   ),
-                ),
-              );
-            }).toList(),
-            onChanged: (value) {
-              if (value != null) {
-                controller.selectLanguage(value);
-              }
-            },
-            dropdownColor: Colors.white,
-            icon: Icon(
-              Icons.arrow_drop_down,
-              color: "#DFB343".toColor(),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  controller.selectLanguage(value);
+                }
+              },
+              dropdownColor: Colors.white,
+              icon: Icon(Icons.arrow_drop_down, color: "#DFB343".toColor()),
             ),
           ),
-        )),
+        ),
       ],
     );
   }
 
   Widget _buildSubmitButton() {
-    return Obx(() => Container(
-      width: double.infinity,
-      height: 56.h,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: controller.isLoading.value
-              ? [
-                  "#DFB343".toColor().withOpacity(0.5),
-                  "#DFB343".toColor().withOpacity(0.3),
-                ]
-              : [
-                  "#DFB343".toColor(),
-                  "#DFB343".toColor().withOpacity(0.8),
-                ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(14.r),
-        boxShadow: controller.isLoading.value
-            ? []
-            : [
-                BoxShadow(
-                  color: "#DFB343".toColor().withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-      ),
-      child: ElevatedButton(
-        onPressed: controller.isLoading.value
-            ? null
-            : () => controller.generateLoShuGrid(),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14.r),
+    return Obx(
+      () => Container(
+        width: double.infinity,
+        height: 56.h,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: controller.isLoading.value
+                ? [
+                    "#DFB343".toColor().withOpacity(0.5),
+                    "#DFB343".toColor().withOpacity(0.3),
+                  ]
+                : ["#DFB343".toColor(), "#DFB343".toColor().withOpacity(0.8)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-        ),
-        child: controller.isLoading.value
-            ? SizedBox(
-                height: 24.h,
-                width: 24.w,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.5,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.auto_awesome,
-                    color: Colors.white,
-                    size: 20.w,
-                  ),
-                  Spacing.w(8),
-                  AutoTranslateText(
-                    'Generate Lo Shu Grid',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+          borderRadius: BorderRadius.circular(14.r),
+          boxShadow: controller.isLoading.value
+              ? []
+              : [
+                  BoxShadow(
+                    color: "#DFB343".toColor().withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
                   ),
                 ],
-              ),
+        ),
+        child: ElevatedButton(
+          onPressed: controller.isLoading.value
+              ? null
+              : () => controller.generateLoShuGrid(),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14.r),
+            ),
+          ),
+          child: controller.isLoading.value
+              ? SizedBox(
+                  height: 24.h,
+                  width: 24.w,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.auto_awesome, color: Colors.white, size: 20.w),
+                    Spacing.w(8),
+                    AutoTranslateText(
+                      'Generate Lo Shu Grid',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+        ),
       ),
-    ));
+    );
   }
 }

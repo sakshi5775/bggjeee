@@ -10,7 +10,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/profile_check_helper.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -161,8 +161,7 @@ class PersonaDetailView extends StatelessWidget {
   Widget _buildHeader(BuildContext context, PersonaModel persona) {
     return CommonHeader(
       title: 'Astrologer Details',
-      titleColor: AppColors.templeGold,
-      actions: [
+      customActions: [
         // History icon
         GestureDetector(
           onTap: () {

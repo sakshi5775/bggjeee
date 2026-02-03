@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:astrobharataiuser/core/localization/language_controller_v2.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/data_model/tarot_card_model.dart';
 import 'package:astrobharataiuser/data_model/tarot_reading_models.dart';
@@ -97,6 +98,29 @@ class TarotController extends BaseController {
     super.onInit();
     // Initialize state properly
     _initializeState();
+
+    // Listen to global language changes
+    _setupLanguageWorker();
+  }
+
+  void _setupLanguageWorker() {
+    final languageController = Get.find<LanguageControllerV2>();
+    // Initial sync
+    selectedLanguage.value = languageController.currentLanguageCode;
+
+    // Listen for changes
+    ever(languageController.currentLanguage, (language) {
+      if (language != null && selectedLanguage.value != language.code) {
+        debugPrint(
+          '🌍 TarotController: Language changed to ${language.code}, triggering reshuffle',
+        );
+        selectedLanguage.value = language.code;
+        // If cards are already loaded, reshuffle with new language
+        if (cards.isNotEmpty && !isShuffling.value) {
+          shuffleCards();
+        }
+      }
+    });
   }
 
   @override

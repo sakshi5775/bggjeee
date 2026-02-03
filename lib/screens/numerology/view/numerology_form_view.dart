@@ -2,11 +2,11 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
-import 'package:astrobharataiuser/screens/astrology_services/widgets/astrology_header_widget.dart';
 import 'package:astrobharataiuser/screens/numerology/controller/numerology_form_controller.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,7 +26,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
         child: Column(
           children: [
             // Header
-            _buildHeader(),
+            CommonHeader(title: 'Numerology'),
             // Content
             Expanded(
               child: SingleChildScrollView(
@@ -45,82 +45,6 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return AstrologyHeaderWidget(
-      padding: EdgeInsets.only(
-        left: 16.w,
-        right: 16.w,
-        top: 24.h,
-        bottom: 20.h,
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Spacing.h(8),
-          Row(
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            spacing: 20.w,
-            children: [
-              GestureDetector(
-                onTap: () => Get.back(),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: const Color(0xFFDFB343),
-                  size: 24.w,
-                ),
-              ),
-              AutoTranslateText(
-                'Numerology',
-                style: MyTextTheme.largeBCB
-                    .copyWith(
-                      color: const Color(0xFFDFB343),
-                      fontWeight: FontWeight.bold,
-                    )
-                    .merge(AppTypography.h2),
-                textAlign: TextAlign.center,
-              ),
-
-              // Obx(
-              //   () => GestureDetector(
-              //     onTap: () => Get.toNamed('/wallet'),
-              //     child: Container(
-              //       padding: EdgeInsets.symmetric(
-              //         horizontal: 8.w,
-              //         vertical: 4.h,
-              //       ),
-              //       margin: EdgeInsets.only(right: 4.w),
-              //       decoration: BoxDecoration(
-              //         color: const Color(0xFFDFB343).withOpacity(0.1),
-              //         borderRadius: BorderRadius.circular(8.r),
-              //       ),
-              //       child: Row(
-              //         mainAxisSize: MainAxisSize.min,
-              //         children: [
-              //           Icon(
-              //             Icons.account_balance_wallet,
-              //             color: const Color(0xFFDFB343),
-              //             size: 18.w,
-              //           ),
-              //           Spacing.w(4),
-              //           AutoTranslateText(
-              //             '₹${walletController.walletBalance.value.toStringAsFixed(0)}',
-              //             style: MyTextTheme.smallBCB.copyWith(
-              //               color: const Color(0xFFDFB343),
-              //               fontWeight: FontWeight.w600,
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ),
-              // ),
-            ],
-          ),
-        ],
       ),
     );
   }

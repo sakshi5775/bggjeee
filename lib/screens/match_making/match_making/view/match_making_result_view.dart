@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/utils/app_constant.dart';
 
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -116,7 +117,12 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
         child: Column(
           children: [
             // Header
-            _buildHeader(),
+            CommonHeader(
+              title: 'Match Making Result',
+              showCart: false,
+              showWallet: false,
+              showSearch: false,
+            ),
 
             // Content
             Expanded(
@@ -186,63 +192,6 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
                     Spacing.h(20),
                   ],
                 ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      decoration: BoxDecoration(color: "#6F221E".toColor()),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: Icon(
-                Icons.arrow_back,
-                color: const Color(0xFFDFB343),
-                size: 24.w,
-              ),
-            ),
-            Spacing.w(16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AutoTranslateText(
-                    'Compatibility Report',
-                    style: MyTextTheme.largeBCB
-                        .copyWith(
-                          color: const Color(0xFFDFB343),
-                          fontWeight: FontWeight.bold,
-                        )
-                        .merge(AppTypography.h2),
-                  ),
-                  Spacing.h(2),
-                  AutoTranslateText(
-                    'Based on Vedic Astrology',
-                    style: MyTextTheme.smallBCN
-                        .copyWith(
-                          color: const Color(0xFFDFB343).withOpacity(0.8),
-                        )
-                        .merge(AppTypography.body2),
-                  ),
-                ],
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                // Share functionality
-              },
-              child: Icon(
-                Icons.share,
-                color: const Color(0xFFDFB343),
-                size: 24.w,
               ),
             ),
           ],
@@ -589,7 +538,7 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
+            const CommonHeader(title: 'Match Making Result'),
             Expanded(
               child: Center(
                 child: Padding(

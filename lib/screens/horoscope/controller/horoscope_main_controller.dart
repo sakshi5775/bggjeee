@@ -16,34 +16,38 @@ class HoroscopeMainController extends BaseController {
 
   // Selected sign from previous page
   final selectedSign = Rxn<String>();
-  
+
   // Tab widget selections (for embedded tab)
-  final selectedCategory = Rxn<String>(); // Daily, Weekly, Weekly Love, Monthly, Yearly
+  final selectedCategory =
+      Rxn<String>(); // Daily, Weekly, Weekly Love, Monthly, Yearly
   final selectedZodiac = Rxn<String>(); // Aries, Taurus, etc.
-  
+
   // Form data (date, time, location)
   final dateController = TextEditingController();
   final timeController = TextEditingController();
   final placeController = TextEditingController();
-  
+
   // Location data
   double? latitude;
   double? longitude;
   double? timezone;
-  
+
   // Selected tab index
   final selectedTabIndex = 0.obs;
-  
+
   // PageController for swipeable tabs
   late final PageController pageController;
-  
+
   // ScrollController for tab slider
   final ScrollController tabScrollController = ScrollController();
-  
+
+  // Keys for each tab to support auto-scrolling parity
+  final Map<int, GlobalKey> tabKeys = {};
+
   // Daily prediction day selection (today, tomorrow, yesterday)
   final selectedDay = 'today'.obs;
   final List<String> dayOptions = ['yesterday', 'today', 'tomorrow'];
-  
+
   // Tab names
   final tabs = [
     'Key Points',
@@ -60,7 +64,7 @@ class HoroscopeMainController extends BaseController {
     'Friendship Table',
     'Planet KP',
   ];
-  
+
   // Data observables
   final extendedKundaliData = Rxn<Map<String, dynamic>>();
   final dailyPredictionData = Rxn<Map<String, dynamic>>();
@@ -75,7 +79,7 @@ class HoroscopeMainController extends BaseController {
   final rudrakshSuggestionData = Rxn<Map<String, dynamic>>();
   final friendshipTableData = Rxn<Map<String, dynamic>>();
   final planetKpData = Rxn<Map<String, dynamic>>();
-  
+
   // Loading states
   final isLoadingExtendedKundali = false.obs;
   final isLoadingDaily = false.obs;
@@ -109,7 +113,7 @@ class HoroscopeMainController extends BaseController {
         timezone = formData['timezone'] as double?;
       }
     }
-    
+
     // Set default date/time if not provided
     if (dateController.text.isEmpty) {
       dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
@@ -117,7 +121,7 @@ class HoroscopeMainController extends BaseController {
     if (timeController.text.isEmpty) {
       timeController.text = DateFormat('HH:mm').format(DateTime.now());
     }
-    
+
     // Initialize location and then load data
     _initializeLocationAndLoadData();
   }
@@ -127,7 +131,7 @@ class HoroscopeMainController extends BaseController {
     if (latitude == null || longitude == null) {
       await _getCurrentLocation();
     }
-    
+
     // Wait for next frame to ensure widget is fully built before showing errors or loading data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Load first tab data after location is ready
@@ -136,7 +140,10 @@ class HoroscopeMainController extends BaseController {
       } else {
         // Show error after build is complete
         Future.delayed(const Duration(milliseconds: 100), () {
-          showErrorMessage(title: 'Error', message: 'Location data is missing. Please try again.');
+          showErrorMessage(
+            title: 'Error',
+            message: 'Location data is missing. Please try again.',
+          );
         });
       }
     });
@@ -159,7 +166,7 @@ class HoroscopeMainController extends BaseController {
       );
       latitude = position.latitude;
       longitude = position.longitude;
-      
+
       // Get timezone from address helper (static method)
       final tzString = await AddressHelper.getTimezoneFromCoordinates(
         position.latitude,
@@ -170,15 +177,28 @@ class HoroscopeMainController extends BaseController {
       } else {
         timezone = 5.5;
       }
-      
+
       // Get place name using reverse geocoding
-      final reverseGeocode = await _reverseGeocode(position.latitude, position.longitude);
+      final reverseGeocode = await _reverseGeocode(
+        position.latitude,
+        position.longitude,
+      );
       if (reverseGeocode != null) {
-        final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+        final city =
+            reverseGeocode['city'] ??
+            reverseGeocode['town'] ??
+            reverseGeocode['village'] ??
+            '';
         final state = reverseGeocode['state'] ?? '';
         final country = reverseGeocode['country'] ?? '';
-        final addressParts = [city, state, country].where((e) => e.isNotEmpty).toList();
-        placeController.text = addressParts.isNotEmpty ? addressParts.join(', ') : 'Unknown Location';
+        final addressParts = [
+          city,
+          state,
+          country,
+        ].where((e) => e.isNotEmpty).toList();
+        placeController.text = addressParts.isNotEmpty
+            ? addressParts.join(', ')
+            : 'Unknown Location';
       } else {
         placeController.text = 'Unknown Location';
       }
@@ -197,14 +217,11 @@ class HoroscopeMainController extends BaseController {
       final url = Uri.parse(
         'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon&zoom=18&addressdetails=1',
       );
-      
-      final response = await http.get(
-        url,
-        headers: {
-          'User-Agent': 'AstrologyApp/1.0',
-        },
-      ).timeout(const Duration(seconds: 10));
-      
+
+      final response = await http
+          .get(url, headers: {'User-Agent': 'AstrologyApp/1.0'})
+          .timeout(const Duration(seconds: 10));
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
         final address = data['address'] as Map<String, dynamic>? ?? {};
@@ -226,27 +243,38 @@ class HoroscopeMainController extends BaseController {
     _scrollToTab(index);
     _loadTabData(index);
   }
-  
+
   void onPageChanged(int index) {
     selectedTabIndex.value = index;
     _scrollToTab(index);
     _loadTabData(index);
   }
-  
+
   void _scrollToTab(int index) {
     if (!tabScrollController.hasClients) return;
-    
-    // Calculate approximate position for the tab
-    // Each tab is approximately 100-120 pixels wide with margins
-    final double tabWidth = 120.0;
-    final double screenWidth = tabScrollController.position.viewportDimension;
-    final double targetOffset = (index * tabWidth) - (screenWidth / 2) + (tabWidth / 2);
-    
-    tabScrollController.animateTo(
-      targetOffset.clamp(0.0, tabScrollController.position.maxScrollExtent),
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+
+    // Use GlobalKey to scroll the tab into view if available
+    final key = tabKeys[index];
+    if (key != null && key.currentContext != null) {
+      Scrollable.ensureVisible(
+        key.currentContext!,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        alignment: 0.5, // Center the tab
+      );
+    } else {
+      // Fallback: Calculate approximate position
+      final double tabWidth = 120.0;
+      final double screenWidth = tabScrollController.position.viewportDimension;
+      final double targetOffset =
+          (index * tabWidth) - (screenWidth / 2) + (tabWidth / 2);
+
+      tabScrollController.animateTo(
+        targetOffset.clamp(0.0, tabScrollController.position.maxScrollExtent),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   void _loadTabData(int index) {
@@ -254,7 +282,10 @@ class HoroscopeMainController extends BaseController {
       // Defer error message to avoid calling during build
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(const Duration(milliseconds: 100), () {
-          showErrorMessage(title: 'Error', message: 'Location data is missing. Please try again.');
+          showErrorMessage(
+            title: 'Error',
+            message: 'Location data is missing. Please try again.',
+          );
         });
       });
       return;
@@ -305,7 +336,7 @@ class HoroscopeMainController extends BaseController {
 
   Future<void> fetchExtendedKundali() async {
     if (extendedKundaliData.value != null) return;
-    
+
     try {
       isLoadingExtendedKundali.value = true;
       final data = await _horoscopeService.getExtendedKundali(
@@ -315,9 +346,12 @@ class HoroscopeMainController extends BaseController {
         longitude: longitude!,
         tz: timezone!,
       );
-      
-      if (data != null && data['data'] != null && data['data']['response'] != null) {
-        extendedKundaliData.value = data['data']['response'] as Map<String, dynamic>;
+
+      if (data != null &&
+          data['data'] != null &&
+          data['data']['response'] != null) {
+        extendedKundaliData.value =
+            data['data']['response'] as Map<String, dynamic>;
       }
     } catch (e) {
       debugPrint('Error fetching Extended Kundali: $e');
@@ -335,7 +369,7 @@ class HoroscopeMainController extends BaseController {
         zodiac: zodiacNo,
         day: selectedDay.value,
       );
-      
+
       if (data != null) {
         dailyPredictionData.value = data;
       }
@@ -354,12 +388,12 @@ class HoroscopeMainController extends BaseController {
 
   Future<void> fetchWeeklyPrediction() async {
     if (weeklyPredictionData.value != null) return;
-    
+
     try {
       isLoadingWeekly.value = true;
       final zodiacNo = _getZodiacNumber(selectedSign.value ?? 'Aries');
       final data = await _kundliService.getWeeklyPrediction(zodiac: zodiacNo);
-      
+
       if (data != null) {
         weeklyPredictionData.value = data;
       }
@@ -372,12 +406,12 @@ class HoroscopeMainController extends BaseController {
 
   Future<void> fetchMonthlyPrediction() async {
     if (monthlyPredictionData.value != null) return;
-    
+
     try {
       isLoadingMonthly.value = true;
       final zodiacNo = _getZodiacNumber(selectedSign.value ?? 'Aries');
       final data = await _kundliService.getMonthlyPrediction(zodiac: zodiacNo);
-      
+
       if (data != null) {
         monthlyPredictionData.value = data;
       }
@@ -390,7 +424,7 @@ class HoroscopeMainController extends BaseController {
 
   Future<void> fetchYearlyPrediction() async {
     if (yearlyPredictionData.value != null) return;
-    
+
     try {
       isLoadingYearly.value = true;
       final zodiacNo = _getZodiacNumber(selectedSign.value ?? 'Aries');
@@ -399,7 +433,7 @@ class HoroscopeMainController extends BaseController {
         zodiac: zodiacNo,
         year: currentYear,
       );
-      
+
       if (data != null) {
         yearlyPredictionData.value = data;
       }
@@ -412,7 +446,7 @@ class HoroscopeMainController extends BaseController {
 
   Future<void> fetchMoonSign() async {
     if (moonSignData.value != null) return;
-    
+
     try {
       isLoadingMoonSign.value = true;
       final data = await _horoscopeService.getMoonSign(
@@ -422,8 +456,10 @@ class HoroscopeMainController extends BaseController {
         longitude: longitude!,
         tz: timezone!,
       );
-      
-      if (data != null && data['data'] != null && data['data']['response'] != null) {
+
+      if (data != null &&
+          data['data'] != null &&
+          data['data']['response'] != null) {
         moonSignData.value = data['data']['response'] as Map<String, dynamic>;
       }
     } catch (e) {
@@ -435,7 +471,7 @@ class HoroscopeMainController extends BaseController {
 
   Future<void> fetchSunSign() async {
     if (sunSignData.value != null) return;
-    
+
     try {
       isLoadingSunSign.value = true;
       final data = await _horoscopeService.getSunSign(
@@ -445,8 +481,10 @@ class HoroscopeMainController extends BaseController {
         longitude: longitude!,
         tz: timezone!,
       );
-      
-      if (data != null && data['data'] != null && data['data']['response'] != null) {
+
+      if (data != null &&
+          data['data'] != null &&
+          data['data']['response'] != null) {
         sunSignData.value = data['data']['response'] as Map<String, dynamic>;
       }
     } catch (e) {
@@ -458,7 +496,7 @@ class HoroscopeMainController extends BaseController {
 
   Future<void> fetchAscendantSign() async {
     if (ascendantSignData.value != null) return;
-    
+
     try {
       isLoadingAscendantSign.value = true;
       final data = await _horoscopeService.getAscendantSign(
@@ -468,9 +506,12 @@ class HoroscopeMainController extends BaseController {
         longitude: longitude!,
         tz: timezone!,
       );
-      
-      if (data != null && data['data'] != null && data['data']['response'] != null) {
-        ascendantSignData.value = data['data']['response'] as Map<String, dynamic>;
+
+      if (data != null &&
+          data['data'] != null &&
+          data['data']['response'] != null) {
+        ascendantSignData.value =
+            data['data']['response'] as Map<String, dynamic>;
       }
     } catch (e) {
       debugPrint('Error fetching Ascendant Sign: $e');
@@ -481,7 +522,7 @@ class HoroscopeMainController extends BaseController {
 
   Future<void> fetchSadeSati() async {
     if (sadeSatiData.value != null) return;
-    
+
     try {
       isLoadingSadeSati.value = true;
       final data = await _horoscopeService.getCurrentSadeSati(
@@ -491,8 +532,10 @@ class HoroscopeMainController extends BaseController {
         longitude: longitude!,
         tz: timezone!,
       );
-      
-      if (data != null && data['data'] != null && data['data']['response'] != null) {
+
+      if (data != null &&
+          data['data'] != null &&
+          data['data']['response'] != null) {
         sadeSatiData.value = data['data']['response'] as Map<String, dynamic>;
       }
     } catch (e) {
@@ -504,7 +547,7 @@ class HoroscopeMainController extends BaseController {
 
   Future<void> fetchGemSuggestion() async {
     if (gemSuggestionData.value != null) return;
-    
+
     try {
       isLoadingGemSuggestion.value = true;
       final data = await _horoscopeService.getGemSuggestion(
@@ -514,9 +557,12 @@ class HoroscopeMainController extends BaseController {
         longitude: longitude!,
         tz: timezone!,
       );
-      
-      if (data != null && data['data'] != null && data['data']['response'] != null) {
-        gemSuggestionData.value = data['data']['response'] as Map<String, dynamic>;
+
+      if (data != null &&
+          data['data'] != null &&
+          data['data']['response'] != null) {
+        gemSuggestionData.value =
+            data['data']['response'] as Map<String, dynamic>;
       }
     } catch (e) {
       debugPrint('Error fetching Gem Suggestion: $e');
@@ -527,7 +573,7 @@ class HoroscopeMainController extends BaseController {
 
   Future<void> fetchRudrakshSuggestion() async {
     if (rudrakshSuggestionData.value != null) return;
-    
+
     try {
       isLoadingRudrakshSuggestion.value = true;
       final data = await _horoscopeService.getRudrakshSuggestion(
@@ -537,9 +583,12 @@ class HoroscopeMainController extends BaseController {
         longitude: longitude!,
         tz: timezone!,
       );
-      
-      if (data != null && data['data'] != null && data['data']['response'] != null) {
-        rudrakshSuggestionData.value = data['data']['response'] as Map<String, dynamic>;
+
+      if (data != null &&
+          data['data'] != null &&
+          data['data']['response'] != null) {
+        rudrakshSuggestionData.value =
+            data['data']['response'] as Map<String, dynamic>;
       }
     } catch (e) {
       debugPrint('Error fetching Rudraksh Suggestion: $e');
@@ -550,7 +599,7 @@ class HoroscopeMainController extends BaseController {
 
   Future<void> fetchFriendshipTable() async {
     if (friendshipTableData.value != null) return;
-    
+
     try {
       isLoadingFriendshipTable.value = true;
       final data = await _horoscopeService.getFriendshipTable(
@@ -560,9 +609,12 @@ class HoroscopeMainController extends BaseController {
         longitude: longitude!,
         tz: timezone!,
       );
-      
-      if (data != null && data['data'] != null && data['data']['response'] != null) {
-        friendshipTableData.value = data['data']['response'] as Map<String, dynamic>;
+
+      if (data != null &&
+          data['data'] != null &&
+          data['data']['response'] != null) {
+        friendshipTableData.value =
+            data['data']['response'] as Map<String, dynamic>;
       }
     } catch (e) {
       debugPrint('Error fetching Friendship Table: $e');
@@ -573,7 +625,7 @@ class HoroscopeMainController extends BaseController {
 
   Future<void> fetchPlanetKp() async {
     if (planetKpData.value != null) return;
-    
+
     try {
       isLoadingPlanetKp.value = true;
       final data = await _horoscopeService.getPlanetKp(
@@ -583,8 +635,10 @@ class HoroscopeMainController extends BaseController {
         longitude: longitude!,
         tz: timezone!,
       );
-      
-      if (data != null && data['data'] != null && data['data']['response'] != null) {
+
+      if (data != null &&
+          data['data'] != null &&
+          data['data']['response'] != null) {
         planetKpData.value = data['data']['response'] as Map<String, dynamic>;
       }
     } catch (e) {
@@ -612,4 +666,3 @@ class HoroscopeMainController extends BaseController {
     return zodiacMap[sign] ?? 1;
   }
 }
-

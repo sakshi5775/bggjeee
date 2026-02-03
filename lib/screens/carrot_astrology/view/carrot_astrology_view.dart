@@ -1,11 +1,14 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/controller/carrot_astrology_controller.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/utils/carrot_astrology_colors.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,85 +22,98 @@ class CarrotAstrologyView extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 768;
     final maxWidth = isMobile ? double.infinity : 600.w;
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Header with back button
-                  _buildHeader(),
-                  
-                  // Main icon
-                  _buildMainIcon(),
-                  
-                  // Title
-                  _buildTitle(),
-                  
-                  Spacing.h(8),
-                  
-                  // Subtitle
-                  _buildSubtitle(),
-                  
-                  Spacing.h(32),
-                  
-                  // Discover Your Vegetable Match section
-                  _buildDiscoverSection(controller),
-                  
-                  Spacing.h(32),
-                  
-                  // What You'll Discover section
-                  _buildWhatYouDiscoverSection(),
-                  
-                  Spacing.h(32),
-                  
-                  // About Carrot Astrology section
-                  _buildAboutSection(),
-                  
-                  Spacing.h(32),
-                ],
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Padding(
+          padding: EdgeInsets.only(
+            top:
+                (MediaQuery.of(context).padding.top > 0
+                        ? MediaQuery.of(context).padding.top * 0.5
+                        : 0.0)
+                    .clamp(6.0, 24.0)
+                    .toDouble(),
+          ),
+          child: Column(
+            children: [
+              // Fixed Header
+              Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: maxWidth),
+                  child: CommonHeader(
+                    title: 'Carrot Astrology',
+                    subtitle: AutoTranslateText(
+                      'Playful Insights • AI Wisdom',
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: const Color(0xFF6F221E).withOpacity(0.7),
+                      ),
+                    ),
+                    customActions: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.history,
+                          color: '#6F221E'.toColor(),
+                          size: 24.w,
+                        ),
+                        onPressed: () async {
+                          final ok = await LoginGuard.ensureLoggedIn(
+                            message:
+                                'Login to view your carrot astrology history.',
+                          );
+                          if (ok) {
+                            Get.toNamed(AppRoutes.carrotAstrologyHistory);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: maxWidth),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Main icon
+                          _buildMainIcon(),
+
+                          // Title
+                          _buildTitle(),
+
+                          Spacing.h(8),
+
+                          // Subtitle
+                          _buildSubtitle(),
+
+                          Spacing.h(32),
+
+                          // Discover Your Vegetable Match section
+                          _buildDiscoverSection(controller),
+
+                          Spacing.h(32),
+
+                          // What You'll Discover section
+                          _buildWhatYouDiscoverSection(),
+
+                          Spacing.h(32),
+
+                          // About Carrot Astrology section
+                          _buildAboutSection(),
+
+                          Spacing.h(32),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: '#3E2723'.toColor(),
-                size: 20.w,
-              ),
-            ),
-          ),
-          Spacer(),
-        ],
       ),
     );
   }
@@ -121,10 +137,9 @@ class CarrotAstrologyView extends StatelessWidget {
   Widget _buildTitle() {
     return AutoTranslateText(
       'Carrot Astrology',
-      style: MyTextTheme.veryLargeBCB.copyWith(
-        color: '#3E2723'.toColor(),
-        fontWeight: FontWeight.bold,
-      ).merge(AppTypography.h1),
+      style: MyTextTheme.veryLargeBCB
+          .copyWith(color: '#3E2723'.toColor(), fontWeight: FontWeight.bold)
+          .merge(AppTypography.h1),
       textAlign: TextAlign.center,
     );
   }
@@ -134,9 +149,9 @@ class CarrotAstrologyView extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: AutoTranslateText(
         'Discover Your Vegetable Essence • Zodiac-Based Wellness',
-        style: MyTextTheme.mediumBCN.copyWith(
-          color: '#3E2723'.toColor(),
-        ).merge(AppTypography.body1),
+        style: MyTextTheme.mediumBCN
+            .copyWith(color: '#3E2723'.toColor())
+            .merge(AppTypography.body1),
         textAlign: TextAlign.center,
       ),
     );
@@ -150,10 +165,7 @@ class CarrotAstrologyView extends StatelessWidget {
         decoration: BoxDecoration(
           color: '#ffffff'.toColor(),
           borderRadius: BorderRadius.circular(18.r),
-          border: Border.all(
-            color: '#F5D7B8'.toColor(),
-            width: 1.5,
-          ),
+          border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.07),
@@ -185,18 +197,19 @@ class CarrotAstrologyView extends StatelessWidget {
             Spacing.h(12),
             AutoTranslateText(
               'Discover Your Vegetable Match',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: '#3E2723'.toColor(),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
+              style: MyTextTheme.largeBCB
+                  .copyWith(
+                    color: '#3E2723'.toColor(),
+                    fontWeight: FontWeight.bold,
+                  )
+                  .merge(AppTypography.h2),
             ),
             Spacing.h(12),
             AutoTranslateText(
               'Select your zodiac sign and discover which vegetable aligns with your cosmic energy, along with personalized remedies and insights.',
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: '#666666'.toColor(),
-                height: 1.5,
-              ).merge(AppTypography.body1),
+              style: MyTextTheme.mediumBCN
+                  .copyWith(color: '#666666'.toColor(), height: 1.5)
+                  .merge(AppTypography.body1),
             ),
             Spacing.h(20),
             SizedBox(
@@ -207,7 +220,9 @@ class CarrotAstrologyView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: CarrotAstrologyColors.orangeColorDark.withOpacity(0.35),
+                      color: CarrotAstrologyColors.orangeColorDark.withOpacity(
+                        0.35,
+                      ),
                       blurRadius: 6,
                       offset: const Offset(0, 3),
                     ),
@@ -218,7 +233,10 @@ class CarrotAstrologyView extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     foregroundColor: '#ffffff'.toColor(),
-                    padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 24.w),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 14.h,
+                      horizontal: 24.w,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.r),
                     ),
@@ -259,10 +277,12 @@ class CarrotAstrologyView extends StatelessWidget {
         children: [
           AutoTranslateText(
             'What You\'ll Discover',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: '#3E2723'.toColor(),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
+            style: MyTextTheme.largeBCB
+                .copyWith(
+                  color: '#3E2723'.toColor(),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h2),
           ),
           Spacing.h(16),
           Row(
@@ -322,10 +342,7 @@ class CarrotAstrologyView extends StatelessWidget {
         decoration: BoxDecoration(
           color: '#ffffff'.toColor(),
           borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(
-            color: '#F5D7B8'.toColor(),
-            width: 1.2,
-          ),
+          border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -345,28 +362,25 @@ class CarrotAstrologyView extends StatelessWidget {
                 color: '#FFF2E8'.toColor(),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                color: '#E85C0D'.toColor(),
-                size: 22.w,
-              ),
+              child: Icon(icon, color: '#E85C0D'.toColor(), size: 22.w),
             ),
             Spacing.h(10),
             AutoTranslateText(
               title,
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: '#3E2723'.toColor(),
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.body2),
+              style: MyTextTheme.mediumBCB
+                  .copyWith(
+                    color: '#3E2723'.toColor(),
+                    fontWeight: FontWeight.bold,
+                  )
+                  .merge(AppTypography.body2),
             ),
             Spacing.h(4),
             Expanded(
               child: AutoTranslateText(
                 description,
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: '#666666'.toColor(),
-                  height: 1.25,
-                ).merge(AppTypography.label),
+                style: MyTextTheme.smallBCN
+                    .copyWith(color: '#666666'.toColor(), height: 1.25)
+                    .merge(AppTypography.label),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -404,7 +418,10 @@ class CarrotAstrologyView extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: [CarrotAstrologyColors.orangeColorDark.withOpacity(0.35), CarrotAstrologyColors.orangeColor.withOpacity(0.15)],
+                    colors: [
+                      CarrotAstrologyColors.orangeColorDark.withOpacity(0.35),
+                      CarrotAstrologyColors.orangeColor.withOpacity(0.15),
+                    ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -434,10 +451,9 @@ class CarrotAstrologyView extends StatelessWidget {
                 Spacing.h(12),
                 AutoTranslateText(
                   'Carrot Astrology is a unique wellness practice that connects your zodiac sign with vegetables that resonate with your cosmic energy. Discover personalized remedies, lifestyle practices, and insights to enhance your well-being and harmony.',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: '#ffffff'.toColor(),
-                    height: 1.5,
-                  ).merge(AppTypography.body1),
+                  style: MyTextTheme.mediumBCN
+                      .copyWith(color: '#ffffff'.toColor(), height: 1.5)
+                      .merge(AppTypography.body1),
                 ),
               ],
             ),
@@ -447,4 +463,3 @@ class CarrotAstrologyView extends StatelessWidget {
     );
   }
 }
-

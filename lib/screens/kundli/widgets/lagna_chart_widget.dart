@@ -233,21 +233,14 @@ class LagnaChartWidget extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    "#FF8A3D".toColor(),
-                    "#ed6f30".toColor(),
-                  ],
+                  colors: ["#FF8A3D".toColor(), "#ed6f30".toColor()],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                 ),
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.tune_rounded,
-                    size: 18.w,
-                    color: Colors.white,
-                  ),
+                  Icon(Icons.tune_rounded, size: 18.w, color: Colors.white),
                   Spacing.w(8),
                   AutoTranslateText(
                     'Actions',
@@ -309,8 +302,9 @@ class LagnaChartWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (isPlanet) {
-          controller.selectedLagnaAction.value =
-              isPlanetSelected ? null : 'planet';
+          controller.selectedLagnaAction.value = isPlanetSelected
+              ? null
+              : 'planet';
           return;
         }
         if (isYogaButton) {
@@ -334,7 +328,10 @@ class LagnaChartWidget extends StatelessWidget {
         }
         final route = routeMap[titleLower];
         if (route != null) {
-          Get.toNamed(route, arguments: {'formData': controller.formData.value});
+          Get.toNamed(
+            route,
+            arguments: {'formData': controller.formData.value},
+          );
           return;
         }
         final tabIndex = controller.tabs.indexWhere(
@@ -345,8 +342,13 @@ class LagnaChartWidget extends StatelessWidget {
           return;
         }
         final handledFeatures = [
-          'birth details', 'panchang', 'ashtakvarga', 'binnashtakvarga',
-          'divisional chart', 'ashtakvarga chart', 'ascendant report',
+          'birth details',
+          'panchang',
+          'ashtakvarga',
+          'binnashtakvarga',
+          'divisional chart',
+          'ashtakvarga chart',
+          'summary(lagna) report',
         ];
         if (handledFeatures.contains(titleLower)) {
           controller.onFeatureTap(title);
@@ -368,7 +370,9 @@ class LagnaChartWidget extends StatelessWidget {
           color: isPlanetSelected ? null : Colors.white,
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(
-            color: isPlanetSelected ? "#ed6f30".toColor() : "#ed6f30".toColor().withOpacity(0.35),
+            color: isPlanetSelected
+                ? "#ed6f30".toColor()
+                : "#ed6f30".toColor().withOpacity(0.35),
             width: isPlanetSelected ? 1.5 : 1,
           ),
         ),
@@ -525,10 +529,7 @@ class LagnaChartWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            "#FF8A3D".toColor(),
-            "#ed6f30".toColor(),
-          ],
+          colors: ["#FF8A3D".toColor(), "#ed6f30".toColor()],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
@@ -573,9 +574,7 @@ class LagnaChartWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: isEven
-            ? "#ed6f30".toColor().withOpacity(0.04)
-            : Colors.white,
+        color: isEven ? "#ed6f30".toColor().withOpacity(0.04) : Colors.white,
         border: Border(
           bottom: BorderSide(
             color: "#ed6f30".toColor().withOpacity(0.12),

@@ -10,13 +10,16 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class LiveAstrologersView extends StatelessWidget {
   final bool showBackButton;
 
-  const LiveAstrologersView({Key? key, this.showBackButton = true}) : super(key: key);
+  const LiveAstrologersView({Key? key, this.showBackButton = true})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +30,35 @@ class LiveAstrologersView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header with dark red/maroon background
-            _buildHeader(context, controller),
-            
+            // Header
+            CommonHeader(
+              title: 'Live Astrologers',
+              customActions: [
+                GestureDetector(
+                  onTap: () {
+                    Get.toNamed(AppRoutes.streamReports);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 8.w),
+                    child: Icon(
+                      Icons.report_problem,
+                      color: const Color(0xFF6F221E),
+                      size: 24.w,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
             // Tab Navigation
-            _buildTabNavigation(controller),
-            
+            Obx(
+              () => CommonTabSlider(
+                tabs: const ['ONGOING', 'UPCOMING'],
+                selectedIndex: controller.selectedTab.value,
+                onTabSelected: (index) => controller.switchTab(index),
+              ),
+            ),
+
             // Content based on selected tab
             Expanded(
               child: Obx(() {
@@ -49,130 +75,12 @@ class LiveAstrologersView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, LiveAstrologersController controller) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            const Color(0xFF5F2221), // Dark red/maroon
-            const Color(0xFF6F221E),
-          ],
-        ),
-      ),
-      child: Row(
-        children: [
-          if (showBackButton)
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: Icon(
-                Icons.arrow_back,
-                color: const Color(0xFFDFB343), // Yellow/gold
-                size: 24.w,
-              ),
-            )
-          else
-            SizedBox(width: 24.w),
-          if (showBackButton) Spacing.w(16),
-          Expanded(
-            child: AutoTranslateText(
-              'Live Astrologers',
-              style: MyTextTheme.largeBCB.copyWith(
-                color: const Color(0xFFDFB343), // Yellow/gold
-                fontWeight: FontWeight.bold,
-              ).merge(AppTypography.h2),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              Get.toNamed(AppRoutes.streamReports);
-            },
-            child: Icon(
-              Icons.report_problem,
-              color: const Color(0xFFDFB343), // Yellow/gold
-              size: 24.w,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabNavigation(LiveAstrologersController controller) {
-    return Container(
-      color: Colors.white,
-      child: Row(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () => controller.switchTab(0),
-              child: Obx(() => Container(
-                padding: EdgeInsets.symmetric(vertical: 12.h),
-                decoration: BoxDecoration(
-                  color: controller.selectedTab.value == 0
-                      ? const Color(0xFFF38B3B) // Orange-red when selected
-                      : Colors.white,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(controller.selectedTab.value == 0 ? 8.r : 0),
-                    bottomRight: Radius.circular(controller.selectedTab.value == 0 ? 8.r : 0),
-                  ),
-                ),
-                child: AutoTranslateText(
-                  'ONGOING',
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: controller.selectedTab.value == 0
-                        ? Colors.white
-                        : Colors.black,
-                    fontWeight: FontWeight.w500,
-                  ).merge(AppTypography.body2),
-                  textAlign: TextAlign.center,
-                ),
-              )),
-            ),
-          ),
-          Expanded(
-            child: GestureDetector(
-              onTap: () => controller.switchTab(1),
-              child: Obx(() => Container(
-                padding: EdgeInsets.symmetric(vertical: 12.h),
-                decoration: BoxDecoration(
-                  color: controller.selectedTab.value == 1
-                      ? const Color(0xFFF38B3B) // Orange-red when selected
-                      : Colors.white,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(controller.selectedTab.value == 1 ? 8.r : 0),
-                    bottomRight: Radius.circular(controller.selectedTab.value == 1 ? 8.r : 0),
-                  ),
-                ),
-                child: AutoTranslateText(
-                  'UPCOMING',
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: controller.selectedTab.value == 1
-                        ? Colors.white
-                        : Colors.black,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              )),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildOngoingTab(LiveAstrologersController controller) {
     return Obx(() {
-      if (controller.isLoadingLiveStreams.value && controller.liveStreams.isEmpty) {
+      if (controller.isLoadingLiveStreams.value &&
+          controller.liveStreams.isEmpty) {
         return const Center(
-          child: CircularProgressIndicator(
-            color: Color(0xFF5F2221),
-          ),
+          child: CircularProgressIndicator(color: Color(0xFF5F2221)),
         );
       }
 
@@ -208,8 +116,13 @@ class LiveAstrologersView extends StatelessWidget {
     });
   }
 
-  Widget _buildOngoingCard(LiveAstrologersController controller, LiveStreamModel stream) {
-    final profilePicture = controller.getProfilePictureForAstrologer(stream.astrologerId);
+  Widget _buildOngoingCard(
+    LiveAstrologersController controller,
+    LiveStreamModel stream,
+  ) {
+    final profilePicture = controller.getProfilePictureForAstrologer(
+      stream.astrologerId,
+    );
     final astrologerName = controller.getAstrologerName(stream.astrologerId);
 
     return GestureDetector(
@@ -219,20 +132,24 @@ class LiveAstrologersView extends StatelessWidget {
           message: 'Please login to watch live streams.',
           onLoginSuccess: () {
             // Navigate to live stream after successful login
-            Get.to(() => LiveStreamView(
+            Get.to(
+              () => LiveStreamView(
+                stream: stream,
+                astrologerName: astrologerName,
+                astrologerProfilePicture: profilePicture,
+              ),
+            );
+          },
+        );
+
+        if (isLoggedIn) {
+          Get.to(
+            () => LiveStreamView(
               stream: stream,
               astrologerName: astrologerName,
               astrologerProfilePicture: profilePicture,
-            ));
-          },
-        );
-        
-        if (isLoggedIn) {
-          Get.to(() => LiveStreamView(
-            stream: stream,
-            astrologerName: astrologerName,
-            astrologerProfilePicture: profilePicture,
-          ));
+            ),
+          );
         }
       },
       child: Container(
@@ -267,7 +184,11 @@ class LiveAstrologersView extends StatelessWidget {
                           width: 80.w,
                           height: 80.w,
                           color: Colors.grey[300],
-                          child: Icon(Icons.person, size: 40.w, color: Colors.grey[600]),
+                          child: Icon(
+                            Icons.person,
+                            size: 40.w,
+                            color: Colors.grey[600],
+                          ),
                         ),
                 ),
                 // LIVE badge at bottom-left
@@ -275,7 +196,10 @@ class LiveAstrologersView extends StatelessWidget {
                   bottom: 0,
                   left: 0,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 6.w,
+                      vertical: 2.h,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.green,
                       borderRadius: BorderRadius.only(
@@ -285,10 +209,12 @@ class LiveAstrologersView extends StatelessWidget {
                     ),
                     child: AutoTranslateText(
                       'LIVE',
-                      style: MyTextTheme.smallBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.label),
+                      style: MyTextTheme.smallBCB
+                          .copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.label),
                     ),
                   ),
                 ),
@@ -300,10 +226,12 @@ class LiveAstrologersView extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 4.w),
               child: AutoTranslateText(
                 astrologerName,
-                style: MyTextTheme.smallBCB.copyWith(
-                  color: const Color(0xFF5F2221),
-                  fontWeight: FontWeight.w500,
-                ).merge(AppTypography.body2),
+                style: MyTextTheme.smallBCB
+                    .copyWith(
+                      color: const Color(0xFF5F2221),
+                      fontWeight: FontWeight.w500,
+                    )
+                    .merge(AppTypography.body2),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
@@ -317,11 +245,10 @@ class LiveAstrologersView extends StatelessWidget {
 
   Widget _buildUpcomingTab(LiveAstrologersController controller) {
     return Obx(() {
-      if (controller.isLoadingUpcomingStreams.value && controller.upcomingStreams.isEmpty) {
+      if (controller.isLoadingUpcomingStreams.value &&
+          controller.upcomingStreams.isEmpty) {
         return const Center(
-          child: CircularProgressIndicator(
-            color: Color(0xFF5F2221),
-          ),
+          child: CircularProgressIndicator(color: Color(0xFF5F2221)),
         );
       }
 
@@ -351,9 +278,16 @@ class LiveAstrologersView extends StatelessWidget {
     });
   }
 
-  Widget _buildUpcomingCard(LiveAstrologersController controller, UpcomingStreamModel stream) {
-    final profilePicture = controller.getUpcomingProfilePictureForAstrologer(stream.astrologerId);
-    final astrologerName = controller.getUpcomingAstrologerName(stream.astrologerId);
+  Widget _buildUpcomingCard(
+    LiveAstrologersController controller,
+    UpcomingStreamModel stream,
+  ) {
+    final profilePicture = controller.getUpcomingProfilePictureForAstrologer(
+      stream.astrologerId,
+    );
+    final astrologerName = controller.getUpcomingAstrologerName(
+      stream.astrologerId,
+    );
     final scheduledTime = stream.scheduling.scheduledStartTime;
     final dateFormat = DateFormat('dd MMM, EEEE | hh:mm a', 'en_US');
 
@@ -388,7 +322,11 @@ class LiveAstrologersView extends StatelessWidget {
                         width: 60.w,
                         height: 60.w,
                         color: Colors.grey[300],
-                        child: Icon(Icons.person, size: 30.w, color: Colors.grey[600]),
+                        child: Icon(
+                          Icons.person,
+                          size: 30.w,
+                          color: Colors.grey[600],
+                        ),
                       ),
               ),
               // Green dot indicator
@@ -417,30 +355,28 @@ class LiveAstrologersView extends StatelessWidget {
               children: [
                 AutoTranslateText(
                   astrologerName,
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: const Color(0xFF5F2221),
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h3),
+                  style: MyTextTheme.mediumBCB
+                      .copyWith(
+                        color: const Color(0xFF5F2221),
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.h3),
                 ),
                 Spacing.h(4),
                 AutoTranslateText(
                   stream.scheduling.description.isNotEmpty
                       ? stream.scheduling.description
                       : (stream.scheduling.title.isNotEmpty
-                          ? stream.scheduling.title
-                          : 'Live Session'),
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: Colors.black87,
-                  ),
+                            ? stream.scheduling.title
+                            : 'Live Session'),
+                  style: MyTextTheme.smallBCN.copyWith(color: Colors.black87),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Spacing.h(4),
                 AutoTranslateText(
                   dateFormat.format(scheduledTime),
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: Colors.black54,
-                  ),
+                  style: MyTextTheme.smallBCN.copyWith(color: Colors.black54),
                 ),
               ],
             ),
@@ -450,7 +386,11 @@ class LiveAstrologersView extends StatelessWidget {
           GestureDetector(
             onTap: () {
               // TODO: Implement share functionality
-              Get.snackbar('Info', 'Share feature coming soon', snackPosition: SnackPosition.BOTTOM);
+              Get.snackbar(
+                'Info',
+                'Share feature coming soon',
+                snackPosition: SnackPosition.BOTTOM,
+              );
             },
             child: Icon(
               Icons.share,
@@ -463,4 +403,3 @@ class LiveAstrologersView extends StatelessWidget {
     );
   }
 }
-

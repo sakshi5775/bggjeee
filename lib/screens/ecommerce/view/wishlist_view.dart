@@ -6,7 +6,7 @@ import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.d
 import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
-import 'package:astrobharataiuser/widgets/common_appbar.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -37,13 +37,13 @@ class WishlistView extends GetView<WishlistController> {
                       ? '$count ${count == 1 ? 'item' : 'items'} saved'
                       : 'Save products you love',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
+                    color: '#6F221E'.toColor().withOpacity(0.7),
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w400,
                   ),
                 );
               }),
-              actions: [
+              customActions: [
                 Obx(() {
                   final hasItems = controller.items.isNotEmpty;
                   final isBusy = controller.isUpdating.value;
@@ -58,14 +58,14 @@ class WishlistView extends GetView<WishlistController> {
                       child: Container(
                         padding: EdgeInsets.all(8.w),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: '#6F221E'.toColor().withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.delete_outline_rounded,
                           color: hasItems && !isBusy
-                              ? Colors.white
-                              : Colors.white.withOpacity(0.5),
+                              ? '#6F221E'.toColor()
+                              : '#6F221E'.toColor().withOpacity(0.5),
                           size: 20.sp,
                         ),
                       ),
