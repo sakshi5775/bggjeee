@@ -68,92 +68,70 @@ class LoginController extends BaseController {
   }
 
   void login() async {
-    try {
-      setLoadingState(true);
-      if (formKey.currentState!.validate()) {
-        String identifier;
-        String password = passwordController.text.trim();
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
 
-        if (isEmailMode.value) {
-          identifier = emailController.text.trim();
-          if (identifier.isEmpty) {
-            identifier = phoneController.text
-                .trim(); // Fallback if email is in phone field
-          }
-          // Password is required for email login
-          if (password.isEmpty) {
-            showErrorMessage(
-              title: "Error",
-              message: "Password is required for email login",
-            );
-            setLoadingState(false);
-            return;
-          }
-        } else {
-          // Phone login - no password required, send OTP and navigate to OTP page
-          final phoneNumber = phoneController.text.trim();
-          final countryCode = selectedCountryCode.value.dialCode ?? '+91';
-          identifier = '$countryCode$phoneNumber';
+    String password = passwordController.text.trim();
+    String identifier;
 
+    if (isEmailMode.value) {
+      identifier = emailController.text.trim();
+      if (identifier.isEmpty) {
+        identifier = phoneController.text.trim();
+      }
+      if (password.isEmpty) {
+        showErrorMessage(
+          title: "Error",
+          message: "Password is required for email login",
+        );
+        return;
+      }
+    } else {
+      final phoneNumber = phoneController.text.trim();
+      final countryCode = selectedCountryCode.value.dialCode ?? '+91';
+      identifier = '$countryCode$phoneNumber';
+    }
+
+    await runWithLoading(
+      () async {
+        if (!isEmailMode.value) {
+          // Phone login - send OTP
           if (kDebugMode) {
             print('Login: Phone login - sending OTP to: $identifier');
           }
-
-          // Send OTP first
           final otpSent = await _otpService.sendOtp(phone: identifier);
-
           if (otpSent) {
             if (kDebugMode) {
               print('Login: OTP sent successfully, navigating to OTP page');
             }
-
-            // Navigate to OTP page - use offNamed to replace current route
             await Future.delayed(const Duration(milliseconds: 300));
             Get.offNamed(
               AppRoutes.otp,
               arguments: {
                 'destination': identifier,
                 'userType': 'USER',
-                'isRegistration': false, // This is login, not registration
+                'isRegistration': false,
               },
             );
           } else {
             if (kDebugMode) {
               print('Login: Failed to send OTP');
             }
-            // Error message already shown by OtpService
           }
-          setLoadingState(false);
-          return;
+        } else {
+          // Email login
+          final loginModel = await _loginService.login(identifier, password);
+          if (loginModel != null) {
+            UserData().addLoginData(loginModel.toJson());
+            await Future.delayed(const Duration(milliseconds: 500));
+            Get.offAllNamed(AppRoutes.userDashboard);
+          }
         }
-
-        // Email login - password is required
-        final loginModel = await _loginService.login(identifier, password);
-
-        if (loginModel != null) {
-          // Save user data
-          UserData().addLoginData(loginModel.toJson());
-
-          showSuccessMessage(title: "Success", message: "Login successful!");
-
-          // Navigate: if we're already on dashboard (e.g. opened login from Profile), just pop
-          // to avoid duplicate GlobalKey (second UserMainView would use same Get.nestedKey(1))
-          await Future.delayed(const Duration(milliseconds: 500));
-          // if (Get.nestedKey(1)?.currentState != null) {
-          //   Get.back();
-          // } else {
-          //   Get.offAllNamed(AppRoutes.userDashboard);
-          // }
-
-          Get.offAllNamed(AppRoutes.userDashboard);
-        }
-      }
-    } catch (e) {
-      setLoadingState(false);
-      showErrorMessage(title: "Error", message: "Login failed! $e");
-    } finally {
-      setLoadingState(false);
-    }
+      },
+      showBusy: true,
+      successMessage: isEmailMode.value ? "Login successful!" : null,
+    );
   }
 
   String? validatePhone(String? value) {

@@ -151,7 +151,7 @@ class CourseDetailView extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+              colors: [Colors.transparent, Colors.black.withValues(alpha: 0.6)],
             ),
           ),
         ),
@@ -203,7 +203,7 @@ class CourseDetailView extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -292,8 +292,8 @@ class CourseDetailView extends StatelessWidget {
                 width: 56.w,
                 height: 56.w,
                 decoration: BoxDecoration(
-                  color: AppColors.primaryGradient.colors.first.withOpacity(
-                    0.2,
+                  color: AppColors.primaryGradient.colors.first.withValues(
+                    alpha: 0.2,
                   ),
                   shape: BoxShape.circle,
                 ),
@@ -392,7 +392,7 @@ class CourseDetailView extends StatelessWidget {
           Expanded(
             child: _buildMetaCard(
               icon: Icons.access_time,
-              label: '${totalHours} hours',
+              label: '$totalHours hours',
             ),
           ),
           SizedBox(width: 8.w),
@@ -425,7 +425,7 @@ class CourseDetailView extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
-          color: AppColors.templeGold.withOpacity(0.3),
+          color: AppColors.templeGold.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -533,7 +533,7 @@ class CourseDetailView extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: AppColors.templeGold.withOpacity(0.2),
+          color: AppColors.templeGold.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -592,7 +592,7 @@ class CourseDetailView extends StatelessWidget {
                 lecture,
                 controller,
               );
-            }).toList(),
+            }),
         ],
       ),
     );
@@ -647,7 +647,7 @@ class CourseDetailView extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(
             color: canAccess
-                ? AppColors.templeGold.withOpacity(0.3)
+                ? AppColors.templeGold.withValues(alpha: 0.3)
                 : Colors.grey.shade300,
             width: 1,
           ),
@@ -677,7 +677,7 @@ class CourseDetailView extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  color: AppColors.templeGold.withOpacity(0.2),
+                  color: AppColors.templeGold.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(4.r),
                 ),
                 child: AutoTranslateText(

@@ -14,6 +14,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_co
 import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/big_sale_banner_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/featured_products_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/promotional_banner_widget.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/shop_banner_carousel_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/shop_by_category_widget.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/e_commerce_home_widgets/shop_by_purpose_widget.dart';
@@ -141,7 +142,16 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
               _buildSearchBar(context),
 
               // Shop Banner Carousel
-              SliverToBoxAdapter(child: ShopBannerCarouselWidget()),
+              SliverToBoxAdapter(
+                child: Obx(() {
+                  if (controller.ecommerceBanners.isNotEmpty) {
+                    return BannerCarouselWidget(
+                      banners: controller.ecommerceBanners,
+                    );
+                  }
+                  return const ShopBannerCarouselWidget();
+                }),
+              ),
               // Promotional Banner (News ticker style)
               SliverToBoxAdapter(child: PromotionalBannerWidget()),
 

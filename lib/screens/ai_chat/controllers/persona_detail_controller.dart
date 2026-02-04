@@ -250,36 +250,22 @@ class PersonaDetailController extends BaseController {
   }
 
   Future<bool> deleteReview(String personaId, String reviewId) async {
-    try {
-      setLoadingState(true);
-      final success = await _aiChatService.deleteReview(personaId, reviewId);
+    final result = await runWithLoading(
+      () async {
+        final success = await _aiChatService.deleteReview(personaId, reviewId);
 
-      if (success) {
-        // Remove from local list
-        reviews.removeWhere((r) => r.id == reviewId);
-        myReview.value = null;
-
-        // Reload persona details to update statistics
-        await loadPersonaDetail(personaId);
-
-        showSuccessMessage(
-          title: 'Success',
-          message: 'Review deleted successfully',
-        );
-        return true;
-      } else {
-        showErrorMessage(title: 'Error', message: 'Failed to delete review');
+        if (success) {
+          reviews.removeWhere((r) => r.id == reviewId);
+          myReview.value = null;
+          await loadPersonaDetail(personaId);
+          return true;
+        }
         return false;
-      }
-    } catch (e) {
-      showErrorMessage(
-        title: 'Error',
-        message: 'Failed to delete review: ${e.toString()}',
-      );
-      return false;
-    } finally {
-      setLoadingState(false);
-    }
+      },
+      successMessage: 'Review deleted successfully',
+      useDialog: true,
+    );
+    return result ?? false;
   }
 
   Future<void> toggleFollow(String personaId) async {

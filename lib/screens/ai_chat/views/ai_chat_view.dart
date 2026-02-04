@@ -2,7 +2,6 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/controllers/ai_chat_controller.dart';
-import 'package:astrobharataiuser/screens/ai_chat/widgets/category_filter_chips.dart';
 import 'package:astrobharataiuser/screens/ai_chat/widgets/chat_profile_dialog.dart';
 import 'package:astrobharataiuser/screens/ai_chat/widgets/empty_state_widget.dart';
 import 'package:astrobharataiuser/screens/ai_chat/widgets/persona_card.dart';
@@ -281,6 +280,7 @@ class AiChatView extends BasePage<AiChatController> {
 
     final profileHelper = ProfileCheckHelper();
     final existingProfile = await profileHelper.getUserProfile();
+    if (!context.mounted) return;
     final profileResult = await showPersonaChatProfileDialog(
       context,
       existingProfile,

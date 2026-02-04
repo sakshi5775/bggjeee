@@ -1,14 +1,18 @@
 import 'dart:async';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/data_model/category_model.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
+import 'package:astrobharataiuser/data_model/banner_model.dart';
 
 class EcommerceHomeController extends BaseController {
   final EcommerceService _ecommerceService = EcommerceService();
+  final BannerService _bannerService = BannerService(); // Added BannerService
 
   // Categories
   final categories = <CategoryModel>[].obs;
@@ -88,6 +92,10 @@ class EcommerceHomeController extends BaseController {
   final purposes = <Map<String, String>>[].obs;
   final isLoadingPurposes = false.obs;
 
+  // Banners
+  final RxList<BannerItem> ecommerceBanners = <BannerItem>[].obs;
+  final RxBool isLoadingBanners = false.obs;
+
   // Banner carousel
   final PageController bannerPageController = PageController();
   final currentBannerIndex = 0.obs;
@@ -105,6 +113,7 @@ class EcommerceHomeController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    loadBanners(); // Load banners
     loadInitialData();
     _startBannerAutoScroll();
   }
@@ -204,202 +213,232 @@ class EcommerceHomeController extends BaseController {
   }
 
   Future<void> loadInitialData() async {
+    final isGuest = LoginGuard.isGuest;
+
     await Future.wait([
       loadCategoryTree(),
       loadFeaturedProducts(),
       loadTopSellingProducts(),
-      loadRecommendations(),
-      loadRecentlyViewedProducts(),
+      if (!isGuest) ...[loadRecommendations(), loadRecentlyViewedProducts()],
       loadPurposes(),
     ]);
   }
 
   Future<void> loadCategoryTree() async {
-    try {
-      isLoadingCategories.value = true;
+    await runWithLoading(
+          () async {
+            isLoadingCategories.value = true;
 
-      // Load all categories (not just featured) to get subcategories
-      final allCategoryData = await _ecommerceService.getCategories(
-        page: 1,
-        limit: 200, // Load more to get all categories including subcategories
-        isActive: true,
-      );
+            // Load all categories (not just featured) to get subcategories
+            final allCategoryData = await _ecommerceService.getCategories(
+              page: 1,
+              limit:
+                  200, // Load more to get all categories including subcategories
+              isActive: true,
+            );
 
-      if (allCategoryData != null && allCategoryData.items != null) {
-        allCategories.value = allCategoryData.items!;
-      }
+            if (allCategoryData != null && allCategoryData.items != null) {
+              allCategories.value = allCategoryData.items!;
+            }
 
-      // First try to get featured categories using getCategories API
-      final categoryData = await _ecommerceService.getCategories(
-        page: 1,
-        limit: 50,
-        isActive: true,
-        isFeatured: true,
-      );
+            // First try to get featured categories using getCategories API
+            final categoryData = await _ecommerceService.getCategories(
+              page: 1,
+              limit: 50,
+              isActive: true,
+              isFeatured: true,
+            );
 
-      if (categoryData != null &&
-          categoryData.items != null &&
-          categoryData.items!.isNotEmpty) {
-        // Use getCategories for featured categories
-        categories.value = categoryData.items!
-            .where((cat) => cat.parent == null)
-            .take(8)
-            .toList();
-      }
+            if (categoryData != null &&
+                categoryData.items != null &&
+                categoryData.items!.isNotEmpty) {
+              // Use getCategories for featured categories
+              categories.value = categoryData.items!
+                  .where((cat) => cat.parent == null)
+                  .take(8)
+                  .toList();
+            }
 
-      // Always load category tree for hierarchical structure
-      final result = await _ecommerceService.getCategoryTree();
-      if (result != null) {
-        categoryTree.value = result;
-        // If getCategories didn't return featured categories, extract from tree
-        if (categories.isEmpty) {
-          categories.value = result
-              .where((cat) => cat.isFeatured == true && cat.parent == null)
-              .take(8)
-              .toList();
-        }
-      }
-    } catch (e) {
-      print('Error loading categories: $e');
-      // Fallback: try category tree only
-      try {
-        final result = await _ecommerceService.getCategoryTree();
-        if (result != null) {
-          categoryTree.value = result;
-          allCategories.value = result; // Use tree as all categories
-          categories.value = result
-              .where((cat) => cat.isFeatured == true && cat.parent == null)
-              .take(8)
-              .toList();
-        }
-      } catch (e2) {
-        print('Error loading category tree fallback: $e2');
-      }
-    } finally {
-      isLoadingCategories.value = false;
-    }
+            // Always load category tree for hierarchical structure
+            final result = await _ecommerceService.getCategoryTree();
+            if (result != null) {
+              categoryTree.value = result;
+              // If getCategories didn't return featured categories, extract from tree
+              if (categories.isEmpty) {
+                categories.value = result
+                    .where(
+                      (cat) => cat.isFeatured == true && cat.parent == null,
+                    )
+                    .take(8)
+                    .toList();
+              }
+            }
+          },
+          showBusy: false,
+          showError: false,
+          silent401ForGuest: true,
+        )
+        .catchError((e) {
+          print('Error loading categories: $e');
+          return null;
+        })
+        .whenComplete(() {
+          isLoadingCategories.value = false;
+        });
   }
 
   Future<void> loadRecommendations() async {
-    try {
-      isLoadingRecommendations.value = true;
-      final result = await _ecommerceService.getRecommendations(limit: 10);
-      recommendedProducts
-        ..clear()
-        ..addAll(result);
-    } catch (e) {
-      print('Error loading recommendations: $e');
-    } finally {
-      isLoadingRecommendations.value = false;
-    }
+    await runWithLoading(
+          () async {
+            isLoadingRecommendations.value = true;
+            final result = await _ecommerceService.getRecommendations(
+              limit: 10,
+            );
+            recommendedProducts
+              ..clear()
+              ..addAll(result);
+          },
+          showBusy: false,
+          showError: false,
+          silent401ForGuest: true,
+        )
+        .catchError((e) {
+          print('Error loading recommendations: $e');
+          return null;
+        })
+        .whenComplete(() => isLoadingRecommendations.value = false);
   }
 
   Future<void> loadRecentlyViewedProducts() async {
-    try {
-      isLoadingRecentlyViewed.value = true;
-      final result = await _ecommerceService.getRecentlyViewed(limit: 10);
-      recentlyViewedProducts
-        ..clear()
-        ..addAll(result);
-    } catch (e) {
-      print('Error loading recently viewed products: $e');
-    } finally {
-      isLoadingRecentlyViewed.value = false;
-    }
+    await runWithLoading(
+          () async {
+            isLoadingRecentlyViewed.value = true;
+            final result = await _ecommerceService.getRecentlyViewed(limit: 10);
+            recentlyViewedProducts
+              ..clear()
+              ..addAll(result);
+          },
+          showBusy: false,
+          showError: false,
+          silent401ForGuest: true,
+        )
+        .catchError((e) {
+          print('Error loading recently viewed products: $e');
+          return null;
+        })
+        .whenComplete(() => isLoadingRecentlyViewed.value = false);
   }
 
   Future<void> loadFeaturedProducts() async {
-    try {
-      isLoadingFeatured.value = true;
-      final result = await _ecommerceService.getFeaturedProducts(limit: 10);
-      if (result != null) {
-        featuredProducts.value = result;
-        // Restart auto-scroll after products are loaded
-        _startBannerAutoScroll();
-      }
-    } catch (e) {
-      print('Error loading featured products: $e');
-    } finally {
-      isLoadingFeatured.value = false;
-    }
+    await runWithLoading(
+          () async {
+            isLoadingFeatured.value = true;
+            final result = await _ecommerceService.getFeaturedProducts(
+              limit: 10,
+            );
+            if (result != null) {
+              featuredProducts.value = result;
+              // Restart auto-scroll after products are loaded
+              _startBannerAutoScroll();
+            }
+          },
+          showBusy: false,
+          showError: false,
+          silent401ForGuest: true,
+        )
+        .catchError((e) {
+          print('Error loading featured products: $e');
+          return null;
+        })
+        .whenComplete(() => isLoadingFeatured.value = false);
   }
 
   Future<void> loadTopSellingProducts() async {
-    try {
-      isLoadingTopSelling.value = true;
-      final result = await _ecommerceService.getTopSellingProducts(limit: 10);
-      if (result != null) {
-        topSellingProducts.value = result;
-      }
-    } catch (e) {
-      print('Error loading top selling products: $e');
-    } finally {
-      isLoadingTopSelling.value = false;
-    }
+    await runWithLoading(
+          () async {
+            isLoadingTopSelling.value = true;
+            final result = await _ecommerceService.getTopSellingProducts(
+              limit: 10,
+            );
+            if (result != null) {
+              topSellingProducts.value = result;
+            }
+          },
+          showBusy: false,
+          showError: false,
+          silent401ForGuest: true,
+        )
+        .catchError((e) {
+          print('Error loading top selling products: $e');
+          return null;
+        })
+        .whenComplete(() => isLoadingTopSelling.value = false);
   }
 
   Future<void> loadPurposes() async {
-    try {
-      isLoadingPurposes.value = true;
-      final purposeList = await _ecommerceService.getPurposes();
+    await runWithLoading(
+          () async {
+            isLoadingPurposes.value = true;
+            final purposeList = await _ecommerceService.getPurposes();
 
-      // Filter to only include the 5 allowed purposes
-      final allowedPurposes = [
-        'Money',
-        'Love',
-        'Health',
-        'Rashi',
-        'Protection',
-      ];
-      final filteredPurposeList = purposeList
-          .where((p) => allowedPurposes.contains(p))
-          .toList();
+            // Filter to only include the 5 allowed purposes
+            final allowedPurposes = [
+              'Money',
+              'Love',
+              'Health',
+              'Rashi',
+              'Protection',
+            ];
+            final filteredPurposeList = purposeList
+                .where((p) => allowedPurposes.contains(p))
+                .toList();
 
-      // Map purposes to the format expected by the widget
-      // Each purpose needs: title and image
-      // For now, we'll use placeholder images or try to get images from products
-      final purposesList = filteredPurposeList.map((purpose) {
-        return {
-          'title': purpose,
-          'image': '', // Will be set from products or use default
-        };
-      }).toList();
+            // Map purposes to the format expected by the widget
+            final purposesList = filteredPurposeList.map((purpose) {
+              return {'title': purpose, 'image': ''};
+            }).toList();
 
-      // Try to get images for each purpose by fetching a sample product
-      for (var purposeMap in purposesList) {
-        try {
-          final purposeName = purposeMap['title']!;
-          // Fetch one product with this purpose to get an image
-          final productData = await _ecommerceService.getProducts(
-            limit: 1,
-            purpose: purposeName,
-          );
+            // Try to get images for each purpose by fetching a sample product
+            for (var purposeMap in purposesList) {
+              try {
+                final purposeName = purposeMap['title']!;
+                final productData = await _ecommerceService.getProducts(
+                  limit: 1,
+                  purpose: purposeName,
+                );
 
-          if (productData?.items != null && productData!.items!.isNotEmpty) {
-            final product = productData.items!.first;
-            if (product.images != null && product.images!.isNotEmpty) {
-              purposeMap['image'] = product.images!.first.url ?? '';
+                if (productData?.items != null &&
+                    productData!.items!.isNotEmpty) {
+                  final product = productData.items!.first;
+                  if (product.images != null && product.images!.isNotEmpty) {
+                    purposeMap['image'] = product.images!.first.url ?? '';
+                  }
+                }
+              } catch (e) {
+                print(
+                  'Error loading image for purpose ${purposeMap['title']}: $e',
+                );
+              }
             }
-          }
-        } catch (e) {
-          print('Error loading image for purpose ${purposeMap['title']}: $e');
-        }
-      }
 
-      purposes.value = purposesList;
-    } catch (e) {
-      print('Error loading purposes: $e');
-      // Set fallback purposes
-      purposes.value = [
-        {'title': 'Money', 'image': ''},
-        {'title': 'Love', 'image': ''},
-        {'title': 'Health', 'image': ''},
-        {'title': 'Rashi', 'image': ''},
-        {'title': 'Protection', 'image': ''},
-      ];
-    } finally {
-      isLoadingPurposes.value = false;
-    }
+            purposes.value = purposesList;
+          },
+          showBusy: false,
+          showError: false,
+          silent401ForGuest: true,
+        )
+        .catchError((e) {
+          print('Error loading purposes: $e');
+          purposes.value = [
+            {'title': 'Money', 'image': ''},
+            {'title': 'Love', 'image': ''},
+            {'title': 'Health', 'image': ''},
+            {'title': 'Rashi', 'image': ''},
+            {'title': 'Protection', 'image': ''},
+          ];
+          return null;
+        })
+        .whenComplete(() => isLoadingPurposes.value = false);
   }
 
   void selectCategory(CategoryModel? category) {
@@ -468,5 +507,23 @@ class EcommerceHomeController extends BaseController {
           'initialQuery': initialQuery,
       },
     );
+  }
+
+  Future<void> loadBanners() async {
+    await runWithLoading(
+      () async {
+        isLoadingBanners.value = true;
+        var list = await _bannerService.getBannersByCategory('appecommerce');
+        if (list.isEmpty) {
+          list = await _bannerService.getBannersByCategory('ecommerce');
+        }
+        ecommerceBanners.assignAll(list);
+      },
+      showBusy: false,
+      showError: false,
+      silent401ForGuest: true,
+    ).whenComplete(() {
+      isLoadingBanners.value = false;
+    });
   }
 }

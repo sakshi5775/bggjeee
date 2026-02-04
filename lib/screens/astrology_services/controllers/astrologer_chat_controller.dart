@@ -25,10 +25,14 @@ class AstrologerChatController extends BaseController
 
   AstrologerModel? _astrologer;
   final Rx<AstrologerModel?> astrologerRx = Rx<AstrologerModel?>(null);
-  
+
   AstrologerModel get astrologer => _astrologer ?? astrologerRx.value!;
-  String get astrologerName => _astrologer?.displayName ?? astrologerRx.value?.displayName ?? 'Astrologer';
-  String? get astrologerImage => _astrologer?.profilePicture ?? astrologerRx.value?.profilePicture;
+  String get astrologerName =>
+      _astrologer?.displayName ??
+      astrologerRx.value?.displayName ??
+      'Astrologer';
+  String? get astrologerImage =>
+      _astrologer?.profilePicture ?? astrologerRx.value?.profilePicture;
 
   final String? initialChatId;
   final UserProfileModel? chatProfile;
@@ -97,7 +101,7 @@ class AstrologerChatController extends BaseController
   final RxBool isSendingMessage = false.obs;
   final RxBool showRatingDialog = false.obs;
   bool _ratingDialogShown = false;
-  
+
   // Session ending state
   bool _isEndingSession = false;
   Completer<void>? _sessionEndCompleter;
@@ -156,28 +160,31 @@ class AstrologerChatController extends BaseController
       if (initialChatId != null && initialChatId!.isNotEmpty) {
         // CASE: Navigating with a specific chatId (e.g. from Dashboard recovery)
         chatId.value = initialChatId!;
-        
+
         // Load session first to get astrologer ID
         session = await _chatService.getSession(initialChatId!);
-        
+
         // CRITICAL: Always fetch astrologer when rejoining (even if _astrologer exists)
         // This ensures we have the latest data and the UI updates correctly
         if (session.astrologerId.isNotEmpty) {
           // Check if we already have the correct astrologer
-          final needsFetch = _astrologer == null || 
-                            _astrologer!.astrologerId != session.astrologerId ||
-                            _astrologer!.id != session.astrologerId;
-          
+          final needsFetch =
+              _astrologer == null ||
+              _astrologer!.astrologerId != session.astrologerId ||
+              _astrologer!.id != session.astrologerId;
+
           if (needsFetch) {
             try {
               // Store astrologerId in local variable to avoid null issues in closures
               final astrologerIdToFind = session.astrologerId;
-              
-              if (kDebugMode) print('🔍 Fetching astrologer for ID: $astrologerIdToFind');
-              
+
+              if (kDebugMode)
+                print('🔍 Fetching astrologer for ID: $astrologerIdToFind');
+
               // Use the centralized method to get astrologer by ID
-              final foundAstrologer = await _astrologerService.getAstrologerById(astrologerIdToFind);
-              
+              final foundAstrologer = await _astrologerService
+                  .getAstrologerById(astrologerIdToFind);
+
               if (foundAstrologer != null) {
                 _astrologer = foundAstrologer;
                 // CRITICAL: Update reactive value IMMEDIATELY so UI updates
@@ -189,9 +196,15 @@ class AstrologerChatController extends BaseController
                   pricePerMinute.value = foundAstrologer.chatPrice ?? 0.0;
                 }
                 if (kDebugMode) {
-                  print('✅ Astrologer found and loaded: ${foundAstrologer.displayName}');
-                  print('✅ Astrologer image: ${foundAstrologer.profilePicture}');
-                  print('✅ Reactive value set: ${astrologerRx.value?.displayName}');
+                  print(
+                    '✅ Astrologer found and loaded: ${foundAstrologer.displayName}',
+                  );
+                  print(
+                    '✅ Astrologer image: ${foundAstrologer.profilePicture}',
+                  );
+                  print(
+                    '✅ Reactive value set: ${astrologerRx.value?.displayName}',
+                  );
                 }
               } else {
                 if (kDebugMode) {
@@ -211,27 +224,30 @@ class AstrologerChatController extends BaseController
             }
           } else {
             // We already have the correct astrologer, but ensure reactive value is set
-            if (astrologerRx.value == null || 
+            if (astrologerRx.value == null ||
                 astrologerRx.value!.astrologerId != _astrologer!.astrologerId ||
                 astrologerRx.value!.id != _astrologer!.id) {
               astrologerRx.value = _astrologer;
-              if (kDebugMode) print('✅ Using existing astrologer data: ${_astrologer!.displayName}');
+              if (kDebugMode)
+                print(
+                  '✅ Using existing astrologer data: ${_astrologer!.displayName}',
+                );
             }
           }
         } else {
           if (kDebugMode) print('⚠️ Session has no astrologerId');
         }
-        
+
         // CRITICAL: Fetch wallet balance BEFORE updating session state to prevent low balance flash
         // Always fetch to ensure we have the latest balance, even if session has one
         try {
           final realBalance = await _profileHelper.getWalletBalance();
-          final priceToUse = pricePerMinute.value > 0 
-              ? pricePerMinute.value 
-              : (session.billingConfig.pricePerMinute > 0 
-                  ? session.billingConfig.pricePerMinute 
-                  : 0.0);
-          
+          final priceToUse = pricePerMinute.value > 0
+              ? pricePerMinute.value
+              : (session.billingConfig.pricePerMinute > 0
+                    ? session.billingConfig.pricePerMinute
+                    : 0.0);
+
           if (realBalance > 0) {
             // Pre-set wallet balance so _updateSessionState uses it
             walletBalance.value = realBalance;
@@ -246,14 +262,20 @@ class AstrologerChatController extends BaseController
             }
             if (kDebugMode) {
               print('✓ Wallet balance pre-loaded: $realBalance');
-              print('✓ Available minutes calculated: ${availableMinutes.value}');
-              print('✓ Low balance warning reset: ${showLowBalanceWarning.value}');
+              print(
+                '✓ Available minutes calculated: ${availableMinutes.value}',
+              );
+              print(
+                '✓ Low balance warning reset: ${showLowBalanceWarning.value}',
+              );
             }
-          } else if (session.walletBalance != null && session.walletBalance! > 0) {
+          } else if (session.walletBalance != null &&
+              session.walletBalance! > 0) {
             // Fallback to session balance if profile fetch fails
             walletBalance.value = session.walletBalance!;
             if (priceToUse > 0) {
-              availableMinutes.value = (session.walletBalance! / priceToUse).floor();
+              availableMinutes.value = (session.walletBalance! / priceToUse)
+                  .floor();
               if (availableMinutes.value >= 2) {
                 showLowBalanceWarning.value = false;
               }
@@ -264,18 +286,19 @@ class AstrologerChatController extends BaseController
           // Fallback to session balance if available
           if (session.walletBalance != null && session.walletBalance! > 0) {
             walletBalance.value = session.walletBalance!;
-            final priceToUse = session.billingConfig.pricePerMinute > 0 
-                ? session.billingConfig.pricePerMinute 
+            final priceToUse = session.billingConfig.pricePerMinute > 0
+                ? session.billingConfig.pricePerMinute
                 : 0.0;
             if (priceToUse > 0) {
-              availableMinutes.value = (session.walletBalance! / priceToUse).floor();
+              availableMinutes.value = (session.walletBalance! / priceToUse)
+                  .floor();
               if (availableMinutes.value >= 2) {
                 showLowBalanceWarning.value = false;
               }
             }
           }
         }
-        
+
         // Now update session state with complete data (astrologer + wallet balance)
         _updateSessionState(session);
       } else {
@@ -293,22 +316,19 @@ class AstrologerChatController extends BaseController
           // No session exists, create a new one (status will be CREATED or ACTIVE based on backend)
           session = await _chatService.startSession(_astrologer!.astrologerId);
         }
-        
+
         _updateSessionState(session);
       }
 
       // Connect socket and load messages in parallel for faster initialization
-           await Future.wait([
-             _connectSocket(),
-             _loadMessages(),
-           ]);
-           
-           // After socket and messages are loaded, refresh session to ensure wallet balance is correct
-           // This prevents showing 0 balance initially
-           // Don't await - let it run in background to not block UI
-           _refreshSessionAndSync().catchError((e) {
-             if (kDebugMode) print('Error refreshing session: $e');
-           });
+      await Future.wait([_connectSocket(), _loadMessages()]);
+
+      // After socket and messages are loaded, refresh session to ensure wallet balance is correct
+      // This prevents showing 0 balance initially
+      // Don't await - let it run in background to not block UI
+      _refreshSessionAndSync().catchError((e) {
+        if (kDebugMode) print('Error refreshing session: $e');
+      });
 
       // SESSION START LOGIC (Strict)
       if (sessionStatus.value == 'CREATED') {
@@ -350,9 +370,11 @@ class AstrologerChatController extends BaseController
     final previousChatId = chatId.value;
     chatId.value = session.chatId;
     sessionStatus.value = session.status;
-    
+
     // If chatId changed and socket is connected, join the new room
-    if (previousChatId != chatId.value && _socket?.connected == true && chatId.value.isNotEmpty) {
+    if (previousChatId != chatId.value &&
+        _socket?.connected == true &&
+        chatId.value.isNotEmpty) {
       if (kDebugMode) print('ChatId updated, joining room: ${chatId.value}');
       _joinChatRoom();
     }
@@ -366,8 +388,8 @@ class AstrologerChatController extends BaseController
         walletBalance.value = session.walletBalance!;
       } else {
         // Use the higher value to prevent showing low balance incorrectly
-        walletBalance.value = walletBalance.value > session.walletBalance! 
-            ? walletBalance.value 
+        walletBalance.value = walletBalance.value > session.walletBalance!
+            ? walletBalance.value
             : session.walletBalance!;
       }
     }
@@ -388,15 +410,16 @@ class AstrologerChatController extends BaseController
     if (walletBalance.value > 0 && pricePerMinute.value > 0) {
       // Calculate available minutes if not already set (prevents showing 0 initially)
       if (availableMinutes.value <= 0) {
-        availableMinutes.value = (walletBalance.value / pricePerMinute.value).floor();
+        availableMinutes.value = (walletBalance.value / pricePerMinute.value)
+            .floor();
       }
-      
+
       // CRITICAL: Reset low balance warning if user has sufficient balance
       // This prevents the banner from showing during initialization
       if (availableMinutes.value >= 2) {
         showLowBalanceWarning.value = false;
       }
-      
+
       if (sessionStatus.value == 'ACTIVE') {
         _syncMoneyAnchor(walletBalance.value, pricePerMinute.value);
       } else {
@@ -472,7 +495,8 @@ class AstrologerChatController extends BaseController
         if (chatId.value.isNotEmpty) {
           _joinChatRoom();
         } else {
-          if (kDebugMode) print('Socket connected but chatId is empty, waiting...');
+          if (kDebugMode)
+            print('Socket connected but chatId is empty, waiting...');
         }
       });
 
@@ -519,32 +543,40 @@ class AstrologerChatController extends BaseController
         }
         _handleNewMessage(data);
       });
-      
+
       // Also listen for message acknowledgment events
       _socket!.on('message_sent', (data) {
         if (kDebugMode) {
           print('=== RECEIVED message_sent ACKNOWLEDGMENT ===');
           print('Data: $data');
         }
-        
+
         // Update message status when server acknowledges
         // Server sends: {success: true, messageId: "...", sentAt: "..."}
         // We need to find the most recent SENDING message and update it
-        if (data is Map && data['messageId'] != null && data['success'] == true) {
+        if (data is Map &&
+            data['messageId'] != null &&
+            data['success'] == true) {
           final serverMessageId = data['messageId'] as String;
-          
+
           if (kDebugMode) {
-            print('Server acknowledged message. Server messageId: $serverMessageId');
+            print(
+              'Server acknowledged message. Server messageId: $serverMessageId',
+            );
             print('Looking for message to update...');
           }
-          
+
           // Find the most recent message with status 'SENDING' (should be the one we just sent)
           // Messages are stored with newest at index 0
-          final sendingIndex = messages.indexWhere((m) => m.status == 'SENDING');
-          
+          final sendingIndex = messages.indexWhere(
+            (m) => m.status == 'SENDING',
+          );
+
           if (sendingIndex != -1) {
             if (kDebugMode) {
-              print('Found SENDING message at index $sendingIndex. Updating...');
+              print(
+                'Found SENDING message at index $sendingIndex. Updating...',
+              );
             }
             messages[sendingIndex] = messages[sendingIndex].copyWith(
               status: 'SENT',
@@ -552,17 +584,21 @@ class AstrologerChatController extends BaseController
             );
             messages.refresh();
             if (kDebugMode) {
-              print('✓ Updated message status to SENT. New messageId: $serverMessageId');
+              print(
+                '✓ Updated message status to SENT. New messageId: $serverMessageId',
+              );
             }
           } else {
             if (kDebugMode) {
               print('⚠ No message with SENDING status found to update');
-              print('Current messages statuses: ${messages.map((m) => '${m.messageId}: ${m.status}').toList()}');
+              print(
+                'Current messages statuses: ${messages.map((m) => '${m.messageId}: ${m.status}').toList()}',
+              );
             }
           }
         }
       });
-      
+
       _socket!.on('error', (error) {
         if (kDebugMode) {
           print('=== SOCKET ERROR ===');
@@ -601,7 +637,7 @@ class AstrologerChatController extends BaseController
 
           // Authority update - anchor sync will only trigger if money actually changed
           _syncMoneyAnchor(walletBalance.value, pricePerMinute.value);
-          
+
           // Update global WalletController if registered
           _updateGlobalWalletBalance(newBalance);
         }
@@ -660,19 +696,41 @@ class AstrologerChatController extends BaseController
         await _disconnectSocket();
       });
 
+      _socket!.on('session_expired', (data) async {
+        // Expected: { chatId, reason: 'TIME_EXPIRED', message, sessionDetails: {...} }
+        if (kDebugMode) print('Session Expired: $data');
+
+        sessionStatus.value = 'EXPIRED';
+        availableMinutes.value = 0;
+        visualSecondsRemaining.value = 0;
+        isSendingMessage.value = false;
+
+        _handleSessionEnd(
+          'EXPIRED',
+          reason: data['message'] ?? 'Your session time has expired',
+        );
+
+        await _disconnectSocket();
+      });
+
       _socket!.on('session_ended', (data) {
         if (kDebugMode) print('📨 Received session_ended event: $data');
-        
+
         // If we're waiting for this event (user initiated end), complete the completer
         // BUT don't call _handleSessionEnd here - let endChat() handle it
-        if (_isEndingSession && _sessionEndCompleter != null && !_sessionEndCompleter!.isCompleted) {
-          if (kDebugMode) print('✅ Completing session end - user initiated, will handle in endChat()');
+        if (_isEndingSession &&
+            _sessionEndCompleter != null &&
+            !_sessionEndCompleter!.isCompleted) {
+          if (kDebugMode)
+            print(
+              '✅ Completing session end - user initiated, will handle in endChat()',
+            );
           sessionStatus.value = 'COMPLETED';
           _sessionEndCompleter!.complete();
           // Don't call _handleSessionEnd here - endChat() will handle it
           return;
         }
-        
+
         // If astrologer ended it (we're not in ending state), handle it immediately
         if (kDebugMode) print('📨 Astrologer ended the chat');
         sessionStatus.value = 'COMPLETED';
@@ -691,24 +749,23 @@ class AstrologerChatController extends BaseController
         print('Socket connected: ${_socket?.connected}');
         print('Socket ID: ${_socket?.id}');
       }
-      
-      final joinPayload = {
-        'chatId': chatId.value,
-        'role': 'user',
-      };
-      
+
+      final joinPayload = {'chatId': chatId.value};
+
       if (kDebugMode) {
         print('Join payload: $joinPayload');
       }
-      
+
       _socket!.emit('join_chat', joinPayload);
-      
+
       if (kDebugMode) {
         print('Join_chat event emitted');
       }
     } else {
       if (kDebugMode) {
-        print('Cannot join room - Socket connected: ${_socket?.connected}, ChatId: ${chatId.value}');
+        print(
+          'Cannot join room - Socket connected: ${_socket?.connected}, ChatId: ${chatId.value}',
+        );
       }
     }
   }
@@ -720,9 +777,15 @@ class AstrologerChatController extends BaseController
       if (emitEvents && chatId.value.isNotEmpty && _socket!.connected) {
         try {
           if (kDebugMode) print('🔔 Emitting events before disconnecting...');
-          _socket!.emit('end_session', {'chatId': chatId.value, 'reason': 'USER_ENDED'});
+          _socket!.emit('end_session', {
+            'chatId': chatId.value,
+            'reason': 'USER_ENDED',
+          });
           _socket!.emit('leave_chat', {'chatId': chatId.value});
-          _socket!.emit('user_ended', {'chatId': chatId.value, 'reason': 'USER_ENDED'});
+          _socket!.emit('user_ended', {
+            'chatId': chatId.value,
+            'reason': 'USER_ENDED',
+          });
           // Brief delay to ensure events are sent
           await Future.delayed(const Duration(milliseconds: 200));
         } catch (e) {
@@ -748,13 +811,16 @@ class AstrologerChatController extends BaseController
     _statusCheckTimer?.cancel();
     _startActiveSessionStatusCheck();
     isOtherPartyOnline.value = true;
-    
+
     // Ensure socket is connected and in the chat room when session becomes active
-    if (_socket?.connected == true && chatId.value.isNotEmpty && !isInChatRoom.value) {
-      if (kDebugMode) print('Session became ACTIVE, ensuring we are in chat room...');
+    if (_socket?.connected == true &&
+        chatId.value.isNotEmpty &&
+        !isInChatRoom.value) {
+      if (kDebugMode)
+        print('Session became ACTIVE, ensuring we are in chat room...');
       _joinChatRoom();
     }
-    
+
     _startVisualCountdown();
     _sendProfileMessageIfNeeded();
     _notifyGlobalOnSessionActive();
@@ -796,80 +862,57 @@ class AstrologerChatController extends BaseController
       print('🛑 isLoading: ${isLoading.value}');
       print('🛑 _isEndingSession: $_isEndingSession');
     }
-    
+
     if (chatId.value.isEmpty) {
       if (kDebugMode) print('❌ Cannot end chat - chatId is empty');
       return;
     }
-    
+
     if (isLoading.value) {
       if (kDebugMode) print('❌ Cannot end chat - already loading');
       return;
     }
-    
+
     if (_isEndingSession) {
       if (kDebugMode) print('❌ Cannot end chat - already ending');
       return;
     }
-    
+
     try {
       isLoading.value = true;
       _isEndingSession = true;
       _sessionEndCompleter = Completer<void>();
-      
+
       if (kDebugMode) print('🛑 User ending chat session...');
-      
-      // STEP 1: Emit socket events FIRST - server broadcasts session_ended when it receives these
-      // The server likely only broadcasts when socket events are received, not when REST API is called
-      // Keep socket connected and in chat room so server can broadcast to astrologer
-      if (_socket?.connected == true && chatId.value.isNotEmpty && isInChatRoom.value) {
-        try {
-          if (kDebugMode) print('🔔 Step 1: Emitting socket events to trigger server broadcast...');
-          _socket!.emit('end_session', {'chatId': chatId.value, 'reason': 'USER_ENDED'});
-          _socket!.emit('user_ended', {'chatId': chatId.value, 'reason': 'USER_ENDED'});
-          // CRITICAL: Wait for server to process socket events and broadcast session_ended to astrologer
-          // Keep socket connected and in room during this time
-          if (kDebugMode) print('⏳ Waiting for server to broadcast session_ended to astrologer...');
-          await Future.delayed(const Duration(milliseconds: 2000));
-          if (kDebugMode) print('✅ Server should have broadcasted session_ended to astrologer');
-        } catch (e) {
-          if (kDebugMode) print('⚠️ Error emitting socket events: $e');
-        }
-      } else {
-        if (kDebugMode) {
-          print('⚠️ Cannot emit socket events - Socket connected: ${_socket?.connected}, In room: ${isInChatRoom.value}');
-        }
-      }
-      
-      // STEP 2: Call REST API to update database (after socket events triggered broadcast)
-      if (kDebugMode) print('📞 Step 2: Calling REST API to update database...');
+
+      // STEP 1: Call REST API to end session
+      // Per strict guide: Only use REST API POST /api/chat/session/:chatId/end
+      // No socket events for ending - backend will broadcast session_ended when REST API is called
+      if (kDebugMode) print('📞 Calling REST API to end session...');
       try {
         final endedSession = await _chatService.endSession(chatId.value);
         if (kDebugMode) {
           print('✅ Session ended on server - Status: ${endedSession.status}');
         }
-        // Brief delay to ensure REST API processing completes
-        await Future.delayed(const Duration(milliseconds: 300));
       } catch (e) {
         if (kDebugMode) print('❌ Error calling endSession API: $e');
-        // Continue - socket events already sent
+        // Continue to local cleanup even if API fails
       }
-      
-      // STEP 3: Leave chat room (after ensuring notification was sent)
+
+      // STEP 2: Leave chat room
       if (_socket?.connected == true && chatId.value.isNotEmpty) {
         try {
-          if (kDebugMode) print('🚪 Step 3: Leaving chat room...');
+          if (kDebugMode) print('🚪 Leaving chat room...');
           _socket!.emit('leave_chat', {'chatId': chatId.value});
           await Future.delayed(const Duration(milliseconds: 200));
         } catch (e) {
           if (kDebugMode) print('⚠️ Error leaving chat room: $e');
         }
       }
-      
-      // STEP 4: Update local state and handle session end (will disconnect socket)
+
+      // STEP 3: Update local state and handle session end (will disconnect socket)
       sessionStatus.value = 'COMPLETED';
       await _handleSessionEnd('COMPLETED', reason: 'User ended the chat');
-      
     } catch (e) {
       if (kDebugMode) print('❌ End Chat Error: $e');
       // If anything fails, still end locally
@@ -890,9 +933,7 @@ class AstrologerChatController extends BaseController
     try {
       // Use the service default source (PROFILE) which the backend accepts.
       // Previously we passed 'CHAT' which caused a 400: Invalid source value.
-      final result = await _astrologerService.followAstrologer(
-        astroId,
-      );
+      final result = await _astrologerService.followAstrologer(astroId);
       if (result['success'] == true) {
         showSuccessMessage(message: 'You are now following $astrologerName');
       } else {
@@ -983,31 +1024,46 @@ class AstrologerChatController extends BaseController
         // CRITICAL FIX: Don't auto-end based on periodic status check alone
         // Only end if the local status is already COMPLETED/EXPIRED (meaning it was ended via socket event or user action)
         // This prevents false endings when server temporarily returns wrong status
-        
+
         // If local status is still ACTIVE/CREATED, don't trust server's COMPLETED/EXPIRED status
         // Wait for explicit socket event (chat_force_ended, session_ended) which are authoritative
-        if (sessionStatus.value == 'COMPLETED' || sessionStatus.value == 'EXPIRED') {
+        if (sessionStatus.value == 'COMPLETED' ||
+            sessionStatus.value == 'EXPIRED') {
           // Already ended locally, just ensure sync
           if (kDebugMode) {
-            print('✅ Session already ended locally (${sessionStatus.value}), server confirms: ${session.status}');
+            print(
+              '✅ Session already ended locally (${sessionStatus.value}), server confirms: ${session.status}',
+            );
           }
           // Don't call _handleSessionEnd again - it's already been called
         } else {
           // Server says COMPLETED/EXPIRED but we're still ACTIVE locally
           // This could be a false positive - only end if we truly have no balance
-          if (walletBalance.value <= 0 && availableMinutes.value <= 0 && pricePerMinute.value > 0) {
+          if (walletBalance.value <= 0 &&
+              availableMinutes.value <= 0 &&
+              pricePerMinute.value > 0) {
             // User truly has no balance - this is a legitimate end
             if (kDebugMode) {
-              print('⚠️ Server reports ${session.status} and user has no balance - ending chat');
-              print('⚠️ Wallet: ${walletBalance.value}, Minutes: ${availableMinutes.value}');
+              print(
+                '⚠️ Server reports ${session.status} and user has no balance - ending chat',
+              );
+              print(
+                '⚠️ Wallet: ${walletBalance.value}, Minutes: ${availableMinutes.value}',
+              );
             }
             _handleSessionEnd(session.status, reason: 'Insufficient balance');
           } else {
             // False positive - ignore server status, keep session active
             if (kDebugMode) {
-              print('⚠️ Server reports ${session.status} but session is ACTIVE locally');
-              print('⚠️ Wallet: ${walletBalance.value}, Minutes: ${availableMinutes.value}');
-              print('⚠️ Ignoring server status - waiting for explicit socket event');
+              print(
+                '⚠️ Server reports ${session.status} but session is ACTIVE locally',
+              );
+              print(
+                '⚠️ Wallet: ${walletBalance.value}, Minutes: ${availableMinutes.value}',
+              );
+              print(
+                '⚠️ Ignoring server status - waiting for explicit socket event',
+              );
             }
             // Don't end - wait for authoritative socket event
           }
@@ -1041,7 +1097,7 @@ class AstrologerChatController extends BaseController
       print('In chat room: ${isInChatRoom.value}');
       print('ChatId: ${chatId.value}');
     }
-    
+
     // Validation
     final text = messageController.text.trim();
     if (text.isEmpty) {
@@ -1049,7 +1105,8 @@ class AstrologerChatController extends BaseController
       return;
     }
     if (sessionStatus.value != 'ACTIVE') {
-      if (kDebugMode) print('Session is not ACTIVE (${sessionStatus.value}), cannot send');
+      if (kDebugMode)
+        print('Session is not ACTIVE (${sessionStatus.value}), cannot send');
       showErrorMessage(message: 'Chat is not active');
       return;
     }
@@ -1071,7 +1128,8 @@ class AstrologerChatController extends BaseController
     final replyToMessage = replyingToMessage.value;
 
     final newMessage = AstrologerChatMessage(
-      messageId: tempId, // Store tempId as messageId initially, will be updated by server
+      messageId:
+          tempId, // Store tempId as messageId initially, will be updated by server
       chatId: chatId.value,
       senderId: userId ?? 'unknown',
       senderType: 'USER',
@@ -1098,18 +1156,19 @@ class AstrologerChatController extends BaseController
 
     // Ensure socket is connected and we're in the chat room before sending
     // Also allow sending if socket is connected and we've joined (even if flag not set yet)
-    final canSend = _socket?.connected == true && 
+    final canSend =
+        _socket?.connected == true &&
         (isInChatRoom.value || chatId.value.isNotEmpty);
-    
+
     if (canSend) {
       final messagePayload = {
         'chatId': chatId.value,
         'content': text,
         'messageType': 'TEXT',
-        'tempId': tempId,
+        'clientMessageId': tempId,
         'replyToId': newMessage.replyTo?.messageId,
       };
-      
+
       if (kDebugMode) {
         print('=== SENDING MESSAGE VIA SOCKET ===');
         print('Payload: $messagePayload');
@@ -1119,10 +1178,10 @@ class AstrologerChatController extends BaseController
         print('ChatId: ${chatId.value}');
         print('Session status: ${sessionStatus.value}');
       }
-      
+
       try {
         _socket!.emit('send_message', messagePayload);
-        
+
         if (kDebugMode) {
           print('✓ Message emit() called successfully');
           print('Waiting for server to broadcast via new_message event...');
@@ -1142,12 +1201,16 @@ class AstrologerChatController extends BaseController
     } else {
       // Fallback or Error
       if (kDebugMode) {
-        print('Cannot send message - Socket connected: ${_socket?.connected}, In room: ${isInChatRoom.value}');
+        print(
+          'Cannot send message - Socket connected: ${_socket?.connected}, In room: ${isInChatRoom.value}',
+        );
         print('ChatId: ${chatId.value}');
       }
-      
+
       // If socket is connected but not in room, try joining
-      if (_socket?.connected == true && !isInChatRoom.value && chatId.value.isNotEmpty) {
+      if (_socket?.connected == true &&
+          !isInChatRoom.value &&
+          chatId.value.isNotEmpty) {
         if (kDebugMode) print('Socket connected but not in room, joining...');
         _joinChatRoom();
         // Wait for join to complete, then retry send
@@ -1157,59 +1220,67 @@ class AstrologerChatController extends BaseController
               'chatId': chatId.value,
               'content': text,
               'messageType': 'TEXT',
-              'tempId': tempId,
+              'clientMessageId': tempId,
               'replyToId': newMessage.replyTo?.messageId,
             });
             if (kDebugMode) print('Retried sending message after joining room');
           } else {
-            showErrorMessage(message: 'Please wait for connection to establish.');
+            showErrorMessage(
+              message: 'Please wait for connection to establish.',
+            );
             messages.removeAt(0); // Remove optimistic
           }
         });
         isSendingMessage.value = false;
         return;
       }
-      
+
       if (kDebugMode) {
         print('Attempting to reconnect...');
       }
-      
+
       // Try to reconnect and resend
-      _connectSocket().then((_) {
-        if (_socket?.connected == true && chatId.value.isNotEmpty) {
-          _joinChatRoom();
-          // Wait a bit for join to complete, then retry send
-          // Check periodically if we're in the room
-          int attempts = 0;
-          Timer.periodic(const Duration(milliseconds: 500), (timer) {
-            attempts++;
-            if (isInChatRoom.value && _socket?.connected == true) {
-              timer.cancel();
-              if (kDebugMode) print('Reconnected and joined room, retrying message send');
-              _socket!.emit('send_message', {
-                'chatId': chatId.value,
-                'content': text,
-                'messageType': 'TEXT',
-                'tempId': tempId,
-                'replyToId': newMessage.replyTo?.messageId,
+      _connectSocket()
+          .then((_) {
+            if (_socket?.connected == true && chatId.value.isNotEmpty) {
+              _joinChatRoom();
+              // Wait a bit for join to complete, then retry send
+              // Check periodically if we're in the room
+              int attempts = 0;
+              Timer.periodic(const Duration(milliseconds: 500), (timer) {
+                attempts++;
+                if (isInChatRoom.value && _socket?.connected == true) {
+                  timer.cancel();
+                  if (kDebugMode)
+                    print('Reconnected and joined room, retrying message send');
+                  _socket!.emit('send_message', {
+                    'chatId': chatId.value,
+                    'content': text,
+                    'messageType': 'TEXT',
+                    'clientMessageId': tempId,
+                    'replyToId': newMessage.replyTo?.messageId,
+                  });
+                } else if (attempts >= 10) {
+                  // Timeout after 5 seconds (10 attempts * 500ms)
+                  timer.cancel();
+                  if (kDebugMode)
+                    print('Timeout waiting for room join after reconnect');
+                  showErrorMessage(
+                    message: 'Connection timeout. Please try again.',
+                  );
+                  messages.removeAt(0); // Remove optimistic
+                }
               });
-            } else if (attempts >= 10) {
-              // Timeout after 5 seconds (10 attempts * 500ms)
-              timer.cancel();
-              if (kDebugMode) print('Timeout waiting for room join after reconnect');
-              showErrorMessage(message: 'Connection timeout. Please try again.');
+            } else {
+              showErrorMessage(message: 'Connection lost. Message not sent.');
               messages.removeAt(0); // Remove optimistic
             }
+          })
+          .catchError((e) {
+            if (kDebugMode) print('Reconnection failed: $e');
+            showErrorMessage(message: 'Connection lost. Message not sent.');
+            messages.removeAt(0); // Remove optimistic
           });
-        } else {
-          showErrorMessage(message: 'Connection lost. Message not sent.');
-          messages.removeAt(0); // Remove optimistic
-        }
-      }).catchError((e) {
-        if (kDebugMode) print('Reconnection failed: $e');
-        showErrorMessage(message: 'Connection lost. Message not sent.');
-        messages.removeAt(0); // Remove optimistic
-      });
     }
 
     isSendingMessage.value = false;
@@ -1220,13 +1291,16 @@ class AstrologerChatController extends BaseController
       print('=== _handleNewMessage called ===');
       print('Data received: $data');
     }
-    
+
     final userData = UserData();
     final userId = userData.getLoginData.user?.userId;
 
     if (data['senderId'] == userId) {
       // Confirm own message sent
-      if (kDebugMode) print('Received acknowledgment for own message (tempId: ${data['tempId']})');
+      if (kDebugMode)
+        print(
+          'Received acknowledgment for own message (tempId: ${data['tempId']})',
+        );
       final index = messages.indexWhere((m) => m.messageId == data['tempId']);
       if (index != -1) {
         messages[index] = messages[index].copyWith(
@@ -1236,7 +1310,10 @@ class AstrologerChatController extends BaseController
         messages.refresh();
         if (kDebugMode) print('Updated message status to SENT');
       } else {
-        if (kDebugMode) print('Warning: Could not find message with tempId: ${data['tempId']}');
+        if (kDebugMode)
+          print(
+            'Warning: Could not find message with tempId: ${data['tempId']}',
+          );
       }
     } else {
       // Incoming message from astrologer
@@ -1264,7 +1341,7 @@ class AstrologerChatController extends BaseController
 
   void _markMessageAsRead(String messageId) {
     if (_socket?.connected == true) {
-      _socket!.emit('mark_read', {
+      _socket!.emit('message_read', {
         'chatId': chatId.value,
         'messageIds': [messageId],
       });
@@ -1332,7 +1409,10 @@ class AstrologerChatController extends BaseController
     // This is a safety check for other ending scenarios (expiry, force end, etc.)
     if (status == 'COMPLETED' || status == 'EXPIRED') {
       if (_socket != null && _socket!.connected) {
-        if (kDebugMode) print('⚠️ Socket still connected in _handleSessionEnd, disconnecting...');
+        if (kDebugMode)
+          print(
+            '⚠️ Socket still connected in _handleSessionEnd, disconnecting...',
+          );
         await _disconnectSocket();
       } else {
         if (kDebugMode) print('✅ Socket already disconnected');
@@ -1345,7 +1425,7 @@ class AstrologerChatController extends BaseController
           _astrologer?.astrologerId ?? currentSession.value?.astrologerId;
       _notifyGlobalOnSessionEnd();
 
-        if (!_ratingDialogShown && astroId != null && astroId.isNotEmpty) {
+      if (!_ratingDialogShown && astroId != null && astroId.isNotEmpty) {
         _ratingDialogShown = true;
         showRatingDialog.value = true;
 
@@ -1416,10 +1496,12 @@ class AstrologerChatController extends BaseController
 
   void _emitTyping() {
     if (_socket?.connected == true) {
-      _socket!.emit('typing', {'chatId': chatId.value, 'typing': true});
+      _socket!.emit('typing_start', {'chatId': chatId.value});
       _typingTimer?.cancel();
       _typingTimer = Timer(const Duration(seconds: 2), () {
-        _socket!.emit('typing', {'chatId': chatId.value, 'typing': false});
+        if (_socket?.connected == true) {
+          _socket!.emit('typing_stop', {'chatId': chatId.value});
+        }
       });
     }
   }
@@ -1482,21 +1564,24 @@ class AstrologerChatController extends BaseController
       final tempId = const Uuid().v4();
 
       // Send via socket - ensure we're connected AND in the chat room
-      final canSend = _socket?.connected == true && 
+      final canSend =
+          _socket?.connected == true &&
           (isInChatRoom.value || chatId.value.isNotEmpty);
-      
+
       if (canSend) {
         if (kDebugMode) {
-          print('Sending auto-profile message. Socket connected: ${_socket?.connected}, In room: ${isInChatRoom.value}');
+          print(
+            'Sending auto-profile message. Socket connected: ${_socket?.connected}, In room: ${isInChatRoom.value}',
+          );
         }
-        
+
         _socket!.emit('send_message', {
           'chatId': chatId.value,
           'content': messageContent,
           'messageType': 'TEXT',
           'tempId': tempId,
         });
-        
+
         if (kDebugMode) {
           print('Auto-profile message emitted via socket');
         }
@@ -1520,18 +1605,21 @@ class AstrologerChatController extends BaseController
         }
       } else {
         if (kDebugMode) {
-          print('Cannot send auto-profile message - Socket connected: ${_socket?.connected}, In room: ${isInChatRoom.value}');
+          print(
+            'Cannot send auto-profile message - Socket connected: ${_socket?.connected}, In room: ${isInChatRoom.value}',
+          );
           print('Will retry when socket is ready...');
         }
-        
+
         // Wait for socket to be ready, then retry
         // Check periodically if we can send
         int attempts = 0;
         Timer.periodic(const Duration(milliseconds: 500), (timer) {
           attempts++;
-          final canSendNow = _socket?.connected == true && 
+          final canSendNow =
+              _socket?.connected == true &&
               (isInChatRoom.value || chatId.value.isNotEmpty);
-          
+
           if (canSendNow) {
             timer.cancel();
             if (kDebugMode) print('Retrying auto-profile message send...');
@@ -1539,9 +1627,9 @@ class AstrologerChatController extends BaseController
               'chatId': chatId.value,
               'content': messageContent,
               'messageType': 'TEXT',
-              'tempId': tempId,
+              'clientMessageId': tempId,
             });
-            
+
             // Add optimistic message
             // Use SENDING status so message_sent handler can update it
             final newMessage = AstrologerChatMessage(
@@ -1560,7 +1648,10 @@ class AstrologerChatController extends BaseController
           } else if (attempts >= 20) {
             // Timeout after 10 seconds
             timer.cancel();
-            if (kDebugMode) print('Timeout waiting for socket to be ready for auto-profile message');
+            if (kDebugMode)
+              print(
+                'Timeout waiting for socket to be ready for auto-profile message',
+              );
           }
         });
       }

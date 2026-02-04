@@ -9,10 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class GiftAnimationWidget extends StatefulWidget {
   final GiftReceived gift;
 
-  const GiftAnimationWidget({
-    Key? key,
-    required this.gift,
-  }) : super(key: key);
+  const GiftAnimationWidget({Key? key, required this.gift}) : super(key: key);
 
   @override
   State<GiftAnimationWidget> createState() => _GiftAnimationWidgetState();
@@ -46,27 +43,31 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
     // Scale animation: pop in, bounce, then fade out
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 1.4).chain(
-          CurveTween(curve: Curves.elasticOut),
-        ),
+        tween: Tween(
+          begin: 0.0,
+          end: 1.4,
+        ).chain(CurveTween(curve: Curves.elasticOut)),
         weight: 20,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.4, end: 1.1).chain(
-          CurveTween(curve: Curves.easeOut),
-        ),
+        tween: Tween(
+          begin: 1.4,
+          end: 1.1,
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 15,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.1, end: 1.2).chain(
-          CurveTween(curve: Curves.easeInOut),
-        ),
+        tween: Tween(
+          begin: 1.1,
+          end: 1.2,
+        ).chain(CurveTween(curve: Curves.easeInOut)),
         weight: 25,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.2, end: 0.8).chain(
-          CurveTween(curve: Curves.easeIn),
-        ),
+        tween: Tween(
+          begin: 1.2,
+          end: 0.8,
+        ).chain(CurveTween(curve: Curves.easeIn)),
         weight: 40,
       ),
     ]).animate(_mainController);
@@ -74,48 +75,47 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
     // Fade animation
     _fadeAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 1.0).chain(
-          CurveTween(curve: Curves.easeOut),
-        ),
+        tween: Tween(
+          begin: 0.0,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 15,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 1.0).chain(
-          CurveTween(curve: Curves.linear),
-        ),
+        tween: Tween(
+          begin: 1.0,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.linear)),
         weight: 55,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 0.0).chain(
-          CurveTween(curve: Curves.easeIn),
-        ),
+        tween: Tween(
+          begin: 1.0,
+          end: 0.0,
+        ).chain(CurveTween(curve: Curves.easeIn)),
         weight: 30,
       ),
     ]).animate(_mainController);
 
     // Rotation animation
-    _rotationAnimation = Tween<double>(
-      begin: -0.3,
-      end: 0.3,
-    ).animate(
-      CurvedAnimation(
-        parent: _mainController,
-        curve: Curves.easeInOut,
-      ),
+    _rotationAnimation = Tween<double>(begin: -0.3, end: 0.3).animate(
+      CurvedAnimation(parent: _mainController, curve: Curves.easeInOut),
     );
 
     // Glow animation
     _glowAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 1.0).chain(
-          CurveTween(curve: Curves.easeOut),
-        ),
+        tween: Tween(
+          begin: 0.0,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 30,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 0.8).chain(
-          CurveTween(curve: Curves.easeInOut),
-        ),
+        tween: Tween(
+          begin: 1.0,
+          end: 0.8,
+        ).chain(CurveTween(curve: Curves.easeInOut)),
         weight: 70,
       ),
     ]).animate(_mainController);
@@ -125,10 +125,7 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
 
     _mainController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        if (mounted) {
-          _mainController.dispose();
-          _particleController.dispose();
-        }
+        // Animation completed
       }
     });
   }
@@ -153,7 +150,10 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
               child: Opacity(
                 opacity: _fadeAnimation.value,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 28.w, vertical: 20.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 28.w,
+                    vertical: 20.h,
+                  ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
@@ -171,14 +171,16 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFFFD700)
-                            .withOpacity(0.8 * _glowAnimation.value),
+                        color: const Color(
+                          0xFFFFD700,
+                        ).withOpacity(0.8 * _glowAnimation.value),
                         blurRadius: 30 * _glowAnimation.value,
                         spreadRadius: 8 * _glowAnimation.value,
                       ),
                       BoxShadow(
-                        color: const Color(0xFFFFA500)
-                            .withOpacity(0.6 * _glowAnimation.value),
+                        color: const Color(
+                          0xFFFFA500,
+                        ).withOpacity(0.6 * _glowAnimation.value),
                         blurRadius: 40 * _glowAnimation.value,
                         spreadRadius: 4 * _glowAnimation.value,
                       ),
@@ -192,11 +194,9 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                         tween: Tween(begin: 1.0, end: 1.0),
                         duration: const Duration(milliseconds: 600),
                         builder: (context, value, child) {
-                          final pulse = 1.0 + (0.3 * (1 - _mainController.value));
-                          return Transform.scale(
-                            scale: pulse,
-                            child: child,
-                          );
+                          final pulse =
+                              1.0 + (0.3 * (1 - _mainController.value));
+                          return Transform.scale(scale: pulse, child: child);
                         },
                         child: AutoTranslateText(
                           widget.gift.giftIcon,
@@ -207,10 +207,12 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                       // Gift name
                       AutoTranslateText(
                         widget.gift.giftName,
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: const Color(0xFF3E2723),
-                          fontWeight: FontWeight.bold,
-                        ).merge(AppTypography.h2),
+                        style: MyTextTheme.mediumBCB
+                            .copyWith(
+                              color: const Color(0xFF3E2723),
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.h2),
                       ),
                       Spacing.h(6),
                       // Sender name
@@ -219,17 +221,25 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                         children: [
                           AutoTranslateText(
                             'from ',
-                            style: MyTextTheme.smallBCN.copyWith(
-                              color: const Color(0xFF3E2723).withOpacity(0.8),
-                            ).merge(AppTypography.body1),
+                            style: MyTextTheme.smallBCN
+                                .copyWith(
+                                  color: const Color(
+                                    0xFF3E2723,
+                                  ).withOpacity(0.8),
+                                )
+                                .merge(AppTypography.body1),
                           ),
                           AutoTranslateText(
-                            widget.gift.senderName ?? 
-                            (widget.gift.senderId.isEmpty ? 'Someone' : widget.gift.senderId),
-                            style: MyTextTheme.smallBCB.copyWith(
-                              color: const Color(0xFF3E2723),
-                              fontWeight: FontWeight.bold,
-                            ).merge(AppTypography.body1),
+                            widget.gift.senderName ??
+                                (widget.gift.senderId.isEmpty
+                                    ? 'Someone'
+                                    : widget.gift.senderId),
+                            style: MyTextTheme.smallBCB
+                                .copyWith(
+                                  color: const Color(0xFF3E2723),
+                                  fontWeight: FontWeight.bold,
+                                )
+                                .merge(AppTypography.body1),
                           ),
                         ],
                       ),
@@ -244,10 +254,7 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                             builder: (context, value, child) {
                               return Transform.rotate(
                                 angle: value * 2 * 3.14159,
-                                child: Opacity(
-                                  opacity: value,
-                                  child: child,
-                                ),
+                                child: Opacity(opacity: value, child: child),
                               );
                             },
                             child: AutoTranslateText(
@@ -262,10 +269,7 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                             builder: (context, value, child) {
                               return Transform.rotate(
                                 angle: value * -2 * 3.14159,
-                                child: Opacity(
-                                  opacity: value,
-                                  child: child,
-                                ),
+                                child: Opacity(opacity: value, child: child),
                               );
                             },
                             child: AutoTranslateText(
@@ -280,10 +284,7 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                             builder: (context, value, child) {
                               return Transform.rotate(
                                 angle: value * 2 * 3.14159,
-                                child: Opacity(
-                                  opacity: value,
-                                  child: child,
-                                ),
+                                child: Opacity(opacity: value, child: child),
                               );
                             },
                             child: AutoTranslateText(
@@ -296,17 +297,22 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                       Spacing.h(8),
                       // Value badge
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 6.h,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFF3E2723),
                           borderRadius: BorderRadius.circular(20.r),
                         ),
                         child: AutoTranslateText(
                           '₹${widget.gift.giftValue}',
-                          style: MyTextTheme.smallBCB.copyWith(
-                            color: const Color(0xFFFFD700),
-                            fontWeight: FontWeight.bold,
-                          ).merge(AppTypography.h3),
+                          style: MyTextTheme.smallBCB
+                              .copyWith(
+                                color: const Color(0xFFFFD700),
+                                fontWeight: FontWeight.bold,
+                              )
+                              .merge(AppTypography.h3),
                         ),
                       ),
                     ],
@@ -320,10 +326,3 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
     );
   }
 }
-
-
-
-
-
-
-

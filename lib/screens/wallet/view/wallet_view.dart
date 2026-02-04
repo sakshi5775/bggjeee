@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/utils/error_ui_utils.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/wallet_model.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
@@ -7,6 +8,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 
+import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -25,6 +27,7 @@ class WalletView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        drawer: UserDashboardView.buildDrawer(context),
         body: SafeArea(
           child: Column(
             children: [
@@ -77,7 +80,7 @@ class WalletView extends StatelessWidget {
           color: '#6F221E'.toColor().withOpacity(0.9),
         ),
       ),
-      onMenuTap: () => Get.back(),
+      onMenuTap: null,
     );
   }
 
@@ -885,13 +888,8 @@ class WalletView extends StatelessWidget {
                                   final success = await controller
                                       .cancelRecharge(recharge.rechargeId);
                                   if (success) {
-                                    Get.showSnackbar(
-                                      GetSnackBar(
-                                        message:
-                                            'Recharge cancelled successfully',
-                                        duration: const Duration(seconds: 2),
-                                        backgroundColor: Colors.green,
-                                      ),
+                                    ErrorUiUtils.showSuccessSnackbar(
+                                      'Recharge cancelled successfully',
                                     );
                                   }
                                 },

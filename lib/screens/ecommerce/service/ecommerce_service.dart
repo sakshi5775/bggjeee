@@ -67,16 +67,10 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true) {
         final categoryResponse = CategoryResponse.fromJson(response.body);
         return categoryResponse.data;
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to fetch categories. Please try again.",
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -107,21 +101,14 @@ class EcommerceService with ApiHelperMixin {
           }
           return [];
         }
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to fetch category tree. Please try again.",
-        );
-        return null;
       }
+      return null;
     } catch (e) {
       print('Error in getCategoryTree: $e');
-      showErrorMessage(title: "Error", message: e.toString());
-      return null;
+      rethrow;
     }
   }
 
-  // Get category by slug
   Future<CategoryModel?> getCategoryBySlug(String slug) async {
     try {
       final response = await _apiRepository.getApi(
@@ -130,16 +117,10 @@ class EcommerceService with ApiHelperMixin {
 
       if (response.body['success'] == true) {
         return CategoryModel.fromJson(response.body['data']);
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to fetch category. Please try again.",
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -152,16 +133,10 @@ class EcommerceService with ApiHelperMixin {
 
       if (response.body['success'] == true) {
         return CategoryModel.fromJson(response.body['data']);
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to fetch category. Please try again.",
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -189,16 +164,10 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true) {
         final productResponse = ProductResponse.fromJson(response.body);
         return productResponse.data;
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to fetch products. Please try again.",
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -224,16 +193,10 @@ class EcommerceService with ApiHelperMixin {
 
       if (response.body['success'] == true) {
         return ProductResponse.fromJson(response.body).data;
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to fetch products. Please try again.",
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -365,16 +328,10 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true) {
         final productResponse = ProductResponse.fromJson(response.body);
         return productResponse.data;
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to fetch products. Please try again.",
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -395,14 +352,8 @@ class EcommerceService with ApiHelperMixin {
         }
         return [];
       }
-      showErrorMessage(
-        title: "Error",
-        message:
-            response.body['message']?.toString() ??
-            'Failed to fetch recommendations',
-      );
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
     return [];
   }
@@ -426,14 +377,8 @@ class EcommerceService with ApiHelperMixin {
         }
         return [];
       }
-      showErrorMessage(
-        title: "Error",
-        message:
-            response.body['message']?.toString() ??
-            'Failed to fetch personalized recommendations',
-      );
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
     return [];
   }
@@ -455,14 +400,8 @@ class EcommerceService with ApiHelperMixin {
         }
         return [];
       }
-      showErrorMessage(
-        title: "Error",
-        message:
-            response.body['message']?.toString() ??
-            'Failed to fetch recently viewed products',
-      );
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
     return [];
   }
@@ -487,14 +426,8 @@ class EcommerceService with ApiHelperMixin {
         }
         return [];
       }
-      showErrorMessage(
-        title: "Error",
-        message:
-            response.body['message']?.toString() ??
-            'Failed to fetch frequently bought together products',
-      );
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
     return [];
   }
@@ -509,72 +442,30 @@ class EcommerceService with ApiHelperMixin {
         query: queryParams,
       );
 
-      print('Featured Products API Response:');
-      print('Success: ${response.body['success']}');
-      print('Data type: ${response.body['data'].runtimeType}');
-      print('Data value: ${response.body['data']}');
-
       if (response.body['success'] == true) {
-        try {
-          final dynamic dataField = response.body['data'];
+        final dynamic dataField = response.body['data'];
 
-          // Check if data is a List
-          if (dataField == null) {
-            print('Data is null');
-            return [];
-          }
-
-          if (dataField is! List) {
-            print('Data is not a List, it is: ${dataField.runtimeType}');
-            return [];
-          }
-
-          final List<dynamic> data = dataField;
-          print('Data is a List with ${data.length} items');
-
-          final List<ProductModel> products = [];
-          for (int i = 0; i < data.length; i++) {
-            final item = data[i];
-            print('Processing item $i, type: ${item.runtimeType}');
-
-            if (item is Map<String, dynamic>) {
-              try {
-                products.add(ProductModel.fromJson(item));
-                print('Successfully parsed product $i');
-              } catch (e, stackTrace) {
-                print('Error parsing product $i: $e');
-                print('Stack trace: $stackTrace');
-                print('Product data: $item');
-              }
-            } else {
-              print(
-                'Item $i is not a Map, skipping. Type: ${item.runtimeType}',
-              );
-            }
-          }
-
-          print(
-            'Successfully parsed ${products.length} products out of ${data.length}',
-          );
-          return products;
-        } catch (parseError, stackTrace) {
-          print('Parse error in getFeaturedProducts: $parseError');
-          print('Stack trace: $stackTrace');
-          print('Response body: ${response.body}');
+        if (dataField == null || dataField is! List) {
           return [];
         }
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to fetch featured products. Please try again.",
-        );
-        return null;
+
+        final List<dynamic> data = dataField;
+        final List<ProductModel> products = [];
+        for (var item in data) {
+          if (item is Map<String, dynamic>) {
+            try {
+              products.add(ProductModel.fromJson(item));
+            } catch (e) {
+              print('Error parsing product in getFeaturedProducts: $e');
+            }
+          }
+        }
+        return products;
       }
-    } catch (e, stackTrace) {
-      print('Error in getFeaturedProducts: $e');
-      print('Stack trace: $stackTrace');
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      print('Error in getFeaturedProducts: $e');
+      rethrow;
     }
   }
 
@@ -595,14 +486,8 @@ class EcommerceService with ApiHelperMixin {
           response.body['data'] as Map<String, dynamic>,
         );
       }
-      showErrorMessage(
-        title: "Search",
-        message:
-            response.body['message']?.toString() ??
-            'Failed to fetch search results',
-      );
     } catch (e) {
-      showErrorMessage(title: "Search", message: e.toString());
+      rethrow;
     }
     return null;
   }
@@ -623,14 +508,8 @@ class EcommerceService with ApiHelperMixin {
           response.body['data'] as Map<String, dynamic>,
         );
       }
-      showErrorMessage(
-        title: "Search",
-        message:
-            response.body['message']?.toString() ??
-            'Failed to fetch suggestions',
-      );
     } catch (e) {
-      showErrorMessage(title: "Search", message: e.toString());
+      rethrow;
     }
     return SearchSuggestions();
   }
@@ -648,16 +527,10 @@ class EcommerceService with ApiHelperMixin {
             .map(SearchPopularTerm.fromJson)
             .toList();
       }
-      showErrorMessage(
-        title: "Search",
-        message:
-            response.body['message']?.toString() ??
-            'Failed to fetch popular searches',
-      );
+      return [];
     } catch (e) {
-      showErrorMessage(title: "Search", message: e.toString());
+      rethrow;
     }
-    return [];
   }
 
   // Get top selling products
@@ -670,72 +543,29 @@ class EcommerceService with ApiHelperMixin {
         query: queryParams,
       );
 
-      print('Top Selling Products API Response:');
-      print('Success: ${response.body['success']}');
-      print('Data type: ${response.body['data'].runtimeType}');
-      print('Data value: ${response.body['data']}');
-
       if (response.body['success'] == true) {
-        try {
-          final dynamic dataField = response.body['data'];
+        final dynamic dataField = response.body['data'];
 
-          // Check if data is a List
-          if (dataField == null) {
-            print('Data is null');
-            return [];
-          }
-
-          if (dataField is! List) {
-            print('Data is not a List, it is: ${dataField.runtimeType}');
-            return [];
-          }
-
-          final List<dynamic> data = dataField;
-          print('Data is a List with ${data.length} items');
-
-          final List<ProductModel> products = [];
-          for (int i = 0; i < data.length; i++) {
-            final item = data[i];
-            print('Processing item $i, type: ${item.runtimeType}');
-
-            if (item is Map<String, dynamic>) {
-              try {
-                products.add(ProductModel.fromJson(item));
-                print('Successfully parsed product $i');
-              } catch (e, stackTrace) {
-                print('Error parsing product $i: $e');
-                print('Stack trace: $stackTrace');
-                print('Product data: $item');
-              }
-            } else {
-              print(
-                'Item $i is not a Map, skipping. Type: ${item.runtimeType}',
-              );
-            }
-          }
-
-          print(
-            'Successfully parsed ${products.length} products out of ${data.length}',
-          );
-          return products;
-        } catch (parseError, stackTrace) {
-          print('Parse error in getTopSellingProducts: $parseError');
-          print('Stack trace: $stackTrace');
-          print('Response body: ${response.body}');
+        if (dataField == null || dataField is! List) {
           return [];
         }
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to fetch top selling products. Please try again.",
-        );
-        return null;
+
+        final List<dynamic> data = dataField;
+        final List<ProductModel> products = [];
+        for (var item in data) {
+          if (item is Map<String, dynamic>) {
+            try {
+              products.add(ProductModel.fromJson(item));
+            } catch (e) {
+              print('Error parsing product in getTopSellingProducts: $e');
+            }
+          }
+        }
+        return products;
       }
-    } catch (e, stackTrace) {
-      print('Error in getTopSellingProducts: $e');
-      print('Stack trace: $stackTrace');
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -749,16 +579,10 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true) {
         final productResponse = ProductDetailResponse.fromJson(response.body);
         return productResponse.data;
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to fetch product. Please try again.",
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -772,16 +596,10 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true) {
         final productResponse = ProductDetailResponse.fromJson(response.body);
         return productResponse.data;
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to fetch product. Please try again.",
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -808,23 +626,16 @@ class EcommerceService with ApiHelperMixin {
                 products.add(ProductModel.fromJson(item));
               } catch (e) {
                 print('Error parsing related product: $e');
-                print('Product data: $item');
               }
             }
           }
           return products;
         }
         return [];
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to fetch related products. Please try again.",
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -845,24 +656,16 @@ class EcommerceService with ApiHelperMixin {
                 variants.add(ProductVariant.fromJson(item));
               } catch (e) {
                 print('Error parsing variant: $e');
-                print('Variant data: $item');
               }
             }
           }
           return variants;
         }
         return [];
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to fetch product variants. Please try again.",
-        );
-        return null;
       }
-    } catch (e) {
-      print('Error in getProductVariants: $e');
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -893,29 +696,19 @@ class EcommerceService with ApiHelperMixin {
           return reviewResponse.data;
         } catch (parseError) {
           print('Parse error in ProductReviewResponse: $parseError');
-          print('Response body: ${response.body}');
-          // Try to parse directly if response structure is different
           if (response.body['data'] != null) {
             try {
               return ProductReviewData.fromJson(response.body['data']);
             } catch (e) {
-              print('Error parsing review data directly: $e');
               return null;
             }
           }
           return null;
         }
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to fetch product reviews. Please try again.",
-        );
-        return null;
       }
-    } catch (e) {
-      print('Error in getProductReviews: $e');
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -955,32 +748,18 @@ class EcommerceService with ApiHelperMixin {
         return OrdersResponse.fromJson(
           response.body['data'] as Map<String, dynamic>,
         );
-      } else {
-        // Don't show error for 403 - user just doesn't have ecommerce access
-        final errorMessage =
-            response.body['message']?.toString() ?? 'Failed to fetch orders';
-        final msgLower = errorMessage.toLowerCase();
-        if (!msgLower.contains('forbidden') &&
-            !msgLower.contains('403') &&
-            !msgLower.contains('account has been deactivated')) {
-          showErrorMessage(title: "Error", message: errorMessage);
-        }
       }
+      return null;
     } catch (e) {
       // Check if error is 403 (Forbidden) or contains deactivated message - don't show error
       final errorStr = e.toString().toLowerCase();
       if (errorStr.contains('403') ||
           errorStr.contains('forbidden') ||
           errorStr.contains('account has been deactivated')) {
-        // Silently return null - user doesn't have ecommerce access
         return null;
       }
-      // Only show error for other types of errors, not unauthorized
-      if (!errorStr.contains('unauthorized') && !errorStr.contains('401')) {
-        showErrorMessage(title: "Error", message: e.toString());
-      }
+      rethrow;
     }
-    return null;
   }
 
   Future<OrderModel?> getOrderById(String orderId) async {
@@ -995,18 +774,11 @@ class EcommerceService with ApiHelperMixin {
         return OrderModel.fromJson(
           response.body['data'] as Map<String, dynamic>,
         );
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to fetch order details',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   Future<OrderModel?> getOrderByOrderNumber(String orderNumber) async {
@@ -1021,18 +793,11 @@ class EcommerceService with ApiHelperMixin {
         return OrderModel.fromJson(
           response.body['data'] as Map<String, dynamic>,
         );
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to fetch order details',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   Future<List<OrderHistoryEntry>> getOrderHistory(String orderId) async {
@@ -1067,16 +832,8 @@ class EcommerceService with ApiHelperMixin {
                 .toList();
           }
         }
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to fetch order history',
-        );
       }
     } catch (e) {
-      // Treat network or parsing issues as a soft failure.
       return [];
     }
     return [];
@@ -1093,18 +850,11 @@ class EcommerceService with ApiHelperMixin {
         return OrderTrackingInfo.fromJson(
           response.body['data'] as Map<String, dynamic>,
         );
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to fetch tracking info',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   Future<OrderModel?> cancelOrder(
@@ -1145,24 +895,11 @@ class EcommerceService with ApiHelperMixin {
         return OrderModel.fromJson(
           response.body['data'] as Map<String, dynamic>,
         );
-      } else {
-        // Handle validation errors from API
-        String errorMessage =
-            response.body['message']?.toString() ?? 'Failed to cancel order';
-        if (response.body['errors'] != null &&
-            response.body['errors'] is List) {
-          final errors = response.body['errors'] as List;
-          if (errors.isNotEmpty && errors[0] is Map) {
-            final firstError = errors[0] as Map;
-            errorMessage = firstError['message']?.toString() ?? errorMessage;
-          }
-        }
-        showErrorMessage(title: "Error", message: errorMessage);
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   // Cart APIs
@@ -1177,17 +914,10 @@ class EcommerceService with ApiHelperMixin {
           );
         }
         return CartModel();
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ?? 'Failed to fetch cart',
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -1217,18 +947,10 @@ class EcommerceService with ApiHelperMixin {
           );
         }
         return CartModel();
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to add item to cart',
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -1243,17 +965,10 @@ class EcommerceService with ApiHelperMixin {
           );
         }
         return CartModel();
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ?? 'Failed to clear cart',
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -1276,19 +991,8 @@ class EcommerceService with ApiHelperMixin {
               .map((map) => AddressModel.fromJson(map))
               .toList();
         }
-      } else {
-        // Don't show error for 403 - user just doesn't have ecommerce access
-        final message = response.body['message']?.toString() ?? '';
-        final msgLower = message.toLowerCase();
-        if (!msgLower.contains('forbidden') &&
-            !msgLower.contains('403') &&
-            !msgLower.contains('account has been deactivated')) {
-          showErrorMessage(
-            title: "Error",
-            message: message.isNotEmpty ? message : 'Failed to fetch addresses',
-          );
-        }
       }
+      return [];
     } catch (e) {
       // Check if error is 403 (Forbidden) or contains deactivated message - don't show error
       final errorStr = e.toString().toLowerCase();
@@ -1298,12 +1002,8 @@ class EcommerceService with ApiHelperMixin {
         // Silently return empty list - user doesn't have ecommerce access
         return [];
       }
-      // Only show error for other types of errors, not unauthorized
-      if (!errorStr.contains('unauthorized') && !errorStr.contains('401')) {
-        showErrorMessage(title: "Error", message: e.toString());
-      }
+      rethrow;
     }
-    return [];
   }
 
   Future<AddressModel?> getDefaultAddress() async {
@@ -1317,10 +1017,10 @@ class EcommerceService with ApiHelperMixin {
           response.body['data'] as Map<String, dynamic>,
         );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   Future<AddressModel?> getAddressById(String addressId) async {
@@ -1333,17 +1033,11 @@ class EcommerceService with ApiHelperMixin {
         return AddressModel.fromJson(
           response.body['data'] as Map<String, dynamic>,
         );
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ?? 'Failed to fetch address',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   Future<AddressModel?> setDefaultAddress(String addressId) async {
@@ -1357,18 +1051,11 @@ class EcommerceService with ApiHelperMixin {
         return AddressModel.fromJson(
           response.body['data'] as Map<String, dynamic>,
         );
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to update default address',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   Future<AddressModel?> upsertAddress(AddressModel address) async {
@@ -1420,18 +1107,11 @@ class EcommerceService with ApiHelperMixin {
       );
       if (response.body['success'] == true) {
         return true;
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to delete address',
-        );
       }
+      return false;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return false;
   }
 
   Future<List<CouponModel>> getAvailableCoupons() async {
@@ -1450,19 +1130,8 @@ class EcommerceService with ApiHelperMixin {
             .whereType<Map<String, dynamic>>()
             .map(CouponModel.fromJson)
             .toList();
-      } else {
-        // Don't show error for 403 - user just doesn't have ecommerce access
-        final message = response.body['message']?.toString() ?? '';
-        final msgLower = message.toLowerCase();
-        if (!msgLower.contains('forbidden') &&
-            !msgLower.contains('403') &&
-            !msgLower.contains('account has been deactivated')) {
-          showErrorMessage(
-            title: "Error",
-            message: message.isNotEmpty ? message : 'Failed to fetch coupons',
-          );
-        }
       }
+      return [];
     } catch (e) {
       // Check if error is 403 (Forbidden) or contains deactivated message - don't show error
       final errorStr = e.toString().toLowerCase();
@@ -1472,12 +1141,8 @@ class EcommerceService with ApiHelperMixin {
         // Silently return empty list - user doesn't have ecommerce access
         return [];
       }
-      // Only show error for other types of errors, not unauthorized
-      if (!errorStr.contains('unauthorized') && !errorStr.contains('401')) {
-        showErrorMessage(title: "Error", message: e.toString());
-      }
+      rethrow;
     }
-    return [];
   }
 
   Future<CouponValidationResult?> validateCoupon({
@@ -1498,18 +1163,11 @@ class EcommerceService with ApiHelperMixin {
         return CouponValidationResult.fromJson(
           response.body['data'] as Map<String, dynamic>,
         );
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to validate coupon',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   Future<CouponModel?> getCouponByCode(String code) async {
@@ -1522,17 +1180,11 @@ class EcommerceService with ApiHelperMixin {
         return CouponModel.fromJson(
           response.body['data'] as Map<String, dynamic>,
         );
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ?? 'Failed to fetch coupon',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   Future<Map<String, dynamic>?> createOrder({
@@ -1561,17 +1213,10 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true &&
           response.body['data'] is Map<String, dynamic>) {
         return Map<String, dynamic>.from(response.body['data'] as Map);
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ?? 'Failed to create order',
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -1597,18 +1242,10 @@ class EcommerceService with ApiHelperMixin {
       );
       if (response.body['success'] == true) {
         return EcommercePaymentInitiateResponse.fromJson(response.body);
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to initiate payment',
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -1631,18 +1268,10 @@ class EcommerceService with ApiHelperMixin {
       );
       if (response.body['success'] == true) {
         return EcommercePaymentVerifyResponse.fromJson(response.body);
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to verify payment',
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -1670,18 +1299,11 @@ class EcommerceService with ApiHelperMixin {
         return PaymentsResponse.fromJson(
           response.body['data'] as Map<String, dynamic>,
         );
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to fetch payments',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   Future<PaymentModel?> getPaymentById(String paymentId) async {
@@ -1695,18 +1317,11 @@ class EcommerceService with ApiHelperMixin {
         return PaymentModel.fromJson(
           response.body['data'] as Map<String, dynamic>,
         );
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to fetch payment details',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   // Cart
@@ -1719,17 +1334,11 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true) {
         final cart = _parseCartResponse(response.body['data']);
         return cart ?? CartModel();
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ?? 'Failed to remove item',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   Future<CartModel?> saveCartItemForLater(String itemId) async {
@@ -1741,18 +1350,11 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true) {
         final cart = _parseCartResponse(response.body['data']);
         return cart ?? CartModel();
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to save item for later',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   Future<CartModel?> applyCartCoupon(String code) async {
@@ -1764,17 +1366,11 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true) {
         final cart = _parseCartResponse(response.body['data']);
         return cart ?? CartModel();
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ?? 'Failed to apply coupon',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   Future<CartModel?> removeCartCoupon() async {
@@ -1785,17 +1381,11 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true) {
         final cart = _parseCartResponse(response.body['data']);
         return cart ?? CartModel();
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ?? 'Failed to remove coupon',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   Future<CartModel?> mergeCart({String? sessionId}) async {
@@ -1812,22 +1402,11 @@ class EcommerceService with ApiHelperMixin {
       if (response.body['success'] == true) {
         final cart = _parseCartResponse(response.body['data']);
         return cart ?? CartModel();
-      } else {
-        final message = response.body['message']?.toString() ?? '';
-        if (!message.toLowerCase().contains('session id is required')) {
-          showErrorMessage(
-            title: "Error",
-            message: message.isNotEmpty ? message : 'Failed to merge cart',
-          );
-        }
       }
+      return null;
     } catch (e) {
-      final message = e.toString();
-      if (!message.toLowerCase().contains('session id is required')) {
-        showErrorMessage(title: "Error", message: message);
-      }
+      rethrow;
     }
-    return null;
   }
 
   Future<CartAndWishlistResponse?> moveSavedItemToCart(
@@ -1840,18 +1419,11 @@ class EcommerceService with ApiHelperMixin {
       );
       if (response.body['success'] == true) {
         return _parseCartWishlistResponse(response.body['data']);
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to move item to cart',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 
   // Wishlist
@@ -1867,18 +1439,10 @@ class EcommerceService with ApiHelperMixin {
           );
         }
         return WishlistModel();
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to fetch wishlist',
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -1896,18 +1460,10 @@ class EcommerceService with ApiHelperMixin {
           );
         }
         return WishlistModel();
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to add to wishlist',
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -1924,18 +1480,10 @@ class EcommerceService with ApiHelperMixin {
           );
         }
         return WishlistModel();
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to remove from wishlist',
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -1952,18 +1500,10 @@ class EcommerceService with ApiHelperMixin {
           );
         }
         return WishlistModel();
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to clear wishlist',
-        );
-        return null;
       }
-    } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
       return null;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -1977,18 +1517,11 @@ class EcommerceService with ApiHelperMixin {
       );
       if (response.body['success'] == true) {
         return _parseCartWishlistResponse(response.body['data']);
-      } else {
-        showErrorMessage(
-          title: "Error",
-          message:
-              response.body['message']?.toString() ??
-              'Failed to move item to cart',
-        );
       }
+      return null;
     } catch (e) {
-      showErrorMessage(title: "Error", message: e.toString());
+      rethrow;
     }
-    return null;
   }
 }
 

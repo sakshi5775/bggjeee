@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/data_model/support_ticket_model.dart';
 import 'package:astrobharataiuser/screens/support/service/support_ticket_service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -87,29 +86,26 @@ class SupportTicketController extends BaseController {
       currentPage.value = 1;
     }
 
-    try {
-      isLoadingTickets.value = true;
-      final response = await _service.getTickets(
-        status: selectedStatus.value,
-        category: selectedCategory.value,
-        page: currentPage.value,
-        limit: limit,
-      );
+    await runWithLoading(
+      () async {
+        final response = await _service.getTickets(
+          status: selectedStatus.value,
+          category: selectedCategory.value,
+          page: currentPage.value,
+          limit: limit,
+        );
 
-      if (response != null) {
-        if (refresh || currentPage.value == 1) {
-          tickets.clear();
+        if (response != null) {
+          if (refresh || currentPage.value == 1) {
+            tickets.clear();
+          }
+          tickets.addAll(response.items);
+          pagination.value = response.pagination;
         }
-        tickets.addAll(response.items);
-        pagination.value = response.pagination;
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error loading tickets: $e');
-      }
-    } finally {
-      isLoadingTickets.value = false;
-    }
+      },
+      showBusy: tickets.isEmpty, // Only show busy if initial load
+      showError: true,
+    );
   }
 
   /// Load more tickets (pagination)
@@ -149,39 +145,25 @@ class SupportTicketController extends BaseController {
       return false;
     }
 
-    if (subjectController.text.trim().length < 5) {
+    // Basic validation
+    if (subjectController.text.trim().length < 5 ||
+        subjectController.text.trim().length > 200) {
       showErrorMessage(
         title: 'Support',
-        message: 'Subject must be at least 5 characters',
+        message: 'Subject must be between 5 and 200 characters',
       );
       return false;
     }
 
-    if (subjectController.text.trim().length > 200) {
+    if (descriptionController.text.trim().length < 10 ||
+        descriptionController.text.trim().length > 5000) {
       showErrorMessage(
         title: 'Support',
-        message: 'Subject must not exceed 200 characters',
+        message: 'Description must be between 10 and 5000 characters',
       );
       return false;
     }
 
-    if (descriptionController.text.trim().length < 10) {
-      showErrorMessage(
-        title: 'Support',
-        message: 'Description must be at least 10 characters',
-      );
-      return false;
-    }
-
-    if (descriptionController.text.trim().length > 5000) {
-      showErrorMessage(
-        title: 'Support',
-        message: 'Description must not exceed 5000 characters',
-      );
-      return false;
-    }
-
-    // Validate attachments
     if (attachments.length > 5) {
       showErrorMessage(
         title: 'Support',
@@ -190,99 +172,60 @@ class SupportTicketController extends BaseController {
       return false;
     }
 
-    for (final file in attachments) {
-      if (await file.exists()) {
-        final sizeInMB = await file.length() / (1024 * 1024);
-        if (sizeInMB > 5) {
-          showErrorMessage(
-            title: 'Support',
-            message: 'File ${file.path.split('/').last} exceeds 5MB limit',
-          );
-          return false;
-        }
-      }
-    }
+    return await runWithLoading(
+          () async {
+            List<String>? tags;
+            if (tagsController.text.trim().isNotEmpty) {
+              tags = tagsController.text
+                  .split(',')
+                  .map((e) => e.trim())
+                  .where((e) => e.isNotEmpty)
+                  .toList();
+            }
 
-    try {
-      isCreatingTicket.value = true;
+            final ticket = await _service.createTicket(
+              category: selectedCategoryForCreate.value!,
+              priority: selectedPriority.value!,
+              subject: subjectController.text.trim(),
+              description: descriptionController.text.trim(),
+              tags: tags,
+              attachments: attachments.toList(),
+            );
 
-      List<String>? tags;
-      if (tagsController.text.trim().isNotEmpty) {
-        tags = tagsController.text
-            .split(',')
-            .map((e) => e.trim())
-            .where((e) => e.isNotEmpty)
-            .toList();
-      }
+            if (ticket != null) {
+              // Clear form
+              subjectController.clear();
+              descriptionController.clear();
+              tagsController.clear();
+              selectedCategoryForCreate.value = null;
+              selectedPriority.value = null;
+              attachments.clear();
 
-      final ticket = await _service.createTicket(
-        category: selectedCategoryForCreate.value!,
-        priority: selectedPriority.value!,
-        subject: subjectController.text.trim(),
-        description: descriptionController.text.trim(),
-        tags: tags,
-        attachments: attachments.toList(),
-      );
-
-      if (ticket != null) {
-        // Clear form
-        subjectController.clear();
-        descriptionController.clear();
-        tagsController.clear();
-        selectedCategoryForCreate.value = null;
-        selectedPriority.value = null;
-        attachments.clear();
-
-        // Reload tickets
-        await loadTickets(refresh: true);
-
-        // Show success message - ensure it's visible
-        showSuccessMessage(
-          title: 'Success',
-          message: 'Ticket created successfully',
-        );
-        // Wait a bit to ensure snackbar is shown
-        await Future.delayed(const Duration(milliseconds: 300));
-        return true;
-      } else {
-        // Show error if ticket creation failed
-        showErrorMessage(
-          title: 'Error',
-          message: 'Failed to create ticket. Please try again.',
-        );
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error creating ticket: $e');
-      }
-      // Show error message for exceptions
-      showErrorMessage(
-        title: 'Error',
-        message: 'An error occurred while creating the ticket. Please try again.',
-      );
-    } finally {
-      isCreatingTicket.value = false;
-    }
-    return false;
+              // Reload tickets
+              await loadTickets(refresh: true);
+              return true;
+            }
+            return false;
+          },
+          showBusy: true,
+          successMessage: 'Ticket created successfully',
+        ) ??
+        false;
   }
 
   /// Load ticket details
   Future<void> loadTicketDetails(String ticketId) async {
-    try {
-      isLoadingTicketDetails.value = true;
-      final response = await _service.getTicketDetails(ticketId);
-
-      if (response != null) {
-        selectedTicket.value = response.ticket;
-        ticketActivities.value = response.activities;
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error loading ticket details: $e');
-      }
-    } finally {
-      isLoadingTicketDetails.value = false;
-    }
+    await runWithLoading(
+      () async {
+        final response = await _service.getTicketDetails(ticketId);
+        if (response != null) {
+          selectedTicket.value = response.ticket;
+          ticketActivities.value = response.activities;
+        }
+      },
+      showBusy: selectedTicket.value == null,
+      showError: true,
+    );
   }
 
   /// Reply to ticket
@@ -304,7 +247,6 @@ class SupportTicketController extends BaseController {
       return false;
     }
 
-    // Validate attachments
     if (replyAttachments.length > 5) {
       showErrorMessage(
         title: 'Support',
@@ -313,65 +255,32 @@ class SupportTicketController extends BaseController {
       return false;
     }
 
-    for (final file in replyAttachments) {
-      if (await file.exists()) {
-        final sizeInMB = await file.length() / (1024 * 1024);
-        if (sizeInMB > 5) {
-          showErrorMessage(
-            title: 'Support',
-            message: 'File ${file.path.split('/').last} exceeds 5MB limit',
-          );
-          return false;
-        }
-      }
-    }
+    return await runWithLoading(
+          () async {
+            final activity = await _service.replyToTicket(
+              ticketId: ticketId,
+              message: replyMessageController.text.trim(),
+              attachments: replyAttachments.toList(),
+            );
 
-    try {
-      isSendingReply.value = true;
+            if (activity != null) {
+              // Add to activities list
+              ticketActivities.insert(0, activity);
 
-      final activity = await _service.replyToTicket(
-        ticketId: ticketId,
-        message: replyMessageController.text.trim(),
-        attachments: replyAttachments.toList(),
-      );
+              // Clear form
+              replyMessageController.clear();
+              replyAttachments.clear();
 
-      if (activity != null) {
-        // Add to activities list
-        ticketActivities.insert(0, activity);
-
-        // Clear form
-        replyMessageController.clear();
-        replyAttachments.clear();
-
-        // Reload ticket details to get updated status
-        await loadTicketDetails(ticketId);
-
-        // Show success message
-        showSuccessMessage(
-          title: 'Success',
-          message: 'Reply sent successfully',
-        );
-        return true;
-      } else {
-        // Show error if reply failed
-        showErrorMessage(
-          title: 'Error',
-          message: 'Failed to send reply. Please try again.',
-        );
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error replying to ticket: $e');
-      }
-      // Show error message for exceptions
-      showErrorMessage(
-        title: 'Error',
-        message: 'An error occurred while sending the reply. Please try again.',
-      );
-    } finally {
-      isSendingReply.value = false;
-    }
-    return false;
+              // Reload ticket details to get updated status
+              await loadTicketDetails(ticketId);
+              return true;
+            }
+            return false;
+          },
+          showBusy: true,
+          successMessage: 'Reply sent successfully',
+        ) ??
+        false;
   }
 
   /// Add attachment to create form
@@ -435,4 +344,3 @@ class SupportTicketController extends BaseController {
     return status.toUpperCase() == 'CLOSED';
   }
 }
-

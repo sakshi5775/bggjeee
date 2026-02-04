@@ -40,7 +40,7 @@ class AstrologerDetailView extends StatelessWidget {
                 children: [
                   // Scrollable content positioned after header
                   Positioned(
-                    top: 70,
+                    top: 110.h,
                     left: 0,
                     right: 0,
                     bottom: 0,
@@ -1050,13 +1050,7 @@ class AstrologerDetailView extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Get.toNamed(
-                        AppRoutes.booking,
-                        arguments: {
-                          'astrologer': controller.astrologer,
-                          'callType': CallType.chat,
-                        },
-                      );
+                      controller.initiateChat();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFDFB343), // Gold
@@ -1096,13 +1090,7 @@ class AstrologerDetailView extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Get.toNamed(
-                        '/booking',
-                        arguments: {
-                          'astrologer': controller.astrologer,
-                          'callType': CallType.voice,
-                        },
-                      );
+                      controller.initiateVoiceCall();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF5D1C21), // Dark maroon
@@ -1138,13 +1126,7 @@ class AstrologerDetailView extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Get.toNamed(
-                        '/booking',
-                        arguments: {
-                          'astrologer': controller.astrologer,
-                          'callType': CallType.video,
-                        },
-                      );
+                      controller.initiateVideoCall();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF5D1C21), // Dark maroon

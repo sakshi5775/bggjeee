@@ -136,6 +136,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/languages.json
+    # Audio files (aarti.mp3, shankh.mp3) now loaded from network CDN
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

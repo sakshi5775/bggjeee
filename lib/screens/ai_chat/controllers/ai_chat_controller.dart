@@ -2,7 +2,6 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/services/ai_chat_service.dart';
 
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,7 +10,7 @@ class AiChatController extends BaseController {
 
   // Personas list
   final RxList<PersonaModel> personas = <PersonaModel>[].obs;
-  
+
   // Categories
   final RxList<PersonaCategory> categories = <PersonaCategory>[].obs;
   final Rx<PersonaCategory?> selectedCategory = Rx<PersonaCategory?>(null);
@@ -61,59 +60,55 @@ class AiChatController extends BaseController {
 
   // Load personas
   Future<void> loadPersonas({bool refresh = false}) async {
-    try {
-      if (refresh) {
-        currentPage.value = 1;
-        personas.clear();
-        hasMoreData.value = true;
-        isLoadingMore.value = false;
-        setLoadingState(true);
-      } else {
-        if (!hasMoreData.value || isLoadingMore.value) {
-          return;
-        }
-        isLoadingMore.value = true;
-      }
+    if (!refresh && (!hasMoreData.value || isLoadingMore.value)) {
+      return;
+    }
 
-      // Get the category value for filtering
-      final categoryValue = selectedCategory.value?.value;
-      
-      final response = await _aiChatService.getPersonas(
-        page: refresh ? 1 : currentPage.value,
-        limit: 20,
-        category: categoryValue, // This will be null for "All", or the category value for filtering
-        sortBy: 'rating',
-      );
-
-      if (response != null) {
+    await runWithLoading(
+      () async {
         if (refresh) {
-          personas.value = response.personas;
+          currentPage.value = 1;
+          personas.clear();
+          hasMoreData.value = true;
         } else {
-          personas.addAll(response.personas);
+          isLoadingMore.value = true;
         }
 
-        // Update pagination
-        hasMoreData.value = response.pagination.hasNextPage;
-        if (response.pagination.nextPage != null) {
-          currentPage.value = response.pagination.nextPage!;
-        } else {
-          currentPage.value = response.pagination.page + 1;
-        }
+        final categoryValue = selectedCategory.value?.value;
 
-        // Apply search filter
-        _performSearch();
-      }
-    } catch (e) {
-      showErrorMessage(
-        title: "Error",
-        message: "Failed to load personas: $e",
-      );
-    } finally {
-      if (refresh) {
-        setLoadingState(false);
-      } else {
-        isLoadingMore.value = false;
-      }
+        final response = await _aiChatService.getPersonas(
+          page: refresh ? 1 : currentPage.value,
+          limit: 20,
+          category: categoryValue,
+          sortBy: 'rating',
+        );
+
+        if (response != null) {
+          if (refresh) {
+            personas.value = response.personas;
+          } else {
+            personas.addAll(response.personas);
+          }
+
+          hasMoreData.value = response.pagination.hasNextPage;
+          if (response.pagination.nextPage != null) {
+            currentPage.value = response.pagination.nextPage!;
+          } else {
+            currentPage.value = response.pagination.page + 1;
+          }
+
+          _performSearch();
+        }
+      },
+      showBusy: refresh,
+      showError: true,
+      useDialog:
+          refresh, // Use dialog for initial load failures, snackbar for pagination
+      onRetry: () => loadPersonas(refresh: refresh),
+    );
+
+    if (!refresh) {
+      isLoadingMore.value = false;
     }
   }
 
@@ -157,8 +152,9 @@ class AiChatController extends BaseController {
               persona.displayName.toLowerCase().contains(query) ||
               persona.description.toLowerCase().contains(query) ||
               persona.tags.any((tag) => tag.toLowerCase().contains(query)) ||
-              persona.specializations
-                  .any((spec) => spec.toLowerCase().contains(query)),
+              persona.specializations.any(
+                (spec) => spec.toLowerCase().contains(query),
+              ),
         )
         .toList();
   }

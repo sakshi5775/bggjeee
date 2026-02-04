@@ -54,14 +54,15 @@ class CoursePlayerView extends StatelessWidget {
                 SizedBox(height: 24.h),
                 ElevatedButton(
                   onPressed: () => Get.back(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                  ).copyWith(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                      AppColors.primaryGradient.colors.first,
-                    ),
-                  ),
+                  style:
+                      ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                      ).copyWith(
+                        backgroundColor: WidgetStateProperty.all<Color>(
+                          AppColors.primaryGradient.colors.first,
+                        ),
+                      ),
                   child: const AutoTranslateText('Go Back'),
                 ),
               ],
@@ -98,13 +99,16 @@ class CoursePlayerView extends StatelessWidget {
             child: progress > 0
                 ? LinearProgressIndicator(
                     value: progress / 100,
-                    backgroundColor: Colors.grey.withOpacity(0.2),
+                    backgroundColor: Colors.grey.withValues(alpha: 0.2),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       AppColors.primaryGradient.colors.first,
                     ),
                     minHeight: 4.h,
                   )
-                : Container(height: 4.h, color: Colors.grey.withOpacity(0.2)),
+                : Container(
+                    height: 4.h,
+                    color: Colors.grey.withValues(alpha: 0.2),
+                  ),
           );
         }),
 
@@ -153,9 +157,7 @@ class CoursePlayerView extends StatelessWidget {
   // Header with course title, share, menu
   Widget _buildHeader(CoursePlayerController controller) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-      ),
+      decoration: BoxDecoration(gradient: AppColors.primaryGradient),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: SafeArea(
         bottom: false,
@@ -443,7 +445,10 @@ class CoursePlayerView extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border(
-            bottom: BorderSide(color: Colors.grey.withOpacity(0.2), width: 1),
+            bottom: BorderSide(
+              color: Colors.grey.withValues(alpha: 0.2),
+              width: 1,
+            ),
           ),
         ),
         child: Column(
@@ -510,7 +515,7 @@ class CoursePlayerView extends StatelessWidget {
                   isCurrent,
                   isCompleted,
                 );
-              }).toList(),
+              }),
           ],
         ),
       );
@@ -552,7 +557,7 @@ class CoursePlayerView extends StatelessWidget {
         margin: EdgeInsets.only(left: 52.w),
         decoration: BoxDecoration(
           color: isCurrent
-              ? AppColors.primaryGradient.colors.first.withOpacity(0.1)
+              ? AppColors.primaryGradient.colors.first.withValues(alpha: 0.1)
               : Colors.transparent,
           border: Border(
             left: BorderSide(
@@ -631,7 +636,7 @@ class CoursePlayerView extends StatelessWidget {
                             vertical: 2.h,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.templeGold.withOpacity(0.2),
+                            color: AppColors.templeGold.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(4.r),
                           ),
                           child: AutoTranslateText(
@@ -768,7 +773,7 @@ class CoursePlayerView extends StatelessWidget {
                       Obx(
                         () => CircularProgressIndicator(
                           value: controller.courseProgress.value / 100,
-                          backgroundColor: Colors.white.withOpacity(0.2),
+                          backgroundColor: Colors.white.withValues(alpha: 0.2),
                           valueColor: AlwaysStoppedAnimation<Color>(
                             AppColors.primaryGradient.colors.first,
                           ),
@@ -872,7 +877,9 @@ class CoursePlayerView extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.orangeGradient.colors.first.withOpacity(0.3),
+              color: AppColors.orangeGradient.colors.first.withValues(
+                alpha: 0.3,
+              ),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -918,7 +925,7 @@ class CoursePlayerView extends StatelessWidget {
                   AutoTranslateText(
                     webinar.title ?? 'Join the session now',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       fontSize: 12.sp,
                     ),
                     maxLines: 1,

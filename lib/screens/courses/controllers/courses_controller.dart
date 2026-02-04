@@ -3,15 +3,22 @@ import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/data_model/webinar_model.dart'; // Added
 import 'package:astrobharataiuser/screens/courses/services/courses_service.dart';
 import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart'; // Added
+import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
+import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CoursesController extends BaseController {
   final CoursesService _coursesService = CoursesService();
   final WebinarService _webinarService = WebinarService();
+  final BannerService _bannerService = BannerService(); // Added BannerService
 
   // Courses list
   final RxList<CourseModel> courses = <CourseModel>[].obs;
+
+  // Banners
+  final RxList<BannerItem> learningBanners = <BannerItem>[].obs;
+  final RxBool isLoadingBanners = false.obs;
 
   // Pagination
   final RxInt currentPage = 1.obs;
@@ -41,6 +48,7 @@ class CoursesController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    loadBanners(); // Load banners
     loadCourses(refresh: true);
     searchController.addListener(_performSearch);
     _updateLiveWebinar(); // Fetch live webinar
@@ -186,6 +194,22 @@ class CoursesController extends BaseController {
       debugPrint("Error fetching live webinar banner: $e");
       liveWebinar.value = null;
       hasLiveWebinar.value = false;
+    }
+  }
+
+  // Load banners
+  Future<void> loadBanners() async {
+    isLoadingBanners.value = true;
+    try {
+      var list = await _bannerService.getBannersByCategory('applearning');
+      if (list.isEmpty) {
+        list = await _bannerService.getBannersByCategory('learning-portal');
+      }
+      learningBanners.assignAll(list);
+    } catch (e) {
+      debugPrint("Error fetching learning banners: $e");
+    } finally {
+      isLoadingBanners.value = false;
     }
   }
 }

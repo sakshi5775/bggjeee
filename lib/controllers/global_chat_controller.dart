@@ -63,12 +63,26 @@ class GlobalChatController extends GetxController {
           return dateB.compareTo(dateA);
         });
 
-        final latestSession = sessions.first;
+        // Filter out sessions that are actually completed/expired/cancelled
+        // The backend might return recently updated sessions even if they are closed
+        final activeSessions = sessions.where((s) {
+          final status = (s.status ?? '').toUpperCase();
+          return status == 'ACTIVE' ||
+              status == 'CREATED' ||
+              status == 'PAUSED';
+        }).toList();
 
-        // If it's a new session or status changed, update
-        if (activeSession.value?.chatId != latestSession.chatId ||
-            activeSession.value?.status != latestSession.status) {
-          activeSession.value = latestSession;
+        if (activeSessions.isNotEmpty) {
+          final latestSession = activeSessions.first;
+
+          // If it's a new session or status changed, update
+          if (activeSession.value?.chatId != latestSession.chatId ||
+              activeSession.value?.status != latestSession.status) {
+            activeSession.value = latestSession;
+          }
+        } else {
+          // No truly active sessions found
+          activeSession.value = null;
         }
       } else {
         activeSession.value = null;
@@ -121,13 +135,16 @@ class GlobalChatController extends GetxController {
   Future<void> resumeActiveChat() async {
     final session = activeSession.value;
     if (session == null || session.chatId.isEmpty) {
-      if (kDebugMode) print('⚠️ [GlobalChat] No active session or chatId available');
+      if (kDebugMode)
+        print('⚠️ [GlobalChat] No active session or chatId available');
       return;
     }
 
     if (kDebugMode) {
       print('✅ [GlobalChat] Navigating to chat with chatId: ${session.chatId}');
-      print('✅ [GlobalChat] Controller will fetch astrologer using session.astrologerId');
+      print(
+        '✅ [GlobalChat] Controller will fetch astrologer using session.astrologerId',
+      );
     }
 
     // Just pass chatId - the controller already handles fetching astrologer by ID

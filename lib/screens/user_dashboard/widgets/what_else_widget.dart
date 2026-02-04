@@ -1,14 +1,17 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class WhatElseWidget extends StatelessWidget {
   const WhatElseWidget({super.key});
@@ -16,58 +19,52 @@ class WhatElseWidget extends StatelessWidget {
   static const List<Map<String, dynamic>> _items = [
     {
       'title': 'Daily Panchang',
-      'icon': Icons.calendar_today,
+      'image': AppConstant.servicePanchang,
       'route': AppRoutes.dailyPanchang,
     },
     {
       'title': 'Talk to Astrologer',
-      'icon': Icons.phone_in_talk,
+      'image': AppConstant.cardConsultation,
       'route': AppRoutes.astrologyServices,
     },
-    // {
-    //   'title': 'Brihat Kundli',
-    //   'icon': Icons.menu_book,
-    //   'route': AppRoutes.allReports,
-    // },
-    // {'title': 'Daily Notes', 'icon': Icons.note_alt_outlined, 'route': null},
     {
       'title': 'Digital Mart',
-      'icon': Icons.shopping_bag_outlined,
+      'image': AppConstant.divineShop,
       'route': AppRoutes.ecommerceHome,
     },
-    // {'title': 'Ask A Question', 'icon': Icons.help_outline, 'route': AppRoutes.prashnaKundali},
-    // {'title': 'Kundli AI+', 'icon': Icons.auto_awesome, 'route': null},
     {
       'title': 'Numerology',
-      'icon': Icons.numbers,
+      'image': AppConstant.serviceNumerology,
       'route': AppRoutes.numerologyForm,
     },
-    // {'title': 'Free 50+ Pages', 'icon': Icons.picture_as_pdf_outlined, 'route': null},
     {
       'title': 'Videos',
-      'icon': Icons.play_circle_outline,
+      'image': AppConstant.videoThumbnail,
       'route': AppRoutes.allVideos,
     },
-    {'title': 'KP System', 'icon': Icons.grid_on, 'route': AppRoutes.kpSystem},
+    {
+      'title': 'KP System',
+      'image': AppConstant.kpN,
+      'route': AppRoutes.kpSystem,
+    },
     {
       'title': 'Varshphal',
-      'icon': Icons.calendar_month,
+      'image': AppConstant.varshpal3d,
       'route': AppRoutes.kundliForm,
     },
     {
       'title': 'Lal Kitab',
-      'icon': Icons.menu_book_rounded,
+      'image': AppConstant.lalKitab,
       'route': AppRoutes.lalKitab,
     },
     {
       'title': 'Digital Learning',
-      'icon': Icons.school_outlined,
+      'image': AppConstant.education,
       'route': AppRoutes.courses,
     },
-
     {
       'title': 'Match Making',
-      'icon': Icons.favorite_border,
+      'image': AppConstant.serviceMatchMaking,
       'route': AppRoutes.matchMakingForm,
     },
   ];
@@ -115,7 +112,7 @@ class WhatElseWidget extends StatelessWidget {
               final item = _items[index];
               return _buildItem(
                 title: item['title'] as String,
-                icon: item['icon'] as IconData,
+                image: item['image'] as String,
                 route: item['route'] as String?,
               );
             },
@@ -134,7 +131,7 @@ class WhatElseWidget extends StatelessWidget {
               final item = _items[perRow + index];
               return _buildItem(
                 title: item['title'] as String,
-                icon: item['icon'] as IconData,
+                image: item['image'] as String,
                 route: item['route'] as String?,
               );
             },
@@ -146,7 +143,7 @@ class WhatElseWidget extends StatelessWidget {
 
   Widget _buildItem({
     required String title,
-    required IconData icon,
+    required String image,
     required String? route,
   }) {
     final isComingSoon = route == null;
@@ -168,33 +165,7 @@ class WhatElseWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
-              width: 48.w,
-              height: 48.h,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: 48.w,
-                    height: 48.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: AppColors.orangeGradient,
-                    ),
-                  ),
-                  Container(
-                    width: 44.w,
-                    height: 44.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: '#FFFCF3'.toColor(),
-                      border: Border.all(color: '#FCE5AA'.toColor(), width: 1),
-                    ),
-                    child: Icon(icon, size: 20.w, color: AppColors.deepOrange),
-                  ),
-                ],
-              ),
-            ),
+            SizedBox(width: 48.w, height: 48.h, child: _buildImage(image)),
             SizedBox(height: 2.h),
             SizedBox(
               width: 56.w,
@@ -214,6 +185,40 @@ class WhatElseWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildImage(String imagePath) {
+    if (imagePath.startsWith('http')) {
+      if (imagePath.endsWith('.svg')) {
+        return SvgPicture.network(
+          imagePath,
+          fit: BoxFit.contain,
+          placeholderBuilder: (context) =>
+              const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+        );
+      }
+      return NetworkImageWithLoader(
+        url: imagePath,
+        height: 48.h,
+        width: 48.w,
+        fit: BoxFit.contain,
+      );
+    } else {
+      if (imagePath.endsWith('.svg')) {
+        return SvgPicture.asset(
+          imagePath,
+          height: 48.h,
+          width: 48.w,
+          fit: BoxFit.contain,
+        );
+      }
+      return Image.asset(
+        imagePath,
+        height: 48.h,
+        width: 48.w,
+        fit: BoxFit.contain,
+      );
+    }
   }
 
   Widget _buildShareButton() {

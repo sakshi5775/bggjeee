@@ -35,7 +35,7 @@ class AddressSelectionView extends BasePage<AddressSelectionController> {
                       vertical: 6.h,
                     ),
                     decoration: BoxDecoration(
-                      color: '#6F221E'.toColor().withOpacity(0.1),
+                      color: '#6F221E'.toColor().withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Row(

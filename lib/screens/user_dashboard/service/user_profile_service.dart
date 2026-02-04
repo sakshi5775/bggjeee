@@ -13,26 +13,17 @@ class UserProfileService with ApiHelperMixin {
   /// Get user profile
   /// Uses users/api/users/profile (Bearer token identifies current user)
   Future<UserProfileModel?> getProfile([String? userId]) async {
-    try {
-      // Current user profile: users/api/users/profile (no userId in path)
-      final response = await _apiRepository.getApi(
-        EndPoints.userProfileCurrent,
-      );
+    // Current user profile: users/api/users/profile (no userId in path)
+    final response = await _apiRepository.getApi(EndPoints.userProfileCurrent);
 
-      if (response.body['success'] == true &&
-          response.body['data'] is Map<String, dynamic>) {
-        return UserProfileModel.fromJson(
-            response.body['data'] as Map<String, dynamic>);
-      }
-      showErrorMessage(
-        title: 'Profile',
-        message:
-            response.body['message']?.toString() ?? 'Failed to load profile',
+    if (response.body['success'] == true &&
+        response.body['data'] is Map<String, dynamic>) {
+      return UserProfileModel.fromJson(
+        response.body['data'] as Map<String, dynamic>,
       );
-    } catch (e) {
-      showErrorMessage(title: 'Profile', message: e.toString());
     }
-    return null;
+
+    throw response.body['message']?.toString() ?? 'Failed to load profile';
   }
 
   /// Update user profile (PATCH with multipart/form-data)
@@ -44,72 +35,54 @@ class UserProfileService with ApiHelperMixin {
     ContactInfo? contactInfo,
     Preferences? preferences,
   }) async {
-    try {
-      // Prepare fields for multipart/form-data
-      final fields = <String, String>{};
+    // Prepare fields for multipart/form-data
+    final fields = <String, String>{};
 
-      // Add personalInfo as JSON string; omit null values so backend enum validation does not fail
-      if (personalInfo != null) {
-        final personalInfoMap = personalInfo.toJson();
-        personalInfoMap.removeWhere((_, v) => v == null);
-        fields['personalInfo'] = jsonEncode(personalInfoMap);
-      }
-
-      // Add contactInfo as JSON string; backend requires contactInfo.address to be an object (not undefined)
-      if (contactInfo != null) {
-        final contactInfoMap = contactInfo.toJson(excludeProtectedFields: true);
-        contactInfoMap['address'] = contactInfo.address != null
-            ? contactInfo.address!.toJson()
-            : <String, dynamic>{};
-        contactInfoMap.removeWhere((_, v) => v == null);
-        fields['contactInfo'] = jsonEncode(contactInfoMap);
-      }
-
-      // Add preferences as JSON string; omit null values
-      if (preferences != null) {
-        final preferencesMap = preferences.toJson();
-        preferencesMap.removeWhere((_, v) => v == null);
-        fields['preferences'] = jsonEncode(preferencesMap);
-      }
-
-      // Add empty birthChart as per API requirement
-      fields['birthChart'] = '';
-
-      // Prepare files
-      final files = <String, File?>{};
-      if (profilePicture != null) {
-        files['profilePicture'] = profilePicture;
-      }
-
-      final response = await _apiRepository.patchDataByFormData(
-        uri: EndPoints.updateUserProfile(userId),
-        fields: fields,
-        files: files,
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final decoded = jsonDecode(response.body) as Map<String, dynamic>;
-        if (decoded['success'] == true &&
-            decoded['data'] is Map<String, dynamic>) {
-          return UserProfileModel.fromJson(
-              decoded['data'] as Map<String, dynamic>);
-        }
-        showErrorMessage(
-          title: 'Profile',
-          message: decoded['message']?.toString() ?? 'Profile update failed',
-        );
-      } else {
-        final decoded = jsonDecode(response.body);
-        final message = decoded is Map<String, dynamic>
-            ? decoded['message']?.toString()
-            : 'Profile update failed';
-        showErrorMessage(
-            title: 'Profile', message: message ?? 'Profile update failed');
-      }
-    } catch (e) {
-      showErrorMessage(title: 'Profile', message: e.toString());
+    // Add personalInfo as JSON string; omit null values
+    if (personalInfo != null) {
+      final personalInfoMap = personalInfo.toJson();
+      personalInfoMap.removeWhere((_, v) => v == null);
+      fields['personalInfo'] = jsonEncode(personalInfoMap);
     }
-    return null;
+
+    // Add contactInfo as JSON string
+    if (contactInfo != null) {
+      final contactInfoMap = contactInfo.toJson(excludeProtectedFields: true);
+      contactInfoMap['address'] = contactInfo.address != null
+          ? contactInfo.address!.toJson()
+          : <String, dynamic>{};
+      contactInfoMap.removeWhere((_, v) => v == null);
+      fields['contactInfo'] = jsonEncode(contactInfoMap);
+    }
+
+    // Add preferences as JSON string
+    if (preferences != null) {
+      final preferencesMap = preferences.toJson();
+      preferencesMap.removeWhere((_, v) => v == null);
+      fields['preferences'] = jsonEncode(preferencesMap);
+    }
+
+    // Add empty birthChart as per API requirement
+    fields['birthChart'] = '';
+
+    // Prepare files
+    final files = <String, File?>{};
+    if (profilePicture != null) {
+      files['profilePicture'] = profilePicture;
+    }
+
+    final response = await _apiRepository.patchDataByFormData(
+      uri: EndPoints.updateUserProfile(userId),
+      fields: fields,
+      files: files,
+    );
+
+    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    if (decoded['success'] == true && decoded['data'] is Map<String, dynamic>) {
+      return UserProfileModel.fromJson(decoded['data'] as Map<String, dynamic>);
+    }
+
+    throw decoded['message']?.toString() ?? 'Profile update failed';
   }
 
   /// Update birth chart (PUT with application/json)
@@ -119,38 +92,30 @@ class UserProfileService with ApiHelperMixin {
     required BirthTime birthTime,
     String? dateOfBirth,
   }) async {
-    try {
-      final request = BirthChartUpdateRequest(
-        birthPlace: birthPlace,
-        birthTime: birthTime,
-        dateOfBirth: dateOfBirth,
-      );
+    final request = BirthChartUpdateRequest(
+      birthPlace: birthPlace,
+      birthTime: birthTime,
+      dateOfBirth: dateOfBirth,
+    );
 
-      final response = await _apiRepository.putApi(
-        EndPoints.updateBirthChart(userId),
-        request.toJson(),
-      );
+    final response = await _apiRepository.putApi(
+      EndPoints.updateBirthChart(userId),
+      request.toJson(),
+    );
 
-      if (response.body['success'] == true &&
-          response.body['data'] is Map<String, dynamic>) {
-        // The response contains birthChart and dateOfBirth
-        final data = response.body['data'] as Map<String, dynamic>;
-        final birthChartData = data['birthChart'] as Map<String, dynamic>?;
-        final profile = UserProfileModel();
-        if (birthChartData != null) {
-          profile.birthChart = BirthChart.fromJson(birthChartData);
-        }
-        return profile;
+    if (response.body['success'] == true &&
+        response.body['data'] is Map<String, dynamic>) {
+      // The response contains birthChart and dateOfBirth
+      final data = response.body['data'] as Map<String, dynamic>;
+      final birthChartData = data['birthChart'] as Map<String, dynamic>?;
+      final profile = UserProfileModel();
+      if (birthChartData != null) {
+        profile.birthChart = BirthChart.fromJson(birthChartData);
       }
-      showErrorMessage(
-        title: 'Birth Chart',
-        message: response.body['message']?.toString() ??
-            'Failed to update birth chart',
-      );
-    } catch (e) {
-      showErrorMessage(title: 'Birth Chart', message: e.toString());
+      return profile;
     }
-    return null;
+
+    throw response.body['message']?.toString() ??
+        'Failed to update birth chart';
   }
 }
-

@@ -79,16 +79,16 @@ class KundliResultView extends BasePage<KundliResultController> {
     const orangeLight = Color(0xFFFF8A3D);
 
     return Container(
-      height: 48.h,
+      height: 56.h,
       color: Colors.transparent,
-      padding: EdgeInsets.symmetric(vertical: 6.h),
+      padding: EdgeInsets.symmetric(vertical: 2.h),
       child: Obx(() {
         return Row(
           children: [
             Padding(
               padding: EdgeInsets.only(left: 12.w, right: 10.w),
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [orangeLight, orange],
@@ -175,13 +175,14 @@ class KundliResultView extends BasePage<KundliResultController> {
               fontSize: 15.sp,
             ),
           ),
-          Spacing.h(6),
+          // Spacing.h(6),
           LayoutBuilder(
             builder: (context, constraints) {
               final crossAxisCount = constraints.maxWidth > 600 ? 4 : 4;
               return GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: crossAxisCount,
                   childAspectRatio: 0.95,
@@ -707,7 +708,7 @@ class KundliResultView extends BasePage<KundliResultController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildFeatureGrid(),
-          Spacing.h(12),
+          Spacing.h(1),
           //  _buildAdditionalFeatures(),
 
           // Spacing.h(12),

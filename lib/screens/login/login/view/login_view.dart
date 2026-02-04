@@ -44,81 +44,84 @@ class LoginView extends BasePage<LoginController> {
               // ),
               SizedBox(
                 width: double.infinity,
-                height: 300.h,
-                child: Stack(
-                  children: [
-                    /// 🔹 Main Image
-                    Positioned.fill(
-                      child: Image.network(
-                        AppConstant.cardConsultation,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Center(
-                            child: Icon(
-                              Icons.error,
-                              size: 48,
-                              color: Colors.grey,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-
-                    /// 🔹 Welcome Text Overlay
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        padding: EdgeInsets.only(bottom: 20.h),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/images/star.png",
-                                  height: 20.h,
-                                  width: 30.w,
-                                ),
-                                SizedBox(width: 8.w),
-                                AutoTranslateText(
-                                  'Welcome Back',
-                                  style: MyTextTheme.veryLargeWCB.copyWith(
-                                    color: AppColors.saffron,
-                                    fontSize: 28.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(width: 8.w),
-                                Image.asset(
-                                  "assets/images/star.png",
-                                  height: 20.h,
-                                  width: 30.w,
-                                ),
-                              ],
-                            ),
-                            Spacing.h(4),
-                            AutoTranslateText(
-                              'Continue your spiritual journey',
-                              style: MyTextTheme.mediumBCN.copyWith(
-                                color: AppColors.saffron,
-                                fontSize: 14.sp,
+                height: 320.h, // Increased height to accommodate padding
+                child: Padding(
+                  padding: EdgeInsets.only(top: 20.h), // Added top spacing
+                  child: Stack(
+                    children: [
+                      /// 🔹 Main Image
+                      Positioned.fill(
+                        child: Image.network(
+                          AppConstant.cardConsultation,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Center(
+                              child: Icon(
+                                Icons.error,
+                                size: 48,
+                                color: Colors.grey,
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                            );
+                          },
                         ),
                       ),
-                    ),
-                  ],
+
+                      /// 🔹 Welcome Text Overlay
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.only(bottom: 20.h),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    "assets/images/star.png",
+                                    height: 20.h,
+                                    width: 30.w,
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  AutoTranslateText(
+                                    'Welcome Back',
+                                    style: MyTextTheme.veryLargeWCB.copyWith(
+                                      color: AppColors.saffron,
+                                      fontSize: 28.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  Image.asset(
+                                    "assets/images/star.png",
+                                    height: 20.h,
+                                    width: 30.w,
+                                  ),
+                                ],
+                              ),
+                              Spacing.h(4),
+                              AutoTranslateText(
+                                'Continue your spiritual journey',
+                                style: MyTextTheme.mediumBCN.copyWith(
+                                  color: AppColors.saffron,
+                                  fontSize: 14.sp,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Container(

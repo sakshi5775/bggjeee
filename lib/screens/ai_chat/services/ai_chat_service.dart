@@ -217,39 +217,7 @@ class AiChatService {
       }
     } catch (e) {
       debugPrint('Error creating review: $e');
-      String errorMessage = 'Failed to submit review. Please try again.';
-
-      // Try to extract error message from exception
-      final errorString = e.toString().toLowerCase();
-      if (errorString.contains('must have a conversation') ||
-          errorString.contains('conversation')) {
-        errorMessage =
-            'You must have a conversation with this persona before leaving a review.';
-      } else if (errorString.contains('already reviewed') ||
-          errorString.contains('already exists')) {
-        errorMessage =
-            'You have already reviewed this persona. Use the update option to modify your review.';
-      } else if (errorString.contains('unauthorized') ||
-          errorString.contains('401')) {
-        errorMessage = 'Please login to submit a review.';
-      } else if (errorString.contains('network') ||
-          errorString.contains('connection') ||
-          errorString.contains('socket')) {
-        errorMessage =
-            'Network error. Please check your connection and try again.';
-      } else if (errorString.contains('timeout')) {
-        errorMessage = 'Request timeout. Please try again.';
-      } else if (errorString.contains('fetchdataexception')) {
-        // Extract message from FetchDataException
-        final match = RegExp(
-          r'FetchDataException:\s*(.+)',
-        ).firstMatch(errorString);
-        if (match != null) {
-          errorMessage = match.group(1) ?? errorMessage;
-        }
-      }
-
-      return {'success': false, 'message': errorMessage};
+      rethrow;
     }
   }
 

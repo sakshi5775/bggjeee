@@ -291,7 +291,7 @@ class AppConstant {
       'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/dasha+n.png';
 
   static const String kPAstrology =
-      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/KP+ASTROLOGY+.png';
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/KP+ASTROLOGY.png';
   static const String kpN =
       'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/kp+n.png';
 

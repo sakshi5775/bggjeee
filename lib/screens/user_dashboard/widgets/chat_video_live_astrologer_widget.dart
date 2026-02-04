@@ -107,6 +107,26 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
                                       ),
                                     ),
                                   ),
+                                  // Green dot indicator for online astrologers
+                                  if (astrologer.isOnline)
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: Container(
+                                        width: 16.w,
+                                        height: 16.w,
+                                        decoration: BoxDecoration(
+                                          color: const Color(
+                                            0xFF4CAF50,
+                                          ), // Green
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 2,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               ),
                             ),
@@ -232,6 +252,26 @@ class ChatCallAstrologerWidget extends BasePage<UserDashboardController> {
                                       ),
                                     ),
                                   ),
+                                  // Green dot indicator for online astrologers
+                                  if (astrologer.isOnline)
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: Container(
+                                        width: 16.w,
+                                        height: 16.w,
+                                        decoration: BoxDecoration(
+                                          color: const Color(
+                                            0xFF4CAF50,
+                                          ), // Green
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 2,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               ),
                             ),

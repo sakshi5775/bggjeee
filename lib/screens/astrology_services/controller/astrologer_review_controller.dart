@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 class AstrologerReviewController extends BaseController {
   final AstrologerReviewService _reviewService = AstrologerReviewService();
   final AstrologerChatService _chatService = AstrologerChatService();
-  
+
   // Reviews
   final RxList<AstrologerReview> reviews = <AstrologerReview>[].obs;
   final Rx<AstrologerReview?> myReview = Rx<AstrologerReview?>(null);
@@ -66,38 +66,44 @@ class AstrologerReviewController extends BaseController {
     required String reviewText,
     required String serviceType, // VIDEO, AUDIO, CHAT
   }) async {
-    try {
-      // Pre-check: ensure user hasn't already reviewed and has had a conversation
-      debugPrint('AstrologerReviewController.createReview -> checking eligibility for $astrologerId');
-      await _ensureEligibleForReview(astrologerId);
-      debugPrint('AstrologerReviewController.createReview -> eligibility passed for $astrologerId');
+    return await runWithLoading(
+          () async {
+            debugPrint(
+              'AstrologerReviewController.createReview -> checking eligibility for $astrologerId',
+            );
+            await _ensureEligibleForReview(astrologerId);
+            debugPrint(
+              'AstrologerReviewController.createReview -> eligibility passed for $astrologerId',
+            );
 
-      setLoadingState(true);
-      final result = await _reviewService.createReview(
-        astrologerId,
-        rating: rating,
-        reviewText: reviewText,
-        serviceType: serviceType,
-      );
+            final result = await _reviewService.createReview(
+              astrologerId,
+              rating: rating,
+              reviewText: reviewText,
+              serviceType: serviceType,
+            );
 
-      if (result['success'] == true) {
-        // Reload reviews
-        await Future.wait([
-          loadReviews(astrologerId, refresh: true),
-          loadMyReview(astrologerId),
-        ]);
-        return true;
-      } else {
-        // Error message is already in result['message']
-        debugPrint('AstrologerReviewController.createReview -> service returned failure: ${result['message']}');
-        throw Exception(result['message'] ?? 'Failed to submit review');
-      }
-    } catch (e) {
-      // Error will be handled by the dialog
-      rethrow;
-    } finally {
-      setLoadingState(false);
-    }
+            if (result['success'] == true) {
+              // Reload reviews
+              await Future.wait([
+                loadReviews(astrologerId, refresh: true),
+                loadMyReview(astrologerId),
+              ]);
+              return true;
+            } else {
+              String message = result['message'] ?? 'Failed to submit review';
+              if (message.toLowerCase().contains('already submitted') ||
+                  message.toLowerCase().contains('already reviewed')) {
+                message =
+                    'You have already submitted a review for this astrologer. Please update your existing review instead.';
+              }
+              throw message; // Throwing as string since runWithLoading handles it
+            }
+          },
+          showBusy: true,
+          showError: true,
+        ) ??
+        false;
   }
 
   /// Ensure the current user is eligible to create a review for [astrologerId].
@@ -106,7 +112,9 @@ class AstrologerReviewController extends BaseController {
     // Check if user has already submitted a review
     await loadMyReview(astrologerId);
     if (myReview.value != null) {
-      throw Exception('You have already submitted a review for this astrologer. Use the update option to modify your review.');
+      throw Exception(
+        'You have already submitted a review for this astrologer. Use the update option to modify your review.',
+      );
     }
 
     // Check session history to verify user had a conversation with this astrologer
@@ -115,15 +123,20 @@ class AstrologerReviewController extends BaseController {
       final sessions = history['sessions'] as List?;
       if (sessions == null || sessions.isEmpty) {
         // Don't block review submission if history check fails - let backend validate
-        debugPrint('Warning: No session history found, but allowing review submission (backend will validate)');
+        debugPrint(
+          'Warning: No session history found, but allowing review submission (backend will validate)',
+        );
         return;
       }
 
       final bool hasConversation = sessions.any((s) {
         try {
           final session = s as dynamic;
-          final sid = session.astrologerId?.toString() ?? session['astrologerId']?.toString();
-          final status = session.status?.toString() ?? session['status']?.toString();
+          final sid =
+              session.astrologerId?.toString() ??
+              session['astrologerId']?.toString();
+          final status =
+              session.status?.toString() ?? session['status']?.toString();
           if (sid == null) return false;
           // Consider sessions other than CREATED as valid conversations
           return sid == astrologerId && (status != null && status != 'CREATED');
@@ -134,12 +147,16 @@ class AstrologerReviewController extends BaseController {
 
       if (!hasConversation) {
         // Don't block - let backend validate. This is just a pre-check.
-        debugPrint('Warning: No conversation found in local history, but allowing review submission (backend will validate)');
+        debugPrint(
+          'Warning: No conversation found in local history, but allowing review submission (backend will validate)',
+        );
         return;
       }
     } catch (e) {
       // Don't block review submission if history check fails - let backend validate
-      debugPrint('Warning: Error checking session history: $e. Allowing review submission (backend will validate)');
+      debugPrint(
+        'Warning: Error checking session history: $e. Allowing review submission (backend will validate)',
+      );
       // Don't throw - let the backend handle validation
     }
   }
@@ -150,65 +167,45 @@ class AstrologerReviewController extends BaseController {
     required int rating,
     required String reviewText,
   }) async {
-    try {
-      setLoadingState(true);
-      final result = await _reviewService.updateReview(
-        astrologerId,
-        reviewId,
-        rating: rating,
-        reviewText: reviewText,
-      );
+    return await runWithLoading(
+          () async {
+            final result = await _reviewService.updateReview(
+              astrologerId,
+              reviewId,
+              rating: rating,
+              reviewText: reviewText,
+            );
 
-      if (result['success'] == true) {
-        // Reload reviews
-        await Future.wait([
-          loadReviews(astrologerId, refresh: true),
-          loadMyReview(astrologerId),
-        ]);
-        return true;
-      } else {
-        // Error message is already in result['message']
-        throw Exception(result['message'] ?? 'Failed to update review');
-      }
-    } catch (e) {
-      // Error will be handled by the dialog
-      rethrow;
-    } finally {
-      setLoadingState(false);
-    }
+            if (result['success'] == true) {
+              // Reload reviews
+              await Future.wait([
+                loadReviews(astrologerId, refresh: true),
+                loadMyReview(astrologerId),
+              ]);
+              return true;
+            } else {
+              throw result['message'] ?? 'Failed to update review';
+            }
+          },
+          showBusy: true,
+          showError: true,
+        ) ??
+        false;
   }
 
   Future<bool> deleteReview(String astrologerId, String reviewId) async {
-    try {
-      setLoadingState(true);
-      final result = await _reviewService.deleteReview(astrologerId, reviewId);
+    final result = await runWithLoading(
+      () => _reviewService.deleteReview(astrologerId, reviewId),
+      successMessage: 'Review deleted successfully',
+    );
 
-      if (result['success'] == true) {
-        // Remove from local list
-        reviews.removeWhere((r) => r.id == reviewId);
-        myReview.value = null;
-        
-        showSuccessMessage(
-          title: 'Success',
-          message: 'Review deleted successfully',
-        );
-        return true;
-      } else {
-        showErrorMessage(
-          title: 'Error',
-          message: result['message'] ?? 'Failed to delete review',
-        );
-        return false;
-      }
-    } catch (e) {
-      showErrorMessage(
-        title: 'Error',
-        message: 'Failed to delete review: ${e.toString()}',
-      );
-      return false;
-    } finally {
-      setLoadingState(false);
+    if (result != null && result['success'] == true) {
+      // Remove from local list
+      reviews.removeWhere((r) => r.id == reviewId);
+      myReview.value = null;
+      return true;
     }
+    return false;
   }
 
   Future<void> markReviewHelpful(String astrologerId, String reviewId) async {
@@ -227,7 +224,8 @@ class AstrologerReviewController extends BaseController {
             createdAt: review.createdAt,
             updatedAt: review.updatedAt,
             userDisplayInfo: review.userDisplayInfo,
-            helpfulCount: result['helpfulCount'] as int? ?? review.helpfulCount + 1,
+            helpfulCount:
+                result['helpfulCount'] as int? ?? review.helpfulCount + 1,
             reportedCount: review.reportedCount,
             status: review.status,
           );
@@ -239,6 +237,3 @@ class AstrologerReviewController extends BaseController {
     }
   }
 }
-
-
-

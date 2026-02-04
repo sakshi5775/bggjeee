@@ -68,7 +68,7 @@ dynamic returnException(Response response) {
 
 String _extractErrorMessage(Map<dynamic, dynamic> body, String defaultMessage) {
   String? extractedMessage;
-  
+
   // Try to extract message from various possible locations
   if (body['message'] != null) {
     final msg = body['message'];
@@ -132,37 +132,36 @@ String _extractErrorMessage(Map<dynamic, dynamic> body, String defaultMessage) {
 }
 
 class NetworkException implements Exception {
-  final dynamic _message;
-  final dynamic _prefix;
+  final dynamic message;
+  final dynamic prefix;
 
-  NetworkException([this._message, this._prefix]);
+  NetworkException([this.message, this.prefix]);
 
   @override
   String toString() {
-    return "$_prefix $_message";
+    return "${prefix ?? ''} ${message ?? ''}".trim();
   }
 }
 
 class FetchDataException extends NetworkException {
-  FetchDataException([String? message])
-    : super(message, "Error During Communication: ");
+  FetchDataException([String? message]) : super(message, "");
 }
 
 class BadRequestException extends NetworkException {
-  BadRequestException([message]) : super(message, "Error: ");
+  BadRequestException([message]) : super(message, "");
 }
 
 class UnauthorisedException extends NetworkException {
-  UnauthorisedException([message]) : super(message, "Error: ");
+  UnauthorisedException([message]) : super(message, "");
 }
 
 class AlreadyReportedException extends NetworkException {
   final String _message;
-  
-  AlreadyReportedException([String? message]) 
+
+  AlreadyReportedException([String? message])
     : _message = message ?? 'You have already reported this stream',
       super(message, "");
-  
+
   @override
   String toString() {
     return _message;

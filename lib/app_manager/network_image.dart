@@ -117,7 +117,8 @@ class NetworkImageWithLoader extends StatelessWidget {
   final String url;
   final double? height;
   final double? width;
-  final bool isCircular; // NEW FLAG
+  final bool isCircular;
+  final BoxFit? fit; // NEW
 
   const NetworkImageWithLoader({
     super.key,
@@ -125,6 +126,7 @@ class NetworkImageWithLoader extends StatelessWidget {
     this.height,
     this.width,
     this.isCircular = false,
+    this.fit, // NEW
   });
 
   @override
@@ -136,7 +138,7 @@ class NetworkImageWithLoader extends StatelessWidget {
       imageUrl: url,
       height: h.isFinite ? h : null,
       width: w.isFinite ? w : null,
-      fit: BoxFit.cover,
+      fit: fit ?? BoxFit.cover,
       httpHeaders: {'Accept': 'image/*'},
       placeholder: (context, url) =>
           const Center(child: CircularProgressIndicator(color: Colors.orange)),
@@ -151,8 +153,8 @@ class NetworkImageWithLoader extends StatelessWidget {
           child: const Icon(Icons.error),
         );
       },
-      memCacheWidth: w.isFinite ? w.toInt() : null,
-      memCacheHeight: h.isFinite ? h.toInt() : null,
+      // memCacheWidth: w.isFinite ? w.toInt() : null,
+      // memCacheHeight: h.isFinite ? h.toInt() : null,
     );
 
     if (isCircular) {

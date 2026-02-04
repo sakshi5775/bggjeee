@@ -3,12 +3,12 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/courses/controllers/courses_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/widgets/user_bottom_nav.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/digital_learning_banner_slider.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/key_course_modules_section.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/learning_features_section.dart';
@@ -35,15 +35,17 @@ class CoursesView extends BasePage<CoursesController> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        try {
-          final mainController = Get.find<UserMainController>();
-          mainController.selectedIndex.value = 0;
-        } catch (e) {
-          // Controller not found, ignore
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          try {
+            final mainController = Get.find<UserMainController>();
+            mainController.selectedIndex.value = 0;
+          } catch (e) {
+            // Controller not found, ignore
+          }
         }
-        return true;
       },
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -144,44 +146,6 @@ class CoursesView extends BasePage<CoursesController> {
     );
   }
 
-  Widget _buildSearchBar() {
-    return Container(
-      color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: const Color(0xFFE8E8E8), width: 1),
-        ),
-        child: TextField(
-          controller: controller.searchController,
-          decoration: InputDecoration(
-            hintText: 'Search Courses & Book',
-            hintStyle: AppTypography.body1.copyWith(
-              color: const Color(0xFF999999),
-            ),
-            prefixIcon: Icon(
-              Icons.search,
-              color: AppColors.primaryGradient.colors.first,
-              size: 20.w,
-            ),
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 12.h,
-            ),
-          ),
-          style: AppTypography.body1.copyWith(color: AppColors.textPrimary),
-          onSubmitted: (value) {
-            controller.searchQuery.value = value;
-            controller.loadCourses(refresh: true);
-          },
-        ),
-      ),
-    );
-  }
-
   Widget _buildLiveWebinarBanner() {
     return Obx(() {
       final webinar = controller.liveWebinar.value;
@@ -217,7 +181,7 @@ class CoursesView extends BasePage<CoursesController> {
             borderRadius: BorderRadius.circular(16.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.orange.withOpacity(0.3),
+                color: Colors.orange.withValues(alpha: 0.3),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -310,7 +274,7 @@ class CoursesView extends BasePage<CoursesController> {
                             vertical: 6.h,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8.r),
                           ),
                           child: AutoTranslateText(
@@ -355,90 +319,18 @@ class CoursesView extends BasePage<CoursesController> {
     });
   }
 
-  Widget _buildStatsCards() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Row(
-        children: [
-          Expanded(
-            child: Obx(
-              () => _buildStatCard(
-                icon: Icons.school,
-                value: controller.courses.isEmpty && controller.isLoading.value
-                    ? '0'
-                    : '${controller.courses.length}',
-                label: 'Courses',
-              ),
-            ),
-          ),
-          // SizedBox(width: 12.w),
-          // Expanded(
-          //   child: Obx(
-          //     () => _buildStatCard(
-          //       icon: Icons.menu_book,
-          //       value: '${controller.eBooksCount.value}',
-          //       label: 'E-Books',
-          //     ),
-          //   ),
-          // ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Obx(
-              () => _buildStatCard(
-                icon: Icons.emoji_events,
-                value: '${controller.studentsCount.value}',
-                label: 'Students',
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard({
-    required IconData icon,
-    required String value,
-    required String label,
-  }) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFAEAAF), // Cream
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: AppColors.templeGold, size: 32.w),
-          SizedBox(height: 8.h),
-          AutoTranslateText(
-            value,
-            style: AppTypography.h2.copyWith(
-              color: AppColors.textPrimary,
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 4.h),
-          AutoTranslateText(
-            label,
-            style: AppTypography.body2.copyWith(
-              color: AppColors.textSecondary,
-              fontSize: 12.sp,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildCoursesSection() {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 1. Digital Learning Banner Slider (Video/Image)
-          const DigitalLearningBannerSlider(),
+          Obx(() {
+            if (controller.learningBanners.isNotEmpty) {
+              return BannerCarouselWidget(banners: controller.learningBanners);
+            }
+            return const DigitalLearningBannerSlider();
+          }),
 
           // 2. Learning Features Section
           const LearningFeaturesSection(),
@@ -533,18 +425,5 @@ class CoursesView extends BasePage<CoursesController> {
         ],
       ),
     );
-  }
-
-  Widget _buildBottomNav() {
-    try {
-      final mainController = Get.find<UserMainController>();
-      return UserBottomNav(
-        onTap: (index) {
-          mainController.changePage(index);
-        },
-      );
-    } catch (e) {
-      return const SizedBox.shrink();
-    }
   }
 }

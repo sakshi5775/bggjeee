@@ -1,9 +1,7 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
 
 class DashaController extends BaseController {
@@ -16,50 +14,50 @@ class DashaController extends BaseController {
 
   // Form data
   final formData = Rxn<Map<String, dynamic>>();
-  
+
   // Dasha API data
   final dashaData = Rxn<Map<String, dynamic>>();
   final currentMahadashaData = Rxn<Map<String, dynamic>>();
   final mahadashaData = Rxn<Map<String, dynamic>>();
   final yoginiMainData = Rxn<Map<String, dynamic>>();
   final yoginiSubData = Rxn<Map<String, dynamic>>();
-  
+
   // Loading states
   final isLoadingCurrentMahadasha = false.obs;
   final isLoadingMahadasha = false.obs;
   final isLoadingYoginiMain = false.obs;
   final isLoadingYoginiSub = false.obs;
-  
+
   // Current tab index: 0 = DASHA, 1 = VIMSHOTTARI DASHA, 2 = MAHADASHA, 3 = CURRENT MAHADASHA, 4 = YOGINI DASHA
   final selectedTabIndex = 0.obs;
-  
+
   // PageController for swipeable tabs
   late PageController pageController;
-  
+
   // ScrollController for tabs
   final ScrollController tabsScrollController = ScrollController();
-  
+
   // Map to store GlobalKeys for each tab
   final Map<int, GlobalKey> tabKeys = {};
-  
+
   // Current navigation level: 'mahadasha', 'antardasha', 'paryantardasha', 'shookshamadasha', 'pranadasha'
   final currentLevel = 'mahadasha'.obs;
-  
+
   // Yogini Dasha navigation level: 'main', 'sub'
   final yoginiCurrentLevel = 'main'.obs;
-  
+
   // Selected item for navigation
   final selectedItemIndex = Rxn<int>();
-  
+
   // Track selected path through hierarchy (e.g., ['Me', 'Me', 'Me', 'Me', 'Me'])
   final selectedPath = <String>[].obs;
-  
+
   // Selected Yogini Main Dasha index
   final selectedYoginiMainIndex = Rxn<int>();
-  
+
   // Track selected path through Yogini hierarchy (e.g., ['Mangala', 'Mangala'])
   final yoginiSelectedPath = <String>[].obs;
-  
+
   // Service
   final _kundliService = KundliService();
 
@@ -70,14 +68,14 @@ class DashaController extends BaseController {
     pageController = PageController(initialPage: 0);
     _loadData();
   }
-  
+
   @override
   void onClose() {
     pageController.dispose();
     tabsScrollController.dispose();
     super.onClose();
   }
-  
+
   // Handle page change from swipe
   void onPageChanged(int index) {
     selectedTabIndex.value = index;
@@ -100,7 +98,7 @@ class DashaController extends BaseController {
         break;
     }
   }
-  
+
   // Navigate to specific tab (called from tab tap)
   void onTabSelected(int index) {
     if (pageController.hasClients) {
@@ -128,7 +126,7 @@ class DashaController extends BaseController {
 
     try {
       isLoading.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -137,7 +135,11 @@ class DashaController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Dasha');
         isLoading.value = false;
         return;
@@ -169,25 +171,30 @@ class DashaController extends BaseController {
   // Get current list based on level
   List<Map<String, dynamic>> getCurrentList() {
     if (dashaData.value == null) return [];
-    
+
     final response = dashaData.value!;
-    
+
     switch (currentLevel.value) {
       case 'mahadasha':
         final list = response['mahadasha'] as List<dynamic>?;
-        return list?.map((e) => Map<String, dynamic>.from(e as Map)).toList() ?? [];
+        return list?.map((e) => Map<String, dynamic>.from(e as Map)).toList() ??
+            [];
       case 'antardasha':
         final list = response['antardasha'] as List<dynamic>?;
-        return list?.map((e) => Map<String, dynamic>.from(e as Map)).toList() ?? [];
+        return list?.map((e) => Map<String, dynamic>.from(e as Map)).toList() ??
+            [];
       case 'paryantardasha':
         final list = response['paryantardasha'] as List<dynamic>?;
-        return list?.map((e) => Map<String, dynamic>.from(e as Map)).toList() ?? [];
+        return list?.map((e) => Map<String, dynamic>.from(e as Map)).toList() ??
+            [];
       case 'shookshamadasha':
         final list = response['Shookshamadasha'] as List<dynamic>?;
-        return list?.map((e) => Map<String, dynamic>.from(e as Map)).toList() ?? [];
+        return list?.map((e) => Map<String, dynamic>.from(e as Map)).toList() ??
+            [];
       case 'pranadasha':
         final list = response['Pranadasha'] as List<dynamic>?;
-        return list?.map((e) => Map<String, dynamic>.from(e as Map)).toList() ?? [];
+        return list?.map((e) => Map<String, dynamic>.from(e as Map)).toList() ??
+            [];
       default:
         return [];
     }
@@ -238,7 +245,7 @@ class DashaController extends BaseController {
         final item = currentList[index];
         final planetName = item['name'] as String? ?? '';
         final planetShort = getPlanetShortName(planetName);
-        
+
         // Add to path
         selectedPath.add(planetShort);
         selectedItemIndex.value = index;
@@ -282,7 +289,7 @@ class DashaController extends BaseController {
         Get.back();
     }
   }
-  
+
   // Get full path string (e.g., "Me/Me/Me/Me/Me")
   String getFullPath(String currentPlanetShort) {
     if (selectedPath.isEmpty) {
@@ -290,7 +297,7 @@ class DashaController extends BaseController {
     }
     return '${selectedPath.join('/')}/$currentPlanetShort';
   }
-  
+
   // Check if we can go back
   bool canGoBack() {
     return currentLevel.value != 'mahadasha';
@@ -301,15 +308,15 @@ class DashaController extends BaseController {
     try {
       // Try parsing date like "Wed Dec 14 2016"
       DateTime? date;
-      
+
       // Try different date formats
       final formats = [
-        'EEE MMM dd yyyy',  // "Wed Dec 14 2016"
+        'EEE MMM dd yyyy', // "Wed Dec 14 2016"
         'EEE, MMM dd yyyy', // "Wed, Dec 14 2016"
-        'MMM dd yyyy',      // "Dec 14 2016"
-        'dd/MM/yyyy',       // Already in correct format
+        'MMM dd yyyy', // "Dec 14 2016"
+        'dd/MM/yyyy', // Already in correct format
       ];
-      
+
       for (final format in formats) {
         try {
           date = DateFormat(format).parse(dateStr);
@@ -318,11 +325,11 @@ class DashaController extends BaseController {
           continue;
         }
       }
-      
+
       if (date != null) {
         return DateFormat('dd/MM/yyyy').format(date);
       }
-      
+
       return dateStr;
     } catch (e) {
       debugPrint('Error formatting date: $e');
@@ -365,7 +372,7 @@ class DashaController extends BaseController {
       pageController.jumpToPage(1);
     }
   }
-  
+
   // Navigate to DASHA tab
   void navigateToDashaTab() {
     selectedTabIndex.value = 0;
@@ -382,7 +389,7 @@ class DashaController extends BaseController {
       pageController.jumpToPage(0);
     }
   }
-  
+
   // Navigate to Mahadasha tab
   void navigateToMahadashaTab() {
     selectedTabIndex.value = 2;
@@ -394,7 +401,7 @@ class DashaController extends BaseController {
       pageController.jumpToPage(2);
     }
   }
-  
+
   // Navigate to Current Mahadasha tab
   void navigateToCurrentMahadashaTab() {
     selectedTabIndex.value = 3;
@@ -406,7 +413,7 @@ class DashaController extends BaseController {
       pageController.jumpToPage(3);
     }
   }
-  
+
   // Navigate to Yogini Dasha
   void navigateToYoginiDasha() {
     selectedTabIndex.value = 4; // Switch to YOGINI DASHA tab
@@ -426,18 +433,18 @@ class DashaController extends BaseController {
       pageController.jumpToPage(4);
     }
   }
-  
+
   // Get Yogini Main list
   List<Map<String, dynamic>> getYoginiMainList() {
     if (yoginiMainData.value == null) return [];
-    
+
     final response = yoginiMainData.value!['response'] as Map<String, dynamic>?;
     if (response == null) return [];
-    
+
     final dashaList = response['dasha_list'] as List<dynamic>? ?? [];
     final dashaEndDates = response['dasha_end_dates'] as List<dynamic>? ?? [];
     final dashaLordList = response['dasha_lord_list'] as List<dynamic>? ?? [];
-    
+
     final List<Map<String, dynamic>> result = [];
     for (int i = 0; i < dashaList.length; i++) {
       result.add({
@@ -448,44 +455,50 @@ class DashaController extends BaseController {
     }
     return result;
   }
-  
+
   // Get Yogini Sub list for selected main dasha
   List<Map<String, dynamic>> getYoginiSubList() {
-    if (yoginiSubData.value == null || selectedYoginiMainIndex.value == null) return [];
-    
+    if (yoginiSubData.value == null || selectedYoginiMainIndex.value == null)
+      return [];
+
     final response = yoginiSubData.value!['response'] as List<dynamic>?;
     if (response == null || response.isEmpty) return [];
-    
+
     final mainIndex = selectedYoginiMainIndex.value!;
     if (mainIndex >= response.length) return [];
-    
+
     final mainDashaItem = response[mainIndex] as Map<String, dynamic>;
-    final subDashaList = mainDashaItem['sub_dasha_list'] as List<dynamic>? ?? [];
-    final subDashaEndDates = mainDashaItem['sub_dasha_end_dates'] as List<dynamic>? ?? [];
-    
+    final subDashaList =
+        mainDashaItem['sub_dasha_list'] as List<dynamic>? ?? [];
+    final subDashaEndDates =
+        mainDashaItem['sub_dasha_end_dates'] as List<dynamic>? ?? [];
+
     final List<Map<String, dynamic>> result = [];
     for (int i = 0; i < subDashaList.length; i++) {
       result.add({
         'dasha': subDashaList[i].toString(),
-        'end_date': i < subDashaEndDates.length ? subDashaEndDates[i].toString() : '',
+        'end_date': i < subDashaEndDates.length
+            ? subDashaEndDates[i].toString()
+            : '',
       });
     }
     return result;
   }
-  
+
   // Get selected Yogini Main Dasha info
   Map<String, dynamic>? getSelectedYoginiMainInfo() {
-    if (yoginiSubData.value == null || selectedYoginiMainIndex.value == null) return null;
-    
+    if (yoginiSubData.value == null || selectedYoginiMainIndex.value == null)
+      return null;
+
     final response = yoginiSubData.value!['response'] as List<dynamic>?;
     if (response == null || response.isEmpty) return null;
-    
+
     final mainIndex = selectedYoginiMainIndex.value!;
     if (mainIndex >= response.length) return null;
-    
+
     return response[mainIndex] as Map<String, dynamic>;
   }
-  
+
   // Navigate to Yogini Sub level
   void onYoginiMainItemTap(int index) {
     final mainList = getYoginiMainList();
@@ -506,7 +519,7 @@ class DashaController extends BaseController {
       }
     }
   }
-  
+
   // Navigate back from Yogini Sub to Main
   void navigateYoginiBack() {
     if (yoginiCurrentLevel.value == 'sub') {
@@ -518,7 +531,7 @@ class DashaController extends BaseController {
       }
     }
   }
-  
+
   // Get full Yogini path string (e.g., "Mangala/Mangala")
   String getYoginiFullPath(String currentDasha) {
     if (yoginiSelectedPath.isEmpty) {
@@ -526,12 +539,12 @@ class DashaController extends BaseController {
     }
     return '${yoginiSelectedPath.join('/')}/$currentDasha';
   }
-  
+
   // Check if can go back in Yogini
   bool canGoBackYogini() {
     return yoginiCurrentLevel.value == 'sub';
   }
-  
+
   // Get Yogini level title
   String getYoginiLevelTitle() {
     if (yoginiCurrentLevel.value == 'main') {
@@ -552,7 +565,7 @@ class DashaController extends BaseController {
 
     try {
       isLoadingCurrentMahadasha.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -561,7 +574,11 @@ class DashaController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Current Mahadasha');
         isLoadingCurrentMahadasha.value = false;
         return;
@@ -599,7 +616,7 @@ class DashaController extends BaseController {
 
     try {
       isLoadingMahadasha.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -608,7 +625,11 @@ class DashaController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Mahadasha');
         isLoadingMahadasha.value = false;
         return;
@@ -646,7 +667,7 @@ class DashaController extends BaseController {
 
     try {
       isLoadingYoginiMain.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -655,7 +676,11 @@ class DashaController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Yogini Main');
         isLoadingYoginiMain.value = false;
         return;
@@ -693,7 +718,7 @@ class DashaController extends BaseController {
 
     try {
       isLoadingYoginiSub.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -702,7 +727,11 @@ class DashaController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Yogini Sub');
         isLoadingYoginiSub.value = false;
         return;

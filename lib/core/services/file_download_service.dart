@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:astrobharataiuser/core/services/permission_service.dart';
-import 'package:astrobharataiuser/utils/getx_snackbar.dart';
+import 'package:astrobharataiuser/utils/error_ui_utils.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 
 class FileDownloadService {
@@ -13,11 +12,8 @@ class FileDownloadService {
       // Request storage permission
       bool granted = await PermissionService.requestStoragePermission();
       if (!granted) {
-        Get.showSnackbar(
-          Ui.ErrorSnackBar(
-            title: "Permission Denied",
-            message: "Please grant storage permission to download files.",
-          ),
+        ErrorUiUtils.showWarningSnackbar(
+          "Please grant storage permission to download files.",
         );
         print("Permission not granted!");
         return;
@@ -60,22 +56,14 @@ class FileDownloadService {
       );
 
       // Show success message
-      Get.showSnackbar(
-        Ui.SuccessSnackBar(
-          title: "Download Started",
-          message: "File download has started successfully",
-        ),
+      ErrorUiUtils.showSuccessSnackbar(
+        "File download has started successfully",
       );
 
       print("✅ Download started with Task ID: $taskId");
     } catch (e) {
       // Show error message
-      Get.showSnackbar(
-        Ui.ErrorSnackBar(
-          title: "Download Failed",
-          message: "File download failed",
-        ),
-      );
+      ErrorUiUtils.showWarningSnackbar("File download failed");
       print("Error downloading file: $e");
     }
   }

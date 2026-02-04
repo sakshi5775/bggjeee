@@ -38,7 +38,7 @@ class OurServicesSection extends BasePage<UserDashboardController> {
     ('Life\nPredictions', AppConstant.lifePredictions),
     ('Dosh', AppConstant.dosh),
     ('Dasha', AppConstant.dasha),
-    ('KP\nAstrology', AppConstant.kPAstrology),
+    ('KP\nAstrology', AppConstant.kpN),
     ('Lal\nKitab', AppConstant.lalKitab),
   ];
 

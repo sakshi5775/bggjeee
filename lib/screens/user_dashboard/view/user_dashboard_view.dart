@@ -6,7 +6,6 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
-import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
 import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/AnimatedChakra.dart';
@@ -46,6 +45,7 @@ import '../widgets/what_else_widget.dart';
 import '../widgets/year_tab_widget.dart';
 import '../widgets/banner_carousel_widget.dart';
 import '../widgets/our_services_carousel_widget.dart';
+import '../widgets/floating_astrologer_button.dart';
 // import '../widgets/reports_tab_widget.dart';
 import '../widgets/horoscope_tab_widget.dart';
 import '../widgets/daily_astrologers_widget.dart';
@@ -155,14 +155,13 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   ),
                   Positioned(
                     right: 1.w,
-                    bottom: 60.h,
+                    bottom: 10.h,
                     child: _buildCircularChatButton(),
                   ),
                   Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 3,
-                    child: Container(child: _buildAstrologerActionsRow()),
+                    left: 20.w,
+                    bottom: 10.h,
+                    child: const FloatingAstrologerButton(),
                   ),
                 ],
               ),
@@ -491,6 +490,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           children: [
             _buildKundliTabs(context),
             Spacing.h(8),
+            // Banner removed as per request to fix layout issue and UI requirement
             Stack(
               clipBehavior: Clip.none,
               children: [
@@ -633,7 +633,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     {
       'label': 'KP Astrology',
       'route': AppRoutes.kpSystem,
-      'icon': AppConstant.kPAstrology,
+      'icon': AppConstant.kpN,
     },
     {
       'label': 'Numerology',
@@ -3207,6 +3207,21 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                             ),
                     ),
                   ),
+                  // Green dot indicator for online astrologers
+                  if (astrologer.isOnline)
+                    Positioned(
+                      bottom: 0,
+                      right: 22.w,
+                      child: Container(
+                        width: 16.w,
+                        height: 16.w,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF4CAF50), // Green
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                      ),
+                    ),
                   // Experience Badge at bottom-center
                   Positioned(
                     bottom: 0,
@@ -3469,95 +3484,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           height: 70.h,
           errorBuilder: (_, __, ___) =>
               Icon(Icons.chat_bubble_outline, color: Colors.white, size: 28.w),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAstrologerActionsRow() {
-    return Row(
-      children: [
-        Expanded(
-          child: _goldPillButton(
-            icon: 'assets/icons/chat_with_astro.png',
-            label: 'Chat with Astrologer',
-            iconColor: AppColors.gradientBackground.colors.first,
-            animateIcon: true,
-            onTap: () => Get.to(() => const AstrologyServicesView()),
-          ),
-        ),
-        Spacing.w(12),
-        Expanded(
-          child: _goldPillButton(
-            icon: 'assets/icons/call_with_astro.png',
-            label: 'Call with Astrologer',
-            iconColor: Colors.green,
-            animateIcon: true,
-            onTap: () => Get.to(() => const AstrologyServicesView()),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _goldPillButton({
-    required String icon,
-    required String label,
-    required VoidCallback onTap,
-    Color? iconColor,
-    bool animateIcon = false,
-  }) {
-    final color = iconColor ?? Colors.white;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        constraints: BoxConstraints(minHeight: 52.h),
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-        decoration: BoxDecoration(
-          gradient: AppColors.orangeGradient,
-          borderRadius: BorderRadius.circular(32.r),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (animateIcon)
-              _RingingIcon(
-                iconPath: icon,
-                color: color,
-                width: 15.w,
-                height: 15.h,
-              )
-            else
-              Image.asset(
-                icon,
-                width: 20.w,
-                height: 20.h,
-                color: color,
-                colorBlendMode: BlendMode.srcIn,
-              ),
-            Spacing.w(2),
-            Flexible(
-              child: AutoTranslateText(
-                label,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.clip,
-                softWrap: true,
-                style: MyTextTheme.mediumBCB
-                    .copyWith(
-                      color: "#ffffff".toColor(),
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'Poppins',
-                      fontSize: 12.sp,
-                      height: 1.2,
-                    )
-                    .merge(
-                      AppTypography.body2.copyWith(fontWeight: FontWeight.w900),
-                    ),
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -6034,68 +5960,6 @@ class _SliderStripWidgetState extends State<_SliderStripWidget> {
           }),
         ),
       ),
-    );
-  }
-}
-
-/// Ringing/moving animation for the call icon (scale pulse like a phone ringing).
-class _RingingIcon extends StatefulWidget {
-  final String iconPath;
-  final Color color;
-  final double width;
-  final double height;
-
-  const _RingingIcon({
-    required this.iconPath,
-    required this.color,
-    required this.width,
-    required this.height,
-  });
-
-  @override
-  State<_RingingIcon> createState() => _RingingIconState();
-}
-
-class _RingingIconState extends State<_RingingIcon>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    )..repeat(reverse: true);
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.25,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: Image.asset(
-            widget.iconPath,
-            width: widget.width,
-            height: widget.height,
-            color: widget.color,
-            colorBlendMode: BlendMode.srcIn,
-          ),
-        );
-      },
     );
   }
 }

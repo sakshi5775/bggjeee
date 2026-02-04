@@ -77,8 +77,8 @@ android {
             enableSplit = true
         }
         density {
-            // Disable density splitting for app bundles (Play Store handles this automatically)
-            enableSplit = false
+            // Enable density splitting for app bundles (Play Store handles this automatically)
+            enableSplit = true
         }
         abi {
             // Enable ABI splitting for app bundles to reduce size per architecture

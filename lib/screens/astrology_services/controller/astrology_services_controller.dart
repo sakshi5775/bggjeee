@@ -5,6 +5,8 @@ import 'package:astrobharataiuser/data_model/category_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/live_stream_service.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
+import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,36 +14,45 @@ class AstrologyServicesController extends GetxController {
   final AstrologerService _astrologerService = AstrologerService();
   final LiveStreamService _liveStreamService = LiveStreamService();
   final EcommerceService _ecommerceService = EcommerceService();
-// Categories data - matching the image exactly
+  final BannerService _bannerService = BannerService();
+  // Categories data - matching the image exactly
   final List<Map<String, dynamic>> categories = [
     {
       'name': 'Daily Horoscope',
-      'icon': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/DailyHoroscope.png',
+      'icon':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/DailyHoroscope.png',
     },
     {
       'name': 'Kundli Analysis',
-      'icon': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/kundali.jpeg',
+      'icon':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/kundali.jpeg',
     },
     {
       'name': 'Compatibility',
-      'icon': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/Compatibility.png',
+      'icon':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/Compatibility.png',
     },
     {
       'name': 'Tarot Reading',
-      'icon': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/TarotReading.png',
+      'icon':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/TarotReading.png',
     },
     {
       'name': 'Numerology',
-      'icon': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/num.jpeg',
+      'icon':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/num.jpeg',
     },
     {
       'name': 'Remedies',
-      'icon': 'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/Remediess.png',
+      'icon':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/Remediess.png',
     },
   ];
   // Reactive variables
   final RxList<AstrologerModel> allAstrologers = <AstrologerModel>[].obs;
+  final RxList<BannerItem> serviceBanners = <BannerItem>[].obs;
   final RxBool isLoading = false.obs;
+  final RxBool isLoadingBanners = false.obs;
   final RxString errorMessage = ''.obs;
 
   // Filter variables
@@ -51,9 +62,11 @@ class AstrologyServicesController extends GetxController {
   final RxDouble maxPrice = 0.0.obs;
   final RxString selectedAvailability = ''.obs;
   final RxInt minExperience = 0.obs;
-  final RxString sortBy = 'rating'.obs; // rating, experience, price_low, price_high, consultations
+  final RxString sortBy =
+      'rating'.obs; // rating, experience, price_low, price_high, consultations
   final RxString searchQuery = ''.obs;
-  final RxString selectedAstrologerCategory = ''.obs; // KID_ASTROLOGER, CELEBRITY_ASTROLOGER, NORMAL
+  final RxString selectedAstrologerCategory =
+      ''.obs; // KID_ASTROLOGER, CELEBRITY_ASTROLOGER, NORMAL
 
   // Pagination
   final RxInt currentPage = 1.obs;
@@ -87,7 +100,9 @@ class AstrologyServicesController extends GetxController {
       AstrologerModel? matchingAstrologer;
       try {
         matchingAstrologer = allAstrologers.firstWhere(
-          (a) => a.astrologerId == stream.astrologerId || a.id == stream.astrologerId,
+          (a) =>
+              a.astrologerId == stream.astrologerId ||
+              a.id == stream.astrologerId,
         );
       } catch (e) {
         // No matching astrologer found
@@ -95,7 +110,9 @@ class AstrologyServicesController extends GetxController {
       }
 
       // Get specialization from matching astrologer or use default
-      final specialization = matchingAstrologer != null && matchingAstrologer.specializations.isNotEmpty
+      final specialization =
+          matchingAstrologer != null &&
+              matchingAstrologer.specializations.isNotEmpty
           ? matchingAstrologer.specializations.first
           : 'Astrology';
 
@@ -108,14 +125,23 @@ class AstrologyServicesController extends GetxController {
       String priceText = 'N/A';
       if (matchingAstrologer != null) {
         List<String> prices = [];
-        if (matchingAstrologer.chatPricePerMin != null && matchingAstrologer.chatPricePerMin! > 0) {
-          prices.add('Chat: ₹${matchingAstrologer.chatPricePerMin!.toStringAsFixed(0)}/min');
+        if (matchingAstrologer.chatPricePerMin != null &&
+            matchingAstrologer.chatPricePerMin! > 0) {
+          prices.add(
+            'Chat: ₹${matchingAstrologer.chatPricePerMin!.toStringAsFixed(0)}/min',
+          );
         }
-        if (matchingAstrologer.voicePricePerMin != null && matchingAstrologer.voicePricePerMin! > 0) {
-          prices.add('Call: ₹${matchingAstrologer.voicePricePerMin!.toStringAsFixed(0)}/min');
+        if (matchingAstrologer.voicePricePerMin != null &&
+            matchingAstrologer.voicePricePerMin! > 0) {
+          prices.add(
+            'Call: ₹${matchingAstrologer.voicePricePerMin!.toStringAsFixed(0)}/min',
+          );
         }
-        if (matchingAstrologer.videoPricePerMin != null && matchingAstrologer.videoPricePerMin! > 0) {
-          prices.add('Video: ₹${matchingAstrologer.videoPricePerMin!.toStringAsFixed(0)}/min');
+        if (matchingAstrologer.videoPricePerMin != null &&
+            matchingAstrologer.videoPricePerMin! > 0) {
+          prices.add(
+            'Video: ₹${matchingAstrologer.videoPricePerMin!.toStringAsFixed(0)}/min',
+          );
         }
         if (prices.isNotEmpty) {
           priceText = prices.join(' • ');
@@ -123,14 +149,17 @@ class AstrologyServicesController extends GetxController {
       }
 
       // Get profile picture from matching astrologer or use default
-      final image = matchingAstrologer?.profilePicture ?? 'assets/app/astrology.png';
+      final image =
+          matchingAstrologer?.profilePicture ?? 'assets/app/astrology.png';
 
       // Get name from matching astrologer or fall back to stream name
       final name = matchingAstrologer != null
-          ? (matchingAstrologer.displayName.isNotEmpty 
-              ? matchingAstrologer.displayName 
-              : matchingAstrologer.name)
-          : (stream.astrologerName != 'Unknown' ? stream.astrologerName : 'Astrologer');
+          ? (matchingAstrologer.displayName.isNotEmpty
+                ? matchingAstrologer.displayName
+                : matchingAstrologer.name)
+          : (stream.astrologerName != 'Unknown'
+                ? stream.astrologerName
+                : 'Astrologer');
 
       return {
         'streamId': stream.streamId,
@@ -159,7 +188,10 @@ class AstrologyServicesController extends GetxController {
   }
 
   // Convert AstrologerModel to Map for view compatibility
-  Map<String, dynamic> _astrologerToMap(AstrologerModel astrologer, {bool isLive = false}) {
+  Map<String, dynamic> _astrologerToMap(
+    AstrologerModel astrologer, {
+    bool isLive = false,
+  }) {
     // Get first specialization or join them
     final specialization = astrologer.specializations.isNotEmpty
         ? astrologer.specializations.first
@@ -167,9 +199,11 @@ class AstrologyServicesController extends GetxController {
 
     // Format price - prefer voice price, then video, then chat
     String priceText = 'N/A';
-    if (astrologer.voicePricePerMin != null && astrologer.voicePricePerMin! > 0) {
+    if (astrologer.voicePricePerMin != null &&
+        astrologer.voicePricePerMin! > 0) {
       priceText = '₹${astrologer.voicePricePerMin!.toStringAsFixed(0)}/min';
-    } else if (astrologer.videoPricePerMin != null && astrologer.videoPricePerMin! > 0) {
+    } else if (astrologer.videoPricePerMin != null &&
+        astrologer.videoPricePerMin! > 0) {
       priceText = '₹${astrologer.videoPricePerMin!.toStringAsFixed(0)}/min';
     } else if (astrologer.chatPrice != null && astrologer.chatPrice! > 0) {
       priceText = '₹${astrologer.chatPrice!.toStringAsFixed(0)}/msg';
@@ -202,6 +236,7 @@ class AstrologyServicesController extends GetxController {
     loadAstrologers();
     loadLiveStreams();
     loadRemedyCategories();
+    loadBanners();
   }
 
   /// Load remedy categories for Remedies section
@@ -238,7 +273,7 @@ class AstrologyServicesController extends GetxController {
       isLoadingRemedyCategories.value = false;
     }
   }
-  
+
   Future<void> loadLiveStreams() async {
     isLoadingLiveStreams.value = true;
     try {
@@ -254,6 +289,21 @@ class AstrologyServicesController extends GetxController {
       // Handle error silently or show message
     } finally {
       isLoadingLiveStreams.value = false;
+    }
+  }
+
+  Future<void> loadBanners() async {
+    isLoadingBanners.value = true;
+    try {
+      var list = await _bannerService.getBannersByCategory('appastrologer');
+      if (list.isEmpty) {
+        list = await _bannerService.getBannersByCategory('astrologer');
+      }
+      serviceBanners.assignAll(list);
+    } catch (e) {
+      debugPrint('Error loading service banners: $e');
+    } finally {
+      isLoadingBanners.value = false;
     }
   }
 
@@ -276,15 +326,25 @@ class AstrologyServicesController extends GetxController {
       final response = await _astrologerService.getAstrologers(
         page: currentPage.value,
         limit: limit.value,
-        specialization: selectedSpecialization.value.trim().isEmpty ? null : selectedSpecialization.value.trim(),
-        language: selectedLanguage.value.trim().isEmpty ? null : selectedLanguage.value.trim(),
+        specialization: selectedSpecialization.value.trim().isEmpty
+            ? null
+            : selectedSpecialization.value.trim(),
+        language: selectedLanguage.value.trim().isEmpty
+            ? null
+            : selectedLanguage.value.trim(),
         minRating: minRating.value > 0 ? minRating.value : null,
         maxPrice: maxPrice.value > 0 ? maxPrice.value : null,
-        availability: selectedAvailability.value.trim().isEmpty ? null : selectedAvailability.value.trim(),
+        availability: selectedAvailability.value.trim().isEmpty
+            ? null
+            : selectedAvailability.value.trim(),
         experience: minExperience.value > 0 ? minExperience.value : null,
         sortBy: sortBy.value.trim().isEmpty ? 'rating' : sortBy.value.trim(),
-        search: searchQuery.value.trim().isEmpty ? null : searchQuery.value.trim(),
-        astrologerCategory: selectedAstrologerCategory.value.trim().isEmpty ? null : selectedAstrologerCategory.value.trim(),
+        search: searchQuery.value.trim().isEmpty
+            ? null
+            : searchQuery.value.trim(),
+        astrologerCategory: selectedAstrologerCategory.value.trim().isEmpty
+            ? null
+            : selectedAstrologerCategory.value.trim(),
       );
 
       if (response != null) {
@@ -310,10 +370,7 @@ class AstrologyServicesController extends GetxController {
   /// Pull-to-refresh handler for the Astrology & Guidance screen
   Future<void> refresh() async {
     searchDebounceTimer?.cancel();
-    await Future.wait([
-      loadAstrologers(refresh: true),
-      loadLiveStreams(),
-    ]);
+    await Future.wait([loadAstrologers(refresh: true), loadLiveStreams()]);
   }
 
   Future<void> loadMore() async {
@@ -328,12 +385,9 @@ class AstrologyServicesController extends GetxController {
 
   void _applyFilters() {
     _filterDebounceTimer?.cancel();
-    _filterDebounceTimer = Timer(
-      const Duration(milliseconds: 300),
-      () {
-        loadAstrologers(refresh: true);
-      },
-    );
+    _filterDebounceTimer = Timer(const Duration(milliseconds: 300), () {
+      loadAstrologers(refresh: true);
+    });
   }
 
   /// Apply filters immediately (used when Apply button is pressed)
@@ -415,4 +469,3 @@ class AstrologyServicesController extends GetxController {
     super.onClose();
   }
 }
-

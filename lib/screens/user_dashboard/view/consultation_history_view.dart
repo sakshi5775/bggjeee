@@ -13,6 +13,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 
 import '../../../core/routes/app_routes.dart';
 
@@ -100,6 +101,7 @@ class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        drawer: UserDashboardView.buildDrawer(context),
         body: Column(
           children: [
             CommonHeader(

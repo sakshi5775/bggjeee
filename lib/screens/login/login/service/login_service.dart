@@ -9,32 +9,45 @@ class LoginService with ApiHelperMixin {
   final ApiRepository _apiRepository = Get.find();
 
   Future<LoginModel?> login(String identifier, String password) async {
-    try {
-      final response = await _apiRepository.postApi(
-        EndPoints.login,
-        {
-          'identifier': identifier,
-          'password': password,
-        },
-        useAuthHeader: false,
-      );
+    final response = await _apiRepository.postApi(EndPoints.login, {
+      'identifier': identifier,
+      'password': password,
+    }, useAuthHeader: false);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final loginModel = LoginModel.fromJson(response.body['data']);
-        return loginModel;
-      } else {
-        showErrorMessage(
-          title: "Login Failed",
-          message: "Invalid credentials. Please try again.",
-        );
-        return null;
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.body != null && response.body['data'] != null) {
+        return LoginModel.fromJson(response.body['data']);
       }
-    } catch (e) {
-      showErrorMessage(
-        title: "Error",
-        message: "An error occurred during login. Please try again.",
-      );
-      return null;
     }
+
+    throw response.body?['message']?.toString() ??
+        'Invalid credentials. Please try again.';
+  }
+
+  /// Send OTP to phone or email
+  Future<bool> sendOtp({String? phone, String? email}) async {
+    final Map<String, dynamic> body = {};
+    if (phone != null && phone.isNotEmpty) {
+      body['phone'] = phone;
+    }
+    if (email != null && email.isNotEmpty) {
+      body['email'] = email;
+    }
+
+    if (body.isEmpty) {
+      throw "Please provide either phone number or email.";
+    }
+
+    final response = await _apiRepository.postApi(
+      EndPoints.sendOtp,
+      body,
+      useAuthHeader: false,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    }
+
+    throw response.body?['message']?.toString() ?? 'Failed to send OTP';
   }
 }

@@ -37,17 +37,21 @@ class AstrologerDetailController extends GetxController {
       Get.back();
       return;
     }
-    
+
     // Initialize review controller
-    reviewController = Get.put(AstrologerReviewController(), tag: astrologer.astrologerId, permanent: false);
+    reviewController = Get.put(
+      AstrologerReviewController(),
+      tag: astrologer.astrologerId,
+      permanent: false,
+    );
     // Load reviews and my review
     reviewController.loadReviews(astrologer.astrologerId);
     reviewController.loadMyReview(astrologer.astrologerId);
-    
+
     // Load follow status and follower count
     loadFollowStatus();
     loadFollowersCount();
-    
+
     // Check if review prompt should be shown
     if (args is Map<String, dynamic> && args['showReviewPrompt'] == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -67,18 +71,18 @@ class AstrologerDetailController extends GetxController {
                     Expanded(
                       child: AutoTranslateText(
                         'Rate Your Experience',
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: const Color(0xFF5F2221),
-                        ).merge(AppTypography.h2),
+                        style: MyTextTheme.mediumBCB
+                            .copyWith(color: const Color(0xFF5F2221))
+                            .merge(AppTypography.h2),
                       ),
                     ),
                   ],
                 ),
                 content: AutoTranslateText(
                   'Would you like to rate your experience with ${astrologer.displayName}?',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: const Color(0xFF666666),
-                  ).merge(AppTypography.body1),
+                  style: MyTextTheme.smallBCN
+                      .copyWith(color: const Color(0xFF666666))
+                      .merge(AppTypography.body1),
                 ),
                 actions: [
                   TextButton(
@@ -98,18 +102,23 @@ class AstrologerDetailController extends GetxController {
                         // Fetch current follow status before showing dialog
                         bool currentFollowing = isFollowing.value;
                         try {
-                          final status = await _astrologerService.getFollowStatus(astrologer.astrologerId);
+                          final status = await _astrologerService
+                              .getFollowStatus(astrologer.astrologerId);
                           currentFollowing = status?['isFollowing'] ?? false;
                         } catch (e) {
                           // Use current value if fetch fails
-                          if (kDebugMode) print('Error fetching follow status for review dialog: $e');
+                          if (kDebugMode)
+                            print(
+                              'Error fetching follow status for review dialog: $e',
+                            );
                         }
-                        
+
                         AstrologerReviewDialog.show(
                           context: Get.context!,
                           astrologerId: astrologer.astrologerId,
                           astrologer: astrologer,
-                          serviceType: args['serviceType'] as String? ?? 'VIDEO',
+                          serviceType:
+                              args['serviceType'] as String? ?? 'VIDEO',
                           isFollowing: currentFollowing,
                           onFollow: () async {
                             await toggleFollow();
@@ -142,33 +151,46 @@ class AstrologerDetailController extends GetxController {
   // Helper methods - Get all prices formatted
   String getPrice() {
     List<String> prices = [];
-    
+
     if (astrologer.chatPricePerMin != null && astrologer.chatPricePerMin! > 0) {
-      prices.add('Chat: ₹${astrologer.chatPricePerMin!.toStringAsFixed(0)}/min');
+      prices.add(
+        'Chat: ₹${astrologer.chatPricePerMin!.toStringAsFixed(0)}/min',
+      );
     }
-    if (astrologer.voicePricePerMin != null && astrologer.voicePricePerMin! > 0) {
-      prices.add('Call: ₹${astrologer.voicePricePerMin!.toStringAsFixed(0)}/min');
+    if (astrologer.voicePricePerMin != null &&
+        astrologer.voicePricePerMin! > 0) {
+      prices.add(
+        'Call: ₹${astrologer.voicePricePerMin!.toStringAsFixed(0)}/min',
+      );
     }
-    if (astrologer.videoPricePerMin != null && astrologer.videoPricePerMin! > 0) {
-      prices.add('Video: ₹${astrologer.videoPricePerMin!.toStringAsFixed(0)}/min');
+    if (astrologer.videoPricePerMin != null &&
+        astrologer.videoPricePerMin! > 0) {
+      prices.add(
+        'Video: ₹${astrologer.videoPricePerMin!.toStringAsFixed(0)}/min',
+      );
     }
-    
+
     if (prices.isEmpty) {
       return 'N/A';
     }
     return prices.join(' • ');
   }
-  
+
   // Get individual prices for detailed display
   Map<String, String?> getDetailedPrices() {
     return {
-      'chat': astrologer.chatPricePerMin != null && astrologer.chatPricePerMin! > 0
+      'chat':
+          astrologer.chatPricePerMin != null && astrologer.chatPricePerMin! > 0
           ? '₹${astrologer.chatPricePerMin!.toStringAsFixed(0)}/min'
           : null,
-      'voice': astrologer.voicePricePerMin != null && astrologer.voicePricePerMin! > 0
+      'voice':
+          astrologer.voicePricePerMin != null &&
+              astrologer.voicePricePerMin! > 0
           ? '₹${astrologer.voicePricePerMin!.toStringAsFixed(0)}/min'
           : null,
-      'video': astrologer.videoPricePerMin != null && astrologer.videoPricePerMin! > 0
+      'video':
+          astrologer.videoPricePerMin != null &&
+              astrologer.videoPricePerMin! > 0
           ? '₹${astrologer.videoPricePerMin!.toStringAsFixed(0)}/min'
           : null,
     };
@@ -198,7 +220,9 @@ class AstrologerDetailController extends GetxController {
   // Load follow status
   Future<void> loadFollowStatus() async {
     try {
-      final status = await _astrologerService.getFollowStatus(astrologer.astrologerId);
+      final status = await _astrologerService.getFollowStatus(
+        astrologer.astrologerId,
+      );
       if (status != null) {
         isFollowing.value = status['isFollowing'] as bool? ?? false;
       }
@@ -210,7 +234,9 @@ class AstrologerDetailController extends GetxController {
   // Load followers count
   Future<void> loadFollowersCount() async {
     try {
-      final count = await _astrologerService.getFollowersCount(astrologer.astrologerId);
+      final count = await _astrologerService.getFollowersCount(
+        astrologer.astrologerId,
+      );
       if (count != null) {
         followerCount.value = count;
       }
@@ -228,26 +254,31 @@ class AstrologerDetailController extends GetxController {
       isTogglingFollow.value = true;
       final result = currentState
           ? await _astrologerService.unfollowAstrologer(astrologer.astrologerId)
-          : await _astrologerService.followAstrologer(astrologer.astrologerId, source: 'PROFILE');
+          : await _astrologerService.followAstrologer(
+              astrologer.astrologerId,
+              source: 'PROFILE',
+            );
 
       if (result['success'] == true) {
         // Update follow state
         isFollowing.value = !currentState;
-        
+
         // Update follower count
         final newFollowerCount = result['followerCount'] as int?;
         if (newFollowerCount != null) {
           followerCount.value = newFollowerCount;
         } else {
           // Fallback: increment/decrement locally
-          followerCount.value = currentState 
+          followerCount.value = currentState
               ? (followerCount.value - 1).clamp(0, double.infinity).toInt()
               : followerCount.value + 1;
         }
 
         Get.snackbar(
           'Success',
-          currentState ? 'Unfollowed ${astrologer.displayName}' : 'Following ${astrologer.displayName}',
+          currentState
+              ? 'Unfollowed ${astrologer.displayName}'
+              : 'Following ${astrologer.displayName}',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -286,6 +317,9 @@ class AstrologerDetailController extends GetxController {
   Future<void> initiateVideoCall() async {
     await CallInitiationHelper.initiateVideoCall(astrologer);
   }
+
+  /// Initiate chat directly (bypasses booking screen)
+  Future<void> initiateChat() async {
+    await CallInitiationHelper.initiateChat(astrologer);
+  }
 }
-
-

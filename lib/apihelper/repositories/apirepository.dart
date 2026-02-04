@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-import '../api_provider/api_provider.dart';
+import 'package:astrobharataiuser/apihelper/api_provider/api_provider.dart';
 
 class ApiRepository {
   final ApiClient apiClient;
@@ -27,8 +27,11 @@ class ApiRepository {
   }
 
   /// Normal POST API
-  Future<Response> postApi(String endPoint, dynamic body,
-      {bool useAuthHeader = true}) async {
+  Future<Response> postApi(
+    String endPoint,
+    dynamic body, {
+    bool useAuthHeader = true,
+  }) async {
     return await apiClient.postApi(
       endPoint,
       body,
@@ -37,8 +40,11 @@ class ApiRepository {
   }
 
   /// DELETE API
-  Future<Response> deleteReq(String endPoint,
-      {dynamic query, bool useAuthHeader = true}) async {
+  Future<Response> deleteReq(
+    String endPoint, {
+    dynamic query,
+    bool useAuthHeader = true,
+  }) async {
     return await apiClient.deleteRequest(
       endPoint,
       query,
@@ -47,8 +53,12 @@ class ApiRepository {
   }
 
   /// PUT API
-  Future<Response> putApiCall(String endPoint, dynamic body,
-      {Map<String, dynamic>? query, bool useAuthHeader = true}) async {
+  Future<Response> putApiCall(
+    String endPoint,
+    dynamic body, {
+    Map<String, dynamic>? query,
+    bool useAuthHeader = true,
+  }) async {
     return await apiClient.putApi(
       endPoint,
       body,

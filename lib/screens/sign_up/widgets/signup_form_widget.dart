@@ -56,9 +56,7 @@ class SignUpFormWidget extends StatelessWidget {
           Spacing.h(8),
           AutoTranslateText(
             'Join us to get started',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: AppColors.saffron,
-            ),
+            style: MyTextTheme.mediumBCN.copyWith(color: AppColors.saffron),
             textAlign: TextAlign.center,
           ),
           Spacing.h(32),
@@ -121,57 +119,55 @@ class SignUpFormWidget extends StatelessWidget {
           Spacing.h(32),
 
           // Sign Up Button (matching login page style)
-          Obx(
-            () {
-              final isLoading = controller.isLoading.value;
-              return GestureDetector(
-                onTap: isLoading ? null : controller.signUp,
-                child: Container(
-                  height: 52,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    gradient: const LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0xFFF38B3B), // light orange
-                        Color(0xFFDD2914), // deep orange/red
-                      ],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.orange.withOpacity(0.45),
-                        blurRadius: 18,
-                        offset: const Offset(0, 8),
-                      ),
+          Obx(() {
+            final isLoading = controller.isLoading.value;
+            return GestureDetector(
+              onTap: isLoading ? null : controller.signUp,
+              child: Container(
+                height: 52,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  gradient: const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFFF38B3B), // light orange
+                      Color(0xFFDD2914), // deep orange/red
                     ],
                   ),
-                  child: Center(
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 22,
-                            width: 22,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
-                              ),
-                            ),
-                          )
-                        : const Text(
-                            "Create Account",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.orange.withValues(alpha: 0.45),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: isLoading
+                      ? const SizedBox(
+                          height: 22,
+                          width: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
                             ),
                           ),
-                  ),
+                        )
+                      : const Text(
+                          "Create Account",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          }),
 
           Spacing.h(20),
 

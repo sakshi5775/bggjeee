@@ -1,10 +1,8 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/all_astrologers_controller.dart';
-import 'package:astrobharataiuser/screens/astrology_services/controller/booking_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +11,7 @@ import 'package:get/get.dart';
 
 import '../../../theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
 
 class AllAstrologersView extends StatelessWidget {
   final String? initialFilter;
@@ -118,33 +117,57 @@ class AllAstrologersView extends StatelessWidget {
                     child: RefreshIndicator(
                       onRefresh: controller.refresh,
                       color: const Color(0xFFDFB343),
-                      child: ListView.builder(
+                      child: CustomScrollView(
                         primary: !hideHeader,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 16.h,
-                        ),
-                        itemCount:
-                            controller.astrologers.length +
-                            (controller.hasMoreData.value ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index == controller.astrologers.length) {
-                            return const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: CircularProgressIndicator(
-                                  color: Color(0xFFDFB343),
-                                ),
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        slivers: [
+                          SliverPadding(
+                            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
+                            sliver: SliverToBoxAdapter(
+                              child: Obx(() {
+                                if (controller.astrologerBanners.isNotEmpty) {
+                                  return Padding(
+                                    padding: EdgeInsets.only(bottom: 16.h),
+                                    child: BannerCarouselWidget(
+                                      banners: controller.astrologerBanners,
+                                    ),
+                                  );
+                                }
+                                return const SizedBox.shrink();
+                              }),
+                            ),
+                          ),
+                          SliverPadding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            sliver: SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) {
+                                  if (index == controller.astrologers.length) {
+                                    return const Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(16.0),
+                                        child: CircularProgressIndicator(
+                                          color: Color(0xFFDFB343),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  final astrologer =
+                                      controller.astrologers[index];
+                                  return _buildAstrologerCard(
+                                    astrologer,
+                                    controller,
+                                    isFirst: index == 0,
+                                  );
+                                },
+                                childCount:
+                                    controller.astrologers.length +
+                                    (controller.hasMoreData.value ? 1 : 0),
                               ),
-                            );
-                          }
-                          final astrologer = controller.astrologers[index];
-                          return _buildAstrologerCard(
-                            astrologer,
-                            controller,
-                            isFirst: index == 0,
-                          );
-                        },
+                            ),
+                          ),
+                          SliverPadding(padding: EdgeInsets.only(bottom: 16.h)),
+                        ],
                       ),
                     ),
                   );
@@ -507,13 +530,7 @@ class AllAstrologersView extends StatelessWidget {
                             color: Colors.transparent,
                             child: InkWell(
                               onTap: () {
-                                Get.toNamed(
-                                  AppRoutes.booking,
-                                  arguments: {
-                                    'astrologer': astrologer,
-                                    'callType': CallType.chat,
-                                  },
-                                );
+                                controller.initiateChat(astrologer);
                               },
                               borderRadius: BorderRadius.circular(6.r),
                               child: Row(
@@ -559,13 +576,7 @@ class AllAstrologersView extends StatelessWidget {
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: () {
-                              Get.toNamed(
-                                '/booking',
-                                arguments: {
-                                  'astrologer': astrologer,
-                                  'callType': CallType.voice,
-                                },
-                              );
+                              controller.initiateVoiceCall(astrologer);
                             },
                             borderRadius: BorderRadius.circular(6.r),
                             child: Icon(
@@ -593,13 +604,7 @@ class AllAstrologersView extends StatelessWidget {
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: () {
-                              Get.toNamed(
-                                '/booking',
-                                arguments: {
-                                  'astrologer': astrologer,
-                                  'callType': CallType.video,
-                                },
-                              );
+                              controller.initiateVideoCall(astrologer);
                             },
                             borderRadius: BorderRadius.circular(6.r),
                             child: Icon(

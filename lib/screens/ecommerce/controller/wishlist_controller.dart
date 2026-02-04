@@ -37,11 +37,18 @@ class WishlistController extends BaseController {
   }
 
   Future<void> _refreshWishlistFromServer() async {
-    final refreshed = await _service.getWishlist();
-    if (refreshed != null) {
-      wishlist.value = refreshed;
-      wishlist.refresh();
-    }
+    await runWithLoading(
+      () async {
+        final refreshed = await _service.getWishlist();
+        if (refreshed != null) {
+          wishlist.value = refreshed;
+          wishlist.refresh();
+        }
+      },
+      showBusy: false,
+      showError: false,
+      silent401ForGuest: true,
+    );
     _cleanupPendingKeys();
   }
 
@@ -100,7 +107,9 @@ class WishlistController extends BaseController {
   void _cleanupPendingKeys() {
     if (_pendingItems.isEmpty) return;
     final validKeys = items.map((item) => _resolveKey(item: item)).toSet();
-    final toRemove = _pendingItems.keys.where((key) => !validKeys.contains(key)).toList();
+    final toRemove = _pendingItems.keys
+        .where((key) => !validKeys.contains(key))
+        .toList();
     if (toRemove.isEmpty) return;
     for (final key in toRemove) {
       _pendingItems.remove(key);
@@ -125,26 +134,33 @@ class WishlistController extends BaseController {
   }
 
   Future<void> loadWishlist() async {
-    try {
-      isLoading.value = true;
-      final result = await _service.getWishlist();
-      _mergeExistingProductDetails(result);
-      wishlist.value = result;
-      wishlist.refresh();
-      _cleanupPendingKeys();
-      await _ensureWishlistHydrated(candidate: result);
-    } finally {
+    await runWithLoading(
+      () async {
+        isLoading.value = true;
+        final result = await _service.getWishlist();
+        _mergeExistingProductDetails(result);
+        wishlist.value = result;
+        wishlist.refresh();
+        _cleanupPendingKeys();
+        await _ensureWishlistHydrated(candidate: result);
+      },
+      showBusy: false,
+      showError: false,
+      silent401ForGuest: true,
+    ).whenComplete(() {
       isLoading.value = false;
-    }
+    });
   }
 
   bool isInWishlist(ProductModel product) {
     final productId = product.id ?? product.slug ?? product.sku;
     if (productId == null) return false;
-    return items.any((item) =>
-        item.product?.id == productId ||
-        item.product?.slug == product.slug ||
-        item.product?.sku == product.sku);
+    return items.any(
+      (item) =>
+          item.product?.id == productId ||
+          item.product?.slug == product.slug ||
+          item.product?.sku == product.sku,
+    );
   }
 
   Future<void> toggleWishlist(ProductModel product) async {
@@ -242,4 +258,3 @@ class WishlistController extends BaseController {
     }
   }
 }
-

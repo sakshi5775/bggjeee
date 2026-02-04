@@ -3,13 +3,20 @@ import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/utils/call_initiation_helper.dart';
+
+import 'package:astrobharataiuser/data_model/banner_model.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
 
 class AllAstrologersController extends GetxController {
   final AstrologerService _astrologerService = AstrologerService();
+  final BannerService _bannerService = BannerService();
 
   // Reactive variables
   final RxList<AstrologerModel> astrologers = <AstrologerModel>[].obs;
+  final RxList<BannerItem> astrologerBanners = <BannerItem>[].obs;
   final RxBool isLoading = false.obs;
+  final RxBool isLoadingBanners = false.obs;
   final RxString errorMessage = ''.obs;
 
   // Filter variables (specialization + category)
@@ -42,6 +49,7 @@ class AllAstrologersController extends GetxController {
       selectedFilter.value = initialFilter!;
     }
     loadAstrologers();
+    loadBanners();
   }
 
   /// Call from view when user scrolls near bottom (NotificationListener).
@@ -107,7 +115,23 @@ class AllAstrologersController extends GetxController {
     }
   }
 
+  Future<void> loadBanners() async {
+    isLoadingBanners.value = true;
+    try {
+      var list = await _bannerService.getBannersByCategory('appastrologer');
+      if (list.isEmpty) {
+        list = await _bannerService.getBannersByCategory('astrologer');
+      }
+      astrologerBanners.assignAll(list);
+    } catch (e) {
+      debugPrint('Error loading astrologer banners: $e');
+    } finally {
+      isLoadingBanners.value = false;
+    }
+  }
+
   Future<void> refresh() async {
+    loadBanners(); // Reload banners on refresh too
     await loadAstrologers(refresh: true);
   }
 
@@ -192,5 +216,20 @@ class AllAstrologersController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  /// Initiate voice call directly (bypasses booking screen)
+  Future<void> initiateVoiceCall(AstrologerModel astrologer) async {
+    await CallInitiationHelper.initiateVoiceCall(astrologer);
+  }
+
+  /// Initiate video call directly (bypasses booking screen)
+  Future<void> initiateVideoCall(AstrologerModel astrologer) async {
+    await CallInitiationHelper.initiateVideoCall(astrologer);
+  }
+
+  /// Initiate chat directly (bypasses booking screen)
+  Future<void> initiateChat(AstrologerModel astrologer) async {
+    await CallInitiationHelper.initiateChat(astrologer);
   }
 }

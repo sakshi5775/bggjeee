@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:astrobharataiuser/utils/error_ui_utils.dart';
 import 'package:get/get.dart';
 
 class RechargeDialog extends StatefulWidget {
@@ -48,36 +49,19 @@ class _RechargeDialogState extends State<RechargeDialog> {
   Future<void> _initiateRecharge() async {
     final amountText = _amountController.text.trim();
     if (amountText.isEmpty) {
-      Get.showSnackbar(
-        GetSnackBar(
-          message: 'Please enter an amount',
-          duration: const Duration(seconds: 2),
-          backgroundColor: Colors.red,
-        ),
-      );
+      ErrorUiUtils.showWarningSnackbar('Please enter an amount');
       return;
     }
 
     final amount = int.tryParse(amountText);
     if (amount == null || amount <= 0) {
-      Get.showSnackbar(
-        GetSnackBar(
-          message: 'Please enter a valid amount',
-          duration: const Duration(seconds: 2),
-          backgroundColor: Colors.red,
-        ),
-      );
+      ErrorUiUtils.showWarningSnackbar('Please enter a valid amount');
       return;
     }
 
     if (amount < _minRechargeAmount) {
-      Get.showSnackbar(
-        GetSnackBar(
-          message:
-              'Minimum recharge amount is ₹$_minRechargeAmount. Please enter at least ₹$_minRechargeAmount or choose from the quick amounts.',
-          duration: const Duration(seconds: 3),
-          backgroundColor: Colors.red,
-        ),
+      ErrorUiUtils.showWarningSnackbar(
+        'Minimum recharge amount is ₹$_minRechargeAmount. Please enter at least ₹$_minRechargeAmount or choose from the quick amounts.',
       );
       return;
     }
@@ -106,13 +90,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
             .trim();
         if (cleanMessage.isNotEmpty) message = cleanMessage;
       }
-      Get.showSnackbar(
-        GetSnackBar(
-          message: message,
-          duration: const Duration(seconds: 3),
-          backgroundColor: Colors.red,
-        ),
-      );
+      ErrorUiUtils.showWarningSnackbar(message);
     } finally {
       if (Get.isDialogOpen == true) Get.back(); // Close loading dialog
     }

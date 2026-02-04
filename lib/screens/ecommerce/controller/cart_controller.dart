@@ -109,7 +109,6 @@ class CartController extends BaseController {
 
       // Show success modal that auto-closes after 3 seconds
       _showPaymentSuccessModal();
-
     } catch (e) {
       showErrorMessage(title: 'Error', message: 'Verification failed: $e');
     } finally {
@@ -149,7 +148,9 @@ class CartController extends BaseController {
                   padding: EdgeInsets.all(24.w),
                   decoration: BoxDecoration(
                     gradient: AppColors.primaryGradient,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(30.r),
+                    ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -238,16 +239,21 @@ class CartController extends BaseController {
   String? _pendingPaymentId;
 
   Future<void> loadCart() async {
-    try {
-      isLoading.value = true;
-      // Try to merge cart if we have a session ID (guest cart to merge with user cart)
-      // If no session ID is available, mergeCart will skip the API call
-      await _service.mergeCart();
-      final result = await _service.getCart();
-      _updateCartState(result);
-    } finally {
+    await runWithLoading(
+      () async {
+        isLoading.value = true;
+        // Try to merge cart if we have a session ID (guest cart to merge with user cart)
+        // If no session ID is available, mergeCart will skip the API call
+        await _service.mergeCart();
+        final result = await _service.getCart();
+        _updateCartState(result);
+      },
+      showBusy: false,
+      showError: false,
+      silent401ForGuest: true,
+    ).whenComplete(() {
       isLoading.value = false;
-    }
+    });
   }
 
   void _updateCartState(CartModel? updatedCart) {
@@ -362,7 +368,8 @@ class CartController extends BaseController {
           } else if (previousQty == 0 && newQty > 0) {
             showSuccessMessage(
               title: 'Added to cart',
-              message: '${product.name ?? 'Product'} has been added to your cart',
+              message:
+                  '${product.name ?? 'Product'} has been added to your cart',
             );
           } else if (previousQty != newQty) {
             showSuccessMessage(
@@ -415,7 +422,10 @@ class CartController extends BaseController {
   Future<void> incrementItem(CartItem item) async {
     final product = item.product;
     if (product == null) {
-      showErrorMessage(title: 'Error', message: 'Product data missing for this item');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Product data missing for this item',
+      );
       return;
     }
     final current = item.quantity ?? 0;
@@ -437,7 +447,10 @@ class CartController extends BaseController {
   Future<void> decrementItem(CartItem item) async {
     final product = item.product;
     if (product == null) {
-      showErrorMessage(title: 'Error', message: 'Product data missing for this item');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Product data missing for this item',
+      );
       return;
     }
     final current = item.quantity ?? 0;
@@ -504,7 +517,11 @@ class CartController extends BaseController {
   }
 
   String resolveProductKey(ProductModel product) {
-    return product.id ?? product.slug ?? product.sku ?? product.name ?? product.hashCode.toString();
+    return product.id ??
+        product.slug ??
+        product.sku ??
+        product.name ??
+        product.hashCode.toString();
   }
 
   CartItem? _findCartItem(ProductModel product) {
@@ -640,7 +657,9 @@ class CartController extends BaseController {
     }
 
     final product = productOverride ?? item.product;
-    final pendingKey = product != null ? resolveProductKey(product) : _resolveCartItemKey(item);
+    final pendingKey = product != null
+        ? resolveProductKey(product)
+        : _resolveCartItemKey(item);
 
     try {
       _pendingProducts[pendingKey] = true;
@@ -683,7 +702,8 @@ class CartController extends BaseController {
         }
         showSuccessMessage(
           title: 'Saved for later',
-          message: '${item.product?.name ?? item.productSnapshot?.name ?? 'Product'} saved for later.',
+          message:
+              '${item.product?.name ?? item.productSnapshot?.name ?? 'Product'} saved for later.',
         );
       }
     } catch (e) {
@@ -716,7 +736,8 @@ class CartController extends BaseController {
         }
         showSuccessMessage(
           title: 'Moved to cart',
-          message: '${item.product?.name ?? item.productSnapshot?.name ?? 'Product'} moved to cart.',
+          message:
+              '${item.product?.name ?? item.productSnapshot?.name ?? 'Product'} moved to cart.',
         );
       }
     } catch (e) {
@@ -750,7 +771,8 @@ class CartController extends BaseController {
         }
         showSuccessMessage(
           title: 'Moved to cart',
-          message: '${item.product?.name ?? 'Item'} moved to cart successfully.',
+          message:
+              '${item.product?.name ?? 'Item'} moved to cart successfully.',
         );
       }
     } catch (e) {
@@ -772,7 +794,10 @@ class CartController extends BaseController {
       final result = await _service.applyCartCoupon(code);
       if (result != null) {
         _updateCartState(result);
-        showSuccessMessage(title: 'Coupon applied', message: 'Coupon "$code" applied successfully.');
+        showSuccessMessage(
+          title: 'Coupon applied',
+          message: 'Coupon "$code" applied successfully.',
+        );
       }
     } finally {
       isApplyingCoupon.value = false;
@@ -786,7 +811,10 @@ class CartController extends BaseController {
       if (result != null) {
         _updateCartState(result);
         couponController.clear();
-        showSuccessMessage(title: 'Coupon removed', message: 'Coupon removed successfully.');
+        showSuccessMessage(
+          title: 'Coupon removed',
+          message: 'Coupon removed successfully.',
+        );
       }
     } finally {
       isApplyingCoupon.value = false;
@@ -794,39 +822,47 @@ class CartController extends BaseController {
   }
 
   Future<void> loadAddresses() async {
-    try {
-      isLoadingAddresses.value = true;
-      final defaultAddress = await _service.getDefaultAddress();
-      final allAddresses = await _service.getAddresses();
-      final sorted = List<AddressModel>.from(allAddresses);
-      sorted.sort((a, b) {
-        final aDefault = a.isDefault == true;
-        final bDefault = b.isDefault == true;
-        if (aDefault == bDefault) return 0;
-        return aDefault ? -1 : 1;
-      });
-      addresses
-        ..clear()
-        ..addAll(sorted);
-      if (defaultAddress != null) {
-        selectedAddress.value = defaultAddress;
-      } else if (addresses.isNotEmpty) {
-        AddressModel? fallback;
-        for (final address in addresses) {
-          if (address.isDefault == true) {
-            fallback = address;
-            break;
+    await runWithLoading(
+      () async {
+        isLoadingAddresses.value = true;
+        final defaultAddress = await _service.getDefaultAddress();
+        final allAddresses = await _service.getAddresses();
+        final sorted = List<AddressModel>.from(allAddresses);
+        sorted.sort((a, b) {
+          final aDefault = a.isDefault == true;
+          final bDefault = b.isDefault == true;
+          if (aDefault == bDefault) return 0;
+          return aDefault ? -1 : 1;
+        });
+        addresses
+          ..clear()
+          ..addAll(sorted);
+        if (defaultAddress != null) {
+          selectedAddress.value = defaultAddress;
+        } else if (addresses.isNotEmpty) {
+          AddressModel? fallback;
+          for (final address in addresses) {
+            if (address.isDefault == true) {
+              fallback = address;
+              break;
+            }
           }
+          selectedAddress.value = fallback ?? addresses.first;
         }
-        selectedAddress.value = fallback ?? addresses.first;
-      }
-      addresses.refresh();
-    } finally {
+        addresses.refresh();
+      },
+      showBusy: false,
+      showError: false,
+      silent401ForGuest: true,
+    ).whenComplete(() {
       isLoadingAddresses.value = false;
-    }
+    });
   }
 
-  Future<void> saveAddress(AddressModel address, {bool setAsDefault = false}) async {
+  Future<void> saveAddress(
+    AddressModel address, {
+    bool setAsDefault = false,
+  }) async {
     try {
       isSavingAddress.value = true;
       final saved = await _service.upsertAddress(address);

@@ -1,149 +1,16 @@
-// import 'dart:io';
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:image_picker/image_picker.dart';
-//
-// import '../utils/constant.dart';
-// import '../getx_snackbar.dart';
-// import '../svg_assets.dart';
-// import 'my_text_theme.dart';
-//
-// class ImagePickerHelper {
-//   static final ImagePicker _picker = ImagePicker();
-//
-//   static Future<File?> pickImage(context) async {
-//     return await showModalBottomSheet<File?>(
-//       context: context,
-//       isScrollControlled: true,
-//       backgroundColor: Colors.transparent,
-//       builder: (_) => _buildStyledBottomSheet(context),
-//     );
-//   }
-//
-//   static Widget _buildStyledBottomSheet(context) {
-//     return DraggableScrollableSheet(
-//       initialChildSize: 0.30,
-//       maxChildSize: 0.4,
-//       minChildSize: 0.2,
-//       builder: (context, scrollController) => Container(
-//         decoration: const BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-//         ),
-//         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
-//         child: ListView(
-//           controller: scrollController,
-//           children: [
-//             Center(
-//               child: Container(
-//                 width: 40,
-//                 height: 5,
-//                 decoration: BoxDecoration(
-//                   color: Colors.grey[400],
-//                   borderRadius: BorderRadius.circular(10),
-//                 ),
-//               ),
-//             ),
-//             const SizedBox(height: 20),
-//             AutoTranslateText(
-//               'Select Image From',
-//               style: MyTextTheme.largeBCB,
-//               textAlign: TextAlign.center,
-//             ),
-//             const SizedBox(height: 24),
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//               children: [
-//                 _buildOption(
-//                   context,
-//                   iconPath: Constant.galleryIcon,
-//                   label: 'Gallery',
-//                   source: ImageSource.gallery,
-//                 ),
-//                 _buildOption(
-//                   context,
-//                   iconPath: Constant.cameraIcon,
-//                   label: 'Camera',
-//                   source: ImageSource.camera,
-//                 ),
-//               ],
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-//
-//   static Widget _buildOption(
-//     context, {
-//     required String iconPath,
-//     required String label,
-//     required ImageSource source,
-//   }) {
-//     return GestureDetector(
-//       onTap: () async {
-//         Navigator.pop(context, await _pickAndValidate(context, source));
-//       },
-//       child: Column(
-//         children: [
-//           Container(
-//             decoration: BoxDecoration(
-//               // color: Colors.blue.shade50,
-//               color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
-//               borderRadius: BorderRadius.circular(16),
-//             ),
-//             padding: const EdgeInsets.all(20),
-//             child: SvgAssets(path: iconPath),
-//           ),
-//           const SizedBox(height: 8),
-//           AutoTranslateText(label, style: MyTextTheme.mediumBCB),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   static Future<File?> _pickAndValidate(context, ImageSource source) async {
-//     try {
-//       final pickedFile =
-//           await _picker.pickImage(source: source, imageQuality: 80);
-//       if (pickedFile != null) {
-//         final file = File(pickedFile.path);
-//         final bytes = await file.length();
-//
-//         const maxSizeInBytes = 5 * 1024 * 1024;
-//
-//         if (bytes <= maxSizeInBytes) {
-//           return file;
-//         } else {
-//           _showSizeError(context);
-//         }
-//       }
-//       return null;
-//     } catch (e) {
-//       return null;
-//     }
-//   }
-//
-//   static void _showSizeError(context) {
-//     Get.showSnackbar(
-//         Ui.ErrorSnackBar(message: 'Image size should not exceed 5 MB'));
-//   }
-// }
-
 import 'dart:io';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
-import 'package:astrobharataiuser/utils/getx_snackbar.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:astrobharataiuser/utils/error_ui_utils.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:camera/camera.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import 'package:file_picker/file_picker.dart'; 
+import 'package:file_picker/file_picker.dart';
 
 class ImagePickerHelper {
   static final ImagePicker _picker = ImagePicker();
@@ -276,9 +143,7 @@ class ImagePickerHelper {
       var cameras = await availableCameras();
       if (cameras.isEmpty) {
         if (context.mounted) {
-          Get.showSnackbar(
-            Ui.ErrorSnackBar(message: 'No camera available'),
-          );
+          ErrorUiUtils.showWarningSnackbar('No camera available');
         }
         return null;
       }
@@ -290,8 +155,9 @@ class ImagePickerHelper {
             CameraLensDirection.front: 1,
             CameraLensDirection.external: 2,
           };
-          return (order[a.lensDirection] ?? 3)
-              .compareTo(order[b.lensDirection] ?? 3);
+          return (order[a.lensDirection] ?? 3).compareTo(
+            order[b.lensDirection] ?? 3,
+          );
         });
 
       final image = await Navigator.push<File?>(
@@ -318,10 +184,8 @@ class ImagePickerHelper {
   }
 
   static void _showSizeError(context, [double maxSizeInMB = 5.0]) {
-    Get.showSnackbar(
-      Ui.ErrorSnackBar(
-        message: 'Image size should not exceed ${maxSizeInMB.toInt()} MB',
-      ),
+    ErrorUiUtils.showWarningSnackbar(
+      'Image size should not exceed ${maxSizeInMB.toInt()} MB',
     );
   }
 
@@ -567,9 +431,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
     } catch (e) {
       debugPrint('Camera capture error: $e');
       if (mounted) {
-        Get.showSnackbar(
-          Ui.ErrorSnackBar(message: 'Failed to capture photo'),
-        );
+        ErrorUiUtils.showWarningSnackbar('Failed to capture photo');
       }
     }
   }
@@ -657,10 +519,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                           height: 72,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 4,
-                            ),
+                            border: Border.all(color: Colors.white, width: 4),
                             color: Colors.white24,
                           ),
                           child: const Icon(

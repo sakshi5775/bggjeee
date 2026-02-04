@@ -1,14 +1,18 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/data_model/blog_model.dart';
 import 'package:astrobharataiuser/screens/blogs/service/blog_service.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
+import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AllBlogsController extends BaseController {
   final BlogService _blogService = BlogService();
+  final BannerService _bannerService = BannerService();
 
   final RxList<Blog> blogs = <Blog>[].obs;
   final RxList<Blog> featuredBlogs = <Blog>[].obs;
+  final RxList<BannerItem> blogBanners = <BannerItem>[].obs;
   final RxList<Map<String, dynamic>> categories = <Map<String, dynamic>>[].obs;
   final RxString selectedCategory = 'all'.obs;
   final RxString selectedFilter = 'all'.obs;
@@ -16,7 +20,7 @@ class AllBlogsController extends BaseController {
   final RxInt currentPage = 1.obs;
   final RxBool hasMoreData = true.obs;
   final RxBool isSearching = false.obs;
-  
+
   late PageController featuredPageController;
 
   final List<String> filterOptions = [
@@ -32,6 +36,7 @@ class AllBlogsController extends BaseController {
     featuredPageController = PageController(viewportFraction: 0.85);
     loadCategories();
     loadBlogs();
+    loadBanners();
   }
 
   @override
@@ -55,6 +60,18 @@ class AllBlogsController extends BaseController {
     }
   }
 
+  Future<void> loadBanners() async {
+    try {
+      var list = await _bannerService.getBannersByCategory('appblog');
+      if (list.isEmpty) {
+        list = await _bannerService.getBannersByCategory('blogs');
+      }
+      blogBanners.assignAll(list);
+    } catch (e) {
+      debugPrint('Error loading blog banners: $e');
+    }
+  }
+
   Future<void> loadBlogs({bool refresh = false}) async {
     try {
       if (refresh) {
@@ -71,32 +88,41 @@ class AllBlogsController extends BaseController {
         page: currentPage.value,
         status: selectedFilter.value == 'all' ? null : selectedFilter.value,
         search: searchQuery.value.isEmpty ? null : searchQuery.value,
-        category: selectedCategory.value == 'all' ? null : selectedCategory.value,
+        category: selectedCategory.value == 'all'
+            ? null
+            : selectedCategory.value,
       );
 
       if (response != null && response.data != null) {
         final allBlogs = response.data ?? [];
-        
+
         // Filter by category on client side if needed (in case API doesn't support it)
         List<Blog> filteredBlogs = allBlogs;
         if (selectedCategory.value != 'all') {
           filteredBlogs = allBlogs.where((blog) {
-            if (blog.categories == null || blog.categories!.isEmpty) return false;
-            return blog.categories!.any((cat) => 
-              cat.slug == selectedCategory.value || 
-              cat.id == selectedCategory.value
+            if (blog.categories == null || blog.categories!.isEmpty)
+              return false;
+            return blog.categories!.any(
+              (cat) =>
+                  cat.slug == selectedCategory.value ||
+                  cat.id == selectedCategory.value,
             );
           }).toList();
         }
-        
+
         // Only show published blogs
-        filteredBlogs = filteredBlogs.where((blog) => 
-          blog.status == 'published' && !(blog.isDeleted ?? false)
-        ).toList();
-        
+        filteredBlogs = filteredBlogs
+            .where(
+              (blog) =>
+                  blog.status == 'published' && !(blog.isDeleted ?? false),
+            )
+            .toList();
+
         // Separate featured and regular blogs
         if (refresh) {
-          featuredBlogs.value = filteredBlogs.where((blog) => blog.isFeatured == true).toList();
+          featuredBlogs.value = filteredBlogs
+              .where((blog) => blog.isFeatured == true)
+              .toList();
           blogs.value = filteredBlogs;
         } else {
           blogs.addAll(filteredBlogs);

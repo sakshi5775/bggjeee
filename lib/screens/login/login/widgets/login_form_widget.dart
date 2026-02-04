@@ -159,7 +159,7 @@ class LoginFormWidget extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.orange.withOpacity(0.45),
+                      color: Colors.orange.withValues(alpha: 0.45),
                       blurRadius: 18,
                       offset: const Offset(0, 8),
                     ),
@@ -240,7 +240,7 @@ class LoginFormWidget extends StatelessWidget {
             onPressed: () async {
               // Enable guest mode
               await GuestSessionManager.enableGuestMode();
-              
+
               // Navigate to user dashboard
               Get.offAllNamed(AppRoutes.userDashboard);
             },

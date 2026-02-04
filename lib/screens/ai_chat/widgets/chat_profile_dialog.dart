@@ -2,21 +2,22 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/time_picker_helper.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 Future<ChatProfileResult?> showPersonaChatProfileDialog(
   BuildContext context,
   UserProfileModel? initialProfile,
 ) {
-  return Get.dialog<ChatProfileResult?>(
-    ChatProfileDialog(initialProfile: initialProfile),
+  print('DEBUG: showPersonaChatProfileDialog called');
+  return showDialog<ChatProfileResult?>(
+    context: context,
     barrierDismissible: false,
+    builder: (context) => ChatProfileDialog(initialProfile: initialProfile),
   );
 }
 
@@ -24,10 +25,7 @@ class ChatProfileResult {
   final UserProfileModel profile;
   final String languageCode;
 
-  ChatProfileResult({
-    required this.profile,
-    required this.languageCode,
-  });
+  ChatProfileResult({required this.profile, required this.languageCode});
 }
 
 class ChatProfileDialog extends StatefulWidget {
@@ -42,7 +40,12 @@ class ChatProfileDialog extends StatefulWidget {
 class _ChatProfileDialogState extends State<ChatProfileDialog> {
   final _formKey = GlobalKey<FormState>();
   final List<String> _genderOptions = ['Male', 'Female', 'Other'];
-  final List<String> _maritalStatusOptions = ['Single', 'Married', 'Divorced', 'Widowed'];
+  final List<String> _maritalStatusOptions = [
+    'Single',
+    'Married',
+    'Divorced',
+    'Widowed',
+  ];
 
   late final TextEditingController _fullNameController;
   late final TextEditingController _occupationController;
@@ -72,14 +75,22 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
   @override
   void initState() {
     super.initState();
+    print('DEBUG: ChatProfileDialog initState');
     final personalInfo = widget.initialProfile?.personalInfo;
     final birthPlace = widget.initialProfile?.birthChart?.birthPlace;
     final birthTime = widget.initialProfile?.birthChart?.birthTime;
 
-    _fullNameController = TextEditingController(text: personalInfo?.fullName ?? '');
-    _occupationController = TextEditingController(text: personalInfo?.occupation ?? '');
+    _fullNameController = TextEditingController(
+      text: personalInfo?.fullName ?? '',
+    );
+    _occupationController = TextEditingController(
+      text: personalInfo?.occupation ?? '',
+    );
     _selectedGender = _matchOption(_genderOptions, personalInfo?.gender);
-    _selectedMaritalStatus = _matchOption(_maritalStatusOptions, personalInfo?.maritalStatus);
+    _selectedMaritalStatus = _matchOption(
+      _maritalStatusOptions,
+      personalInfo?.maritalStatus,
+    );
     final initialLanguage = widget.initialProfile?.preferences?.language;
     if (initialLanguage != null && initialLanguage.isNotEmpty) {
       final normalized = initialLanguage.toLowerCase();
@@ -101,7 +112,7 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
       }
     }
     _birthPlaceController = TextEditingController(text: placeParts.join(', '));
-    
+
     // Parse birth date - handle both ISO format and DD/MM/YYYY format
     final existingDateStr = widget.initialProfile?.birthChart?.generatedAt;
     String dateText = '';
@@ -130,17 +141,21 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
       }
     }
     _birthDateController = TextEditingController(text: dateText);
-    
+
     _birthTimeController = TextEditingController();
-    if (birthTime != null && birthTime.hour != null && birthTime.minute != null) {
+    if (birthTime != null &&
+        birthTime.hour != null &&
+        birthTime.minute != null) {
       _selectedBirthSeconds = birthTime.second ?? 0;
       _birthTimeController.text = TimePickerHelper.formatTime24To12Display(
         birthTime.hour!,
         birthTime.minute!,
       );
-      _selectedBirthTime = TimeOfDay(hour: birthTime.hour!, minute: birthTime.minute!);
+      _selectedBirthTime = TimeOfDay(
+        hour: birthTime.hour!,
+        minute: birthTime.minute!,
+      );
     }
-
   }
 
   @override
@@ -180,17 +195,19 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                   Spacing.h(16),
                   AutoTranslateText(
                     'Share Birth Details',
-                    style: MyTextTheme.largeBCB.copyWith(
-                      color: AppColors.saffron,
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.h2),
+                    style: MyTextTheme.largeBCB
+                        .copyWith(
+                          color: AppColors.saffron,
+                          fontWeight: FontWeight.bold,
+                        )
+                        .merge(AppTypography.h2),
                   ),
                   Spacing.h(8),
                   AutoTranslateText(
                     'Share them with your persona to avoid typing during chat.',
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: AppColors.saffron.withOpacity(0.8),
-                    ).merge(AppTypography.body2),
+                    style: MyTextTheme.smallBCN
+                        .copyWith(color: AppColors.saffron.withOpacity(0.8))
+                        .merge(AppTypography.body2),
                   ),
                   Spacing.h(20),
                   Form(
@@ -204,7 +221,10 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                               label: 'Full Name',
                               controller: _fullNameController,
                               hint: 'Enter name',
-                              prefixIcon: Icon(Icons.person, color: AppColors.saffron),
+                              prefixIcon: Icon(
+                                Icons.person,
+                                color: AppColors.saffron,
+                              ),
                               fillColor: fieldColor,
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
@@ -238,7 +258,9 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                               fillColor: fieldColor,
                               onChanged: (value) {
                                 if (value != null) {
-                                  setState(() => _selectedMaritalStatus = value);
+                                  setState(
+                                    () => _selectedMaritalStatus = value,
+                                  );
                                 }
                               },
                             ),
@@ -255,7 +277,10 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                               fillColor: fieldColor,
                               readOnly: true,
                               onTap: () => _pickBirthDate(context),
-                              suffixIcon: Icon(Icons.calendar_today, color: AppColors.saffron),
+                              suffixIcon: Icon(
+                                Icons.calendar_today,
+                                color: AppColors.saffron,
+                              ),
                             ),
                             _buildTextField(
                               label: 'Time of Birth',
@@ -264,7 +289,10 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                               fillColor: fieldColor,
                               readOnly: true,
                               onTap: () => _pickBirthTime(context),
-                              suffixIcon: Icon(Icons.access_time, color: AppColors.saffron),
+                              suffixIcon: Icon(
+                                Icons.access_time,
+                                color: AppColors.saffron,
+                              ),
                             ),
                           ],
                           spacing: 12,
@@ -277,14 +305,20 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                               hint: 'City, State, Country',
                               controller: _birthPlaceController,
                               fillColor: fieldColor,
-                              prefixIcon: Icon(Icons.location_on, color: AppColors.saffron),
+                              prefixIcon: Icon(
+                                Icons.location_on,
+                                color: AppColors.saffron,
+                              ),
                             ),
                             _buildTextField(
                               label: 'Occupation',
                               controller: _occupationController,
                               hint: 'Occupation',
                               fillColor: fieldColor,
-                              prefixIcon: Icon(Icons.work_outline, color: AppColors.saffron),
+                              prefixIcon: Icon(
+                                Icons.work_outline,
+                                color: AppColors.saffron,
+                              ),
                             ),
                           ],
                           spacing: 12,
@@ -301,11 +335,15 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.saffron,
                           padding: EdgeInsets.symmetric(vertical: 16.h),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
                         ),
                         child: AutoTranslateText(
                           'Proceed Chat',
-                          style: MyTextTheme.mediumBCB.copyWith(color: Colors.white).merge(AppTypography.h3),
+                          style: MyTextTheme.mediumBCB
+                              .copyWith(color: Colors.white)
+                              .merge(AppTypography.h3),
                         ),
                       ),
                       Spacing.h(12),
@@ -313,7 +351,9 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                         onPressed: () => Navigator.of(context).pop(null),
                         child: AutoTranslateText(
                           'Cancel Chat',
-                          style: MyTextTheme.smallBCB.copyWith(color: AppColors.saffron),
+                          style: MyTextTheme.smallBCB.copyWith(
+                            color: AppColors.saffron,
+                          ),
                         ),
                       ),
                     ],
@@ -385,7 +425,10 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
       if (seconds != null) {
         _selectedBirthSeconds = seconds;
       }
-      _birthTimeController.text = TimePickerHelper.formatTime24To12Display(picked.hour, picked.minute);
+      _birthTimeController.text = TimePickerHelper.formatTime24To12Display(
+        picked.hour,
+        picked.minute,
+      );
     }
   }
 
@@ -419,10 +462,7 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
     );
 
     Navigator.of(context).pop(
-      ChatProfileResult(
-        profile: profile,
-        languageCode: _selectedLanguageCode,
-      ),
+      ChatProfileResult(profile: profile, languageCode: _selectedLanguageCode),
     );
   }
 
@@ -439,7 +479,10 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
         dobText = controllerText;
       }
     }
-    if (birthPlace == null && birthTime == null && (dobText == null || dobText.isEmpty)) return null;
+    if (birthPlace == null &&
+        birthTime == null &&
+        (dobText == null || dobText.isEmpty))
+      return null;
     return BirthChart(
       birthPlace: birthPlace,
       birthTime: birthTime,
@@ -450,7 +493,11 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
   BirthPlace? _buildBirthPlace() {
     final placeText = _normalize(_birthPlaceController.text);
     if (placeText == null) return null;
-    final rawParts = placeText.split(',').map((part) => part.trim()).where((part) => part.isNotEmpty).toList();
+    final rawParts = placeText
+        .split(',')
+        .map((part) => part.trim())
+        .where((part) => part.isNotEmpty)
+        .toList();
     final city = rawParts.isNotEmpty ? rawParts[0] : null;
     final state = rawParts.length > 1 ? rawParts[1] : null;
     final country = rawParts.length > 2 ? rawParts[2] : null;
@@ -465,12 +512,16 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
     if (parts.length < 2) return null;
     final hour = int.tryParse(parts[0]);
     final minute = int.tryParse(parts[1]);
-    final second = parts.length >= 3 ? int.tryParse(parts[2]) : _selectedBirthSeconds;
+    final second = parts.length >= 3
+        ? int.tryParse(parts[2])
+        : _selectedBirthSeconds;
     return BirthTime(hour: hour, minute: minute, second: second);
   }
 
   Future<int?> _pickBirthSeconds(BuildContext context, int initialSeconds) {
-    final controller = TextEditingController(text: initialSeconds.toString().padLeft(2, '0'));
+    final controller = TextEditingController(
+      text: initialSeconds.toString().padLeft(2, '0'),
+    );
     return showDialog<int>(
       context: context,
       builder: (context) {
@@ -480,10 +531,7 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
             controller: controller,
             keyboardType: TextInputType.number,
             maxLength: 2,
-            decoration: InputDecoration(
-              hintText: '00',
-              counterText: '',
-            ),
+            decoration: InputDecoration(hintText: '00', counterText: ''),
           ),
           actions: [
             TextButton(
@@ -540,7 +588,9 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        hintStyle: MyTextTheme.smallBCN.copyWith(color: AppColors.saffron.withOpacity(0.6)),
+        hintStyle: MyTextTheme.smallBCN.copyWith(
+          color: AppColors.saffron.withOpacity(0.6),
+        ),
         labelStyle: MyTextTheme.smallBCN.copyWith(color: AppColors.saffron),
         filled: true,
         fillColor: fillColor,
@@ -589,10 +639,12 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
           style: MyTextTheme.smallBCN.copyWith(color: AppColors.saffron),
           iconEnabledColor: AppColors.saffron,
           items: options
-              .map((option) => DropdownMenuItem<String>(
-                    value: option,
-                    child: AutoTranslateText(option),
-                  ))
+              .map(
+                (option) => DropdownMenuItem<String>(
+                  value: option,
+                  child: AutoTranslateText(option),
+                ),
+              )
               .toList(),
           onChanged: onChanged,
         ),
@@ -624,10 +676,12 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
           style: MyTextTheme.smallBCN.copyWith(color: AppColors.saffron),
           iconEnabledColor: AppColors.saffron,
           items: _languageOptions.entries
-              .map((entry) => DropdownMenuItem<String>(
-                    value: entry.key,
-                    child: AutoTranslateText(entry.value),
-                  ))
+              .map(
+                (entry) => DropdownMenuItem<String>(
+                  value: entry.key,
+                  child: AutoTranslateText(entry.value),
+                ),
+              )
               .toList(),
           onChanged: (value) {
             if (value != null) {
@@ -679,16 +733,10 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
           spacing: gapW,
           runSpacing: gapH,
           children: children
-              .map(
-                (child) => SizedBox(
-                  width: columnWidth,
-                  child: child,
-                ),
-              )
+              .map((child) => SizedBox(width: columnWidth, child: child))
               .toList(),
         );
       },
     );
   }
 }
-

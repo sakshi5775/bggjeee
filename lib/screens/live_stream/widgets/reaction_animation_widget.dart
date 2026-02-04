@@ -16,7 +16,8 @@ class ReactionAnimationWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ReactionAnimationWidget> createState() => _ReactionAnimationWidgetState();
+  State<ReactionAnimationWidget> createState() =>
+      _ReactionAnimationWidgetState();
 }
 
 class _ReactionAnimationWidgetState extends State<ReactionAnimationWidget>
@@ -31,7 +32,7 @@ class _ReactionAnimationWidgetState extends State<ReactionAnimationWidget>
   @override
   void initState() {
     super.initState();
-    
+
     // Main animation controller
     _controller = AnimationController(
       duration: const Duration(milliseconds: 2000),
@@ -47,15 +48,24 @@ class _ReactionAnimationWidgetState extends State<ReactionAnimationWidget>
     // Scale animation: start large, shrink, then grow again
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 1.3).chain(CurveTween(curve: Curves.elasticOut)),
+        tween: Tween(
+          begin: 0.0,
+          end: 1.3,
+        ).chain(CurveTween(curve: Curves.elasticOut)),
         weight: 30,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.3, end: 1.0).chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween(
+          begin: 1.3,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 20,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 1.2).chain(CurveTween(curve: Curves.easeInOut)),
+        tween: Tween(
+          begin: 1.0,
+          end: 1.2,
+        ).chain(CurveTween(curve: Curves.easeInOut)),
         weight: 50,
       ),
     ]).animate(_controller);
@@ -63,11 +73,17 @@ class _ReactionAnimationWidgetState extends State<ReactionAnimationWidget>
     // Fade animation
     _fadeAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween(
+          begin: 0.0,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 15,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 0.0).chain(CurveTween(curve: Curves.easeIn)),
+        tween: Tween(
+          begin: 1.0,
+          end: 0.0,
+        ).chain(CurveTween(curve: Curves.easeIn)),
         weight: 85,
       ),
     ]).animate(_controller);
@@ -75,13 +91,17 @@ class _ReactionAnimationWidgetState extends State<ReactionAnimationWidget>
     // Position animation: move up while fading
     _positionAnimation = TweenSequence<Offset>([
       TweenSequenceItem(
-        tween: Tween(begin: const Offset(0, 0.3), end: const Offset(0, 0.1))
-            .chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween(
+          begin: const Offset(0, 0.3),
+          end: const Offset(0, 0.1),
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 30,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: const Offset(0, 0.1), end: const Offset(0, -0.15))
-            .chain(CurveTween(curve: Curves.easeIn)),
+        tween: Tween(
+          begin: const Offset(0, 0.1),
+          end: const Offset(0, -0.15),
+        ).chain(CurveTween(curve: Curves.easeIn)),
         weight: 70,
       ),
     ]).animate(_controller);
@@ -90,20 +110,14 @@ class _ReactionAnimationWidgetState extends State<ReactionAnimationWidget>
     _rotationAnimation = Tween<double>(
       begin: -0.2,
       end: 0.2,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _controller.forward();
     _particleController.repeat();
-    
+
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        if (mounted) {
-          _controller.dispose();
-          _particleController.dispose();
-        }
+        // Animation completed
       }
     });
   }
@@ -132,7 +146,10 @@ class _ReactionAnimationWidgetState extends State<ReactionAnimationWidget>
                   opacity: _fadeAnimation.value,
                   child: Container(
                     margin: EdgeInsets.only(top: 120.h),
-                    padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 18.w,
+                      vertical: 12.h,
+                    ),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -174,10 +191,12 @@ class _ReactionAnimationWidgetState extends State<ReactionAnimationWidget>
                         Spacing.w(10),
                         AutoTranslateText(
                           widget.senderName,
-                          style: MyTextTheme.mediumBCB.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ).merge(AppTypography.body1),
+                          style: MyTextTheme.mediumBCB
+                              .copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              )
+                              .merge(AppTypography.body1),
                         ),
                       ],
                     ),
@@ -191,10 +210,3 @@ class _ReactionAnimationWidgetState extends State<ReactionAnimationWidget>
     );
   }
 }
-
-
-
-
-
-
-

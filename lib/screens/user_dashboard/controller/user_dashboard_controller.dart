@@ -62,7 +62,6 @@ class UserDashboardController extends BaseController
   final DailyQuoteService _dailyQuoteService = DailyQuoteService();
   final Rx<DailyQuoteData?> dailyQuote = Rx<DailyQuoteData?>(null);
   final RxBool isLoadingDailyQuote = false.obs;
-  String? _lastQuoteDate; // Store the date of the last fetched quote
 
   // Fallback quotes when API doesn't return data
   static final List<DailyQuoteData> _fallbackQuotes = [
@@ -285,9 +284,7 @@ class UserDashboardController extends BaseController
     // and scroll via that position to avoid controller assertion.
     ScrollPosition? position;
     try {
-      position = sc.positions.length == 1
-          ? sc.position
-          : sc.positions.first;
+      position = sc.positions.length == 1 ? sc.position : sc.positions.first;
     } catch (e) {
       debugPrint("SLIDER SCROLL: Failed to get position - $e");
       if (retry < _kScrollSliderMaxRetries) {
@@ -297,16 +294,18 @@ class UserDashboardController extends BaseController
       }
       return;
     }
-    
+
     if (sc.positions.length != 1) {
       debugPrint(
         "SLIDER SCROLL: Using positions.first (total=${sc.positions.length})",
       );
     }
-    
+
     // Check if position is attached and has valid context
     if (!position.hasContentDimensions || !position.hasPixels) {
-      debugPrint("SLIDER SCROLL: Position not ready (hasContentDimensions=${position.hasContentDimensions}, hasPixels=${position.hasPixels})");
+      debugPrint(
+        "SLIDER SCROLL: Position not ready (hasContentDimensions=${position.hasContentDimensions}, hasPixels=${position.hasPixels})",
+      );
       if (retry < _kScrollSliderMaxRetries) {
         scrollSliderToSelected(retry: retry + 1);
       } else {
@@ -314,7 +313,7 @@ class UserDashboardController extends BaseController
       }
       return;
     }
-    
+
     final i = selectedSliderIndex.value;
     final n = sliderTabs.length;
     if (n == 0 || i < 0) {
@@ -460,6 +459,8 @@ class UserDashboardController extends BaseController
   // Ads Carousel (dynamic from API)
   final BannerService _bannerService = BannerService();
   final RxList<BannerItem> adsBanners = <BannerItem>[].obs;
+  final RxList<BannerItem> offerBanners = <BannerItem>[].obs;
+  final RxList<BannerItem> generalBanners = <BannerItem>[].obs;
   final RxBool isLoadingBanners = false.obs;
   final Rx<PageController> adsPageController = PageController().obs;
   final RxInt adsCurrentPage = 0.obs;
@@ -523,22 +524,12 @@ class UserDashboardController extends BaseController
     );
     final requireAuth = !_isGuest;
     _loadUserData();
-    loadUserProfile();
-    loadLiveStreams();
-    loadDailyQuote(requireAuth: requireAuth);
-    loadBanners();
-    loadBlogs(requireAuth: requireAuth);
-    loadAiAstrologers();
-    loadVedicAstrologers();
-    loadKidsSpecialistAstrologers();
-    loadCelebrityAstrologers();
-    loadCourses();
-    loadRemedyCategories(); // Load remedy categories for Astro Remedy section
-    loadDigitalMartCategories(); // Load Digital Mart tab categories
     if (requireAuth) {
+      loadUserProfile();
       checkForLiveWebinarFromEnrolledCourses();
     }
     _initializeSTT();
+    refreshDashboard();
     // Start global free service manager after dashboard loads
     if (requireAuth) {
       _startGlobalFreeServiceManager();
@@ -579,78 +570,38 @@ class UserDashboardController extends BaseController
     String? search,
     String? templeId,
   }) async {
-    try {
-      isLoadingPujas.value = true;
+    await runWithLoading(
+      () async {
+        isLoadingPujas.value = true;
+        final response = await _pujaService.getPujas(
+          page: 1,
+          limit: 10,
+          featured: featured,
+          popular: popular,
+          search: search,
+          templeId: templeId,
+        );
 
-      // Call API without filters first (as per user requirement)
-      // Only add filters if explicitly provided
-      final response = await _pujaService.getPujas(
-        page: 1,
-        limit: 10,
-        featured: featured, // Only include if explicitly set
-        popular: popular, // Only include if explicitly set
-        search: search, // Only include if explicitly set
-        templeId: templeId, // Only include if explicitly set
-      );
+        if (response != null &&
+            response.success == true &&
+            response.data?.items != null) {
+          pujas.value = response.data!.items!
+              .where(
+                (puja) =>
+                    puja.status == null ||
+                    puja.status!.isEmpty ||
+                    puja.status!.toLowerCase() == 'active',
+              )
+              .toList();
 
-      if (response != null && response.success == true) {
-        if (response.data != null && response.data!.items != null) {
-          final items = response.data!.items!;
-
-          // Filter to only show active pujas (if status field exists and is not null)
-          final activePujas = items.where((puja) {
-            // If status is null or empty, include it (API might not return status)
-            // If status exists, only include active ones
-            return puja.status == null ||
-                puja.status!.isEmpty ||
-                puja.status!.toLowerCase() == 'active';
-          }).toList();
-
-          pujas.value = activePujas;
-
-          if (kDebugMode) {
-            print(
-              'Loaded ${activePujas.length} pujas (${items.length} total from API)',
-            );
-            if (activePujas.isNotEmpty) {
-              print('First puja: ${activePujas.first.title}');
-            }
-          }
-
-          // Start auto-slide after pujas are loaded
           if (pujas.isNotEmpty) {
             _startBookPoojaAutoSlide();
-          } else {
-            if (kDebugMode) {
-              print('No active pujas available to display');
-            }
-          }
-        } else {
-          if (kDebugMode) {
-            print('Puja response data is null');
-            print('Response: ${response.toJson()}');
-          }
-          pujas.value = [];
-        }
-      } else {
-        if (kDebugMode) {
-          print('Puja API response is null or unsuccessful');
-          if (response != null) {
-            print('Response success: ${response.success}');
-            print('Response message: ${response.message}');
           }
         }
-        pujas.value = [];
-      }
-    } catch (e, stackTrace) {
-      if (kDebugMode) {
-        print('Error loading pujas: $e');
-        print('Stack trace: $stackTrace');
-      }
-      pujas.value = [];
-    } finally {
-      isLoadingPujas.value = false;
-    }
+      },
+      showBusy: false,
+      silent401ForGuest: true,
+    ).whenComplete(() => isLoadingPujas.value = false);
   }
 
   /// Start Book Pooja carousel auto-slide
@@ -695,17 +646,36 @@ class UserDashboardController extends BaseController
 
   /// Load home screen banners from API
   Future<void> loadBanners() async {
-    isLoadingBanners.value = true;
-    try {
-      var list = await _bannerService.getBannersByCategory('home');
-      if (list.isEmpty) {
-        list = await _bannerService.getHomeBanners();
-      }
-      adsBanners.assignAll(list);
-      // Auto-slide is handled by BannerCarouselWidget
-    } finally {
-      isLoadingBanners.value = false;
-    }
+    await runWithLoading(
+      () async {
+        isLoadingBanners.value = true;
+        // 1. Home Screen Banners (apphomescreen)
+        var list = await _bannerService.getBannersByCategory('apphomescreen');
+        if (list.isEmpty) {
+          list = await _bannerService.getBannersByCategory('home');
+          if (list.isEmpty) {
+            list = await _bannerService.getHomeBanners();
+          }
+        }
+        adsBanners.assignAll(list);
+
+        // 2. Offer Banners (appoffers) - Visible all over app (stored here for access)
+        var offers = await _bannerService.getBannersByCategory('appoffers');
+        if (offers.isEmpty) {
+          offers = await _bannerService.getBannersByCategory('offers');
+        }
+        offerBanners.assignAll(offers);
+
+        // 3. General Banners (appgeneral) - For Horoscope, 2026, etc.
+        var generals = await _bannerService.getBannersByCategory('appgeneral');
+        if (generals.isEmpty) {
+          generals = await _bannerService.getBannersByCategory('general');
+        }
+        generalBanners.assignAll(generals);
+      },
+      showBusy: false,
+      silent401ForGuest: true,
+    ).whenComplete(() => isLoadingBanners.value = false);
   }
 
   /// Start Ads carousel auto-slide
@@ -766,62 +736,40 @@ class UserDashboardController extends BaseController
   }
 
   Future<void> loadLiveStreams() async {
-    isLoadingLiveStreams.value = true;
-    try {
-      final response = await _liveStreamService.getLiveStreams(limit: 20);
-      if (response != null) {
-        // Get only LIVE streams
-        final currentLive = response.streams
-            .where((stream) => stream.status == 'LIVE')
-            .toList();
-
-        liveStreams.value = currentLive;
-      }
-      // Always load astrologers for "All Astrologers" and Live section fallback,
-      // even when live stream API fails (e.g. in release mode) so sections stay visible.
-      await _loadAstrologerDetails(liveStreams);
-    } catch (e) {
-      debugPrint('Error loading live streams: $e');
-      // Still try to load astrologers so All / Live sections can show
-      await _loadAstrologerDetails(liveStreams);
-    } finally {
-      isLoadingLiveStreams.value = false;
-    }
+    await runWithLoading(
+      () async {
+        isLoadingLiveStreams.value = true;
+        final response = await _liveStreamService.getLiveStreams(limit: 20);
+        if (response != null) {
+          liveStreams.value = response.streams
+              .where((stream) => stream.status == 'LIVE')
+              .toList();
+          await _loadAstrologerDetails(liveStreams);
+        }
+      },
+      showBusy: false,
+      silent401ForGuest: true,
+    ).whenComplete(() => isLoadingLiveStreams.value = false);
   }
 
   final RxList<AstrologerModel> allAstrologer = <AstrologerModel>[].obs;
 
   Future<void> _loadAstrologerDetails(List<LiveStreamModel> streams) async {
-    // Fetch astrologers to get profile pictures and names (for All Astrologers + Live fallback)
-    try {
-      final astrologerResponse = await _astrologerService.getAstrologers(
-        limit: 100,
-      );
-      if (astrologerResponse != null) {
-        allAstrologer.clear();
-        // Create maps of astrologerId -> profilePicture and astrologerId -> name
-        final Map<String, String?> profileMap = {};
-        final Map<String, String?> nameMap = {};
-        for (final astrologer in astrologerResponse.astrologers) {
-          // Use displayName if available, otherwise use fullName
-          final name = astrologer.displayName.isNotEmpty
-              ? astrologer.displayName
-              : astrologer.name;
-
-          profileMap[astrologer.astrologerId] = astrologer.profilePicture;
-          profileMap[astrologer.id] =
-              astrologer.profilePicture; // Also map by _id
-
-          nameMap[astrologer.astrologerId] = name;
-          nameMap[astrologer.id] = name; // Also map by _id
+    final response = await _astrologerService.getAstrologers(limit: 100);
+    if (response != null) {
+      for (final astrologer in response.astrologers) {
+        final name = astrologer.displayName.isNotEmpty
+            ? astrologer.displayName
+            : astrologer.name;
+        astrologerProfilePictures[astrologer.astrologerId] =
+            astrologer.profilePicture;
+        astrologerProfilePictures[astrologer.id] = astrologer.profilePicture;
+        astrologerNames[astrologer.astrologerId] = name;
+        astrologerNames[astrologer.id] = name;
+        if (!allAstrologer.contains(astrologer)) {
           allAstrologer.add(astrologer);
         }
-        // Update the reactive maps
-        astrologerProfilePictures.value = profileMap;
-        astrologerNames.value = nameMap;
       }
-    } catch (e) {
-      // Handle error silently
     }
   }
 
@@ -877,175 +825,152 @@ class UserDashboardController extends BaseController
 
   /// Load daily quote
   Future<void> loadDailyQuote({bool requireAuth = true}) async {
-    // Check if we already have today's quote
-    final today = DateTime.now().toIso8601String().split(
-      'T',
-    )[0]; // Format: YYYY-MM-DD
-    if (_lastQuoteDate == today && dailyQuote.value != null) {
-      return; // Already have today's quote
-    }
+    await runWithLoading(
+          () async {
+            isLoadingDailyQuote.value = true;
+            final response = await _dailyQuoteService.getDailyQuote(
+              useAuthHeader: requireAuth,
+            );
+            if (response != null &&
+                response.success == true &&
+                response.data != null) {
+              dailyQuote.value = response.data;
+            } else {
+              _useFallbackQuote();
+            }
+          },
+          showBusy: false,
+          silent401ForGuest: true,
+        )
+        .catchError((_) {
+          _useFallbackQuote();
+          return null;
+        })
+        .whenComplete(() => isLoadingDailyQuote.value = false);
+  }
 
-    isLoadingDailyQuote.value = true;
-    try {
-      final response = await _dailyQuoteService.getDailyQuote(
-        useAuthHeader: requireAuth,
-      );
-      if (response != null && response.success && response.data != null) {
-        // API returned data, use it
-        dailyQuote.value = response.data;
-        _lastQuoteDate = response.data!.quoteDate;
-      } else {
-        // API didn't return data, use fallback quote
-        _setFallbackQuote(today);
-      }
-    } catch (e) {
-      debugPrint('Error loading daily quote: $e');
-      // On error, use fallback quote
-      _setFallbackQuote(today);
-    } finally {
-      isLoadingDailyQuote.value = false;
-    }
+  void _useFallbackQuote() {
+    final dayOfYear = DateTime.now()
+        .difference(DateTime(DateTime.now().year, 1, 1))
+        .inDays;
+    final quote = _fallbackQuotes[dayOfYear % _fallbackQuotes.length];
+    dailyQuote.value = quote;
   }
 
   final Rxn<UserProfileModel> userProfile = Rxn<UserProfileModel>();
   Future<void> loadUserProfile() async {
-    try {
+    await runWithLoading(() async {
       final response = await UserProfileService().getProfile(
         UserData().getLoginData.user?.userId ?? '',
       );
       if (response != null) {
         userProfile.value = response;
       }
-    } catch (e) {
-      userProfile.value = null;
-      debugPrint('Error loading user profile: $e');
-    }
-  }
-
-  /// Set a fallback quote when API doesn't return data
-  void _setFallbackQuote(String date) {
-    // Select a quote based on day of year to ensure variety
-    final dayOfYear = DateTime.now()
-        .difference(DateTime(DateTime.now().year, 1, 1))
-        .inDays;
-    final quoteIndex = dayOfYear % _fallbackQuotes.length;
-    final selectedQuote = _fallbackQuotes[quoteIndex];
-
-    // Create a new DailyQuoteData with today's date
-    dailyQuote.value = DailyQuoteData(
-      quoteDate: date,
-      sanskrit: selectedQuote.sanskrit,
-      availableTranslations: selectedQuote.availableTranslations,
-      isFallback: true,
-      generatedAt: DateTime.now().toIso8601String(),
-    );
-    _lastQuoteDate = date;
+    }, showBusy: false);
   }
 
   /// Load blogs for dashboard (limit to 5 for preview)
   // Load AI Astrologers Personas
   Future<void> loadAiAstrologers() async {
-    try {
-      isLoadingAiAstrologers.value = true;
-      final response = await _aiChatService.getPersonas(
-        page: 1,
-        limit: 10, // Load 10 personas for the AI Astrologers section
-        sortBy: 'rating',
-      );
+    await runWithLoading(
+      () async {
+        isLoadingAiAstrologers.value = true;
+        final response = await _aiChatService.getPersonas(
+          page: 1,
+          limit: 10,
+          sortBy: 'rating',
+        );
 
-      if (response != null && response.personas.isNotEmpty) {
-        aiAstrologersPersonas.value = response.personas;
-      }
-    } catch (e) {
-      print("Error loading AI Astrologers: $e");
-    } finally {
-      isLoadingAiAstrologers.value = false;
-    }
+        if (response != null && response.personas.isNotEmpty) {
+          aiAstrologersPersonas.value = response.personas;
+        }
+      },
+      showBusy: false,
+      silent401ForGuest: true,
+    ).whenComplete(() => isLoadingAiAstrologers.value = false);
   }
 
   // Load Vedic Kundli Astrologers
   Future<void> loadVedicAstrologers() async {
-    try {
-      isLoadingVedicAstrologers.value = true;
-      final response = await _astrologerService.getAstrologers(
-        page: 1,
-        limit: 5, // Load only 5 astrologers for the dashboard
-        specialization: 'VEDIC', // Filter by VEDIC specialization
-        sortBy: 'rating',
-      );
+    await runWithLoading(
+      () async {
+        isLoadingVedicAstrologers.value = true;
+        final response = await _astrologerService.getAstrologers(
+          page: 1,
+          limit: 5,
+          specialization: 'VEDIC',
+          sortBy: 'rating',
+        );
 
-      if (response != null && response.astrologers.isNotEmpty) {
-        vedicAstrologers.value = response.astrologers;
-      }
-    } catch (e) {
-      print("Error loading Vedic Astrologers: $e");
-    } finally {
-      isLoadingVedicAstrologers.value = false;
-    }
+        if (response != null && response.astrologers.isNotEmpty) {
+          vedicAstrologers.value = response.astrologers;
+        }
+      },
+      showBusy: false,
+      silent401ForGuest: true,
+    ).whenComplete(() => isLoadingVedicAstrologers.value = false);
   }
 
   // Load Kids Specialist Astrologers
   Future<void> loadKidsSpecialistAstrologers() async {
-    try {
-      isLoadingKidsSpecialistAstrologers.value = true;
-      final response = await _astrologerService.getAstrologers(
-        page: 1,
-        limit: 5, // Load only 5 astrologers for the dashboard
-        astrologerCategory:
-            'KID_ASTROLOGER', // Filter by KID_ASTROLOGER category
-        sortBy: 'rating',
-      );
+    await runWithLoading(
+      () async {
+        isLoadingKidsSpecialistAstrologers.value = true;
+        final response = await _astrologerService.getAstrologers(
+          page: 1,
+          limit: 5,
+          astrologerCategory: 'KID_ASTROLOGER',
+          sortBy: 'rating',
+        );
 
-      if (response != null && response.astrologers.isNotEmpty) {
-        kidsSpecialistAstrologers.value = response.astrologers;
-      }
-    } catch (e) {
-      print("Error loading Kids Specialist Astrologers: $e");
-    } finally {
-      isLoadingKidsSpecialistAstrologers.value = false;
-    }
+        if (response != null && response.astrologers.isNotEmpty) {
+          kidsSpecialistAstrologers.value = response.astrologers;
+        }
+      },
+      showBusy: false,
+      silent401ForGuest: true,
+    ).whenComplete(() => isLoadingKidsSpecialistAstrologers.value = false);
   }
 
   // Load Celebrity Astrologers
   Future<void> loadCelebrityAstrologers() async {
-    try {
-      isLoadingCelebrityAstrologers.value = true;
-      final response = await _astrologerService.getAstrologers(
-        page: 1,
-        limit: 5, // Load only 5 astrologers for the dashboard
-        astrologerCategory:
-            'CELEBRITY_ASTROLOGER', // Filter by CELEBRITY_ASTROLOGER category
-        sortBy: 'rating',
-      );
+    await runWithLoading(
+      () async {
+        isLoadingCelebrityAstrologers.value = true;
+        final response = await _astrologerService.getAstrologers(
+          page: 1,
+          limit: 5,
+          astrologerCategory: 'CELEBRITY_ASTROLOGER',
+          sortBy: 'rating',
+        );
 
-      if (response != null && response.astrologers.isNotEmpty) {
-        celebrityAstrologers.value = response.astrologers;
-      }
-    } catch (e) {
-      print("Error loading Celebrity Astrologers: $e");
-    } finally {
-      isLoadingCelebrityAstrologers.value = false;
-    }
+        if (response != null && response.astrologers.isNotEmpty) {
+          celebrityAstrologers.value = response.astrologers;
+        }
+      },
+      showBusy: false,
+      silent401ForGuest: true,
+    ).whenComplete(() => isLoadingCelebrityAstrologers.value = false);
   }
 
   // Load Courses
   Future<void> loadCourses() async {
-    try {
-      isLoadingCourses.value = true;
-      final response = await _coursesService.getCourses(
-        page: 1,
-        limit: 5, // Load only 5 courses for the dashboard
-        isPublished: true, // Only show published courses
-      );
+    await runWithLoading(
+      () async {
+        isLoadingCourses.value = true;
+        final response = await _coursesService.getCourses(
+          page: 1,
+          limit: 5,
+          isPublished: true,
+        );
 
-      if (response != null && response.courses.isNotEmpty) {
-        courses.value = response.courses;
-      }
-    } catch (e) {
-      print("Error loading Courses: $e");
-    } finally {
-      isLoadingCourses.value = false;
-    }
+        if (response != null && response.courses.isNotEmpty) {
+          courses.value = response.courses;
+        }
+      },
+      showBusy: false,
+      silent401ForGuest: true,
+    ).whenComplete(() => isLoadingCourses.value = false);
   }
 
   // Check for live webinars from enrolled courses
@@ -1153,28 +1078,27 @@ class UserDashboardController extends BaseController
   }
 
   Future<void> loadBlogs({bool requireAuth = true}) async {
-    isLoadingBlogs.value = true;
-    try {
-      final response = await _blogService.getBlogs(
-        page: 1,
-        useAuthHeader: requireAuth,
-      );
-      if (response != null && response.data != null) {
-        // Filter only published blogs and limit to 5 for dashboard
-        blogs.value = response.data!
-            .where(
-              (blog) =>
-                  blog.status == 'published' && !(blog.isDeleted ?? false),
-            )
-            .take(5)
-            .toList();
-      }
-    } catch (e) {
-      debugPrint('Error loading blogs: $e');
-      // Handle error silently
-    } finally {
-      isLoadingBlogs.value = false;
-    }
+    await runWithLoading(
+      () async {
+        isLoadingBlogs.value = true;
+        final response = await _blogService.getBlogs(
+          page: 1,
+          useAuthHeader: requireAuth,
+        );
+        if (response != null && response.data != null) {
+          // Filter only published blogs and limit to 5 for dashboard
+          blogs.value = response.data!
+              .where(
+                (blog) =>
+                    blog.status == 'published' && !(blog.isDeleted ?? false),
+              )
+              .take(5)
+              .toList();
+        }
+      },
+      showBusy: false,
+      silent401ForGuest: true,
+    ).whenComplete(() => isLoadingBlogs.value = false);
   }
 
   // Get filtered personas (for search)
@@ -1199,115 +1123,110 @@ class UserDashboardController extends BaseController
 
   /// Load remedy categories for Astro Remedy section
   Future<void> loadRemedyCategories() async {
-    try {
-      isLoadingRemedyCategories.value = true;
-      // Load featured categories for remedy section
-      final categoryData = await _ecommerceService.getCategories(
-        page: 1,
-        limit: 10,
-        isActive: true,
-        isFeatured: true,
-      );
+    await runWithLoading(
+      () async {
+        isLoadingRemedyCategories.value = true;
+        // Load featured categories for remedy section
+        final categoryData = await _ecommerceService.getCategories(
+          page: 1,
+          limit: 10,
+          isActive: true,
+          isFeatured: true,
+        );
 
-      if (categoryData != null &&
-          categoryData.items != null &&
-          categoryData.items!.isNotEmpty) {
-        // Filter to only top-level categories (no parent) and limit to 6
-        remedyCategories.value = categoryData.items!
-            .where((cat) => cat.parent == null)
-            .take(6)
-            .toList();
-      } else {
-        // Fallback: try category tree
-        final treeResult = await _ecommerceService.getCategoryTree();
-        if (treeResult != null && treeResult.isNotEmpty) {
-          remedyCategories.value = treeResult
-              .where((cat) => cat.isFeatured == true && cat.parent == null)
+        if (categoryData != null &&
+            categoryData.items != null &&
+            categoryData.items!.isNotEmpty) {
+          // Filter to only top-level categories (no parent) and limit to 6
+          remedyCategories.value = categoryData.items!
+              .where((cat) => cat.parent == null)
               .take(6)
               .toList();
+        } else {
+          // Fallback: try category tree
+          final treeResult = await _ecommerceService.getCategoryTree();
+          if (treeResult != null && treeResult.isNotEmpty) {
+            remedyCategories.value = treeResult
+                .where((cat) => cat.isFeatured == true && cat.parent == null)
+                .take(6)
+                .toList();
+          }
         }
-      }
-    } catch (e) {
-      debugPrint('Error loading remedy categories: $e');
-    } finally {
-      isLoadingRemedyCategories.value = false;
-    }
+      },
+      showBusy: false,
+      silent401ForGuest: true,
+    ).whenComplete(() => isLoadingRemedyCategories.value = false);
   }
 
   /// Load all categories for Digital Mart tab (grid of products)
   Future<void> loadDigitalMartCategories() async {
-    try {
-      isLoadingDigitalMartCategories.value = true;
-      final categoryData = await _ecommerceService.getCategories(
-        page: 1,
-        limit: 50,
-        isActive: true,
-      );
+    await runWithLoading(
+      () async {
+        isLoadingDigitalMartCategories.value = true;
+        final categoryData = await _ecommerceService.getCategories(
+          page: 1,
+          limit: 50,
+          isActive: true,
+        );
 
-      if (categoryData != null &&
-          categoryData.items != null &&
-          categoryData.items!.isNotEmpty) {
-        digitalMartCategories.value = categoryData.items!
-            .where((cat) => cat.parent == null)
-            .toList();
-      } else {
-        final treeResult = await _ecommerceService.getCategoryTree();
-        if (treeResult != null && treeResult.isNotEmpty) {
-          digitalMartCategories.value = treeResult
-              .where((cat) => cat.parent == null && (cat.isActive ?? true))
+        if (categoryData != null &&
+            categoryData.items != null &&
+            categoryData.items!.isNotEmpty) {
+          digitalMartCategories.value = categoryData.items!
+              .where((cat) => cat.parent == null)
               .toList();
         } else {
-          digitalMartCategories.clear();
+          final treeResult = await _ecommerceService.getCategoryTree();
+          if (treeResult != null && treeResult.isNotEmpty) {
+            digitalMartCategories.value = treeResult
+                .where((cat) => cat.parent == null && (cat.isActive ?? true))
+                .toList();
+          } else {
+            digitalMartCategories.clear();
+          }
         }
-      }
-    } catch (e) {
-      debugPrint('Error loading Digital Mart categories: $e');
-      digitalMartCategories.clear();
-    } finally {
-      isLoadingDigitalMartCategories.value = false;
-    }
+      },
+      showBusy: false,
+      silent401ForGuest: true,
+    ).whenComplete(() => isLoadingDigitalMartCategories.value = false);
   }
 
   /// Pull-to-refresh handler for dashboard content
   /// Load YouTube videos from channel
   Future<void> loadYouTubeVideos({String? apiKey}) async {
-    try {
-      isLoadingYoutubeVideos.value = true;
-      final videos = await _youtubeService.getChannelVideos(apiKey: apiKey);
-      youtubeVideos.value = videos;
+    await runWithLoading(
+      () async {
+        isLoadingYoutubeVideos.value = true;
+        final videos = await _youtubeService.getChannelVideos(apiKey: apiKey);
+        youtubeVideos.value = videos;
 
-      if (kDebugMode) {
-        print('Loaded ${videos.length} YouTube videos');
-      }
-    } catch (e) {
-      debugPrint('Error loading YouTube videos: $e');
-    } finally {
-      isLoadingYoutubeVideos.value = false;
-    }
+        if (kDebugMode) {
+          print('Loaded ${videos.length} YouTube videos');
+        }
+      },
+      showBusy: false,
+      silent401ForGuest: true,
+    ).whenComplete(() => isLoadingYoutubeVideos.value = false);
   }
 
   Future<void> refreshDashboard() async {
-    _loadUserData(); // Ensure user data stays up to date
-    await loadUserProfile();
-    await loadLiveStreams();
     final requireAuth = !_isGuest;
-    await loadDailyQuote(
-      requireAuth: requireAuth,
-    ); // Refresh quote on pull-to-refresh
-    await loadBanners();
-    await loadBlogs(
-      requireAuth: requireAuth,
-    ); // Refresh blogs on pull-to-refresh
     if (requireAuth) {
-      await checkForLiveWebinarFromEnrolledCourses(); // Refresh live webinar status
+      _loadUserData();
+      await loadUserProfile();
+      await checkForLiveWebinarFromEnrolledCourses();
     }
+    await loadLiveStreams();
+    await loadDailyQuote(requireAuth: requireAuth);
+    await loadBanners();
+    await loadBlogs(requireAuth: requireAuth);
     await loadVedicAstrologers();
     await loadKidsSpecialistAstrologers();
     await loadCelebrityAstrologers();
     await loadAiAstrologers();
     await loadCourses();
-    await loadRemedyCategories(); // Load remedy categories
-    await loadDigitalMartCategories(); // Load Digital Mart categories
+    await loadRemedyCategories();
+    await loadDigitalMartCategories();
   }
 
   /// Initialize Speech-to-AutoTranslateText

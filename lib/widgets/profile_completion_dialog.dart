@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:astrobharataiuser/utils/error_ui_utils.dart';
 
 /// Dialog to show profile completion form before starting chat/call
 class ProfileCompletionDialog extends StatefulWidget {
@@ -186,8 +187,10 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
     if (picked != null) {
       setState(() {
         _selectedTime = picked;
-        _timeController.text =
-            TimePickerHelper.formatTime24To12Display(picked.hour, picked.minute);
+        _timeController.text = TimePickerHelper.formatTime24To12Display(
+          picked.hour,
+          picked.minute,
+        );
       });
     }
   }
@@ -198,24 +201,12 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
     }
 
     if (_selectedDate == null) {
-      Get.showSnackbar(
-        GetSnackBar(
-          message: 'Please select date of birth',
-          duration: const Duration(seconds: 2),
-          backgroundColor: Colors.red,
-        ),
-      );
+      ErrorUiUtils.showWarningSnackbar('Please select date of birth');
       return;
     }
 
     if (_selectedTime == null) {
-      Get.showSnackbar(
-        GetSnackBar(
-          message: 'Please select time of birth',
-          duration: const Duration(seconds: 2),
-          backgroundColor: Colors.red,
-        ),
-      );
+      ErrorUiUtils.showWarningSnackbar('Please select time of birth');
       return;
     }
 
@@ -257,13 +248,7 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
       }
     } catch (e) {
       setState(() => _isSaving = false);
-      Get.showSnackbar(
-        GetSnackBar(
-          message: 'Failed to save profile: $e',
-          duration: const Duration(seconds: 2),
-          backgroundColor: Colors.red,
-        ),
-      );
+      ErrorUiUtils.showWarningSnackbar('Failed to save profile: $e');
     }
   }
 

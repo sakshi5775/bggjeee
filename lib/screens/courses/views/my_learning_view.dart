@@ -1,8 +1,6 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/courses/controllers/my_learning_controller.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/controller/user_main_controller.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/widgets/user_bottom_nav.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -36,7 +34,7 @@ class MyLearningView extends BasePage<MyLearningController> {
                 subtitle: AutoTranslateText(
                   '${controller.enrolledCourses.length} courses enrolled',
                   style: AppTypography.body2.copyWith(
-                    color: const Color(0xFF5F2221).withOpacity(0.7),
+                    color: const Color(0xFF5F2221).withValues(alpha: 0.7),
                     fontSize: 12.sp,
                   ),
                 ),
@@ -64,7 +62,7 @@ class MyLearningView extends BasePage<MyLearningController> {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -92,9 +90,8 @@ class MyLearningView extends BasePage<MyLearningController> {
                   ),
                 ),
                 Container(
-                  width: 1,
                   height: 40.h,
-                  color: AppColors.textSecondary.withOpacity(0.2),
+                  color: AppColors.textSecondary.withValues(alpha: 0.2),
                 ),
                 Expanded(
                   child: _buildStatItem(
@@ -104,9 +101,8 @@ class MyLearningView extends BasePage<MyLearningController> {
                   ),
                 ),
                 Container(
-                  width: 1,
                   height: 40.h,
-                  color: AppColors.textSecondary.withOpacity(0.2),
+                  color: AppColors.textSecondary.withValues(alpha: 0.2),
                 ),
                 Expanded(
                   child: _buildStatItem(
@@ -124,7 +120,9 @@ class MyLearningView extends BasePage<MyLearningController> {
                 Expanded(
                   child: LinearProgressIndicator(
                     value: controller.overallCompletionPercentage / 100,
-                    backgroundColor: AppColors.textSecondary.withOpacity(0.1),
+                    backgroundColor: AppColors.textSecondary.withValues(
+                      alpha: 0.1,
+                    ),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       AppColors.saffron,
                     ),
@@ -195,7 +193,7 @@ class MyLearningView extends BasePage<MyLearningController> {
                 Icon(
                   Icons.school_outlined,
                   size: 64.w,
-                  color: AppColors.saffron.withOpacity(0.5),
+                  color: AppColors.saffron.withValues(alpha: 0.5),
                 ),
                 SizedBox(height: 16.h),
                 AutoTranslateText(
@@ -244,7 +242,7 @@ class MyLearningView extends BasePage<MyLearningController> {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -308,7 +306,7 @@ class MyLearningView extends BasePage<MyLearningController> {
                     vertical: 6.h,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
+                    color: Colors.black.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: AutoTranslateText(
@@ -394,7 +392,9 @@ class MyLearningView extends BasePage<MyLearningController> {
                     SizedBox(height: 6.h),
                     LinearProgressIndicator(
                       value: progress.completionPercentage / 100,
-                      backgroundColor: AppColors.textSecondary.withOpacity(0.1),
+                      backgroundColor: AppColors.textSecondary.withValues(
+                        alpha: 0.1,
+                      ),
                       valueColor: AlwaysStoppedAnimation<Color>(
                         AppColors.saffron,
                       ),
@@ -436,18 +436,5 @@ class MyLearningView extends BasePage<MyLearningController> {
         ],
       ),
     );
-  }
-
-  Widget _buildBottomNav() {
-    try {
-      final mainController = Get.find<UserMainController>();
-      return UserBottomNav(
-        onTap: (index) {
-          mainController.changePage(index);
-        },
-      );
-    } catch (e) {
-      return const SizedBox.shrink();
-    }
   }
 }

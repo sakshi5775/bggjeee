@@ -14,7 +14,7 @@ class LoginGuard {
 
   /// Returns true when the user is logged in.
   /// When the user is a guest, a login modal is shown and `false` is returned.
-  /// 
+  ///
   /// [message] - Optional custom message to display in the modal
   /// [onLoginSuccess] - Optional callback to execute after successful login
   static Future<bool> ensureLoggedIn({
@@ -22,7 +22,7 @@ class LoginGuard {
     VoidCallback? onLoginSuccess,
   }) async {
     if (isLoggedIn) return true;
-    
+
     // Show login modal for guest users or non-logged-in users
     await showLoginRequiredModal(
       message: message,
@@ -37,18 +37,16 @@ class LoginGuard {
     String? message,
     VoidCallback? onLoginSuccess,
   }) async {
-    // Avoid stacking multiple dialogs of the same kind.
-    if (Get.isDialogOpen == true) {
-      Get.back(closeOverlays: true);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Avoid stacking multiple dialogs of the same kind.
+      if (Get.isDialogOpen == true) {
+        Get.back(closeOverlays: true);
+      }
 
-    await Get.dialog(
-      LoginRequiredModal(
-        message: message,
-        onLoginSuccess: onLoginSuccess,
-      ),
-      barrierDismissible: true,
-    );
+      await Get.dialog(
+        LoginRequiredModal(message: message, onLoginSuccess: onLoginSuccess),
+        barrierDismissible: true,
+      );
+    });
   }
 }
-

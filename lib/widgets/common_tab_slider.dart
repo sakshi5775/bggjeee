@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -78,9 +79,9 @@ class _CommonTabSliderState extends State<CommonTabSlider> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 48.h,
+      height: 56.h,
       color: Colors.transparent,
-      padding: EdgeInsets.symmetric(vertical: 6.h),
+      padding: EdgeInsets.symmetric(vertical: 2.h),
       child: SingleChildScrollView(
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
@@ -107,8 +108,8 @@ class _CommonTabSliderState extends State<CommonTabSlider> {
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.easeOut,
                     padding: EdgeInsets.symmetric(
-                      horizontal: 14.w,
-                      vertical: 8.h,
+                      horizontal: 16.w,
+                      vertical: 10.h,
                     ),
                     decoration: BoxDecoration(
                       color: isSelected ? orange : Colors.transparent,
@@ -134,7 +135,7 @@ class _CommonTabSliderState extends State<CommonTabSlider> {
                         tabLabel,
                         textAlign: TextAlign.center,
                         style: MyTextTheme.mediumBCB.copyWith(
-                          color: isSelected ? Colors.white : maroon,
+                          color: isSelected ? Colors.white : AppColors.saffron,
                           fontWeight: isSelected
                               ? FontWeight.w700
                               : FontWeight.w500,

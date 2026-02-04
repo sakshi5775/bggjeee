@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/screens/astrology_services/controller/astrolog
 import 'package:astrobharataiuser/screens/astrology_services/widgets/remedies_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -90,6 +91,21 @@ class AstrologyServicesView extends StatelessWidget {
 
                           // Explore Categories Section
                           _buildExploreCategoriesSection(context, controller),
+
+                          Spacing.h(16),
+
+                          // Banners
+                          Obx(() {
+                            if (controller.serviceBanners.isNotEmpty) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                child: BannerCarouselWidget(
+                                  banners: controller.serviceBanners,
+                                ),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          }),
 
                           Spacing.h(10),
 

@@ -29,9 +29,10 @@ class _BannerSkeletonShimmerState extends State<_BannerSkeletonShimmer>
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat();
-    _animation = Tween<double>(begin: -1.5, end: 1.5).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: -1.5,
+      end: 1.5,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -190,7 +191,7 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
               imageUrl: banner.image,
               width: double.infinity,
               height: double.infinity,
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
               placeholder: (context, url) => const _BannerSkeletonShimmer(),
               errorWidget: (context, url, error) => Container(
                 color: "#6F221E".toColor().withOpacity(0.1),
@@ -208,10 +209,7 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.4),
-                    Colors.transparent,
-                  ],
+                  colors: [Colors.black.withOpacity(0.4), Colors.transparent],
                 ),
               ),
             ),

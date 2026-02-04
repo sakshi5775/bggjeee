@@ -93,18 +93,17 @@ class UserProfileController extends BaseController {
   Future<void> loadProfile() async {
     if (userId == null) return;
 
-    try {
-      isLoading.value = true;
-      final loadedProfile = await _service.getProfile(userId!);
-      if (loadedProfile != null) {
-        profile.value = loadedProfile;
-        _populateFieldsFromProfile(loadedProfile);
-      }
-    } catch (e) {
-      showErrorMessage(title: 'Profile', message: e.toString());
-    } finally {
-      isLoading.value = false;
-    }
+    await runWithLoading(
+      () async {
+        final loadedProfile = await _service.getProfile(userId!);
+        if (loadedProfile != null) {
+          profile.value = loadedProfile;
+          _populateFieldsFromProfile(loadedProfile);
+        }
+      },
+      showBusy: true, // Show global loader for profile load
+      showError: true,
+    );
   }
 
   /// Populate form fields from profile data
@@ -125,7 +124,8 @@ class UserProfileController extends BaseController {
         cityController.text = profile.contactInfo!.address!.city ?? '';
         stateController.text = profile.contactInfo!.address!.state ?? '';
         pincodeController.text = profile.contactInfo!.address!.pincode ?? '';
-        countryController.text = profile.contactInfo!.address!.country ?? 'India';
+        countryController.text =
+            profile.contactInfo!.address!.country ?? 'India';
       }
     }
 
@@ -186,7 +186,9 @@ class UserProfileController extends BaseController {
         whatsappNotificationController.value =
             profile.preferences!.notificationSettings!.whatsapp ?? false;
       }
-      interestsController.value = List<String>.from(profile.preferences!.interests ?? []);
+      interestsController.value = List<String>.from(
+        profile.preferences!.interests ?? [],
+      );
     }
   }
 
@@ -199,39 +201,44 @@ class UserProfileController extends BaseController {
       return;
     }
 
-    try {
-      isFetchingCoordinates.value = true;
-      final addressDetails = await AddressHelper.fetchAddressDetails(
-        city: birthCityController.text.trim(),
-        state: birthStateController.text.trim().isNotEmpty
-            ? birthStateController.text.trim()
-            : null,
-        country: birthCountryController.text.trim().isNotEmpty
-            ? birthCountryController.text.trim()
-            : 'India',
-      );
+    await runWithLoading(
+      () async {
+        isFetchingCoordinates.value = true;
+        final addressDetails = await AddressHelper.fetchAddressDetails(
+          city: birthCityController.text.trim(),
+          state: birthStateController.text.trim().isNotEmpty
+              ? birthStateController.text.trim()
+              : null,
+          country: birthCountryController.text.trim().isNotEmpty
+              ? birthCountryController.text.trim()
+              : 'India',
+        );
 
-      if (addressDetails != null) {
-        birthLatitudeController.text = addressDetails['latitude']?.toString() ?? '';
-        birthLongitudeController.text = addressDetails['longitude']?.toString() ?? '';
-        birthTimezoneController.text = addressDetails['timezone']?.toString() ?? '';
-        
-        // Optionally update state and country if found
-        if (addressDetails['state'] != null && birthStateController.text.isEmpty) {
-          birthStateController.text = addressDetails['state']?.toString() ?? '';
+        if (addressDetails != null) {
+          birthLatitudeController.text =
+              addressDetails['latitude']?.toString() ?? '';
+          birthLongitudeController.text =
+              addressDetails['longitude']?.toString() ?? '';
+          birthTimezoneController.text =
+              addressDetails['timezone']?.toString() ?? '';
+
+          // Optionally update state and country if found
+          if (addressDetails['state'] != null &&
+              birthStateController.text.isEmpty) {
+            birthStateController.text =
+                addressDetails['state']?.toString() ?? '';
+          }
+          if (addressDetails['country'] != null &&
+              birthCountryController.text.isEmpty) {
+            birthCountryController.text =
+                addressDetails['country']?.toString() ?? '';
+          }
         }
-        if (addressDetails['country'] != null && birthCountryController.text.isEmpty) {
-          birthCountryController.text = addressDetails['country']?.toString() ?? '';
-        }
-      }
-    } catch (e) {
-      showErrorMessage(
-        title: 'Address',
-        message: 'Failed to fetch coordinates. Please enter manually.',
-      );
-    } finally {
-      isFetchingCoordinates.value = false;
-    }
+      },
+      showBusy: false, // Don't show global loader for coordinate fetch
+      showError: true,
+    );
+    isFetchingCoordinates.value = false;
   }
 
   /// Autofetch coordinates for contact address city
@@ -247,177 +254,172 @@ class UserProfileController extends BaseController {
       return false;
     }
 
-    try {
-      isUpdating.value = true;
+    return await runWithLoading(
+          () async {
+            // Prepare PersonalInfo
+            final personalInfo = PersonalInfo(
+              fullName: fullNameController.text.trim().isNotEmpty
+                  ? fullNameController.text.trim()
+                  : null,
+              gender: genderController.text.trim().isNotEmpty
+                  ? genderController.text.trim()
+                  : null,
+              maritalStatus: maritalStatusController.text.trim().isNotEmpty
+                  ? maritalStatusController.text.trim()
+                  : null,
+              occupation: occupationController.text.trim().isNotEmpty
+                  ? occupationController.text.trim()
+                  : null,
+            );
 
-      // Prepare PersonalInfo
-      final personalInfo = PersonalInfo(
-        fullName: fullNameController.text.trim().isNotEmpty
-            ? fullNameController.text.trim()
-            : null,
-        gender: genderController.text.trim().isNotEmpty
-            ? genderController.text.trim()
-            : null,
-        maritalStatus: maritalStatusController.text.trim().isNotEmpty
-            ? maritalStatusController.text.trim()
-            : null,
-        occupation: occupationController.text.trim().isNotEmpty
-            ? occupationController.text.trim()
-            : null,
-      );
+            // Prepare ContactInfo
+            final contactInfo = ContactInfo(
+              alternatePhone: alternatePhoneController.text.trim().isNotEmpty
+                  ? alternatePhoneController.text.trim()
+                  : null,
+              address:
+                  (cityController.text.trim().isNotEmpty ||
+                      stateController.text.trim().isNotEmpty ||
+                      pincodeController.text.trim().isNotEmpty)
+                  ? Address(
+                      city: cityController.text.trim().isNotEmpty
+                          ? cityController.text.trim()
+                          : null,
+                      state: stateController.text.trim().isNotEmpty
+                          ? stateController.text.trim()
+                          : null,
+                      country: countryController.text.trim().isNotEmpty
+                          ? countryController.text.trim()
+                          : null,
+                      pincode: pincodeController.text.trim().isNotEmpty
+                          ? pincodeController.text.trim()
+                          : null,
+                    )
+                  : null,
+            );
 
-      // Prepare ContactInfo
-      final contactInfo = ContactInfo(
-        alternatePhone: alternatePhoneController.text.trim().isNotEmpty
-            ? alternatePhoneController.text.trim()
-            : null,
-        address: (cityController.text.trim().isNotEmpty ||
-                stateController.text.trim().isNotEmpty ||
-                pincodeController.text.trim().isNotEmpty)
-            ? Address(
-                city: cityController.text.trim().isNotEmpty
-                    ? cityController.text.trim()
+            // Prepare Preferences
+            final preferences = Preferences(
+              language: languageController.text.trim().isNotEmpty
+                  ? languageController.text.trim()
+                  : null,
+              notificationSettings: NotificationSettings(
+                email: emailNotificationController.value,
+                sms: smsNotificationController.value,
+                push: pushNotificationController.value,
+                whatsapp: whatsappNotificationController.value,
+              ),
+              interests: interestsController.isNotEmpty
+                  ? interestsController.toList()
+                  : null,
+            );
+
+            // Call PATCH API to update profile
+            final profileUpdated = await _service.updateProfile(
+              userId: userId!,
+              profilePicture: profilePicture.value,
+              personalInfo: personalInfo,
+              contactInfo: contactInfo,
+              preferences: preferences,
+            );
+
+            if (profileUpdated == null) {
+              throw 'Failed to update profile';
+            }
+
+            // Prepare BirthChart data if provided
+            bool shouldUpdateBirthChart =
+                birthCityController.text.trim().isNotEmpty ||
+                birthHourController.text.trim().isNotEmpty;
+
+            if (shouldUpdateBirthChart) {
+              double? latitude = birthLatitudeController.text.trim().isNotEmpty
+                  ? double.tryParse(birthLatitudeController.text.trim())
+                  : null;
+              double? longitude =
+                  birthLongitudeController.text.trim().isNotEmpty
+                  ? double.tryParse(birthLongitudeController.text.trim())
+                  : null;
+
+              int? hour = birthHourController.text.trim().isNotEmpty
+                  ? int.tryParse(birthHourController.text.trim())
+                  : null;
+              int? minute = birthMinuteController.text.trim().isNotEmpty
+                  ? int.tryParse(birthMinuteController.text.trim())
+                  : null;
+              int? second = birthSecondController.text.trim().isNotEmpty
+                  ? int.tryParse(birthSecondController.text.trim())
+                  : null;
+
+              final birthPlace = BirthPlace(
+                city: birthCityController.text.trim().isNotEmpty
+                    ? birthCityController.text.trim()
                     : null,
-                state: stateController.text.trim().isNotEmpty
-                    ? stateController.text.trim()
+                state: birthStateController.text.trim().isNotEmpty
+                    ? birthStateController.text.trim()
                     : null,
-                country: countryController.text.trim().isNotEmpty
-                    ? countryController.text.trim()
+                country: birthCountryController.text.trim().isNotEmpty
+                    ? birthCountryController.text.trim()
                     : null,
-                pincode: pincodeController.text.trim().isNotEmpty
-                    ? pincodeController.text.trim()
+                latitude: latitude,
+                longitude: longitude,
+                timezone: birthTimezoneController.text.trim().isNotEmpty
+                    ? birthTimezoneController.text.trim()
                     : null,
-              )
-            : null,
-      );
+              );
 
-      // Prepare Preferences
-      final preferences = Preferences(
-        language: languageController.text.trim().isNotEmpty
-            ? languageController.text.trim()
-            : null,
-        notificationSettings: NotificationSettings(
-          email: emailNotificationController.value,
-          sms: smsNotificationController.value,
-          push: pushNotificationController.value,
-          whatsapp: whatsappNotificationController.value,
-        ),
-        interests: interestsController.isNotEmpty ? interestsController.toList() : null,
-      );
+              final birthTime = BirthTime(
+                hour: hour,
+                minute: minute,
+                second: second,
+              );
 
-      // Call PATCH API to update profile (with empty birthChart)
-      final profileUpdated = await _service.updateProfile(
-        userId: userId!,
-        profilePicture: profilePicture.value,
-        personalInfo: personalInfo,
-        contactInfo: contactInfo,
-        preferences: preferences,
-      );
+              String? dateOfBirth;
+              if (selectedBirthDate.value != null) {
+                dateOfBirth = DateFormat(
+                  'yyyy-MM-dd',
+                ).format(selectedBirthDate.value!);
+              } else if (profile.value?.birthChart?.generatedAt != null) {
+                dateOfBirth = _formatDateToISO(
+                  profile.value!.birthChart!.generatedAt!,
+                );
+              }
 
-      if (profileUpdated == null) {
-        showErrorMessage(title: 'Profile', message: 'Failed to update profile');
-        return false;
-      }
+              final birthChartUpdated = await _service.updateBirthChart(
+                userId: userId!,
+                birthPlace: birthPlace,
+                birthTime: birthTime,
+                dateOfBirth: dateOfBirth,
+              );
 
-      // Prepare BirthChart data if provided
-      bool shouldUpdateBirthChart = birthCityController.text.trim().isNotEmpty ||
-          birthHourController.text.trim().isNotEmpty;
+              if (birthChartUpdated == null) {
+                // Log warning but continue as profile was updated
+                debugPrint('Profiling updated but birth chart update failed');
+              }
+            }
 
-      if (shouldUpdateBirthChart) {
-        // Parse coordinates
-        double? latitude = birthLatitudeController.text.trim().isNotEmpty
-            ? double.tryParse(birthLatitudeController.text.trim())
-            : null;
-        double? longitude = birthLongitudeController.text.trim().isNotEmpty
-            ? double.tryParse(birthLongitudeController.text.trim())
-            : null;
-
-        // Parse birth time
-        int? hour = birthHourController.text.trim().isNotEmpty
-            ? int.tryParse(birthHourController.text.trim())
-            : null;
-        int? minute = birthMinuteController.text.trim().isNotEmpty
-            ? int.tryParse(birthMinuteController.text.trim())
-            : null;
-        int? second = birthSecondController.text.trim().isNotEmpty
-            ? int.tryParse(birthSecondController.text.trim())
-            : null;
-
-        final birthPlace = BirthPlace(
-          city: birthCityController.text.trim().isNotEmpty
-              ? birthCityController.text.trim()
-              : null,
-          state: birthStateController.text.trim().isNotEmpty
-              ? birthStateController.text.trim()
-              : null,
-          country: birthCountryController.text.trim().isNotEmpty
-              ? birthCountryController.text.trim()
-              : null,
-          latitude: latitude,
-          longitude: longitude,
-          timezone: birthTimezoneController.text.trim().isNotEmpty
-              ? birthTimezoneController.text.trim()
-              : null,
-        );
-
-        final birthTime = BirthTime(
-          hour: hour,
-          minute: minute,
-          second: second,
-        );
-
-        // Extract and format dateOfBirth from selected date or profile
-        String? dateOfBirth;
-        if (selectedBirthDate.value != null) {
-          dateOfBirth = DateFormat('yyyy-MM-dd').format(selectedBirthDate.value!);
-        } else if (profile.value?.birthChart?.generatedAt != null) {
-          dateOfBirth = _formatDateToISO(profile.value!.birthChart!.generatedAt!);
-        }
-
-        // Call PUT API to update birth chart
-        final birthChartUpdated = await _service.updateBirthChart(
-          userId: userId!,
-          birthPlace: birthPlace,
-          birthTime: birthTime,
-          dateOfBirth: dateOfBirth,
-        );
-
-        if (birthChartUpdated == null) {
-          showErrorMessage(
-            title: 'Birth Chart',
-            message: 'Profile updated but birth chart update failed',
-          );
-          // Still return true since profile was updated
-          return true;
-        }
-      }
-
-      // Reload profile to get updated data
-      await loadProfile();
-
-      showSuccessMessage(
-        title: 'Profile',
-        message: 'Profile updated successfully',
-      );
-      return true;
-    } catch (e) {
-      showErrorMessage(title: 'Profile', message: e.toString());
-      return false;
-    } finally {
-      isUpdating.value = false;
-    }
+            // Reload profile
+            await loadProfile();
+            return true;
+          },
+          showBusy: true,
+          successMessage: 'Profile updated successfully',
+        ) ??
+        false;
   }
 
   /// Select birth date
   Future<void> selectBirthDate() async {
     final pickedDate = await showDatePicker(
       context: Get.context!,
-      initialDate: selectedBirthDate.value ?? DateTime.now().subtract(Duration(days: 365 * 25)),
+      initialDate:
+          selectedBirthDate.value ??
+          DateTime.now().subtract(Duration(days: 365 * 25)),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       helpText: 'Select Date of Birth',
     );
-    
+
     if (pickedDate != null) {
       selectedBirthDate.value = pickedDate;
       birthDateController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
@@ -428,14 +430,14 @@ class UserProfileController extends BaseController {
   /// Handles both DD/MM/YYYY and ISO formats
   String? _formatDateToISO(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return null;
-    
+
     try {
       // Try parsing as ISO date first
       final isoDate = DateTime.tryParse(dateStr);
       if (isoDate != null) {
         return '${isoDate.year.toString().padLeft(4, '0')}-${isoDate.month.toString().padLeft(2, '0')}-${isoDate.day.toString().padLeft(2, '0')}';
       }
-      
+
       // Try parsing as DD/MM/YYYY
       final parts = dateStr.split('/');
       if (parts.length == 3) {
@@ -449,7 +451,7 @@ class UserProfileController extends BaseController {
     } catch (e) {
       // Return default if parsing fails
     }
-    
+
     return '1990-01-15'; // Default date as per requirement
   }
 
@@ -462,4 +464,3 @@ class UserProfileController extends BaseController {
     }
   }
 }
-

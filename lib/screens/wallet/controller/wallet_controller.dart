@@ -247,12 +247,12 @@ class WalletController extends BaseController {
 
   /// Load wallet balance from user profile
   Future<void> loadWalletBalance() async {
-    try {
-      final userId = UserData().getLoginData.user?.userId;
-      if (userId != null) {
-        // Use the new specific wallet balance API if available,
-        // or fall back to profile.
-        // Let's use the new API I added to WalletService
+    final userId = UserData().getLoginData.user?.userId;
+    if (userId == null) return;
+
+    await runWithLoading(
+      () async {
+        // Try new wallet balance API
         final balanceResponse = await _walletService.getWalletBalance(userId);
         if (balanceResponse != null && balanceResponse.data != null) {
           walletBalance.value = balanceResponse.data!.balance.toDouble();
@@ -265,68 +265,69 @@ class WalletController extends BaseController {
             currency.value = profile.wallet!.currency ?? 'INR';
           }
         }
-      }
-    } catch (e) {
-      print('Error loading wallet balance: $e');
-    }
+      },
+      showBusy: false, // Don't show global loader for balance update
+      showError: false, // Handle errors silently for background updates
+    );
   }
 
   /// Load recharge history
   Future<void> loadRechargeHistory({bool refresh = false}) async {
-    try {
-      if (refresh) {
-        currentOffset.value = 0;
-        rechargeHistory.clear();
-      }
-
-      isLoadingHistory.value = true;
-      final response = await _walletService.getRechargeHistory(
-        limit: limit.value,
-        offset: currentOffset.value,
-        status: selectedStatus.value.isEmpty ? null : selectedStatus.value,
-      );
-
-      if (response?.data != null) {
+    await runWithLoading(
+      () async {
         if (refresh) {
-          rechargeHistory.value = response!.data!.recharges;
-        } else {
-          rechargeHistory.addAll(response!.data!.recharges);
+          currentOffset.value = 0;
         }
-        hasMore.value = response.data!.pagination.hasMore;
-        total.value = response.data!.pagination.total;
-        currentOffset.value =
-            response.data!.pagination.offset + response.data!.recharges.length;
-      }
-    } catch (e) {
-      print('Error loading recharge history: $e');
-    } finally {
-      isLoadingHistory.value = false;
-    }
+
+        isLoadingHistory.value = true;
+        final response = await _walletService.getRechargeHistory(
+          limit: limit.value,
+          offset: currentOffset.value,
+          status: selectedStatus.value.isEmpty ? null : selectedStatus.value,
+        );
+
+        if (response?.data != null) {
+          if (refresh) {
+            rechargeHistory.value = response!.data!.recharges;
+          } else {
+            rechargeHistory.addAll(response!.data!.recharges);
+          }
+          hasMore.value = response.data!.pagination.hasMore;
+          total.value = response.data!.pagination.total;
+          currentOffset.value =
+              response.data!.pagination.offset +
+              response.data!.recharges.length;
+        }
+      },
+      showBusy: false, // Use local isLoadingHistory instead
+    );
+    isLoadingHistory.value = false;
   }
 
   /// Load more recharge history (pagination)
   Future<void> loadMoreHistory() async {
     if (isLoadingMore.value || !hasMore.value) return;
 
-    try {
-      isLoadingMore.value = true;
-      final response = await _walletService.getRechargeHistory(
-        limit: limit.value,
-        offset: currentOffset.value,
-        status: selectedStatus.value.isEmpty ? null : selectedStatus.value,
-      );
+    await runWithLoading(
+      () async {
+        isLoadingMore.value = true;
+        final response = await _walletService.getRechargeHistory(
+          limit: limit.value,
+          offset: currentOffset.value,
+          status: selectedStatus.value.isEmpty ? null : selectedStatus.value,
+        );
 
-      if (response?.data != null) {
-        rechargeHistory.addAll(response!.data!.recharges);
-        hasMore.value = response.data!.pagination.hasMore;
-        currentOffset.value =
-            response.data!.pagination.offset + response.data!.recharges.length;
-      }
-    } catch (e) {
-      print('Error loading more history: $e');
-    } finally {
-      isLoadingMore.value = false;
-    }
+        if (response?.data != null) {
+          rechargeHistory.addAll(response!.data!.recharges);
+          hasMore.value = response.data!.pagination.hasMore;
+          currentOffset.value =
+              response.data!.pagination.offset +
+              response.data!.recharges.length;
+        }
+      },
+      showBusy: false, // Use local isLoadingMore instead
+    );
+    isLoadingMore.value = false;
   }
 
   /// Filter by status
@@ -341,8 +342,7 @@ class WalletController extends BaseController {
     String paymentMethod = 'online',
     String paymentProvider = 'razorpay', // Default changed to razorpay
   }) async {
-    try {
-      isInitiatingRecharge.value = true;
+    return await runWithLoading<WalletRechargeData?>(() async {
       final response = await _walletService.initiateRecharge(
         amount: amount,
         paymentMethod: paymentMethod,
@@ -354,12 +354,7 @@ class WalletController extends BaseController {
         return response.data;
       }
       return null;
-    } catch (e) {
-      print('Error initiating recharge: $e');
-      return null;
-    } finally {
-      isInitiatingRecharge.value = false;
-    }
+    }, showBusy: true);
   }
 
   /// Verify recharge
@@ -370,54 +365,46 @@ class WalletController extends BaseController {
     String? razorpayPaymentId,
     String? razorpaySignature,
   }) async {
-    try {
-      isVerifyingRecharge.value = true;
-      final response = await _walletService.verifyRecharge(
-        rechargeId: rechargeId,
-        transactionId: transactionId,
-        razorpayOrderId: razorpayOrderId,
-        razorpayPaymentId: razorpayPaymentId,
-        razorpaySignature: razorpaySignature,
-      );
+    return await runWithLoading(
+          () async {
+            final response = await _walletService.verifyRecharge(
+              rechargeId: rechargeId,
+              transactionId: transactionId,
+              razorpayOrderId: razorpayOrderId,
+              razorpayPaymentId: razorpayPaymentId,
+              razorpaySignature: razorpaySignature,
+            );
 
-      if (response?.success == true && response?.data != null) {
-        // Update wallet balance
-        walletBalance.value = response!.data!.newBalance.toDouble();
-        // Refresh history
-        await loadRechargeHistory(refresh: true);
-        // Refresh wallet balance from API
-        await loadWalletBalance();
+            if (response?.success == true && response?.data != null) {
+              // Update wallet balance
+              walletBalance.value = response!.data!.newBalance.toDouble();
+              // Refresh history and balance
+              await Future.wait([
+                loadRechargeHistory(refresh: true),
+                loadWalletBalance(),
+              ]);
 
-        showSuccessMessage(
-          title: "Success",
-          message: "Wallet recharged successfully!",
-        );
-        return true;
-      }
-      return false;
-    } catch (e) {
-      print('Error verifying recharge: $e');
-      showErrorMessage(title: "Verification Failed", message: e.toString());
-      return false;
-    } finally {
-      isVerifyingRecharge.value = false;
-    }
+              return true;
+            }
+            return false;
+          },
+          showBusy: true,
+          successMessage: "Wallet recharged successfully!",
+        ) ??
+        false;
   }
 
   /// Cancel recharge
   Future<bool> cancelRecharge(String rechargeId) async {
-    try {
-      final response = await _walletService.cancelRecharge(rechargeId);
-      if (response?.success == true) {
-        // Refresh history
-        await loadRechargeHistory(refresh: true);
-        return true;
-      }
-      return false;
-    } catch (e) {
-      print('Error cancelling recharge: $e');
-      return false;
-    }
+    return await runWithLoading(() async {
+          final response = await _walletService.cancelRecharge(rechargeId);
+          if (response?.success == true) {
+            await loadRechargeHistory(refresh: true);
+            return true;
+          }
+          return false;
+        }, showBusy: true) ??
+        false;
   }
 
   /// Format currency

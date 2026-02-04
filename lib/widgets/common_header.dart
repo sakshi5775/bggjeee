@@ -304,19 +304,28 @@ class CommonHeader extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    if (showBackButton)
+                    if (showBackButton) ...[
+                      if (Navigator.canPop(context))
+                        IconButton(
+                          onPressed: () => Get.back(),
+                          style: IconButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size(36.w, 36.h),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          icon: Icon(
+                            Icons.arrow_back_ios_new,
+                            size: 20.w,
+                            color: '#6F221E'.toColor(),
+                          ),
+                        ),
                       IconButton(
                         onPressed:
                             onMenuTap ??
                             () {
-                              // If back button, try Get.back first
-                              if (Navigator.canPop(context)) {
-                                Get.back();
-                              } else {
-                                final scaffoldState = context
-                                    .findAncestorStateOfType<ScaffoldState>();
-                                scaffoldState?.openDrawer();
-                              }
+                              final scaffoldState = context
+                                  .findAncestorStateOfType<ScaffoldState>();
+                              scaffoldState?.openDrawer();
                             },
                         style: IconButton.styleFrom(
                           padding: EdgeInsets.zero,
@@ -324,14 +333,13 @@ class CommonHeader extends StatelessWidget {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         icon: Icon(
-                          (Navigator.canPop(context) && onMenuTap == null)
-                              ? Icons.arrow_back_ios_new
-                              : Icons.menu,
+                          Icons.menu,
                           size: 20.w,
                           color: '#6F221E'.toColor(),
                         ),
                       ),
-                    SizedBox(width: 10.w),
+                    ],
+                    SizedBox(width: 4.w),
 
                     Expanded(
                       child: AutoTranslateText(
@@ -345,6 +353,25 @@ class CommonHeader extends StatelessWidget {
                     ),
 
                     if (customActions != null) ...customActions!,
+
+                    IconButton(
+                      onPressed: () {
+                        // Use popUntil to avoid Duplicate GlobalKey crash with nested navigators
+                        Navigator.of(
+                          context,
+                        ).popUntil((route) => route.isFirst);
+                      },
+                      icon: Icon(
+                        Icons.home_outlined,
+                        size: 22.w,
+                        color: '#6F221E'.toColor(),
+                      ),
+                      style: IconButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size(36.w, 36.h),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
                   ],
                 ),
               ),
