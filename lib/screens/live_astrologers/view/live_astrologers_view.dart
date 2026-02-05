@@ -32,7 +32,7 @@ class LiveAstrologersView extends StatelessWidget {
           children: [
             // Header
             CommonHeader(
-              title: 'Live Astrologers',
+              title: 'Astro Live Streaming Hub',
               customActions: [
                 GestureDetector(
                   onTap: () {

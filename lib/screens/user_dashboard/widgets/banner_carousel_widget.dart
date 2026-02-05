@@ -124,23 +124,8 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
   }
 
   void _startAutoSlide() {
-    if (!mounted || widget.banners.isEmpty) return;
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 2), (_) {
-      if (!mounted || widget.banners.isEmpty) return;
-      final pc = _pageController;
-      if (!pc.hasClients || pc.positions.length != 1) return;
-      try {
-        final current = pc.page?.round() ?? (500 * widget.banners.length);
-        pc.animateToPage(
-          current + 1,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      } catch (_) {
-        _timer?.cancel();
-      }
-    });
+    // Animation removed as per user request
+    return;
   }
 
   @override
@@ -174,13 +159,7 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: "#F38B3B".toColor(), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        // Shadow removed as per user request
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16.r),
@@ -204,15 +183,7 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
                 ),
               ),
             ),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [Colors.black.withOpacity(0.4), Colors.transparent],
-                ),
-              ),
-            ),
+            // Gradient overlay removed as per user request
             if (banner.title != null && banner.title!.trim().isNotEmpty)
               Padding(
                 padding: EdgeInsets.all(12.w),

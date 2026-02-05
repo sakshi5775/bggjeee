@@ -1,12 +1,12 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/all_videos_controller.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/service/youtube_service.dart'
-    show YouTubeVideo;
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/instagram_webview.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/media_cards.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,44 +19,30 @@ class AllVideosView extends BasePage<AllVideosController> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SafeArea(
-          top: !hideHeader,
-          child: Column(
-            children: [
-              if (!hideHeader) ...[
-                _buildHeader(),
-                SizedBox(height: 4.h),
+    return DefaultTabController(
+      length: 2,
+      child: Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SafeArea(
+            top: !hideHeader,
+            child: Column(
+              children: [
+                if (!hideHeader) ...[_buildHeader(), SizedBox(height: 4.h)],
+                _buildTabBar(),
+                SizedBox(height: 12.h),
+                Expanded(
+                  child: TabBarView(
+                    physics: const BouncingScrollPhysics(),
+                    children: [
+                      _buildYouTubeTab(context),
+                      _buildInstagramTab(context),
+                    ],
+                  ),
+                ),
               ],
-              Expanded(
-                child: Obx(() {
-                  if (controller.isLoading.value && controller.videos.isEmpty) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.deepOrange,
-                        ),
-                      ),
-                    );
-                  }
-                  if (controller.videos.isEmpty) {
-                    return _buildEmptyState();
-                  }
-                  return RefreshIndicator(
-                    onRefresh: controller.refresh,
-                    color: AppColors.deepOrange,
-                    child: Obx(
-                      () => controller.isGridView.value
-                          ? _buildGridView(context)
-                          : _buildListView(context),
-                    ),
-                  );
-                }),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -84,16 +70,12 @@ class AllVideosView extends BasePage<AllVideosController> {
                   ),
                 ],
               ),
-              child: Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-                size: 17.w,
-              ),
+              child: Icon(Icons.arrow_back, color: Colors.white, size: 17.w),
             ),
           ),
           SizedBox(width: 8.w),
           AutoTranslateText(
-            'Videos',
+            'Media Hub',
             style: AppTypography.h2.copyWith(
               color: '#3D0C11'.toColor(),
               fontWeight: FontWeight.bold,
@@ -101,21 +83,21 @@ class AllVideosView extends BasePage<AllVideosController> {
             ),
           ),
           const Spacer(),
-          GestureDetector(
-            onTap: controller.toggleViewMode,
-            child: Container(
-              width: 32.w,
-              height: 32.h,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(
-                  color: const Color(0xFFE0E0E0),
-                  width: 1,
+          Obx(() {
+            // Only show grid/list toggle for YouTube tab
+            if (controller.selectedTabIndex.value != 0)
+              return const SizedBox.shrink();
+            return GestureDetector(
+              onTap: controller.toggleViewMode,
+              child: Container(
+                width: 32.w,
+                height: 32.h,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
                 ),
-              ),
-              child: Obx(
-                () => Icon(
+                child: Icon(
                   controller.isGridView.value
                       ? Icons.view_list
                       : Icons.grid_view,
@@ -123,327 +105,145 @@ class AllVideosView extends BasePage<AllVideosController> {
                   color: const Color(0xFF5F2221),
                 ),
               ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabBar() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      height: 40.h,
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: Colors.white, width: 1),
+      ),
+      child: TabBar(
+        onTap: (index) => controller.selectedTabIndex.value = index,
+        indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.r),
+          gradient: AppColors.primaryGradient,
+          boxShadow: [
+            BoxShadow(
+              color: '#68171E'.toColor().withOpacity(0.2),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
+          ],
+        ),
+        indicatorSize: TabBarIndicatorSize.tab,
+        labelColor: Colors.white,
+        unselectedLabelColor: '#5F2221'.toColor(),
+        labelStyle: AppTypography.body1.copyWith(
+          fontWeight: FontWeight.bold,
+          fontSize: 13.sp,
+        ),
+        unselectedLabelStyle: AppTypography.body2.copyWith(
+          fontWeight: FontWeight.w600,
+          fontSize: 13.sp,
+        ),
+        tabs: const [
+          Tab(text: 'YouTube'),
+          Tab(text: 'Instagram'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildYouTubeTab(BuildContext context) {
+    return Obx(() {
+      if (controller.isLoading.value && controller.videos.isEmpty) {
+        return _buildLoading();
+      }
+      if (controller.videos.isEmpty) {
+        return _buildEmptyState('YouTube');
+      }
+      return RefreshIndicator(
+        onRefresh: controller.loadVideos,
+        color: AppColors.deepOrange,
+        child: controller.isGridView.value
+            ? _buildYouTubeGrid()
+            : _buildYouTubeList(),
+      );
+    });
+  }
+
+  Widget _buildInstagramTab(BuildContext context) {
+    // Instagram Tab - WebView doesn't need Obx since it's not reactive
+    return InstagramWebView(url: InstagramConstant.instagramProfileUrl);
+  }
+
+  Widget _buildYouTubeGrid() {
+    return GridView.builder(
+      padding: EdgeInsets.all(16.w),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12.w,
+        mainAxisSpacing: 12.h,
+        childAspectRatio: 0.9,
+      ),
+      itemCount: controller.videos.length,
+      itemBuilder: (context, index) {
+        final video = controller.videos[index];
+        return YouTubeMediaCard(
+          video: video,
+          isGridView: true,
+          onTap: () => _launchUrl(video.videoUrl),
+        );
+      },
+    );
+  }
+
+  Widget _buildYouTubeList() {
+    return ListView.builder(
+      padding: EdgeInsets.all(16.w),
+      itemCount: controller.videos.length,
+      itemBuilder: (context, index) {
+        final video = controller.videos[index];
+        return YouTubeMediaCard(
+          video: video,
+          isGridView: false,
+          onTap: () => _launchUrl(video.videoUrl),
+        );
+      },
+    );
+  }
+
+  Widget _buildLoading() {
+    return Center(
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(AppColors.deepOrange),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(String platform) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.video_collection_outlined,
+            size: 64.w,
+            color: Colors.grey.shade400,
+          ),
+          SizedBox(height: 16.h),
+          AutoTranslateText(
+            'No content found for $platform',
+            style: AppTypography.h3.copyWith(color: Colors.grey),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(24.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: EdgeInsets.all(16.w),
-              decoration: BoxDecoration(
-                color: AppColors.deepOrange.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.play_circle_outline_rounded,
-                size: 48.h,
-                color: AppColors.deepOrange,
-              ),
-            ),
-            SizedBox(height: 14.h),
-            AutoTranslateText(
-              'No Videos Available',
-              style: AppTypography.h2.copyWith(
-                color: '#3D0C11'.toColor(),
-                fontWeight: FontWeight.bold,
-                fontSize: 16.sp,
-              ),
-            ),
-            SizedBox(height: 4.h),
-            AutoTranslateText(
-              'Videos will appear here when available',
-              style: AppTypography.body2.copyWith(
-                color: '#666666'.toColor(),
-                fontSize: 12.sp,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGridView(BuildContext context) {
-    return GridView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 6.w,
-        mainAxisSpacing: 6.h,
-        childAspectRatio: 1.05,
-      ),
-      itemCount: controller.videos.length,
-      itemBuilder: (context, index) {
-        final video = controller.videos[index];
-        return _VideoGridCard(
-          video: video,
-          onTap: () => _launchVideo(video),
-        );
-      },
-    );
-  }
-
-  Widget _buildListView(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 2.h),
-      itemCount: controller.videos.length,
-      itemBuilder: (context, index) {
-        final video = controller.videos[index];
-        return Padding(
-          padding: EdgeInsets.only(bottom: 6.h),
-          child: _VideoListCard(
-            video: video,
-            onTap: () => _launchVideo(video),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _launchVideo(YouTubeVideo video) async {
-    final url = Uri.parse(video.videoUrl);
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
-}
-
-class _VideoGridCard extends StatelessWidget {
-  final YouTubeVideo video;
-  final VoidCallback onTap;
-
-  const _VideoGridCard({
-    required this.video,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: const Color(0xFFE0E0E0), width: 0.8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 3,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            // IMAGE (shorter height)
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(8.r)),
-                    child: CachedNetworkImage(
-                      imageUrl: video.thumbnailUrl,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) => _placeholder(),
-                      errorWidget: (_, __, ___) => _placeholder(),
-                    ),
-                  ),
-                  _playButton(22.w),
-                ],
-              ),
-            ),
-
-            // TEXT (compact)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AutoTranslateText(
-                    video.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.body2.copyWith(
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF5F2221),
-                    ),
-                  ),
-                  if (video.channelTitle.isNotEmpty)
-                    Padding(
-                      padding: EdgeInsets.only(top: 1.h),
-                      child: AutoTranslateText(
-                        video.channelTitle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTypography.body2.copyWith(
-                          fontSize: 9.sp,
-                          color: const Color(0xFF666666),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _playButton(double size) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: AppColors.deepOrange.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(6.r),
-      ),
-      child: Icon(Icons.play_arrow_rounded, color: Colors.white, size: size * 0.7),
-    );
-  }
-
-  Widget _placeholder() {
-    return Container(
-      color: const Color(0xFFF5F5F5),
-      child: Center(
-        child: Icon(
-          Icons.play_circle_outline,
-          color: AppColors.deepOrange.withOpacity(0.5),
-        ),
-      ),
-    );
-  }
-}
-
-class _VideoListCard extends StatelessWidget {
-  final YouTubeVideo video;
-  final VoidCallback onTap;
-
-  const _VideoListCard({
-    required this.video,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(6.w),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: const Color(0xFFE0E0E0), width: 0.8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 3,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            // IMAGE SMALLER HEIGHT
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6.r),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  CachedNetworkImage(
-                    imageUrl: video.thumbnailUrl,
-                    width: 100.w,
-                    height: 60.h,
-                    fit: BoxFit.cover,
-                    placeholder: (_, __) => _placeholder(),
-                    errorWidget: (_, __, ___) => _placeholder(),
-                  ),
-                  _playButton(20.w),
-                ],
-              ),
-            ),
-
-            SizedBox(width: 8.w),
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AutoTranslateText(
-                    video.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTypography.body2.copyWith(
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF5F2221),
-                    ),
-                  ),
-                  if (video.channelTitle.isNotEmpty)
-                    Padding(
-                      padding: EdgeInsets.only(top: 2.h),
-                      child: AutoTranslateText(
-                        video.channelTitle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTypography.body2.copyWith(
-                          fontSize: 9.5.sp,
-                          color: const Color(0xFF666666),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _playButton(double size) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: AppColors.deepOrange.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(5.r),
-      ),
-      child: Icon(Icons.play_arrow_rounded, color: Colors.white, size: size * 0.7),
-    );
-  }
-
-  Widget _placeholder() {
-    return Container(
-      width: 100.w,
-      height: 60.h,
-      color: const Color(0xFFF5F5F5),
-      child: Center(
-        child: Icon(
-          Icons.play_circle_outline,
-          size: 20.w,
-          color: AppColors.deepOrange.withOpacity(0.5),
-        ),
-      ),
-    );
-  }
-
-
- 
 }

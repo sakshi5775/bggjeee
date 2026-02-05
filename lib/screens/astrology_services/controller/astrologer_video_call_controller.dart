@@ -6,7 +6,8 @@ import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/data_model/call_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/agora_call_manager.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/call_service.dart';
-import 'package:astrobharataiuser/screens/astrology_services/services/call_service.dart' show ServiceNotEnabledException;
+import 'package:astrobharataiuser/screens/astrology_services/services/call_service.dart'
+    show ServiceNotEnabledException;
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/profile_check_helper.dart';
@@ -23,7 +24,7 @@ class AstrologerVideoCallController extends GetxController {
   final CallService _callService = CallService();
   final AgoraCallManager _agoraManager = AgoraCallManager();
   final ProfileCheckHelper _profileHelper = ProfileCheckHelper();
-  
+
   final RxBool isMuted = false.obs;
   final RxBool isVideoOn = true.obs;
   final RxBool isSpeakerOn = false.obs;
@@ -34,8 +35,10 @@ class AstrologerVideoCallController extends GetxController {
   final RxString remainingTime = '00:00'.obs; // Countdown timer
   final RxBool isLoading = true.obs;
   final RxString errorMessage = ''.obs;
-  final RxString callStatus = 'Initializing...'.obs; // Initializing..., Ringing..., Connected, Error
-  final RxBool isRinging = false.obs; // True when waiting for astrologer to accept
+  final RxString callStatus =
+      'Initializing...'.obs; // Initializing..., Ringing..., Connected, Error
+  final RxBool isRinging =
+      false.obs; // True when waiting for astrologer to accept
   final RxBool isCallConnected = false.obs; // True when astrologer has joined
 
   // Store call data
@@ -45,7 +48,8 @@ class AstrologerVideoCallController extends GetxController {
   String? _appId;
   int? _remoteUid;
   int? _timeoutSeconds;
-  int? _availableMinutes; // Max available minutes from wallet (for countdown UX)
+  int?
+  _availableMinutes; // Max available minutes from wallet (for countdown UX)
   double? _walletBalance; // Current wallet balance (updated via WebSocket)
   double? _pricePerMinute; // Price per minute (updated via WebSocket)
   Timer? _countdownTimer; // Timer for countdown
@@ -53,12 +57,13 @@ class AstrologerVideoCallController extends GetxController {
   Timer? _walletSyncTimer; // Timer for periodic wallet balance sync
   int _remainingSeconds = 0; // Remaining seconds based on availableMinutes
   bool _durationExpiredNotified = false;
-  DateTime? _callStartTime; // Track when call actually started (when astrologer joined)
+  DateTime?
+  _callStartTime; // Track when call actually started (when astrologer joined)
 
   // WebSocket for billing updates
   io.Socket? _socket;
   static const String callSocketUrl = 'http://3.109.91.254:8009/';
-  
+
   // Reactive variables for billing
   final RxDouble walletBalance = 0.0.obs;
   final RxDouble totalCost = 0.0.obs;
@@ -67,13 +72,17 @@ class AstrologerVideoCallController extends GetxController {
   final RxBool isSocketConnected = false.obs;
   final RxDouble pricePerMinute = 0.0.obs; // Reactive price per minute
 
+  // Money Anchor variables for robust visual sync (mirrors chat)
+  DateTime? _lastMoneySyncTime;
+  int _moneySecondsAtSync = 0;
+
   @override
   void onInit() {
     super.onInit();
     // Get astrologer and callData from arguments
     final args = Get.arguments;
     CallData? callData;
-    
+
     if (args is Map<String, dynamic>) {
       if (args['astrologer'] != null) {
         astrologer = args['astrologer'] as AstrologerModel;
@@ -81,9 +90,15 @@ class AstrologerVideoCallController extends GetxController {
       if (args['callData'] != null) {
         callData = args['callData'] as CallData;
         // Use availableMinutes from API response for countdown (UX only)
-        _availableMinutes = callData.availableMinutes ?? callData.durationMinutes;
-        _walletBalance = callData.walletBalance;
+        _availableMinutes =
+            callData.availableMinutes ?? callData.durationMinutes;
+        _walletBalance = callData.walletBalance ?? 0.0;
+        walletBalance.value = _walletBalance!;
         _pricePerMinute = callData.pricePerMinute;
+        pricePerMinute.value = _pricePerMinute!;
+
+        // Initialize Money Anchor for robust visual countdown sync
+        _syncMoneyAnchor(_walletBalance!, _pricePerMinute!);
       }
     } else if (args is AstrologerModel) {
       astrologer = args;
@@ -95,7 +110,7 @@ class AstrologerVideoCallController extends GetxController {
 
     // Setup Agora callbacks
     _setupAgoraCallbacks();
-    
+
     // If callData is provided, use it directly; otherwise initialize call
     if (callData != null) {
       _initializeCallWithData(callData);
@@ -109,7 +124,8 @@ class AstrologerVideoCallController extends GetxController {
   Future<void> _connectSocketForNotification() async {
     try {
       if (_callId == null || _callId!.isEmpty) {
-        if (kDebugMode) print('Cannot connect socket for notification - callId is empty');
+        if (kDebugMode)
+          print('Cannot connect socket for notification - callId is empty');
         return;
       }
 
@@ -147,13 +163,14 @@ class AstrologerVideoCallController extends GetxController {
           print('═══════════════════════════════════════════════════════════');
         }
         isSocketConnected.value = true;
-        
+
         // CRITICAL: Follow exact same pattern as chat
         // Join call room IMMEDIATELY after socket connects (just like chat joins immediately)
         if (_callId != null && _callId!.isNotEmpty) {
           _joinCallRoom();
         } else {
-          if (kDebugMode) print('Socket connected but callId is empty, waiting...');
+          if (kDebugMode)
+            print('Socket connected but callId is empty, waiting...');
         }
       });
 
@@ -167,14 +184,16 @@ class AstrologerVideoCallController extends GetxController {
       });
 
       _socket!.onConnectError((error) {
-        if (kDebugMode) print('📡 Video Call WebSocket connection error: $error');
+        if (kDebugMode)
+          print('📡 Video Call WebSocket connection error: $error');
         isSocketConnected.value = false;
       });
 
       // Set up billing event listeners (will be used after call connects)
       _setupBillingEventListeners();
     } catch (e) {
-      if (kDebugMode) print('Error connecting video call socket for notification: $e');
+      if (kDebugMode)
+        print('Error connecting video call socket for notification: $e');
     }
   }
 
@@ -190,51 +209,60 @@ class AstrologerVideoCallController extends GetxController {
         print('Data: $data');
         print('═══════════════════════════════════════════════════════════');
       }
-      
+
       // Check if session is active - if not, we need to wait for session_started event
       if (data is Map && data['sessionActive'] == true) {
         if (kDebugMode) print('✅ Session is ACTIVE - billing should start now');
       } else {
-        if (kDebugMode) print('⚠️ Session not active yet - waiting for session_started event...');
+        if (kDebugMode)
+          print(
+            '⚠️ Session not active yet - waiting for session_started event...',
+          );
       }
     });
-    
+
     // Also listen for call-specific join confirmations
     _socket!.on('call_joined', (data) {
       if (kDebugMode) {
         print('✅ Call room joined confirmation (Video): $data');
       }
     });
-    
+
     // --- SESSION STARTED EVENT (like chat) - This triggers billing ---
     _socket!.on('session_started', (data) {
       if (kDebugMode) {
         print('═══════════════════════════════════════════════════════════');
-        print('🎉 SESSION STARTED EVENT (Video Call) - Billing should start now!');
+        print(
+          '🎉 SESSION STARTED EVENT (Video Call) - Billing should start now!',
+        );
         print('Data: $data');
         print('═══════════════════════════════════════════════════════════');
       }
     });
-    
+
     // --- SESSION STARTED EVENT (like chat) - RECEIVED FROM BACKEND - This triggers billing ---
     // CRITICAL: Chat listens for this event FROM backend, we should too!
     _socket!.on('session_started', (data) {
       if (kDebugMode) {
         print('═══════════════════════════════════════════════════════════');
         print('🎉 SESSION STARTED EVENT RECEIVED FROM BACKEND (Video Call)');
-        print('💰 Billing should start now - Backend will send billing_update events!');
+        print(
+          '💰 Billing should start now - Backend will send billing_update events!',
+        );
         print('Data: $data');
         print('═══════════════════════════════════════════════════════════');
       }
       // Mark session as active (like chat does)
       // Backend should now start sending billing_update events
     });
-    
+
     // Also listen for call-specific session started events
     _socket!.on('call_started', (data) {
       if (kDebugMode) {
         print('═══════════════════════════════════════════════════════════');
-        print('🎉 CALL STARTED EVENT RECEIVED (Video Call) - Billing should start now!');
+        print(
+          '🎉 CALL STARTED EVENT RECEIVED (Video Call) - Billing should start now!',
+        );
         print('Data: $data');
         print('═══════════════════════════════════════════════════════════');
       }
@@ -250,13 +278,13 @@ class AstrologerVideoCallController extends GetxController {
       }
       _handleBillingUpdate(data);
     });
-    
+
     // Also listen for call-specific billing events (in case backend uses different event names)
     _socket!.on('call_billing_update', (data) {
       if (kDebugMode) print('💰 Call Billing Update (Video Call): $data');
       _handleBillingUpdate(data);
     });
-    
+
     _socket!.on('video_call_billing', (data) {
       if (kDebugMode) print('💰 Video Call Billing (Video Call): $data');
       _handleBillingUpdate(data);
@@ -264,19 +292,20 @@ class AstrologerVideoCallController extends GetxController {
 
     _socket!.on('low_balance_warning', (data) {
       if (kDebugMode) print('⚠️ Low Balance Warning (Video Call): $data');
-      
+
       if (data['balance'] != null) {
         final balance = (data['balance'] as num).toDouble();
         walletBalance.value = balance;
         _walletBalance = balance;
         _updateGlobalWalletBalance(balance);
       }
-      
+
       showLowBalanceWarning.value = true;
-      
+
       Get.snackbar(
         'Low Balance',
-        data['message'] ?? 'Your wallet balance is running low. Please recharge to continue.',
+        data['message'] ??
+            'Your wallet balance is running low. Please recharge to continue.',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.orange,
         colorText: Colors.white,
@@ -293,7 +322,7 @@ class AstrologerVideoCallController extends GetxController {
         _walletBalance = newBalance;
         _updateGlobalWalletBalance(newBalance);
       }
-      
+
       _availableMinutes = 0;
       _remainingSeconds = 0;
       _updateRemainingTime();
@@ -306,7 +335,8 @@ class AstrologerVideoCallController extends GetxController {
 
       Get.snackbar(
         'Call Ended',
-        data['message'] ?? 'Your wallet balance is insufficient to continue the call',
+        data['message'] ??
+            'Your wallet balance is insufficient to continue the call',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -318,7 +348,6 @@ class AstrologerVideoCallController extends GetxController {
       });
     });
   }
-
 
   /// Handle billing update from WebSocket
   void _handleBillingUpdate(dynamic data) {
@@ -338,28 +367,49 @@ class AstrologerVideoCallController extends GetxController {
     }
     if (data['remainingBalance'] != null) {
       final newBalance = (data['remainingBalance'] as num).toDouble();
-      walletBalance.value = newBalance;
-      _walletBalance = newBalance;
-      
-      // Update global WalletController if registered
-      _updateGlobalWalletBalance(newBalance);
-      
-      // Update available minutes and countdown
-      if (pricePerMinute.value > 0) {
-        final newAvailableMinutes = (walletBalance.value / pricePerMinute.value).floor();
-        _availableMinutes = newAvailableMinutes;
-        // Update countdown timer if call is connected
-        if (isCallConnected.value && newAvailableMinutes > 0) {
-          _remainingSeconds = newAvailableMinutes * 60;
-          _updateRemainingTime();
-        }
+
+      // Only update if balance significantly changed or first time
+      // This prevents visual jitter while maintaining backend authority
+      if ((newBalance - walletBalance.value).abs() > 0.1 ||
+          walletBalance.value == 0) {
+        walletBalance.value = newBalance;
+        _walletBalance = newBalance;
+
+        // Sync the Money Anchor - this is the source of truth for visual countdown
+        _syncMoneyAnchor(newBalance, pricePerMinute.value);
+
+        // Update global WalletController if registered
+        _updateGlobalWalletBalance(newBalance);
       }
-      
+
       if (kDebugMode) {
-        print('💰 Updated wallet balance: ₹${walletBalance.value}');
+        print(
+          '💰 Updated wallet balance from backend: ₹${walletBalance.value}',
+        );
         print('💰 Total cost so far: ₹${totalCost.value}');
         print('💰 Minutes billed: ${totalMinutesBilled.value}');
       }
+    }
+  }
+
+  /// Syncs the "Money Anchor" when balance or price changes significantly.
+  /// This prevents the visual countdown from jumping and provides a smooth UX.
+  void _syncMoneyAnchor(double wallet, double price) {
+    if (price <= 0) return;
+    int newMoneySeconds = (wallet / price * 60).floor();
+
+    // If money changed significantly OR first time sync
+    if (_lastMoneySyncTime == null ||
+        (newMoneySeconds - _moneySecondsAtSync).abs() > 2) {
+      if (kDebugMode) {
+        print(
+          '💰 Video Call Timer Anchor Synced: $newMoneySeconds seconds (Wallet: $wallet)',
+        );
+      }
+      _moneySecondsAtSync = newMoneySeconds;
+      _lastMoneySyncTime = DateTime.now();
+      _remainingSeconds = _moneySecondsAtSync;
+      _updateRemainingTime();
     }
   }
 
@@ -391,30 +441,32 @@ class AstrologerVideoCallController extends GetxController {
         print('Socket ID: ${_socket?.id}');
         print('═══════════════════════════════════════════════════════════');
       }
-      
+
       // Use exact same pattern as chat: emit join_call (like join_chat)
       final joinPayload = {
         'callId': _callId,
         'role': 'user',
         'callType': 'VIDEO', // Add callType to help backend identify call type
       };
-      
+
       if (kDebugMode) {
         print('Join payload: $joinPayload');
       }
-      
+
       _socket!.emit('join_call', joinPayload);
-      
+
       // Also try alternative event names that backend might expect
       _socket!.emit('join_call_room', joinPayload);
-      
+
       if (kDebugMode) {
         print('✅ join_call and join_call_room events emitted');
         print('✅ Waiting for join_success confirmation...');
       }
     } else {
       if (kDebugMode) {
-        print('⚠️ Cannot join room - Socket connected: ${_socket?.connected}, CallId: $_callId');
+        print(
+          '⚠️ Cannot join room - Socket connected: ${_socket?.connected}, CallId: $_callId',
+        );
       }
     }
   }
@@ -498,7 +550,7 @@ class AstrologerVideoCallController extends GetxController {
       isAstrologerSpeaking.value = true;
       isAstrologerVideoOn.value = true;
       isLoading.value = false;
-      
+
       // Record call start time for billing calculation
       _callStartTime = DateTime.now();
       if (kDebugMode) {
@@ -507,7 +559,7 @@ class AstrologerVideoCallController extends GetxController {
         print('📞 Video call started at: $_callStartTime');
         print('═══════════════════════════════════════════════════════════');
       }
-      
+
       // CRITICAL: Emit WebSocket events to signal backend that call is active
       // Backend needs this to start billing (like chat receives session_started from backend)
       // For calls, backend might detect billing start from these events OR from Agora channel join detection
@@ -515,10 +567,12 @@ class AstrologerVideoCallController extends GetxController {
         if (kDebugMode) {
           print('═══════════════════════════════════════════════════════════');
           print('💰 EMITTING WEB SOCKET EVENTS TO START BILLING (Video)');
-          print('💰 Backend should detect both parties joined and start billing');
+          print(
+            '💰 Backend should detect both parties joined and start billing',
+          );
           print('═══════════════════════════════════════════════════════════');
         }
-        
+
         // Emit events that backend uses to detect call is active and both parties joined
         // Try multiple event names to match what backend expects
         _socket!.emit('call_active', {
@@ -528,7 +582,7 @@ class AstrologerVideoCallController extends GetxController {
           'status': 'ACTIVE',
           'timestamp': DateTime.now().toIso8601String(),
         });
-        
+
         _socket!.emit('call_connected', {
           'callId': _callId,
           'callType': 'VIDEO',
@@ -536,7 +590,7 @@ class AstrologerVideoCallController extends GetxController {
           'status': 'CONNECTED',
           'timestamp': DateTime.now().toIso8601String(),
         });
-        
+
         _socket!.emit('user_joined_call', {
           'callId': _callId,
           'callType': 'VIDEO',
@@ -544,7 +598,7 @@ class AstrologerVideoCallController extends GetxController {
           'channelName': _channelName,
           'timestamp': DateTime.now().toIso8601String(),
         });
-        
+
         // Also emit call_started event (but NOT session_started - backend sends that!)
         // Backend should detect both parties joined and send session_started event
         _socket!.emit('call_started', {
@@ -553,37 +607,47 @@ class AstrologerVideoCallController extends GetxController {
           'role': 'user',
           'timestamp': DateTime.now().toIso8601String(),
         });
-        
+
         // NOTE: We DON'T emit session_started - that's sent BY the backend when it starts billing
         // (Following chat pattern - chat never emits session_started, only receives it)
-        
+
         if (kDebugMode) {
           print('✅ Emitted multiple WebSocket events (Video):');
           print('   - call_active');
           print('   - call_connected');
           print('   - user_joined_call');
           print('   - call_started');
-          print('✅ Waiting for backend to send session_started event (like chat)');
-          print('✅ Backend should detect call is active, send session_started, then start billing');
+          print(
+            '✅ Waiting for backend to send session_started event (like chat)',
+          );
+          print(
+            '✅ Backend should detect call is active, send session_started, then start billing',
+          );
         }
       } else {
-        if (kDebugMode) print('⚠️ Cannot emit billing events - Socket connected: ${isSocketConnected.value}, CallId: $_callId (Video)');
+        if (kDebugMode)
+          print(
+            '⚠️ Cannot emit billing events - Socket connected: ${isSocketConnected.value}, CallId: $_callId (Video)',
+          );
       }
-      
+
       // Start periodic wallet sync (every 30 seconds) to ensure we have latest balance
       _startWalletSyncTimer();
-      
+
       // Start countdown timer when call is connected
       _startCountdownTimer();
-      
+
       // Start manual billing timer (fallback if WebSocket doesn't work)
       // Wait a moment to ensure pricePerMinute is set
       Future.delayed(const Duration(milliseconds: 500), () {
         _startBillingTimer();
         // Also try again after 2 seconds if it didn't start (check if timer was created)
         Future.delayed(const Duration(seconds: 2), () {
-          if (_billingTimer == null && isCallConnected.value && pricePerMinute.value > 0) {
-            if (kDebugMode) print('🔄 Retrying to start billing timer (Video)...');
+          if (_billingTimer == null &&
+              isCallConnected.value &&
+              pricePerMinute.value > 0) {
+            if (kDebugMode)
+              print('🔄 Retrying to start billing timer (Video)...');
             _startBillingTimer();
           }
         });
@@ -609,30 +673,29 @@ class AstrologerVideoCallController extends GetxController {
       }
     };
 
-        _agoraManager.onError = (error) {
-          errorMessage.value = error;
-          isLoading.value = false;
-          isRinging.value = false;
-          
-          // Handle specific error messages
-          if (error == 'Busy') {
-            callStatus.value = 'Busy';
-            Future.delayed(const Duration(seconds: 1), () => Get.back());
-          } else if (error == 'Call Ended') {
-            callStatus.value = 'Call Ended';
-            Future.delayed(const Duration(seconds: 1), () => Get.back());
-          } else {
-            Get.snackbar(
-              'Call Error',
-              error,
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.red,
-              colorText: Colors.white,
-            );
-          }
-        };
-  }
+    _agoraManager.onError = (error) {
+      errorMessage.value = error;
+      isLoading.value = false;
+      isRinging.value = false;
 
+      // Handle specific error messages
+      if (error == 'Busy') {
+        callStatus.value = 'Busy';
+        Future.delayed(const Duration(seconds: 1), () => Get.back());
+      } else if (error == 'Call Ended') {
+        callStatus.value = 'Call Ended';
+        Future.delayed(const Duration(seconds: 1), () => Get.back());
+      } else {
+        Get.snackbar(
+          'Call Error',
+          error,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    };
+  }
 
   Future<void> _initializeCall() async {
     try {
@@ -700,50 +763,66 @@ class AstrologerVideoCallController extends GetxController {
       _timeoutSeconds = callData.timeoutSeconds;
       // Use availableMinutes for countdown (UX only - backend handles actual billing)
       // availableMinutes is preferred, fallback to durationMinutes if availableMinutes not provided
-      _availableMinutes = callData.availableMinutes ?? (callData.durationMinutes > 0 ? callData.durationMinutes : 0);
+      _availableMinutes =
+          callData.availableMinutes ??
+          (callData.durationMinutes > 0 ? callData.durationMinutes : 0);
       _walletBalance = callData.walletBalance ?? 0.0;
-      _pricePerMinute = callData.pricePerMinute; // pricePerMinute is non-nullable
-      
+      _pricePerMinute =
+          callData.pricePerMinute; // pricePerMinute is non-nullable
+
       // Initialize reactive variables - IMPORTANT: Set these correctly
       final initialWallet = callData.walletBalance ?? 0.0;
       final ratePerMin = callData.pricePerMinute;
-      
+
       // CRITICAL: Ensure we have a valid rate - fallback to astrologer's rate if needed
-      final finalRate = ratePerMin > 0 ? ratePerMin : (astrologer.videoPricePerMin ?? 0.0);
-      
+      final finalRate = ratePerMin > 0
+          ? ratePerMin
+          : (astrologer.videoPricePerMin ?? 0.0);
+
       // Use wallet balance from CallData immediately (don't block on API call)
       // Fetch actual wallet balance from backend in background for accuracy
       walletBalance.value = initialWallet > 0 ? initialWallet : 0.0;
       pricePerMinute.value = finalRate;
-      totalCost.value = 0.0; // Start with 0 - will be calculated as call progresses
+      totalCost.value =
+          0.0; // Start with 0 - will be calculated as call progresses
       totalMinutesBilled.value = 0;
-      
+
       // Also update private variables
       _pricePerMinute = finalRate;
       _walletBalance = walletBalance.value;
-      
+
+      // Sync Money Anchor for robust visual countdown
+      _syncMoneyAnchor(_walletBalance!, _pricePerMinute!);
+
       // Fetch actual wallet balance from backend asynchronously (non-blocking)
       // This ensures call setup is not delayed by API calls
       if (initialWallet <= 0) {
-        _profileHelper.getWalletBalance().then((balance) {
-          if (balance > 0) {
-            walletBalance.value = balance;
-            _walletBalance = balance;
-            if (kDebugMode) print('💰 Updated wallet balance from backend: ₹$balance');
-          }
-        }).catchError((e) {
-          if (kDebugMode) print('⚠️ Error fetching wallet balance (non-blocking): $e');
-          // Don't show error to user - use CallData balance as fallback
-        });
+        _profileHelper
+            .getWalletBalance()
+            .then((balance) {
+              if (balance > 0) {
+                walletBalance.value = balance;
+                _walletBalance = balance;
+                if (kDebugMode)
+                  print('💰 Updated wallet balance from backend: ₹$balance');
+              }
+            })
+            .catchError((e) {
+              if (kDebugMode)
+                print('⚠️ Error fetching wallet balance (non-blocking): $e');
+              // Don't show error to user - use CallData balance as fallback
+            });
       }
-      
+
       if (kDebugMode) {
         print('═══════════════════════════════════════════════════════════');
         print('💰 INITIALIZED BILLING VALUES (Video Call)');
         print('═══════════════════════════════════════════════════════════');
         print('  Call ID: $_callId');
         print('  Wallet Balance (from CallData): ₹$initialWallet');
-        print('  Wallet Balance (actual from backend): ₹${walletBalance.value}');
+        print(
+          '  Wallet Balance (actual from backend): ₹${walletBalance.value}',
+        );
         print('  Rate/Min: ₹${pricePerMinute.value}');
         print('  Available Minutes: $_availableMinutes');
         print('  Total Cost (initial): ₹${totalCost.value}');
@@ -752,16 +831,18 @@ class AstrologerVideoCallController extends GetxController {
         print('  Final Rate Used: ₹${pricePerMinute.value}');
         print('═══════════════════════════════════════════════════════════');
       }
-      
+
       if (pricePerMinute.value <= 0) {
         if (kDebugMode) print('❌ WARNING: Price per minute is 0 or invalid!');
       }
-      
+
       if (walletBalance.value <= 0) {
         if (kDebugMode) print('❌ WARNING: Wallet balance is 0 or invalid!');
       }
-      
-      _remainingSeconds = _availableMinutes! * 60; // Initialize remaining seconds from availableMinutes
+
+      _remainingSeconds =
+          _availableMinutes! *
+          60; // Initialize remaining seconds from availableMinutes
       _durationExpiredNotified = false;
       _updateRemainingTime(); // Set initial remaining time display
 
@@ -806,8 +887,10 @@ class AstrologerVideoCallController extends GetxController {
         print('═══════════════════════════════════════════════════════════');
       }
       callStatus.value = 'Preparing call...';
-      await Future.delayed(const Duration(seconds: 2)); // 2 second delay for backend processing
-      
+      await Future.delayed(
+        const Duration(seconds: 2),
+      ); // 2 second delay for backend processing
+
       // Now join channel - backend should have notified astrologer by now
       callStatus.value = 'Connecting to call...';
       if (kDebugMode) {
@@ -861,26 +944,39 @@ class AstrologerVideoCallController extends GetxController {
     }
     // Format as hh:mm:ss
     final hours = (_remainingSeconds ~/ 3600).toString().padLeft(2, '0');
-    final minutes = ((_remainingSeconds % 3600) ~/ 60).toString().padLeft(2, '0');
+    final minutes = ((_remainingSeconds % 3600) ~/ 60).toString().padLeft(
+      2,
+      '0',
+    );
     final seconds = (_remainingSeconds % 60).toString().padLeft(2, '0');
     remainingTime.value = '$hours:$minutes:$seconds';
   }
 
   void _startCountdownTimer() {
     _countdownTimer?.cancel();
-    if (_availableMinutes == null || _availableMinutes! <= 0) return;
-    
+
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingSeconds > 0 && isCallConnected.value) {
-        _remainingSeconds--;
-        _updateRemainingTime();
-        
-        // Note: Backend handles actual billing per-minute. This countdown is for UX only.
-        // Backend will end call if wallet balance insufficient via WebSocket event.
-        if (_remainingSeconds <= 0) {
-          timer.cancel();
-          _notifyDurationExpired();
+      if (!isCallConnected.value) {
+        timer.cancel();
+        return;
+      }
+
+      if (_lastMoneySyncTime != null) {
+        final elapsedSinceSync = DateTime.now()
+            .difference(_lastMoneySyncTime!)
+            .inSeconds;
+        final secondsRemaining = _moneySecondsAtSync - elapsedSinceSync;
+
+        if (secondsRemaining <= 0) {
+          _remainingSeconds = 0;
+          // Don't auto-disconnect here, wait for backend call_force_ended event
+          if (!_durationExpiredNotified) {
+            _notifyDurationExpired();
+          }
+        } else {
+          _remainingSeconds = secondsRemaining;
         }
+        _updateRemainingTime();
       }
     });
   }
@@ -904,126 +1000,24 @@ class AstrologerVideoCallController extends GetxController {
   /// Start manual billing timer - calculates and deducts money every minute as fallback
   void _startBillingTimer() {
     _billingTimer?.cancel();
-    
-    if (!isCallConnected.value) {
-      if (kDebugMode) print('⚠️ Cannot start billing timer - call not connected');
-      return;
-    }
-    
-    // Wait a bit for pricePerMinute to be set if it's not ready yet
-    if (pricePerMinute.value <= 0) {
-      if (kDebugMode) print('⚠️ Price per minute is 0, waiting...');
-      // Try again after a short delay
-      Future.delayed(const Duration(seconds: 2), () {
-        if (pricePerMinute.value > 0 && isCallConnected.value) {
-          _startBillingTimer();
-        } else {
-          if (kDebugMode) print('❌ Still no price per minute after delay. Price: ${pricePerMinute.value}');
-        }
-      });
-      return;
-    }
-    
+
+    if (!isCallConnected.value) return;
+
     if (kDebugMode) {
-      print('═══════════════════════════════════════════════════════════');
-      print('💰 Starting manual billing timer (Video)');
-      print('💰 Rate: ₹${pricePerMinute.value}/min');
-      print('💰 Initial Wallet Balance: ₹${walletBalance.value}');
-      print('💰 Initial Total Cost: ₹${totalCost.value}');
-      print('═══════════════════════════════════════════════════════════');
+      print('💰 Starting periodic billing sync timer (Video)');
     }
-    
-    // CRITICAL: Deduct first minute AFTER 60 seconds (1 minute) completes, not immediately
-    // This ensures charges are applied only when actual minutes have passed
+
+    // This timer is now just a fallback for syncing balance from backend
+    // Backend is the source of truth for all deductions
     _billingTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
       if (!isCallConnected.value) {
-        if (kDebugMode) print('💰 Billing timer stopped - call disconnected');
         timer.cancel();
         return;
       }
-      
-      if (pricePerMinute.value <= 0) {
-        if (kDebugMode) print('⚠️ Billing timer stopped - price per minute is 0');
-        timer.cancel();
-        return;
-      }
-      
-      // Calculate which minute we're deducting (1st, 2nd, 3rd, etc.)
-      final minuteNumber = totalMinutesBilled.value + 1;
-      
-      // Check if we have enough balance for this minute
-      if (walletBalance.value < pricePerMinute.value) {
-        if (kDebugMode) print('⚠️ Insufficient balance for minute $minuteNumber. Current: ₹${walletBalance.value}, Needed: ₹${pricePerMinute.value}');
-        showLowBalanceWarning.value = true;
-        timer.cancel();
-        
-        // End call if balance insufficient
-        Future.delayed(const Duration(seconds: 2), () {
-          if (walletBalance.value < pricePerMinute.value && isCallConnected.value) {
-            Get.snackbar(
-              'Insufficient Balance',
-              'Your wallet balance is insufficient to continue the call',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.red,
-              colorText: Colors.white,
-              duration: const Duration(seconds: 3),
-            );
-            endCall();
-          }
-        });
-        return;
-      }
-      
-      // Deduct one minute's charge (this fires after each full minute completes)
-      final balanceBefore = walletBalance.value;
-      walletBalance.value = walletBalance.value - pricePerMinute.value;
-      totalCost.value = totalCost.value + pricePerMinute.value;
-      totalMinutesBilled.value = minuteNumber;
-      _walletBalance = walletBalance.value; // Update private variable
-      
-      // Update available minutes based on remaining balance
-      final newAvailableMinutes = (walletBalance.value / pricePerMinute.value).floor();
-      _availableMinutes = newAvailableMinutes;
-      if (newAvailableMinutes > 0) {
-        _remainingSeconds = newAvailableMinutes * 60;
-        _updateRemainingTime();
-      } else {
-        _remainingSeconds = 0;
-        _updateRemainingTime();
-      }
-      
-      // Check for low balance warning (less than 2 minutes remaining)
-      if (walletBalance.value < (pricePerMinute.value * 2) && !showLowBalanceWarning.value) {
-        showLowBalanceWarning.value = true;
-        Get.snackbar(
-          'Low Balance',
-          'Your wallet balance is running low. Please recharge to continue.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orange,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 3),
-        );
-      }
-      
-      // Try to sync wallet balance with backend periodically (every 2 minutes)
-      if (minuteNumber % 2 == 0) {
-        _syncWalletBalanceWithBackend();
-      }
-      
-      if (kDebugMode) {
-        print('═══════════════════════════════════════════════════════════');
-        print('💰 ⏰ MINUTE $minuteNumber COMPLETED - Deducting charges (Video)');
-        print('💰 Amount deducted: ₹${pricePerMinute.value}');
-        print('💰 Balance: ₹$balanceBefore → ₹${walletBalance.value}');
-        print('💰 Total Cost (cumulative): ₹${totalCost.value}');
-        print('💰 Expected cost for $minuteNumber minutes: ₹${pricePerMinute.value * minuteNumber}');
-        print('💰 Total Minutes Billed: ${totalMinutesBilled.value}');
-        print('💰 Available Minutes Remaining: $_availableMinutes');
-        print('═══════════════════════════════════════════════════════════');
-      }
+
+      // Periodic backend sync
+      _syncWalletBalanceWithBackend();
     });
-    
-    if (kDebugMode) print('✅ Billing timer started - will deduct after each full minute completes (Video)');
   }
 
   /// Start periodic wallet sync timer
@@ -1036,7 +1030,8 @@ class AstrologerVideoCallController extends GetxController {
       }
       _syncWalletBalanceWithBackend();
     });
-    if (kDebugMode) print('✅ Wallet sync timer started - will sync every 30 seconds (Video)');
+    if (kDebugMode)
+      print('✅ Wallet sync timer started - will sync every 30 seconds (Video)');
   }
 
   /// Sync wallet balance with backend
@@ -1047,20 +1042,19 @@ class AstrologerVideoCallController extends GetxController {
       if (backendBalance >= 0) {
         if (backendBalance != walletBalance.value) {
           if (kDebugMode) {
-            print('💰 Syncing wallet balance (Video): Local ₹${walletBalance.value} → Backend ₹$backendBalance');
+            print(
+              '💰 Syncing wallet balance (Video): Local ₹${walletBalance.value} → Backend ₹$backendBalance',
+            );
           }
         }
         walletBalance.value = backendBalance;
         _walletBalance = backendBalance;
-        
-        // Recalculate available minutes
-        if (pricePerMinute.value > 0) {
-          _availableMinutes = (walletBalance.value / pricePerMinute.value).floor();
-          if (isCallConnected.value && _availableMinutes! > 0) {
-            _remainingSeconds = _availableMinutes! * 60;
-            _updateRemainingTime();
-          }
-        }
+
+        // Sync the Money Anchor for visual smoothness
+        _syncMoneyAnchor(backendBalance, pricePerMinute.value);
+
+        // Update global WalletController
+        _updateGlobalWalletBalance(backendBalance);
       }
     } catch (e) {
       if (kDebugMode) print('⚠️ Error syncing wallet balance: $e');
@@ -1103,26 +1097,26 @@ class AstrologerVideoCallController extends GetxController {
   Future<void> endCall() async {
     // Only show review prompt if call was connected
     final wasConnected = isCallConnected.value;
-    
+
     // Stop all timers
     _billingTimer?.cancel();
     _walletSyncTimer?.cancel();
-    
+
     // Disconnect WebSocket first
     await _disconnectSocket();
-    
+
     // Sync wallet balance one final time before ending
     await _syncWalletBalanceWithBackend();
-    
+
     // Calculate actual call duration and amount for backend billing
     int? actualTotalMinutes;
     double? actualTotalAmount;
-    
+
     if (_callStartTime != null && totalMinutesBilled.value > 0) {
       // Use the actual minutes billed (calculated by our timer)
       actualTotalMinutes = totalMinutesBilled.value;
       actualTotalAmount = totalCost.value;
-      
+
       if (kDebugMode) {
         print('═══════════════════════════════════════════════════════════');
         print('💰 CALCULATED BILLING PARAMETERS FOR BACKEND (Video)');
@@ -1132,7 +1126,7 @@ class AstrologerVideoCallController extends GetxController {
         print('═══════════════════════════════════════════════════════════');
       }
     }
-    
+
     // Call API to end the call with billing parameters (this will deduct money from wallet)
     if (_callId != null) {
       try {
@@ -1151,7 +1145,7 @@ class AstrologerVideoCallController extends GetxController {
           print('💰 Minutes Billed: ${totalMinutesBilled.value}');
           print('═══════════════════════════════════════════════════════════');
         }
-        
+
         // Sync wallet balance multiple times after call ends to ensure backend processed the deduction
         Future.delayed(const Duration(seconds: 1), () async {
           await _syncWalletBalanceWithBackend();
@@ -1167,11 +1161,11 @@ class AstrologerVideoCallController extends GetxController {
         // Continue even if API call fails
       }
     }
-    
+
     await _agoraManager.leaveChannel();
     await _agoraManager.dispose();
     Get.back();
-    
+
     // Show review prompt after closing call screen
     if (wasConnected) {
       Future.delayed(const Duration(milliseconds: 300), () {
@@ -1194,18 +1188,18 @@ class AstrologerVideoCallController extends GetxController {
             Expanded(
               child: AutoTranslateText(
                 'Rate Your Experience',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: const Color(0xFF5F2221),
-                ).merge(AppTypography.h2),
+                style: MyTextTheme.mediumBCB
+                    .copyWith(color: const Color(0xFF5F2221))
+                    .merge(AppTypography.h2),
               ),
             ),
           ],
         ),
         content: AutoTranslateText(
           'Would you like to rate your experience with ${astrologer.displayName}?',
-          style: MyTextTheme.smallBCN.copyWith(
-            color: const Color(0xFF666666),
-          ).merge(AppTypography.body1),
+          style: MyTextTheme.smallBCN
+              .copyWith(color: const Color(0xFF666666))
+              .merge(AppTypography.body1),
         ),
         actions: [
           TextButton(
@@ -1223,18 +1217,19 @@ class AstrologerVideoCallController extends GetxController {
               Get.back(); // Go back from call screen
               // Navigate to astrologer detail with review prompt
               Future.delayed(const Duration(milliseconds: 300), () {
-                Get.toNamed(AppRoutes.astrologerDetail, arguments: {
-                  'astrologer': astrologer,
-                  'showReviewPrompt': true,
-                  'serviceType': 'VIDEO',
-                });
+                Get.toNamed(
+                  AppRoutes.astrologerDetail,
+                  arguments: {
+                    'astrologer': astrologer,
+                    'showReviewPrompt': true,
+                    'serviceType': 'VIDEO',
+                  },
+                );
               });
             },
             child: AutoTranslateText(
               'Rate Now',
-              style: MyTextTheme.smallBCB.copyWith(
-                color: AppColors.saffron,
-              ),
+              style: MyTextTheme.smallBCB.copyWith(color: AppColors.saffron),
             ),
           ),
         ],

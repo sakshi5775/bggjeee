@@ -65,15 +65,22 @@ class _CommonTabSliderState extends State<CommonTabSlider> {
   void _scrollToSelectedTab(int index) {
     if (!_scrollController.hasClients) return;
 
-    final key = _tabKeys[index];
-    if (key?.currentContext != null) {
-      Scrollable.ensureVisible(
-        key!.currentContext!,
-        alignment: 0.5, // Center the tab
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
+    // Ensure layout is complete before trying to scroll to a specific context
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final key = _tabKeys[index];
+      if (key?.currentContext != null) {
+        final renderObject = key!.currentContext!.findRenderObject();
+        if (renderObject is RenderBox && renderObject.hasSize) {
+          Scrollable.ensureVisible(
+            key.currentContext!,
+            alignment: 0.5, // Center the tab
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      }
+    });
   }
 
   @override

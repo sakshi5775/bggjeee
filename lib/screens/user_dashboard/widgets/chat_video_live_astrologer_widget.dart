@@ -173,7 +173,7 @@ class ChatCallAstrologerWidget extends BasePage<UserDashboardController> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 AutoTranslateText(
-                  "Chat/Call",
+                  "Astro Chat & Call",
                   style: AppTypography.h2.copyWith(color: '#820B17'.toColor()),
                 ),
                 Spacing.w(16),

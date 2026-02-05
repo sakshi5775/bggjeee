@@ -30,7 +30,6 @@ class _DigitalServicesAnimatedWidgetState
         try {
           final dashboardController = Get.find<UserDashboardController>();
           dashboardController.selectedSliderIndex.value = 6;
-          dashboardController.scrollSliderToSelected();
           dashboardController.scrollController.jumpTo(0);
         } catch (e) {
           Get.toNamed(AppRoutes.courses);
@@ -47,7 +46,6 @@ class _DigitalServicesAnimatedWidgetState
         try {
           final dashboardController = Get.find<UserDashboardController>();
           dashboardController.selectedSliderIndex.value = 4;
-          dashboardController.scrollSliderToSelected();
           dashboardController.scrollController.jumpTo(0);
         } catch (e) {
           Get.to(

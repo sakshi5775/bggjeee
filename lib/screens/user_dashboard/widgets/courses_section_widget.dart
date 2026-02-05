@@ -89,7 +89,6 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
             try {
               final dashboardController = Get.find<UserDashboardController>();
               dashboardController.selectedSliderIndex.value = 6;
-              dashboardController.scrollSliderToSelected();
               dashboardController.scrollController.animateTo(
                 0,
                 duration: const Duration(milliseconds: 300),
@@ -126,7 +125,6 @@ class CoursesSectionWidget extends BasePage<UserDashboardController> {
         try {
           final dashboardController = Get.find<UserDashboardController>();
           dashboardController.selectedSliderIndex.value = 6;
-          dashboardController.scrollSliderToSelected();
           dashboardController.scrollController.animateTo(
             0,
             duration: const Duration(milliseconds: 300),

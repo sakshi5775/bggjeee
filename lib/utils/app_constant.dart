@@ -109,13 +109,13 @@ class AppConstant {
   static const String templeImage = 'assets/app/temple_image.png';
   static const String templeMahakaleshwar =
       'assets/app/temple_mahakaleshwar.png';
-  static const String videoThumbnail = 'assets/app/video_thumbnail.png';
+  static const String videoThumbnail = 'assets/app/astrology.svg';
   static const String horoscopeGuru = 'assets/app/guru.png';
-  static const String divineShop = 'assets/app/divine_shop.png';
+  static const String divineShop = 'assets/app/pill_digital_mart.png';
   static const String ePooja = 'assets/app/e_pooja.png';
   static const String aiAstrologer =
       'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/AIAstrologer.svg';
-  static const String education = 'assets/app/education.png';
+  static const String education = 'assets/app/pill_digital_education.png';
   static const String poojaAnuj = 'assets/app/pooja_anuj.png';
   static const String poojaAbhishek = 'assets/app/pooja_abhishek.png';
   static const String chantingMala = 'assets/app/chanting_mala.png';
@@ -436,4 +436,10 @@ class AppConstant {
       '$s3BaseUrl/Digital+Learning/GrandMasterImage.png';
 
   ///
+}
+
+class InstagramConstant {
+  static const String instagramAccessToken = '';
+  static const String instagramProfileUrl =
+      'https://www.instagram.com/astrobharatai';
 }

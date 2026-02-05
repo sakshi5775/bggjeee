@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
@@ -10,6 +11,7 @@ import 'package:astrobharataiuser/screens/live_stream/view/live_stream_view.dart
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/AnimatedChakra.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/astrology_tool_widget.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/widgets/media_hub_preview_widget.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/orders_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/my_bookings/controller/my_bookings_controller.dart';
@@ -40,7 +42,7 @@ import '../widgets/book_pooja_carousel_widget.dart';
 import '../widgets/courses_section_widget.dart';
 import '../widgets/kids_specialist_astrologers_widget.dart';
 import '../widgets/celebrity_astrologer_widget.dart';
-import '../widgets/features_and_videos_widget.dart';
+
 import '../widgets/what_else_widget.dart';
 import '../widgets/year_tab_widget.dart';
 import '../widgets/banner_carousel_widget.dart';
@@ -356,11 +358,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
   }
 
   Widget _buildSlider(BuildContext context) {
-    // Row 2: Drawer (fixed) + Home tab (fixed) + scrollable slider tabs (2026, Digital Consultation, etc.)
     return Container(
       color: Colors.transparent,
       height: 44.h,
-      padding: EdgeInsets.only(left: 4.w, right: 16.w),
+      padding: EdgeInsets.only(left: 4.w),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -375,70 +376,20 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ),
             ),
           ),
-          Spacing.w(20),
-          // Fixed Home tab (does not scroll)
-          Obx(
-            () => _buildSliderTab(
-              context,
-              0,
-              controller.selectedSliderIndex.value,
-            ),
-          ),
-          Spacing.w(8),
+          Spacing.w(4),
+          // Use CommonTabSlider for the tabs
           Expanded(
-            child: _SliderStripWidget(
-              key: const ValueKey('dashboard_slider_strip'),
-              controller: controller,
-              startIndex: 1,
-              buildTab: (ctx, idx, selIdx) => _buildSliderTab(ctx, idx, selIdx),
+            child: Obx(
+              () => CommonTabSlider(
+                tabs: controller.sliderTabs,
+                selectedIndex: controller.selectedSliderIndex.value,
+                onTabSelected: (index) {
+                  controller.selectedSliderIndex.value = index;
+                },
+              ),
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSliderTab(BuildContext context, int index, int selectedIndex) {
-    final isSelected = selectedIndex == index;
-    final label = controller.sliderTabs[index];
-    final isBold = isSelected || label == 'Home';
-    return Padding(
-      key: ValueKey('slider_tab_$index'),
-      padding: EdgeInsets.zero,
-      child: GestureDetector(
-        onTap: () {
-          debugPrint("SLIDER: Tab $index tapped, updating selectedSliderIndex");
-          controller.selectedSliderIndex.value = index;
-          controller.scrollSliderToSelected();
-        },
-        behavior: HitTestBehavior.opaque,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              label,
-              style: AppTypography.body1.copyWith(
-                color: isSelected
-                    ? "#6F221E".toColor()
-                    : "#3D0C11".toColor().withOpacity(0.75),
-                fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
-              ),
-            ),
-            Spacing.h(4),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              height: 2.5.h,
-              width: isSelected ? 36.w : 0,
-              margin: EdgeInsets.only(top: 1.h),
-              decoration: BoxDecoration(
-                color: "#6F221E".toColor(),
-                borderRadius: BorderRadius.circular(2.r),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -459,18 +410,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             "SLIDER: Swipe left detected, changing index from $cur to $newIndex",
           );
           controller.selectedSliderIndex.value = newIndex;
-          controller.scrollMainViewToTopOnSwipe();
-          // Direct call as backup (ever() may not fire immediately)
-          controller.scrollSliderToSelected();
         } else if (v > _kSwipeVelocityThreshold) {
           final newIndex = (cur - 1).clamp(0, n - 1);
           debugPrint(
             "SLIDER: Swipe right detected, changing index from $cur to $newIndex",
           );
           controller.selectedSliderIndex.value = newIndex;
-          controller.scrollMainViewToTopOnSwipe();
-          // Direct call as backup (ever() may not fire immediately)
-          controller.scrollSliderToSelected();
         }
       },
       child: _buildSliderBody(context),
@@ -767,9 +712,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       if (banners.isEmpty) {
         return const SizedBox.shrink();
       }
-      return BannerCarouselWidget(
-        key: ValueKey(banners.length),
-        banners: banners.toList(),
+      return Column(
+        children: [
+          BannerCarouselWidget(
+            key: ValueKey(banners.length),
+            banners: banners.toList(),
+          ),
+          Spacing.h(5),
+        ],
       );
     });
   }
@@ -1050,11 +1000,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Spacing.h(30),
+          Spacing.h(40),
           AstrologyToolWidget(),
-          Spacing.h(2),
+          Spacing.h(10),
           _buildAdsSection(context),
-          Spacing.h(2),
+          Spacing.h(10),
           //   OurServicesSection(),
           // Live Astrologers Section
           Obx(() {
@@ -1095,7 +1045,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                   );
                                 },
                                 child: AutoTranslateText(
-                                  'Live Astrologers',
+                                  'Astro Live Streaming Hub',
                                   style: AppTypography.h2.copyWith(
                                     color: '#820B17'.toColor(),
                                     letterSpacing: -0.05,
@@ -1266,8 +1216,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
           // Blog Section
 
-          // Features and Videos Section
-          FeaturesAndVideosWidget(),
+          // Media Hub Section
+          const MediaHubPreviewWidget(),
           Spacing.h(5),
           WhatElseWidget(),
 
@@ -5776,7 +5726,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
-              maxLines: 1,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -5897,68 +5847,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
-              maxLines: 1,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// StatefulWidget wrapper for slider strip to ensure SingleChildScrollView is only created once.
-/// This prevents "multiple scroll views" error when Obx rebuilds.
-/// [startIndex] skips tabs before this index (e.g. 1 = Home is fixed outside, strip shows rest).
-class _SliderStripWidget extends StatefulWidget {
-  final UserDashboardController controller;
-  final Widget Function(BuildContext, int, int) buildTab;
-  final int startIndex;
-
-  const _SliderStripWidget({
-    super.key,
-    required this.controller,
-    required this.buildTab,
-    this.startIndex = 0,
-  });
-
-  @override
-  State<_SliderStripWidget> createState() => _SliderStripWidgetState();
-}
-
-class _SliderStripWidgetState extends State<_SliderStripWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.transparent,
-      height: 26.h,
-      child: NotificationListener<ScrollNotification>(
-        onNotification: (notification) {
-          if (notification is ScrollEndNotification) {
-            widget.controller.onSliderStripScrollEnd();
-          }
-          return false;
-        },
-        child: SingleChildScrollView(
-          controller: widget.controller.sliderTabsScrollController,
-          scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Obx(() {
-            final selectedIndex = widget.controller.selectedSliderIndex.value;
-            final start = widget.startIndex;
-            final length = widget.controller.sliderTabs.length;
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                for (int index = start; index < length; index++) ...[
-                  if (index > start) Spacing.w(20),
-                  widget.buildTab(context, index, selectedIndex),
-                ],
-              ],
-            );
-          }),
-        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -9,20 +10,21 @@ import 'package:astrobharataiuser/core/services/language_service.dart';
 /// This is more reliable than easy_localization for all 23 languages
 class CustomTranslationService extends GetxController {
   static CustomTranslationService? _instance;
-  
+
   // Current translations map
   final _translations = <String, dynamic>{}.obs;
-  
+
   // Current language code
   final _currentLanguageCode = 'en'.obs;
-  
+
   // Language model
   final _currentLanguage = Rxn<AppLanguageModel>();
-  
+
   // Is loading
   final isLoading = false.obs;
 
-  // Get singleton instance
+  // Track languages that failed to load assets to avoid repeated failed attempts
+  final Set<String> _missingLanguages = {};
   static CustomTranslationService get instance {
     if (_instance != null) {
       return _instance!;
@@ -40,7 +42,7 @@ class CustomTranslationService extends GetxController {
 
   // Get current language code
   String get currentLanguageCode => _currentLanguageCode.value;
-  
+
   // Get current language
   AppLanguageModel? get currentLanguage => _currentLanguage.value;
 
@@ -64,7 +66,8 @@ class CustomTranslationService extends GetxController {
 
   /// Change language and load translations
   Future<void> changeLanguage(AppLanguageModel language) async {
-    if (_currentLanguageCode.value == language.code && _translations.isNotEmpty) {
+    if (_currentLanguageCode.value == language.code &&
+        _translations.isNotEmpty) {
       return; // Already loaded
     }
 
@@ -72,13 +75,13 @@ class CustomTranslationService extends GetxController {
       isLoading.value = true;
       _currentLanguageCode.value = language.code;
       _currentLanguage.value = language;
-      
+
       // Load translations from JSON file
       await _loadTranslations(language.code);
-      
+
       // Save preference
       await LanguageService.setLanguage(language);
-      
+
       // Force update to notify all listeners (defer to next frame to avoid build scope issues)
       WidgetsBinding.instance.addPostFrameCallback((_) {
         update();
@@ -96,18 +99,35 @@ class CustomTranslationService extends GetxController {
 
   /// Load translations from JSON file
   Future<void> _loadTranslations(String languageCode) async {
+    // If we already know this language asset is missing, don't try again
+    if (_missingLanguages.contains(languageCode)) {
+      _translations.value = {};
+      return;
+    }
+
     try {
       final String jsonString = await rootBundle.loadString(
         'assets/translations/$languageCode.json',
       );
       final Map<String, dynamic> translations = json.decode(jsonString);
       _translations.value = translations;
-      
+
+      // Successfully loaded, ensure it's not in missing set
+      _missingLanguages.remove(languageCode);
+
       // Don't call update here - let changeLanguage handle it to avoid build scope issues
     } catch (e) {
-      print('Error loading translations for $languageCode: $e');
-      // Try to load English as fallback
-      if (languageCode != 'en') {
+      // Mark as missing to avoid repeated failures
+      _missingLanguages.add(languageCode);
+
+      if (kDebugMode && languageCode == 'en') {
+        print(
+          'CustomTranslationService: Missing $languageCode asset. Using empty.',
+        );
+      }
+
+      // Try to load English as fallback only if we haven't already marked it as missing
+      if (languageCode != 'en' && !_missingLanguages.contains('en')) {
         try {
           final String jsonString = await rootBundle.loadString(
             'assets/translations/en.json',
@@ -115,7 +135,7 @@ class CustomTranslationService extends GetxController {
           final Map<String, dynamic> translations = json.decode(jsonString);
           _translations.value = translations;
         } catch (_) {
-          // If even English fails, use empty map
+          _missingLanguages.add('en');
           _translations.value = {};
         }
       } else {
@@ -130,7 +150,7 @@ class CustomTranslationService extends GetxController {
     try {
       final keys = key.split('.');
       dynamic value = _translations;
-      
+
       for (final k in keys) {
         if (value is Map && value.containsKey(k)) {
           value = value[k];
@@ -139,16 +159,16 @@ class CustomTranslationService extends GetxController {
           return key;
         }
       }
-      
+
       String translation = value.toString();
-      
+
       // Replace arguments if provided
       if (args != null && args.isNotEmpty) {
         args.forEach((key, value) {
           translation = translation.replaceAll('{$key}', value);
         });
       }
-      
+
       return translation;
     } catch (e) {
       print('Error getting translation for key: $key, error: $e');
@@ -161,7 +181,7 @@ class CustomTranslationService extends GetxController {
     try {
       final keys = key.split('.');
       dynamic value = _translations;
-      
+
       for (final k in keys) {
         if (value is Map && value.containsKey(k)) {
           value = value[k];
@@ -169,7 +189,7 @@ class CustomTranslationService extends GetxController {
           return false;
         }
       }
-      
+
       return value != null;
     } catch (e) {
       return false;
@@ -177,7 +197,8 @@ class CustomTranslationService extends GetxController {
   }
 
   /// Get all translations
-  Map<String, dynamic> get allTranslations => Map<String, dynamic>.from(_translations);
+  Map<String, dynamic> get allTranslations =>
+      Map<String, dynamic>.from(_translations);
 }
 
 /// Extension method for easy translation access
@@ -190,4 +211,3 @@ extension StringTranslationExtension on String {
     return this;
   }
 }
-
