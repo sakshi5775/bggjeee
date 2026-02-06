@@ -18,10 +18,11 @@ class NumerologyResultView extends StatelessWidget {
     final type = arguments?['type'] as String? ?? '';
     final data = arguments?['data'] as Map<String, dynamic>? ?? {};
 
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
             CommonHeader(title: _getTitle(type)),
             Expanded(

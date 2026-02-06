@@ -19,22 +19,25 @@ class FaceReadingResultsView extends StatelessWidget {
     final FaceReadingData? result = Get.arguments?['result'];
 
     if (result == null) {
-      return Scaffold(
-        backgroundColor: '#F7EFBD'.toColor(),
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(100.h),
-          child: const CommonHeader(
-            title: 'Face Analysis',
-            showSearch: false,
-            showCart: false,
-            showLanguage: false,
-            showWallet: false,
+      return Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(100.h),
+            child: const CommonHeader(
+              title: 'Face Analysis',
+              showSearch: false,
+              showCart: false,
+              showLanguage: false,
+              showWallet: false,
+            ),
           ),
-        ),
-        body: Center(
-          child: AutoTranslateText(
-            'No results found',
-            style: MyTextTheme.mediumBCB.copyWith(color: '#3E2723'.toColor()),
+          body: Center(
+            child: AutoTranslateText(
+              'No results found',
+              style: MyTextTheme.mediumBCB.copyWith(color: '#3E2723'.toColor()),
+            ),
           ),
         ),
       );
@@ -46,53 +49,56 @@ class FaceReadingResultsView extends StatelessWidget {
     final score = overview?.score ?? 0;
     final tags = overview?.tags ?? [];
 
-    return Scaffold(
-      backgroundColor: '#F7EFBD'.toColor(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            CommonHeader(
-              title: 'Your Face Analysis',
-              subtitle: AutoTranslateText(
-                'AI-Powered Physiognomy reading',
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: const Color(0xFF5F2221).withOpacity(0.7),
-                ),
-              ),
-              customActions: [
-                IconButton(
-                  icon: Icon(
-                    Icons.history,
-                    color: '#6F221E'.toColor(),
-                    size: 22.w,
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              CommonHeader(
+                title: 'Your Face Analysis',
+                subtitle: AutoTranslateText(
+                  'AI-Powered Physiognomy reading',
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: const Color(0xFF5F2221).withOpacity(0.7),
                   ),
-                  onPressed: () => Get.toNamed(AppRoutes.faceReadingHistory),
                 ),
-              ],
-            ),
-            // Scrollable Content
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Overall Analysis Score Section
-                    _buildOverallScoreSection(result, score, tags),
-                    Spacing.h(24),
-                    // Detailed Analysis Section
-                    _buildDetailedAnalysisSection(categories, result),
-                    Spacing.h(24),
-                    // Facial Features Section
-                    _buildFacialFeaturesSection(features, result),
-                    Spacing.h(24),
-                    // Want Deeper Insights Section
-                    _buildDeeperInsightsSection(),
-                    Spacing.h(24),
-                  ],
+                customActions: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.history,
+                      color: '#6F221E'.toColor(),
+                      size: 22.w,
+                    ),
+                    onPressed: () => Get.toNamed(AppRoutes.faceReadingHistory),
+                  ),
+                ],
+              ),
+              // Scrollable Content
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Overall Analysis Score Section
+                      _buildOverallScoreSection(result, score, tags),
+                      Spacing.h(24),
+                      // Detailed Analysis Section
+                      _buildDetailedAnalysisSection(categories, result),
+                      Spacing.h(24),
+                      // Facial Features Section
+                      _buildFacialFeaturesSection(features, result),
+                      Spacing.h(24),
+                      // Want Deeper Insights Section
+                      _buildDeeperInsightsSection(),
+                      Spacing.h(24),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

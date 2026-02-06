@@ -14,6 +14,10 @@ class AppConstant {
   static const String googleMapsApiKey =
       'AIzaSyBLAoT6aFAsHaFWBIvK3hha1BDbMzPFOb0';
 
+  // Google Cloud Translation API Key
+  static const String googleTranslateApiKey =
+      'AIzaSyBcUk-nCY7Je-CFF2uiBJNNlBsE9cE7-JY';
+
   static const String exitAppImage = 'assets/images/exit-app-image.svg';
   static const String logoutImage = 'assets/images/logout-image.svg';
 

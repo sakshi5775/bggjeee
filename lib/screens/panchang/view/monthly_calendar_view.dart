@@ -6,8 +6,8 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/monthly_calendar_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
-import 'package:astrobharataiuser/screens/panchang/widgets/monthly_calendar_header_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,39 +19,155 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: Obx(() {
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Obx(() {
           if (controller.isLoading.value && controller.calendarData.isEmpty) {
             return Center(
               child: CircularProgressIndicator(color: "#DFB343".toColor()),
             );
           }
 
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                // Header
-                MonthlyCalendarHeaderWidget(
-                  controller: controller,
-                  onLocationTap: () => _showLocationBottomSheet(),
-                  onDateTap: () => controller.selectDate(),
+          return Column(
+            children: [
+              // Header
+              CommonHeader(
+                title: 'Monthly Calendar',
+                subtitle: AutoTranslateText(
+                  'Traditional Indian Calendar System',
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400,
+                    color: "#6F221E".toColor().withOpacity(0.7),
+                    height: 1.33,
+                  ),
                 ),
+              ),
 
-                Spacing.h(20),
+              // Date and Location Selectors
+              _buildDateLocationSelectors(),
 
-                // Calendar Grid
-                _buildCalendarGrid(),
-                Spacing.h(20),
+              Spacing.h(10),
 
-                // Hindu Calendar Events Section
-                _buildFestivalsSection(),
-                Spacing.h(20),
-              ],
-            ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Calendar Grid
+                      _buildCalendarGrid(),
+                      Spacing.h(20),
+
+                      // Hindu Calendar Events Section
+                      _buildFestivalsSection(),
+                      Spacing.h(20),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           );
         }),
+      ),
+    );
+  }
+
+  Widget _buildDateLocationSelectors() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 15.w),
+      child: Row(
+        children: [
+          // Date Selector
+          Expanded(
+            child: GestureDetector(
+              onTap: controller.selectDate,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: "#FFFFFF".toColor(),
+                  border: Border.all(
+                    color: Color(0xFFE3B341), // 2nd-gold
+                    width: 0.5,
+                  ),
+                  borderRadius: BorderRadius.circular(13.41.r),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      color: Color(0xFFE3B341),
+                      size: 15.w,
+                    ),
+                    Spacing.w(6),
+                    Expanded(
+                      child: Obx(
+                        () => AutoTranslateText(
+                          controller.getMonthYearString(),
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: Color(0xFFE3B341), // 2nd-gold
+                            fontSize: 13.41.sp,
+                            fontWeight: FontWeight.w500,
+                            height: 1.0,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Spacing.w(6),
+          // Location Selector
+          Expanded(
+            child: GestureDetector(
+              onTap: _showLocationBottomSheet,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: "#FFFFFF".toColor(),
+                  border: Border.all(
+                    color: Color(0xFFE3B341), // 2nd-gold
+                    width: 0.5,
+                  ),
+                  borderRadius: BorderRadius.circular(13.41.r),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      color: Color(0xFFE3B341),
+                      size: 15.33.w,
+                    ),
+                    Spacing.w(6),
+                    Expanded(
+                      child: Obx(
+                        () => AutoTranslateText(
+                          controller.selectedLocation.value,
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: Color(0xFFE3B341), // 2nd-gold
+                            fontSize: 13.41.sp,
+                            fontWeight: FontWeight.w500,
+                            height: 1.0,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -960,10 +1076,11 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
-            controller.selectCity(city, state, country);
-            Get.back();
-          },
+          onCitySelected:
+              (city, state, country, [latitude, longitude, timezone]) {
+                controller.selectCity(city, state, country);
+                Get.back();
+              },
           selectedCity: controller.selectedLocation.value,
           onUseCurrentLocation: () => controller.getCurrentLocation(),
         ),

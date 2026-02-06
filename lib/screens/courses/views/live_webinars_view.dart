@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:astrobharataiuser/screens/courses/controllers/live_webinars_controller.dart';
 import 'package:astrobharataiuser/data_model/webinar_model.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:intl/intl.dart';
 
 class LiveWebinarsView extends GetView<LiveWebinarsController> {
@@ -13,89 +14,92 @@ class LiveWebinarsView extends GetView<LiveWebinarsController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F0), // Cream background
-      body: SafeArea(
-        child: Column(
-          children: [
-            Obx(
-              () => CommonHeader(
-                title: 'Live Webinars',
-                subtitle: AutoTranslateText(
-                  '${controller.liveCount} Live • ${controller.upcomingCount} Upcoming',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: const Color(0xFF5F2221).withValues(alpha: 0.7),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              Obx(
+                () => CommonHeader(
+                  title: 'Live Webinars',
+                  subtitle: AutoTranslateText(
+                    '${controller.liveCount} Live • ${controller.upcomingCount} Upcoming',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: const Color(0xFF5F2221).withValues(alpha: 0.7),
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            // Scrollable Content
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: controller.refreshWebinars,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Stats Row / Quick Info (Optional - using dynamic counts)
-                      // _buildStatsRow(), // Removing mock stats as per request
-                      SizedBox(height: 24.h),
+              // Scrollable Content
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: controller.refreshWebinars,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Stats Row / Quick Info (Optional - using dynamic counts)
+                        // _buildStatsRow(), // Removing mock stats as per request
+                        SizedBox(height: 24.h),
 
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border(
-                              left: BorderSide(
-                                color: Color(0xFFFF9C09),
-                                width: 3.w,
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border(
+                                left: BorderSide(
+                                  color: Color(0xFFFF9C09),
+                                  width: 3.w,
+                                ),
+                              ),
+                            ),
+                            padding: EdgeInsets.only(left: 8.w),
+                            child: AutoTranslateText(
+                              "Live Now",
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF5F2221), // Dark brown
                               ),
                             ),
                           ),
-                          padding: EdgeInsets.only(left: 8.w),
-                          child: AutoTranslateText(
-                            "Live Now",
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFF5F2221), // Dark brown
-                            ),
+                        ),
+
+                        SizedBox(height: 12.h),
+
+                        // Hero Section (Live Now)
+                        _buildLiveNowSection(),
+
+                        SizedBox(height: 24.h),
+
+                        // Tabs (Upcoming & Recordings)
+                        Obx(
+                          () => CommonTabSlider(
+                            tabs: const ["Live", "Upcoming", "Recordings"],
+                            selectedIndex: controller.selectedTab.value,
+                            onTabSelected: (index) =>
+                                controller.selectedTab.value = index,
                           ),
                         ),
-                      ),
 
-                      SizedBox(height: 12.h),
+                        SizedBox(height: 16.h),
 
-                      // Hero Section (Live Now)
-                      _buildLiveNowSection(),
+                        // Content List
+                        _buildContentList(),
 
-                      SizedBox(height: 24.h),
-
-                      // Tabs (Upcoming & Recordings)
-                      Obx(
-                        () => CommonTabSlider(
-                          tabs: const ["Live", "Upcoming", "Recordings"],
-                          selectedIndex: controller.selectedTab.value,
-                          onTabSelected: (index) =>
-                              controller.selectedTab.value = index,
-                        ),
-                      ),
-
-                      SizedBox(height: 16.h),
-
-                      // Content List
-                      _buildContentList(),
-
-                      SizedBox(height: 40.h),
-                    ],
+                        SizedBox(height: 40.h),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

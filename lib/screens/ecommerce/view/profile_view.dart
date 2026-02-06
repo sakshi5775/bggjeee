@@ -35,7 +35,7 @@ class ProfileView extends GetView<ProfileController> {
               // Header using CommonHeader
               CommonHeader(
                 title: 'My Profile',
-                showBackButton: showBackButton,
+
                 customActions: [
                   if (LoginGuard.isLoggedIn)
                     IconButton(

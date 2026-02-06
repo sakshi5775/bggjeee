@@ -64,7 +64,7 @@ class CoursesView extends BasePage<CoursesController> {
                 if (!hideHeader)
                   CommonHeader(
                     title: 'Digital Learning',
-                    showBackButton: showBackButton,
+
                     onMenuTap: showBackButton
                         ? null
                         : () {

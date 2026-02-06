@@ -22,34 +22,32 @@ class HinduCalendarMonthlyPanchangView
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              _buildHeader(),
+        body: Column(
+          children: [
+            // Header
+            _buildHeader(),
 
-              // Date and Location Selector
-              _buildDateLocationSelector(),
+            // Date and Location Selector
+            _buildDateLocationSelector(),
 
-              Spacing.h(16),
+            Spacing.h(16),
 
-              // Content
-              Expanded(
-                child: Obx(() {
-                  if (controller.isLoading.value &&
-                      controller.monthlyPanchangData.isEmpty) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.templeGold,
-                      ),
-                    );
-                  }
+            // Content
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value &&
+                    controller.monthlyPanchangData.isEmpty) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.templeGold,
+                    ),
+                  );
+                }
 
-                  return _buildFestivalsTable();
-                }),
-              ),
-            ],
-          ),
+                return _buildFestivalsTable();
+              }),
+            ),
+          ],
         ),
       ),
     );

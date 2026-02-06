@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -1172,8 +1173,14 @@ class CompatibilityReportWidget extends StatelessWidget {
             children: [
               Icon(Icons.star, color: AppColors.deepOrange, size: 20.w),
               Spacing.w(8),
+              SvgPicture.network(
+                'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/Frame+1321314931.svg',
+                height: 24.h,
+                fit: BoxFit.contain,
+              ),
+              Spacing.w(4),
               AutoTranslateText(
-                'AstroBharat AI Conclusion',
+                'Conclusion',
                 style: MyTextTheme.largeBCB.copyWith(
                   color: "#6F221E".toColor(),
                   fontWeight: FontWeight.bold,

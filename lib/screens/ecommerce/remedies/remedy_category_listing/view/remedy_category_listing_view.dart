@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/common/global_header/global_header_view.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/myButton.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/data_model/remedy_model.dart';
@@ -18,73 +18,76 @@ class RemedyCategoryListingView
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.lightBackground,
-      drawer: UserDashboardView.buildDrawer(context),
-      body: Column(
-        children: [
-          // Fixed Header
-          SafeArea(
-            bottom: false,
-            child: Column(
-              children: [
-                const GlobalHeaderView(title: 'Remedies'),
-                SizedBox(height: 16.h),
-              ],
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        drawer: UserDashboardView.buildDrawer(context),
+        body: Column(
+          children: [
+            CommonHeader(
+              title: 'Remedies',
+              showDrawer: true,
+              onMenuTap: () {
+                Scaffold.of(context).openDrawer();
+              },
             ),
-          ),
 
-          // Scrollable Content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: AutoTranslateText(
-                    controller.categoryTitle,
-                    style: AppTypography.h2.copyWith(
-                      // Changed from h2 as it was too big for page title
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF3E1212),
+            // Scrollable Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 16.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: AutoTranslateText(
+                      controller.categoryTitle,
+                      style: AppTypography.h2.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF3E1212),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 16.h),
+                  SizedBox(height: 16.h),
 
-                Expanded(
-                  child: Obx(() {
-                    if (controller.isLoading.value) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+                  Expanded(
+                    child: Obx(() {
+                      if (controller.isLoading.value) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-                    if (controller.remedies.isEmpty) {
-                      return Center(
-                        child: AutoTranslateText(
-                          "No remedies found in this category",
-                          style: TextStyle(color: Colors.grey, fontSize: 14.sp),
+                      if (controller.remedies.isEmpty) {
+                        return Center(
+                          child: AutoTranslateText(
+                            "No remedies found in this category",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                        );
+                      }
+
+                      return ListView.separated(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 16.h,
                         ),
+                        itemCount: controller.remedies.length,
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 16.h),
+                        itemBuilder: (context, index) {
+                          return _buildRemedyCard(controller.remedies[index]);
+                        },
                       );
-                    }
-
-                    return ListView.separated(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 16.h,
-                      ),
-                      itemCount: controller.remedies.length,
-                      separatorBuilder: (context, index) =>
-                          SizedBox(height: 16.h),
-                      itemBuilder: (context, index) {
-                        return _buildRemedyCard(controller.remedies[index]);
-                      },
-                    );
-                  }),
-                ),
-              ],
+                    }),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -116,6 +119,7 @@ class RemedyCategoryListingView
                 child: CachedNetworkImage(
                   imageUrl: remedy.image ?? '',
                   width: double.infinity,
+                  height: 180.h,
                   fit: BoxFit.cover,
                   errorWidget: (context, url, error) => Container(
                     height: 180.h,

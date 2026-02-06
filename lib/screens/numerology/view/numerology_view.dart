@@ -18,34 +18,24 @@ class NumerologyView extends BasePage<NumerologyController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Padding(
-          padding: EdgeInsets.only(
-            top:
-                (MediaQuery.of(context).padding.top > 0
-                        ? MediaQuery.of(context).padding.top * 0.5
-                        : 0.0)
-                    .clamp(6.0, 24.0)
-                    .toDouble(),
-          ),
-          child: Column(
-            children: [
-              // Header
-              const CommonHeader(title: 'Numerology'),
-              // Content
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Spacing.h(20),
-                      // Feature Grid
-                      _buildFeatureGrid(),
-                      Spacing.h(20),
-                    ],
-                  ),
+        body: Column(
+          children: [
+            // Header
+            const CommonHeader(title: 'Numerology'),
+            // Content
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Spacing.h(20),
+                    // Feature Grid
+                    _buildFeatureGrid(),
+                    Spacing.h(20),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

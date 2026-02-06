@@ -18,22 +18,25 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
     final HandwritingData? result = Get.arguments?['result'];
 
     if (result == null) {
-      return Scaffold(
-        backgroundColor: '#F7EFBD'.toColor(),
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(100.h),
-          child: const CommonHeader(
-            title: 'Handwriting Analysis',
-            showSearch: false,
-            showCart: false,
-            showLanguage: false,
-            showWallet: false,
+      return Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(100.h),
+            child: const CommonHeader(
+              title: 'Handwriting Analysis',
+              showSearch: false,
+              showCart: false,
+              showLanguage: false,
+              showWallet: false,
+            ),
           ),
-        ),
-        body: Center(
-          child: AutoTranslateText(
-            'No results found',
-            style: MyTextTheme.mediumBCB.copyWith(color: '#3E2723'.toColor()),
+          body: Center(
+            child: AutoTranslateText(
+              'No results found',
+              style: MyTextTheme.mediumBCB.copyWith(color: '#3E2723'.toColor()),
+            ),
           ),
         ),
       );
@@ -46,79 +49,82 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
     final score = overview?.score ?? 0;
     final tags = overview?.tags ?? [];
 
-    return Scaffold(
-      backgroundColor: '#F7EFBD'.toColor(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            CommonHeader(
-              title: 'Your Handwriting Analysis',
-              subtitle: AutoTranslateText(
-                'AI-Powered Graphology reading',
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: const Color(0xFF5F2221).withValues(alpha: 0.7),
-                ),
-              ),
-              showSearch: false,
-              showCart: false,
-              showLanguage: false,
-              showWallet: false,
-              customActions: [
-                IconButton(
-                  icon: Icon(
-                    Icons.history,
-                    color: '#6F221E'.toColor(),
-                    size: 22.w,
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              CommonHeader(
+                title: 'Your Handwriting Analysis',
+                subtitle: AutoTranslateText(
+                  'AI-Powered Graphology reading',
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: const Color(0xFF5F2221).withValues(alpha: 0.7),
                   ),
-                  onPressed: () =>
-                      Get.toNamed(AppRoutes.handwritingAstrologyHistory),
                 ),
-              ],
-            ),
-            // Scrollable Content
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Overall Analysis Score Section
-                    _buildOverallScoreSection(result, score, tags),
-                    Spacing.h(24),
-                    // Summary Section
-                    if (result.summary != null) ...[
-                      _buildSummarySection(result.summary!),
+                showSearch: false,
+                showCart: false,
+                showLanguage: false,
+                showWallet: false,
+                customActions: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.history,
+                      color: '#6F221E'.toColor(),
+                      size: 22.w,
+                    ),
+                    onPressed: () =>
+                        Get.toNamed(AppRoutes.handwritingAstrologyHistory),
+                  ),
+                ],
+              ),
+              // Scrollable Content
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Overall Analysis Score Section
+                      _buildOverallScoreSection(result, score, tags),
+                      Spacing.h(24),
+                      // Summary Section
+                      if (result.summary != null) ...[
+                        _buildSummarySection(result.summary!),
+                        Spacing.h(24),
+                      ],
+                      // Detailed Analysis Section
+                      _buildDetailedAnalysisSection(categories, result),
+                      Spacing.h(24),
+                      // Handwriting Features Section
+                      _buildHandwritingFeaturesSection(features, result),
+                      Spacing.h(24),
+                      // Lists Section (Strengths, Areas for Growth, etc.)
+                      if (lists != null) ...[
+                        _buildListsSection(lists),
+                        Spacing.h(24),
+                      ],
+                      // User Input Section
+                      if (result.userInput != null) ...[
+                        _buildUserInputSection(result.userInput!),
+                        Spacing.h(24),
+                      ],
+                      // Images Section
+                      if (result.imageUrls != null &&
+                          result.imageUrls!.isNotEmpty) ...[
+                        _buildImagesSection(result.imageUrls!),
+                        Spacing.h(24),
+                      ],
+                      // Want Deeper Insights Section
+                      _buildDeeperInsightsSection(),
                       Spacing.h(24),
                     ],
-                    // Detailed Analysis Section
-                    _buildDetailedAnalysisSection(categories, result),
-                    Spacing.h(24),
-                    // Handwriting Features Section
-                    _buildHandwritingFeaturesSection(features, result),
-                    Spacing.h(24),
-                    // Lists Section (Strengths, Areas for Growth, etc.)
-                    if (lists != null) ...[
-                      _buildListsSection(lists),
-                      Spacing.h(24),
-                    ],
-                    // User Input Section
-                    if (result.userInput != null) ...[
-                      _buildUserInputSection(result.userInput!),
-                      Spacing.h(24),
-                    ],
-                    // Images Section
-                    if (result.imageUrls != null &&
-                        result.imageUrls!.isNotEmpty) ...[
-                      _buildImagesSection(result.imageUrls!),
-                      Spacing.h(24),
-                    ],
-                    // Want Deeper Insights Section
-                    _buildDeeperInsightsSection(),
-                    Spacing.h(24),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

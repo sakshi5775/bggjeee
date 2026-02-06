@@ -14,6 +14,7 @@ import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 
 class LiveAstrologersView extends StatelessWidget {
   final bool showBackButton;
@@ -25,51 +26,54 @@ class LiveAstrologersView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(LiveAstrologersController());
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFf8f0be), // Light cream background
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            CommonHeader(
-              title: 'Astro Live Streaming Hub',
-              customActions: [
-                GestureDetector(
-                  onTap: () {
-                    Get.toNamed(AppRoutes.streamReports);
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 8.w),
-                    child: Icon(
-                      Icons.report_problem,
-                      color: const Color(0xFF6F221E),
-                      size: 24.w,
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              CommonHeader(
+                title: 'Astro Live Streaming Hub',
+                customActions: [
+                  GestureDetector(
+                    onTap: () {
+                      Get.toNamed(AppRoutes.streamReports);
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 8.w),
+                      child: Icon(
+                        Icons.report_problem,
+                        color: const Color(0xFF6F221E),
+                        size: 24.w,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-
-            // Tab Navigation
-            Obx(
-              () => CommonTabSlider(
-                tabs: const ['ONGOING', 'UPCOMING'],
-                selectedIndex: controller.selectedTab.value,
-                onTabSelected: (index) => controller.switchTab(index),
+                ],
               ),
-            ),
 
-            // Content based on selected tab
-            Expanded(
-              child: Obx(() {
-                if (controller.selectedTab.value == 0) {
-                  return _buildOngoingTab(controller);
-                } else {
-                  return _buildUpcomingTab(controller);
-                }
-              }),
-            ),
-          ],
+              // Tab Navigation
+              Obx(
+                () => CommonTabSlider(
+                  tabs: const ['ONGOING', 'UPCOMING'],
+                  selectedIndex: controller.selectedTab.value,
+                  onTabSelected: (index) => controller.switchTab(index),
+                ),
+              ),
+
+              // Content based on selected tab
+              Expanded(
+                child: Obx(() {
+                  if (controller.selectedTab.value == 0) {
+                    return _buildOngoingTab(controller);
+                  } else {
+                    return _buildUpcomingTab(controller);
+                  }
+                }),
+              ),
+            ],
+          ),
         ),
       ),
     );

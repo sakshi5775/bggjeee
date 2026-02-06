@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/screens/ai_guider/controller/ai_guider_control
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -36,27 +37,26 @@ class _AiGuiderViewState extends State<AiGuiderView>
   @override
   void initState() {
     super.initState();
-    
+
     // Fade animation for main content
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeIn),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeIn));
 
     // Slide animation for cards
     _slideController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
-    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+        );
 
     // Pulse animation for AI icon
     _pulseController = AnimationController(
@@ -159,7 +159,11 @@ class _AiGuiderViewState extends State<AiGuiderView>
                   ),
                 ],
               ),
-              child: Icon(Icons.arrow_back, color: '#3E2723'.toColor(), size: 18.w),
+              child: Icon(
+                Icons.arrow_back,
+                color: '#3E2723'.toColor(),
+                size: 18.w,
+              ),
             ),
           ),
           SizedBox(width: 8.w),
@@ -181,8 +185,12 @@ class _AiGuiderViewState extends State<AiGuiderView>
                   ],
                 ),
                 child: Icon(
-                  controller.isSoundMuted.value ? Icons.volume_off : Icons.volume_up,
-                  color: controller.isSoundMuted.value ? Colors.grey : '#FF6B35'.toColor(),
+                  controller.isSoundMuted.value
+                      ? Icons.volume_off
+                      : Icons.volume_up,
+                  color: controller.isSoundMuted.value
+                      ? Colors.grey
+                      : '#FF6B35'.toColor(),
                   size: 18.w,
                 ),
               ),
@@ -205,7 +213,11 @@ class _AiGuiderViewState extends State<AiGuiderView>
                   ),
                 ],
               ),
-              child: Icon(Icons.language, color: '#FF6B35'.toColor(), size: 18.w),
+              child: Icon(
+                Icons.language,
+                color: '#FF6B35'.toColor(),
+                size: 18.w,
+              ),
             ),
           ),
         ],
@@ -214,16 +226,56 @@ class _AiGuiderViewState extends State<AiGuiderView>
   }
 
   static const List<Map<String, dynamic>> _serviceItems = [
-    {'title': 'Talk to Astrologer', 'icon': Icons.person, 'route': AppRoutes.liveAstrologers},
-    {'title': 'View Kundali', 'icon': Icons.bar_chart, 'route': AppRoutes.kundliForm},
-    {'title': 'Shop - Gemstones', 'icon': Icons.diamond, 'route': AppRoutes.ecommerceHome},
-    {'title': 'Book Pooja', 'icon': Icons.temple_hindu, 'route': AppRoutes.bookPuja},
-    {'title': 'View Panchang', 'icon': Icons.calendar_today, 'route': AppRoutes.panchang},
-    {'title': 'Numerology', 'icon': Icons.numbers, 'route': AppRoutes.numerologyForm},
-    {'title': 'AI Astrologer', 'icon': Icons.smart_toy, 'route': AppRoutes.aiGuider},
-    {'title': 'Kundli Matching', 'icon': Icons.favorite, 'route': AppRoutes.matchMakingGif},
-    {'title': 'Palmistry', 'icon': Icons.back_hand, 'route': AppRoutes.palmReading},
-    {'title': 'Learning Portal', 'icon': Icons.menu_book, 'route': AppRoutes.courses},
+    {
+      'title': 'Talk to Astrologer',
+      'icon': Icons.person,
+      'route': AppRoutes.liveAstrologers,
+    },
+    {
+      'title': 'View Kundali',
+      'icon': Icons.bar_chart,
+      'route': AppRoutes.kundliForm,
+    },
+    {
+      'title': 'Shop - Gemstones',
+      'icon': Icons.diamond,
+      'route': AppRoutes.ecommerceHome,
+    },
+    {
+      'title': 'Book Pooja',
+      'icon': Icons.temple_hindu,
+      'route': AppRoutes.bookPuja,
+    },
+    {
+      'title': 'View Panchang',
+      'icon': Icons.calendar_today,
+      'route': AppRoutes.panchang,
+    },
+    {
+      'title': 'Numerology',
+      'icon': Icons.numbers,
+      'route': AppRoutes.numerologyForm,
+    },
+    {
+      'title': 'AI Astrologer',
+      'icon': Icons.smart_toy,
+      'route': AppRoutes.aiGuider,
+    },
+    {
+      'title': 'Kundli Matching',
+      'icon': Icons.favorite,
+      'route': AppRoutes.matchMakingGif,
+    },
+    {
+      'title': 'Palmistry',
+      'icon': Icons.back_hand,
+      'route': AppRoutes.palmReading,
+    },
+    {
+      'title': 'Learning Portal',
+      'icon': Icons.menu_book,
+      'route': AppRoutes.courses,
+    },
   ];
 
   Widget _buildServiceGrid() {
@@ -238,11 +290,13 @@ class _AiGuiderViewState extends State<AiGuiderView>
             padding: EdgeInsets.only(bottom: 8.h),
             child: AutoTranslateText(
               'Quick access',
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: 12.sp,
-              ).merge(AppTypography.h3),
+              style: MyTextTheme.mediumBCB
+                  .copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12.sp,
+                  )
+                  .merge(AppTypography.h3),
             ),
           ),
           GridView.builder(
@@ -279,10 +333,11 @@ class _AiGuiderViewState extends State<AiGuiderView>
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: (AppColors.orangeGradient.colors.length > 1
-                                ? AppColors.orangeGradient.colors.last
-                                : orangeStart)
-                            .withOpacity(0.12),
+                        color:
+                            (AppColors.orangeGradient.colors.length > 1
+                                    ? AppColors.orangeGradient.colors.last
+                                    : orangeStart)
+                                .withOpacity(0.12),
                         blurRadius: 10,
                         offset: const Offset(0, 3),
                       ),
@@ -311,12 +366,14 @@ class _AiGuiderViewState extends State<AiGuiderView>
                       Spacing.h(4),
                       AutoTranslateText(
                         title,
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 10.sp,
-                          height: 1.15,
-                        ).merge(AppTypography.body2),
+                        style: MyTextTheme.smallBCB
+                            .copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 10.sp,
+                              height: 1.15,
+                            )
+                            .merge(AppTypography.body2),
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -362,7 +419,10 @@ class _AiGuiderViewState extends State<AiGuiderView>
               decoration: BoxDecoration(
                 color: orangeStart.withOpacity(0.12),
                 borderRadius: BorderRadius.circular(14.r),
-                border: Border.all(color: orangeStart.withOpacity(0.35), width: 1),
+                border: Border.all(
+                  color: orangeStart.withOpacity(0.35),
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: orangeEnd.withOpacity(0.1),
@@ -379,11 +439,13 @@ class _AiGuiderViewState extends State<AiGuiderView>
               alignment: Alignment.center,
               child: AutoTranslateText(
                 label,
-                style: MyTextTheme.smallBCB.copyWith(
-                  color: AppColors.deepOrange,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 11.sp,
-                ).merge(AppTypography.body2),
+                style: MyTextTheme.smallBCB
+                    .copyWith(
+                      color: AppColors.deepOrange,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 11.sp,
+                    )
+                    .merge(AppTypography.body2),
               ),
             ),
           );
@@ -427,14 +489,26 @@ class _AiGuiderViewState extends State<AiGuiderView>
   }
 
   Widget _buildTitle() {
-    return AutoTranslateText(
-      'AstroBharat AI Guide',
-      style: MyTextTheme.veryLargeBCB.copyWith(
-        color: AppColors.textPrimary,
-        fontWeight: FontWeight.bold,
-        fontSize: 16.sp,
-      ).merge(AppTypography.h1),
-      textAlign: TextAlign.center,
+    return Column(
+      children: [
+        SvgPicture.network(
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/Frame+1321314931.svg',
+          height: 36.h,
+          fit: BoxFit.contain,
+        ),
+        Spacing.h(4),
+        AutoTranslateText(
+          'Guide',
+          style: MyTextTheme.largeBCB
+              .copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w600,
+                fontSize: 14.sp,
+              )
+              .merge(AppTypography.h2),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 
@@ -443,10 +517,9 @@ class _AiGuiderViewState extends State<AiGuiderView>
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: AutoTranslateText(
         'Your Intelligent Astrology Assistant',
-        style: MyTextTheme.mediumBCN.copyWith(
-          color: AppColors.textSecondary,
-          fontSize: 11.sp,
-        ).merge(AppTypography.body1),
+        style: MyTextTheme.mediumBCN
+            .copyWith(color: AppColors.textSecondary, fontSize: 11.sp)
+            .merge(AppTypography.body1),
         textAlign: TextAlign.center,
       ),
     );
@@ -522,11 +595,13 @@ class _AiGuiderViewState extends State<AiGuiderView>
             Spacing.w(5),
             AutoTranslateText(
               statusText,
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: statusColor,
-                fontWeight: FontWeight.w600,
-                fontSize: 12.sp,
-              ).merge(AppTypography.h3),
+              style: MyTextTheme.mediumBCN
+                  .copyWith(
+                    color: statusColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12.sp,
+                  )
+                  .merge(AppTypography.h3),
             ),
           ],
         );
@@ -540,7 +615,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
       final aiReply = controller.aiReply.value;
       final transcribedText = controller.transcribedText.value;
       final suggestions = controller.suggestions;
-      
+
       // Always show conversation area - messages will appear when available
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 14.w),
@@ -567,11 +642,13 @@ class _AiGuiderViewState extends State<AiGuiderView>
                 children: [
                   AutoTranslateText(
                     'Suggestions:',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12.sp,
-                    ).merge(AppTypography.h3),
+                    style: MyTextTheme.mediumBCB
+                        .copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12.sp,
+                        )
+                        .merge(AppTypography.h3),
                   ),
                   Spacing.h(6),
                   Wrap(
@@ -581,21 +658,28 @@ class _AiGuiderViewState extends State<AiGuiderView>
                       return GestureDetector(
                         onTap: () => controller.onSuggestionTap(suggestion),
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10.w,
+                            vertical: 6.h,
+                          ),
                           decoration: BoxDecoration(
-                            color: AppColors.orangeGradient.colors.first.withOpacity(0.12),
+                            color: AppColors.orangeGradient.colors.first
+                                .withOpacity(0.12),
                             borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(
-                              color: AppColors.orangeGradient.colors.first.withOpacity(0.3),
+                              color: AppColors.orangeGradient.colors.first
+                                  .withOpacity(0.3),
                               width: 1,
                             ),
                           ),
                           child: AutoTranslateText(
                             suggestion,
-                            style: MyTextTheme.smallBCN.copyWith(
-                              color: AppColors.deepOrange,
-                              fontSize: 11.sp,
-                            ).merge(AppTypography.body2),
+                            style: MyTextTheme.smallBCN
+                                .copyWith(
+                                  color: AppColors.deepOrange,
+                                  fontSize: 11.sp,
+                                )
+                                .merge(AppTypography.body2),
                           ),
                         ),
                       );
@@ -623,7 +707,9 @@ class _AiGuiderViewState extends State<AiGuiderView>
         color: isUser ? orangeStart.withOpacity(0.08) : Colors.white,
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
-          color: isUser ? orangeStart.withOpacity(0.35) : orangeStart.withOpacity(0.2),
+          color: isUser
+              ? orangeStart.withOpacity(0.35)
+              : orangeStart.withOpacity(0.2),
           width: 1,
         ),
         boxShadow: [
@@ -679,7 +765,10 @@ class _AiGuiderViewState extends State<AiGuiderView>
       decoration: BoxDecoration(
         color: '#F1F8E9'.toColor(),
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: '#8BC34A'.toColor().withOpacity(0.3), width: 1),
+        border: Border.all(
+          color: '#8BC34A'.toColor().withOpacity(0.3),
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
@@ -688,11 +777,13 @@ class _AiGuiderViewState extends State<AiGuiderView>
           Expanded(
             child: AutoTranslateText(
               text,
-              style: MyTextTheme.smallBCN.copyWith(
-                color: '#666666'.toColor(),
-                fontStyle: FontStyle.italic,
-                fontSize: 11.sp,
-              ).merge(AppTypography.body2),
+              style: MyTextTheme.smallBCN
+                  .copyWith(
+                    color: '#666666'.toColor(),
+                    fontStyle: FontStyle.italic,
+                    fontSize: 11.sp,
+                  )
+                  .merge(AppTypography.body2),
             ),
           ),
         ],
@@ -756,16 +847,14 @@ class _AiGuiderViewState extends State<AiGuiderView>
           Expanded(
             child: TextField(
               controller: _inputController,
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: AppColors.textPrimary,
-                fontSize: 13.sp,
-              ).merge(AppTypography.body1),
+              style: MyTextTheme.mediumBCN
+                  .copyWith(color: AppColors.textPrimary, fontSize: 13.sp)
+                  .merge(AppTypography.body1),
               decoration: InputDecoration(
                 hintText: 'What can I help you with?',
-                hintStyle: MyTextTheme.mediumBCN.copyWith(
-                  color: AppColors.textSecondary,
-                  fontSize: 12.sp,
-                ).merge(AppTypography.body1),
+                hintStyle: MyTextTheme.mediumBCN
+                    .copyWith(color: AppColors.textSecondary, fontSize: 12.sp)
+                    .merge(AppTypography.body1),
                 filled: true,
                 fillColor: AppColors.gradientBackground.colors[1],
                 border: OutlineInputBorder(
@@ -808,11 +897,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
                   ),
                 ],
               ),
-              child: Icon(
-                Icons.send_rounded,
-                color: Colors.white,
-                size: 18.w,
-              ),
+              child: Icon(Icons.send_rounded, color: Colors.white, size: 18.w),
             ),
           ),
         ],
@@ -845,9 +930,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
           borderRadius: BorderRadius.circular(16.r),
         ),
         child: Container(
-          constraints: BoxConstraints(
-            maxHeight: Get.height * 0.8,
-          ),
+          constraints: BoxConstraints(maxHeight: Get.height * 0.8),
           padding: EdgeInsets.all(24.w),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -858,10 +941,12 @@ class _AiGuiderViewState extends State<AiGuiderView>
                 children: [
                   AutoTranslateText(
                     'Select Language',
-                    style: MyTextTheme.largeBCB.copyWith(
-                      color: '#3E2723'.toColor(),
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.h2),
+                    style: MyTextTheme.largeBCB
+                        .copyWith(
+                          color: '#3E2723'.toColor(),
+                          fontWeight: FontWeight.bold,
+                        )
+                        .merge(AppTypography.h2),
                   ),
                   IconButton(
                     icon: Icon(Icons.close, color: '#3E2723'.toColor()),

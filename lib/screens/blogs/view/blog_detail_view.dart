@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -106,378 +107,443 @@ class _BlogDetailViewState extends State<BlogDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: Column(
-        children: [
-          CommonHeader(
-            title: 'Blog Detail',
-            customActions: [
-              IconButton(
-                onPressed: () {
-                  // Share functionality
-                  Get.snackbar(
-                    'Share',
-                    'Share functionality coming soon',
-                    backgroundColor: '#FF6B35'.toColor(),
-                    colorText: Colors.white,
-                  );
-                },
-                icon: Icon(Icons.share, color: '#6F221E'.toColor(), size: 24.w),
-              ),
-            ],
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Featured Image
-                  Container(
-                    color: Colors.black,
-                    width: double.infinity,
-                    height: 280.h,
-                    child:
-                        _isVideoUrl(widget.blog.featuredImage ?? '') &&
-                            widget.blog.featuredImage != null &&
-                            widget.blog.featuredImage!.isNotEmpty
-                        ? ClipRect(
-                            child: OverflowBox(
-                              maxWidth: double.infinity,
-                              maxHeight: double.infinity,
-                              alignment: Alignment.center,
-                              child: FittedBox(
-                                fit: BoxFit.cover,
-                                child: SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 280.h,
-                                  child: VideoPlayerWidget(
-                                    videoUrl: widget.blog.featuredImage!,
-                                    autoPlay: false,
-                                    showControls: true,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        : widget.blog.featuredImage != null &&
-                              widget.blog.featuredImage!.isNotEmpty
-                        ? NetworkImageWithLoader(
-                            url: widget.blog.featuredImage!,
-                            width: double.infinity,
-                            height: 280.h,
-                          )
-                        : Container(
-                            width: double.infinity,
-                            height: 280.h,
-                            color: Colors.grey.withOpacity(0.3),
-                            child: Icon(
-                              Icons.image,
-                              size: 80.w,
-                              color: Colors.white,
-                            ),
-                          ),
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Column(
+          children: [
+            CommonHeader(
+              title: 'Blog Detail',
+              customActions: [
+                IconButton(
+                  onPressed: () {
+                    // Share functionality
+                    Get.snackbar(
+                      'Share',
+                      'Share functionality coming soon',
+                      backgroundColor: '#FF6B35'.toColor(),
+                      colorText: Colors.white,
+                    );
+                  },
+                  icon: Icon(
+                    Icons.share,
+                    color: '#6F221E'.toColor(),
+                    size: 24.w,
                   ),
-
-                  // Blog Content - Cream Card
-                  Container(
-                    margin: EdgeInsets.only(top: 20.h),
-                    decoration: BoxDecoration(
-                      color: '#FFF8E1'.toColor(),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.r),
-                        topRight: Radius.circular(30.r),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, -2),
-                        ),
-                      ],
+                ),
+              ],
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Featured Image
+                    Container(
+                      color: Colors.black,
+                      width: double.infinity,
+                      height: 280.h,
+                      child:
+                          _isVideoUrl(widget.blog.featuredImage ?? '') &&
+                              widget.blog.featuredImage != null &&
+                              widget.blog.featuredImage!.isNotEmpty
+                          ? ClipRect(
+                              child: OverflowBox(
+                                maxWidth: double.infinity,
+                                maxHeight: double.infinity,
+                                alignment: Alignment.center,
+                                child: FittedBox(
+                                  fit: BoxFit.cover,
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 280.h,
+                                    child: VideoPlayerWidget(
+                                      videoUrl: widget.blog.featuredImage!,
+                                      autoPlay: false,
+                                      showControls: true,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : widget.blog.featuredImage != null &&
+                                widget.blog.featuredImage!.isNotEmpty
+                          ? NetworkImageWithLoader(
+                              url: widget.blog.featuredImage!,
+                              width: double.infinity,
+                              height: 280.h,
+                            )
+                          : Container(
+                              width: double.infinity,
+                              height: 280.h,
+                              color: Colors.grey.withOpacity(0.3),
+                              child: Icon(
+                                Icons.image,
+                                size: 80.w,
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Category Tag and Title Section
-                        Padding(
-                          padding: AppPaddings.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Category Tag
-                              if (widget.blog.categories != null &&
-                                  widget.blog.categories!.isNotEmpty)
-                                Container(
-                                  padding: AppPaddings.symmetric(h: 12, v: 6),
-                                  decoration: BoxDecoration(
-                                    color: '#FF6B35'.toColor(),
-                                    borderRadius: BorderRadius.circular(20.r),
-                                  ),
-                                  child: AutoTranslateText(
-                                    widget.blog.categories!.first.name ??
-                                        'Astrology',
-                                    style: MyTextTheme.smallBCB.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
+
+                    // Blog Content - Cream Card
+                    Container(
+                      margin: EdgeInsets.only(top: 20.h),
+                      decoration: BoxDecoration(
+                        color: '#FFF8E1'.toColor(),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.r),
+                          topRight: Radius.circular(30.r),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, -2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Category Tag and Title Section
+                          Padding(
+                            padding: AppPaddings.all(20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Category Tag
+                                if (widget.blog.categories != null &&
+                                    widget.blog.categories!.isNotEmpty)
+                                  Container(
+                                    padding: AppPaddings.symmetric(h: 12, v: 6),
+                                    decoration: BoxDecoration(
+                                      color: '#FF6B35'.toColor(),
+                                      borderRadius: BorderRadius.circular(20.r),
+                                    ),
+                                    child: AutoTranslateText(
+                                      widget.blog.categories!.first.name ??
+                                          'Astrology',
+                                      style: MyTextTheme.smallBCB.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
+                                if (widget.blog.categories != null &&
+                                    widget.blog.categories!.isNotEmpty)
+                                  Spacing.h(12),
+                                // Title
+                                AutoTranslateText(
+                                  widget.blog.title ?? 'Untitled',
+                                  style: MyTextTheme.veryLargeWCB.copyWith(
+                                    color: '#3E2723'.toColor(),
+                                    fontFamily: 'Baloo Bhai 2',
+                                    height: 1.3,
+                                  ),
                                 ),
-                              if (widget.blog.categories != null &&
-                                  widget.blog.categories!.isNotEmpty)
                                 Spacing.h(12),
-                              // Title
-                              AutoTranslateText(
-                                widget.blog.title ?? 'Untitled',
-                                style: MyTextTheme.veryLargeWCB.copyWith(
-                                  color: '#3E2723'.toColor(),
-                                  fontFamily: 'Baloo Bhai 2',
-                                  height: 1.3,
-                                ),
-                              ),
-                              Spacing.h(12),
-                              // Meta Info
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.access_time,
-                                    size: 16.w,
-                                    color: "#6F221E".toColor(),
-                                  ),
-                                  Spacing.w(6),
-                                  AutoTranslateText(
-                                    '${widget.blog.readingTime ?? 0} min. read',
-                                    style: MyTextTheme.smallBCN.copyWith(
-                                      color: '#3E2723'.toColor(),
-                                    ),
-                                  ),
-                                  Spacing.w(16),
-                                  Icon(
-                                    Icons.visibility,
-                                    size: 16.w,
-                                    color: "#6F221E".toColor(),
-                                  ),
-                                  Spacing.w(6),
-                                  AutoTranslateText(
-                                    '${_formatNumber(widget.blog.viewsCount ?? 0)} Views',
-                                    style: MyTextTheme.smallBCN.copyWith(
-                                      color: '#3E2723'.toColor(),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Spacing.h(8),
-                              InkWell(
-                                onTap: () {
-                                  _openCommentsSheet(widget.blog.id ?? '');
-                                },
-                                child: Row(
+                                // Meta Info
+                                Row(
                                   children: [
                                     Icon(
-                                      Icons.comment_outlined,
+                                      Icons.access_time,
                                       size: 16.w,
                                       color: "#6F221E".toColor(),
                                     ),
                                     Spacing.w(6),
-                                    Obx(
-                                      () => AutoTranslateText(
-                                        '${_formatNumber(_likeCount.value + 20)} comments',
-                                        style: MyTextTheme.smallBCN.copyWith(
-                                          color: '#3E2723'.toColor(),
+                                    AutoTranslateText(
+                                      '${widget.blog.readingTime ?? 0} min. read',
+                                      style: MyTextTheme.smallBCN.copyWith(
+                                        color: '#3E2723'.toColor(),
+                                      ),
+                                    ),
+                                    Spacing.w(16),
+                                    Icon(
+                                      Icons.visibility,
+                                      size: 16.w,
+                                      color: "#6F221E".toColor(),
+                                    ),
+                                    Spacing.w(6),
+                                    AutoTranslateText(
+                                      '${_formatNumber(widget.blog.viewsCount ?? 0)} Views',
+                                      style: MyTextTheme.smallBCN.copyWith(
+                                        color: '#3E2723'.toColor(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Spacing.h(8),
+                                InkWell(
+                                  onTap: () {
+                                    _openCommentsSheet(widget.blog.id ?? '');
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.comment_outlined,
+                                        size: 16.w,
+                                        color: "#6F221E".toColor(),
+                                      ),
+                                      Spacing.w(6),
+                                      Obx(
+                                        () => AutoTranslateText(
+                                          '${_formatNumber(_likeCount.value + 20)} comments',
+                                          style: MyTextTheme.smallBCN.copyWith(
+                                            color: '#3E2723'.toColor(),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Spacing.h(16),
-                              // Author Information
-                              Container(
-                                padding: AppPaddings.all(16),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16.r),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Row(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 24.r,
-                                      backgroundColor: "#F38B3B"
-                                          .toColor()
-                                          .withOpacity(0.2),
-                                      child: Icon(
-                                        Icons.person,
-                                        color: '#3E2723'.toColor(),
-                                        size: 24.w,
-                                      ),
-                                    ),
-                                    Spacing.w(12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          AutoTranslateText(
-                                            widget.blog.author ?? 'Author',
-                                            style: MyTextTheme.mediumBCB
-                                                .copyWith(
-                                                  color: '#3E2723'.toColor(),
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                          ),
-                                          Spacing.h(4),
-                                          AutoTranslateText(
-                                            '${widget.blog.authorType?.toUpperCase() ?? "USER"} • ${_formatDate(widget.blog.publishDate ?? widget.blog.createdAt ?? "")}',
-                                            style: MyTextTheme.smallBCN
-                                                .copyWith(
-                                                  color: '#3E2723'
-                                                      .toColor()
-                                                      .withOpacity(0.7),
-                                                ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Content Section
-                        Padding(
-                          padding: AppPaddings.symmetric(h: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Introduction/Excerpt
-                              if (widget.blog.excerpt != null &&
-                                  widget.blog.excerpt!.isNotEmpty)
-                                AutoTranslateText(
-                                  widget.blog.excerpt!,
-                                  style: MyTextTheme.mediumBCN.copyWith(
-                                    color: '#3E2723'.toColor(),
-                                    height: 1.6,
+                                    ],
                                   ),
                                 ),
-                              if (widget.blog.excerpt != null &&
-                                  widget.blog.excerpt!.isNotEmpty)
-                                Spacing.h(20),
-
-                              // Main Content
-                              if (widget.blog.content != null &&
-                                  widget.blog.content!.isNotEmpty)
-                                AutoTranslateText(
-                                  _parseHtmlContent(widget.blog.content),
-                                  style: MyTextTheme.mediumBCN.copyWith(
-                                    color: '#3E2723'.toColor(),
-                                    height: 1.6,
+                                Spacing.h(16),
+                                // Author Information
+                                Container(
+                                  padding: AppPaddings.all(16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.05),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 24.r,
+                                        backgroundColor: "#F38B3B"
+                                            .toColor()
+                                            .withOpacity(0.2),
+                                        child: Icon(
+                                          Icons.person,
+                                          color: '#3E2723'.toColor(),
+                                          size: 24.w,
+                                        ),
+                                      ),
+                                      Spacing.w(12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            AutoTranslateText(
+                                              widget.blog.author ?? 'Author',
+                                              style: MyTextTheme.mediumBCB
+                                                  .copyWith(
+                                                    color: '#3E2723'.toColor(),
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                            ),
+                                            Spacing.h(4),
+                                            AutoTranslateText(
+                                              '${widget.blog.authorType?.toUpperCase() ?? "USER"} • ${_formatDate(widget.blog.publishDate ?? widget.blog.createdAt ?? "")}',
+                                              style: MyTextTheme.smallBCN
+                                                  .copyWith(
+                                                    color: '#3E2723'
+                                                        .toColor()
+                                                        .withOpacity(0.7),
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              Spacing.h(24),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
 
-                        // Related Tags Section
-                        if (_popularTags.isNotEmpty ||
-                            (widget.blog.tags != null &&
-                                widget.blog.tags!.isNotEmpty))
+                          // Content Section
                           Padding(
                             padding: AppPaddings.symmetric(h: 20),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                AutoTranslateText(
-                                  'Related Tags:',
-                                  style: MyTextTheme.mediumBCB.copyWith(
-                                    color: '#3E2723'.toColor(),
-                                    fontWeight: FontWeight.w600,
+                                // Introduction/Excerpt
+                                if (widget.blog.excerpt != null &&
+                                    widget.blog.excerpt!.isNotEmpty)
+                                  AutoTranslateText(
+                                    widget.blog.excerpt!,
+                                    style: MyTextTheme.mediumBCN.copyWith(
+                                      color: '#3E2723'.toColor(),
+                                      height: 1.6,
+                                    ),
                                   ),
-                                ),
-                                Spacing.h(12),
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: [
-                                      ...(widget.blog.tags ?? []).map((tag) {
-                                        return Padding(
-                                          padding: EdgeInsets.only(right: 8.w),
-                                          child: Container(
-                                            padding: AppPaddings.symmetric(
-                                              h: 12,
-                                              v: 6,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: '#FF6B35'.toColor(),
-                                              borderRadius:
-                                                  BorderRadius.circular(20.r),
-                                            ),
-                                            child: AutoTranslateText(
-                                              '#${tag.name ?? ''}',
-                                              style: MyTextTheme.smallBCB
-                                                  .copyWith(
-                                                    color: Colors.white,
-                                                  ),
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                      ..._popularTags.take(5).map((tag) {
-                                        return Padding(
-                                          padding: EdgeInsets.only(right: 8.w),
-                                          child: Container(
-                                            padding: AppPaddings.symmetric(
-                                              h: 12,
-                                              v: 6,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: '#FF6B35'.toColor(),
-                                              borderRadius:
-                                                  BorderRadius.circular(20.r),
-                                            ),
-                                            child: AutoTranslateText(
-                                              '#${tag['name'] ?? ''}',
-                                              style: MyTextTheme.smallBCB
-                                                  .copyWith(
-                                                    color: Colors.white,
-                                                  ),
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                    ],
+                                if (widget.blog.excerpt != null &&
+                                    widget.blog.excerpt!.isNotEmpty)
+                                  Spacing.h(20),
+
+                                // Main Content
+                                if (widget.blog.content != null &&
+                                    widget.blog.content!.isNotEmpty)
+                                  AutoTranslateText(
+                                    _parseHtmlContent(widget.blog.content),
+                                    style: MyTextTheme.mediumBCN.copyWith(
+                                      color: '#3E2723'.toColor(),
+                                      height: 1.6,
+                                    ),
                                   ),
-                                ),
                                 Spacing.h(24),
                               ],
                             ),
                           ),
 
-                        // Like and Share Section
-                        Padding(
-                          padding: AppPaddings.symmetric(h: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Obx(
-                                () => InkWell(
+                          // Related Tags Section
+                          if (_popularTags.isNotEmpty ||
+                              (widget.blog.tags != null &&
+                                  widget.blog.tags!.isNotEmpty))
+                            Padding(
+                              padding: AppPaddings.symmetric(h: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AutoTranslateText(
+                                    'Related Tags:',
+                                    style: MyTextTheme.mediumBCB.copyWith(
+                                      color: '#3E2723'.toColor(),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Spacing.h(12),
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: [
+                                        ...(widget.blog.tags ?? []).map((tag) {
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                              right: 8.w,
+                                            ),
+                                            child: Container(
+                                              padding: AppPaddings.symmetric(
+                                                h: 12,
+                                                v: 6,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: '#FF6B35'.toColor(),
+                                                borderRadius:
+                                                    BorderRadius.circular(20.r),
+                                              ),
+                                              child: AutoTranslateText(
+                                                '#${tag.name ?? ''}',
+                                                style: MyTextTheme.smallBCB
+                                                    .copyWith(
+                                                      color: Colors.white,
+                                                    ),
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                        ..._popularTags.take(5).map((tag) {
+                                          return Padding(
+                                            padding: EdgeInsets.only(
+                                              right: 8.w,
+                                            ),
+                                            child: Container(
+                                              padding: AppPaddings.symmetric(
+                                                h: 12,
+                                                v: 6,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: '#FF6B35'.toColor(),
+                                                borderRadius:
+                                                    BorderRadius.circular(20.r),
+                                              ),
+                                              child: AutoTranslateText(
+                                                '#${tag['name'] ?? ''}',
+                                                style: MyTextTheme.smallBCB
+                                                    .copyWith(
+                                                      color: Colors.white,
+                                                    ),
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                      ],
+                                    ),
+                                  ),
+                                  Spacing.h(24),
+                                ],
+                              ),
+                            ),
+
+                          // Like and Share Section
+                          Padding(
+                            padding: AppPaddings.symmetric(h: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Obx(
+                                  () => InkWell(
+                                    onTap: () {
+                                      _liked.value = !_liked.value;
+                                      if (_liked.value) {
+                                        _likeCount.value++;
+                                      } else {
+                                        _likeCount.value =
+                                            (_likeCount.value - 1)
+                                                .clamp(0, double.infinity)
+                                                .toInt();
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: AppPaddings.symmetric(
+                                        h: 24,
+                                        v: 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(
+                                          12.r,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.1,
+                                            ),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            _liked.value
+                                                ? Icons.thumb_up
+                                                : Icons.thumb_up_outlined,
+                                            color: _liked.value
+                                                ? '#FF6B35'.toColor()
+                                                : '#3E2723'.toColor(),
+                                            size: 20.w,
+                                          ),
+                                          Spacing.w(8),
+                                          AutoTranslateText(
+                                            'Like',
+                                            style: MyTextTheme.mediumBCB
+                                                .copyWith(
+                                                  color: '#3E2723'.toColor(),
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Spacing.w(16),
+                                InkWell(
                                   onTap: () {
-                                    _liked.value = !_liked.value;
-                                    if (_liked.value) {
-                                      _likeCount.value++;
-                                    } else {
-                                      _likeCount.value = (_likeCount.value - 1)
-                                          .clamp(0, double.infinity)
-                                          .toInt();
-                                    }
+                                    Get.snackbar(
+                                      'Share',
+                                      'Share functionality coming soon',
+                                      backgroundColor: '#FF6B35'.toColor(),
+                                      colorText: Colors.white,
+                                    );
                                   },
                                   child: Container(
                                     padding: AppPaddings.symmetric(
@@ -498,17 +564,13 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                     child: Row(
                                       children: [
                                         Icon(
-                                          _liked.value
-                                              ? Icons.thumb_up
-                                              : Icons.thumb_up_outlined,
-                                          color: _liked.value
-                                              ? '#FF6B35'.toColor()
-                                              : '#3E2723'.toColor(),
+                                          Icons.share,
+                                          color: '#3E2723'.toColor(),
                                           size: 20.w,
                                         ),
                                         Spacing.w(8),
                                         AutoTranslateText(
-                                          'Like',
+                                          'Share',
                                           style: MyTextTheme.mediumBCB.copyWith(
                                             color: '#3E2723'.toColor(),
                                           ),
@@ -517,180 +579,144 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                     ),
                                   ),
                                 ),
-                              ),
-                              Spacing.w(16),
-                              InkWell(
-                                onTap: () {
-                                  Get.snackbar(
-                                    'Share',
-                                    'Share functionality coming soon',
-                                    backgroundColor: '#FF6B35'.toColor(),
-                                    colorText: Colors.white,
-                                  );
-                                },
-                                child: Container(
-                                  padding: AppPaddings.symmetric(h: 24, v: 12),
+                              ],
+                            ),
+                          ),
+                          Spacing.h(24),
+
+                          // Comments Section
+                          Padding(
+                            padding: AppPaddings.symmetric(h: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    _openCommentsSheet(widget.blog.id ?? '');
+                                  },
+                                  child: AutoTranslateText(
+                                    'Comments (${_likeCount.value + 20})',
+                                    style: MyTextTheme.mediumBCB.copyWith(
+                                      color: '#3E2723'.toColor(),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                Spacing.h(16),
+                                // Comment Input
+                                Container(
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(12.r),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
+                                        color: Colors.black.withOpacity(0.05),
                                         blurRadius: 4,
                                         offset: const Offset(0, 2),
                                       ),
                                     ],
                                   ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.share,
-                                        color: '#3E2723'.toColor(),
-                                        size: 20.w,
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintText: 'Share your thoughts...',
+                                      hintStyle: MyTextTheme.smallBCN.copyWith(
+                                        color: Colors.grey,
                                       ),
-                                      Spacing.w(8),
-                                      AutoTranslateText(
-                                        'Share',
-                                        style: MyTextTheme.mediumBCB.copyWith(
-                                          color: '#3E2723'.toColor(),
+                                      border: InputBorder.none,
+                                      contentPadding: AppPaddings.all(16),
+                                      suffixIcon: IconButton(
+                                        onPressed: () {
+                                          _openCommentsSheet(
+                                            widget.blog.id ?? '',
+                                          );
+                                        },
+                                        icon: Icon(
+                                          Icons.send,
+                                          color: '#FF6B35'.toColor(),
+                                          size: 24.w,
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Spacing.h(24),
-
-                        // Comments Section
-                        Padding(
-                          padding: AppPaddings.symmetric(h: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  _openCommentsSheet(widget.blog.id ?? '');
-                                },
-                                child: AutoTranslateText(
-                                  'Comments (${_likeCount.value + 20})',
-                                  style: MyTextTheme.mediumBCB.copyWith(
-                                    color: '#3E2723'.toColor(),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              Spacing.h(16),
-                              // Comment Input
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 4,
-                                      offset: const Offset(0, 2),
                                     ),
-                                  ],
-                                ),
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                    hintText: 'Share your thoughts...',
-                                    hintStyle: MyTextTheme.smallBCN.copyWith(
-                                      color: Colors.grey,
-                                    ),
-                                    border: InputBorder.none,
-                                    contentPadding: AppPaddings.all(16),
-                                    suffixIcon: IconButton(
-                                      onPressed: () {
+                                    onSubmitted: (value) {
+                                      if (value.trim().isNotEmpty) {
                                         _openCommentsSheet(
                                           widget.blog.id ?? '',
                                         );
-                                      },
-                                      icon: Icon(
-                                        Icons.send,
-                                        color: '#FF6B35'.toColor(),
-                                        size: 24.w,
-                                      ),
-                                    ),
-                                  ),
-                                  onSubmitted: (value) {
-                                    if (value.trim().isNotEmpty) {
-                                      _openCommentsSheet(widget.blog.id ?? '');
-                                    }
-                                  },
-                                ),
-                              ),
-                              Spacing.h(16),
-                              // Sample Comments (will be replaced with actual comments)
-                              _buildCommentItem(
-                                'Anjali Mehra',
-                                '1 day ago',
-                                'Great article!',
-                                3,
-                              ),
-                              Spacing.h(12),
-                              _buildCommentItem(
-                                'Rahul Kapoor',
-                                '4 days ago',
-                                'Very informative.',
-                                1,
-                              ),
-                              Spacing.h(24),
-                            ],
-                          ),
-                        ),
-
-                        // Related Articles Section
-                        if (_relatedBlogs.isNotEmpty) ...[
-                          Padding(
-                            padding: AppPaddings.symmetric(h: 20),
-                            child: AutoTranslateText(
-                              'Related Articles',
-                              style: MyTextTheme.mediumBCB.copyWith(
-                                color: '#3E2723'.toColor(),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          Spacing.h(16),
-                          Obx(
-                            () => _loadingRelated.value
-                                ? const Center(
-                                    child: CircularProgressIndicator(),
-                                  )
-                                : ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    padding: AppPaddings.symmetric(h: 20),
-                                    itemCount: _relatedBlogs.length,
-                                    itemBuilder: (context, index) {
-                                      final relatedBlog = _relatedBlogs[index];
-                                      return Padding(
-                                        padding: EdgeInsets.only(bottom: 16.h),
-                                        child: _buildRelatedArticleCard(
-                                          relatedBlog,
-                                        ),
-                                      );
+                                      }
                                     },
                                   ),
+                                ),
+                                Spacing.h(16),
+                                // Sample Comments (will be replaced with actual comments)
+                                _buildCommentItem(
+                                  'Anjali Mehra',
+                                  '1 day ago',
+                                  'Great article!',
+                                  3,
+                                ),
+                                Spacing.h(12),
+                                _buildCommentItem(
+                                  'Rahul Kapoor',
+                                  '4 days ago',
+                                  'Very informative.',
+                                  1,
+                                ),
+                                Spacing.h(24),
+                              ],
+                            ),
                           ),
-                          Spacing.h(24),
+
+                          // Related Articles Section
+                          if (_relatedBlogs.isNotEmpty) ...[
+                            Padding(
+                              padding: AppPaddings.symmetric(h: 20),
+                              child: AutoTranslateText(
+                                'Related Articles',
+                                style: MyTextTheme.mediumBCB.copyWith(
+                                  color: '#3E2723'.toColor(),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            Spacing.h(16),
+                            Obx(
+                              () => _loadingRelated.value
+                                  ? const Center(
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  : ListView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      padding: AppPaddings.symmetric(h: 20),
+                                      itemCount: _relatedBlogs.length,
+                                      itemBuilder: (context, index) {
+                                        final relatedBlog =
+                                            _relatedBlogs[index];
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                            bottom: 16.h,
+                                          ),
+                                          child: _buildRelatedArticleCard(
+                                            relatedBlog,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                            ),
+                            Spacing.h(24),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          // Add bottom padding
-          SizedBox(height: 24.h),
-        ],
+            // Add bottom padding
+            SizedBox(height: 24.h),
+          ],
+        ),
       ),
     );
   }

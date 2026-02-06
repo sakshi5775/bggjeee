@@ -17,98 +17,102 @@ class NumerologyReportsView extends BasePage<NumerologyReportsController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: Column(
-          children: [
-            CommonHeader(title: 'My Reports'),
-            Expanded(
-              child: Obx(() {
-                if (controller.isLoading.value && controller.reports.isEmpty) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        const Color(0xFFDFB343),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              CommonHeader(title: 'My Reports'),
+              Expanded(
+                child: Obx(() {
+                  if (controller.isLoading.value &&
+                      controller.reports.isEmpty) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          const Color(0xFFDFB343),
+                        ),
+                      ),
+                    );
+                  }
+
+                  if (controller.reports.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.description_outlined,
+                            size: 64.w,
+                            color: Colors.grey,
+                          ),
+                          Spacing.h(16),
+                          AutoTranslateText(
+                            'No Reports Found',
+                            style: MyTextTheme.mediumBCB
+                                .copyWith(color: Colors.grey)
+                                .merge(AppTypography.h3),
+                          ),
+                          Spacing.h(8),
+                          AutoTranslateText(
+                            'Your numerology reports will appear here',
+                            style: MyTextTheme.smallBCN
+                                .copyWith(color: Colors.grey)
+                                .merge(AppTypography.body1),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return RefreshIndicator(
+                    onRefresh: () => controller.loadReports(refresh: true),
+                    color: const Color(0xFFDFB343),
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (ScrollNotification scrollInfo) {
+                        if (!controller.isLoadingMore.value &&
+                            controller.hasMore.value &&
+                            scrollInfo.metrics.pixels ==
+                                scrollInfo.metrics.maxScrollExtent) {
+                          controller.loadMore();
+                        }
+                        return false;
+                      },
+                      child: ListView.builder(
+                        padding: EdgeInsets.all(16.w),
+                        itemCount:
+                            controller.reports.length +
+                            (controller.hasMore.value ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == controller.reports.length) {
+                            // Load more indicator
+                            if (controller.isLoadingMore.value) {
+                              return Padding(
+                                padding: EdgeInsets.all(16.w),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      const Color(0xFFDFB343),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                            return SizedBox.shrink();
+                          }
+
+                          final report = controller.reports[index];
+                          return _buildReportCard(report);
+                        },
                       ),
                     ),
                   );
-                }
-
-                if (controller.reports.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.description_outlined,
-                          size: 64.w,
-                          color: Colors.grey,
-                        ),
-                        Spacing.h(16),
-                        AutoTranslateText(
-                          'No Reports Found',
-                          style: MyTextTheme.mediumBCB
-                              .copyWith(color: Colors.grey)
-                              .merge(AppTypography.h3),
-                        ),
-                        Spacing.h(8),
-                        AutoTranslateText(
-                          'Your numerology reports will appear here',
-                          style: MyTextTheme.smallBCN
-                              .copyWith(color: Colors.grey)
-                              .merge(AppTypography.body1),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                return RefreshIndicator(
-                  onRefresh: () => controller.loadReports(refresh: true),
-                  color: const Color(0xFFDFB343),
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: (ScrollNotification scrollInfo) {
-                      if (!controller.isLoadingMore.value &&
-                          controller.hasMore.value &&
-                          scrollInfo.metrics.pixels ==
-                              scrollInfo.metrics.maxScrollExtent) {
-                        controller.loadMore();
-                      }
-                      return false;
-                    },
-                    child: ListView.builder(
-                      padding: EdgeInsets.all(16.w),
-                      itemCount:
-                          controller.reports.length +
-                          (controller.hasMore.value ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index == controller.reports.length) {
-                          // Load more indicator
-                          if (controller.isLoadingMore.value) {
-                            return Padding(
-                              padding: EdgeInsets.all(16.w),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    const Color(0xFFDFB343),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-                          return SizedBox.shrink();
-                        }
-
-                        final report = controller.reports[index];
-                        return _buildReportCard(report);
-                      },
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ],
+                }),
+              ),
+            ],
+          ),
         ),
       ),
     );
