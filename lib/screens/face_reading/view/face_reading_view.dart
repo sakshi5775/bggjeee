@@ -13,7 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class FaceReadingView extends StatelessWidget {
-  const FaceReadingView({Key? key}) : super(key: key);
+  const FaceReadingView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -94,6 +94,7 @@ class FaceReadingView extends StatelessWidget {
 
                       // About Face Reading section
                       _buildAboutSection(),
+                      Spacing.h(32),
                     ],
                   ),
                 ),
@@ -273,6 +274,39 @@ class FaceReadingView extends StatelessWidget {
   }
 
   Widget _buildWhatWeAnalyzeSection() {
+    final analyzeItems = [
+      {
+        'icon': Icons.person,
+        'title': 'Personality Analysis',
+        'desc': 'Discover your core traits.',
+      },
+      {
+        'icon': Icons.business_center,
+        'title': 'Career Potential',
+        'desc': 'Professional success indicators.',
+      },
+      {
+        'icon': Icons.favorite,
+        'title': 'Love & Relationships',
+        'desc': 'Romantic compatibility insights.',
+      },
+      {
+        'icon': Icons.trending_up,
+        'title': 'Wealth Indicators',
+        'desc': 'Financial fortune signs.',
+      },
+      {
+        'icon': Icons.health_and_safety,
+        'title': 'Health Markers',
+        'desc': 'Wellness and vitality signs.',
+      },
+      {
+        'icon': Icons.bolt,
+        'title': 'Life Path Insights',
+        'desc': 'Destiny and purpose.',
+      },
+    ];
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
@@ -288,58 +322,25 @@ class FaceReadingView extends StatelessWidget {
                 .merge(AppTypography.h2),
           ),
           Spacing.h(16),
-          // Grid of 6 items in 2 columns
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildAnalyzeCard(
-                      icon: Icons.person,
-                      title: 'Personality Analysis',
-                      description: 'Discover your core traits.',
-                    ),
-                    Spacing.h(12),
-                    _buildAnalyzeCard(
-                      icon: Icons.business_center,
-                      title: 'Career Potential',
-                      description: 'Professional success indicators.',
-                    ),
-                    Spacing.h(12),
-                    _buildAnalyzeCard(
-                      icon: Icons.favorite,
-                      title: 'Love & Relationships',
-                      description: 'Romantic compatibility insights.',
-                    ),
-                  ],
-                ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildAnalyzeCard(
-                      icon: Icons.trending_up,
-                      title: 'Wealth Indicators',
-                      description: 'Financial fortune signs.',
-                    ),
-                    Spacing.h(12),
-                    _buildAnalyzeCard(
-                      icon: Icons.health_and_safety,
-                      title: 'Health Markers',
-                      description: 'Wellness and vitality signs.',
-                    ),
-                    Spacing.h(12),
-                    _buildAnalyzeCard(
-                      icon: Icons.bolt,
-                      title: 'Life Path Insights',
-                      description: 'Destiny and purpose.',
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          // Responsive Grid
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 200.w,
+              mainAxisExtent: 158.h,
+              crossAxisSpacing: 12.w,
+              mainAxisSpacing: 12.h,
+            ),
+            itemCount: analyzeItems.length,
+            itemBuilder: (context, index) {
+              final item = analyzeItems[index];
+              return _buildAnalyzeCard(
+                icon: item['icon'] as IconData,
+                title: item['title'] as String,
+                description: item['desc'] as String,
+              );
+            },
           ),
         ],
       ),
@@ -407,6 +408,15 @@ class FaceReadingView extends StatelessWidget {
   }
 
   Widget _buildFacialFeaturesSection() {
+    final features = [
+      {'title': 'Eyes', 'desc': 'Window to soul.'},
+      {'title': 'Nose', 'desc': 'Wealth indicator.'},
+      {'title': 'Mouth', 'desc': 'Communication style.'},
+      {'title': 'Ears', 'desc': 'Fortune & longevity.'},
+      {'title': 'Chin', 'desc': 'Determination level.'},
+      {'title': 'Face Shape', 'desc': 'Core personality.'},
+    ];
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
@@ -422,58 +432,24 @@ class FaceReadingView extends StatelessWidget {
                 .merge(AppTypography.h2),
           ),
           Spacing.h(16),
-          // Grid of 6 items in 3 columns
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildFeatureCard(
-                      title: 'Eyes',
-                      description: 'Window to soul.',
-                    ),
-                    Spacing.h(12),
-                    _buildFeatureCard(
-                      title: 'Nose',
-                      description: 'Wealth indicator.',
-                    ),
-                  ],
-                ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildFeatureCard(
-                      title: 'Mouth',
-                      description: 'Communication style.',
-                    ),
-                    Spacing.h(12),
-                    _buildFeatureCard(
-                      title: 'Ears',
-                      description: 'Fortune & longevity.',
-                    ),
-                  ],
-                ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildFeatureCard(
-                      title: 'Chin',
-                      description: 'Determination level.',
-                    ),
-                    Spacing.h(12),
-                    _buildFeatureCard(
-                      title: 'Face Shape',
-                      description: 'Core personality.',
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          // Responsive Grid
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 130.w, // Allows ~3 cols on mobile
+              mainAxisExtent: 145.h,
+              crossAxisSpacing: 12.w,
+              mainAxisSpacing: 12.h,
+            ),
+            itemCount: features.length,
+            itemBuilder: (context, index) {
+              final item = features[index];
+              return _buildFeatureCard(
+                title: item['title']!,
+                description: item['desc']!,
+              );
+            },
           ),
         ],
       ),

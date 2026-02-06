@@ -60,7 +60,7 @@ class AstrologyToolWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 100.h,
+      height: 110.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -103,17 +103,7 @@ class AstrologyToolWidget extends StatelessWidget {
       child: Container(
         width: 70.w,
         height: 80.h,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.r),
-          boxShadow: [
-            // BoxShadow(
-            //   color: const Color.fromARGB(255, 168, 156, 155).withOpacity(0.12),
-            //   blurRadius: 12,
-            //   offset: const Offset(0, 4),
-            //   spreadRadius: 0,
-            // ),
-          ],
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(16.r)),
         child: Column(
           children: [
             // Image section - takes most of the space

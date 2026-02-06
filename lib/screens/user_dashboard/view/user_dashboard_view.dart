@@ -597,7 +597,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
   Widget _buildKundliTabs(BuildContext context) {
     const maroon = Color(0xFF6F221E);
-    final double iconSize = 52.w;
+    final double iconSize = 52;
 
     return SizedBox(
       height: 92.h,
@@ -2676,14 +2676,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            width: 74.w,
-            height: 74.h,
+            width: 60.w,
+            height: 60.w,
             child: Stack(
               alignment: Alignment.center,
               children: [
                 Container(
-                  width: 74.w,
-                  height: 74.h,
+                  width: 60.w,
+                  height: 60.w,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
@@ -2691,18 +2691,18 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 ),
                 ClipOval(
                   child: SizedBox(
-                    width: 70.w,
-                    height: 70.h,
+                    width: 60.w,
+                    height: 60.w,
                     child: category.image != null && category.image!.isNotEmpty
                         ? NetworkImageWithLoader(
                             url: category.image!,
-                            width: 70.w,
-                            height: 70.h,
+                            width: 60.w,
+                            height: 60.w,
                             isCircular: true,
                           )
                         : Container(
-                            width: 70.w,
-                            height: 70.h,
+                            width: 60.w,
+                            height: 60.w,
                             color: '#FCE5AA'.toColor(),
                             child: Icon(
                               Icons.category,
@@ -3011,7 +3011,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         fontWeight: FontWeight.w400,
                         fontFamily: 'Baloo',
                         letterSpacing: -0.05,
-                        height: 1.5740000406901042,
                       )
                       .merge(AppTypography.h2),
                 ),
@@ -3040,7 +3039,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             Spacing.h(4),
             // Horizontal Scrollable List
             SizedBox(
-              height: 210.h,
+              height: Get.width > 600 ? 250.h : 210.h,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: controller.vedicAstrologers.length >= 5
@@ -3086,7 +3085,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         );
       },
       child: Container(
-        width: 170.w,
+        width: Get.width > 600 ? 200.w : 170.w,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.r),
           color: Colors.white,
@@ -3721,33 +3720,33 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            width: 74.w,
-            height: 74.h,
+            width: 60.w,
+            height: 60.w,
             child: Stack(
               alignment: Alignment.center,
               children: [
                 Container(
-                  width: 74.w,
-                  height: 74.h,
+                  width: 60.w,
+                  height: 60.w,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: AppColors.orangeGradient,
+                    color: Colors.white,
                   ),
                 ),
                 ClipOval(
                   child: SizedBox(
-                    width: 70.w,
-                    height: 70.h,
+                    width: 60.w,
+                    height: 60.w,
                     child: imageUrl.isNotEmpty
                         ? NetworkImageWithLoader(
                             url: imageUrl,
-                            width: 70.w,
-                            height: 70.h,
+                            width: 60.w,
+                            height: 60.w,
                             isCircular: true,
                           )
                         : Container(
-                            width: 70.w,
-                            height: 70.h,
+                            width: 60.w,
+                            height: 60.w,
                             color: Colors.grey[300],
                             child: Icon(
                               Icons.person,
@@ -5661,8 +5660,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 70.w,
-            height: 70.w,
+            width: 60.w,
+            height: 60.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(color: borderColor, width: 2.w),
@@ -5708,7 +5707,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     isLive ? 'Live' : 'Offline',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 8.sp,
+                      fontSize: 8,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -5764,8 +5763,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 70.w,
-            height: 70.w,
+            width: 60.w,
+            height: 60.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(color: Colors.red, width: 2.w),
@@ -5829,7 +5828,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     'Offline',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 8.sp,
+                      fontSize: 8,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

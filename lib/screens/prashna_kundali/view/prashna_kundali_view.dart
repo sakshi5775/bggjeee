@@ -90,6 +90,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
 
                       // About Prashna Kundali section
                       _buildAboutSection(),
+                      Spacing.h(32),
                     ],
                   ),
                 ),
@@ -531,6 +532,15 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
   }
 
   Widget _buildKeyFeaturesSection() {
+    final features = [
+      {'title': 'Direct Answer', 'desc': 'Clear yes/no response.'},
+      {'title': 'Timing', 'desc': 'When it will happen.'},
+      {'title': 'Planetary', 'desc': 'Celestial influences.'},
+      {'title': 'Remedies', 'desc': 'Solutions to improve.'},
+      {'title': 'Accuracy', 'desc': 'Precise predictions.'},
+      {'title': 'Guidance', 'desc': 'Actionable advice.'},
+    ];
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
@@ -546,60 +556,24 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
                 .merge(AppTypography.h2),
           ),
           Spacing.h(16),
-          // Grid of 6 items in 3 columns
-          IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      _buildFeatureCard(
-                        title: 'Direct Answer',
-                        description: 'Clear yes/no response.',
-                      ),
-                      Spacing.h(12),
-                      _buildFeatureCard(
-                        title: 'Timing',
-                        description: 'When it will happen.',
-                      ),
-                    ],
-                  ),
-                ),
-                Spacing.w(12),
-                Expanded(
-                  child: Column(
-                    children: [
-                      _buildFeatureCard(
-                        title: 'Planetary',
-                        description: 'Celestial influences.',
-                      ),
-                      Spacing.h(12),
-                      _buildFeatureCard(
-                        title: 'Remedies',
-                        description: 'Solutions to improve.',
-                      ),
-                    ],
-                  ),
-                ),
-                Spacing.w(12),
-                Expanded(
-                  child: Column(
-                    children: [
-                      _buildFeatureCard(
-                        title: 'Accuracy',
-                        description: 'Precise predictions.',
-                      ),
-                      Spacing.h(12),
-                      _buildFeatureCard(
-                        title: 'Guidance',
-                        description: 'Actionable advice.',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+          // Responsive Grid
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 130.w,
+              mainAxisExtent: 150.h,
+              crossAxisSpacing: 12.w,
+              mainAxisSpacing: 12.h,
             ),
+            itemCount: features.length,
+            itemBuilder: (context, index) {
+              final item = features[index];
+              return _buildFeatureCard(
+                title: item['title']!,
+                description: item['desc']!,
+              );
+            },
           ),
         ],
       ),

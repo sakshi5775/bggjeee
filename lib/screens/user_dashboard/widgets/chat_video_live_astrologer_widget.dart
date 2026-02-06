@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -81,30 +82,28 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             SizedBox(
-                              width: 74.w,
-                              height: 74.h,
+                              width: 60.w,
+                              height: 60.w,
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
                                   Container(
-                                    width: 74.w,
-                                    height: 74.h,
+                                    width: 60.w,
+                                    height: 60.w,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       // gradient: AppColors.orangeGradient,
                                       color: Colors.white,
                                     ),
                                   ),
-                                  ClipOval(
-                                    child: SizedBox(
-                                      width: 70.w,
-                                      height: 70.h,
-                                      child: NetworkImageWithLoader(
-                                        url: astrologer.profilePicture ?? '',
-                                        width: 70.w,
-                                        height: 70.h,
-                                        isCircular: true,
-                                      ),
+                                  SizedBox(
+                                    width: 60.w,
+                                    height: 60.w,
+                                    child: NetworkImageWithLoader(
+                                      url: astrologer.profilePicture ?? '',
+                                      width: 60.w,
+                                      height: 60.w,
+                                      isCircular: true,
                                     ),
                                   ),
                                   // Green dot indicator for online astrologers
@@ -225,55 +224,73 @@ class ChatCallAstrologerWidget extends BasePage<UserDashboardController> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            SizedBox(
-                              width: 74.w,
-                              height: 74.h,
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Container(
-                                    width: 74.w,
-                                    height: 74.h,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      // gradient: AppColors.orangeGradient,
-                                      color: Colors.white,
-                                    ),
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  width: 60.w,
+                                  height: 60.w,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+
+                                    color: Colors.white,
                                   ),
-                                  ClipOval(
-                                    child: SizedBox(
-                                      width: 70.w,
-                                      height: 70.h,
-                                      child: NetworkImageWithLoader(
-                                        url: astrologer.profilePicture ?? '',
-                                        width: 70.w,
-                                        height: 70.h,
-                                        isCircular: true,
-                                      ),
-                                    ),
-                                  ),
-                                  // Green dot indicator for online astrologers
-                                  if (astrologer.isOnline)
-                                    Positioned(
-                                      bottom: 0,
-                                      right: 0,
-                                      child: Container(
-                                        width: 16.w,
-                                        height: 16.w,
-                                        decoration: BoxDecoration(
-                                          color: const Color(
-                                            0xFF4CAF50,
-                                          ), // Green
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: Colors.white,
-                                            width: 2,
+                                ),
+                                // NetworkImageWithLoader(
+                                //   url: astrologer.profilePicture ?? '',
+                                //   // width: 70.w,
+                                //   // height: 70.h,
+                                //   fit: BoxFit.cover,
+                                //   isCircular: true,
+                                // ),
+                                Container(
+                                  height: 60.w,
+                                  width: 60.w,
+                                  child: ClipOval(
+                                    child: CachedNetworkImage(
+                                      imageUrl: astrologer.profilePicture ?? '',
+                                      fit: BoxFit.fill,
+                                      placeholder: (context, url) => Container(
+                                        color: Colors.grey[300],
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            color: AppColors.deepOrange,
+                                            strokeWidth: 2,
                                           ),
                                         ),
                                       ),
+                                      errorWidget: (context, url, error) {
+                                        return Container(
+                                          color: Colors.grey[300],
+                                          child: Icon(
+                                            Icons.person,
+                                            size: 35.w,
+                                            color: Colors.grey[600],
+                                          ),
+                                        );
+                                      },
                                     ),
-                                ],
-                              ),
+                                  ),
+                                ),
+                                // Green dot indicator for online astrologers
+                                if (astrologer.isOnline)
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      width: 16.w,
+                                      height: 16.w,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF4CAF50), // Green
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.white,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                             Spacing.h(4),
                             SizedBox(

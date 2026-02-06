@@ -76,7 +76,6 @@ class YouTubeMediaCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: AppTypography.body1.copyWith(
-                      fontSize: 12.sp,
                       fontWeight: FontWeight.w600,
                       color: '#3D0C11'.toColor(),
                     ),
@@ -92,10 +91,7 @@ class YouTubeMediaCard extends StatelessWidget {
                       SizedBox(width: 4.w),
                       Text(
                         _formatDate(video.publishedAt),
-                        style: AppTypography.body2.copyWith(
-                          fontSize: 10.sp,
-                          color: Colors.grey,
-                        ),
+                        style: AppTypography.body2.copyWith(color: Colors.grey),
                       ),
                     ],
                   ),

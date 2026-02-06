@@ -146,7 +146,6 @@ class _CommonTabSliderState extends State<CommonTabSlider> {
                           fontWeight: isSelected
                               ? FontWeight.w700
                               : FontWeight.w500,
-                          fontSize: 12.sp,
                         ),
                       ),
                     ),

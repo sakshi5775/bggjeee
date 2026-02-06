@@ -26,7 +26,7 @@ class MediaHubPreviewWidget extends StatelessWidget {
         ),
         SizedBox(height: 12.h),
         SizedBox(
-          height: 180.h,
+          height: Get.width > 600 ? 240.h : 180.h,
           child: Obx(() {
             if (controller.isLoadingYoutubeVideos.value &&
                 controller.youtubeVideos.isEmpty) {

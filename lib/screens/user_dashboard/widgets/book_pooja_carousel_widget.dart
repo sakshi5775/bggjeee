@@ -54,7 +54,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
               ),
             ],
           ),
-         // Spacing.h(2),
+          // Spacing.h(2),
           // Carousel Section
           ConstrainedBox(
             constraints: BoxConstraints(maxHeight: 120.h),
@@ -62,13 +62,13 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
               if (controller.isLoadingPujas.value) {
                 return const Center(child: CircularProgressIndicator());
               }
-              
+
               if (controller.pujas.isEmpty) {
                 return const Center(
                   child: AutoTranslateText('No pujas available'),
                 );
               }
-              
+
               return PageView.builder(
                 key: const ValueKey('book_pooja_pageview'),
                 controller: controller.bookPoojaPageController.value,
@@ -89,17 +89,21 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
   }
 
   Widget _buildPoojaCard(PujaModel puja) {
+    final isTablet = Get.width > 600;
+
     // Get the first package (or recommended package) for price
-    final package = puja.packages?.firstWhere(
-      (p) => p.isRecommended == true,
-      orElse: () => puja.packages?.first ?? PujaPackage(),
-    ) ?? PujaPackage();
-    
+    final package =
+        puja.packages?.firstWhere(
+          (p) => p.isRecommended == true,
+          orElse: () => puja.packages?.first ?? PujaPackage(),
+        ) ??
+        PujaPackage();
+
     // Format price
-    final priceText = package.price != null 
+    final priceText = package.price != null
         ? '₹${package.price!.toStringAsFixed(0)}'
         : 'Price on request';
-    
+
     // Format timing
     String timingText = '';
     if (puja.timing != null && puja.timing!.isNotEmpty) {
@@ -116,7 +120,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
         timingText = puja.timing!;
       }
     }
-    
+
     return GestureDetector(
       onTap: () {
         if (puja.id != null && puja.id!.isNotEmpty) {
@@ -126,198 +130,216 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
       child: Card(
         elevation: 2,
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 120.h),
+          constraints: BoxConstraints(maxHeight: isTablet ? 165.h : 120.h),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Flexible(
                 child: Padding(
-                  padding: AppPaddings.symmetric(h: 15, v: 2),
+                  padding: AppPaddings.symmetric(
+                    h: isTablet ? 20 : 15,
+                    v: isTablet ? 10 : 6,
+                  ),
                   child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Puja Image
-                Container(
-                  width: 42.w,
-                  height: 42.w,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(
-                      color: '#F5D7B8'.toColor(),
-                      width: 1,
-                    ),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12.r),
-                    child: puja.image != null && puja.image!.isNotEmpty
-                        ? Image.network(
-                            puja.image!,
-                            width: 42.w,
-                            height: 42.w,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: 42.w,
-                                height: 42.w,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: ["#FFF8F0".toColor(), "#FFE8D0".toColor()],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                ),
-                                child: Icon(
-                                  Icons.auto_awesome,
-                                  color: AppColors.deepOrange,
-                                  size: 24.w,
-                                ),
-                              );
-                            },
-                          )
-                        : Container(
-                            width: 42.w,
-                            height: 42.w,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: ["#FFF8F0".toColor(), "#FFE8D0".toColor()],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.auto_awesome,
-                              color: AppColors.deepOrange,
-                              size: 20.w,
-                            ),
-                          ),
-                  ),
-                ),
-                Spacing.w(16),
-                // Content Section
-                Expanded(
-                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Title
-                      AutoTranslateText(
-                        puja.title ?? 'Puja',
-                        style: MyTextTheme.largeBCB
-                            .copyWith(
-                              color: "#5D1C21".toColor(),
-                              fontWeight: FontWeight.w500,
-                            )
-                            .merge(AppTypography.h2),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Spacing.h(2),
-                      // Description (subheading)
-                      AutoTranslateText(
-                        puja.subheading ?? puja.title ?? 'Divine blessings',
-                        style: MyTextTheme.smallBCN
-                            .copyWith(
-                              color: "#666666".toColor(),
-                              fontSize: 9.sp,
-                            )
-                            .merge(AppTypography.body2),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Spacing.h(3),
-                      // Price, Timing and Button Row
-                      Row(
-                        children: [
-                          // Price
-                          Flexible(
-                            child: AutoTranslateText(
-                              priceText,
-                              style: MyTextTheme.mediumBCB
-                                  .copyWith(
+                      // Puja Image
+                      Container(
+                        width: isTablet ? 60.w : 42.w,
+                        height: isTablet ? 60.w : 42.w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
+                            color: '#F5D7B8'.toColor(),
+                            width: 1,
+                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12.r),
+                          child: puja.image != null && puja.image!.isNotEmpty
+                              ? Image.network(
+                                  puja.image!,
+                                  width: isTablet ? 60.w : 42.w,
+                                  height: isTablet ? 60.w : 42.w,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: isTablet ? 60.w : 42.w,
+                                      height: isTablet ? 60.w : 42.w,
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            "#FFF8F0".toColor(),
+                                            "#FFE8D0".toColor(),
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.auto_awesome,
+                                        color: AppColors.deepOrange,
+                                        size: isTablet ? 32.w : 24.w,
+                                      ),
+                                    );
+                                  },
+                                )
+                              : Container(
+                                  width: isTablet ? 60.w : 42.w,
+                                  height: isTablet ? 60.w : 42.w,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        "#FFF8F0".toColor(),
+                                        "#FFE8D0".toColor(),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    Icons.auto_awesome,
                                     color: AppColors.deepOrange,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16.sp,
+                                    size: isTablet ? 28.w : 20.w,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      Spacing.w(isTablet ? 24 : 16),
+                      // Content Section
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Title
+                            AutoTranslateText(
+                              puja.title ?? 'Puja',
+                              style: MyTextTheme.largeBCB
+                                  .copyWith(
+                                    color: "#5D1C21".toColor(),
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: isTablet ? 20.sp : null,
                                   )
-                                  .merge(AppTypography.h3),
+                                  .merge(AppTypography.h2),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                          if (timingText.isNotEmpty) ...[
-                            Spacing.w(8),
-                            // Timing with icon
-                            Flexible(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.access_time,
-                                    size: 12.w,
+                            Spacing.h(isTablet ? 4 : 2),
+                            // Description (subheading)
+                            AutoTranslateText(
+                              puja.subheading ??
+                                  puja.title ??
+                                  'Divine blessings',
+                              style: MyTextTheme.smallBCN
+                                  .copyWith(
                                     color: "#666666".toColor(),
+                                    fontSize: isTablet ? 12.sp : 9.sp,
+                                  )
+                                  .merge(AppTypography.body2),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Spacing.h(isTablet ? 3 : 3),
+                            // Price, Timing and Button Row
+                            Row(
+                              children: [
+                                // Price
+                                Flexible(
+                                  child: AutoTranslateText(
+                                    priceText,
+                                    style: MyTextTheme.mediumBCB
+                                        .copyWith(
+                                          color: AppColors.deepOrange,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: isTablet ? 20.sp : 16.sp,
+                                        )
+                                        .merge(AppTypography.h3),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  Spacing.w(3),
+                                ),
+                                if (timingText.isNotEmpty) ...[
+                                  Spacing.w(isTablet ? 12 : 8),
+                                  // Timing with icon
                                   Flexible(
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.access_time,
+                                          size: isTablet ? 12.w : 12.w,
+                                          color: "#666666".toColor(),
+                                        ),
+                                        Spacing.w(3),
+                                        Flexible(
+                                          child: AutoTranslateText(
+                                            timingText,
+                                            style: MyTextTheme.smallBCN
+                                                .copyWith(
+                                                  color: "#666666".toColor(),
+                                                  fontSize: isTablet
+                                                      ? 12.sp
+                                                      : 10.sp,
+                                                )
+                                                .merge(AppTypography.body2),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                                const Spacer(),
+                                // Book Now Button
+                                GestureDetector(
+                                  onTap: () {
+                                    // Navigate to puja detail page
+                                    if (puja.id != null &&
+                                        puja.id!.isNotEmpty) {
+                                      Get.toNamed(
+                                        AppRoutes.pujaDetail,
+                                        arguments: puja.id,
+                                      );
+                                    } else {
+                                      // Fallback to book puja page
+                                      Get.toNamed(AppRoutes.bookPuja);
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: isTablet ? 24.w : 16.w,
+                                      vertical: isTablet ? 10.h : 8.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      gradient: AppColors.orangeGradient,
+                                      borderRadius: BorderRadius.circular(20.r),
+                                    ),
                                     child: AutoTranslateText(
-                                      timingText,
-                                      style: MyTextTheme.smallBCN
+                                      'Book Now',
+                                      style: MyTextTheme.smallBCB
                                           .copyWith(
-                                            color: "#666666".toColor(),
-                                            fontSize: 10.sp,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: isTablet ? 12.sp : 10.sp,
                                           )
                                           .merge(AppTypography.body2),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ],
-                          const Spacer(),
-                          // Book Now Button
-                          GestureDetector(
-                            onTap: () {
-                              // Navigate to puja detail page
-                              if (puja.id != null && puja.id!.isNotEmpty) {
-                                Get.toNamed(AppRoutes.pujaDetail, arguments: puja.id);
-                              } else {
-                                // Fallback to book puja page
-                                Get.toNamed(AppRoutes.bookPuja);
-                              }
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: 8.h,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: AppColors.orangeGradient,
-                                borderRadius: BorderRadius.circular(20.r),
-                              ),
-                              child: AutoTranslateText(
-                                'Book Now',
-                                style: MyTextTheme.smallBCB
-                                    .copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10.sp,
-                                    )
-                                    .merge(AppTypography.body2),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ],
-                  ),
-                ),
               ),
-              Spacing.h(2),
+              Spacing.h(isTablet ? 4 : 2),
               // Pagination Dots
               _buildPaginationDots(),
             ],
@@ -328,21 +350,23 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
   }
 
   Widget _buildPaginationDots() {
-    return Obx(() => Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(controller.pujas.length, (index) {
-        return Container(
-          margin: EdgeInsets.symmetric(horizontal: 4.w),
-          width: 8.w,
-          height: 8.h,
-          decoration: BoxDecoration(
-            color: controller.bookPoojaCurrentPage.value == index
-                ? AppColors.deepOrange
-                : AppColors.deepOrange.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(4.r),
-          ),
-        );
-      }),
-    ));
+    return Obx(
+      () => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(controller.pujas.length, (index) {
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: 4.w),
+            width: 8.w,
+            height: 8.h,
+            decoration: BoxDecoration(
+              color: controller.bookPoojaCurrentPage.value == index
+                  ? AppColors.deepOrange
+                  : AppColors.deepOrange.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(4.r),
+            ),
+          );
+        }),
+      ),
+    );
   }
 }

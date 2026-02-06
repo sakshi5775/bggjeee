@@ -13,7 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class RamalShastraView extends StatelessWidget {
-  const RamalShastraView({Key? key}) : super(key: key);
+  const RamalShastraView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +72,7 @@ class RamalShastraView extends StatelessWidget {
                       Spacing.h(32),
                       // About Ramal Shastra section
                       _buildAboutSection(),
+                      Spacing.h(32),
                     ],
                   ),
                 ),
@@ -237,6 +238,35 @@ class RamalShastraView extends StatelessWidget {
   }
 
   Widget _buildWhatWeAnalyzeSection() {
+    final analyzeItems = [
+      {'icon': Icons.work, 'title': 'Career', 'desc': 'Professional guidance.'},
+      {
+        'icon': Icons.favorite,
+        'title': 'Love & Relationships',
+        'desc': 'Romantic insights.',
+      },
+      {
+        'icon': Icons.business,
+        'title': 'Business',
+        'desc': 'Business decisions.',
+      },
+      {
+        'icon': Icons.health_and_safety,
+        'title': 'Health',
+        'desc': 'Wellness guidance.',
+      },
+      {
+        'icon': Icons.account_balance_wallet,
+        'title': 'Finance',
+        'desc': 'Financial fortune.',
+      },
+      {
+        'icon': Icons.family_restroom,
+        'title': 'Family',
+        'desc': 'Family matters.',
+      },
+    ];
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
@@ -252,58 +282,25 @@ class RamalShastraView extends StatelessWidget {
                 .merge(AppTypography.h2),
           ),
           Spacing.h(16),
-          // Grid of 6 items in 2 columns
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildAnalyzeCard(
-                      icon: Icons.work,
-                      title: 'Career',
-                      description: 'Professional guidance.',
-                    ),
-                    Spacing.h(12),
-                    _buildAnalyzeCard(
-                      icon: Icons.favorite,
-                      title: 'Love & Relationships',
-                      description: 'Romantic insights.',
-                    ),
-                    Spacing.h(12),
-                    _buildAnalyzeCard(
-                      icon: Icons.business,
-                      title: 'Business',
-                      description: 'Business decisions.',
-                    ),
-                  ],
-                ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildAnalyzeCard(
-                      icon: Icons.health_and_safety,
-                      title: 'Health',
-                      description: 'Wellness guidance.',
-                    ),
-                    Spacing.h(12),
-                    _buildAnalyzeCard(
-                      icon: Icons.account_balance_wallet,
-                      title: 'Finance',
-                      description: 'Financial fortune.',
-                    ),
-                    Spacing.h(12),
-                    _buildAnalyzeCard(
-                      icon: Icons.family_restroom,
-                      title: 'Family',
-                      description: 'Family matters.',
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          // Responsive Grid
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 200.w,
+              mainAxisExtent: 158.h,
+              crossAxisSpacing: 12.w,
+              mainAxisSpacing: 12.h,
+            ),
+            itemCount: analyzeItems.length,
+            itemBuilder: (context, index) {
+              final item = analyzeItems[index];
+              return _buildAnalyzeCard(
+                icon: item['icon'] as IconData,
+                title: item['title'] as String,
+                description: item['desc'] as String,
+              );
+            },
           ),
         ],
       ),
@@ -315,57 +312,52 @@ class RamalShastraView extends StatelessWidget {
     required String title,
     required String description,
   }) {
-    return SizedBox(
-      height: 158.h,
-      child: Container(
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          color: '#ffffff'.toColor(),
-          borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: '#ffffff'.toColor(),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            width: 42.w,
+            height: 42.w,
+            decoration: BoxDecoration(
+              color: '#FFF2E8'.toColor(),
+              shape: BoxShape.circle,
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              width: 42.w,
-              height: 42.w,
-              decoration: BoxDecoration(
-                color: '#FFF2E8'.toColor(),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: '#E85C0D'.toColor(), size: 22.w),
+            child: Icon(icon, color: '#E85C0D'.toColor(), size: 22.w),
+          ),
+          Spacing.h(10),
+          AutoTranslateText(
+            title,
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: '#3E2723'.toColor(),
+              fontWeight: FontWeight.bold,
             ),
-            Spacing.h(10),
-            AutoTranslateText(
-              title,
-              style: MyTextTheme.mediumBCB.copyWith(
-                color: '#3E2723'.toColor(),
-                fontWeight: FontWeight.bold,
-              ),
+          ),
+          Spacing.h(4),
+          AutoTranslateText(
+            description,
+            style: MyTextTheme.smallBCN.copyWith(
+              color: '#666666'.toColor(),
+              height: 1.25,
             ),
-            Spacing.h(4),
-            Expanded(
-              child: AutoTranslateText(
-                description,
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: '#666666'.toColor(),
-                  height: 1.25,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }

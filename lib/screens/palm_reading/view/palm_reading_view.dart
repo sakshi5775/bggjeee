@@ -13,7 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class PalmReadingView extends StatelessWidget {
-  const PalmReadingView({Key? key}) : super(key: key);
+  const PalmReadingView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +64,7 @@ class PalmReadingView extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          Spacing.h(16),
                           // Main icon with star badge
                           _buildMainIcon(),
 

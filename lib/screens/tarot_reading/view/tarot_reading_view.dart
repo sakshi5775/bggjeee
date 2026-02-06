@@ -71,6 +71,7 @@ class TarotReadingView extends BasePage<TarotController> {
                     ],
                   ),
                 ),
+                Spacing.h(32),
               ],
             ),
           ),
