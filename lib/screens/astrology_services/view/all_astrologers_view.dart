@@ -49,7 +49,7 @@ class AllAstrologersView extends StatelessWidget {
                 CommonHeader(
                   title:
                       'Chat with Astrologer', // Or dynamic title if needed, but 'All Astrologers' or 'Chat with Astrologer' is standard
-                  showBackButton: showBackButton,
+
                   showWallet: true,
                   showCart: true,
                   showSearch:

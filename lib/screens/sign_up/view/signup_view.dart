@@ -14,20 +14,12 @@ class SignUpView extends BasePage<SignUpController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFFF7C443).withOpacity(0.3),
-                Color(0xFFFFFCF3).withOpacity(0.1),
-              ],
-            ),
-          ),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: Colors.transparent,
+        body: SingleChildScrollView(
           child: Column(
             children: [
               // Ganesh Image Header (matching login page)
@@ -37,7 +29,7 @@ class SignUpView extends BasePage<SignUpController> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                Positioned.fill(
+                    Positioned.fill(
                       child: Image.network(
                         AppConstant.cardConsultation,
                         fit: BoxFit.cover,

@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/data_model/blog_model.dart';
 import 'package:astrobharataiuser/screens/blogs/controller/all_blogs_controller.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/video_player_widget.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -33,240 +34,250 @@ class AllBlogsView extends BasePage<AllBlogsController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            // Header
-            CommonHeader(
-              title: 'Blog & News',
-              showBackButton: showBack,
-              customActions: [
-                Container(
-                  padding: AppPaddings.symmetric(h: 12, v: 6),
-                  decoration: BoxDecoration(
-                    color: '#FF6B35'.toColor(),
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.trending_up, color: Colors.white, size: 16.w),
-                      Spacing.w(4),
-                      AutoTranslateText(
-                        'Trending',
-                        style: MyTextTheme.smallBCB.copyWith(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              // Header
+              CommonHeader(
+                title: 'Blog & News',
+
+                customActions: [
+                  Container(
+                    padding: AppPaddings.symmetric(h: 12, v: 6),
+                    decoration: BoxDecoration(
+                      color: '#FF6B35'.toColor(),
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.trending_up,
                           color: Colors.white,
-                          fontWeight: FontWeight.w500,
+                          size: 16.w,
                         ),
+                        Spacing.w(4),
+                        AutoTranslateText(
+                          'Trending',
+                          style: MyTextTheme.smallBCB.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              // Search Bar
+              Container(
+                padding: AppPaddings.all(16),
+                color: Colors.transparent,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-
-            // Search Bar
-            Container(
-              padding: AppPaddings.all(16),
-              color: '#FFF8E1'.toColor(),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search articles...',
+                      hintStyle: MyTextTheme.mediumBCN.copyWith(
+                        color: Colors.grey,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Colors.grey,
+                        size: 20.w,
+                      ),
+                      suffixIcon: Icon(
+                        Icons.tune,
+                        color: Colors.grey,
+                        size: 20.w,
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: AppPaddings.symmetric(h: 16, v: 12),
                     ),
-                  ],
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search articles...',
-                    hintStyle: MyTextTheme.mediumBCN.copyWith(
-                      color: Colors.grey,
-                    ),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Colors.grey,
-                      size: 20.w,
-                    ),
-                    suffixIcon: Icon(
-                      Icons.tune,
-                      color: Colors.grey,
-                      size: 20.w,
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: AppPaddings.symmetric(h: 16, v: 12),
+                    onChanged: (value) {
+                      controller.searchQuery.value = value;
+                    },
+                    onSubmitted: (value) {
+                      if (value.trim().isNotEmpty) {
+                        controller.searchBlogs(value.trim());
+                      } else {
+                        controller.clearSearch();
+                      }
+                    },
                   ),
-                  onChanged: (value) {
-                    controller.searchQuery.value = value;
-                  },
-                  onSubmitted: (value) {
-                    if (value.trim().isNotEmpty) {
-                      controller.searchBlogs(value.trim());
-                    } else {
-                      controller.clearSearch();
-                    }
-                  },
                 ),
               ),
-            ),
 
-            // Category Filters
-            Container(
-              padding: AppPaddings.symmetric(h: 16, v: 8),
-              color: '#FFF8E1'.toColor(),
-              child: Obx(() {
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _buildCategoryChip(
-                        'All',
-                        controller.selectedCategory.value == 'all',
-                        Icons.auto_awesome,
-                        onTap: () => controller.filterByCategory('all'),
-                      ),
-                      Spacing.w(8),
-                      ...controller.categories.take(5).map((category) {
-                        final slug = category['slug'] ?? '';
-                        final name = category['name'] ?? 'Category';
-                        final isSelected =
-                            controller.selectedCategory.value == slug;
-                        return Padding(
-                          padding: EdgeInsets.only(right: 8.w),
-                          child: _buildCategoryChip(
-                            name,
-                            isSelected,
-                            Icons.category,
-                            onTap: () => controller.filterByCategory(slug),
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                );
-              }),
-            ),
-
-            // Content
-            Expanded(
-              child: Container(
-                color: '#FFF8E1'.toColor(),
+              // Category Filters
+              Container(
+                padding: AppPaddings.symmetric(h: 16, v: 8),
+                color: Colors.transparent,
                 child: Obx(() {
-                  if (controller.isLoading.value && controller.blogs.isEmpty) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _buildCategoryChip(
+                          'All',
+                          controller.selectedCategory.value == 'all',
+                          Icons.auto_awesome,
+                          onTap: () => controller.filterByCategory('all'),
+                        ),
+                        Spacing.w(8),
+                        ...controller.categories.take(5).map((category) {
+                          final slug = category['slug'] ?? '';
+                          final name = category['name'] ?? 'Category';
+                          final isSelected =
+                              controller.selectedCategory.value == slug;
+                          return Padding(
+                            padding: EdgeInsets.only(right: 8.w),
+                            child: _buildCategoryChip(
+                              name,
+                              isSelected,
+                              Icons.category,
+                              onTap: () => controller.filterByCategory(slug),
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                  );
+                }),
+              ),
 
-                  if (controller.blogs.isEmpty) {
-                    return NoDataFoundWidget(onPress: _navigateToCreateBlog);
-                  }
+              // Content
+              Expanded(
+                child: Container(
+                  color: Colors.transparent,
+                  child: Obx(() {
+                    if (controller.isLoading.value &&
+                        controller.blogs.isEmpty) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                  return RefreshIndicator(
-                    onRefresh: () => controller.loadBlogs(refresh: true),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Banners
-                          Obx(() {
-                            if (controller.blogBanners.isNotEmpty) {
-                              return Padding(
+                    if (controller.blogs.isEmpty) {
+                      return NoDataFoundWidget(onPress: _navigateToCreateBlog);
+                    }
+
+                    return RefreshIndicator(
+                      onRefresh: () => controller.loadBlogs(refresh: true),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Banners
+                            Obx(() {
+                              if (controller.blogBanners.isNotEmpty) {
+                                return Padding(
+                                  padding: AppPaddings.all(16),
+                                  child: BannerCarouselWidget(
+                                    banners: controller.blogBanners,
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            }),
+
+                            // Featured Articles Section
+                            if (controller.featuredBlogs.isNotEmpty) ...[
+                              Padding(
                                 padding: AppPaddings.all(16),
-                                child: BannerCarouselWidget(
-                                  banners: controller.blogBanners,
+                                child: AutoTranslateText(
+                                  'Featured Articles',
+                                  style: MyTextTheme.largeBCB.copyWith(
+                                    color: '#3E2723'.toColor(),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              );
-                            }
-                            return const SizedBox.shrink();
-                          }),
+                              ),
+                              SizedBox(
+                                height: 320.h,
+                                child: PageView.builder(
+                                  controller: controller.featuredPageController,
+                                  scrollDirection: Axis.horizontal,
+                                  onPageChanged:
+                                      controller.onFeaturedPageChanged,
+                                  itemCount: controller.featuredBlogs.length,
+                                  itemBuilder: (context, index) {
+                                    final blog =
+                                        controller.featuredBlogs[index];
+                                    return Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w,
+                                      ),
+                                      child: _buildFeaturedArticleCard(
+                                        blog,
+                                        Get.width * 0.85,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              Spacing.h(16),
+                            ],
 
-                          // Featured Articles Section
-                          if (controller.featuredBlogs.isNotEmpty) ...[
+                            // Latest Articles Section
                             Padding(
-                              padding: AppPaddings.all(16),
+                              padding: AppPaddings.symmetric(h: 16),
                               child: AutoTranslateText(
-                                'Featured Articles',
+                                'Latest Articles',
                                 style: MyTextTheme.largeBCB.copyWith(
                                   color: '#3E2723'.toColor(),
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              height: 320.h,
-                              child: PageView.builder(
-                                controller: controller.featuredPageController,
-                                scrollDirection: Axis.horizontal,
-                                onPageChanged: controller.onFeaturedPageChanged,
-                                itemCount: controller.featuredBlogs.length,
-                                itemBuilder: (context, index) {
-                                  final blog = controller.featuredBlogs[index];
-                                  return Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 8.w,
-                                    ),
-                                    child: _buildFeaturedArticleCard(
-                                      blog,
-                                      Get.width * 0.85,
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: AppPaddings.all(16),
+                              itemCount:
+                                  controller.blogs.length +
+                                  (controller.hasMoreData.value ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (index == controller.blogs.length) {
+                                  return Container(
+                                    padding: AppPaddings.all(16),
+                                    child: const Center(
+                                      child: CircularProgressIndicator(),
                                     ),
                                   );
-                                },
-                              ),
-                            ),
-                            Spacing.h(16),
-                          ],
+                                }
 
-                          // Latest Articles Section
-                          Padding(
-                            padding: AppPaddings.symmetric(h: 16),
-                            child: AutoTranslateText(
-                              'Latest Articles',
-                              style: MyTextTheme.largeBCB.copyWith(
-                                color: '#3E2723'.toColor(),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            padding: AppPaddings.all(16),
-                            itemCount:
-                                controller.blogs.length +
-                                (controller.hasMoreData.value ? 1 : 0),
-                            itemBuilder: (context, index) {
-                              if (index == controller.blogs.length) {
-                                return Container(
-                                  padding: AppPaddings.all(16),
-                                  child: const Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
+                                final blog = controller.blogs[index];
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 16.h),
+                                  child: _buildLatestArticleCard(blog),
                                 );
-                              }
-
-                              final blog = controller.blogs[index];
-                              return Padding(
-                                padding: EdgeInsets.only(bottom: 16.h),
-                                child: _buildLatestArticleCard(blog),
-                              );
-                            },
-                          ),
-                          // Add bottom padding
-                          Spacing.h(24),
-                        ],
+                              },
+                            ),
+                            // Add bottom padding
+                            Spacing.h(24),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

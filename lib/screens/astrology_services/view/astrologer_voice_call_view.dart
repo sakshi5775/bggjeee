@@ -2,7 +2,9 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_voice_call_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,53 +18,72 @@ class AstrologerVoiceCallView extends StatelessWidget {
     final controller = Get.put(AstrologerVoiceCallController());
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Stack(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Column(
           children: [
-            // Background Image
-            _buildBackgroundImage(controller),
-            
-            // Loading overlay
-            Obx(() => controller.isLoading.value
-                ? Container(
-                    color: Colors.black.withOpacity(0.7),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const CircularProgressIndicator(
-                            color: Color(0xFFDFB343),
-                          ),
-                          Spacing.h(16),
-                          AutoTranslateText(
-                            controller.callStatus.value,
-                            style: MyTextTheme.mediumBCN.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                          if (controller.errorMessage.value.isNotEmpty) ...[
-                            Spacing.h(8),
-                            AutoTranslateText(
-                              controller.errorMessage.value,
-                              style: MyTextTheme.smallBCN.copyWith(
-                                color: Colors.red,
+            // Header
+            CommonHeader(
+              title: controller.astrologer.displayName,
+              showDrawer: false, // No drawer on voice call screen
+              showHome: true,
+            ),
+            // Main content area
+            Expanded(
+              child: Stack(
+                children: [
+                  // Background Image
+                  _buildBackgroundImage(controller),
+
+                  // Loading overlay
+                  Obx(
+                    () => controller.isLoading.value
+                        ? Container(
+                            color: Colors.black.withOpacity(0.7),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const CircularProgressIndicator(
+                                    color: Color(0xFFDFB343),
+                                  ),
+                                  Spacing.h(16),
+                                  AutoTranslateText(
+                                    controller.callStatus.value,
+                                    style: MyTextTheme.mediumBCN.copyWith(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  if (controller
+                                      .errorMessage
+                                      .value
+                                      .isNotEmpty) ...[
+                                    Spacing.h(8),
+                                    AutoTranslateText(
+                                      controller.errorMessage.value,
+                                      style: MyTextTheme.smallBCN.copyWith(
+                                        color: Colors.red,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ],
                               ),
-                              textAlign: TextAlign.center,
                             ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  )
-                : const SizedBox.shrink()),
-            
-            // Overlay with call controls
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: _buildCallOverlay(controller),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+
+                  // Overlay with call controls
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: _buildCallOverlay(controller),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -74,15 +95,13 @@ class AstrologerVoiceCallView extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.black,
-      ),
+      decoration: BoxDecoration(color: Colors.black),
       child: Stack(
         fit: StackFit.expand,
         children: [
           // Astrologer profile image
           _buildImage(controller.astrologer.profilePicture),
-          
+
           // Gradient overlay for better text visibility
           Container(
             decoration: BoxDecoration(
@@ -108,11 +127,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
       return Container(
         color: Colors.grey.withOpacity(0.3),
         child: Center(
-          child: Icon(
-            Icons.person,
-            size: 200.w,
-            color: Colors.grey,
-          ),
+          child: Icon(Icons.person, size: 200.w, color: Colors.grey),
         ),
       );
     }
@@ -125,11 +140,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
           return Container(
             color: Colors.grey.withOpacity(0.3),
             child: Center(
-              child: Icon(
-                Icons.person,
-                size: 200.w,
-                color: Colors.grey,
-              ),
+              child: Icon(Icons.person, size: 200.w, color: Colors.grey),
             ),
           );
         },
@@ -141,7 +152,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
               child: CircularProgressIndicator(
                 value: loadingProgress.expectedTotalBytes != null
                     ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
+                          loadingProgress.expectedTotalBytes!
                     : null,
                 color: const Color(0xFFDFB343),
               ),
@@ -157,11 +168,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
           return Container(
             color: Colors.grey.withOpacity(0.3),
             child: Center(
-              child: Icon(
-                Icons.person,
-                size: 200.w,
-                color: Colors.grey,
-              ),
+              child: Icon(Icons.person, size: 200.w, color: Colors.grey),
             ),
           );
         },
@@ -185,75 +192,95 @@ class AstrologerVoiceCallView extends StatelessWidget {
           // Astrologer Name
           AutoTranslateText(
             controller.astrologer.displayName,
-            style: MyTextTheme.largeBCB.copyWith(
-              color: const Color(0xFF5F2221),
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h1),
+            style: MyTextTheme.largeBCB
+                .copyWith(
+                  color: const Color(0xFF5F2221),
+                  fontWeight: FontWeight.bold,
+                )
+                .merge(AppTypography.h1),
             textAlign: TextAlign.center,
           ),
           Spacing.h(8),
           // Call Status
-          Obx(() => AutoTranslateText(
-            controller.callStatus.value,
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: const Color(0xFF666666),
-            ).merge(AppTypography.h3),
-            textAlign: TextAlign.center,
-          )),
+          Obx(
+            () => AutoTranslateText(
+              controller.callStatus.value,
+              style: MyTextTheme.mediumBCN
+                  .copyWith(color: const Color(0xFF666666))
+                  .merge(AppTypography.h3),
+              textAlign: TextAlign.center,
+            ),
+          ),
           Spacing.h(8),
-          
+
           // Rate per minute - ALWAYS visible
-          Obx(() => controller.pricePerMinute.value > 0
-              ? Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4.h),
-                  child: AutoTranslateText(
-                    'Rate: ₹${controller.pricePerMinute.value.toStringAsFixed(0)}/min',
-                    style: MyTextTheme.smallBCB.copyWith(
-                      color: const Color(0xFFDFB343),
-                      fontWeight: FontWeight.bold,
+          Obx(
+            () => controller.pricePerMinute.value > 0
+                ? Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4.h),
+                    child: AutoTranslateText(
+                      'Rate: ₹${controller.pricePerMinute.value.toStringAsFixed(0)}/min',
+                      style: MyTextTheme.smallBCB.copyWith(
+                        color: const Color(0xFFDFB343),
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              : const SizedBox.shrink()),
-          
+                  )
+                : const SizedBox.shrink(),
+          ),
+
           // Call Duration (only show when connected) - Format: hh:mm:ss
-          Obx(() => controller.isCallConnected.value && controller.callDuration.value != '00:00:00'
-              ? Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4.h),
-                  child: AutoTranslateText(
-                    controller.callDuration.value,
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: const Color(0xFF5F2221),
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.h2),
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              : const SizedBox.shrink()),
-          
+          Obx(
+            () =>
+                controller.isCallConnected.value &&
+                    controller.callDuration.value != '00:00:00'
+                ? Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4.h),
+                    child: AutoTranslateText(
+                      controller.callDuration.value,
+                      style: MyTextTheme.mediumBCB
+                          .copyWith(
+                            color: const Color(0xFF5F2221),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h2),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
+
           // Wallet Balance & Billing Info (only show when connected)
-          Obx(() => controller.isCallConnected.value ? _buildBillingInfo(controller) : const SizedBox.shrink()),
-          
+          Obx(
+            () => controller.isCallConnected.value
+                ? _buildBillingInfo(controller)
+                : const SizedBox.shrink(),
+          ),
+
           Spacing.h(24),
           // Call Control Buttons
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               // Speaker Button
-              Obx(() => _buildCallButton(
-                icon: Icons.volume_up,
-                color: const Color(0xFFFF9800), // Orange
-                isActive: controller.isSpeakerOn.value,
-                onTap: () => controller.toggleSpeaker(),
-              )),
+              Obx(
+                () => _buildCallButton(
+                  icon: Icons.volume_up,
+                  color: const Color(0xFFFF9800), // Orange
+                  isActive: controller.isSpeakerOn.value,
+                  onTap: () => controller.toggleSpeaker(),
+                ),
+              ),
               // Mute Button
-              Obx(() => _buildCallButton(
-                icon: Icons.mic_off,
-                color: Colors.black,
-                isActive: controller.isMuted.value,
-                onTap: () => controller.toggleMute(),
-              )),
+              Obx(
+                () => _buildCallButton(
+                  icon: Icons.mic_off,
+                  color: Colors.black,
+                  isActive: controller.isMuted.value,
+                  onTap: () => controller.toggleMute(),
+                ),
+              ),
               // End Call Button
               _buildCallButton(
                 icon: Icons.call_end,
@@ -290,11 +317,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
             ),
           ],
         ),
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: 28.w,
-        ),
+        child: Icon(icon, color: Colors.white, size: 28.w),
       ),
     );
   }
@@ -325,13 +348,15 @@ class AstrologerVoiceCallView extends StatelessWidget {
                   color: const Color(0xFF666666),
                 ),
               ),
-              Obx(() => AutoTranslateText(
-                '₹${controller.pricePerMinute.value.toStringAsFixed(0)}/min',
-                style: MyTextTheme.smallBCB.copyWith(
-                  color: const Color(0xFF5F2221),
-                  fontWeight: FontWeight.bold,
+              Obx(
+                () => AutoTranslateText(
+                  '₹${controller.pricePerMinute.value.toStringAsFixed(0)}/min',
+                  style: MyTextTheme.smallBCB.copyWith(
+                    color: const Color(0xFF5F2221),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              )),
+              ),
             ],
           ),
           Spacing.h(6),
@@ -345,15 +370,17 @@ class AstrologerVoiceCallView extends StatelessWidget {
                   color: const Color(0xFF666666),
                 ),
               ),
-              Obx(() => AutoTranslateText(
-                '₹${controller.walletBalance.value.toStringAsFixed(0)}',
-                style: MyTextTheme.smallBCB.copyWith(
-                  color: controller.walletBalance.value < 50
-                      ? Colors.red
-                      : const Color(0xFF4CAF50),
-                  fontWeight: FontWeight.bold,
+              Obx(
+                () => AutoTranslateText(
+                  '₹${controller.walletBalance.value.toStringAsFixed(0)}',
+                  style: MyTextTheme.smallBCB.copyWith(
+                    color: controller.walletBalance.value < 50
+                        ? Colors.red
+                        : const Color(0xFF4CAF50),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              )),
+              ),
             ],
           ),
           Spacing.h(6),
@@ -367,13 +394,15 @@ class AstrologerVoiceCallView extends StatelessWidget {
                   color: const Color(0xFF666666),
                 ),
               ),
-              Obx(() => AutoTranslateText(
-                '₹${controller.totalCost.value.toStringAsFixed(0)}',
-                style: MyTextTheme.smallBCB.copyWith(
-                  color: const Color(0xFF5F2221),
-                  fontWeight: FontWeight.bold,
+              Obx(
+                () => AutoTranslateText(
+                  '₹${controller.totalCost.value.toStringAsFixed(0)}',
+                  style: MyTextTheme.smallBCB.copyWith(
+                    color: const Color(0xFF5F2221),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              )),
+              ),
             ],
           ),
           // Remaining time based on balance - Format: hh:mm:ss
@@ -410,4 +439,3 @@ class AstrologerVoiceCallView extends StatelessWidget {
     );
   }
 }
-

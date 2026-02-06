@@ -13,10 +13,7 @@ import '../../../utils/app_colors.dart';
 class RemediesBottomSheetWidget extends StatelessWidget {
   final AstrologyServicesController controller;
 
-  const RemediesBottomSheetWidget({
-    super.key,
-    required this.controller,
-  });
+  const RemediesBottomSheetWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -185,10 +182,7 @@ class RemediesBottomSheetWidget extends StatelessWidget {
         Get.back();
         // Navigate to product list with category filter
         if (category.id != null) {
-          Get.toNamed(
-            '/product-list',
-            arguments: {'category': category},
-          );
+          Get.toNamed('/product-list', arguments: {'category': category});
         } else if (category.slug != null) {
           Get.toNamed(
             '/product-list',
@@ -231,11 +225,7 @@ class RemediesBottomSheetWidget extends StatelessWidget {
                           width: double.infinity,
                           height: double.infinity,
                         )
-                      : Icon(
-                          Icons.category,
-                          color: Colors.white,
-                          size: 30.w,
-                        ),
+                      : Icon(Icons.category, color: Colors.white, size: 30.w),
                 ),
               ),
             ),
@@ -277,6 +267,3 @@ class RemediesBottomSheetWidget extends StatelessWidget {
     );
   }
 }
-
-
-

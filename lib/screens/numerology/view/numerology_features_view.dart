@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/numerology/controller/numerology_form_
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -15,8 +16,9 @@ class NumerologyFeaturesView extends BasePage<NumerologyFormController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: '#FEF6C3'.toColor(),
-      body: SafeArea(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Column(
           children: [
             CommonHeader(title: 'Select Feature'),

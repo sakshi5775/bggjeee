@@ -18,38 +18,41 @@ class EcommerceSearchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<EcommerceSearchController>();
-    return Scaffold(
-      backgroundColor: AppColors.lightBackground,
-      body: SafeArea(
-        child: Column(
-          children: [
-            CommonHeader(
-              title: 'Search Products',
-              customActions: [
-                IconButton(
-                  icon: Icon(Icons.close, color: '#6F221E'.toColor()),
-                  onPressed: () => Get.back(),
-                ),
-              ],
-            ),
-            _buildSearchBar(controller),
-            Expanded(
-              child: Obx(
-                () => NotificationListener<ScrollNotification>(
-                  onNotification: (notification) {
-                    if (notification.metrics.pixels >=
-                            notification.metrics.maxScrollExtent - 120 &&
-                        !controller.isLoadingMore.value &&
-                        controller.hasMoreResults.value) {
-                      controller.loadMore();
-                    }
-                    return false;
-                  },
-                  child: _buildBody(context, controller),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              CommonHeader(
+                title: 'Search Products',
+                customActions: [
+                  IconButton(
+                    icon: Icon(Icons.close, color: '#6F221E'.toColor()),
+                    onPressed: () => Get.back(),
+                  ),
+                ],
+              ),
+              _buildSearchBar(controller),
+              Expanded(
+                child: Obx(
+                  () => NotificationListener<ScrollNotification>(
+                    onNotification: (notification) {
+                      if (notification.metrics.pixels >=
+                              notification.metrics.maxScrollExtent - 120 &&
+                          !controller.isLoadingMore.value &&
+                          controller.hasMoreResults.value) {
+                        controller.loadMore();
+                      }
+                      return false;
+                    },
+                    child: _buildBody(context, controller),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

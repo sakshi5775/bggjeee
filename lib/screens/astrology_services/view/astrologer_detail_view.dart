@@ -21,55 +21,58 @@ class AstrologerDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(AstrologerDetailController());
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFf8f0be), // Light cream background
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // Header with Profile title - positioned at top
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: _buildHeaderWithDots(context, controller),
-            ),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              // Header with Profile title - positioned at top
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: _buildHeaderWithDots(context, controller),
+              ),
 
-            // Main Content with Positioned widgets
-            Positioned.fill(
-              child: Stack(
-                children: [
-                  // Scrollable content positioned after header
-                  Positioned(
-                    top: 110.h,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          // Profile Card - positioned after header
-                          _buildProfileCard(controller),
-                          Spacing.h(16),
+              // Main Content with Positioned widgets
+              Positioned.fill(
+                child: Stack(
+                  children: [
+                    // Scrollable content positioned after header
+                    Positioned(
+                      top: 110.h,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            // Profile Card - positioned after header
+                            _buildProfileCard(controller),
+                            Spacing.h(16),
 
-                          // Navigation Tabs
-                          _buildTabs(controller),
-                          Spacing.h(16),
+                            // Navigation Tabs
+                            _buildTabs(controller),
+                            Spacing.h(16),
 
-                          // Content based on selected tab
-                          Obx(() => _buildTabContent(controller)),
-                          Spacing.h(50), // Space for bottom bar
-                        ],
+                            // Content based on selected tab
+                            Obx(() => _buildTabContent(controller)),
+                            Spacing.h(50), // Space for bottom bar
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+        // Fixed Bottom Bar
+        bottomNavigationBar: _buildBottomBar(controller),
       ),
-      // Fixed Bottom Bar
-      bottomNavigationBar: _buildBottomBar(controller),
     );
   }
 

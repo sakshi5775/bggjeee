@@ -14,32 +14,38 @@ import 'package:get/get.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 
 /// Standard Common Header for the application.
+/// Includes: Logo, Back button (if canPop), Home icon, Drawer icon, Wallet, Language, Cart, Search
 class CommonHeader extends StatelessWidget {
   final String? title;
+  final Widget? titleWidget;
   final Widget? subtitle;
   final VoidCallback? onMenuTap;
-  final bool showBackButton;
+  final bool showDrawer;
+  final bool showHome;
   final List<Widget>? customActions;
   final bool showWallet;
   final bool showLanguage;
   final bool showCart;
   final bool showSearch;
+  final VoidCallback? onSearchTap;
 
   const CommonHeader({
     super.key,
     this.title,
+    this.titleWidget,
     this.subtitle,
     this.onMenuTap,
-    this.showBackButton = true,
+    this.showDrawer = false,
+    this.showHome = true,
     this.customActions,
     this.showWallet = true,
     this.showLanguage = true,
     this.showCart = true,
     this.showSearch = true,
+    this.onSearchTap,
   });
 
   static void _showSearchDialog(BuildContext context) {
-    // Reusing the search logic from KundliHeader
     final controller = TextEditingController();
     final searchService = DashboardSearchService();
 
@@ -85,7 +91,7 @@ class CommonHeader extends StatelessWidget {
                     )
                     .merge(AppTypography.body1),
                 decoration: InputDecoration(
-                  hintText: 'Search horoscope, kundli, tarot, naturally...',
+                  hintText: 'Search horoscope, kundli, tarot, numerology...',
                   hintStyle: MyTextTheme.mediumBCN
                       .copyWith(
                         color: '#3D0C11'.toColor().withOpacity(0.5),
@@ -183,180 +189,165 @@ class CommonHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      spacing: 8,
-                      children: [
-                        Image.network(
-                          AppConstant.logo,
-                          width: 40.w,
-                          height: 40.h,
-                          fit: BoxFit.contain,
-                        ),
-                        Expanded(
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SvgAssets(
-                                  path: 'assets/app/AstrobharatAi .svg',
-                                  width: 110.w,
-                                  height: 26.h,
-                                ),
-                                AutoTranslateText(
-                                  "STAR ALIGN DESTINY DIVINE",
-                                  style: AppTypography.label.copyWith(
-                                    color: '#6F221E'.toColor(),
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.2,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
+    return SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Top row: Logo + Actions
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Logo section
+                Expanded(
+                  child: Row(
+                    spacing: 8,
                     children: [
-                      if (showWallet)
-                        IconButton(
-                          onPressed: () => Get.toNamed(AppRoutes.wallet),
-                          style: IconButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: Size(36.w, 36.h),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          icon: Icon(
-                            Icons.account_balance_wallet,
-                            size: 22.w,
-                            color: '#6F221E'.toColor(),
-                          ),
-                        ),
-                      if (showLanguage)
-                        LanguageSelector(
-                          iconColor: '#6F221E'.toColor(),
-                          iconSize: 22.w,
-                        ),
-                      if (showCart)
-                        IconButton(
-                          onPressed: () => Get.toNamed(AppRoutes.cart),
-                          style: IconButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: Size(36.w, 36.h),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          icon: SvgAssets(
-                            path: 'assets/app/cart.svg',
-                            width: 22.w,
-                            height: 22.h,
-                            colorFilter: ColorFilter.mode(
-                              '#6F221E'.toColor(),
-                              BlendMode.srcIn,
-                            ),
+                      Image.network(
+                        AppConstant.logo,
+                        width: 40.w,
+                        height: 40.h,
+                        fit: BoxFit.contain,
+                      ),
+                      Expanded(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SvgAssets(
+                                path: 'assets/app/AstrobharatAi .svg',
+                                width: 110.w,
+                                height: 26.h,
+                              ),
+                              AutoTranslateText(
+                                "STARS ALIGN DESTINY DIVINE",
+                                style: AppTypography.label.copyWith(
+                                  color: '#6F221E'.toColor(),
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.2,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                translate: false,
+                              ),
+                            ],
                           ),
                         ),
-                      if (showSearch)
-                        IconButton(
-                          onPressed: () => _showSearchDialog(context),
-                          style: IconButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: Size(36.w, 36.h),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          icon: Icon(
-                            Icons.search,
-                            size: 22.w,
-                            color: '#6F221E'.toColor(),
-                          ),
-                        ),
+                      ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            if (title != null && title!.isNotEmpty) ...[
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 10.w,
-                  right: 10.w,
-                  bottom: 6.h,
-                  top: 2.h,
                 ),
-                child: Row(
+                // Action icons
+                Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (showBackButton) ...[
-                      if (Navigator.canPop(context))
-                        IconButton(
-                          onPressed: () => Get.back(),
-                          style: IconButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: Size(36.w, 36.h),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          icon: Icon(
-                            Icons.arrow_back_ios_new,
-                            size: 20.w,
-                            color: '#6F221E'.toColor(),
-                          ),
-                        ),
+                    if (showWallet)
                       IconButton(
-                        onPressed:
-                            onMenuTap ??
-                            () {
-                              final scaffoldState = context
-                                  .findAncestorStateOfType<ScaffoldState>();
-                              scaffoldState?.openDrawer();
-                            },
+                        onPressed: () => Get.toNamed(AppRoutes.wallet),
                         style: IconButton.styleFrom(
                           padding: EdgeInsets.zero,
                           minimumSize: Size(36.w, 36.h),
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         icon: Icon(
-                          Icons.menu,
-                          size: 20.w,
+                          Icons.account_balance_wallet,
+                          size: 22.w,
                           color: '#6F221E'.toColor(),
                         ),
                       ),
-                    ],
-                    SizedBox(width: 4.w),
-
-                    Expanded(
-                      child: AutoTranslateText(
-                        title!,
-                        style: MyTextTheme.largeBCB.copyWith(
-                          color: '#6F221E'.toColor(),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
+                    if (showLanguage)
+                      LanguageSelector(
+                        iconColor: '#6F221E'.toColor(),
+                        iconSize: 22.w,
+                      ),
+                    if (showCart)
+                      IconButton(
+                        onPressed: () => Get.toNamed(AppRoutes.cart),
+                        style: IconButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(36.w, 36.h),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
+                        icon: SvgAssets(
+                          path: 'assets/app/cart.svg',
+                          width: 22.w,
+                          height: 22.h,
+                          colorFilter: ColorFilter.mode(
+                            '#6F221E'.toColor(),
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
+                    if (showSearch)
+                      IconButton(
+                        onPressed:
+                            onSearchTap ?? () => _showSearchDialog(context),
+                        style: IconButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(36.w, 36.h),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        icon: Icon(
+                          Icons.search,
+                          size: 22.w,
+                          color: '#6F221E'.toColor(),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          // Title row (if title provided)
+          if ((title != null && title!.isNotEmpty) || titleWidget != null) ...[
+            Padding(
+              padding: EdgeInsets.only(
+                left: 10.w,
+                right: 10.w,
+                bottom: 6.h,
+                top: 2.h,
+              ),
+              child: Row(
+                children: [
+                  // Back button (Navigator.canPop)
+                  if (Navigator.canPop(context))
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: IconButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size(36.w, 36.h),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      icon: Icon(
+                        Icons.arrow_back_ios_new,
+                        size: 20.w,
+                        color: '#6F221E'.toColor(),
                       ),
                     ),
-
-                    if (customActions != null) ...customActions!,
-
+                  // Title
+                  Expanded(
+                    child:
+                        titleWidget ??
+                        AutoTranslateText(
+                          title!,
+                          style: MyTextTheme.largeBCB.copyWith(
+                            color: '#6F221E'.toColor(),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.sp,
+                          ),
+                        ),
+                  ),
+                  // Custom actions
+                  if (customActions != null) ...customActions!,
+                  // Home icon (always visible if showHome)
+                  if (showHome)
                     IconButton(
                       onPressed: () {
-                        // Use popUntil to avoid Duplicate GlobalKey crash with nested navigators
                         Navigator.of(
                           context,
                         ).popUntil((route) => route.isFirst);
@@ -372,22 +363,40 @@ class CommonHeader extends StatelessWidget {
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                     ),
-                  ],
-                ),
+                  // Drawer icon (if enabled)
+                  if (showDrawer)
+                    IconButton(
+                      onPressed:
+                          onMenuTap ??
+                          () {
+                            Scaffold.of(context).openDrawer();
+                          },
+                      style: IconButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size(36.w, 36.h),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      icon: Icon(
+                        Icons.menu,
+                        size: 22.w,
+                        color: '#6F221E'.toColor(),
+                      ),
+                    ),
+                ],
               ),
-              if (subtitle != null)
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: showBackButton ? 56.w : 16.w,
-                    right: 16.w,
-                    bottom: 8.h,
-                  ),
-                  child: subtitle!,
+            ),
+            if (subtitle != null)
+              Padding(
+                padding: EdgeInsets.only(
+                  left: Navigator.canPop(context) ? 56.w : 16.w,
+                  right: 16.w,
+                  bottom: 8.h,
                 ),
-            ],
+                child: subtitle!,
+              ),
           ],
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

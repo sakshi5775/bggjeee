@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/data_model/webinar_model.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 
 class LiveWebinarSessionView extends StatelessWidget {
   final String webinarId;
@@ -64,37 +65,40 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
 
       final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
-      return Scaffold(
-        backgroundColor: const Color(0xFFFFF8F0),
-        resizeToAvoidBottomInset: true, // Crucial for sticky input
-        body: SafeArea(
-          child: Column(
-            children: [
-              // 1. Fixed Header
-              _buildHeader(),
+      return Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          resizeToAvoidBottomInset: true, // Crucial for sticky input
+          body: SafeArea(
+            child: Column(
+              children: [
+                // 1. Fixed Header
+                _buildHeader(),
 
-              // 2. Video + Title + Toolbar (Potentially fixed or scrollable)
-              // Let's make Video and Toolbar scrollable with questions but Input fixed
-              // 2. Video Area (Fixed height)
-              _buildVideoArea(),
+                // 2. Video + Title + Toolbar (Potentially fixed or scrollable)
+                // Let's make Video and Toolbar scrollable with questions but Input fixed
+                // 2. Video Area (Fixed height)
+                _buildVideoArea(),
 
-              // 3. Interaction Section (Scrollable Questions)
-              Expanded(
-                child: CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(child: _buildQaTitleBar()),
-               //     SliverToBoxAdapter(child: _buildToolbar()),
-                    _buildQaListSliver(),
-                  ],
+                // 3. Interaction Section (Scrollable Questions)
+                Expanded(
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(child: _buildQaTitleBar()),
+                      //     SliverToBoxAdapter(child: _buildToolbar()),
+                      _buildQaListSliver(),
+                    ],
+                  ),
                 ),
-              ),
 
-              // 4. Sticky Input Area
-              _buildInputArea(),
+                // 4. Sticky Input Area
+                _buildInputArea(),
 
-              // 5. Bottom controls (Hide when keyboard is open to prevent overflow)
-              if (!isKeyboardOpen) _buildBottomControls(),
-            ],
+                // 5. Bottom controls (Hide when keyboard is open to prevent overflow)
+                if (!isKeyboardOpen) _buildBottomControls(),
+              ],
+            ),
           ),
         ),
       );

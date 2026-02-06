@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_video_call_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,14 +17,16 @@ class AstrologerVideoCallView extends StatelessWidget {
     final controller = Get.put(AstrologerVideoCallController());
 
     return Scaffold(
-      backgroundColor: const Color(0xFFE0E0E0), // Light grey background
-      body: SafeArea(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Column(
           children: [
             // Header
             CommonHeader(
               title: controller.astrologer.displayName,
-              onMenuTap: () => controller.endCall(),
+              showDrawer: false, // No drawer on video call screen
+              showHome: true,
               subtitle: Obx(
                 () => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/core/localization/language_controller_v2.dart';
-import 'package:astrobharataiuser/core/services/mlkit_translation_service_v2.dart';
+import 'package:astrobharataiuser/core/services/google_cloud_translation_service.dart';
 
 /// AutoTranslateText - Drop-in replacement for AutoTranslateText widget
-/// 
+///
 /// Features:
 /// - Accepts raw English strings
 /// - Translates automatically based on current language
@@ -12,44 +12,44 @@ import 'package:astrobharataiuser/core/services/mlkit_translation_service_v2.dar
 /// - No UI flicker
 /// - Fail-safe (falls back to English)
 /// - Zero configuration needed
-/// 
+///
 /// Usage:
 /// ```dart
 /// // Before
 /// AutoTranslateText('Hello World', style: TextStyle(fontSize: 16))
-/// 
+///
 /// // After
 /// AutoTranslateText('Hello World', style: TextStyle(fontSize: 16))
 /// ```
 class AutoTranslateText extends StatefulWidget {
   /// The English text to translate
   final String text;
-  
+
   /// AutoTranslateText style
   final TextStyle? style;
-  
+
   /// AutoTranslateText alignment
   final TextAlign? textAlign;
-  
+
   /// Maximum lines
   final int? maxLines;
-  
+
   /// AutoTranslateText overflow
   final TextOverflow? overflow;
-  
+
   /// Soft wrap
   final bool? softWrap;
-  
+
   /// AutoTranslateText direction
   final TextDirection? textDirection;
-  
+
   /// Locale override (for testing)
   final Locale? locale;
-  
+
   /// Whether to translate (default: true)
   /// Set to false to disable translation for this widget
   final bool translate;
-  
+
   /// Source language code (default: 'en')
   final String sourceLanguageCode;
 
@@ -73,20 +73,20 @@ class AutoTranslateText extends StatefulWidget {
 
 class _AutoTranslateTextState extends State<AutoTranslateText> {
   /// Translation service
-  final _translationService = MLKitTranslationServiceV2();
-  
+  final _translationService = GoogleCloudTranslationService();
+
   /// Language controller
   LanguageControllerV2? _languageController;
-  
+
   /// Cached translation for current language
   String? _cachedTranslation;
-  
+
   /// Language code when translation was cached
   String? _cachedLanguageCode;
-  
+
   /// Future for current translation (prevents duplicate calls)
   Future<String>? _translationFuture;
-  
+
   /// Key to force FutureBuilder rebuild
   int _futureKey = 0;
 
@@ -118,7 +118,8 @@ class _AutoTranslateTextState extends State<AutoTranslateText> {
     }
 
     // Ensure controller is initialized
-    if (_languageController == null && Get.isRegistered<LanguageControllerV2>()) {
+    if (_languageController == null &&
+        Get.isRegistered<LanguageControllerV2>()) {
       _languageController = Get.find<LanguageControllerV2>();
     }
 
@@ -126,15 +127,16 @@ class _AutoTranslateTextState extends State<AutoTranslateText> {
     return GetBuilder<LanguageControllerV2>(
       builder: (controller) {
         final currentLanguageCode = controller.currentLanguageCode;
-        
+
         // CRITICAL: Clear cache if language changed (synchronously, no setState during build)
-        if (_cachedLanguageCode != null && _cachedLanguageCode != currentLanguageCode) {
+        if (_cachedLanguageCode != null &&
+            _cachedLanguageCode != currentLanguageCode) {
           _cachedTranslation = null;
           _translationFuture = null;
           _futureKey++; // Force new future
           _cachedLanguageCode = currentLanguageCode;
         }
-        
+
         // If English, show original text (no translation needed)
         if (currentLanguageCode == 'en') {
           if (_cachedLanguageCode != 'en') {
@@ -154,7 +156,8 @@ class _AutoTranslateTextState extends State<AutoTranslateText> {
         }
 
         // Check if we have cached translation for current language
-        if (_cachedTranslation != null && _cachedLanguageCode == currentLanguageCode) {
+        if (_cachedTranslation != null &&
+            _cachedLanguageCode == currentLanguageCode) {
           return Text(
             _cachedTranslation!,
             style: widget.style,
@@ -167,39 +170,47 @@ class _AutoTranslateTextState extends State<AutoTranslateText> {
         }
 
         // Need to translate - create new future for this language
-        if (_translationFuture == null || _cachedLanguageCode != currentLanguageCode) {
+        if (_translationFuture == null ||
+            _cachedLanguageCode != currentLanguageCode) {
           _translationFuture = _translateText(currentLanguageCode);
           _cachedLanguageCode = currentLanguageCode;
           _futureKey++; // Force FutureBuilder to rebuild
-          
+
           // Listen to future completion and update state (after build)
-          _translationFuture!.then((translated) {
-            if (mounted && _cachedLanguageCode == currentLanguageCode) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
+          _translationFuture!
+              .then((translated) {
                 if (mounted && _cachedLanguageCode == currentLanguageCode) {
-                  setState(() {
-                    _cachedTranslation = translated;
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted && _cachedLanguageCode == currentLanguageCode) {
+                      setState(() {
+                        _cachedTranslation = translated;
+                      });
+                    }
                   });
                 }
+              })
+              .catchError((e) {
+                print('AutoTranslateText: Error in future: $e');
               });
-            }
-          }).catchError((e) {
-            print('AutoTranslateText: Error in future: $e');
-          });
         }
 
         // Show FutureBuilder with translation in progress
         return FutureBuilder<String>(
-          key: ValueKey('translation_${currentLanguageCode}_${widget.text}_$_futureKey'),
+          key: ValueKey(
+            'translation_${currentLanguageCode}_${widget.text}_$_futureKey',
+          ),
           future: _translationFuture,
           initialData: widget.text, // Show original while translating
           builder: (context, snapshot) {
             String displayText = widget.text;
-            
-            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData) {
               displayText = snapshot.data!;
               // Cache the result (after build completes)
-              if (mounted && _cachedLanguageCode == currentLanguageCode && _cachedTranslation != displayText) {
+              if (mounted &&
+                  _cachedLanguageCode == currentLanguageCode &&
+                  _cachedTranslation != displayText) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted && _cachedLanguageCode == currentLanguageCode) {
                     setState(() {
@@ -211,7 +222,7 @@ class _AutoTranslateTextState extends State<AutoTranslateText> {
             } else if (snapshot.hasData) {
               displayText = snapshot.data!;
             }
-            
+
             return Text(
               displayText,
               style: widget.style,
@@ -224,20 +235,26 @@ class _AutoTranslateTextState extends State<AutoTranslateText> {
           },
         );
       },
-      init: _languageController ?? (Get.isRegistered<LanguageControllerV2>() ? Get.find<LanguageControllerV2>() : null),
+      init:
+          _languageController ??
+          (Get.isRegistered<LanguageControllerV2>()
+              ? Get.find<LanguageControllerV2>()
+              : null),
     );
   }
 
   /// Translate text (with caching at service level)
   Future<String> _translateText(String targetLanguageCode) async {
     try {
-      print('AutoTranslateText: Translating "${widget.text}" to $targetLanguageCode');
+      print(
+        'AutoTranslateText: Translating "${widget.text}" to $targetLanguageCode',
+      );
       final translated = await _translationService.translateText(
         text: widget.text,
-        sourceLanguageCode: widget.sourceLanguageCode,
-        targetLanguageCode: targetLanguageCode,
+        sourceLanguage: widget.sourceLanguageCode,
+        targetLanguage: targetLanguageCode,
       );
-      
+
       print('AutoTranslateText: Translated "${widget.text}" -> "$translated"');
       return translated;
     } catch (e, stackTrace) {
@@ -272,4 +289,3 @@ extension AutoTranslateTextExtension on String {
     );
   }
 }
-

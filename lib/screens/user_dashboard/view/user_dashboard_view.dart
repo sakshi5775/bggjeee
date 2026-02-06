@@ -1,4 +1,5 @@
 import 'package:astrobharataiuser/widgets/common_tab_slider.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/svg_assets.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
@@ -25,9 +26,10 @@ import 'package:astrobharataiuser/data_model/category_model.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/video_player_widget.dart';
-import 'package:astrobharataiuser/widgets/language_selector.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -79,94 +81,78 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       drawer: buildDrawer(context),
       body: Builder(
         builder: (context) => Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                "#FCE5AA".toColor(), // Light yellow/cream at top (3%)
-                "#FFFCF3".toColor(), // Light cream in middle (52%)
-                "#FFFFFF".toColor(), // White at bottom (100%)
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
+          decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: SafeArea(
             top: false,
-            child: Padding(
-              padding: EdgeInsets.only(
-                top:
-                    (MediaQuery.of(context).padding.top > 0
-                            ? MediaQuery.of(context).padding.top * 0.5
-                            : 0.0)
-                        .clamp(6.0, 24.0)
-                        .toDouble(),
-              ),
-              child: Stack(
-                children: [
-                  RefreshIndicator(
-                    onRefresh: controller.refreshDashboard,
-                    color: "#6F221E".toColor(),
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      controller: controller.scrollController,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Spacing.h(22),
-                          _buildHeaderAndSliderWithChakra(context),
-                          Obx(() {
-                            final i = controller.selectedSliderIndex.value;
-                            final tabs = controller.sliderTabs;
-                            final noGap =
-                                (i == 2 &&
-                                    tabs.length > 2 &&
-                                    tabs[2] == 'Astrologers') ||
-                                (i == 3 &&
-                                    tabs.length > 3 &&
-                                    tabs[3] == 'AI Astrologers') ||
-                                (i == 4 &&
-                                    tabs.length > 4 &&
-                                    tabs[4] == 'Digital Mart') ||
-                                (i == 5 &&
-                                    tabs.length > 5 &&
-                                    tabs[5] == 'Digital Mandir') ||
-                                (i == 6 &&
-                                    tabs.length > 6 &&
-                                    tabs[6] == 'Digital Learning') ||
-                                (i == 7 &&
-                                    tabs.length > 7 &&
-                                    tabs[7] == 'Video') ||
-                                (i == 8 &&
-                                    tabs.length > 8 &&
-                                    tabs[8] == 'Panchang') ||
-                                (i == 9 &&
-                                    tabs.length > 9 &&
-                                    tabs[9] == 'Horoscope');
-                            return Spacing.h(noGap ? 0 : 8);
-                          }),
-                          _buildSliderBodyWithSwipe(context),
-                          Spacing.h(60),
-                        ],
-                      ),
+            child: Stack(
+              children: [
+                RefreshIndicator(
+                  onRefresh: controller.refreshDashboard,
+                  color: "#6F221E".toColor(),
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: controller.scrollController,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Safe area padding for the specific top content if strictly needed,
+                        // but CommonHeader handles its own SafeArea.
+                        // However, since we are inside a ScrollView, CommonHeader's SafeArea
+                        // might behave interestingly if scrolled.
+                        // But standard behavior is acceptable.
+                        _buildHeaderAndSliderWithChakra(context),
+                        Obx(() {
+                          final i = controller.selectedSliderIndex.value;
+                          final tabs = controller.sliderTabs;
+                          final noGap =
+                              (i == 2 &&
+                                  tabs.length > 2 &&
+                                  tabs[2] == 'Astrologers') ||
+                              (i == 3 &&
+                                  tabs.length > 3 &&
+                                  tabs[3] == 'AI Astrologers') ||
+                              (i == 4 &&
+                                  tabs.length > 4 &&
+                                  tabs[4] == 'Digital Mart') ||
+                              (i == 5 &&
+                                  tabs.length > 5 &&
+                                  tabs[5] == 'Digital Mandir') ||
+                              (i == 6 &&
+                                  tabs.length > 6 &&
+                                  tabs[6] == 'Digital Learning') ||
+                              (i == 7 &&
+                                  tabs.length > 7 &&
+                                  tabs[7] == 'Video') ||
+                              (i == 8 &&
+                                  tabs.length > 8 &&
+                                  tabs[8] == 'Panchang') ||
+                              (i == 9 &&
+                                  tabs.length > 9 &&
+                                  tabs[9] == 'Horoscope');
+                          return Spacing.h(noGap ? 0 : 8);
+                        }),
+                        _buildSliderBodyWithSwipe(context),
+                        Spacing.h(60),
+                      ],
                     ),
                   ),
-                  Obx(
-                    () => controller.isHeaderSearchOpen.value
-                        ? _buildHeaderSearchOverlay(context)
-                        : const SizedBox.shrink(),
-                  ),
-                  Positioned(
-                    right: 1.w,
-                    bottom: 10.h,
-                    child: _buildCircularChatButton(),
-                  ),
-                  Positioned(
-                    left: 20.w,
-                    bottom: 10.h,
-                    child: const FloatingAstrologerButton(),
-                  ),
-                ],
-              ),
+                ),
+                Obx(
+                  () => controller.isHeaderSearchOpen.value
+                      ? _buildHeaderSearchOverlay(context)
+                      : const SizedBox.shrink(),
+                ),
+                Positioned(
+                  right: 1.w,
+                  bottom: 10.h,
+                  child: _buildCircularChatButton(),
+                ),
+                Positioned(
+                  left: 20.w,
+                  bottom: 10.h,
+                  child: const FloatingAstrologerButton(),
+                ),
+              ],
             ),
           ),
         ),
@@ -198,160 +184,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [_buildHeaderContent(context), _buildSlider(context)],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHeaderContent(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Row 1 (fixed): Logo + Wallet, Language, Cart, Search — no drawer
-        Container(
-          height: 56.h,
-          padding: AppPaddings.symmetric(h: 16, v: 6),
-          color: Colors.transparent,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Logo: circular icon + AstroBharatAI + tagline (per brand image)
-                    Flexible(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Left: circular chakra/icon (favicon)
-                          SizedBox(
-                            width: 36.w,
-                            height: 36.w,
-                            child: CachedNetworkImage(
-                              imageUrl:
-                                  'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/favicon.ico',
-                              fit: BoxFit.contain,
-                              placeholder: (_, __) => SizedBox(
-                                width: 36.w,
-                                height: 36.w,
-                                child: const Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                              ),
-                              errorWidget: (_, __, ___) => Icon(
-                                Icons.star_rounded,
-                                size: 28.w,
-                                color: "#6F221E".toColor(),
-                              ),
-                            ),
-                          ),
-                          Spacing.w(8),
-                          // Right: main logo SVG + tagline
-                          Flexible(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgAssets(
-                                  path:
-                                      'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/Frame+1321314931.svg',
-                                  width: 110.w,
-                                  height: 26.h,
-                                ),
-                                SizedBox(height: 2.h),
-                                FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: AutoTranslateText(
-                                    'STARS ALIGN DESTINY DIVINE',
-                                    style: TextStyle(
-                                      fontSize: 9.sp,
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 0.5,
-                                      color: "#6F221E".toColor(),
-                                      height: 1.2,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Wallet, Language, Cart and Search icons
-              Flexible(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Get.toNamed(AppRoutes.wallet);
-                        },
-                        icon: Icon(
-                          Icons.account_balance_wallet,
-                          size: 22.w,
-                          color: "#6F221E".toColor(),
-                        ),
-                        style: IconButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size(36.w, 36.h),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                      ),
-                      LanguageSelector(
-                        iconColor: "#6F221E".toColor(),
-                        iconSize: 22.w,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          Get.toNamed(AppRoutes.cart);
-                        },
-                        icon: SvgAssets(
-                          path: 'assets/app/cart.svg',
-                          width: 22.w,
-                          height: 22.h,
-                          colorFilter: ColorFilter.mode(
-                            "#6F221E".toColor(),
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                        style: IconButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size(36.w, 36.h),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => controller.openHeaderSearch(),
-                        icon: Icon(
-                          Icons.search,
-                          size: 22.w,
-                          color: "#6F221E".toColor(),
-                        ),
-                        style: IconButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size(36.w, 36.h),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+          children: [
+            CommonHeader(
+              showHome: false,
+              showDrawer: false,
+              onSearchTap: controller.openHeaderSearch,
+            ),
+            _buildSlider(context),
+          ],
         ),
       ],
     );
@@ -554,7 +394,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       'icon': AppConstant.serviceGenerateKundali,
     },
     {
-      'label': 'Matching',
+      'label': 'kundli Matching',
       'route': AppRoutes.matchMakingForm,
       'icon': AppConstant.serviceMatchMaking,
     },
@@ -796,7 +636,12 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                   ? 'Listening...'
                                   : showAnimatedText
                                   ? controller.animatedSearchText.value
-                                  : 'Search horoscope, kundli, tarot...',
+                                  : (controller
+                                            .translatedSearchHint
+                                            .value
+                                            .isNotEmpty
+                                        ? controller.translatedSearchHint.value
+                                        : 'Search horoscope, kundli, tarot...'),
                               hintStyle: MyTextTheme.mediumBCN
                                   .copyWith(
                                     color: "#3D0C11".toColor().withOpacity(0.5),
@@ -4879,54 +4724,61 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 40.w,
-                          height: 40.h,
-                          decoration: BoxDecoration(
-                            color: "#6F221E".toColor(), // Dark maroon
-                            shape: BoxShape.circle,
-                          ),
-                          child: ClipOval(
-                            child: Padding(
-                              padding: AppPaddings.all(3),
-                              child: Image.asset(
-                                'assets/app/app_icon.png',
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Icon(
-                                    Icons.star,
-                                    color: const Color(0xFFFFD700), // Gold
-                                    size: 24.w,
-                                  );
-                                },
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 40.w,
+                            height: 40.h,
+                            decoration: BoxDecoration(
+                              color: "#6F221E".toColor(), // Dark maroon
+                              shape: BoxShape.circle,
+                            ),
+                            child: ClipOval(
+                              child: Padding(
+                                padding: AppPaddings.all(3),
+                                child: Image.asset(
+                                  'assets/app/app_icon.png',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(
+                                      Icons.star,
+                                      color: const Color(0xFFFFD700), // Gold
+                                      size: 24.w,
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Spacing.w(12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AutoTranslateText(
-                              'AstroBharat AI',
-                              style: MyTextTheme.mediumBCB
-                                  .copyWith(
-                                    color: "#6F221E".toColor(), // Dark maroon
-                                    fontWeight: FontWeight.bold,
-                                  )
-                                  .merge(AppTypography.h2),
+                          Spacing.w(12),
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SvgPicture.network(
+                                  'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/Frame+1321314931.svg',
+                                  height: 32.h,
+                                  fit: BoxFit.contain,
+                                  alignment: Alignment.centerLeft,
+                                ),
+                                AutoTranslateText(
+                                  'Stars Align, Destiny Divine',
+                                  style: MyTextTheme.smallBCN.copyWith(
+                                    color: const Color(
+                                      0xFF5F2221,
+                                    ).withOpacity(0.7),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  translate: false,
+                                ),
+                              ],
                             ),
-                            AutoTranslateText(
-                              'Divine Guidance',
-                              style: MyTextTheme.smallBCN.copyWith(
-                                color: const Color(0xFF5F2221).withOpacity(0.7),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
@@ -5182,7 +5034,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   _buildDrawerItemStatic(
                     context: context,
                     icon: Icons.favorite,
-                    label: 'Matching',
+                    label: 'Kundli Matching',
                     onTap: () {
                       Navigator.of(context).pop();
                       Get.toNamed(AppRoutes.matchMakingForm);
@@ -5703,7 +5555,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     ),
                   ),
                   SizedBox(width: 3.w),
-                  Text(
+                  AutoTranslateText(
                     isLive ? 'Live' : 'Offline',
                     style: TextStyle(
                       color: Colors.white,
@@ -5824,7 +5676,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                     ),
                   ),
                   SizedBox(width: 3.w),
-                  Text(
+                  AutoTranslateText(
                     'Offline',
                     style: TextStyle(
                       color: Colors.white,

@@ -21,189 +21,201 @@ class RamalShastraResultsView extends StatelessWidget {
     final RamalShastraData? result = Get.arguments?['result'];
 
     if (result == null) {
-      return Scaffold(
-        backgroundColor: '#FFF8E1'.toColor(),
-        body: Center(
-          child: AutoTranslateText(
-            'No results found',
-            style: MyTextTheme.mediumBCB.copyWith(color: '#3E2723'.toColor()),
+      return Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Center(
+            child: AutoTranslateText(
+              'No results found',
+              style: MyTextTheme.mediumBCB.copyWith(color: '#3E2723'.toColor()),
+            ),
           ),
         ),
       );
     }
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            CommonHeader(
-              title: 'Results',
-              customActions: [
-                IconButton(
-                  onPressed: () => Get.toNamed(AppRoutes.ramalShastraStats),
-                  icon: Icon(
-                    Icons.bar_chart,
-                    color: '#6F221E'.toColor(),
-                    size: 24.w,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Get.toNamed(AppRoutes.ramalShastraHistory),
-                  icon: Icon(
-                    Icons.history,
-                    color: '#6F221E'.toColor(),
-                    size: 24.w,
-                  ),
-                ),
-                if (result.readingId != null)
-                  PopupMenuButton<String>(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              CommonHeader(
+                title: 'Results',
+                customActions: [
+                  IconButton(
+                    onPressed: () => Get.toNamed(AppRoutes.ramalShastraStats),
                     icon: Icon(
-                      Icons.more_vert,
+                      Icons.bar_chart,
                       color: '#6F221E'.toColor(),
                       size: 24.w,
                     ),
-                    onSelected: (value) {
-                      if (value == 'delete') {
-                        _showDeleteDialog(result.readingId!);
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'delete',
-                        child: Text(
-                          'Delete Reading',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ),
-                    ],
                   ),
-              ],
-            ),
-            if (result.readingId != null)
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                child: Container(
+                  IconButton(
+                    onPressed: () => Get.toNamed(AppRoutes.ramalShastraHistory),
+                    icon: Icon(
+                      Icons.history,
+                      color: '#6F221E'.toColor(),
+                      size: 24.w,
+                    ),
+                  ),
+                  if (result.readingId != null)
+                    PopupMenuButton<String>(
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: '#6F221E'.toColor(),
+                        size: 24.w,
+                      ),
+                      onSelected: (value) {
+                        if (value == 'delete') {
+                          _showDeleteDialog(result.readingId!);
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Text(
+                            'Delete Reading',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+              if (result.readingId != null)
+                Padding(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 6.h,
+                    horizontal: 16.w,
+                    vertical: 8.h,
                   ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20.r),
-                    border: Border.all(color: '#F5D7B8'.toColor()),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.tag, color: "#F38B3B".toColor(), size: 14.w),
-                      Spacing.w(4),
-                      AutoTranslateText(
-                        'Reading ID: ${result.readingId}',
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: '#3E2723'.toColor(),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 6.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(color: '#F5D7B8'.toColor()),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.tag, color: "#F38B3B".toColor(), size: 14.w),
+                        Spacing.w(4),
+                        AutoTranslateText(
+                          'Reading ID: ${result.readingId}',
+                          style: MyTextTheme.smallBCB.copyWith(
+                            color: '#3E2723'.toColor(),
+                          ),
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Question Header Card
+                      _buildQuestionHeader(result),
+                      Spacing.h(24),
+                      // Section 1: Final Judgment Card (includes judgmentSummary)
+                      _buildJudgmentCard(
+                        result.judgment,
+                        result.interpretation?.judgmentSummary,
                       ),
+                      Spacing.h(24),
+                      // Section 2: Answer to Question
+                      _buildAnswerToQuestion(
+                        result.interpretation?.answerToQuestion,
+                      ),
+                      Spacing.h(24),
+                      // Section 3: Ramal Chart (4×4 Grid) - with chartData details if available
+                      if (result.chart != null || result.chartData != null) ...[
+                        _buildRamalChart(result.chart, result.chartData),
+                        Spacing.h(24),
+                      ],
+                      // Element Distribution
+                      if (result.chart?.relationships?.elementDistribution !=
+                              null ||
+                          result
+                                  .chartData
+                                  ?.relationships
+                                  ?.elementDistribution !=
+                              null) ...[
+                        _buildElementDistribution(
+                          result.chart?.relationships?.elementDistribution ??
+                              result
+                                  .chartData
+                                  ?.relationships
+                                  ?.elementDistribution,
+                        ),
+                        Spacing.h(24),
+                      ],
+                      // House Relationships (Strong/Weak/Neutral)
+                      if (result.chart?.relationships != null ||
+                          result.chartData?.relationships != null) ...[
+                        _buildHouseRelationships(
+                          result.chart?.relationships ??
+                              result.chartData?.relationships,
+                        ),
+                        Spacing.h(24),
+                      ],
+                      // Section 4: Key Houses
+                      if (result.interpretation?.keyHouses != null &&
+                          result.interpretation!.keyHouses!.isNotEmpty) ...[
+                        _buildKeyHouses(result.interpretation!.keyHouses!),
+                        Spacing.h(24),
+                      ],
+                      // Section 5: Summary
+                      if (result.interpretation?.summary != null &&
+                          result.interpretation!.summary!.isNotEmpty) ...[
+                        _buildSummary(result.interpretation!.summary!),
+                        Spacing.h(24),
+                      ],
+                      // Section 6: Detailed Analysis
+                      if (result.interpretation?.detailedAnalysis != null) ...[
+                        _buildDetailedAnalysis(
+                          result.interpretation!.detailedAnalysis!,
+                        ),
+                        Spacing.h(24),
+                      ],
+                      // Section 7: Timing
+                      if (result.interpretation?.timing != null) ...[
+                        _buildTiming(result.interpretation!.timing!),
+                        Spacing.h(24),
+                      ],
+                      // Section 8: Strengths & Challenges
+                      if (result.interpretation?.strengths != null ||
+                          result.interpretation?.challenges != null) ...[
+                        _buildStrengthsChallenges(
+                          result.interpretation?.strengths,
+                          result.interpretation?.challenges,
+                        ),
+                        Spacing.h(24),
+                      ],
+                      // Section 9: Advice
+                      if (result.interpretation?.advice != null &&
+                          result.interpretation!.advice!.isNotEmpty) ...[
+                        _buildAdvice(result.interpretation!.advice!),
+                        Spacing.h(24),
+                      ],
+                      // Section 10: Remedies
+                      if (result.interpretation?.remedies != null) ...[
+                        _buildRemedies(result.interpretation!.remedies!),
+                        Spacing.h(24),
+                      ],
                     ],
                   ),
                 ),
               ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Question Header Card
-                    _buildQuestionHeader(result),
-                    Spacing.h(24),
-                    // Section 1: Final Judgment Card (includes judgmentSummary)
-                    _buildJudgmentCard(
-                      result.judgment,
-                      result.interpretation?.judgmentSummary,
-                    ),
-                    Spacing.h(24),
-                    // Section 2: Answer to Question
-                    _buildAnswerToQuestion(
-                      result.interpretation?.answerToQuestion,
-                    ),
-                    Spacing.h(24),
-                    // Section 3: Ramal Chart (4×4 Grid) - with chartData details if available
-                    if (result.chart != null || result.chartData != null) ...[
-                      _buildRamalChart(result.chart, result.chartData),
-                      Spacing.h(24),
-                    ],
-                    // Element Distribution
-                    if (result.chart?.relationships?.elementDistribution !=
-                            null ||
-                        result.chartData?.relationships?.elementDistribution !=
-                            null) ...[
-                      _buildElementDistribution(
-                        result.chart?.relationships?.elementDistribution ??
-                            result
-                                .chartData
-                                ?.relationships
-                                ?.elementDistribution,
-                      ),
-                      Spacing.h(24),
-                    ],
-                    // House Relationships (Strong/Weak/Neutral)
-                    if (result.chart?.relationships != null ||
-                        result.chartData?.relationships != null) ...[
-                      _buildHouseRelationships(
-                        result.chart?.relationships ??
-                            result.chartData?.relationships,
-                      ),
-                      Spacing.h(24),
-                    ],
-                    // Section 4: Key Houses
-                    if (result.interpretation?.keyHouses != null &&
-                        result.interpretation!.keyHouses!.isNotEmpty) ...[
-                      _buildKeyHouses(result.interpretation!.keyHouses!),
-                      Spacing.h(24),
-                    ],
-                    // Section 5: Summary
-                    if (result.interpretation?.summary != null &&
-                        result.interpretation!.summary!.isNotEmpty) ...[
-                      _buildSummary(result.interpretation!.summary!),
-                      Spacing.h(24),
-                    ],
-                    // Section 6: Detailed Analysis
-                    if (result.interpretation?.detailedAnalysis != null) ...[
-                      _buildDetailedAnalysis(
-                        result.interpretation!.detailedAnalysis!,
-                      ),
-                      Spacing.h(24),
-                    ],
-                    // Section 7: Timing
-                    if (result.interpretation?.timing != null) ...[
-                      _buildTiming(result.interpretation!.timing!),
-                      Spacing.h(24),
-                    ],
-                    // Section 8: Strengths & Challenges
-                    if (result.interpretation?.strengths != null ||
-                        result.interpretation?.challenges != null) ...[
-                      _buildStrengthsChallenges(
-                        result.interpretation?.strengths,
-                        result.interpretation?.challenges,
-                      ),
-                      Spacing.h(24),
-                    ],
-                    // Section 9: Advice
-                    if (result.interpretation?.advice != null &&
-                        result.interpretation!.advice!.isNotEmpty) ...[
-                      _buildAdvice(result.interpretation!.advice!),
-                      Spacing.h(24),
-                    ],
-                    // Section 10: Remedies
-                    if (result.interpretation?.remedies != null) ...[
-                      _buildRemedies(result.interpretation!.remedies!),
-                      Spacing.h(24),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/festival_filtered_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -17,13 +18,14 @@ class FestivalFilteredView extends BasePage<FestivalFilteredController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
             // Header
-            _buildHeader(),
+            Obx(() => CommonHeader(title: controller.festivalName.value)),
 
             // Festival List
             Expanded(
@@ -101,46 +103,6 @@ class FestivalFilteredView extends BasePage<FestivalFilteredController> {
                   },
                 );
               }),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      decoration: BoxDecoration(
-        color: "#6F221E".toColor(),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24.r),
-          bottomRight: Radius.circular(24.r),
-        ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: Icon(
-                Icons.arrow_back,
-                color: const Color(0xFFDFB343),
-                size: 24.w,
-              ),
-            ),
-            Spacing.w(16),
-            Expanded(
-              child: AutoTranslateText(
-                controller.festivalName.value,
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: const Color(0xFFDFB343),
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
             ),
           ],
         ),

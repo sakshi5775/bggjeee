@@ -15,38 +15,41 @@ class LoShuGridResultView extends BasePage<LoShuGridResultController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            CommonHeader(title: 'Lo Shu Grid'),
-            // Content
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(16.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Spacing.h(20),
-                    // Lo Shu Grid
-                    _buildGridSection(),
-                    Spacing.h(24),
-                    // Interpretation Section
-                    _buildInterpretationSection(),
-                    Spacing.h(24),
-                    // Planes Analysis
-                    _buildPlanesAnalysisSection(),
-                    Spacing.h(24),
-                    // Numerology Summary
-                    _buildNumerologySummarySection(),
-                    Spacing.h(20),
-                  ],
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              CommonHeader(title: 'Lo Shu Grid'),
+              // Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(16.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Spacing.h(20),
+                      // Lo Shu Grid
+                      _buildGridSection(),
+                      Spacing.h(24),
+                      // Interpretation Section
+                      _buildInterpretationSection(),
+                      Spacing.h(24),
+                      // Planes Analysis
+                      _buildPlanesAnalysisSection(),
+                      Spacing.h(24),
+                      // Numerology Summary
+                      _buildNumerologySummarySection(),
+                      Spacing.h(20),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

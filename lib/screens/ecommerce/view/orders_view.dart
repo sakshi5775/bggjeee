@@ -19,40 +19,35 @@ class OrdersView extends GetView<OrdersController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Column(
-            children: [
-              CommonHeader(
-                title: 'My Orders',
-                customActions: [_filterDialog()],
-              ),
-              Padding(padding: EdgeInsets.all(16.w), child: _buildFilters()),
-              Expanded(
-                child: Obx(() {
-                  if (controller.isLoading.value) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.deepOrange,
-                      ),
-                    );
-                  }
-                  if (controller.orders.isEmpty) {
-                    return _buildEmptyState();
-                  }
-
-                  return ListView.separated(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    itemCount: controller.orders.length,
-                    separatorBuilder: (_, __) => SizedBox(height: 16.h),
-                    itemBuilder: (_, index) {
-                      final order = controller.orders[index];
-                      return _OrderCard(order: order);
-                    },
+        body: Column(
+          children: [
+            CommonHeader(title: 'My Orders', customActions: [_filterDialog()]),
+            Padding(padding: EdgeInsets.all(16.w), child: _buildFilters()),
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.deepOrange,
+                    ),
                   );
-                }),
-              ),
-            ],
-          ),
+                }
+                if (controller.orders.isEmpty) {
+                  return _buildEmptyState();
+                }
+
+                return ListView.separated(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  itemCount: controller.orders.length,
+                  separatorBuilder: (_, __) => SizedBox(height: 16.h),
+                  itemBuilder: (_, index) {
+                    final order = controller.orders[index];
+                    return _OrderCard(order: order);
+                  },
+                );
+              }),
+            ),
+          ],
         ),
       ),
     );

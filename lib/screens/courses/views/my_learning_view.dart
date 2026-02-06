@@ -21,32 +21,35 @@ class MyLearningView extends BasePage<MyLearningController> {
       Get.put(MyLearningController());
     }
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F0),
-      // bottomNavigationBar: _buildBottomNav(),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Obx(
-              () => CommonHeader(
-                title: 'My Learning',
-                subtitle: AutoTranslateText(
-                  '${controller.enrolledCourses.length} courses enrolled',
-                  style: AppTypography.body2.copyWith(
-                    color: const Color(0xFF5F2221).withValues(alpha: 0.7),
-                    fontSize: 12.sp,
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        // bottomNavigationBar: _buildBottomNav(),
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              Obx(
+                () => CommonHeader(
+                  title: 'My Learning',
+                  subtitle: AutoTranslateText(
+                    '${controller.enrolledCourses.length} courses enrolled',
+                    style: AppTypography.body2.copyWith(
+                      color: const Color(0xFF5F2221).withValues(alpha: 0.7),
+                      fontSize: 12.sp,
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            // Progress Overview
-            _buildProgressOverview(),
+              // Progress Overview
+              _buildProgressOverview(),
 
-            // Enrolled Courses
-            Expanded(child: _buildEnrolledCourses()),
-          ],
+              // Enrolled Courses
+              Expanded(child: _buildEnrolledCourses()),
+            ],
+          ),
         ),
       ),
     );

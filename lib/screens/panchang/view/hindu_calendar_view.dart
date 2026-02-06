@@ -5,9 +5,9 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/hindu_calendar_controller.dart';
-import 'package:astrobharataiuser/screens/panchang/widgets/hindu_calendar_header_widget.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,10 +19,11 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: Obx(() {
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Obx(() {
           if (controller.isLoading.value && controller.calendarData.isEmpty) {
             return Center(
               child: CircularProgressIndicator(color: "#DFB343".toColor()),
@@ -31,10 +32,22 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
 
           return Column(
             children: [
-              // Header with Month Navigation
-              HinduCalendarHeaderWidget(controller: controller),
+              // Header
+              CommonHeader(
+                title: 'Hindu Calendar',
+                subtitle: AutoTranslateText(
+                  'Traditional Indian Calendar System',
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400,
+                    color: "#6F221E".toColor().withOpacity(0.7),
+                    height: 1.33,
+                  ),
+                ),
+              ),
 
-              Spacing.h(16),
+              // Month Navigation
+              _buildMonthNavigation(),
 
               // Year and Location Selectors
               _buildYearLocationSelectors(),
@@ -48,6 +61,121 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
         }),
       ),
     );
+  }
+
+  Widget _buildMonthNavigation() {
+    return Obx(() {
+      // Check if "All" is selected (when selectedMonth is 0 or null)
+      final isAllSelected = controller.selectedMonth.value == 0;
+
+      return Container(
+        height: 60.h,
+        decoration: BoxDecoration(color: Colors.transparent),
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+          itemCount: controller.monthNames.length + 1, // +1 for "All" option
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              // "All" button
+              return GestureDetector(
+                onTap: () {
+                  // Set month to 0 for "All" - don't fetch, just filter in view
+                  controller.selectedMonth.value = 0;
+                },
+                child: Container(
+                  margin: EdgeInsets.only(right: 12.w),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isAllSelected
+                        ? Colors
+                              .white // White background when selected
+                        : Colors.white.withOpacity(
+                            0.3,
+                          ), // White with opacity when unselected
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AutoTranslateText(
+                        'All',
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: isAllSelected
+                              ? "#6B1B1A"
+                                    .toColor() // Dark red text when selected
+                              : Colors.white, // White text when unselected
+                          fontSize: 14.sp,
+                          fontWeight: isAllSelected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            // Month buttons
+            final monthIndex = index; // index 1-12 for months
+            final isSelected =
+                !isAllSelected && controller.selectedMonth.value == monthIndex;
+            // Use abbreviated month names (Jan, Feb, etc.)
+            final fullMonthName = controller.monthNames[index - 1];
+            final monthName = fullMonthName.length > 3
+                ? fullMonthName.substring(0, 3)
+                : fullMonthName;
+
+            return GestureDetector(
+              onTap: () => controller.selectMonth(monthIndex),
+              child: Container(
+                margin: EdgeInsets.only(right: 12.w),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? Colors
+                            .white // White background when selected
+                      : Colors.white.withOpacity(
+                          0.3,
+                        ), // White with opacity when unselected
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: AutoTranslateText(
+                        monthName,
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: isSelected
+                              ? "#6B1B1A"
+                                    .toColor() // Dark red text when selected
+                              : Colors.white, // White text when unselected
+                          fontSize: 14.sp,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    });
   }
 
   Widget _buildYearLocationSelectors() {
@@ -363,10 +491,11 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
-            controller.selectCity(city, state, country);
-            Get.back();
-          },
+          onCitySelected:
+              (city, state, country, [latitude, longitude, timezone]) {
+                controller.selectCity(city, state, country);
+                Get.back();
+              },
           selectedCity: controller.selectedLocation.value,
           onUseCurrentLocation: () => controller.getCurrentLocation(),
         ),

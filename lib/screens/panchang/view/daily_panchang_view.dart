@@ -6,14 +6,15 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/daily_panchang_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/daily_panchang_button_widget.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/daily_panchang_form_field_widget.dart';
-import 'package:astrobharataiuser/screens/panchang/widgets/daily_panchang_header_widget.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/daily_panchang_language_field_widget.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:intl/intl.dart';
 
 class DailyPanchangView extends BasePage<DailyPanchangController> {
   const DailyPanchangView({super.key});
@@ -26,11 +27,20 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
         backgroundColor: Colors.transparent,
         body: Column(
           children: [
-            // Header (Dark Maroon Background)
-            DailyPanchangHeaderWidget(
-              controller: controller,
-              onLocationTap: () => _showLocationBottomSheet(),
+            // Header
+            CommonHeader(
+              title: "Today's Panchang",
+              subtitle: AutoTranslateText(
+                'Vedic Details for the seleceted date',
+                style: MyTextTheme.smallBCN.copyWith(
+                  fontSize: 12.sp,
+                  color: "#6F221E".toColor().withOpacity(0.7),
+                ),
+              ),
             ),
+
+            // Date and Location Selector
+            _buildDateLocationSelector(),
 
             // Form Section
             Expanded(
@@ -1308,6 +1318,110 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
       return 'Not Available';
     }
     return '$startTime - $endTime';
+  }
+
+  Widget _buildDateLocationSelector() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      child: Row(
+        children: [
+          // Location button
+          Expanded(
+            child: GestureDetector(
+              onTap: () => _showLocationBottomSheet(),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.location_on_outlined,
+                      color: AppColors.templeGold,
+                      size: 16.w,
+                    ),
+                    Spacing.w(6),
+                    Obx(
+                      () => Flexible(
+                        child: AutoTranslateText(
+                          controller.selectedLocation.value,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: MyTextTheme.smallBCB.copyWith(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w500,
+                            color: "#68171E".toColor(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Spacing.w(12),
+          // Date button
+          Expanded(
+            child: GestureDetector(
+              onTap: () => controller.selectDate(),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      color: AppColors.templeGold,
+                      size: 16.w,
+                    ),
+                    Spacing.w(6),
+                    Obx(
+                      () => Flexible(
+                        child: AutoTranslateText(
+                          // Use observable selectedDate directly
+                          DateFormat(
+                            'dd/MM/yyyy',
+                          ).format(controller.selectedDate.value),
+                          style: MyTextTheme.smallBCB.copyWith(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w500,
+                            color: "#68171E".toColor(),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

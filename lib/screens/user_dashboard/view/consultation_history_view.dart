@@ -106,7 +106,7 @@ class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
           children: [
             CommonHeader(
               title: 'Consultation History',
-              showBackButton: widget.showBackButton,
+
               customActions: [
                 GestureDetector(
                   onTap: () => Get.toNamed(AppRoutes.wallet),

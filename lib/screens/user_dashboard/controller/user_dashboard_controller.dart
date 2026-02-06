@@ -37,6 +37,8 @@ import 'package:video_player/video_player.dart';
 import '../../../data_model/astrologer_model.dart';
 import '../../../data_model/user_profile_model.dart';
 import '../service/user_profile_service.dart';
+import 'package:astrobharataiuser/core/services/google_cloud_translation_service.dart';
+import 'package:astrobharataiuser/core/localization/language_controller_v2.dart';
 
 class UserDashboardController extends BaseController
     with GetTickerProviderStateMixin {
@@ -197,6 +199,9 @@ class UserDashboardController extends BaseController
 
   // Typewriter animation for search bar
   final RxString animatedSearchText = ''.obs;
+  final RxString translatedSearchHint = ''.obs; // Added for translated hint
+  final RxList<String> translatedSearchPrompts =
+      <String>[].obs; // Translated prompts
   final List<String> _searchPrompts = [
     'Get your palm reading.',
     'Get face reading.',
@@ -209,6 +214,46 @@ class UserDashboardController extends BaseController
   bool _isAnimating = false;
   bool _shouldAnimate = true;
   final ScrollController scrollController = ScrollController();
+
+  // Translation of UI strings
+  Future<void> _translateUIStrings() async {
+    try {
+      final service = GoogleCloudTranslationService();
+      if (Get.isRegistered<LanguageControllerV2>()) {
+        final langController = Get.find<LanguageControllerV2>();
+        final targetLang = langController.currentLanguageCode;
+
+        if (targetLang != 'en') {
+          // Translate the fallback search hint
+          final hint = 'Search horoscope, kundli, tarot...';
+          final translatedHint = await service.translateText(
+            text: hint,
+            targetLanguage: targetLang,
+          );
+          translatedSearchHint.value = translatedHint;
+
+          // Translate all search prompts for typewriter animation
+          final List<String> translatedPromptsList = [];
+          for (final prompt in _searchPrompts) {
+            final translatedPrompt = await service.translateText(
+              text: prompt,
+              targetLanguage: targetLang,
+            );
+            translatedPromptsList.add(translatedPrompt);
+          }
+          translatedSearchPrompts.assignAll(translatedPromptsList);
+        } else {
+          translatedSearchHint.value = 'Search horoscope, kundli, tarot...';
+          translatedSearchPrompts.assignAll(_searchPrompts);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error translating UI strings: $e');
+      // Fallback to English if translation fails
+      translatedSearchHint.value = 'Search horoscope, kundli, tarot...';
+      translatedSearchPrompts.assignAll(_searchPrompts);
+    }
+  }
 
   final RxBool isExpanded = false.obs;
 
@@ -337,6 +382,17 @@ class UserDashboardController extends BaseController
     loadPujas();
     // Load YouTube videos
     loadYouTubeVideos();
+    // Translate static strings
+    _translateUIStrings();
+
+    // Listen for language changes
+    if (Get.isRegistered<LanguageControllerV2>()) {
+      final langController = Get.find<LanguageControllerV2>();
+      ever(langController.currentLanguage, (_) {
+        _translateUIStrings();
+      });
+    }
+
     // Ads carousel auto-slide is started in loadBanners() when banners are loaded
   }
 
@@ -1144,7 +1200,12 @@ class UserDashboardController extends BaseController
         continue;
       }
 
-      final prompt = _searchPrompts[_currentPromptIndex];
+      // Use translated prompt if available, otherwise use English
+      final prompt =
+          translatedSearchPrompts.isNotEmpty &&
+              _currentPromptIndex < translatedSearchPrompts.length
+          ? translatedSearchPrompts[_currentPromptIndex]
+          : _searchPrompts[_currentPromptIndex];
       debugPrint('Typewriter: Starting prompt: $prompt');
 
       // Type out the text

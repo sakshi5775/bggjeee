@@ -28,51 +28,54 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 24.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CommonHeader(title: 'Upload Face'),
-                Spacing.h(12),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: AutoTranslateText(
-                    'Upload Your Photo',
-                    style: MyTextTheme.veryLargeBCB
-                        .copyWith(
-                          color: '#3E2723'.toColor(),
-                          fontWeight: FontWeight.bold,
-                        )
-                        .merge(AppTypography.h1),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 24.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const CommonHeader(title: 'Upload Face'),
+                  Spacing.h(12),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: AutoTranslateText(
+                      'Upload Your Photo',
+                      style: MyTextTheme.veryLargeBCB
+                          .copyWith(
+                            color: '#3E2723'.toColor(),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h1),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: AutoTranslateText(
-                    'For accurate face reading analysis',
-                    style: MyTextTheme.mediumBCN
-                        .copyWith(color: '#3E2723'.toColor())
-                        .merge(AppTypography.body1),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: AutoTranslateText(
+                      'For accurate face reading analysis',
+                      style: MyTextTheme.mediumBCN
+                          .copyWith(color: '#3E2723'.toColor())
+                          .merge(AppTypography.body1),
+                    ),
                   ),
-                ),
-                Spacing.h(20),
-                _buildUploadCard(),
-                if (_selectedImage != null) ...[
-                  Spacing.h(16),
-                  _buildSelectedImagePreview(),
+                  Spacing.h(20),
+                  _buildUploadCard(),
+                  if (_selectedImage != null) ...[
+                    Spacing.h(16),
+                    _buildSelectedImagePreview(),
+                  ],
+                  Spacing.h(20),
+                  _buildGuidelinesCard(),
+                  Spacing.h(20),
+                  _buildGoodExamples(),
+                  Spacing.h(24),
+                  _buildPrivacyCard(),
                 ],
-                Spacing.h(20),
-                _buildGuidelinesCard(),
-                Spacing.h(20),
-                _buildGoodExamples(),
-                Spacing.h(24),
-                _buildPrivacyCard(),
-              ],
+              ),
             ),
           ),
         ),

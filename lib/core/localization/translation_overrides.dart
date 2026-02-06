@@ -1,10 +1,10 @@
 /// Translation Overrides for ML Kit
-/// 
+///
 /// ML Kit sometimes translates UI terms incorrectly (e.g., "Call" as "to shout" instead of "phone call").
 /// This file provides manual overrides for common UI terms to ensure accurate translations.
-/// 
+///
 /// Format: "English Text" -> Map<LanguageCode, CorrectTranslation>
-/// 
+///
 /// To add new overrides:
 /// 1. Add the English text as the key
 /// 2. Add translations for each supported language
@@ -16,6 +16,12 @@ class TranslationOverrides {
   /// Value: Map of language code -> correct translation
   static final Map<String, Map<String, String>> _overrides = {
     // Common UI Actions
+    'AI': {'hi': 'एआई'},
+    'Online': {'hi': 'ऑनलाइन'},
+    'Offline': {'hi': 'ऑफलाइन'},
+    'Live': {'hi': 'लाइव'}, // Transliteration as requested
+    'Ramal': {'hi': 'रमल'}, // Transliteration as requested
+    'Ramal\nShastra': {'hi': 'रमल\nशास्त्र'}, // Multiline version
     'Call': {
       'hi': 'कॉल करें', // Phone call, not "to shout"
       'bn': 'কল করুন',
@@ -291,6 +297,29 @@ class TranslationOverrides {
       'ur': 'دوبارہ کوشش کریں',
       'ml': 'വീണ്ടും ശ്രമിക്കുക',
     },
+    // App Tagline - DO NOT TRANSLATE
+    'STAR ALIGN DESTINY DIVINE': {
+      'hi': 'STAR ALIGN DESTINY DIVINE',
+      'bn': 'STAR ALIGN DESTINY DIVINE',
+      'te': 'STAR ALIGN DESTINY DIVINE',
+      'mr': 'STAR ALIGN DESTINY DIVINE',
+      'ta': 'STAR ALIGN DESTINY DIVINE',
+      'gu': 'STAR ALIGN DESTINY DIVINE',
+      'kn': 'STAR ALIGN DESTINY DIVINE',
+      'ur': 'STAR ALIGN DESTINY DIVINE',
+      'ml': 'STAR ALIGN DESTINY DIVINE',
+    },
+    'Stars Align, Destiny Divine': {
+      'hi': 'Stars Align, Destiny Divine',
+      'bn': 'Stars Align, Destiny Divine',
+      'te': 'Stars Align, Destiny Divine',
+      'mr': 'Stars Align, Destiny Divine',
+      'ta': 'Stars Align, Destiny Divine',
+      'gu': 'Stars Align, Destiny Divine',
+      'kn': 'Stars Align, Destiny Divine',
+      'ur': 'Stars Align, Destiny Divine',
+      'ml': 'Stars Align, Destiny Divine',
+    },
   };
 
   /// Get override translation for a text and language
@@ -298,7 +327,7 @@ class TranslationOverrides {
   static String? getOverride(String englishText, String targetLanguageCode) {
     final override = _overrides[englishText];
     if (override == null) return null;
-    
+
     // Return override if exists, otherwise return null (use ML Kit)
     return override[targetLanguageCode];
   }
@@ -309,7 +338,11 @@ class TranslationOverrides {
   }
 
   /// Add a new override (for runtime additions if needed)
-  static void addOverride(String englishText, String languageCode, String translation) {
+  static void addOverride(
+    String englishText,
+    String languageCode,
+    String translation,
+  ) {
     _overrides.putIfAbsent(englishText, () => {});
     _overrides[englishText]![languageCode] = translation;
   }
@@ -326,12 +359,3 @@ class TranslationOverrides {
     return result;
   }
 }
-
-
-
-
-
-
-
-
-

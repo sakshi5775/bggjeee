@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/screens/panchang/widgets/celestial_time_card_w
 import 'package:astrobharataiuser/screens/panchang/widgets/panchang_tool_button_widget.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -21,34 +22,37 @@ class PanchangView extends BasePage<PanchangController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: hideHeader
-          ? Colors.transparent
-          : "#FFF8E7".toColor(), // Cream background from Figma
-      drawer: UserDashboardView.buildDrawer(context),
-      body: Column(
-        children: [
-          if (!hideHeader) const CommonHeader(title: 'Panchang'),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Spacing.h(20),
-                  // Celestial Times Section
-                  _buildCelestialTimesSection(),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: hideHeader ? null : AppColors.gradientBackground,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        drawer: UserDashboardView.buildDrawer(context),
+        body: Column(
+          children: [
+            if (!hideHeader) const CommonHeader(title: 'Panchang'),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Spacing.h(20),
+                    // Celestial Times Section
+                    _buildCelestialTimesSection(),
 
-                  Spacing.h(15.33),
+                    Spacing.h(15.33),
 
-                  // Panchang Tools Section
-                  _buildPanchangToolsSection(),
+                    // Panchang Tools Section
+                    _buildPanchangToolsSection(),
 
-                  // Bottom spacing
-                  Spacing.h(20),
-                ],
+                    // Bottom spacing
+                    Spacing.h(20),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

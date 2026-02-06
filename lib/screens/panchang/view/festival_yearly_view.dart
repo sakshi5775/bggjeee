@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/festival_yearly_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -17,10 +18,11 @@ class FestivalYearlyView extends BasePage<FestivalYearlyController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: Obx(() {
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Obx(() {
           if (controller.isLoading.value &&
               controller.yearlyFestivalData.isEmpty) {
             return Center(
@@ -30,9 +32,34 @@ class FestivalYearlyView extends BasePage<FestivalYearlyController> {
 
           return Column(
             children: [
-              // Header with Month Navigation
-              _buildHeader(),
-              Spacing.h(16),
+              // Header
+              CommonHeader(
+                titleWidget: Obx(
+                  () => AutoTranslateText(
+                    'Festival ${controller.selectedYear.value}',
+                    style: MyTextTheme.largeBCB.copyWith(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.48,
+                      color: "#6F221E".toColor(),
+                      height: 1.34,
+                    ),
+                  ),
+                ),
+                subtitle: AutoTranslateText(
+                  'Annual Festival Calendar',
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400,
+                    color: "#6F221E".toColor().withOpacity(0.7),
+                  ),
+                ),
+              ),
+
+              // Month Navigation
+              _buildMonthNavigation(),
+              Spacing.h(10),
+
               // Year and Location Selectors
               _buildYearLocationSelectors(),
 
@@ -43,99 +70,6 @@ class FestivalYearlyView extends BasePage<FestivalYearlyController> {
             ],
           );
         }),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            "#8B1925".toColor(), // rgba(139, 25, 37, 1)
-            "#5D1C21".toColor(), // rgba(93, 28, 33, 1)
-          ],
-        ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(12.r),
-          bottomRight: Radius.circular(12.r),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 5.75,
-            offset: const Offset(0, 3.83),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            // Header content
-            Padding(
-              padding: AppPaddings.all(12),
-              child: Row(
-                children: [
-                  // Back button
-                  GestureDetector(
-                    onTap: () => Get.back(),
-                    child: Container(
-                      width: 34.49.w,
-                      height: 34.49.h,
-                      padding: EdgeInsets.all(7.67.w),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(9.58.r),
-                      ),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: "#E3B341".toColor(),
-                        size: 20.w,
-                      ),
-                    ),
-                  ),
-                  Spacing.w(12),
-                  // Title Column
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Title - gold text with dynamic year
-                        Obx(
-                          () => AutoTranslateText(
-                            'Festival ${controller.selectedYear.value}',
-                            style: MyTextTheme.largeBCB.copyWith(
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 0.48,
-                              color: "#E3B341".toColor(),
-                              height: 1.34,
-                            ),
-                          ),
-                        ),
-                        Spacing.h(4),
-                        // Subtitle - gold text
-                        AutoTranslateText(
-                          'Annual Festival Calendar',
-                          style: MyTextTheme.mediumBCN.copyWith(
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w400,
-                            color: "#E3B341".toColor(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Month Navigation
-            _buildMonthNavigation(),
-            Spacing.h(10),
-          ],
-        ),
       ),
     );
   }
@@ -482,10 +416,11 @@ class FestivalYearlyView extends BasePage<FestivalYearlyController> {
           ),
         ),
         child: LocationBottomSheetWidget(
-          onCitySelected: (city, state, country, [latitude, longitude, timezone]) {
-            controller.selectCity(city, state, country);
-            Get.back();
-          },
+          onCitySelected:
+              (city, state, country, [latitude, longitude, timezone]) {
+                controller.selectCity(city, state, country);
+                Get.back();
+              },
           selectedCity: controller.selectedLocation.value,
           onUseCurrentLocation: () => controller.getCurrentLocation(),
         ),

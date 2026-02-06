@@ -59,7 +59,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                 SliverToBoxAdapter(
                   child: CommonHeader(
                     title: 'Digital Mart',
-                    showBackButton: showBackButton,
+
                     customActions: [
                       // Wishlist Icon
                       GestureDetector(

@@ -6,7 +6,9 @@ import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_c
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -20,86 +22,64 @@ class PalmReadingFormView extends StatelessWidget {
     final maxWidth = isMobile ? double.infinity : 500.w;
 
     return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(), // Match face reading background
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth),
-              child: Padding(
-                padding: AppPaddings.all(24),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Back button
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: GestureDetector(
-                        onTap: () => Get.back(),
-                        child: Container(
-                          padding: EdgeInsets.all(8.w),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Column(
+          children: [
+            CommonHeader(title: 'Palm Reading'),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxWidth),
+                    child: Padding(
+                      padding: AppPaddings.all(24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Spacing.h(40),
+
+                          // App Logo
+                          SvgPicture.network(
+                            'https://astrobharatai.s3.ap-south-1.amazonaws.com/homepageVideos/Frame+1321314931.svg',
+                            height: 48.h,
+                            fit: BoxFit.contain,
                           ),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: '#3E2723'.toColor(),
-                            size: 20.w,
+
+                          Spacing.h(32),
+
+                          // Instruction text
+                          AutoTranslateText(
+                            'Enter your details (all fields are optional)',
+                            style: MyTextTheme.mediumBCN.copyWith(
+                              color: '#3E2723'.toColor(),
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                        ),
+
+                          Spacing.h(40),
+
+                          // Form fields
+                          _buildFormFields(controller),
+
+                          Spacing.h(40),
+
+                          // Continue button
+                          _buildContinueButton(context, controller),
+
+                          Spacing.h(16),
+
+                          // Skip button
+                          _buildSkipButton(context, controller),
+                        ],
                       ),
                     ),
-
-                    Spacing.h(40),
-
-                    // App Title
-                    AutoTranslateText(
-                      'AstroBharatAI',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: '#3E2723'.toColor(),
-                        letterSpacing: 4.w,
-                      ).merge(AppTypography.h1),
-                    ),
-
-                    Spacing.h(32),
-
-                    // Instruction text
-                    AutoTranslateText(
-                      'Enter your details (all fields are optional)',
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: '#3E2723'.toColor(),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-
-                    Spacing.h(40),
-
-                    // Form fields
-                    _buildFormFields(controller),
-
-                    Spacing.h(40),
-
-                    // Continue button
-                    _buildContinueButton(context, controller),
-
-                    Spacing.h(16),
-
-                    // Skip button
-                    _buildSkipButton(context, controller),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
