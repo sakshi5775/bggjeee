@@ -342,6 +342,8 @@ class RamalShastraView extends StatelessWidget {
           Spacing.h(10),
           AutoTranslateText(
             title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: MyTextTheme.mediumBCB.copyWith(
               color: '#3E2723'.toColor(),
               fontWeight: FontWeight.bold,
@@ -350,11 +352,8 @@ class RamalShastraView extends StatelessWidget {
           Spacing.h(4),
           AutoTranslateText(
             description,
-            style: MyTextTheme.smallBCN.copyWith(
-              color: '#666666'.toColor(),
-              height: 1.25,
-            ),
-            maxLines: 2,
+            style: MyTextTheme.smallBCN.copyWith(color: '#666666'.toColor()),
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
         ],

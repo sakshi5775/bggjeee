@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../utils/app_colors.dart';
+
 class DoshView extends BasePage<DoshController> {
   const DoshView({super.key});
 
@@ -83,11 +85,7 @@ class DoshView extends BasePage<DoshController> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [orangeLight, orange],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: AppColors.orangeGradient,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Row(
@@ -95,7 +93,7 @@ class DoshView extends BasePage<DoshController> {
                   children: [
                     Icon(
                       Icons.warning_amber_rounded,
-                      size: 14.w,
+                      size: 14.h,
                       color: Colors.white,
                     ),
                     SizedBox(width: 6.w),
@@ -104,7 +102,6 @@ class DoshView extends BasePage<DoshController> {
                       style: MyTextTheme.mediumBCB.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
-                        fontSize: 11.sp,
                       ),
                     ),
                   ],
@@ -173,7 +170,7 @@ class DoshView extends BasePage<DoshController> {
           curve: Curves.easeOut,
           padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
           decoration: BoxDecoration(
-            color: isSelected ? orange : Colors.transparent,
+            gradient: isSelected ? AppColors.orangeGradient : null,
             borderRadius: BorderRadius.circular(12.r),
             border: isSelected
                 ? null
@@ -195,7 +192,6 @@ class DoshView extends BasePage<DoshController> {
               style: MyTextTheme.mediumBCB.copyWith(
                 color: isSelected ? Colors.white : maroon,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                fontSize: 12.sp,
               ),
             ),
           ),

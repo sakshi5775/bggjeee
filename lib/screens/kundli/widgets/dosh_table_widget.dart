@@ -46,16 +46,16 @@ class DoshTableWidget extends StatelessWidget {
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(6.r),
+                    padding: EdgeInsets.all(10.r),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [_orangeLight, _orange],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      gradient: AppColors.orangeGradient,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(Icons.warning_amber_rounded, color: Colors.white, size: 18.w),
+                    child: Icon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
                   ),
                   Spacing.w(8),
                   AutoTranslateText(
@@ -87,11 +87,16 @@ class DoshTableWidget extends StatelessWidget {
                   }
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 12.h,
+                  ),
                   decoration: BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
-                        color: isLast ? Colors.transparent : _maroon.withOpacity(0.15),
+                        color: isLast
+                            ? Colors.transparent
+                            : _maroon.withOpacity(0.15),
                         width: 1,
                       ),
                     ),
@@ -101,11 +106,7 @@ class DoshTableWidget extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.all(10.w),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [_orangeLight, _orange],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
+                          gradient: AppColors.orangeGradient,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(icon, color: Colors.white, size: 22.w),

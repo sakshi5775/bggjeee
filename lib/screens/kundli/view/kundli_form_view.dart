@@ -226,7 +226,6 @@ class KundliFormView extends BasePage<KundliFormController> {
               display,
               style: MyTextTheme.mediumBCN.copyWith(
                 color: AppColors.textColorMaroon,
-                fontSize: 14.sp,
               ),
             ),
           ),
@@ -259,10 +258,7 @@ class KundliFormView extends BasePage<KundliFormController> {
         controller: controller,
         readOnly: readOnly,
         onTap: onTap,
-        style: MyTextTheme.mediumBCN.copyWith(
-          color: AppColors.textColorMaroon,
-          fontSize: 14.sp,
-        ),
+        style: MyTextTheme.mediumBCN.copyWith(color: AppColors.textColorMaroon),
         decoration: _inputDecoration(
           hint: hint,
           icon: icon,
@@ -308,7 +304,6 @@ class KundliFormView extends BasePage<KundliFormController> {
                   controller.selectedLocation.value,
                   style: MyTextTheme.mediumBCN.copyWith(
                     color: AppColors.textColorMaroon,
-                    fontSize: 14.sp,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -339,7 +334,6 @@ class KundliFormView extends BasePage<KundliFormController> {
                 g,
                 style: MyTextTheme.mediumBCN.copyWith(
                   color: AppColors.textColorMaroon,
-                  fontSize: 13.sp,
                 ),
               ),
             )

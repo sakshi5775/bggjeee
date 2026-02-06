@@ -263,9 +263,7 @@ class KeyPointsWidget extends StatelessWidget {
   }) {
     if (data.isEmpty) return const SizedBox.shrink();
 
-    final gradient = useOrangeGradient
-        ? AppColors.orangeGradient
-        : AppColors.primaryGradient;
+    final gradient = AppColors.orangeGradient;
     final headerColor = useOrangeGradient ? Colors.white : AppColors.golden;
 
     return Container(
@@ -305,14 +303,14 @@ class KeyPointsWidget extends StatelessWidget {
                     color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(8.r),
                   ),
-                  child: Icon(icon, color: headerColor, size: 20.w),
+                  child: Icon(icon, color: Colors.white, size: 20.w),
                 ),
                 Spacing.w(12),
                 Expanded(
                   child: AutoTranslateText(
                     title,
                     style: MyTextTheme.mediumBCB.copyWith(
-                      color: headerColor,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

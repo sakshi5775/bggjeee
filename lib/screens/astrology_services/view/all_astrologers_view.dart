@@ -19,11 +19,11 @@ class AllAstrologersView extends StatelessWidget {
   final bool showBackButton;
 
   const AllAstrologersView({
-    Key? key,
+    super.key,
     this.initialFilter,
     this.hideHeader = false,
     this.showBackButton = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +225,7 @@ class AllAstrologersView extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w500,
-                          fontSize: 13.sp,
+
                           color: isSelected
                               ? '#DDAF3E'.toColor()
                               : Colors.white,
@@ -345,7 +345,7 @@ class AllAstrologersView extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w600,
-                          fontSize: 13.sp,
+
                           color: '#68171E'.toColor(),
                         ),
                       ),
@@ -366,10 +366,7 @@ class AllAstrologersView extends StatelessWidget {
                       Expanded(
                         child: AutoTranslateText(
                           astrologer.displayName,
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.sp,
+                          style: AppTypography.h1.copyWith(
                             color: '#68171E'.toColor(),
                           ),
                           maxLines: 1,
@@ -397,10 +394,7 @@ class AllAstrologersView extends StatelessWidget {
                           ),
                           child: AutoTranslateText(
                             'Follow',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
-                              fontSize: 10.sp,
+                            style: AppTypography.body1.copyWith(
                               color: AppColors.orangeGradient.colors.first,
                             ),
                           ),
@@ -415,7 +409,6 @@ class AllAstrologersView extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w400,
-                      fontSize: 11.sp,
                       color: '#909090'.toColor(),
                       height: 1.3,
                     ),
@@ -438,7 +431,6 @@ class AllAstrologersView extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w400,
-                            fontSize: 11.sp,
                             color: '#909090'.toColor(),
                             height: 1.3,
                           ),
@@ -463,7 +455,6 @@ class AllAstrologersView extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w400,
-                          fontSize: 11.sp,
                           color: '#909090'.toColor(),
                           height: 1.3,
                         ),
@@ -491,7 +482,6 @@ class AllAstrologersView extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w600,
-                                fontSize: 12.sp,
                                 color: AppColors.templeGold,
                               ),
                               maxLines: 1,
@@ -505,7 +495,6 @@ class AllAstrologersView extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w400,
-                          fontSize: 11.sp,
                           color: '#3D0C11'.toColor().withOpacity(0.5),
                         ),
                         maxLines: 1,
@@ -523,7 +512,7 @@ class AllAstrologersView extends StatelessWidget {
                         child: Container(
                           height: 36.h,
                           decoration: BoxDecoration(
-                            gradient: AppColors.goldenGradient,
+                            gradient: AppColors.orangeGradient,
                             borderRadius: BorderRadius.circular(6.r),
                           ),
                           child: Material(
@@ -538,20 +527,15 @@ class AllAstrologersView extends StatelessWidget {
                                 children: [
                                   Icon(
                                     Icons.chat_bubble_outline,
-                                    color: '#68171E'.toColor(),
-                                    size: 16.w,
+                                    color: Colors.white,
+                                    size: 16.h,
                                   ),
                                   SizedBox(width: 6.w),
                                   AutoTranslateText(
                                     'Chat',
-                                    style: MyTextTheme.mediumBCB
-                                        .copyWith(color: '#68171E'.toColor())
-                                        .merge(
-                                          AppTypography.h1.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.sp,
-                                          ),
-                                        ),
+                                    style: AppTypography.h2.copyWith(
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -568,7 +552,7 @@ class AllAstrologersView extends StatelessWidget {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(6.r),
                           border: Border.all(
-                            color: AppColors.templeGold,
+                            color: AppColors.deepOrange,
                             width: 1,
                           ),
                         ),
@@ -596,7 +580,7 @@ class AllAstrologersView extends StatelessWidget {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(6.r),
                           border: Border.all(
-                            color: AppColors.templeGold,
+                            color: AppColors.deepOrange,
                             width: 1,
                           ),
                         ),

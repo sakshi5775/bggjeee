@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/consult_astrologer_card.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/planets_widget.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -59,7 +60,7 @@ class LagnaChartWidget extends StatelessWidget {
             _buildContentBelowSlider(controller, selectedAction),
             Spacing.h(12),
             const ConsultAstrologerCard(),
-            Spacing.h(12),
+            Spacing.h(30),
           ],
         ),
       );
@@ -231,13 +232,7 @@ class LagnaChartWidget extends StatelessWidget {
           children: [
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: ["#FF8A3D".toColor(), "#ed6f30".toColor()],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-              ),
+              decoration: BoxDecoration(gradient: AppColors.orangeGradient),
               child: Row(
                 children: [
                   Icon(Icons.tune_rounded, size: 18.w, color: Colors.white),
@@ -527,13 +522,7 @@ class LagnaChartWidget extends StatelessWidget {
     const labels = ['Planet', 'Sign', 'Degree', 'Nakshatra', 'House'];
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ["#FF8A3D".toColor(), "#ed6f30".toColor()],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.orangeGradient),
       child: Row(
         children: [
           Expanded(

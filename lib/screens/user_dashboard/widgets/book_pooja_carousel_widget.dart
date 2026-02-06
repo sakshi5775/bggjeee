@@ -57,7 +57,9 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
           // Spacing.h(2),
           // Carousel Section
           ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: 120.h),
+            constraints: BoxConstraints(
+              maxHeight: Get.width > 600 ? 130.h : 130.h,
+            ),
             child: Obx(() {
               if (controller.isLoadingPujas.value) {
                 return const Center(child: CircularProgressIndicator());

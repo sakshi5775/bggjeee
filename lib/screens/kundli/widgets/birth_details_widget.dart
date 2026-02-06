@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../utils/app_colors.dart';
+
 class BirthDetailsWidget extends StatelessWidget {
   final KundliResultController controller;
 
@@ -95,16 +97,12 @@ class BirthDetailsWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 10.h,
+                    ),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          "#FF8A3D".toColor(),
-                          "#ed6f30".toColor(),
-                        ],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ),
+                      gradient: AppColors.orangeGradient,
                     ),
                     child: Row(
                       children: [
@@ -126,7 +124,10 @@ class BirthDetailsWidget extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 6.h,
+                    ),
                     child: Column(
                       children: [
                         for (int i = 0; i < _details.length; i++) ...[
@@ -149,7 +150,7 @@ class BirthDetailsWidget extends StatelessWidget {
             ),
             Spacing.h(12),
             const ConsultAstrologerCard(),
-            Spacing.h(12),
+            Spacing.h(30),
           ],
         ),
       );

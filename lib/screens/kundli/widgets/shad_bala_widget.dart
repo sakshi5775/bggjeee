@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/consult_astrologer_card.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,10 +19,7 @@ class ShadBalaWidget extends StatelessWidget {
     if (key.isEmpty) return key;
     final normalized = key
         .replaceAll('_', ' ')
-        .replaceAllMapped(
-          RegExp(r'^.| .'),
-          (m) => m.group(0)!.toUpperCase(),
-        );
+        .replaceAllMapped(RegExp(r'^.| .'), (m) => m.group(0)!.toUpperCase());
     if (key == 'chesta_Bala') return 'Chesta Bala';
     if (key == 'naisargeka_balas') return 'Naisargeka Balas';
     if (key == 'drik_bala') return 'Drik Bala';
@@ -133,7 +131,7 @@ class ShadBalaWidget extends StatelessWidget {
             }),
             Spacing.h(12),
             const ConsultAstrologerCard(),
-            Spacing.h(12),
+            Spacing.h(32),
           ],
         ),
       );
@@ -158,10 +156,10 @@ class ShadBalaWidget extends StatelessWidget {
             final valueStr = value == null
                 ? '--'
                 : (value is num)
-                    ? value is int
-                        ? value.toString()
-                        : (value as double).toStringAsFixed(2)
-                    : value.toString();
+                ? value is int
+                      ? value.toString()
+                      : (value as double).toStringAsFixed(2)
+                : value.toString();
             return _buildRow(e.key, valueStr, index);
           }),
         ],
@@ -182,7 +180,10 @@ class ShadBalaWidget extends StatelessWidget {
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
+        border: Border.all(
+          color: '#ed6f30'.toColor().withOpacity(0.2),
+          width: 1,
+        ),
       ),
       clipBehavior: Clip.antiAlias,
       child: child,
@@ -195,7 +196,10 @@ class ShadBalaWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: '#ed6f30'.toColor().withOpacity(0.08),
         border: Border(
-          bottom: BorderSide(color: '#ed6f30'.toColor().withOpacity(0.25), width: 1),
+          bottom: BorderSide(
+            color: '#ed6f30'.toColor().withOpacity(0.25),
+            width: 1,
+          ),
         ),
       ),
       child: Row(
@@ -218,13 +222,7 @@ class ShadBalaWidget extends StatelessWidget {
   Widget _buildTableHeader(List<String> labels) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#FF8A3D'.toColor(), '#ed6f30'.toColor()],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.orangeGradient),
       child: Row(
         children: [
           Expanded(
@@ -263,7 +261,10 @@ class ShadBalaWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: isEven ? '#ed6f30'.toColor().withOpacity(0.04) : Colors.white,
         border: Border(
-          bottom: BorderSide(color: '#ed6f30'.toColor().withOpacity(0.12), width: 1),
+          bottom: BorderSide(
+            color: '#ed6f30'.toColor().withOpacity(0.12),
+            width: 1,
+          ),
         ),
       ),
       child: Row(

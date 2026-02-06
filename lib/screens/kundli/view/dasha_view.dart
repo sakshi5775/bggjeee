@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/screens/kundli/widgets/vimshottari_dasha_widge
 import 'package:astrobharataiuser/screens/kundli/widgets/mahadasha_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/current_mahadasha_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/yogini_dasha_widget.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -85,11 +86,7 @@ class DashaView extends BasePage<DashaController> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [orangeLight, orange],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: AppColors.orangeGradient,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Row(
@@ -102,7 +99,6 @@ class DashaView extends BasePage<DashaController> {
                       style: MyTextTheme.mediumBCB.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
-                        fontSize: 11.sp,
                       ),
                     ),
                   ],
@@ -173,7 +169,7 @@ class DashaView extends BasePage<DashaController> {
           curve: Curves.easeOut,
           padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
           decoration: BoxDecoration(
-            color: isSelected ? orange : Colors.transparent,
+            gradient: isSelected ? AppColors.orangeGradient : null,
             borderRadius: BorderRadius.circular(12.r),
             border: isSelected
                 ? null
@@ -195,7 +191,6 @@ class DashaView extends BasePage<DashaController> {
               style: MyTextTheme.mediumBCB.copyWith(
                 color: isSelected ? Colors.white : maroon,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                fontSize: 12.sp,
               ),
             ),
           ),

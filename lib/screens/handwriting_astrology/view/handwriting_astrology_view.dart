@@ -368,12 +368,12 @@ class HandwritingAstrologyView extends StatelessWidget {
           Spacing.h(10),
           AutoTranslateText(
             title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: MyTextTheme.mediumBCB.copyWith(
               color: '#3E2723'.toColor(),
               fontWeight: FontWeight.bold,
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
           Spacing.h(4),
           AutoTranslateText(

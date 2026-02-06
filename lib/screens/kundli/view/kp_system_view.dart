@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/screens/kundli/widgets/kp_cusps_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/kp_planet_signification_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/kp_house_significators_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/kp_planet_signification_level_wise_widget.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -95,11 +96,7 @@ class KpSystemView extends BasePage<KpSystemController> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [orangeLight, orange],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: AppColors.orangeGradient,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Row(
@@ -112,7 +109,6 @@ class KpSystemView extends BasePage<KpSystemController> {
                       style: MyTextTheme.mediumBCB.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
-                        fontSize: 11.sp,
                       ),
                     ),
                   ],
@@ -150,7 +146,9 @@ class KpSystemView extends BasePage<KpSystemController> {
                               vertical: 8.h,
                             ),
                             decoration: BoxDecoration(
-                              color: isSelected ? orange : Colors.transparent,
+                              gradient: isSelected
+                                  ? AppColors.orangeGradient
+                                  : null,
                               borderRadius: BorderRadius.circular(12.r),
                               border: isSelected
                                   ? null
@@ -177,7 +175,6 @@ class KpSystemView extends BasePage<KpSystemController> {
                                   fontWeight: isSelected
                                       ? FontWeight.w700
                                       : FontWeight.w500,
-                                  fontSize: 12.sp,
                                 ),
                               ),
                             ),

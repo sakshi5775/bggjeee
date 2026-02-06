@@ -97,11 +97,7 @@ class HoroscopeMainView extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [orangeLight, orange],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: AppColors.orangeGradient,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Row(
@@ -141,7 +137,6 @@ class HoroscopeMainView extends StatelessWidget {
                       style: MyTextTheme.mediumBCB.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
-                        fontSize: 11.sp,
                       ),
                     ),
                   ],
@@ -182,7 +177,9 @@ class HoroscopeMainView extends StatelessWidget {
                               vertical: 8.h,
                             ),
                             decoration: BoxDecoration(
-                              color: isSelected ? orange : Colors.transparent,
+                              gradient: isSelected
+                                  ? AppColors.orangeGradient
+                                  : null,
                               borderRadius: BorderRadius.circular(12.r),
                               border: isSelected
                                   ? null
@@ -209,7 +206,6 @@ class HoroscopeMainView extends StatelessWidget {
                                   fontWeight: isSelected
                                       ? FontWeight.w700
                                       : FontWeight.w500,
-                                  fontSize: 12.sp,
                                 ),
                               ),
                             ),

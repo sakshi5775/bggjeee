@@ -14,7 +14,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class RamalShastraResultsView extends StatelessWidget {
-  const RamalShastraResultsView({Key? key}) : super(key: key);
+  const RamalShastraResultsView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -199,12 +199,6 @@ class RamalShastraResultsView extends StatelessWidget {
                       _buildRemedies(result.interpretation!.remedies!),
                       Spacing.h(24),
                     ],
-                    // Section 11: AI Metadata (if available)
-                    if (result.aiMetadata != null) ...[
-                      _buildAIMetadata(result.aiMetadata!),
-                      Spacing.h(24),
-                    ],
-                    Spacing.h(32),
                   ],
                 ),
               ),
@@ -300,7 +294,7 @@ class RamalShastraResultsView extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        gradient: AppColors.orangeGradient,
+        gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -387,34 +381,17 @@ class RamalShastraResultsView extends StatelessWidget {
 
     if (displayOutcome == null) return SizedBox.shrink();
 
-    Color outcomeColor = '#EA632B'.toColor();
-    if (displayOutcome.toLowerCase() == 'positive' ||
-        displayOutcome.toLowerCase() == 'yes') {
-      outcomeColor = Colors.green;
-    } else if (displayOutcome.toLowerCase() == 'negative' ||
-        displayOutcome.toLowerCase() == 'no') {
-      outcomeColor = Colors.red;
-    }
-
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            outcomeColor.withOpacity(0.1),
-            outcomeColor.withOpacity(0.05),
-          ],
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: outcomeColor.withOpacity(0.3), width: 2),
         boxShadow: [
           BoxShadow(
-            color: outcomeColor.withOpacity(0.15),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -426,10 +403,10 @@ class RamalShastraResultsView extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(10.w),
                 decoration: BoxDecoration(
-                  color: outcomeColor.withOpacity(0.2),
+                  gradient: AppColors.orangeGradient,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Icon(Icons.gavel, color: outcomeColor, size: 24.w),
+                child: Icon(Icons.gavel, color: Colors.white, size: 24.w),
               ),
               Spacing.w(12),
               Expanded(
@@ -465,7 +442,7 @@ class RamalShastraResultsView extends StatelessWidget {
                         vertical: 10.h,
                       ),
                       decoration: BoxDecoration(
-                        color: outcomeColor,
+                        gradient: AppColors.orangeGradient,
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: AutoTranslateText(
@@ -496,13 +473,16 @@ class RamalShastraResultsView extends StatelessWidget {
                       vertical: 10.h,
                     ),
                     decoration: BoxDecoration(
-                      color: outcomeColor.withOpacity(0.2),
+                      color: AppColors.deepOrange.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(
+                        color: AppColors.deepOrange.withOpacity(0.3),
+                      ),
                     ),
                     child: AutoTranslateText(
                       '${((displayConfidence ?? 0) * 100).toStringAsFixed(0)}%',
                       style: MyTextTheme.largeBCB.copyWith(
-                        color: outcomeColor,
+                        color: AppColors.deepOrange,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -516,15 +496,20 @@ class RamalShastraResultsView extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.5),
+                color: '#FFF8E1'.toColor().withOpacity(0.5),
                 borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: '#F5D7B8'.toColor()),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.info_outline, color: outcomeColor, size: 18.w),
+                      Icon(
+                        Icons.info_outline,
+                        color: AppColors.deepOrange,
+                        size: 18.w,
+                      ),
                       Spacing.w(8),
                       AutoTranslateText(
                         'Explanation',
@@ -552,7 +537,7 @@ class RamalShastraResultsView extends StatelessWidget {
               (judgment.judgeStrength != null ||
                   judgment.reconcilerStrength != null)) ...[
             Spacing.h(16),
-            Divider(),
+            Divider(color: '#F5D7B8'.toColor()),
             Spacing.h(12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -570,7 +555,7 @@ class RamalShastraResultsView extends StatelessWidget {
                       AutoTranslateText(
                         '${judgment.judgeStrength}/4',
                         style: MyTextTheme.mediumBCB.copyWith(
-                          color: Colors.amber[700],
+                          color: AppColors.deepOrange,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -589,7 +574,7 @@ class RamalShastraResultsView extends StatelessWidget {
                       AutoTranslateText(
                         '${judgment.reconcilerStrength}/4',
                         style: MyTextTheme.mediumBCB.copyWith(
-                          color: Colors.grey[600],
+                          color: AppColors.deepOrange.withOpacity(0.7),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -610,7 +595,7 @@ class RamalShastraResultsView extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        gradient: AppColors.orangeGradient,
+        gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
@@ -679,18 +664,13 @@ class RamalShastraResultsView extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.white, '#FFF8E1'.toColor().withOpacity(0.3)],
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -702,14 +682,10 @@ class RamalShastraResultsView extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(10.w),
                 decoration: BoxDecoration(
-                  color: '#FFF2E8'.toColor(),
+                  gradient: AppColors.orangeGradient,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
-                child: Icon(
-                  Icons.grid_view,
-                  color: '#EA632B'.toColor(),
-                  size: 24.w,
-                ),
+                child: Icon(Icons.grid_view, color: Colors.white, size: 24.w),
               ),
               Spacing.w(12),
               Expanded(
@@ -756,7 +732,7 @@ class RamalShastraResultsView extends StatelessWidget {
                             height: 40.w,
                             decoration: BoxDecoration(
                               color: value == 1
-                                  ? "#F38B3B".toColor()
+                                  ? AppColors.deepOrange
                                   : Colors.grey[300],
                               borderRadius: BorderRadius.circular(4.r),
                             ),
@@ -787,13 +763,13 @@ class RamalShastraResultsView extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: '#F5D7B8'.toColor(), width: 1),
+              border: Border.all(color: Colors.grey.withOpacity(0.2), width: 1),
             ),
             child: Column(
               children: [
                 AutoTranslateText(
                   'Houses Layout',
-                  style: MyTextTheme.mediumBCB.copyWith(
+                  style: MyTextTheme.veryLarge20.copyWith(
                     color: '#3E2723'.toColor(),
                     fontWeight: FontWeight.bold,
                   ),
@@ -803,8 +779,9 @@ class RamalShastraResultsView extends StatelessWidget {
                   return Row(
                     children: List.generate(4, (col) {
                       final index = row * 4 + col;
-                      if (index >= houses.length)
+                      if (index >= houses.length) {
                         return Expanded(child: SizedBox.shrink());
+                      }
                       final house = houses[index];
                       final isJudge =
                           house.isJudge ?? (house.houseNumber == 15);
@@ -853,9 +830,11 @@ class RamalShastraResultsView extends StatelessWidget {
                           return Container(
                             padding: EdgeInsets.all(8.w),
                             decoration: BoxDecoration(
-                              color: Colors.grey[100],
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(8.r),
-                              border: Border.all(color: '#F5D7B8'.toColor()),
+                              border: Border.all(
+                                color: Colors.grey.withOpacity(0.2),
+                              ),
                             ),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -880,8 +859,8 @@ class RamalShastraResultsView extends StatelessWidget {
                                         style: TextStyle(
                                           fontSize: 12.sp,
                                           color: val == 1
-                                              ? "#F38B3B".toColor()
-                                              : Colors.grey[600],
+                                              ? AppColors.deepOrange
+                                              : Colors.grey[400],
                                         ),
                                       ),
                                     );
@@ -908,15 +887,15 @@ class RamalShastraResultsView extends StatelessWidget {
     bool isReconciler,
     RamalHouseDetailed? detailedHouse,
   ) {
-    Color borderColor = '#F5D7B8'.toColor();
-    Color bgColor = _getElementColor(house.element).withOpacity(0.1);
+    Color borderColor = Colors.grey.withOpacity(0.2);
+    Color bgColor = _getElementColor(house.element).withOpacity(0.05);
     if (isJudge) {
-      borderColor = Colors.amber[700]!;
-      bgColor = Colors.amber[50]!;
+      borderColor = AppColors.deepOrange;
+      bgColor = AppColors.lightBackground;
     }
     if (isReconciler) {
-      borderColor = Colors.grey[600]!;
-      bgColor = Colors.grey[100]!;
+      borderColor = Colors.grey[400]!;
+      bgColor = Colors.grey[50]!;
     }
 
     final shakal = detailedHouse?.shakal;
@@ -934,7 +913,7 @@ class RamalShastraResultsView extends StatelessWidget {
           borderRadius: BorderRadius.circular(10.r),
           border: Border.all(
             color: borderColor,
-            width: isJudge || isReconciler ? 3 : 1.5,
+            // width: isJudge || isReconciler ? 3 : 1.5,
           ),
           boxShadow: isJudge || isReconciler
               ? [
@@ -961,11 +940,11 @@ class RamalShastraResultsView extends StatelessWidget {
                 ),
                 if (isJudge) ...[
                   Spacing.w(4),
-                  Icon(Icons.star, size: 12.w, color: Colors.amber[700]),
+                  Icon(Icons.star, size: 6.w, color: AppColors.deepOrange),
                 ],
                 if (isReconciler) ...[
                   Spacing.w(4),
-                  Icon(Icons.balance, size: 12.w, color: Colors.grey[600]),
+                  Icon(Icons.balance, size: 6.w, color: Colors.grey[500]),
                 ],
               ],
             ),
@@ -1013,7 +992,8 @@ class RamalShastraResultsView extends StatelessWidget {
               width: 24.w,
               height: 24.w,
               decoration: BoxDecoration(
-                color: _getElementColor(house.element),
+                // color: _getElementColor(house.element),
+                gradient: AppColors.orangeGradient,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -1058,12 +1038,9 @@ class RamalShastraResultsView extends StatelessWidget {
             Spacing.h(4),
             AutoTranslateText(
               _getHouseNameAbbreviation(house.name ?? ''),
-              style: MyTextTheme.smallBCN.copyWith(
-                color: '#666666'.toColor(),
-                fontSize: 9.sp,
-              ),
+              style: MyTextTheme.smallBCN.copyWith(color: '#666666'.toColor()),
               textAlign: TextAlign.center,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ],
@@ -1083,9 +1060,9 @@ class RamalShastraResultsView extends StatelessWidget {
   }
 
   Color _getStrengthColor(int strength) {
-    if (strength >= 3) return Colors.green;
-    if (strength == 2) return "#F38B3B".toColor();
-    return Colors.red;
+    if (strength >= 3) return AppColors.deepOrange;
+    if (strength == 2) return AppColors.deepOrange.withOpacity(0.8);
+    return AppColors.deepOrange.withOpacity(0.6);
   }
 
   String _getElementIcon(String? element) {
@@ -1213,13 +1190,13 @@ class RamalShastraResultsView extends StatelessWidget {
                             vertical: 6.h,
                           ),
                           decoration: BoxDecoration(
-                            color: '#FFF2E8'.toColor(),
+                            gradient: AppColors.orangeGradient,
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                           child: AutoTranslateText(
                             keyword,
                             style: MyTextTheme.smallBCN.copyWith(
-                              color: '#3E2723'.toColor(),
+                              color: Colors.white,
                             ),
                           ),
                         );
@@ -1237,7 +1214,7 @@ class RamalShastraResultsView extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () => Get.back(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: '#EA632B'.toColor(),
+                      backgroundColor: AppColors.deepOrange,
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(vertical: 12.h),
                       shape: RoundedRectangleBorder(
@@ -1284,18 +1261,7 @@ class RamalShastraResultsView extends StatelessWidget {
   }
 
   Color _getElementColor(String? element) {
-    switch (element?.toLowerCase()) {
-      case 'fire':
-        return Colors.red;
-      case 'air':
-        return Colors.blue;
-      case 'water':
-        return Colors.teal;
-      case 'earth':
-        return Colors.brown;
-      default:
-        return Colors.grey;
-    }
+    return AppColors.deepOrange;
   }
 
   String _getDotPattern(int strength) {
@@ -1349,13 +1315,13 @@ class RamalShastraResultsView extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  color: '#FFF2E8'.toColor(),
+                  gradient: AppColors.orangeGradient,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Text(
                   'H${house.houseNumber}',
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: '#EA632B'.toColor(),
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -1458,7 +1424,7 @@ class RamalShastraResultsView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.access_time, color: '#EA632B'.toColor(), size: 24.w),
+              Icon(Icons.access_time, color: AppColors.deepOrange, size: 24.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Timing Prediction',
@@ -1637,7 +1603,7 @@ class RamalShastraResultsView extends StatelessWidget {
                     width: 6.w,
                     height: 6.w,
                     decoration: BoxDecoration(
-                      color: '#EA632B'.toColor(),
+                      gradient: AppColors.orangeGradient,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -1690,9 +1656,9 @@ class RamalShastraResultsView extends StatelessWidget {
             Spacing.h(16),
             TabBar(
               isScrollable: true,
-              labelColor: '#EA632B'.toColor(),
+              labelColor: AppColors.deepOrange,
               unselectedLabelColor: Colors.grey,
-              indicatorColor: '#EA632B'.toColor(),
+              indicatorColor: AppColors.deepOrange,
               tabs: [
                 Tab(text: 'Mantras'),
                 Tab(text: 'Charity'),
@@ -1743,7 +1709,7 @@ class RamalShastraResultsView extends StatelessWidget {
                 width: 6.w,
                 height: 6.w,
                 decoration: BoxDecoration(
-                  color: '#EA632B'.toColor(),
+                  gradient: AppColors.orangeGradient,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -1764,8 +1730,9 @@ class RamalShastraResultsView extends StatelessWidget {
   }
 
   Widget _buildElementDistribution(Map<String, int>? elementDistribution) {
-    if (elementDistribution == null || elementDistribution.isEmpty)
+    if (elementDistribution == null || elementDistribution.isEmpty) {
       return SizedBox.shrink();
+    }
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
@@ -1786,7 +1753,7 @@ class RamalShastraResultsView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.pie_chart, color: '#EA632B'.toColor(), size: 24.w),
+              Icon(Icons.pie_chart, color: AppColors.deepOrange, size: 24.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Element Distribution',
@@ -1823,7 +1790,8 @@ class RamalShastraResultsView extends StatelessWidget {
                         width: 40.w,
                         height: 40.w,
                         decoration: BoxDecoration(
-                          color: _getElementColor(element),
+                          // color: _getElementColor(element),
+                          gradient: AppColors.orangeGradient,
                           shape: BoxShape.circle,
                         ),
                         child: Center(
@@ -1849,8 +1817,9 @@ class RamalShastraResultsView extends StatelessWidget {
                       vertical: 8.h,
                     ),
                     decoration: BoxDecoration(
-                      color: _getElementColor(element),
-                      borderRadius: BorderRadius.circular(20.r),
+                      // color: _getElementColor(element),
+                      gradient: AppColors.orangeGradient,
+                      shape: BoxShape.circle,
                     ),
                     child: AutoTranslateText(
                       '$count',
@@ -2049,7 +2018,7 @@ class RamalShastraResultsView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.summarize, color: '#EA632B'.toColor(), size: 24.w),
+              Icon(Icons.summarize, color: AppColors.deepOrange, size: 24.w),
               Spacing.w(8),
               AutoTranslateText(
                 'Summary',
@@ -2068,77 +2037,6 @@ class RamalShastraResultsView extends StatelessWidget {
             style: MyTextTheme.mediumBCN.copyWith(
               color: '#3E2723'.toColor(),
               height: 1.6,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAIMetadata(RamalAIMetadata metadata) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.grey[300]!, width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.smart_toy, color: Colors.grey[700], size: 20.w),
-              Spacing.w(8),
-              AutoTranslateText(
-                'AI Analysis Details',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: Colors.grey[700],
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          Spacing.h(12),
-          if (metadata.model != null)
-            _buildMetadataRow('Model', metadata.model!),
-          if (metadata.responseTime != null)
-            _buildMetadataRow(
-              'Response Time',
-              '${(metadata.responseTime! / 1000).toStringAsFixed(2)}s',
-            ),
-          if (metadata.tokens != null) ...[
-            _buildMetadataRow(
-              'Prompt Tokens',
-              '${metadata.tokens!.prompt ?? 0}',
-            ),
-            _buildMetadataRow(
-              'Completion Tokens',
-              '${metadata.tokens!.completion ?? 0}',
-            ),
-            _buildMetadataRow('Total Tokens', '${metadata.tokens!.total ?? 0}'),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMetadataRow(String label, String value) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          AutoTranslateText(
-            label,
-            style: MyTextTheme.smallBCN.copyWith(color: Colors.grey[600]),
-          ),
-          AutoTranslateText(
-            value,
-            style: MyTextTheme.smallBCB.copyWith(
-              color: Colors.grey[800],
-              fontWeight: FontWeight.bold,
             ),
           ),
         ],

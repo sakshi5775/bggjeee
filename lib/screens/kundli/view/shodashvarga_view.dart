@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/shodashvarga_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/consult_astrologer_card.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/division_chart_widget.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -103,11 +104,7 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [orangeLight, orange],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: AppColors.orangeGradient,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Row(
@@ -120,7 +117,6 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
                       style: MyTextTheme.mediumBCB.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
-                        fontSize: 11.sp,
                       ),
                     ),
                   ],
@@ -152,7 +148,9 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
                               vertical: 8.h,
                             ),
                             decoration: BoxDecoration(
-                              color: isSelected ? orange : Colors.transparent,
+                              gradient: isSelected
+                                  ? AppColors.orangeGradient
+                                  : null,
                               borderRadius: BorderRadius.circular(12.r),
                               border: isSelected
                                   ? null
@@ -169,7 +167,6 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
                                   fontWeight: isSelected
                                       ? FontWeight.w700
                                       : FontWeight.w500,
-                                  fontSize: 11.sp,
                                 ),
                               ),
                             ),

@@ -90,11 +90,7 @@ class KundliResultView extends BasePage<KundliResultController> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [orangeLight, orange],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: AppColors.orangeGradient,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Row(
@@ -434,17 +430,17 @@ class KundliResultView extends BasePage<KundliResultController> {
             Expanded(
               child: AutoTranslateText(
                 title,
-                style: MyTextTheme.smallBCN.copyWith(
+                style: MyTextTheme.mediumBCB.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w500,
-                  fontSize: 13.sp,
+                  // fontSize: 13.sp,
                 ),
               ),
             ),
             Icon(
               Icons.arrow_forward_ios,
               color: AppColors.deepOrange,
-              size: 12.w,
+              size: 12.h,
             ),
           ],
         ),

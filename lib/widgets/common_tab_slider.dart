@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 /// Standard Common Tab Slider for the application.
 /// Based on the slider implementation in KundliResultView.
@@ -88,7 +89,7 @@ class _CommonTabSliderState extends State<CommonTabSlider> {
     return Container(
       height: 56.h,
       color: Colors.transparent,
-      padding: EdgeInsets.symmetric(vertical: 2.h),
+      // padding: EdgeInsets.symmetric(vertical: 2.h),
       child: SingleChildScrollView(
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
@@ -116,10 +117,11 @@ class _CommonTabSliderState extends State<CommonTabSlider> {
                     curve: Curves.easeOut,
                     padding: EdgeInsets.symmetric(
                       horizontal: 16.w,
-                      vertical: 10.h,
+                      vertical: Get.width > 600 ? 10.h : 5.h,
                     ),
                     decoration: BoxDecoration(
-                      color: isSelected ? orange : Colors.transparent,
+                      // color: isSelected ? orange : Colors.transparent,
+                      gradient: isSelected ? AppColors.orangeGradient : null,
                       borderRadius: BorderRadius.circular(12.r),
                       border: isSelected
                           ? null

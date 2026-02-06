@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../utils/app_colors.dart';
+
 /// Consult an Astrologer card — same style as palm reading / carrot astrology.
 /// Place below chart or results.
 class ConsultAstrologerCard extends StatelessWidget {
@@ -19,20 +21,8 @@ class ConsultAstrologerCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ["#FF8A3D".toColor(), "#ed6f30".toColor()],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: "#ed6f30".toColor().withOpacity(0.35),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-            spreadRadius: 0,
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,11 +59,13 @@ class ConsultAstrologerCard extends StatelessWidget {
                   children: [
                     AutoTranslateText(
                       'Want More Insights?',
-                      style: MyTextTheme.largeBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.sp,
-                      ).merge(AppTypography.h2),
+                      style: MyTextTheme.largeBCB
+                          .copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.sp,
+                          )
+                          .merge(AppTypography.h2),
                     ),
                     Spacing.h(4),
                     AutoTranslateText(

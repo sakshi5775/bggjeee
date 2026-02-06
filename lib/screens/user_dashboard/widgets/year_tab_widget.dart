@@ -52,24 +52,88 @@ class _YearTabWidgetState extends State<YearTabWidget> {
   }
 
   static List<Map<String, dynamic>> _gridItems(int year) => [
-    {'title': 'Horoscope $year', 'icon': Icons.calendar_today, 'route': AppRoutes.horoscope},
-    {'title': 'Numerology $year', 'icon': Icons.numbers, 'route': AppRoutes.numerologyForm},
-    {'title': 'Love Horoscope $year', 'icon': Icons.favorite, 'route': AppRoutes.horoscope},
-    {'title': 'Education Horoscope $year', 'icon': Icons.school, 'route': AppRoutes.horoscope},
-    {'title': 'Finance Horoscope $year', 'icon': Icons.account_balance_wallet, 'route': AppRoutes.horoscope},
-    {'title': 'Vivah Muhurat $year', 'icon': Icons.favorite_border, 'route': AppRoutes.muhurat},
-    {'title': 'Griha Muhurat $year', 'icon': Icons.home, 'route': AppRoutes.muhurat},
-    {'title': 'Lal Kitab $year', 'icon': Icons.menu_book, 'route': AppRoutes.lalKitab},
-    {'title': 'Mundan Muhurat $year', 'icon': Icons.child_care, 'route': AppRoutes.muhurat},
-    {'title': 'Namkaran Muhurat $year', 'icon': Icons.badge, 'route': AppRoutes.muhurat},
-    {'title': 'Annaprashan Muhurat $year', 'icon': Icons.restaurant, 'route': AppRoutes.muhurat},
-    {'title': 'Karnavedha Muhurat $year', 'icon': Icons.hearing, 'route': AppRoutes.muhurat},
-    {'title': 'Vidyarambh Muhurat $year', 'icon': Icons.menu_book_rounded, 'route': AppRoutes.muhurat},
+    {
+      'title': 'Horoscope $year',
+      'icon': Icons.calendar_today,
+      'route': AppRoutes.horoscope,
+    },
+    {
+      'title': 'Numerology $year',
+      'icon': Icons.numbers,
+      'route': AppRoutes.numerologyForm,
+    },
+    {
+      'title': 'Love Horoscope $year',
+      'icon': Icons.favorite,
+      'route': AppRoutes.horoscope,
+    },
+    {
+      'title': 'Education Horoscope $year',
+      'icon': Icons.school,
+      'route': AppRoutes.horoscope,
+    },
+    {
+      'title': 'Finance Horoscope $year',
+      'icon': Icons.account_balance_wallet,
+      'route': AppRoutes.horoscope,
+    },
+    {
+      'title': 'Vivah Muhurat $year',
+      'icon': Icons.favorite_border,
+      'route': AppRoutes.muhurat,
+    },
+    {
+      'title': 'Griha Muhurat $year',
+      'icon': Icons.home,
+      'route': AppRoutes.muhurat,
+    },
+    {
+      'title': 'Lal Kitab $year',
+      'icon': Icons.menu_book,
+      'route': AppRoutes.lalKitab,
+    },
+    {
+      'title': 'Mundan Muhurat $year',
+      'icon': Icons.child_care,
+      'route': AppRoutes.muhurat,
+    },
+    {
+      'title': 'Namkaran Muhurat $year',
+      'icon': Icons.badge,
+      'route': AppRoutes.muhurat,
+    },
+    {
+      'title': 'Annaprashan Muhurat $year',
+      'icon': Icons.restaurant,
+      'route': AppRoutes.muhurat,
+    },
+    {
+      'title': 'Karnavedha Muhurat $year',
+      'icon': Icons.hearing,
+      'route': AppRoutes.muhurat,
+    },
+    {
+      'title': 'Vidyarambh Muhurat $year',
+      'icon': Icons.menu_book_rounded,
+      'route': AppRoutes.muhurat,
+    },
     {'title': 'Ketu Transit $year', 'icon': Icons.visibility, 'route': null},
-    {'title': 'Rahu Transit $year', 'icon': Icons.visibility_outlined, 'route': null},
+    {
+      'title': 'Rahu Transit $year',
+      'icon': Icons.visibility_outlined,
+      'route': null,
+    },
     {'title': 'Lunar Eclipse $year', 'icon': Icons.dark_mode, 'route': null},
-    {'title': 'Solar Eclipse $year', 'icon': Icons.wb_sunny_outlined, 'route': null},
-    {'title': 'Mercury Retrograde $year', 'icon': Icons.rotate_right, 'route': null},
+    {
+      'title': 'Solar Eclipse $year',
+      'icon': Icons.wb_sunny_outlined,
+      'route': null,
+    },
+    {
+      'title': 'Mercury Retrograde $year',
+      'icon': Icons.rotate_right,
+      'route': null,
+    },
   ];
 
   @override
@@ -172,10 +236,10 @@ class _YearTabWidgetState extends State<YearTabWidget> {
               width: 40.w,
               height: 40.h,
               decoration: BoxDecoration(
-                color: '#FCE5AA'.toColor().withOpacity(0.5),
+                gradient: AppColors.orangeGradient,
                 borderRadius: BorderRadius.circular(10.r),
               ),
-              child: Icon(icon, size: 22.w, color: AppColors.deepOrange),
+              child: Icon(icon, size: 22.h, color: Colors.white),
             ),
             SizedBox(height: 6.h),
             AutoTranslateText(

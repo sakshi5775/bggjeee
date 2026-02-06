@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -82,16 +83,7 @@ class AshtakvargaWidget extends StatelessWidget {
             children: [
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      "#FF8A3D".toColor(),
-                      "#ed6f30".toColor(),
-                    ],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                ),
+                decoration: BoxDecoration(gradient: AppColors.orangeGradient),
                 child: Row(
                   children: [
                     Icon(
@@ -178,7 +170,11 @@ class AshtakvargaWidget extends StatelessWidget {
             ),
             children: [
               _buildHouseCell('H${houseIndex + 1}'),
-              for (int planetIndex = 0; planetIndex < planetCount; planetIndex++)
+              for (
+                int planetIndex = 0;
+                planetIndex < planetCount;
+                planetIndex++
+              )
                 _buildDataCell(
                   _getPointForHouse(planetIndex, houseIndex, points),
                 ),

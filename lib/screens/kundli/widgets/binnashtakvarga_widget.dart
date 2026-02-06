@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kundli_result_controller.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,7 +14,13 @@ class BinnashtakvargaWidget extends StatelessWidget {
   const BinnashtakvargaWidget({super.key, required this.controller});
 
   static const List<String> planets = [
-    'Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn',
+    'Sun',
+    'Moon',
+    'Mars',
+    'Mercury',
+    'Jupiter',
+    'Venus',
+    'Saturn',
   ];
 
   @override
@@ -50,10 +57,12 @@ class BinnashtakvargaWidget extends StatelessWidget {
                   children: [
                     _buildPlanetGrid(),
                     if (controller.isLoadingBinnashtakvarga.value &&
-                        controller.selectedPlanetForBinnashtakvarga.value != null) ...[
+                        controller.selectedPlanetForBinnashtakvarga.value !=
+                            null) ...[
                       Spacing.h(12),
                       _buildLoading(),
-                    ] else if (controller.binnashtakvargaData.value != null) ...[
+                    ] else if (controller.binnashtakvargaData.value !=
+                        null) ...[
                       Spacing.h(12),
                       _buildDataTable(controller.binnashtakvargaData.value!),
                     ],
@@ -70,13 +79,7 @@ class BinnashtakvargaWidget extends StatelessWidget {
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ["#FF8A3D".toColor(), "#ed6f30".toColor()],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.orangeGradient),
       child: Row(
         children: [
           Icon(Icons.grid_on_rounded, size: 18.w, color: Colors.white),
@@ -108,7 +111,11 @@ class BinnashtakvargaWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.info_outline_rounded, size: 16.w, color: "#ed6f30".toColor()),
+          Icon(
+            Icons.info_outline_rounded,
+            size: 16.w,
+            color: "#ed6f30".toColor(),
+          ),
           Spacing.w(8),
           Expanded(
             child: AutoTranslateText(
@@ -163,11 +170,17 @@ class BinnashtakvargaWidget extends StatelessWidget {
                       : () => controller.fetchBinnashtakvargaData(planet),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 6.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 6.w,
+                      vertical: 6.h,
+                    ),
                     decoration: BoxDecoration(
                       gradient: isSelected
                           ? LinearGradient(
-                              colors: ["#FF8A3D".toColor(), "#ed6f30".toColor()],
+                              colors: [
+                                "#FF8A3D".toColor(),
+                                "#ed6f30".toColor(),
+                              ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             )
@@ -256,7 +269,13 @@ class BinnashtakvargaWidget extends StatelessWidget {
 
   Widget _buildDataTable(Map<String, dynamic> data) {
     final planetKeys = [
-      'sun', 'moon', 'mars', 'mercury', 'jupiter', 'venus', 'saturn',
+      'sun',
+      'moon',
+      'mars',
+      'mercury',
+      'jupiter',
+      'venus',
+      'saturn',
     ];
     final ascendant = data['ascendant'] as List<dynamic>?;
     final total = data['Total'] as List<dynamic>?;
@@ -321,10 +340,9 @@ class BinnashtakvargaWidget extends StatelessWidget {
           ),
           children: [
             _cell('H', header: true),
-            ...planetKeys.map((p) => _cell(
-                  p.length >= 2 ? p.substring(0, 2) : p,
-                  header: true,
-                )),
+            ...planetKeys.map(
+              (p) => _cell(p.length >= 2 ? p.substring(0, 2) : p, header: true),
+            ),
             _cell('Asc', header: true),
             _cell('Tot', header: true),
           ],
@@ -353,8 +371,12 @@ class BinnashtakvargaWidget extends StatelessWidget {
     );
   }
 
-  String _point(String key, int i, Map<String, dynamic> data,
-      {List<dynamic>? ascendant}) {
+  String _point(
+    String key,
+    int i,
+    Map<String, dynamic> data, {
+    List<dynamic>? ascendant,
+  }) {
     if (key == 'ascendant') {
       if (ascendant != null && i < ascendant.length) {
         return ascendant[i]?.toString() ?? '--';

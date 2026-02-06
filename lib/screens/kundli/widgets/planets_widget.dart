@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -158,8 +159,8 @@ class PlanetsWidget extends StatelessWidget {
     final columnWidths = <int, TableColumnWidth>{
       for (int i = 0; i < n; i++) i: FixedColumnWidth(52.w),
     };
-    columnWidths[0] = FixedColumnWidth(64.w);  // Planet
-    columnWidths[3] = FixedColumnWidth(58.w);  // Nakshatra
+    columnWidths[0] = FixedColumnWidth(64.w); // Planet
+    columnWidths[3] = FixedColumnWidth(58.w); // Nakshatra
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -222,7 +223,10 @@ class PlanetsWidget extends StatelessWidget {
       _tableCell(p['zodiac_lord']?.toString() ?? '–', cellStyle),
       _tableCell(_formatDegree(p['local_degree']), cellStyle),
       _tableCell(_formatDegree(p['global_degree']), cellStyle),
-      _tableCell('${_formatPercentage(p['progress_in_percentage'])}%', cellStyle),
+      _tableCell(
+        '${_formatPercentage(p['progress_in_percentage'])}%',
+        cellStyle,
+      ),
       _tableCell(p['is_planet_set']?.toString() ?? '–', cellStyle),
       _tableCell(av, cellStyle),
       _tableCell(ls, cellStyle),
@@ -230,7 +234,11 @@ class PlanetsWidget extends StatelessWidget {
     ];
   }
 
-  Widget _tableCell(String text, TextStyle style, {TextAlign align = TextAlign.center}) {
+  Widget _tableCell(
+    String text,
+    TextStyle style, {
+    TextAlign align = TextAlign.center,
+  }) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.h),
       child: AutoTranslateText(
@@ -275,14 +283,11 @@ class PlanetsWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: pad, vertical: compact ? 6.h : 8.h),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: ["#FF8A3D".toColor(), "#ed6f30".toColor()],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
+            padding: EdgeInsets.symmetric(
+              horizontal: pad,
+              vertical: compact ? 6.h : 8.h,
             ),
+            decoration: BoxDecoration(gradient: AppColors.orangeGradient),
             child: Row(
               children: [
                 Icon(icon, size: compact ? 14.w : 16.w, color: Colors.white),
@@ -306,11 +311,16 @@ class PlanetsWidget extends StatelessWidget {
 
   Widget _buildLuckyThingsSection(Map<String, dynamic> data) {
     final items = <Widget>[];
-    if (data['lucky_gem'] != null) items.add(_buildLuckyItem('Lucky Gem', data['lucky_gem']));
-    if (data['lucky_num'] != null) items.add(_buildLuckyItem('Lucky Number', data['lucky_num']));
-    if (data['lucky_colors'] != null) items.add(_buildLuckyItem('Lucky Colors', data['lucky_colors']));
-    if (data['lucky_letters'] != null) items.add(_buildLuckyItem('Lucky Letters', data['lucky_letters']));
-    if (data['lucky_name_start'] != null) items.add(_buildLuckyItem('Lucky Name Start', data['lucky_name_start']));
+    if (data['lucky_gem'] != null)
+      items.add(_buildLuckyItem('Lucky Gem', data['lucky_gem']));
+    if (data['lucky_num'] != null)
+      items.add(_buildLuckyItem('Lucky Number', data['lucky_num']));
+    if (data['lucky_colors'] != null)
+      items.add(_buildLuckyItem('Lucky Colors', data['lucky_colors']));
+    if (data['lucky_letters'] != null)
+      items.add(_buildLuckyItem('Lucky Letters', data['lucky_letters']));
+    if (data['lucky_name_start'] != null)
+      items.add(_buildLuckyItem('Lucky Name Start', data['lucky_name_start']));
     if (items.isEmpty) return const SizedBox.shrink();
 
     return _sectionCard(
@@ -358,9 +368,14 @@ class PlanetsWidget extends StatelessWidget {
 
   Widget _buildBirthDetailsSection(Map<String, dynamic> data) {
     final items = <Widget>[];
-    if (data['rasi'] != null) items.add(_buildDetailRow('Rasi', data['rasi'].toString()));
-    if (data['nakshatra'] != null) items.add(_buildDetailRow('Nakshatra', data['nakshatra'].toString()));
-    if (data['nakshatra_pada'] != null) items.add(_buildDetailRow('Nakshatra Pada', data['nakshatra_pada'].toString()));
+    if (data['rasi'] != null)
+      items.add(_buildDetailRow('Rasi', data['rasi'].toString()));
+    if (data['nakshatra'] != null)
+      items.add(_buildDetailRow('Nakshatra', data['nakshatra'].toString()));
+    if (data['nakshatra_pada'] != null)
+      items.add(
+        _buildDetailRow('Nakshatra Pada', data['nakshatra_pada'].toString()),
+      );
     if (items.isEmpty) return const SizedBox.shrink();
 
     return _sectionCard(
@@ -377,16 +392,24 @@ class PlanetsWidget extends StatelessWidget {
   Widget _buildPanchangSection(Map<String, dynamic> panchang) {
     final rows = <Widget>[];
     void add(String k, String v) => rows.add(_buildDetailRow(k, v));
-    if (panchang['day_of_birth'] != null) add('Day of Birth', panchang['day_of_birth'].toString());
-    if (panchang['day_lord'] != null) add('Day Lord', panchang['day_lord'].toString());
-    if (panchang['hora_lord'] != null) add('Hora Lord', panchang['hora_lord'].toString());
-    if (panchang['sunrise_at_birth'] != null) add('Sunrise at Birth', panchang['sunrise_at_birth'].toString());
-    if (panchang['sunset_at_birth'] != null) add('Sunset at Birth', panchang['sunset_at_birth'].toString());
-    if (panchang['karana'] != null) add('Karana', panchang['karana'].toString());
+    if (panchang['day_of_birth'] != null)
+      add('Day of Birth', panchang['day_of_birth'].toString());
+    if (panchang['day_lord'] != null)
+      add('Day Lord', panchang['day_lord'].toString());
+    if (panchang['hora_lord'] != null)
+      add('Hora Lord', panchang['hora_lord'].toString());
+    if (panchang['sunrise_at_birth'] != null)
+      add('Sunrise at Birth', panchang['sunrise_at_birth'].toString());
+    if (panchang['sunset_at_birth'] != null)
+      add('Sunset at Birth', panchang['sunset_at_birth'].toString());
+    if (panchang['karana'] != null)
+      add('Karana', panchang['karana'].toString());
     if (panchang['yoga'] != null) add('Yoga', panchang['yoga'].toString());
     if (panchang['tithi'] != null) add('Tithi', panchang['tithi'].toString());
-    if (panchang['ayanamsa'] != null) add('Ayanamsa', panchang['ayanamsa'].toString());
-    if (panchang['ayanamsa_name'] != null) add('Ayanamsa Name', panchang['ayanamsa_name'].toString());
+    if (panchang['ayanamsa'] != null)
+      add('Ayanamsa', panchang['ayanamsa'].toString());
+    if (panchang['ayanamsa_name'] != null)
+      add('Ayanamsa Name', panchang['ayanamsa_name'].toString());
     if (rows.isEmpty) return const SizedBox.shrink();
 
     return _sectionCard(
@@ -403,17 +426,23 @@ class PlanetsWidget extends StatelessWidget {
   Widget _buildGhatkaChakraSection(Map<String, dynamic> ghatkaChakra) {
     final rows = <Widget>[];
     void add(String k, String v) => rows.add(_buildDetailRow(k, v));
-    if (ghatkaChakra['rasi'] != null) add('Rasi', ghatkaChakra['rasi'].toString());
+    if (ghatkaChakra['rasi'] != null)
+      add('Rasi', ghatkaChakra['rasi'].toString());
     if (ghatkaChakra['tithi'] != null) {
       final t = ghatkaChakra['tithi'];
       add('Tithi', t is List ? t.join(', ') : t.toString());
     }
     if (ghatkaChakra['day'] != null) add('Day', ghatkaChakra['day'].toString());
-    if (ghatkaChakra['nakshatra'] != null) add('Nakshatra', ghatkaChakra['nakshatra'].toString());
-    if (ghatkaChakra['tatva'] != null) add('Tatva', ghatkaChakra['tatva'].toString());
-    if (ghatkaChakra['lord'] != null) add('Lord', ghatkaChakra['lord'].toString());
-    if (ghatkaChakra['same_sex_lagna'] != null) add('Same Sex Lagna', ghatkaChakra['same_sex_lagna'].toString());
-    if (ghatkaChakra['opposite_sex_lagna'] != null) add('Opposite Sex Lagna', ghatkaChakra['opposite_sex_lagna'].toString());
+    if (ghatkaChakra['nakshatra'] != null)
+      add('Nakshatra', ghatkaChakra['nakshatra'].toString());
+    if (ghatkaChakra['tatva'] != null)
+      add('Tatva', ghatkaChakra['tatva'].toString());
+    if (ghatkaChakra['lord'] != null)
+      add('Lord', ghatkaChakra['lord'].toString());
+    if (ghatkaChakra['same_sex_lagna'] != null)
+      add('Same Sex Lagna', ghatkaChakra['same_sex_lagna'].toString());
+    if (ghatkaChakra['opposite_sex_lagna'] != null)
+      add('Opposite Sex Lagna', ghatkaChakra['opposite_sex_lagna'].toString());
     if (rows.isEmpty) return const SizedBox.shrink();
 
     return _sectionCard(
@@ -428,7 +457,17 @@ class PlanetsWidget extends StatelessWidget {
   }
 
   Widget _buildAspectsSection(Map<String, dynamic> aspectsData) {
-    final aspectTypes = ['conjunction', 'opposition', 'trine', 'square', 'sextile', 'quincunx', 'semi-square', 'quintile', 'semi-sextile'];
+    final aspectTypes = [
+      'conjunction',
+      'opposition',
+      'trine',
+      'square',
+      'sextile',
+      'quincunx',
+      'semi-square',
+      'quintile',
+      'semi-sextile',
+    ];
     final rows = <Widget>[];
     for (final type in aspectTypes) {
       final list = aspectsData[type] as List<dynamic>?;
@@ -439,8 +478,12 @@ class PlanetsWidget extends StatelessWidget {
         final planetTwo = m['planet_two']?.toString() ?? '';
         final orb = m['orb'];
         final aspect = m['aspect']?.toString() ?? type;
-        final orbStr = orb != null ? (orb is num ? orb.toStringAsFixed(2) : orb.toString()) : '-';
-        rows.add(_buildDetailRow('$planetOne ↔ $planetTwo', '$aspect (orb: $orbStr°)'));
+        final orbStr = orb != null
+            ? (orb is num ? orb.toStringAsFixed(2) : orb.toString())
+            : '-';
+        rows.add(
+          _buildDetailRow('$planetOne ↔ $planetTwo', '$aspect (orb: $orbStr°)'),
+        );
       }
     }
     if (rows.isEmpty) return const SizedBox.shrink();
@@ -448,16 +491,32 @@ class PlanetsWidget extends StatelessWidget {
       title: 'Aspects',
       icon: Icons.linear_scale,
       compact: true,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: rows),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: rows,
+      ),
     );
   }
 
   Widget _buildDasaSection(Map<String, dynamic> data) {
     final rows = <Widget>[];
-    if (data['birth_dasa'] != null) rows.add(_buildDetailRow('Birth Dasa', data['birth_dasa'].toString()));
-    if (data['current_dasa'] != null) rows.add(_buildDetailRow('Current Dasa', data['current_dasa'].toString()));
-    if (data['birth_dasa_time'] != null) rows.add(_buildDetailRow('Birth Dasa Time', data['birth_dasa_time'].toString()));
-    if (data['current_dasa_time'] != null) rows.add(_buildDetailRow('Current Dasa Time', data['current_dasa_time'].toString()));
+    if (data['birth_dasa'] != null)
+      rows.add(_buildDetailRow('Birth Dasa', data['birth_dasa'].toString()));
+    if (data['current_dasa'] != null)
+      rows.add(
+        _buildDetailRow('Current Dasa', data['current_dasa'].toString()),
+      );
+    if (data['birth_dasa_time'] != null)
+      rows.add(
+        _buildDetailRow('Birth Dasa Time', data['birth_dasa_time'].toString()),
+      );
+    if (data['current_dasa_time'] != null)
+      rows.add(
+        _buildDetailRow(
+          'Current Dasa Time',
+          data['current_dasa_time'].toString(),
+        ),
+      );
     if (rows.isEmpty) return const SizedBox.shrink();
 
     return _sectionCard(

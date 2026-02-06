@@ -30,9 +30,7 @@ class DivisionChartWidget extends StatelessWidget {
             Spacing.h(16),
             AutoTranslateText(
               'Loading $divisionName chart...',
-              style: AppTypography.body1.copyWith(
-                color: "#6F221E".toColor(),
-              ),
+              style: AppTypography.body1.copyWith(color: "#6F221E".toColor()),
             ),
           ],
         ),
@@ -80,10 +78,9 @@ class DivisionChartWidget extends StatelessWidget {
           ),
           Spacing.h(16),
           const ConsultAstrologerCard(),
-          Spacing.h(16),
+          Spacing.h(32),
         ],
       ),
     );
   }
 }
-

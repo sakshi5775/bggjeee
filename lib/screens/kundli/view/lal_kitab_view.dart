@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/lal_kitab_controller.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/lal_kitab_table_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/lal_kitab_kundli_widget.dart';
@@ -91,11 +92,7 @@ class LalKitabView extends BasePage<LalKitabController> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [orangeLight, orange],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: AppColors.orangeGradient,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Row(
@@ -112,7 +109,6 @@ class LalKitabView extends BasePage<LalKitabController> {
                       style: MyTextTheme.mediumBCB.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
-                        fontSize: 11.sp,
                       ),
                     ),
                   ],
@@ -150,7 +146,9 @@ class LalKitabView extends BasePage<LalKitabController> {
                               vertical: 8.h,
                             ),
                             decoration: BoxDecoration(
-                              color: isSelected ? orange : Colors.transparent,
+                              gradient: isSelected
+                                  ? AppColors.orangeGradient
+                                  : null,
                               borderRadius: BorderRadius.circular(12.r),
                               border: isSelected
                                   ? null
@@ -177,7 +175,6 @@ class LalKitabView extends BasePage<LalKitabController> {
                                   fontWeight: isSelected
                                       ? FontWeight.w700
                                       : FontWeight.w500,
-                                  fontSize: 12.sp,
                                 ),
                               ),
                             ),

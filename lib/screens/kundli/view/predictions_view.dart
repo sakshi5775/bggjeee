@@ -118,7 +118,6 @@ class PredictionsView extends BasePage<PredictionsController> {
                       style: MyTextTheme.mediumBCB.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,
-                        fontSize: 11.sp,
                       ),
                     ),
                   ],
@@ -156,9 +155,9 @@ class PredictionsView extends BasePage<PredictionsController> {
                               vertical: 8.h,
                             ),
                             decoration: BoxDecoration(
-                              color: isSelected
-                                  ? AppColors.deepOrange
-                                  : Colors.transparent,
+                              gradient: isSelected
+                                  ? AppColors.orangeGradient
+                                  : null,
                               borderRadius: BorderRadius.circular(12.r),
                               border: isSelected
                                   ? null
@@ -187,7 +186,6 @@ class PredictionsView extends BasePage<PredictionsController> {
                                   fontWeight: isSelected
                                       ? FontWeight.w700
                                       : FontWeight.w500,
-                                  fontSize: 12.sp,
                                 ),
                               ),
                             ),

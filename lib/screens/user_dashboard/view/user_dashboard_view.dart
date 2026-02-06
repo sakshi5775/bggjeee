@@ -3039,7 +3039,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             Spacing.h(4),
             // Horizontal Scrollable List
             SizedBox(
-              height: Get.width > 600 ? 250.h : 210.h,
+              height: Get.width > 600 ? 250.h : 220.h,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: controller.vedicAstrologers.length >= 5

@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../../utils/app_colors.dart';
+
 class DivisionalChartWidget extends StatelessWidget {
   final KundliResultController controller;
 
@@ -78,7 +80,7 @@ class DivisionalChartWidget extends StatelessWidget {
             ),
             Spacing.h(12),
             const ConsultAstrologerCard(),
-            Spacing.h(12),
+            Spacing.h(32),
           ],
         ),
       );
@@ -88,23 +90,10 @@ class DivisionalChartWidget extends StatelessWidget {
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            "#FF8A3D".toColor(),
-            "#ed6f30".toColor(),
-          ],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.orangeGradient),
       child: Row(
         children: [
-          Icon(
-            Icons.table_chart_rounded,
-            size: 18.w,
-            color: Colors.white,
-          ),
+          Icon(Icons.table_chart_rounded, size: 18.w, color: Colors.white),
           Spacing.w(8),
           AutoTranslateText(
             'Divisional Chart',
@@ -148,21 +137,12 @@ class DivisionalChartWidget extends StatelessWidget {
                 curve: Curves.easeInOut,
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  gradient: isSelected
-                      ? LinearGradient(
-                          colors: [
-                            "#FF8A3D".toColor(),
-                            "#ed6f30".toColor(),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        )
-                      : null,
+                  gradient: isSelected ? AppColors.orangeGradient : null,
                   color: isSelected ? null : Colors.white,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
                     color: isSelected
-                        ? "#ed6f30".toColor()
+                        ? Colors.transparent
                         : "#ed6f30".toColor().withOpacity(0.35),
                     width: isSelected ? 1.5 : 1,
                   ),
@@ -171,9 +151,7 @@ class DivisionalChartWidget extends StatelessWidget {
                 child: AutoTranslateText(
                   code,
                   style: MyTextTheme.smallBCB.copyWith(
-                    color: isSelected
-                        ? Colors.white
-                        : "#6F221E".toColor(),
+                    color: isSelected ? Colors.white : "#6F221E".toColor(),
                     fontWeight: FontWeight.w600,
                     fontSize: 11.sp,
                   ),
@@ -358,8 +336,8 @@ class DivisionalChartWidget extends StatelessWidget {
     required List<dynamic> Function(String k) getPlanets,
   }) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final col1 = (screenWidth * 0.22).clamp(56.0, 90.0);
-    final col2 = (screenWidth * 0.68).clamp(180.0, 320.0);
+    // final col1 = (screenWidth * 0.22).clamp(56.0, 90.0);
+    // final col2 = (screenWidth * 0.68).clamp(180.0, 320.0);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -380,6 +358,7 @@ class DivisionalChartWidget extends StatelessWidget {
         ),
         Spacing.h(6),
         Container(
+          width: double.infinity,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(8.r),
@@ -400,8 +379,8 @@ class DivisionalChartWidget extends StatelessWidget {
                     width: 1,
                   ),
                   columnWidths: {
-                    0: FixedColumnWidth(col1),
-                    1: FixedColumnWidth(col2),
+                    0: FixedColumnWidth(Get.width * 0.2),
+                    1: FixedColumnWidth(Get.width * 0.7),
                   },
                   children: [
                     TableRow(
@@ -498,8 +477,8 @@ class DivisionalChartWidget extends StatelessWidget {
           final sub = fullName.isNotEmpty && zodiac.isNotEmpty
               ? '$fullName, $zodiac'
               : fullName.isNotEmpty
-                  ? fullName
-                  : zodiac;
+              ? fullName
+              : zodiac;
 
           return Container(
             constraints: BoxConstraints(maxWidth: 110.w),

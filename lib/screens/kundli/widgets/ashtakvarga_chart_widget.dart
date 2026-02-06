@@ -157,7 +157,7 @@ class AshtakvargaChartWidget extends StatelessWidget {
             ),
             Spacing.h(12),
             const ConsultAstrologerCard(),
-            Spacing.h(12),
+            Spacing.h(30),
           ],
         ),
       );

@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/varshphal_controller.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,7 +38,10 @@ class VarshphalContentWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
+        border: Border.all(
+          color: '#ed6f30'.toColor().withOpacity(0.2),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -49,7 +53,11 @@ class VarshphalContentWidget extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: _buildTabButton('Varshphal Details', 0, Icons.info_outline_rounded),
+            child: _buildTabButton(
+              'Varshphal Details',
+              0,
+              Icons.info_outline_rounded,
+            ),
           ),
           Container(
             width: 1,
@@ -57,7 +65,11 @@ class VarshphalContentWidget extends StatelessWidget {
             color: '#ed6f30'.toColor().withOpacity(0.2),
           ),
           Expanded(
-            child: _buildTabButton('Yearly Chart', 1, Icons.table_chart_rounded),
+            child: _buildTabButton(
+              'Yearly Chart',
+              1,
+              Icons.table_chart_rounded,
+            ),
           ),
         ],
       ),
@@ -79,13 +91,7 @@ class VarshphalContentWidget extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
           decoration: BoxDecoration(
-            gradient: isSelected
-                ? LinearGradient(
-                    colors: ['#FF8A3D'.toColor(), '#ed6f30'.toColor()],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  )
-                : null,
+            gradient: isSelected ? AppColors.orangeGradient : null,
             borderRadius: BorderRadius.circular(12.r),
           ),
           child: Row(
@@ -93,7 +99,9 @@ class VarshphalContentWidget extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: isSelected ? Colors.white : '#6F221E'.toColor().withOpacity(0.6),
+                color: isSelected
+                    ? Colors.white
+                    : '#6F221E'.toColor().withOpacity(0.6),
                 size: 18.w,
               ),
               Spacing.w(8),
@@ -103,7 +111,9 @@ class VarshphalContentWidget extends StatelessWidget {
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                   style: MyTextTheme.smallBCB.copyWith(
-                    color: isSelected ? Colors.white : '#6F221E'.toColor().withOpacity(0.7),
+                    color: isSelected
+                        ? Colors.white
+                        : '#6F221E'.toColor().withOpacity(0.7),
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                     fontSize: 12.sp,
                   ),
@@ -129,7 +139,10 @@ class VarshphalContentWidget extends StatelessWidget {
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
+        border: Border.all(
+          color: '#ed6f30'.toColor().withOpacity(0.2),
+          width: 1,
+        ),
       ),
       clipBehavior: Clip.antiAlias,
       child: child,
@@ -142,7 +155,10 @@ class VarshphalContentWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: '#ed6f30'.toColor().withOpacity(0.08),
         border: Border(
-          bottom: BorderSide(color: '#ed6f30'.toColor().withOpacity(0.25), width: 1),
+          bottom: BorderSide(
+            color: '#ed6f30'.toColor().withOpacity(0.25),
+            width: 1,
+          ),
         ),
       ),
       child: Row(
@@ -175,7 +191,9 @@ class VarshphalContentWidget extends StatelessWidget {
         return Center(
           child: AutoTranslateText(
             'No Varshphal Details data available',
-            style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+            style: MyTextTheme.mediumBCN.copyWith(
+              color: '#6F221E'.toColor().withOpacity(0.6),
+            ),
           ),
         );
       }
@@ -185,14 +203,21 @@ class VarshphalContentWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.info_outline_rounded, size: 48.w, color: '#ed6f30'.toColor().withOpacity(0.5)),
+              Icon(
+                Icons.info_outline_rounded,
+                size: 48.w,
+                color: '#ed6f30'.toColor().withOpacity(0.5),
+              ),
               Spacing.h(12),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: AutoTranslateText(
                   data['error'].toString(),
                   textAlign: TextAlign.center,
-                  style: MyTextTheme.mediumBCB.copyWith(color: '#6F221E'.toColor(), fontWeight: FontWeight.w600),
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: '#6F221E'.toColor(),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
@@ -211,9 +236,19 @@ class VarshphalContentWidget extends StatelessWidget {
               _buildTableHeader(const ['Field', 'Value']),
               _buildDetailRow('Muntha Sign', data['muntha_sign'], 0),
               _buildDetailRow('Muntha Lord', data['muntha_lord'], 1),
-              _buildDetailRow('Varshphal Date', data['varshphal_date'] != null ? _formatDate(data['varshphal_date'].toString()) : null, 2),
+              _buildDetailRow(
+                'Varshphal Date',
+                data['varshphal_date'] != null
+                    ? _formatDate(data['varshphal_date'].toString())
+                    : null,
+                2,
+              ),
               _buildDetailRow('Varsha Lagna', data['varsha_lagna'], 3),
-              _buildDetailRow('Varsha Lagna Lord', data['varsha_lagna_lord'], 4),
+              _buildDetailRow(
+                'Varsha Lagna Lord',
+                data['varsha_lagna_lord'],
+                4,
+              ),
               _buildDetailRow('Dinratri Lord', data['dinratri_lord'], 5),
               _buildDetailRow('Trirashi Lord', data['trirashi_lord'], 6),
               _buildDetailRow('Current Ayanamsa', data['current_ayanamsa'], 7),
@@ -273,7 +308,10 @@ class VarshphalContentWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: isEven ? '#ed6f30'.toColor().withOpacity(0.04) : Colors.white,
         border: Border(
-          bottom: BorderSide(color: '#ed6f30'.toColor().withOpacity(0.12), width: 1),
+          bottom: BorderSide(
+            color: '#ed6f30'.toColor().withOpacity(0.12),
+            width: 1,
+          ),
         ),
       ),
       child: Row(
@@ -298,7 +336,9 @@ class VarshphalContentWidget extends StatelessWidget {
         return Center(
           child: AutoTranslateText(
             'No Varshphal Yearly Chart data available',
-            style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+            style: MyTextTheme.mediumBCN.copyWith(
+              color: '#6F221E'.toColor().withOpacity(0.6),
+            ),
           ),
         );
       }
@@ -308,14 +348,21 @@ class VarshphalContentWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.info_outline_rounded, size: 48.w, color: '#ed6f30'.toColor().withOpacity(0.5)),
+              Icon(
+                Icons.info_outline_rounded,
+                size: 48.w,
+                color: '#ed6f30'.toColor().withOpacity(0.5),
+              ),
               Spacing.h(12),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: AutoTranslateText(
                   data['error'].toString(),
                   textAlign: TextAlign.center,
-                  style: MyTextTheme.mediumBCB.copyWith(color: '#6F221E'.toColor(), fontWeight: FontWeight.w600),
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: '#6F221E'.toColor(),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
@@ -336,10 +383,17 @@ class VarshphalContentWidget extends StatelessWidget {
             if (varshphalDate != null && varshphalDate.isNotEmpty) ...[
               _planetCard(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 10.h,
+                  ),
                   child: Row(
                     children: [
-                      Icon(Icons.calendar_today_rounded, size: 20.w, color: '#ed6f30'.toColor()),
+                      Icon(
+                        Icons.calendar_today_rounded,
+                        size: 20.w,
+                        color: '#ed6f30'.toColor(),
+                      ),
                       Spacing.w(10),
                       Expanded(
                         child: Column(
@@ -355,7 +409,10 @@ class VarshphalContentWidget extends StatelessWidget {
                             Spacing.h(2),
                             AutoTranslateText(
                               _formatDate(varshphalDate),
-                              style: MyTextTheme.mediumBCB.copyWith(color: '#6F221E'.toColor(), fontWeight: FontWeight.w600),
+                              style: MyTextTheme.mediumBCB.copyWith(
+                                color: '#6F221E'.toColor(),
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),
@@ -372,7 +429,10 @@ class VarshphalContentWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildTitleRow('House-wise positions', Icons.home_work_rounded),
+                    _buildTitleRow(
+                      'House-wise positions',
+                      Icons.home_work_rounded,
+                    ),
                     _buildChartTableHeader(const ['House', 'Planets']),
                     ...List.generate(12, (i) {
                       final key = (i + 1).toString();
@@ -391,7 +451,10 @@ class VarshphalContentWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildTitleRow('Zodiac-wise positions', Icons.public_rounded),
+                    _buildTitleRow(
+                      'Zodiac-wise positions',
+                      Icons.public_rounded,
+                    ),
                     _buildChartTableHeader(const ['Zodiac No', 'Planets']),
                     ...List.generate(12, (i) {
                       final key = (i + 1).toString();
@@ -452,14 +515,17 @@ class VarshphalContentWidget extends StatelessWidget {
 
   String _formatPlanetList(List<dynamic> list) {
     if (list.isEmpty) return '--';
-    return list.map((e) {
-      final m = e as Map<String, dynamic>;
-      final name = m['name']?.toString() ?? m['full_name']?.toString() ?? '--';
-      final zodiac = m['zodiac']?.toString() ?? '';
-      final retro = m['retro'] as bool? ?? false;
-      final part = zodiac.isNotEmpty ? '$name ($zodiac)' : name;
-      return retro ? '$part R' : part;
-    }).join(', ');
+    return list
+        .map((e) {
+          final m = e as Map<String, dynamic>;
+          final name =
+              m['name']?.toString() ?? m['full_name']?.toString() ?? '--';
+          final zodiac = m['zodiac']?.toString() ?? '';
+          final retro = m['retro'] as bool? ?? false;
+          final part = zodiac.isNotEmpty ? '$name ($zodiac)' : name;
+          return retro ? '$part R' : part;
+        })
+        .join(', ');
   }
 
   Widget _buildChartRow(String key, String planetsStr, int index) {
@@ -469,7 +535,10 @@ class VarshphalContentWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: isEven ? '#ed6f30'.toColor().withOpacity(0.04) : Colors.white,
         border: Border(
-          bottom: BorderSide(color: '#ed6f30'.toColor().withOpacity(0.12), width: 1),
+          bottom: BorderSide(
+            color: '#ed6f30'.toColor().withOpacity(0.12),
+            width: 1,
+          ),
         ),
       ),
       child: Row(
