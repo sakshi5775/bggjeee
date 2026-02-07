@@ -50,7 +50,7 @@ class ProductSpecificationsWidget extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w400,
-                        fontSize: 18.sp,
+                        fontSize: 18,
                         color: '#3D0C11'.toColor(),
                         height: 1.56,
                       ),
@@ -96,7 +96,7 @@ class ProductSpecificationsWidget extends StatelessWidget {
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontWeight: FontWeight.w400,
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                     color: '#3D0C11'.toColor(),
                                     height: 1.5,
                                   ),
@@ -109,7 +109,7 @@ class ProductSpecificationsWidget extends StatelessWidget {
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                     color: '#3D0C11'.toColor(),
                                     height: 1.5,
                                   ),

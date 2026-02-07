@@ -23,7 +23,7 @@ class MasteryBundlesSection extends StatelessWidget {
               'Specialized Mastery Bundles',
               style: AppTypography.h2.copyWith(
                 color: const Color(0xFF3E1212),
-                fontSize: 22.sp,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -137,7 +137,7 @@ class MasteryBundlesSection extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 280.w,
+        width: Get.width > 600 ? 230.w : 280.w,
         decoration: BoxDecoration(
           color: const Color(0xFFFFF8E7), // Beige background
           borderRadius: BorderRadius.circular(16.r),
@@ -151,7 +151,7 @@ class MasteryBundlesSection extends StatelessWidget {
               borderRadius: BorderRadius.vertical(top: Radius.circular(15.r)),
               child: Image.network(
                 image,
-                height: 150.h,
+                height: Get.width > 600 ? 220.h : 150.h,
                 width: double.infinity,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
@@ -188,7 +188,7 @@ class MasteryBundlesSection extends StatelessWidget {
                           style: AppTypography.h3.copyWith(
                             fontWeight: FontWeight.bold,
                             color: const Color(0xFF5D2E17),
-                            fontSize: 14.sp,
+                            fontSize: 14,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -205,7 +205,7 @@ class MasteryBundlesSection extends StatelessWidget {
                         style: AppTypography.h2.copyWith(
                           fontWeight: FontWeight.bold,
                           color: const Color(0xFF3E1212),
-                          fontSize: 18.sp,
+                          fontSize: 18,
                         ),
                       ),
                       if (onTap != null) ...[
@@ -228,7 +228,7 @@ class MasteryBundlesSection extends StatelessWidget {
                                 style: AppTypography.label.copyWith(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 10.sp,
+                                  fontSize: 10,
                                 ),
                               ),
                             ),
@@ -273,7 +273,7 @@ class MasteryBundlesSection extends StatelessWidget {
               style: AppTypography.label.copyWith(
                 fontWeight: FontWeight.bold,
                 color: const Color(0xFF5D2E17),
-                fontSize: 10.sp,
+                fontSize: 10,
               ),
             ),
           ],
@@ -283,7 +283,7 @@ class MasteryBundlesSection extends StatelessWidget {
           text,
           style: AppTypography.body2.copyWith(
             color: const Color(0xFF5D2E17),
-            fontSize: 12.sp,
+            fontSize: 12,
           ),
           maxLines: 2,
         ),

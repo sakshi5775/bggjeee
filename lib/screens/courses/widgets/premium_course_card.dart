@@ -67,7 +67,7 @@ class PremiumCourseCard extends StatelessWidget {
                     course.title,
                     style: AppTypography.h3.copyWith(
                       color: const Color(0xFF3E1212),
-                      fontSize: 16.sp,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                     maxLines: 2,
@@ -78,7 +78,7 @@ class PremiumCourseCard extends StatelessWidget {
                     course.description,
                     style: AppTypography.body2.copyWith(
                       color: const Color(0xFF5D4037),
-                      fontSize: 12.sp,
+                      fontSize: 12,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -98,7 +98,7 @@ class PremiumCourseCard extends StatelessWidget {
                           course.instructor,
                           style: AppTypography.label.copyWith(
                             color: const Color(0xFF5D4037),
-                            fontSize: 12.sp,
+                            fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
                           maxLines: 1,
@@ -115,7 +115,7 @@ class PremiumCourseCard extends StatelessWidget {
                         '${course.lectureIds.length} Lec',
                         style: AppTypography.label.copyWith(
                           color: const Color(0xFF5D4037),
-                          fontSize: 12.sp,
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -139,7 +139,7 @@ class PremiumCourseCard extends StatelessWidget {
                             'PRICE',
                             style: AppTypography.label.copyWith(
                               color: Colors.grey[600],
-                              fontSize: 10.sp,
+                              fontSize: 10,
                               letterSpacing: 1.0,
                             ),
                           ),
@@ -147,7 +147,7 @@ class PremiumCourseCard extends StatelessWidget {
                             '₹${course.price.toStringAsFixed(0)}',
                             style: AppTypography.h3.copyWith(
                               color: const Color(0xFF3E1212),
-                              fontSize: 18.sp,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -167,7 +167,7 @@ class PremiumCourseCard extends StatelessWidget {
                           style: AppTypography.body2.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
-                            fontSize: 10.sp,
+                            fontSize: 10,
                           ),
                         ),
                       ),

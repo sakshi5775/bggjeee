@@ -97,12 +97,12 @@ class ProductDetailView extends StatelessWidget {
                         padding: AppPaddings.symmetric(h: 16),
                         child: ProductSpecificationsWidget(),
                       ),
-                      SizedBox(height: 24.h),
-                      // Customer Reviews
-                      Padding(
-                        padding: AppPaddings.symmetric(h: 16),
-                        child: ProductReviewsWidget(),
-                      ),
+                      // SizedBox(height: 24.h),
+                      // // Customer Reviews
+                      // Padding(
+                      //   padding: AppPaddings.symmetric(h: 16),
+                      //   child: ProductReviewsWidget(),
+                      // ),
                       SizedBox(height: 24.h),
                       // You May Also Like Section
                       Padding(
@@ -169,7 +169,7 @@ class ProductDetailView extends StatelessWidget {
                           style: IconButton.styleFrom(
                             backgroundColor: '#E3B341'.toColor(),
                           ),
-                          icon: Icon(Icons.remove, size: 20.w),
+                          icon: Icon(Icons.remove, size: 20.h),
                           onPressed: canDecrease
                               ? controller.decrementQuantity
                               : null,
@@ -178,8 +178,8 @@ class ProductDetailView extends StatelessWidget {
                               : Colors.white.withValues(alpha: 0.4),
                           padding: EdgeInsets.all(8.w),
                           constraints: BoxConstraints(
-                            minWidth: 32.w,
-                            minHeight: 32.w,
+                            minWidth: 32,
+                            minHeight: 32,
                           ),
                         ),
                         Container(
@@ -190,7 +190,7 @@ class ProductDetailView extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w400,
-                              fontSize: 16.sp,
+                              fontSize: 16,
                               color: Colors.white,
                             ),
                           ),
@@ -199,7 +199,7 @@ class ProductDetailView extends StatelessWidget {
                           style: IconButton.styleFrom(
                             backgroundColor: '#E3B341'.toColor(),
                           ),
-                          icon: Icon(Icons.add, size: 20.w),
+                          icon: Icon(Icons.add, size: 20),
                           onPressed: canIncrease
                               ? controller.incrementQuantity
                               : null,
@@ -208,8 +208,8 @@ class ProductDetailView extends StatelessWidget {
                               : Colors.white.withValues(alpha: 0.4),
                           padding: EdgeInsets.all(8.w),
                           constraints: BoxConstraints(
-                            minWidth: 32.w,
-                            minHeight: 32.w,
+                            minWidth: 32,
+                            minHeight: 32,
                           ),
                         ),
                       ],
@@ -257,14 +257,14 @@ class ProductDetailView extends StatelessWidget {
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.shopping_cart_outlined, size: 18.w),
+                            Icon(Icons.shopping_cart_outlined, size: 18.h),
                             SizedBox(width: 8.w),
                             AutoTranslateText(
                               outOfStock ? 'Out of Stock' : 'Add',
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w500,
-                                fontSize: 14.sp,
+                                fontSize: 14,
                                 color: Colors.white,
                               ),
                             ),
@@ -313,7 +313,7 @@ class ProductDetailView extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w500,
-                            fontSize: 14.sp,
+                            fontSize: 14,
                             color: '#3D0C11'.toColor(),
                           ),
                         ),
@@ -376,7 +376,7 @@ class ProductDetailView extends StatelessWidget {
               style: TextStyle(
                 fontFamily: 'Baloo Bhai 2',
                 fontWeight: FontWeight.w600,
-                fontSize: 20.sp,
+                fontSize: 20,
                 color: '#820B17'.toColor(),
                 height: 1.4,
               ),
@@ -511,7 +511,7 @@ class ProductDetailView extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Baloo Bhai 2',
                       fontWeight: FontWeight.w600,
-                      fontSize: 16.sp,
+                      fontSize: 16,
                       color: '#820B17'.toColor(),
                       height: 1.5,
                     ),
@@ -526,7 +526,7 @@ class ProductDetailView extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w400,
-                          fontSize: 14.sp,
+                          fontSize: 14,
                           color: '#3D0C11'.toColor(),
                         ),
                       ),
@@ -539,7 +539,7 @@ class ProductDetailView extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w400,
-                        fontSize: 16.sp,
+                        fontSize: 16,
                         color: '#820B17'.toColor(),
                       ),
                     ),

@@ -353,7 +353,7 @@ class CoursesView extends BasePage<CoursesController> {
                   'Explore Our Premium Courses',
                   style: AppTypography.h2.copyWith(
                     color: const Color(0xFFD68D3C), // Orange/Gold
-                    fontSize: 22.sp,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

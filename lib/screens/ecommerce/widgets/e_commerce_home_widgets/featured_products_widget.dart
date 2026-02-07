@@ -151,9 +151,8 @@ class FeaturedProductsWidget extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Baloo 2',
                       fontWeight: FontWeight.w700,
-                      fontSize: 16.23.sp,
+                      fontSize: 16.23,
                       color: '#3D0C11'.toColor(),
-                      height: 1.2,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

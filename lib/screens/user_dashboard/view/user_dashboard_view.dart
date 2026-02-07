@@ -46,7 +46,7 @@ import '../widgets/kids_specialist_astrologers_widget.dart';
 import '../widgets/celebrity_astrologer_widget.dart';
 
 import '../widgets/what_else_widget.dart';
-import '../widgets/year_tab_widget.dart';
+// import '../widgets/year_tab_widget.dart';
 import '../widgets/banner_carousel_widget.dart';
 import '../widgets/our_services_carousel_widget.dart';
 import '../widgets/floating_astrologer_button.dart';
@@ -105,30 +105,30 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           final i = controller.selectedSliderIndex.value;
                           final tabs = controller.sliderTabs;
                           final noGap =
+                              (i == 1 &&
+                                  tabs.length > 1 &&
+                                  tabs[1] == 'Astrologers') ||
                               (i == 2 &&
                                   tabs.length > 2 &&
-                                  tabs[2] == 'Astrologers') ||
+                                  tabs[2] == 'AI Astrologers') ||
                               (i == 3 &&
                                   tabs.length > 3 &&
-                                  tabs[3] == 'AI Astrologers') ||
+                                  tabs[3] == 'Digital Mart') ||
                               (i == 4 &&
                                   tabs.length > 4 &&
-                                  tabs[4] == 'Digital Mart') ||
+                                  tabs[4] == 'Digital Mandir') ||
                               (i == 5 &&
                                   tabs.length > 5 &&
-                                  tabs[5] == 'Digital Mandir') ||
+                                  tabs[5] == 'Digital Learning') ||
                               (i == 6 &&
                                   tabs.length > 6 &&
-                                  tabs[6] == 'Digital Learning') ||
+                                  tabs[6] == 'Video') ||
                               (i == 7 &&
                                   tabs.length > 7 &&
-                                  tabs[7] == 'Video') ||
+                                  tabs[7] == 'Panchang') ||
                               (i == 8 &&
                                   tabs.length > 8 &&
-                                  tabs[8] == 'Panchang') ||
-                              (i == 9 &&
-                                  tabs.length > 9 &&
-                                  tabs[9] == 'Horoscope');
+                                  tabs[8] == 'Horoscope');
                           return Spacing.h(noGap ? 0 : 8);
                         }),
                         _buildSliderBodyWithSwipe(context),
@@ -294,17 +294,17 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           ],
         );
       }
-      if (i == 1) {
-        return const YearTabWidget();
-      }
-      if (i == 2 && controller.sliderTabs[i] == 'Astrologers') {
+      // if (i == 1) {
+      //   return const YearTabWidget();
+      // }
+      if (i == 1 && controller.sliderTabs[i] == 'Astrologers') {
         final h = MediaQuery.sizeOf(context).height;
         return SizedBox(
           height: (h - 240).clamp(400.0, h * 0.85),
           child: const AllAstrologersView(hideHeader: true),
         );
       }
-      if (i == 3 && controller.sliderTabs[i] == 'AI Astrologers') {
+      if (i == 2 && controller.sliderTabs[i] == 'AI Astrologers') {
         // AI Chat (aichat) embedded below slider like other tabs, without header
         if (!Get.isRegistered<AiChatController>()) {
           Get.put(AiChatController(), permanent: false);
@@ -315,7 +315,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: const AiChatView(hideHeader: true, showBackButton: false),
         );
       }
-      if (i == 4 && controller.sliderTabs[i] == 'Digital Mart') {
+      if (i == 3 && controller.sliderTabs[i] == 'Digital Mart') {
         if (!Get.isRegistered<EcommerceHomeController>()) {
           Get.put(EcommerceHomeController(), permanent: false);
         }
@@ -325,7 +325,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: const EcommerceHomeView(hideHeader: true),
         );
       }
-      if (i == 5 && controller.sliderTabs[i] == 'Digital Mandir') {
+      if (i == 4 && controller.sliderTabs[i] == 'Digital Mandir') {
         if (!Get.isRegistered<NamasteHomeController>()) {
           Get.put(NamasteHomeController(), permanent: false);
         }
@@ -338,7 +338,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           ),
         );
       }
-      if (i == 6 && controller.sliderTabs[i] == 'Digital Learning') {
+      if (i == 5 && controller.sliderTabs[i] == 'Digital Learning') {
         if (!Get.isRegistered<CoursesController>()) {
           Get.put(CoursesController(), permanent: false);
         }
@@ -348,7 +348,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: const CoursesView(hideHeader: true),
         );
       }
-      if (i == 7 && controller.sliderTabs[i] == 'Video') {
+      if (i == 6 && controller.sliderTabs[i] == 'Video') {
         if (!Get.isRegistered<AllVideosController>()) {
           Get.put(AllVideosController(), permanent: false);
         }
@@ -358,7 +358,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: const AllVideosView(hideHeader: true),
         );
       }
-      if (i == 8 && controller.sliderTabs[i] == 'Panchang') {
+      if (i == 7 && controller.sliderTabs[i] == 'Panchang') {
         if (!Get.isRegistered<PanchangController>()) {
           Get.put(PanchangController(), permanent: false);
         }
@@ -368,7 +368,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: const PanchangView(hideHeader: true),
         );
       }
-      if (i == 9 && controller.sliderTabs[i] == 'Horoscope') {
+      if (i == 8 && controller.sliderTabs[i] == 'Horoscope') {
         final h = MediaQuery.sizeOf(context).height;
         return SizedBox(
           height: (h - 240).clamp(400.0, h * 0.85),
@@ -2424,26 +2424,6 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                 ),
                           )
                         : _blogThumbnailPlaceholder(cardWidth.w, thumbHeight.h),
-                  ),
-                  Container(
-                    width: 38.w,
-                    height: 38.w,
-                    decoration: BoxDecoration(
-                      color: AppColors.deepOrange.withValues(alpha: 0.92),
-                      borderRadius: BorderRadius.circular(10.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.25),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      Icons.play_arrow_rounded,
-                      color: Colors.white,
-                      size: 26.w,
-                    ),
                   ),
                 ],
               ),
@@ -4711,6 +4691,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         ? Get.find<UserDashboardController>()
         : null;
     return Drawer(
+      width: Get.width > 600 ? Get.width * 0.70 : null,
       backgroundColor: const Color(
         0xFFFEF5DF,
       ), // Light beige/yellowish background
@@ -4729,7 +4710,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                         children: [
                           Container(
                             width: 40.w,
-                            height: 40.h,
+                            height: 40.w,
                             decoration: BoxDecoration(
                               color: "#6F221E".toColor(), // Dark maroon
                               shape: BoxShape.circle,
@@ -5273,6 +5254,30 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   ),
                 ],
               ),
+              Spacing.h(24),
+              Divider(
+                color: const Color(0xFF5F2221).withOpacity(0.2),
+                thickness: 1,
+              ),
+              Spacing.h(12),
+              // JOIN US Section
+              _buildDrawerSection(
+                context: context,
+                title: 'JOIN US',
+                children: [
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.work_outline,
+                    label: 'Become Astrologer',
+                    isSelected: true,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.astrologerRegistrationIntro);
+                    },
+                  ),
+                ],
+              ),
+              Spacing.h(24),
             ],
           ),
         ),

@@ -46,7 +46,7 @@ class CartItemsListWidget extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Baloo 2',
                     fontWeight: FontWeight.w600,
-                    fontSize: 16.sp,
+                    fontSize: 16,
                     color: Colors.white,
                     height: 1.5,
                   ),
@@ -184,7 +184,7 @@ class _CartItemCard extends StatelessWidget {
                                   color: AppColors.textSecondary.withOpacity(
                                     0.5,
                                   ),
-                                  size: 40.sp,
+                                  size: 40.h,
                                 ),
                               ),
                       ),
@@ -219,7 +219,7 @@ class _CartItemCard extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w700,
-                              fontSize: 10.sp,
+                              fontSize: 10,
                               color: Colors.white,
                               letterSpacing: 0.5,
                             ),
@@ -240,7 +240,7 @@ class _CartItemCard extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w600,
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           color: '#68171E'.toColor(),
                           height: 1.4,
                         ),
@@ -258,7 +258,7 @@ class _CartItemCard extends StatelessWidget {
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w700,
-                              fontSize: 18.sp,
+                              fontSize: 18,
                               color: '#68171E'.toColor(),
                               height: 1,
                             ),
@@ -270,7 +270,7 @@ class _CartItemCard extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w400,
-                                fontSize: 12.sp,
+                                fontSize: 12,
                                 color: AppColors.textSecondary,
                                 decoration: TextDecoration.lineThrough,
                                 height: 1.2,
@@ -282,7 +282,6 @@ class _CartItemCard extends StatelessWidget {
                       SizedBox(height: 16.h),
                       // Quantity Selector
                       Container(
-                        height: 40.h,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
@@ -325,7 +324,7 @@ class _CartItemCard extends StatelessWidget {
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
                                         fontWeight: FontWeight.w700,
-                                        fontSize: 16.sp,
+                                        fontSize: 16,
                                         color: '#68171E'.toColor(),
                                       ),
                                     ),
@@ -368,7 +367,7 @@ class _CartItemCard extends StatelessWidget {
                   child: Icon(
                     Icons.delete_outline_rounded,
                     color: AppColors.sacredRed,
-                    size: 20.sp,
+                    size: 20.h,
                   ),
                 ),
               ),
@@ -401,8 +400,8 @@ class _QuantityButton extends StatelessWidget {
         onTap: enabled && onTap != null ? onTap : null,
         borderRadius: BorderRadius.circular(20.r),
         child: Container(
-          width: 36.w,
-          height: 36.w,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
             color: enabled
                 ? (isRemove
@@ -421,7 +420,7 @@ class _QuantityButton extends StatelessWidget {
           ),
           child: Icon(
             icon,
-            size: 20.sp,
+            size: 20.h,
             color: enabled
                 ? (isRemove ? AppColors.sacredRed : AppColors.saffron)
                 : AppColors.textSecondary.withOpacity(0.3),

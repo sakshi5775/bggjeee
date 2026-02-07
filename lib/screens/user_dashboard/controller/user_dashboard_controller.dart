@@ -264,7 +264,7 @@ class UserDashboardController extends BaseController
   // Slider Tabs
   List<String> get sliderTabs => [
     'Home',
-    DateTime.now().year.toString(),
+    // DateTime.now().year.toString(),
     'Astrologers',
     'AI Astrologers',
     'Digital Mart',

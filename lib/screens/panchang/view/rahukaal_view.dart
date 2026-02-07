@@ -59,8 +59,8 @@ class RahukaalView extends BasePage<RahukaalController> {
             AutoTranslateText(
               'Rahu Kaal & inauspicious timings for the selected date',
               style: MyTextTheme.mediumBCN.copyWith(
-                color: Colors.white.withOpacity(0.9),
-                fontSize: 14.sp,
+                color: Colors.black,
+                fontSize: 14,
               ),
             ),
             Spacing.h(8),
@@ -108,7 +108,7 @@ class RahukaalView extends BasePage<RahukaalController> {
                           controller.selectedLocation.value,
                           style: MyTextTheme.mediumBCB.copyWith(
                             color: "#68171E".toColor(),
-                            fontSize: 14.sp,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -162,7 +162,7 @@ class RahukaalView extends BasePage<RahukaalController> {
                                 ).format(controller.selectedDate.value),
                           style: MyTextTheme.mediumBCB.copyWith(
                             color: "#68171E".toColor(),
-                            fontSize: 14.sp,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -189,7 +189,7 @@ class RahukaalView extends BasePage<RahukaalController> {
             'Enter Details',
             style: MyTextTheme.largeBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -260,7 +260,7 @@ class RahukaalView extends BasePage<RahukaalController> {
                           'Get Rahukaal',
                           style: MyTextTheme.largeBCB.copyWith(
                             color: Colors.white,
-                            fontSize: 16.sp,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -299,7 +299,7 @@ class RahukaalView extends BasePage<RahukaalController> {
           labelText: 'Language',
           labelStyle: MyTextTheme.smallBCN.copyWith(
             color: "#68171E".toColor().withValues(alpha: 0.7),
-            fontSize: 14.sp,
+            fontSize: 14,
           ),
           prefixIcon: Icon(
             Icons.language,
@@ -340,7 +340,7 @@ class RahukaalView extends BasePage<RahukaalController> {
                   entry.value,
                   style: MyTextTheme.mediumBCN.copyWith(
                     color: "#68171E".toColor(),
-                    fontSize: 14.sp,
+                    fontSize: 14,
                   ),
                 ),
               ),
@@ -358,7 +358,7 @@ class RahukaalView extends BasePage<RahukaalController> {
         borderRadius: BorderRadius.circular(12.r),
         style: MyTextTheme.mediumBCN.copyWith(
           color: "#68171E".toColor(),
-          fontSize: 14.sp,
+          fontSize: 14,
         ),
       ),
     );
@@ -396,7 +396,7 @@ class RahukaalView extends BasePage<RahukaalController> {
             "Today's Rahukaal",
             style: MyTextTheme.mediumBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -430,7 +430,7 @@ class RahukaalView extends BasePage<RahukaalController> {
                         dayName,
                         style: MyTextTheme.mediumBCB.copyWith(
                           color: "#68171E".toColor(),
-                          fontSize: 14.sp,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -502,7 +502,7 @@ class RahukaalView extends BasePage<RahukaalController> {
                 label,
                 style: MyTextTheme.smallBCB.copyWith(
                   color: "#68171E".toColor().withValues(alpha: 0.7),
-                  fontSize: 12.sp,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -511,7 +511,7 @@ class RahukaalView extends BasePage<RahukaalController> {
                 value,
                 style: MyTextTheme.mediumBCB.copyWith(
                   color: "#68171E".toColor(),
-                  fontSize: 13.sp,
+                  fontSize: 13,
                 ),
               ),
             ],
@@ -534,7 +534,7 @@ class RahukaalView extends BasePage<RahukaalController> {
             'Monthly Rahukaal',
             style: MyTextTheme.mediumBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -583,7 +583,7 @@ class RahukaalView extends BasePage<RahukaalController> {
                   date,
                   style: MyTextTheme.mediumBCB.copyWith(
                     color: "#68171E".toColor(),
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -602,7 +602,7 @@ class RahukaalView extends BasePage<RahukaalController> {
                     day,
                     style: MyTextTheme.smallBCB.copyWith(
                       color: "#68171E".toColor(),
-                      fontSize: 11.sp,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

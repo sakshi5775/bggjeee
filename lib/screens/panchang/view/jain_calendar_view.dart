@@ -74,7 +74,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
                     textAlign: TextAlign.center,
                     style: MyTextTheme.mediumBCB.copyWith(
                       color: isSelected ? Colors.white : "#68171E".toColor(),
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -148,7 +148,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
                         controller.selectedLocation.value,
                         style: MyTextTheme.mediumBCB.copyWith(
                           color: "#68171E".toColor(),
-                          fontSize: 14.sp,
+                          fontSize: 14,
                         ),
                       ),
                     ),
@@ -159,7 +159,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
                       ).format(controller.selectedDate.value),
                       style: MyTextTheme.smallBCN.copyWith(
                         color: "#68171E".toColor().withValues(alpha: 0.7),
-                        fontSize: 12.sp,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -171,7 +171,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
                 'Navkarshi Timings',
                 style: MyTextTheme.largeBCB.copyWith(
                   color: "#68171E".toColor(),
-                  fontSize: 20.sp,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -228,7 +228,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
             label,
             style: MyTextTheme.smallBCN.copyWith(
               color: "#68171E".toColor().withValues(alpha: 0.7),
-              fontSize: 10.sp,
+              fontSize: 10,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -239,7 +239,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
               time,
               style: MyTextTheme.mediumBCB.copyWith(
                 color: "#68171E".toColor(),
-                fontSize: 14.sp,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
               maxLines: 1,
@@ -264,7 +264,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
                 'Select Section',
                 style: MyTextTheme.mediumBCB.copyWith(
                   color: "#68171E".toColor(),
-                  fontSize: 16.sp,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -345,7 +345,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
             textAlign: TextAlign.center,
             style: MyTextTheme.mediumBCB.copyWith(
               color: isSelected ? Colors.white : "#68171E".toColor(),
-              fontSize: 14.sp,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -386,7 +386,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
                     '${_getMonthName(controller.selectedMonth.value)} ${controller.selectedYear.value}',
                     style: MyTextTheme.mediumBCB.copyWith(
                       color: "#68171E".toColor(),
-                      fontSize: 16.sp,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -428,7 +428,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
           'Select Month & Year',
           style: MyTextTheme.largeBCB.copyWith(
             color: "#68171E".toColor(),
-            fontSize: 20.sp,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -497,7 +497,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
                           color: isSelected
                               ? Colors.white
                               : "#68171E".toColor(),
-                          fontSize: 12.sp,
+                          fontSize: 12,
                         ),
                       ),
                     ),
@@ -542,7 +542,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
                   event['date'] ?? '--',
                   style: MyTextTheme.smallBCB.copyWith(
                     color: Colors.white,
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -556,7 +556,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
               'Tithi: ${event['tithi']}',
               style: MyTextTheme.smallBCN.copyWith(
                 color: "#68171E".toColor().withValues(alpha: 0.7),
-                fontSize: 12.sp,
+                fontSize: 12,
               ),
             ),
           Spacing.h(8),
@@ -565,7 +565,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
             event['tirthankar'] ?? '--',
             style: MyTextTheme.mediumBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 16.sp,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -575,7 +575,7 @@ class JainCalendarView extends BasePage<JainCalendarController> {
             event['kalyanak'] ?? '--',
             style: MyTextTheme.smallBCN.copyWith(
               color: AppColors.templeGold,
-              fontSize: 14.sp,
+              fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
           ),

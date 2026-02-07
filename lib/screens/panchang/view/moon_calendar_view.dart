@@ -91,7 +91,7 @@ class MoonCalendarView extends BasePage<MoonCalendarController> {
                     ).format(controller.selectedDate.value),
                     style: MyTextTheme.mediumBCB.copyWith(
                       color: "#68171E".toColor(),
-                      fontSize: 16.sp,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -115,7 +115,7 @@ class MoonCalendarView extends BasePage<MoonCalendarController> {
                       controller.selectedLocation.value,
                       style: MyTextTheme.smallBCN.copyWith(
                         color: "#68171E".toColor().withValues(alpha: 0.7),
-                        fontSize: 12.sp,
+                        fontSize: 12,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -205,7 +205,7 @@ class MoonCalendarView extends BasePage<MoonCalendarController> {
                       DateFormat('dd MMM yyyy').format(date),
                       style: MyTextTheme.mediumBCB.copyWith(
                         color: "#68171E".toColor(),
-                        fontSize: 16.sp,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -215,7 +215,7 @@ class MoonCalendarView extends BasePage<MoonCalendarController> {
                       DateFormat('EEEE').format(date),
                       style: MyTextTheme.smallBCN.copyWith(
                         color: "#68171E".toColor().withValues(alpha: 0.7),
-                        fontSize: 12.sp,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -223,7 +223,7 @@ class MoonCalendarView extends BasePage<MoonCalendarController> {
               ),
               // Moon Icon
               Container(
-                padding: EdgeInsets.all(12.w),
+                padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   gradient: AppColors.orangeGradient,
                   shape: BoxShape.circle,
@@ -231,7 +231,7 @@ class MoonCalendarView extends BasePage<MoonCalendarController> {
                 child: Icon(
                   Icons.nightlight_round,
                   color: Colors.white,
-                  size: 28.w,
+                  size: 28.h,
                 ),
               ),
             ],
@@ -242,7 +242,7 @@ class MoonCalendarView extends BasePage<MoonCalendarController> {
             state,
             style: MyTextTheme.mediumBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -260,7 +260,7 @@ class MoonCalendarView extends BasePage<MoonCalendarController> {
                   paksha,
                   style: MyTextTheme.smallBCB.copyWith(
                     color: Colors.white,
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -289,7 +289,7 @@ class MoonCalendarView extends BasePage<MoonCalendarController> {
           label,
           style: MyTextTheme.smallBCN.copyWith(
             color: "#68171E".toColor().withValues(alpha: 0.7),
-            fontSize: 11.sp,
+            fontSize: 11,
           ),
         ),
         Spacing.h(4),
@@ -297,7 +297,7 @@ class MoonCalendarView extends BasePage<MoonCalendarController> {
           value,
           style: MyTextTheme.mediumBCB.copyWith(
             color: "#68171E".toColor(),
-            fontSize: 14.sp,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
           ),
         ),

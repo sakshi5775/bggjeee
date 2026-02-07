@@ -19,7 +19,7 @@ class LearningJourneySection extends StatelessWidget {
             'Your Learning Journey',
             style: AppTypography.h2.copyWith(
               color: AppColors.textPrimary,
-              fontSize: 22.sp,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -118,7 +118,7 @@ class LearningJourneySection extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: AppTypography.body1.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   color: isPremium ? Colors.white : AppColors.textPrimary,
                 ),
                 maxLines: 2,
@@ -138,7 +138,7 @@ class LearningJourneySection extends StatelessWidget {
             child: AutoTranslateText(
               duration,
               style: AppTypography.label.copyWith(
-                fontSize: 10.sp,
+                fontSize: 10,
                 fontWeight: FontWeight.bold,
                 color: isPremium
                     ? const Color(0xFF3E1212)
@@ -150,7 +150,7 @@ class LearningJourneySection extends StatelessWidget {
           AutoTranslateText(
             price,
             style: AppTypography.body2.copyWith(
-              fontSize: 12.sp,
+              fontSize: 12,
               fontWeight: FontWeight.bold,
               color: isPremium
                   ? const Color(0xFFFFCC80)

@@ -232,4 +232,12 @@ class AppRoutes {
   static const String pujaBookingForm = '/puja-booking-form';
   static const String myBookings = '/my-bookings';
   static const String myBookingDetail = '/my-booking-detail';
+
+  // Astrologer Registration Routes
+  static const String astrologerRegistrationIntro =
+      '/astrologer-registration-intro';
+  static const String astrologerRegistrationForm =
+      '/astrologer-registration-form';
+  static const String astrologerRegistrationOtp =
+      '/astrologer-registration-otp';
 }

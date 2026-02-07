@@ -62,7 +62,7 @@ class DailyPanchangLanguageFieldWidget extends StatelessWidget {
                             child: AutoTranslateText(
                               'Select Language',
                               style: MyTextTheme.largeBCB.copyWith(
-                                fontSize: 18.sp,
+                                fontSize: 18,
                                 color: "#6B1B1A".toColor(),
                               ),
                             ),
@@ -96,13 +96,13 @@ class DailyPanchangLanguageFieldWidget extends StatelessWidget {
                       controller.languages[controller.selectedLanguage.value] ??
                           'Language',
                       style: MyTextTheme.mediumBCN.copyWith(
-                        fontSize: 16.04.sp,
+                        fontSize: 16.04,
                         fontWeight: FontWeight.w500,
                         color: "#646464".toColor(),
                       ),
                     ),
                   ),
-                  Icon(Icons.language, size: 24.w, color: "#646464".toColor()),
+                  Icon(Icons.language, size: 24.h, color: "#646464".toColor()),
                 ],
               ),
             ),

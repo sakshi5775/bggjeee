@@ -32,12 +32,8 @@ class RemediesSearchBar extends StatelessWidget {
         onChanged: onChanged,
         decoration: InputDecoration(
           hintText: 'Search for remedies...',
-          hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
-          prefixIcon: Icon(
-            Icons.search,
-            color: AppColors.deepOrange,
-            size: 20.sp,
-          ),
+          hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+          prefixIcon: Icon(Icons.search, color: AppColors.deepOrange, size: 20),
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(
             vertical: 14.h,

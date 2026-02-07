@@ -137,7 +137,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                         'Payment Instructions',
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 22.sp,
+                          fontSize: 22,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
@@ -186,7 +186,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                             'Please complete the payment to recharge your wallet.',
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 14.sp,
+                          fontSize: 14,
                           color: '#68171E'.toColor(),
                           height: 1.5,
                         ),
@@ -212,7 +212,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                               'Recharge ID: ${rechargeData.rechargeId}',
                               style: TextStyle(
                                 fontFamily: 'Poppins',
-                                fontSize: 12.sp,
+                                fontSize: 12,
                                 color: '#68171E'.toColor(),
                               ),
                             ),
@@ -247,7 +247,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                               'Got it',
                               style: TextStyle(
                                 fontFamily: 'Poppins',
-                                fontSize: 16.sp,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
                                 letterSpacing: 0.5,
@@ -314,7 +314,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                           'Add Money',
                           style: TextStyle(
                             fontFamily: 'Poppins',
-                            fontSize: 24.sp,
+                            fontSize: 24,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
                           ),
@@ -324,7 +324,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                           'Recharge your wallet',
                           style: TextStyle(
                             fontFamily: 'Poppins',
-                            fontSize: 13.sp,
+                            fontSize: 13,
                             color: Colors.white.withOpacity(0.9),
                           ),
                         ),
@@ -367,7 +367,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                         'Enter Amount',
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: '#68171E'.toColor(),
                         ),
@@ -394,7 +394,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                           keyboardType: TextInputType.number,
                           style: TextStyle(
                             fontFamily: 'Poppins',
-                            fontSize: 20.sp,
+                            fontSize: 20,
                             fontWeight: FontWeight.w600,
                             color: '#68171E'.toColor(),
                           ),
@@ -404,7 +404,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                             prefixText: '₹ ',
                             prefixStyle: TextStyle(
                               fontFamily: 'Poppins',
-                              fontSize: 20.sp,
+                              fontSize: 20,
                               fontWeight: FontWeight.w600,
                               color: AppColors.templeGold,
                             ),
@@ -434,7 +434,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                         'Quick Amounts',
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: '#68171E'.toColor(),
                         ),
@@ -483,7 +483,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                                 '₹${amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                   color: isSelected
                                       ? Colors.white
@@ -570,7 +570,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                                             'Add Money',
                                             style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              fontSize: 18.sp,
+                                              fontSize: 18,
                                               fontWeight: FontWeight.w700,
                                               color: Colors.white,
                                               letterSpacing: 0.5,

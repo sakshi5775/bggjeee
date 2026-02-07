@@ -105,7 +105,7 @@ class _RemediesBannerSliderState extends State<RemediesBannerSlider> {
               AutoTranslateText(
                 "Find your Perfect Remedy\nin a 1-on-1 session",
                 style: TextStyle(
-                  fontSize: 18.sp,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: const Color(0xFF3E1212),
                 ),
@@ -113,7 +113,7 @@ class _RemediesBannerSliderState extends State<RemediesBannerSlider> {
               SizedBox(height: 8.h),
               AutoTranslateText(
                 "with our certified Experts\nat just ₹499/-",
-                style: TextStyle(fontSize: 12.sp, color: Colors.black87),
+                style: TextStyle(fontSize: 12, color: Colors.black87),
               ),
               SizedBox(height: 12.h),
               Container(
@@ -126,7 +126,7 @@ class _RemediesBannerSliderState extends State<RemediesBannerSlider> {
                   "Book your Consultation",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 10.sp,
+                    fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

@@ -33,7 +33,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
               subtitle: AutoTranslateText(
                 'Vedic Details for the seleceted date',
                 style: MyTextTheme.smallBCN.copyWith(
-                  fontSize: 12.sp,
+                  fontSize: 12,
                   color: "#6F221E".toColor().withOpacity(0.7),
                 ),
               ),
@@ -78,7 +78,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                           : const SizedBox.shrink(),
                     ),
 
-                    Spacing.h(20),
+                    Spacing.h(40),
                   ],
                 ),
               ),
@@ -99,7 +99,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           AutoTranslateText(
             'Enter Details',
             style: MyTextTheme.largeBCB.copyWith(
-              fontSize: 20.sp,
+              fontSize: 20,
               fontWeight: FontWeight.w500,
               color: "#68171E".toColor(),
             ),
@@ -216,7 +216,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
               ],
             ),
           ),
-          Spacing.h(20),
+          Spacing.h(40),
         ],
       ),
     );
@@ -248,28 +248,21 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
         onTap: () => Get.toNamed(AppRoutes.monthlyCalendar),
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
           decoration: BoxDecoration(
             gradient: AppColors.orangeGradient,
             borderRadius: BorderRadius.circular(12.r),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.deepOrange,
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.calendar_month, color: Colors.white, size: 24.w),
+              Icon(Icons.calendar_month, color: Colors.white, size: 24.h),
               Spacing.w(12),
               AutoTranslateText(
                 'View Monthly Calendar',
                 style: MyTextTheme.mediumBCB.copyWith(
                   color: Colors.white,
-                  fontSize: 16.sp,
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -310,7 +303,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                   child: Icon(
                     Icons.chat_bubble_outline,
                     color: Colors.white,
-                    size: 24.w,
+                    size: 24.h,
                   ),
                 ),
                 Spacing.w(16),
@@ -322,7 +315,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                         'Have Questions?',
                         style: MyTextTheme.largeBCB.copyWith(
                           color: Colors.white,
-                          fontSize: 20.sp,
+                          fontSize: 20,
                           fontWeight: FontWeight.w500,
                           height: 1.5,
                         ),
@@ -332,7 +325,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                         'Get personalized guidance from expert astrologers',
                         style: MyTextTheme.smallBCN.copyWith(
                           color: Colors.white.withValues(alpha: 0.9),
-                          fontSize: 13.sp,
+                          fontSize: 13,
                         ),
                       ),
                     ],
@@ -349,7 +342,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                  padding: EdgeInsets.symmetric(vertical: 8.h),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.r),
                   ),
@@ -358,7 +351,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                   'Ask an Astrologer',
                   style: MyTextTheme.mediumBCB.copyWith(
                     color: AppColors.orangeGradient.colors.last,
-                    fontSize: 15.sp,
+                    fontSize: 15,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -407,7 +400,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           formattedDate,
           style: MyTextTheme.largeBCB.copyWith(
             color: "#68171E".toColor(),
-            fontSize: 18.sp,
+            fontSize: 18,
             fontWeight: FontWeight.w500,
             height: 1.5,
             letterSpacing: -0.44,
@@ -419,7 +412,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
             'Date: $apiDate',
             style: MyTextTheme.smallBCN.copyWith(
               color: "#68171E".toColor().withValues(alpha: 0.6),
-              fontSize: 12.sp,
+              fontSize: 12,
             ),
           ),
         ],
@@ -433,7 +426,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                 'Lat: ${controller.latitudeController.text}, Lon: ${controller.longitudeController.text}',
                 style: MyTextTheme.smallBCN.copyWith(
                   color: "#68171E".toColor().withValues(alpha: 0.7),
-                  fontSize: 12.sp,
+                  fontSize: 12,
                 ),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
@@ -453,7 +446,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           'Celestial Times',
           style: MyTextTheme.mediumBCB.copyWith(
             color: "#68171E".toColor(),
-            fontSize: 16.sp,
+            fontSize: 16,
             fontWeight: FontWeight.w500,
             height: 1.5,
             letterSpacing: -0.44,
@@ -534,7 +527,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                   label,
                   style: MyTextTheme.smallBCN.copyWith(
                     color: "#68171E".toColor().withValues(alpha: 0.7),
-                    fontSize: 11.sp,
+                    fontSize: 11,
                   ),
                 ),
                 Spacing.h(2),
@@ -674,7 +667,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                 'Vaar Details',
                 style: MyTextTheme.mediumBCB.copyWith(
                   color: "#68171E".toColor(),
-                  fontSize: 16.sp,
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
                   height: 1.5,
                   letterSpacing: -0.44,
@@ -711,7 +704,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                     masa?['paksha']?.toString() ?? '',
                     style: MyTextTheme.smallBCB.copyWith(
                       color: Colors.white,
-                      fontSize: 11.sp,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -879,7 +872,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
             label,
             style: MyTextTheme.smallBCN.copyWith(
               color: "#68171E".toColor().withValues(alpha: 0.7),
-              fontSize: 13.sp,
+              fontSize: 13,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -892,7 +885,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
             value,
             style: MyTextTheme.mediumBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 13.sp,
+              fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.right,
@@ -950,7 +943,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                           'Abhijit Muhurta',
                           style: MyTextTheme.smallBCB.copyWith(
                             color: "#68171E".toColor(),
-                            fontSize: 13.sp,
+                            fontSize: 13,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -966,7 +959,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                           ),
                           style: MyTextTheme.smallBCN.copyWith(
                             color: "#68171E".toColor(),
-                            fontSize: 12.sp,
+                            fontSize: 12,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -998,7 +991,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                         'Inauspicious Timings',
                         style: MyTextTheme.smallBCB.copyWith(
                           color: "#68171E".toColor(),
-                          fontSize: 13.sp,
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1062,7 +1055,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                           'Disha Shoola',
                           style: MyTextTheme.smallBCB.copyWith(
                             color: "#68171E".toColor(),
-                            fontSize: 13.sp,
+                            fontSize: 13,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -1071,7 +1064,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                           advancedDetails?['disha_shool']?.toString() ?? '--',
                           style: MyTextTheme.smallBCN.copyWith(
                             color: "#68171E".toColor(),
-                            fontSize: 12.sp,
+                            fontSize: 12,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -1098,7 +1091,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
             label,
             style: MyTextTheme.smallBCN.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 12.sp,
+              fontSize: 12,
               fontWeight: FontWeight.w400,
             ),
             maxLines: 2,
@@ -1112,7 +1105,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
             time,
             style: MyTextTheme.smallBCN.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 12.sp,
+              fontSize: 12,
               fontWeight: FontWeight.w400,
             ),
             textAlign: TextAlign.right,
@@ -1151,7 +1144,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
             'Additional Details',
             style: MyTextTheme.mediumBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 16.sp,
+              fontSize: 16,
               fontWeight: FontWeight.w500,
               height: 1.5,
               letterSpacing: -0.44,
@@ -1224,7 +1217,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           'Sankranti',
           style: MyTextTheme.mediumBCB.copyWith(
             color: "#68171E".toColor(),
-            fontSize: 14.sp,
+            fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -1358,7 +1351,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: MyTextTheme.smallBCB.copyWith(
-                            fontSize: 13.sp,
+                            fontSize: 13,
                             fontWeight: FontWeight.w500,
                             color: "#68171E".toColor(),
                           ),
@@ -1405,7 +1398,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
                             'dd/MM/yyyy',
                           ).format(controller.selectedDate.value),
                           style: MyTextTheme.smallBCB.copyWith(
-                            fontSize: 13.sp,
+                            fontSize: 13,
                             fontWeight: FontWeight.w500,
                             color: "#68171E".toColor(),
                           ),
@@ -1491,7 +1484,7 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
                           widget.label,
                           style: MyTextTheme.smallBCN.copyWith(
                             color: "#68171E".toColor().withValues(alpha: 0.7),
-                            fontSize: 12.sp,
+                            fontSize: 12,
                           ),
                         ),
                         Spacing.h(4),
@@ -1499,7 +1492,7 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
                           widget.value,
                           style: MyTextTheme.mediumBCB.copyWith(
                             color: "#68171E".toColor(),
-                            fontSize: 15.sp,
+                            fontSize: 15,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -1509,7 +1502,7 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
                             widget.timeRange,
                             style: MyTextTheme.smallBCN.copyWith(
                               color: "#68171E".toColor().withValues(alpha: 0.6),
-                              fontSize: 11.sp,
+                              fontSize: 11,
                             ),
                           ),
                         ],
@@ -1548,7 +1541,7 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
                                   color: "#68171E".toColor().withValues(
                                     alpha: 0.7,
                                   ),
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -1560,7 +1553,7 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
                                 textAlign: TextAlign.right,
                                 style: MyTextTheme.smallBCN.copyWith(
                                   color: "#68171E".toColor(),
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                 ),
                               ),
                             ),

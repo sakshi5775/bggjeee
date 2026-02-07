@@ -41,7 +41,7 @@ class QuickConnectSection extends StatelessWidget {
                 'Quick Connect',
                 style: AppTypography.h2.copyWith(
                   color: AppColors.digitalEducationTextColor,
-                  fontSize: 20.sp,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -93,7 +93,7 @@ class QuickConnectSection extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(12.w),
+              padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
@@ -102,7 +102,7 @@ class QuickConnectSection extends StatelessWidget {
                   end: Alignment.bottomRight,
                 ),
               ),
-              child: Icon(icon, color: Colors.white, size: 24.w),
+              child: Icon(icon, color: Colors.white, size: 24.h),
             ),
             SizedBox(width: 16.w),
             Expanded(
@@ -113,7 +113,7 @@ class QuickConnectSection extends StatelessWidget {
                     title,
                     style: AppTypography.body1.copyWith(
                       color: AppColors.digitalEducationTextColor,
-                      fontSize: 16.sp,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -122,13 +122,13 @@ class QuickConnectSection extends StatelessWidget {
                     subtitle,
                     style: AppTypography.body2.copyWith(
                       color: Colors.white70,
-                      fontSize: 12.sp,
+                      fontSize: 12,
                     ),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16.w),
+            Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16.h),
           ],
         ),
       ),

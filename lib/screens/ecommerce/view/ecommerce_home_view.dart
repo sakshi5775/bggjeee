@@ -104,17 +104,18 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
               // Helper to map categories to slider
               SliverToBoxAdapter(
                 child: Obx(() {
-                  if (controller.isLoadingCategories.value)
+                  if (controller.isLoadingCategories.value) {
                     return const SizedBox.shrink();
+                  }
 
                   final tabs = [
                     'All',
-                    ...controller.categories.map((c) => c.name ?? 'Unknown'),
+                    ...controller.allCategories.map((c) => c.name ?? 'Unknown'),
                   ];
                   // Determine selected index
                   int selectedIndex = 0;
                   if (controller.selectedCategory.value != null) {
-                    final index = controller.categories.indexWhere(
+                    final index = controller.allCategories.indexWhere(
                       (c) => c.id == controller.selectedCategory.value!.id,
                     );
                     if (index != -1) selectedIndex = index + 1;
@@ -128,7 +129,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                         controller.selectCategory(null);
                       } else {
                         controller.selectCategory(
-                          controller.categories[index - 1],
+                          controller.allCategories[index - 1],
                         );
                       }
                     },

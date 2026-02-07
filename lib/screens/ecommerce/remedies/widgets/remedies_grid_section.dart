@@ -31,7 +31,7 @@ class RemediesGridSection extends GetView<RemediesController> {
             padding: EdgeInsets.symmetric(vertical: 40.h),
             child: AutoTranslateText(
               "No remedies found",
-              style: TextStyle(color: Colors.grey, fontSize: 14.sp),
+              style: TextStyle(color: Colors.grey, fontSize: 14),
             ),
           ),
         );
@@ -140,7 +140,7 @@ class RemediesGridSection extends GetView<RemediesController> {
                     style: AppTypography.body1.copyWith(
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF3E1212),
-                      fontSize: 14.sp,
+                      fontSize: 14,
                     ),
                   ),
 
@@ -175,7 +175,7 @@ class RemediesGridSection extends GetView<RemediesController> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 12.sp,
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                         ),
                       ),

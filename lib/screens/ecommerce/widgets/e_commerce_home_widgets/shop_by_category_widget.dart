@@ -32,9 +32,8 @@ class ShopByCategoryWidget extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Baloo 2',
                         fontWeight: FontWeight.w500,
-                        fontSize: 24.sp,
+                        fontSize: 24,
                         color: '#8B1925'.toColor(),
-                        height: 1.0,
                       ),
                     ),
                     Spacing.h(3.68),
@@ -43,7 +42,7 @@ class ShopByCategoryWidget extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w400,
-                        fontSize: 12.88.sp,
+                        fontSize: 12.88,
                         color: '#6A7282'.toColor(),
                         height: 1.0,
                       ),
@@ -60,15 +59,14 @@ class ShopByCategoryWidget extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w400,
-                          fontSize: 12.88.sp,
+                          fontSize: 12.88,
                           color: '#8B1925'.toColor(),
-                          height: 1.43,
                         ),
                       ),
                       Spacing.w(5.52),
                       Icon(
                         Icons.arrow_forward_ios,
-                        size: 14.71.sp,
+                        size: 14.71.h,
                         color: '#8B1925'.toColor(),
                       ),
                     ],
@@ -93,7 +91,6 @@ class ShopByCategoryWidget extends StatelessWidget {
 
             final categories = controller.categoryTree
                 .where((cat) => cat.isFeatured == true && cat.parent == null)
-                .take(6)
                 .toList();
 
             if (categories.isEmpty) {
@@ -224,7 +221,7 @@ class ShopByCategoryWidget extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w500,
-                    fontSize: 12.88.sp,
+                    fontSize: 12.88,
                     color: '#3D0C11'.toColor(),
                     height: 1.0,
                   ),
@@ -238,7 +235,7 @@ class ShopByCategoryWidget extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w400,
-                    fontSize: 11.04.sp,
+                    fontSize: 11.04,
                     color: '#6A7282'.toColor(),
                     height: 1.0,
                   ),

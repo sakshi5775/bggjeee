@@ -38,7 +38,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                 subtitle: AutoTranslateText(
                   'Traditional Indian Calendar System',
                   style: MyTextTheme.mediumBCN.copyWith(
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: "#6F221E".toColor().withOpacity(0.7),
                     height: 1.33,
@@ -107,7 +107,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                           controller.getMonthYearString(),
                           style: MyTextTheme.mediumBCB.copyWith(
                             color: Color(0xFFE3B341), // 2nd-gold
-                            fontSize: 13.41.sp,
+                            fontSize: 13.41,
                             fontWeight: FontWeight.w500,
                             height: 1.0,
                           ),
@@ -152,7 +152,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                           controller.selectedLocation.value,
                           style: MyTextTheme.mediumBCB.copyWith(
                             color: Color(0xFFE3B341), // 2nd-gold
-                            fontSize: 13.41.sp,
+                            fontSize: 13.41,
                             fontWeight: FontWeight.w500,
                             height: 1.0,
                           ),
@@ -234,7 +234,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
             day,
             textAlign: TextAlign.center,
             style: MyTextTheme.smallBCB.copyWith(
-              fontSize: 12.04.sp,
+              fontSize: 12.04,
               fontWeight: FontWeight.w400,
               color: Color.fromRGBO(107, 27, 26, 0.6), // fill_BELX40
             ),
@@ -272,7 +272,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
               child: Icon(
                 Icons.arrow_back_ios,
                 color: Colors.white,
-                size: 20.05.w,
+                size: 20.05.h,
               ),
             ),
           ),
@@ -281,7 +281,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
             () => AutoTranslateText(
               controller.getMonthYearString(),
               style: MyTextTheme.mediumBCB.copyWith(
-                fontSize: 14.04.sp,
+                fontSize: 14.04,
                 fontWeight: FontWeight.w400,
                 color: Colors.white,
                 height: 1.43,
@@ -298,7 +298,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
               child: Icon(
                 Icons.arrow_forward_ios,
                 color: Colors.white,
-                size: 20.05.w,
+                size: 20.05.h,
               ),
             ),
           ),
@@ -498,7 +498,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                 day.toString(),
                 textAlign: TextAlign.center,
                 style: MyTextTheme.mediumBCB.copyWith(
-                  fontSize: 14.04.sp,
+                  fontSize: 14.04,
                   fontWeight: FontWeight.w500,
                   color: textColor,
                   height: 1.43,
@@ -563,7 +563,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
               AutoTranslateText(
                 'Hindu Calendar',
                 style: MyTextTheme.largeBCB.copyWith(
-                  fontSize: 18.05.sp,
+                  fontSize: 18.05,
                   fontWeight: FontWeight.w500,
                   color: "#6B1B1A".toColor(), // fill_54O2QS
                   height: 1.5,
@@ -699,7 +699,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                   AutoTranslateText(
                     dayNumber.toString(),
                     style: MyTextTheme.mediumBCB.copyWith(
-                      fontSize: 18.sp,
+                      fontSize: 18,
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
                       height: 1.0,
@@ -711,7 +711,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                     overflow: TextOverflow.ellipsis,
                     style: MyTextTheme.smallBCN.copyWith(
                       fontWeight: FontWeight.w500,
-                      fontSize: 10.sp,
+                      fontSize: 10,
                       color: Colors.white,
                       height: 1.0,
                     ),
@@ -728,7 +728,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                   AutoTranslateText(
                     festival['name']?.toString() ?? 'Festival',
                     style: MyTextTheme.mediumBCB.copyWith(
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: "#6B1B1A".toColor(), // fill_54O2QS
                       height: 1.43,
@@ -740,7 +740,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                     AutoTranslateText(
                       festival['description']?.toString() ?? '',
                       style: MyTextTheme.smallBCN.copyWith(
-                        fontSize: 10.sp,
+                        fontSize: 10,
                         fontWeight: FontWeight.w400,
                         color: Color.fromRGBO(107, 27, 26, 0.6), // fill_BELX40
                         height: 1.6,
@@ -758,7 +758,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
               child: Icon(
                 Icons.arrow_forward_ios,
                 color: "#6B1B1A".toColor().withOpacity(0.5),
-                size: 16.w,
+                size: 16.h,
               ),
             ),
           ],
@@ -789,9 +789,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
       eventDate = DateTime.now();
     }
 
-    if (eventDate == null) {
-      eventDate = DateTime.now();
-    }
+    eventDate ??= DateTime.now();
 
     // Show bottom sheet
     showModalBottomSheet(
@@ -844,7 +842,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                   'Add to Calendar',
                   style: MyTextTheme.largeBCB.copyWith(
                     color: "#6F221E".toColor(),
-                    fontSize: 20.sp,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -873,7 +871,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                               festival['name']?.toString() ?? 'Festival',
                               style: MyTextTheme.mediumBCB.copyWith(
                                 color: "#6F221E".toColor(),
-                                fontSize: 16.sp,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -895,7 +893,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                                       color: "#6F221E".toColor().withOpacity(
                                         0.7,
                                       ),
-                                      fontSize: 14.sp,
+                                      fontSize: 14,
                                     ),
                                   ),
                                 ),
@@ -907,7 +905,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                                 festival['description']?.toString() ?? '',
                                 style: MyTextTheme.smallBCN.copyWith(
                                   color: "#6F221E".toColor().withOpacity(0.6),
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                 ),
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
@@ -944,7 +942,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                                   'Add to Calendar',
                                   style: MyTextTheme.mediumBCB.copyWith(
                                     color: Colors.white,
-                                    fontSize: 16.sp,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                   overflow: TextOverflow.ellipsis,
@@ -962,7 +960,7 @@ class MonthlyCalendarView extends BasePage<MonthlyCalendarController> {
                           'This will open your default calendar app to save the event',
                           style: MyTextTheme.smallBCN.copyWith(
                             color: Colors.grey.shade600,
-                            fontSize: 12.sp,
+                            fontSize: 12,
                           ),
                           textAlign: TextAlign.center,
                           maxLines: 2,

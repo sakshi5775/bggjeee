@@ -511,16 +511,20 @@ class EndPoints {
 
   // Prokerala Horoscope APIs
   static const String prokeralaDaily = 'prokerala/horoscope/daily';
-  static const String prokeralaDailyAdvanced = 'prokerala/horoscope/daily/advanced';
-  static const String prokeralaLoveCompatibility = 'prokerala/horoscope/daily/love-compatibility';
+  static const String prokeralaDailyAdvanced =
+      'prokerala/horoscope/daily/advanced';
+  static const String prokeralaLoveCompatibility =
+      'prokerala/horoscope/daily/love-compatibility';
 
   // Planet Details API
   static const String planetDetails = 'horoscope/planet-details';
   static const String planetTransitDates = 'vedic/western/planet-transit-dates';
   static const String westernTransitChart = 'vedic/western/transit-chart';
   static const String dailyTransits = 'vedic/western/daily-transits';
-  static const String dailyTransitPrediction = 'vedic/western/daily-transit-prediction';
-  static const String detailedPlanetReport = 'vedic/western/detailed-planet-report';
+  static const String dailyTransitPrediction =
+      'vedic/western/daily-transit-prediction';
+  static const String detailedPlanetReport =
+      'vedic/western/detailed-planet-report';
   static const String westernPlanetDetails = 'vedic/western/planet-details';
   static const String aspects = 'vedic/western/aspects';
 
@@ -554,7 +558,8 @@ class EndPoints {
   static const String sunSign = 'extended-horoscope/sun-sign';
   static const String ascendantSign = 'extended-horoscope/ascendant-sign';
   static const String currentSadeSati = 'extended-horoscope/current-sade-sati';
-  static const String sadeSatiTableVedic = 'extended-horoscope/sade-sati-table-vedic';
+  static const String sadeSatiTableVedic =
+      'extended-horoscope/sade-sati-table-vedic';
   static const String gemSuggestion = 'extended-horoscope/gem-suggestion';
   static const String gemDetails = 'vedic/utilities/gem-details';
   static const String rudrakshSuggestion =
@@ -567,8 +572,7 @@ class EndPoints {
       'vedic/matching/ashtakoot-with-astro-details';
 
   /// Banners APIs
-  static const String bannersCategories =
-      'users/api/users/banners/categories';
+  static const String bannersCategories = 'users/api/users/banners/categories';
   static const String bannersAll = 'users/api/users/banners/all';
   static String bannersByCategory(String category) =>
       'users/api/users/banners/category/$category';
@@ -611,4 +615,12 @@ class EndPoints {
       'users/api/users/prashna-kundali/history';
   static String prashnaKundaliGetById(String id) =>
       'users/api/users/prashna-kundali/$id';
+
+  /// Astrologer Registration
+  static const String astrologerRegistration =
+      'astrologers/api/astrologers/registration-request';
+  static const String astrologerRegistrationVerifyOtp =
+      'astrologers/api/astrologers/registration-request/verify-otp';
+  static const String astrologerRegistrationResendOtp =
+      'astrologers/api/astrologers/registration-request/resend-otp';
 }

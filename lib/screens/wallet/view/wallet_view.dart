@@ -76,7 +76,7 @@ class WalletView extends StatelessWidget {
         'Manage your wallet balance',
         style: TextStyle(
           fontFamily: 'Poppins',
-          fontSize: 12.sp,
+          fontSize: 12,
           color: '#6F221E'.toColor().withOpacity(0.9),
         ),
       ),
@@ -128,7 +128,7 @@ class WalletView extends StatelessWidget {
                 'Available Balance',
                 style: TextStyle(
                   fontFamily: 'Poppins',
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   color: '#68171E'.toColor().withOpacity(0.8),
                   fontWeight: FontWeight.w500,
                 ),
@@ -143,7 +143,7 @@ class WalletView extends StatelessWidget {
             controller.formatCurrency(controller.walletBalance.value),
             style: TextStyle(
               fontFamily: 'Poppins',
-              fontSize: 36.sp,
+              fontSize: 36,
               fontWeight: FontWeight.w700,
               color: '#68171E'.toColor(),
               height: 1.2,
@@ -189,7 +189,7 @@ class WalletView extends StatelessWidget {
                         'Add Money',
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: AppColors.templeGold,
                           letterSpacing: 0.5,
@@ -405,7 +405,7 @@ class WalletView extends StatelessWidget {
                         'No recharge history',
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 14.sp,
+                          fontSize: 14,
                           color: Colors.grey[600],
                         ),
                       ),
@@ -461,7 +461,7 @@ class WalletView extends StatelessWidget {
                                       'Load More',
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
-                                        fontSize: 15.sp,
+                                        fontSize: 15,
                                         fontWeight: FontWeight.w700,
                                         color: Colors.white,
                                       ),
@@ -546,7 +546,7 @@ class WalletView extends StatelessWidget {
                       'Wallet Recharge',
                       style: TextStyle(
                         fontFamily: 'Poppins',
-                        fontSize: 16.sp,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: '#68171E'.toColor(),
                       ),
@@ -557,7 +557,7 @@ class WalletView extends StatelessWidget {
                         _formatTransactionDate(date),
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 12.sp,
+                          fontSize: 12,
                           color: Colors.grey[600],
                         ),
                       ),
@@ -579,7 +579,7 @@ class WalletView extends StatelessWidget {
                         recharge.status,
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 11.sp,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: statusColor,
                         ),
@@ -597,7 +597,7 @@ class WalletView extends StatelessWidget {
                     '+₹${recharge.amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                     style: TextStyle(
                       fontFamily: 'Poppins',
-                      fontSize: 20.sp,
+                      fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: isCredit ? const Color(0xFF4CAF50) : statusColor,
                     ),
@@ -613,7 +613,7 @@ class WalletView extends StatelessWidget {
                       ),
                       style: TextStyle(
                         fontFamily: 'Poppins',
-                        fontSize: 10.sp,
+                        fontSize: 10,
                         color: Colors.grey[500],
                       ),
                     ),
@@ -661,7 +661,7 @@ class WalletView extends StatelessWidget {
                               'Cancel',
                               style: TextStyle(
                                 fontFamily: 'Poppins',
-                                fontSize: 13.sp,
+                                fontSize: 13,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.red,
                               ),
@@ -769,7 +769,7 @@ class WalletView extends StatelessWidget {
                         'Cancel Recharge',
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 22.sp,
+                          fontSize: 22,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
@@ -821,7 +821,7 @@ class WalletView extends StatelessWidget {
                               'Are you sure you want to cancel this recharge?',
                               style: TextStyle(
                                 fontFamily: 'Poppins',
-                                fontSize: 14.sp,
+                                fontSize: 14,
                                 color: '#68171E'.toColor(),
                                 height: 1.5,
                               ),
@@ -855,7 +855,7 @@ class WalletView extends StatelessWidget {
                                     'No',
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
-                                      fontSize: 16.sp,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                       color: Colors.grey[700],
                                     ),
@@ -901,7 +901,7 @@ class WalletView extends StatelessWidget {
                                     'Yes, Cancel',
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
-                                      fontSize: 16.sp,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white,
                                       letterSpacing: 0.5,

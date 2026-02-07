@@ -18,7 +18,7 @@ class KeyCourseModulesSection extends StatelessWidget {
             'Key Course Modules',
             style: AppTypography.h2.copyWith(
               color: const Color(0xFF3E1212),
-              fontSize: 22.sp,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -111,7 +111,7 @@ class KeyCourseModulesSection extends StatelessWidget {
             textAlign: TextAlign.center,
             style: AppTypography.body1.copyWith(
               color: const Color(0xFF3E1212),
-              fontSize: 14.sp,
+              fontSize: 14,
               fontWeight: FontWeight.w600,
               height: 1.4,
             ),

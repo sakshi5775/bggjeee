@@ -48,7 +48,7 @@ class ProductReviewsWidget extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w400,
-                        fontSize: 18.sp,
+                        fontSize: 18,
                         color: '#3D0C11'.toColor(),
                         height: 1.56,
                       ),
@@ -103,7 +103,7 @@ class ProductReviewsWidget extends StatelessWidget {
                                 style: TextStyle(
                                   fontFamily: 'Poppins',
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   color: '#3D0C11'.toColor(),
                                 ),
                               ),
@@ -157,7 +157,7 @@ class ProductReviewsWidget extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w600,
-                        fontSize: 14.sp,
+                        fontSize: 14,
                         color: '#3D0C11'.toColor(),
                       ),
                     ),
@@ -182,7 +182,7 @@ class ProductReviewsWidget extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w500,
-                                fontSize: 10.sp,
+                                fontSize: 10,
                                 color: Colors.white,
                               ),
                             ),
@@ -215,7 +215,7 @@ class ProductReviewsWidget extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w400,
-                  fontSize: 12.sp,
+                  fontSize: 12,
                   color: '#3D0C11'.toColor().withOpacity(0.5),
                 ),
               ),
@@ -228,7 +228,7 @@ class ProductReviewsWidget extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w400,
-              fontSize: 14.sp,
+              fontSize: 14,
               color: '#3D0C11'.toColor(),
               height: 1.5,
             ),
