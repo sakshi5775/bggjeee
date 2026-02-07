@@ -5273,6 +5273,30 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   ),
                 ],
               ),
+              Spacing.h(24),
+              Divider(
+                color: const Color(0xFF5F2221).withOpacity(0.2),
+                thickness: 1,
+              ),
+              Spacing.h(12),
+              // JOIN US Section
+              _buildDrawerSection(
+                context: context,
+                title: 'JOIN US',
+                children: [
+                  _buildDrawerItemStatic(
+                    context: context,
+                    icon: Icons.work_outline,
+                    label: 'Become Astrologer',
+                    isSelected: true,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.astrologerRegistrationIntro);
+                    },
+                  ),
+                ],
+              ),
+              Spacing.h(24),
             ],
           ),
         ),

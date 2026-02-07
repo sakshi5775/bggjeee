@@ -12,6 +12,11 @@ import 'package:astrobharataiuser/binding/waiting_screen_binding/waiting_screen_
 import 'package:astrobharataiuser/binding/onboarding_binding/onboarding_binding.dart';
 import 'package:astrobharataiuser/binding/ai_chat_binding/ai_chat_binding.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/astrologer_registration/binding/astrologer_registration_binding.dart';
+import 'package:astrobharataiuser/screens/astrologer_registration/view/astrologer_registration_intro_view.dart';
+import 'package:astrobharataiuser/screens/astrologer_registration/view/astrologer_registration_form_view.dart';
+import 'package:astrobharataiuser/screens/astrologer_registration/view/astrologer_registration_otp_view.dart';
+
 import 'package:astrobharataiuser/screens/ecommerce/remedies/view/remedies_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/remedies/bindings/remedies_binding.dart';
 import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_category_listing/view/remedy_category_listing_view.dart';
@@ -282,6 +287,24 @@ class PageRoutes {
       page: () => const WaitingScreenView(),
       transition: leftToRight,
       binding: WaitingScreenBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.astrologerRegistrationIntro,
+      page: () => const AstrologerRegistrationIntroView(),
+      transition: Transition.rightToLeft,
+      binding: AstrologerRegistrationBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.astrologerRegistrationForm,
+      page: () => const AstrologerRegistrationFormView(),
+      transition: Transition.rightToLeft,
+      binding: AstrologerRegistrationBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.astrologerRegistrationOtp,
+      page: () => const AstrologerRegistrationOtpView(),
+      transition: Transition.rightToLeft,
+      binding: AstrologerRegistrationBinding(),
     ),
     GetPage(
       name: AppRoutes.onboarding,
