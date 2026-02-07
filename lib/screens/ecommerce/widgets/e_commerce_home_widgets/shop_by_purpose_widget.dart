@@ -72,10 +72,8 @@ class ShopByPurposeWidget extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: 'Baloo 2',
                             fontWeight: FontWeight.w700,
-                            fontSize: 22.sp,
+                            fontSize: 22,
                             color: "#68171E".toColor(),
-                            height: 1.2,
-                            letterSpacing: -0.5,
                           ),
                         ),
                         Spacing.h(4),
@@ -84,9 +82,8 @@ class ShopByPurposeWidget extends StatelessWidget {
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w400,
-                            fontSize: 12.sp,
+                            fontSize: 12,
                             color: AppColors.textSecondary,
-                            height: 1.3,
                           ),
                         ),
                       ],
@@ -222,8 +219,8 @@ class ShopByPurposeWidget extends StatelessWidget {
                   Expanded(
                     child: Center(
                       child: Container(
-                        width: 100.w,
-                        height: 100.w,
+                        width: 60.w,
+                        height: 60.w,
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.25),
                           shape: BoxShape.circle,
@@ -234,8 +231,8 @@ class ShopByPurposeWidget extends StatelessWidget {
                                   purpose['image']!.isNotEmpty
                               ? NetworkImageWithLoader(
                                   url: purpose['image']!,
-                                  width: 100.w,
-                                  height: 100.w,
+                                  width: 60.w,
+                                  height: 60.w,
                                 )
                               : Container(
                                   decoration: BoxDecoration(
@@ -280,10 +277,8 @@ class ShopByPurposeWidget extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w600,
-                          fontSize: 14.sp,
+                          fontSize: 14,
                           color: AppColors.white,
-                          height: 1.2,
-                          letterSpacing: 0.3,
                         ),
                         textAlign: TextAlign.center,
                         maxLines: 1,

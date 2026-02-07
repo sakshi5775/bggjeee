@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LearningFeaturesSection extends StatelessWidget {
-  const LearningFeaturesSection({Key? key}) : super(key: key);
+  const LearningFeaturesSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +66,7 @@ class LearningFeaturesSection extends StatelessWidget {
             textAlign: TextAlign.center,
             style: AppTypography.body1.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 12.sp,
+              fontSize: 12,
               color: const Color(0xFF5D2E17), // Dark brown
             ),
             maxLines: 2,
@@ -76,7 +76,7 @@ class LearningFeaturesSection extends StatelessWidget {
             subtitle,
             textAlign: TextAlign.center,
             style: AppTypography.body2.copyWith(
-              fontSize: 10.sp,
+              fontSize: 10,
               color: Colors.grey[600],
             ),
             maxLines: 2,

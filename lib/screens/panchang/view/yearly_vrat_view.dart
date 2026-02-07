@@ -37,7 +37,7 @@ class YearlyVratView extends BasePage<YearlyVratController> {
                 subtitle: AutoTranslateText(
                   'Annual Fasting Calendar',
                   style: MyTextTheme.mediumBCN.copyWith(
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: "#6F221E".toColor().withOpacity(0.7),
                   ),
@@ -85,12 +85,8 @@ class YearlyVratView extends BasePage<YearlyVratController> {
               margin: EdgeInsets.only(right: 12.w),
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? Colors
-                          .white // White background when selected
-                    : Colors.white.withOpacity(
-                        0.3,
-                      ), // White with opacity when unselected
+                gradient: isSelected ? AppColors.orangeGradient : null,
+                color: isSelected ? null : Colors.white,
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: Column(
@@ -101,11 +97,8 @@ class YearlyVratView extends BasePage<YearlyVratController> {
                     child: AutoTranslateText(
                       abbreviatedMonth,
                       style: MyTextTheme.mediumBCB.copyWith(
-                        color: isSelected
-                            ? "#6B1B1A"
-                                  .toColor() // Maroon text when selected
-                            : Colors.white, // White text when unselected
-                        fontSize: 14.sp,
+                        color: isSelected ? Colors.white : Colors.black,
+                        fontSize: 14,
                         fontWeight: isSelected
                             ? FontWeight.w600
                             : FontWeight.w400,
@@ -157,7 +150,7 @@ class YearlyVratView extends BasePage<YearlyVratController> {
                         controller.selectedYear.value.toString(),
                         style: MyTextTheme.mediumBCB.copyWith(
                           color: "#8B1925".toColor(), // Gold text
-                          fontSize: 13.41.sp,
+                          fontSize: 13.41,
                           fontWeight: FontWeight.w500,
                           height: 1.0,
                         ),
@@ -199,7 +192,7 @@ class YearlyVratView extends BasePage<YearlyVratController> {
                           controller.selectedLocation.value,
                           style: MyTextTheme.mediumBCB.copyWith(
                             color: "#8B1925".toColor(), // Gold text
-                            fontSize: 13.41.sp,
+                            fontSize: 13.41,
                             fontWeight: FontWeight.w500,
                             height: 1.0,
                           ),
@@ -330,7 +323,7 @@ class YearlyVratView extends BasePage<YearlyVratController> {
                     dayNumber.toString(),
                     style: MyTextTheme.mediumBCB.copyWith(
                       color: Colors.white,
-                      fontSize: 20.sp,
+                      fontSize: 20,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -339,7 +332,7 @@ class YearlyVratView extends BasePage<YearlyVratController> {
                     monthName,
                     style: MyTextTheme.smallBCN.copyWith(
                       color: Colors.white,
-                      fontSize: 11.sp,
+                      fontSize: 11,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -356,7 +349,7 @@ class YearlyVratView extends BasePage<YearlyVratController> {
                     festival['name']?.toString() ?? 'Vrat',
                     style: MyTextTheme.mediumBCB.copyWith(
                       color: "#6B1B1A".toColor(),
-                      fontSize: 16.sp,
+                      fontSize: 16,
                       fontWeight: FontWeight.w500,
                       height: 1.5,
                     ),
@@ -368,7 +361,7 @@ class YearlyVratView extends BasePage<YearlyVratController> {
                     dayName,
                     style: MyTextTheme.smallBCN.copyWith(
                       color: "#6B1B1A".toColor().withOpacity(0.7),
-                      fontSize: 12.sp,
+                      fontSize: 12,
                     ),
                   ),
                 ],
@@ -379,7 +372,7 @@ class YearlyVratView extends BasePage<YearlyVratController> {
             Icon(
               Icons.arrow_forward_ios,
               color: "#6B1B1A".toColor().withOpacity(0.5),
-              size: 16.w,
+              size: 16.h,
             ),
           ],
         ),

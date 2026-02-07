@@ -257,7 +257,7 @@ class AstrologerDetailView extends StatelessWidget {
             children: [
               Container(
                 width: 120.w,
-                height: 120.h,
+                height: 120.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
@@ -455,7 +455,7 @@ class AstrologerDetailView extends StatelessWidget {
               tabName,
               style: TextStyle(
                 fontFamily: 'Poppins',
-                fontSize: 14.sp,
+                fontSize: 14,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 color: isSelected
                     ? const Color(0xFF5F2221) // Dark brown/black when selected

@@ -105,7 +105,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                         child: Icon(
                           Icons.arrow_back_ios,
                           color: Colors.white,
-                          size: 18.w,
+                          size: 18.h,
                         ),
                       ),
                     ),
@@ -118,7 +118,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                         ).format(controller.selectedDate.value).toUpperCase(),
                         style: MyTextTheme.mediumBCB.copyWith(
                           color: "#68171E".toColor(),
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -143,7 +143,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                         child: Icon(
                           Icons.arrow_forward_ios,
                           color: Colors.white,
-                          size: 18.w,
+                          size: 18.h,
                         ),
                       ),
                     ),
@@ -167,7 +167,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                 'Today',
                 style: MyTextTheme.mediumBCB.copyWith(
                   color: Colors.white,
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -208,7 +208,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
               'Current Chogadia',
               style: MyTextTheme.mediumBCB.copyWith(
                 color: "#68171E".toColor(),
-                fontSize: 18.sp,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -217,7 +217,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
               muhurat,
               style: MyTextTheme.mediumBCB.copyWith(
                 color: "#68171E".toColor(),
-                fontSize: 20.sp,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -226,7 +226,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
               controller.formatTimeRange(startStr, endStr),
               style: MyTextTheme.smallBCN.copyWith(
                 color: "#68171E".toColor().withValues(alpha: 0.7),
-                fontSize: 14.sp,
+                fontSize: 14,
               ),
             ),
             Spacing.h(8),
@@ -238,7 +238,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                     : type.toLowerCase().contains('inauspicious')
                     ? Colors.red
                     : "#68171E".toColor().withValues(alpha: 0.8),
-                fontSize: 13.sp,
+                fontSize: 13,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -273,7 +273,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
             'Chogadia Table',
             style: MyTextTheme.mediumBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -293,7 +293,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                     'Chogadia',
                     style: MyTextTheme.mediumBCB.copyWith(
                       color: Colors.white,
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -304,7 +304,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                     'Start Time',
                     style: MyTextTheme.mediumBCB.copyWith(
                       color: Colors.white,
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -315,7 +315,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                     'End Time',
                     style: MyTextTheme.mediumBCB.copyWith(
                       color: Colors.white,
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -363,7 +363,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                 muhurat,
                 style: MyTextTheme.mediumBCB.copyWith(
                   color: "#68171E".toColor(),
-                  fontSize: 15.sp,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -376,7 +376,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                 controller.formatTime(startStr),
                 style: MyTextTheme.smallBCN.copyWith(
                   color: "#68171E".toColor().withValues(alpha: 0.7),
-                  fontSize: 13.sp,
+                  fontSize: 13,
                 ),
               ),
             ),
@@ -388,7 +388,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                 controller.formatTime(endStr),
                 style: MyTextTheme.smallBCN.copyWith(
                   color: "#68171E".toColor().withValues(alpha: 0.7),
-                  fontSize: 13.sp,
+                  fontSize: 13,
                 ),
               ),
             ),
@@ -412,7 +412,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
           'Chogadia Properties',
           style: MyTextTheme.largeBCB.copyWith(
             color: "#68171E".toColor(),
-            fontSize: 20.sp,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -425,7 +425,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                 '$muhurat chogadia is $type',
                 style: MyTextTheme.mediumBCN.copyWith(
                   color: "#68171E".toColor(),
-                  fontSize: 14.sp,
+                  fontSize: 14,
                 ),
               ),
             ],
@@ -443,7 +443,7 @@ class ChogadiaView extends BasePage<ChogadiaController> {
                 'OK',
                 style: MyTextTheme.mediumBCB.copyWith(
                   color: Colors.white,
-                  fontSize: 16.sp,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),

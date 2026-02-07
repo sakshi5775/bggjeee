@@ -59,8 +59,8 @@ class BhadraView extends BasePage<BhadraController> {
           AutoTranslateText(
             'Bhadrakaal timings for the selected date',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: Colors.white.withValues(alpha: 0.9),
-              fontSize: 14.sp,
+              color: Colors.black,
+              fontSize: 14,
             ),
           ),
           Padding(
@@ -98,7 +98,7 @@ class BhadraView extends BasePage<BhadraController> {
                                 controller.selectedLocation.value,
                                 style: MyTextTheme.mediumBCB.copyWith(
                                   color: AppColors.templeGold,
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -151,7 +151,7 @@ class BhadraView extends BasePage<BhadraController> {
                                       ).format(controller.selectedDate.value),
                                 style: MyTextTheme.mediumBCB.copyWith(
                                   color: AppColors.templeGold,
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -181,7 +181,7 @@ class BhadraView extends BasePage<BhadraController> {
             'Enter Details',
             style: MyTextTheme.largeBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -275,7 +275,7 @@ class BhadraView extends BasePage<BhadraController> {
           //                   : 'Get Current Location',
           //               style: MyTextTheme.mediumBCB.copyWith(
           //                 color: Colors.white,
-          //                 fontSize: 14.sp,
+          //                 fontSize: 14,
           //               ),
           //             ),
           //           ],
@@ -316,7 +316,7 @@ class BhadraView extends BasePage<BhadraController> {
                           'Get Bhadrakaal',
                           style: MyTextTheme.largeBCB.copyWith(
                             color: Colors.white,
-                            fontSize: 16.sp,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -378,7 +378,7 @@ class BhadraView extends BasePage<BhadraController> {
           labelText: 'Language',
           labelStyle: MyTextTheme.smallBCN.copyWith(
             color: "#68171E".toColor().withValues(alpha: 0.7),
-            fontSize: 14.sp,
+            fontSize: 14,
           ),
           prefixIcon: Icon(
             Icons.language,
@@ -416,7 +416,7 @@ class BhadraView extends BasePage<BhadraController> {
                   entry.value,
                   style: MyTextTheme.mediumBCN.copyWith(
                     color: "#68171E".toColor(),
-                    fontSize: 14.sp,
+                    fontSize: 14,
                   ),
                 ),
               ),
@@ -434,7 +434,7 @@ class BhadraView extends BasePage<BhadraController> {
         borderRadius: BorderRadius.circular(12.r),
         style: MyTextTheme.mediumBCN.copyWith(
           color: "#68171E".toColor(),
-          fontSize: 14.sp,
+          fontSize: 14,
         ),
       ),
     );
@@ -456,7 +456,7 @@ class BhadraView extends BasePage<BhadraController> {
             "Today's Bhadrakaal",
             style: MyTextTheme.mediumBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -490,7 +490,7 @@ class BhadraView extends BasePage<BhadraController> {
                         dayName,
                         style: MyTextTheme.mediumBCB.copyWith(
                           color: "#68171E".toColor(),
-                          fontSize: 14.sp,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -530,7 +530,7 @@ class BhadraView extends BasePage<BhadraController> {
                 label,
                 style: MyTextTheme.smallBCB.copyWith(
                   color: "#68171E".toColor().withValues(alpha: 0.7),
-                  fontSize: 12.sp,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -539,7 +539,7 @@ class BhadraView extends BasePage<BhadraController> {
                 value,
                 style: MyTextTheme.mediumBCB.copyWith(
                   color: "#68171E".toColor(),
-                  fontSize: 13.sp,
+                  fontSize: 13,
                 ),
               ),
             ],
@@ -562,7 +562,7 @@ class BhadraView extends BasePage<BhadraController> {
             'Monthly Bhadrakaal',
             style: MyTextTheme.mediumBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -605,7 +605,7 @@ class BhadraView extends BasePage<BhadraController> {
                   date,
                   style: MyTextTheme.mediumBCB.copyWith(
                     color: "#68171E".toColor(),
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -624,7 +624,7 @@ class BhadraView extends BasePage<BhadraController> {
                     day,
                     style: MyTextTheme.smallBCB.copyWith(
                       color: Colors.white,
-                      fontSize: 11.sp,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -644,7 +644,7 @@ class BhadraView extends BasePage<BhadraController> {
               'No Bhadrakaal',
               style: MyTextTheme.smallBCN.copyWith(
                 color: "#68171E".toColor().withValues(alpha: 0.5),
-                fontSize: 12.sp,
+                fontSize: 12,
                 fontStyle: FontStyle.italic,
               ),
             ),

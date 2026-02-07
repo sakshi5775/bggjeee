@@ -118,7 +118,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 15.w),
-      padding: AppPaddings.all(20),
+      padding: AppPaddings.all(12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -141,12 +141,12 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
         children: [
           // Date text
           Container(
-            height: 32.09.h,
+            height: 32.09,
             alignment: Alignment.center,
             child: AutoTranslateText(
               formattedDate,
               style: MyTextTheme.largeBCB.copyWith(
-                fontSize: 24.07.sp,
+                fontSize: 24.07,
                 fontWeight: FontWeight.w500,
                 color: Colors.white,
                 height: 1.33,
@@ -164,7 +164,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
               child: AutoTranslateText(
                 'Gregorian Calendar',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  fontSize: 14.04.sp,
+                  fontSize: 14.04,
                   fontWeight: FontWeight.w400,
                   color: Colors.white,
                   height: 1.43,
@@ -212,7 +212,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
           AutoTranslateText(
             '$festivalName Muhurat For $location',
             style: MyTextTheme.largeBCB.copyWith(
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.w500,
               color: "#6B1B1A".toColor(), // 1st-maroon
               height: 1.5,
@@ -247,7 +247,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
           child: AutoTranslateText(
             '✓',
             style: MyTextTheme.mediumBCN.copyWith(
-              fontSize: 14.sp,
+              fontSize: 14,
               fontWeight: FontWeight.w400,
               color: Color(0xFFE3B341), // 2nd-gold
               height: 1.43,
@@ -261,7 +261,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
           child: AutoTranslateText(
             text,
             style: MyTextTheme.mediumBCN.copyWith(
-              fontSize: 12.sp,
+              fontSize: 12,
               fontWeight: FontWeight.w400,
               color: Color.fromRGBO(107, 27, 26, 0.7), // fill_SNGR5O
               height: 1.67,
@@ -301,7 +301,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
           AutoTranslateText(
             festivalName,
             style: MyTextTheme.largeBCB.copyWith(
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.w500,
               color: "#6B1B1A".toColor(), // 1st-maroon
               height: 1.5,
@@ -321,7 +321,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
                 child: AutoTranslateText(
                   '✓',
                   style: MyTextTheme.mediumBCN.copyWith(
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: Color(0xFFE3B341), // 2nd-gold
                     height: 1.43,
@@ -335,7 +335,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
                 child: AutoTranslateText(
                   description,
                   style: MyTextTheme.mediumBCN.copyWith(
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: Color.fromRGBO(107, 27, 26, 0.7), // fill_SNGR5O
                     height: 1.67,
@@ -372,7 +372,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
             '${controller.festival.value?['name']} Puja Vidhi',
             style: MyTextTheme.mediumBCB.copyWith(
               color: "#6F221E".toColor(),
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -381,7 +381,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
             'By fasting and worshipping the Gods and Goddesses on this festival, a person is blessed with happiness and prosperity. Following are the Vrat rituals that one should perform while fasting on ${controller.festival.value?['name']}:',
             style: MyTextTheme.mediumBCN.copyWith(
               color: "#6F221E".toColor(),
-              fontSize: 14.sp,
+              fontSize: 14,
               height: 1.6,
             ),
           ),
@@ -396,7 +396,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
                     '• ',
                     style: MyTextTheme.mediumBCN.copyWith(
                       color: "#6F221E".toColor(),
-                      fontSize: 16.sp,
+                      fontSize: 16,
                     ),
                   ),
                   Expanded(
@@ -404,7 +404,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
                       item,
                       style: MyTextTheme.mediumBCN.copyWith(
                         color: "#6F221E".toColor(),
-                        fontSize: 14.sp,
+                        fontSize: 14,
                         height: 1.6,
                       ),
                     ),

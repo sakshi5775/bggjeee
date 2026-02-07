@@ -3,6 +3,8 @@ import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/instance_manager.dart';
 
 class SpiritualPillarsGrid extends StatelessWidget {
   SpiritualPillarsGrid({super.key});
@@ -60,7 +62,7 @@ class SpiritualPillarsGrid extends StatelessWidget {
             'Our 12 Spiritual Pillars',
             style: AppTypography.h2.copyWith(
               color: const Color(0xFFFFCC80), // Gold text
-              fontSize: 22.sp,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -69,10 +71,10 @@ class SpiritualPillarsGrid extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
+              crossAxisCount: Get.width > 600 ? 4 : 3,
               childAspectRatio: 0.75, // Adjusted aspect ratio
-              crossAxisSpacing: 16.w,
-              mainAxisSpacing: 24.h,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 24,
             ),
             itemCount: _pillars.length,
             itemBuilder: (context, index) {
@@ -81,7 +83,7 @@ class SpiritualPillarsGrid extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Container(
-                      width: double.infinity, // Ensure full width
+                      width: double.infinity,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16.r),
                         border: Border.all(
@@ -123,9 +125,8 @@ class SpiritualPillarsGrid extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: AppTypography.body2.copyWith(
                           color: const Color(0xFFFFCC80), // Gold/Beige
-                          fontSize: 12.sp,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          height: 1.2,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,

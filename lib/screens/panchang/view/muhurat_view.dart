@@ -65,8 +65,8 @@ class MuhuratView extends BasePage<MuhuratController> {
           AutoTranslateText(
             'Auspicious timings for the selected date',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: Colors.white.withOpacity(0.9),
-              fontSize: 14.sp,
+              color: Colors.black,
+              fontSize: 14,
             ),
           ),
           Spacing.h(8),
@@ -113,7 +113,7 @@ class MuhuratView extends BasePage<MuhuratController> {
                           controller.selectedLocation.value,
                           style: MyTextTheme.mediumBCB.copyWith(
                             color: "#68171E".toColor(),
-                            fontSize: 14.sp,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -167,7 +167,7 @@ class MuhuratView extends BasePage<MuhuratController> {
                                 ).format(controller.selectedDate.value),
                           style: MyTextTheme.mediumBCB.copyWith(
                             color: "#68171E".toColor(),
-                            fontSize: 14.sp,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -194,7 +194,7 @@ class MuhuratView extends BasePage<MuhuratController> {
             'Enter Details',
             style: MyTextTheme.largeBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -268,7 +268,7 @@ class MuhuratView extends BasePage<MuhuratController> {
                           'Get Muhurat',
                           style: MyTextTheme.largeBCB.copyWith(
                             color: Colors.white,
-                            fontSize: 16.sp,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -290,7 +290,7 @@ class MuhuratView extends BasePage<MuhuratController> {
           labelText: 'Language',
           labelStyle: MyTextTheme.smallBCN.copyWith(
             color: "#68171E".toColor().withValues(alpha: 0.7),
-            fontSize: 14.sp,
+            fontSize: 14,
           ),
           prefixIcon: Icon(
             Icons.language,
@@ -330,7 +330,7 @@ class MuhuratView extends BasePage<MuhuratController> {
               entry.value,
               style: MyTextTheme.mediumBCN.copyWith(
                 color: "#68171E".toColor(),
-                fontSize: 14.sp,
+                fontSize: 14,
               ),
             ),
           );
@@ -349,7 +349,7 @@ class MuhuratView extends BasePage<MuhuratController> {
         borderRadius: BorderRadius.circular(12.r),
         style: MyTextTheme.mediumBCN.copyWith(
           color: "#68171E".toColor(),
-          fontSize: 14.sp,
+          fontSize: 14,
         ),
       ),
     );
@@ -394,7 +394,7 @@ class MuhuratView extends BasePage<MuhuratController> {
             "Today's Muhurat",
             style: MyTextTheme.mediumBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -439,7 +439,7 @@ class MuhuratView extends BasePage<MuhuratController> {
                         'Abhijit Muhurta',
                         style: MyTextTheme.largeBCB.copyWith(
                           color: Colors.white,
-                          fontSize: 20.sp,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -454,7 +454,7 @@ class MuhuratView extends BasePage<MuhuratController> {
                             : 'Not Available',
                         style: MyTextTheme.mediumBCN.copyWith(
                           color: Colors.white.withValues(alpha: 0.9),
-                          fontSize: 14.sp,
+                          fontSize: 14,
                         ),
                       ),
                     ],
@@ -496,7 +496,7 @@ class MuhuratView extends BasePage<MuhuratController> {
                 selectedDateStr.isNotEmpty ? selectedDateStr : 'Selected date',
                 style: MyTextTheme.mediumBCB.copyWith(
                   color: "#68171E".toColor(),
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -519,7 +519,7 @@ class MuhuratView extends BasePage<MuhuratController> {
                     dayOfWeek,
                     style: MyTextTheme.smallBCB.copyWith(
                       color: "#68171E".toColor(),
-                      fontSize: 12.sp,
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -535,7 +535,7 @@ class MuhuratView extends BasePage<MuhuratController> {
               'Day Muhurats',
               style: MyTextTheme.mediumBCB.copyWith(
                 color: "#68171E".toColor(),
-                fontSize: 16.sp,
+                fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -552,7 +552,7 @@ class MuhuratView extends BasePage<MuhuratController> {
               'Night Muhurats',
               style: MyTextTheme.mediumBCB.copyWith(
                 color: "#68171E".toColor(),
-                fontSize: 16.sp,
+                fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -628,7 +628,7 @@ class MuhuratView extends BasePage<MuhuratController> {
                         muhuratName,
                         style: MyTextTheme.mediumBCB.copyWith(
                           color: "#68171E".toColor(),
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -646,7 +646,7 @@ class MuhuratView extends BasePage<MuhuratController> {
                         type,
                         style: MyTextTheme.smallBCB.copyWith(
                           color: Colors.white,
-                          fontSize: 11.sp,
+                          fontSize: 11,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -658,7 +658,7 @@ class MuhuratView extends BasePage<MuhuratController> {
                   '${_formatDateTime(start)} - ${_formatDateTime(end)}',
                   style: MyTextTheme.smallBCN.copyWith(
                     color: "#68171E".toColor().withValues(alpha: 0.7),
-                    fontSize: 13.sp,
+                    fontSize: 13,
                   ),
                 ),
               ],

@@ -11,7 +11,8 @@ class DailyPanchangButtonWidget extends StatelessWidget {
   final IconData? icon;
   final VoidCallback? onPressed;
   final bool isLoading;
-  final bool isPrimary; // true for orange gradient, false for white with orange border
+  final bool
+  isPrimary; // true for orange gradient, false for white with orange border
 
   const DailyPanchangButtonWidget({
     super.key,
@@ -28,7 +29,7 @@ class DailyPanchangButtonWidget extends StatelessWidget {
       // Orange gradient button (Get Panchang)
       return Container(
         width: double.infinity,
-        height: 53.97.h,
+        height: 53,
         decoration: BoxDecoration(
           gradient: AppColors.orangeGradient,
           borderRadius: BorderRadius.circular(10.98.r),
@@ -55,7 +56,7 @@ class DailyPanchangButtonWidget extends StatelessWidget {
                     : AutoTranslateText(
                         text,
                         style: MyTextTheme.mediumBCB.copyWith(
-                          fontSize: 17.58.sp,
+                          fontSize: 17.58,
                           fontWeight: FontWeight.w500,
                           color: Colors.white,
                         ),
@@ -69,7 +70,7 @@ class DailyPanchangButtonWidget extends StatelessWidget {
       // White button with orange border (Get Current Location)
       return Container(
         width: double.infinity,
-        height: 53.97.h,
+        height: 53,
         decoration: BoxDecoration(
           color: "#FFFFFF".toColor(),
           borderRadius: BorderRadius.circular(10.98.r),
@@ -89,11 +90,7 @@ class DailyPanchangButtonWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (icon != null) ...[
-                    Icon(
-                      icon,
-                      size: 21.96.w,
-                      color: "#F15A24".toColor(),
-                    ),
+                    Icon(icon, size: 21.96.w, color: "#F15A24".toColor()),
                     Spacing.w(12),
                   ],
                   isLoading
@@ -110,7 +107,7 @@ class DailyPanchangButtonWidget extends StatelessWidget {
                       : AutoTranslateText(
                           text,
                           style: MyTextTheme.mediumBCB.copyWith(
-                            fontSize: 17.58.sp,
+                            fontSize: 17.58,
                             fontWeight: FontWeight.w500,
                             color: "#F15A24".toColor(),
                           ),
@@ -124,4 +121,3 @@ class DailyPanchangButtonWidget extends StatelessWidget {
     }
   }
 }
-

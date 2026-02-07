@@ -48,10 +48,7 @@ class CartPriceSummaryWidget extends StatelessWidget {
               value: '- ${currencyFormat.format(discount)}',
               valueColor: Colors.green,
             ),
-          _SummaryRow(
-            label: 'Tax',
-            value: currencyFormat.format(tax),
-          ),
+          _SummaryRow(label: 'Tax', value: currencyFormat.format(tax)),
           _SummaryRow(
             label: 'Delivery Fee',
             value: delivery == 0 ? 'Free' : currencyFormat.format(delivery),
@@ -67,13 +64,13 @@ class CartPriceSummaryWidget extends StatelessWidget {
             labelStyle: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w600,
-              fontSize: 18.sp,
+              fontSize: 18,
               color: '#68171E'.toColor(),
             ),
             valueStyle: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w600,
-              fontSize: 18.sp,
+              fontSize: 18,
               color: '#68171E'.toColor(),
             ),
           ),
@@ -107,24 +104,24 @@ class _SummaryRow extends StatelessWidget {
         children: [
           AutoTranslateText(
             label,
-            style: labelStyle ??
+            style:
+                labelStyle ??
                 TextStyle(
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w400,
-                  fontSize: 15.96.sp,
+                  fontSize: 15.96,
                   color: '#68171E'.toColor(),
-                  height: 1.43,
                 ),
           ),
           AutoTranslateText(
             value,
-            style: valueStyle ??
+            style:
+                valueStyle ??
                 TextStyle(
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w400,
-                  fontSize: 15.96.sp,
+                  fontSize: 15.96,
                   color: valueColor ?? '#68171E'.toColor(),
-                  height: 1.43,
                 ),
           ),
         ],

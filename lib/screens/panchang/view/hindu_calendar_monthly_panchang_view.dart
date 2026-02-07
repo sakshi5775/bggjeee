@@ -95,7 +95,7 @@ class HinduCalendarMonthlyPanchangView
                         ).format(controller.selectedDate.value),
                         style: MyTextTheme.mediumBCB.copyWith(
                           color: "#68171E".toColor(),
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -124,7 +124,7 @@ class HinduCalendarMonthlyPanchangView
                         controller.selectedLocation.value,
                         style: MyTextTheme.smallBCN.copyWith(
                           color: "#68171E".toColor().withValues(alpha: 0.7),
-                          fontSize: 12.sp,
+                          fontSize: 12,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -328,8 +328,8 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                 children: [
                   // Date badge
                   Container(
-                    width: 50.w,
-                    height: 50.w,
+                    width: 50,
+                    height: 50,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
@@ -346,7 +346,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                         '${widget.dayNumber}',
                         style: MyTextTheme.largeBCB.copyWith(
                           color: "#68171E".toColor(),
-                          fontSize: 20.sp,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -361,7 +361,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                           widget.dayName,
                           style: MyTextTheme.largeBCB.copyWith(
                             color: Colors.white,
-                            fontSize: 18.sp,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -371,7 +371,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                             '${widget.festivals.length} Festival${widget.festivals.length > 1 ? 's' : ''}',
                             style: MyTextTheme.smallBCN.copyWith(
                               color: Colors.white.withValues(alpha: 0.9),
-                              fontSize: 12.sp,
+                              fontSize: 12,
                             ),
                           ),
                         ],
@@ -381,7 +381,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                   Icon(
                     _isExpanded ? Icons.expand_less : Icons.expand_more,
                     color: Colors.white,
-                    size: 28.w,
+                    size: 28.h,
                   ),
                 ],
               ),
@@ -419,7 +419,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                           name,
                           style: MyTextTheme.smallBCB.copyWith(
                             color: Colors.white,
-                            fontSize: 12.sp,
+                            fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -640,7 +640,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                                 'Inauspicious Timings',
                                 style: MyTextTheme.mediumBCB.copyWith(
                                   color: AppColors.error,
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -688,7 +688,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                                 'Sankranti',
                                 style: MyTextTheme.mediumBCB.copyWith(
                                   color: AppColors.templeGold,
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -731,7 +731,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
           title,
           style: MyTextTheme.mediumBCB.copyWith(
             color: "#68171E".toColor(),
-            fontSize: 14.sp,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -764,7 +764,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                   label,
                   style: MyTextTheme.smallBCN.copyWith(
                     color: "#68171E".toColor().withValues(alpha: 0.7),
-                    fontSize: 11.sp,
+                    fontSize: 11,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -777,7 +777,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
             value,
             style: MyTextTheme.smallBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 13.sp,
+              fontSize: 13,
               fontWeight: FontWeight.bold,
             ),
             maxLines: 2,
@@ -814,7 +814,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
                 title,
                 style: MyTextTheme.mediumBCB.copyWith(
                   color: "#68171E".toColor(),
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -839,7 +839,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
               '$label:',
               style: MyTextTheme.smallBCN.copyWith(
                 color: "#68171E".toColor().withValues(alpha: 0.7),
-                fontSize: 11.sp,
+                fontSize: 11,
               ),
             ),
           ),
@@ -850,7 +850,7 @@ class _DayCardWidgetState extends State<_DayCardWidget> {
               value,
               style: MyTextTheme.smallBCB.copyWith(
                 color: "#68171E".toColor(),
-                fontSize: 11.sp,
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.right,

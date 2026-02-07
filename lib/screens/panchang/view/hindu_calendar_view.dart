@@ -38,7 +38,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                 subtitle: AutoTranslateText(
                   'Traditional Indian Calendar System',
                   style: MyTextTheme.mediumBCN.copyWith(
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: "#6F221E".toColor().withOpacity(0.7),
                     height: 1.33,
@@ -90,12 +90,8 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                     vertical: 8.h,
                   ),
                   decoration: BoxDecoration(
-                    color: isAllSelected
-                        ? Colors
-                              .white // White background when selected
-                        : Colors.white.withOpacity(
-                            0.3,
-                          ), // White with opacity when unselected
+                    gradient: isAllSelected ? AppColors.orangeGradient : null,
+                    color: isAllSelected ? null : Colors.white,
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Column(
@@ -105,11 +101,8 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                       AutoTranslateText(
                         'All',
                         style: MyTextTheme.mediumBCB.copyWith(
-                          color: isAllSelected
-                              ? "#6B1B1A"
-                                    .toColor() // Dark red text when selected
-                              : Colors.white, // White text when unselected
-                          fontSize: 14.sp,
+                          color: isAllSelected ? Colors.white : Colors.black,
+                          fontSize: 14,
                           fontWeight: isAllSelected
                               ? FontWeight.w600
                               : FontWeight.w400,
@@ -139,12 +132,8 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                 margin: EdgeInsets.only(right: 12.w),
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? Colors
-                            .white // White background when selected
-                      : Colors.white.withOpacity(
-                          0.3,
-                        ), // White with opacity when unselected
+                  gradient: isSelected ? AppColors.orangeGradient : null,
+                  color: isSelected ? null : Colors.white,
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Column(
@@ -155,11 +144,8 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                       child: AutoTranslateText(
                         monthName,
                         style: MyTextTheme.mediumBCB.copyWith(
-                          color: isSelected
-                              ? "#6B1B1A"
-                                    .toColor() // Dark red text when selected
-                              : Colors.white, // White text when unselected
-                          fontSize: 14.sp,
+                          color: isSelected ? Colors.white : Colors.black,
+                          fontSize: 14,
                           fontWeight: isSelected
                               ? FontWeight.w600
                               : FontWeight.w400,
@@ -211,7 +197,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                         controller.selectedYear.value.toString(),
                         style: MyTextTheme.mediumBCB.copyWith(
                           color: Color(0xFFE3B341), // 2nd-gold
-                          fontSize: 13.41.sp,
+                          fontSize: 13.41,
                           fontWeight: FontWeight.w500,
                           height: 1.0,
                         ),
@@ -253,7 +239,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                           controller.selectedLocation.value,
                           style: MyTextTheme.mediumBCB.copyWith(
                             color: Color(0xFFE3B341), // 2nd-gold
-                            fontSize: 13.41.sp,
+                            fontSize: 13.41,
                             fontWeight: FontWeight.w500,
                             height: 1.0,
                           ),
@@ -385,7 +371,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                   AutoTranslateText(
                     dayNumber.toString(),
                     style: MyTextTheme.mediumBCB.copyWith(
-                      fontSize: 18.sp,
+                      fontSize: 18,
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
                       height: 1.0,
@@ -397,7 +383,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                     overflow: TextOverflow.ellipsis,
                     style: MyTextTheme.smallBCN.copyWith(
                       fontWeight: FontWeight.w500,
-                      fontSize: 10.sp,
+                      fontSize: 10,
                       color: Colors.white,
                       height: 1.0,
                     ),
@@ -414,7 +400,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                   AutoTranslateText(
                     festival['name']?.toString() ?? 'Festival',
                     style: MyTextTheme.mediumBCB.copyWith(
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: "#6B1B1A".toColor(), // fill_54O2QS
                       height: 1.43,
@@ -426,7 +412,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                     AutoTranslateText(
                       festival['description']?.toString() ?? '',
                       style: MyTextTheme.smallBCN.copyWith(
-                        fontSize: 10.sp,
+                        fontSize: 10,
                         fontWeight: FontWeight.w400,
                         color: Color.fromRGBO(107, 27, 26, 0.6), // fill_BELX40
                         height: 1.6,
@@ -450,7 +436,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
               child: Icon(
                 Icons.arrow_forward_ios,
                 color: "#6B1B1A".toColor().withOpacity(0.5),
-                size: 16.w,
+                size: 16.h,
               ),
             ),
           ],
@@ -582,7 +568,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                   'Add to Calendar',
                   style: MyTextTheme.largeBCB.copyWith(
                     color: "#6F221E".toColor(),
-                    fontSize: 20.sp,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -609,7 +595,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                               festival['name']?.toString() ?? 'Festival',
                               style: MyTextTheme.mediumBCB.copyWith(
                                 color: "#6F221E".toColor(),
-                                fontSize: 16.sp,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -631,7 +617,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                                       color: "#6F221E".toColor().withOpacity(
                                         0.7,
                                       ),
-                                      fontSize: 14.sp,
+                                      fontSize: 14,
                                     ),
                                   ),
                                 ),
@@ -643,7 +629,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                                 festival['description']?.toString() ?? '',
                                 style: MyTextTheme.smallBCN.copyWith(
                                   color: "#6F221E".toColor().withOpacity(0.6),
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                 ),
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
@@ -679,7 +665,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                                   'Add to Calendar',
                                   style: MyTextTheme.mediumBCB.copyWith(
                                     color: Colors.white,
-                                    fontSize: 16.sp,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                   overflow: TextOverflow.ellipsis,
@@ -696,7 +682,7 @@ class HinduCalendarView extends BasePage<HinduCalendarController> {
                           'This will open your default calendar app to save the event',
                           style: MyTextTheme.smallBCN.copyWith(
                             color: Colors.grey.shade600,
-                            fontSize: 12.sp,
+                            fontSize: 12,
                           ),
                           textAlign: TextAlign.center,
                           maxLines: 2,

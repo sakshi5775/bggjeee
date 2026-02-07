@@ -64,7 +64,7 @@ class ProfileView extends GetView<ProfileController> {
                           style: TextStyle(
                             color: '#6F221E'.toColor(),
                             fontWeight: FontWeight.w600,
-                            fontSize: 14.sp,
+                            fontSize: 14,
                           ),
                         ),
                         style: TextButton.styleFrom(
@@ -144,7 +144,7 @@ class ProfileView extends GetView<ProfileController> {
         children: [
           // Header with gradient
           Container(
-            padding: EdgeInsets.all(18.w),
+            padding: EdgeInsets.all(18),
             decoration: BoxDecoration(
               gradient: AppColors.primaryGradient,
               borderRadius: BorderRadius.only(
@@ -172,7 +172,7 @@ class ProfileView extends GetView<ProfileController> {
                     'Account Details',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: 18.sp,
+                      fontSize: 18,
                       color: Colors.white,
                     ),
                   ),
@@ -256,7 +256,7 @@ class ProfileView extends GetView<ProfileController> {
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700,
-                                fontSize: 14.sp,
+                                fontSize: 14,
                               ),
                             ),
                           ],
@@ -320,8 +320,8 @@ class ProfileView extends GetView<ProfileController> {
                         Stack(
                           children: [
                             Container(
-                              width: 110.w,
-                              height: 110.h,
+                              width: 110,
+                              height: 110,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 gradient: hasAvatar
@@ -333,15 +333,7 @@ class ProfileView extends GetView<ProfileController> {
                                   ),
                                   width: 3,
                                 ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.deepOrange.withValues(
-                                      alpha: 0.3,
-                                    ),
-                                    blurRadius: 15,
-                                    spreadRadius: 2,
-                                  ),
-                                ],
+
                                 image: hasAvatar
                                     ? DecorationImage(
                                         image: NetworkImage(avatarUrl),
@@ -352,7 +344,7 @@ class ProfileView extends GetView<ProfileController> {
                               child: !hasAvatar
                                   ? Icon(
                                       Icons.person_outline,
-                                      size: 55.sp,
+                                      size: 55,
                                       color: Colors.white,
                                     )
                                   : null,
@@ -380,19 +372,10 @@ class ProfileView extends GetView<ProfileController> {
                                   decoration: BoxDecoration(
                                     gradient: AppColors.orangeGradient,
                                     shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppColors.deepOrange.withValues(
-                                          alpha: 0.4,
-                                        ),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 4),
-                                      ),
-                                    ],
                                   ),
                                   child: Icon(
                                     Icons.camera_alt,
-                                    size: 16.sp,
+                                    size: 16,
                                     color: Colors.white,
                                   ),
                                 ),
@@ -405,7 +388,7 @@ class ProfileView extends GetView<ProfileController> {
                         AutoTranslateText(
                           controller.userName.value,
                           style: TextStyle(
-                            fontSize: 22.sp,
+                            fontSize: 22,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textColorMaroon,
                           ),
@@ -426,7 +409,7 @@ class ProfileView extends GetView<ProfileController> {
                                 child: AutoTranslateText(
                                   controller.userEmail.value,
                                   style: TextStyle(
-                                    fontSize: 13.sp,
+                                    fontSize: 13,
                                     color: AppColors.textSecondary,
                                   ),
                                   maxLines: 1,
@@ -451,7 +434,7 @@ class ProfileView extends GetView<ProfileController> {
                                 child: AutoTranslateText(
                                   controller.userPhone.value,
                                   style: TextStyle(
-                                    fontSize: 13.sp,
+                                    fontSize: 13,
                                     color: AppColors.textSecondary,
                                   ),
                                   maxLines: 1,
@@ -508,7 +491,7 @@ class ProfileView extends GetView<ProfileController> {
                               AutoTranslateText(
                                 'Last Login',
                                 style: TextStyle(
-                                  fontSize: 11.sp,
+                                  fontSize: 11,
                                   color: Colors.white.withValues(alpha: 0.9),
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -519,7 +502,7 @@ class ProfileView extends GetView<ProfileController> {
                                     ? controller.lastLoginText.value
                                     : '18 Dec 2025 . 08:33 PM',
                                 style: TextStyle(
-                                  fontSize: 13.sp,
+                                  fontSize: 13,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white,
                                 ),
@@ -633,7 +616,7 @@ class ProfileView extends GetView<ProfileController> {
                     'Your Dashboard',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: 18.sp,
+                      fontSize: 18,
                       color: Colors.white,
                     ),
                   ),
@@ -648,7 +631,7 @@ class ProfileView extends GetView<ProfileController> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: actions.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+                crossAxisCount: Get.width > 600 ? 3 : 2,
                 mainAxisSpacing: 12.h,
                 crossAxisSpacing: 12.w,
                 childAspectRatio: 1.0,
@@ -715,7 +698,7 @@ class ProfileView extends GetView<ProfileController> {
                     'Recent Orders',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: 18.sp,
+                      fontSize: 18,
                       color: Colors.white,
                     ),
                   ),
@@ -769,7 +752,7 @@ class ProfileView extends GetView<ProfileController> {
                           style: TextStyle(
                             color: AppColors.textColorMaroon,
                             fontWeight: FontWeight.w600,
-                            fontSize: 14.sp,
+                            fontSize: 14,
                           ),
                         ),
                         SizedBox(height: 4.h),
@@ -777,7 +760,7 @@ class ProfileView extends GetView<ProfileController> {
                           'Start exploring the shop!',
                           style: TextStyle(
                             color: AppColors.textSecondary,
-                            fontSize: 12.sp,
+                            fontSize: 12,
                           ),
                         ),
                       ],
@@ -851,7 +834,7 @@ class ProfileView extends GetView<ProfileController> {
                   child: Icon(
                     Icons.headset_mic_outlined,
                     color: Colors.white,
-                    size: 24.w,
+                    size: 24,
                   ),
                 ),
                 SizedBox(width: 12.w),
@@ -860,7 +843,7 @@ class ProfileView extends GetView<ProfileController> {
                     'Needs Assistance?',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: 20.sp,
+                      fontSize: 20,
                       color: AppColors.textColorMaroon,
                     ),
                   ),
@@ -873,7 +856,7 @@ class ProfileView extends GetView<ProfileController> {
               style: TextStyle(
                 color: AppColors.textSecondary,
                 height: 1.5,
-                fontSize: 14.sp,
+                fontSize: 14,
               ),
             ),
             SizedBox(height: 20.h),
@@ -903,17 +886,13 @@ class ProfileView extends GetView<ProfileController> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.headset_mic,
-                          size: 22.w,
-                          color: Colors.white,
-                        ),
+                        Icon(Icons.headset_mic, size: 22, color: Colors.white),
                         SizedBox(width: 10.w),
                         AutoTranslateText(
                           'Contact Support',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
-                            fontSize: 16.sp,
+                            fontSize: 16,
                             color: Colors.white,
                             letterSpacing: 0.5,
                           ),
@@ -986,7 +965,7 @@ class ProfileView extends GetView<ProfileController> {
                 AutoTranslateText(
                   label,
                   style: TextStyle(
-                    fontSize: 11.sp,
+                    fontSize: 11,
                     fontWeight: FontWeight.w500,
                     color: AppColors.textSecondary,
                   ),
@@ -996,7 +975,7 @@ class ProfileView extends GetView<ProfileController> {
                   value,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     color: AppColors.textColorMaroon,
                   ),
                   maxLines: 2,
@@ -1054,7 +1033,7 @@ class ProfileView extends GetView<ProfileController> {
                             style: TextStyle(
                               fontFamily: 'Baloo 2',
                               fontWeight: FontWeight.w700,
-                              fontSize: 22.sp,
+                              fontSize: 22,
                               color: Colors.white,
                             ),
                           ),
@@ -1064,7 +1043,7 @@ class ProfileView extends GetView<ProfileController> {
                             style: TextStyle(
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w400,
-                              fontSize: 13.sp,
+                              fontSize: 13,
                               color: Colors.white.withOpacity(0.9),
                             ),
                           ),
@@ -1095,7 +1074,7 @@ class ProfileView extends GetView<ProfileController> {
                           child: Icon(
                             Icons.close_rounded,
                             color: Colors.white,
-                            size: 20.sp,
+                            size: 20,
                           ),
                         ),
                       ),
@@ -1168,7 +1147,7 @@ class ProfileView extends GetView<ProfileController> {
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: AppColors.saffron,
-                                            fontSize: 24.sp,
+                                            fontSize: 24,
                                           ),
                                         )
                                       : null,
@@ -1184,7 +1163,7 @@ class ProfileView extends GetView<ProfileController> {
                                     ),
                                     child: Icon(
                                       Icons.camera_alt,
-                                      size: 18.sp,
+                                      size: 18,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -1270,7 +1249,7 @@ class ProfileView extends GetView<ProfileController> {
                               children: [
                                 Icon(
                                   Icons.calendar_today_outlined,
-                                  size: 20.sp,
+                                  size: 20,
                                   color: AppColors.saffron,
                                 ),
                                 SizedBox(width: 12.w),
@@ -1286,7 +1265,7 @@ class ProfileView extends GetView<ProfileController> {
                                         style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontWeight: FontWeight.w500,
-                                          fontSize: 14.sp,
+                                          fontSize: 14,
                                           color: text.isEmpty
                                               ? AppColors.textSecondary
                                               : '#68171E'.toColor(),
@@ -1297,7 +1276,7 @@ class ProfileView extends GetView<ProfileController> {
                                 ),
                                 Icon(
                                   Icons.arrow_forward_ios,
-                                  size: 12.sp,
+                                  size: 12,
                                   color: AppColors.saffron,
                                 ),
                               ],
@@ -1404,7 +1383,7 @@ class ProfileView extends GetView<ProfileController> {
                               children: [
                                 Icon(
                                   Icons.access_time_rounded,
-                                  size: 20.sp,
+                                  size: 20,
                                   color: AppColors.saffron,
                                 ),
                                 SizedBox(width: 12.w),
@@ -1432,7 +1411,7 @@ class ProfileView extends GetView<ProfileController> {
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 14.sp,
+                                        fontSize: 14,
                                         color: (h.isEmpty && m.isEmpty)
                                             ? AppColors.textSecondary
                                             : '#68171E'.toColor(),
@@ -1443,7 +1422,7 @@ class ProfileView extends GetView<ProfileController> {
                                 Spacer(),
                                 Icon(
                                   Icons.arrow_forward_ios,
-                                  size: 12.sp,
+                                  size: 12,
                                   color: AppColors.saffron,
                                 ),
                               ],
@@ -1509,7 +1488,7 @@ class ProfileView extends GetView<ProfileController> {
                                           children: [
                                             Icon(
                                               Icons.check_circle_rounded,
-                                              size: 20.sp,
+                                              size: 20,
                                               color: Colors.white,
                                             ),
                                             SizedBox(width: 8.w),
@@ -1518,7 +1497,7 @@ class ProfileView extends GetView<ProfileController> {
                                               style: TextStyle(
                                                 fontFamily: 'Poppins',
                                                 fontWeight: FontWeight.w700,
-                                                fontSize: 16.sp,
+                                                fontSize: 16,
                                                 color: Colors.white,
                                                 letterSpacing: 0.5,
                                               ),
@@ -1555,7 +1534,7 @@ class ProfileView extends GetView<ProfileController> {
             gradient: AppColors.primaryGradient,
             borderRadius: BorderRadius.circular(12.r),
           ),
-          child: Icon(icon, size: 20.sp, color: '#E3B341'.toColor()),
+          child: Icon(icon, size: 20, color: '#E3B341'.toColor()),
         ),
         SizedBox(width: 12.w),
         AutoTranslateText(
@@ -1563,7 +1542,7 @@ class ProfileView extends GetView<ProfileController> {
           style: TextStyle(
             fontFamily: 'Baloo 2',
             fontWeight: FontWeight.w700,
-            fontSize: 18.sp,
+            fontSize: 18,
             color: '#68171E'.toColor(),
           ),
         ),
@@ -1600,7 +1579,7 @@ class ProfileView extends GetView<ProfileController> {
         style: TextStyle(
           fontFamily: 'Poppins',
           fontWeight: FontWeight.w500,
-          fontSize: 14.sp,
+          fontSize: 14,
           color: '#68171E'.toColor(),
         ),
         decoration: InputDecoration(
@@ -1609,11 +1588,11 @@ class ProfileView extends GetView<ProfileController> {
           labelStyle: TextStyle(
             fontFamily: 'Poppins',
             fontWeight: FontWeight.w500,
-            fontSize: 13.sp,
+            fontSize: 13,
             color: AppColors.textSecondary,
           ),
           prefixIcon: icon != Icons.access_time
-              ? Icon(icon, size: 20.sp, color: AppColors.saffron)
+              ? Icon(icon, size: 20, color: AppColors.saffron)
               : null,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16.r),
@@ -1667,7 +1646,7 @@ class ProfileView extends GetView<ProfileController> {
           labelText: label,
           prefixIcon: Icon(
             Icons.arrow_drop_down,
-            size: 24.sp,
+            size: 24,
             color: AppColors.saffron,
           ),
           border: OutlineInputBorder(
@@ -1697,7 +1676,7 @@ class ProfileView extends GetView<ProfileController> {
                   e.toString(),
                   style: TextStyle(
                     fontFamily: 'Poppins',
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     color: '#68171E'.toColor(),
                   ),
                 ),
@@ -1709,7 +1688,7 @@ class ProfileView extends GetView<ProfileController> {
           hint,
           style: TextStyle(
             fontFamily: 'Poppins',
-            fontSize: 14.sp,
+            fontSize: 14,
             color: AppColors.textSecondary,
           ),
         ),
@@ -1795,7 +1774,7 @@ class _ProfileActionTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: EdgeInsets.all(12.w),
+                  padding: EdgeInsets.all(12.h),
                   decoration: BoxDecoration(
                     gradient: AppColors.orangeGradient,
                     borderRadius: BorderRadius.circular(12.r),
@@ -1807,14 +1786,14 @@ class _ProfileActionTile extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Icon(action.icon, color: Colors.white, size: 26.w),
+                  child: Icon(action.icon, color: Colors.white, size: 26.h),
                 ),
                 SizedBox(height: 10.h),
                 AutoTranslateText(
                   action.label,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     color: AppColors.textColorMaroon,
                   ),
                   textAlign: TextAlign.center,
@@ -1824,7 +1803,7 @@ class _ProfileActionTile extends StatelessWidget {
                   child: AutoTranslateText(
                     action.subtitle,
                     style: TextStyle(
-                      fontSize: 11.sp,
+                      fontSize: 11,
                       color: AppColors.textSecondary,
                       fontWeight: FontWeight.w500,
                     ),
@@ -1926,7 +1905,7 @@ class _RecentOrderTile extends StatelessWidget {
                         order.orderId ?? 'Order',
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontSize: 14.sp,
+                          fontSize: 14,
                           color: AppColors.textColorMaroon,
                         ),
                         maxLines: 1,
@@ -1939,7 +1918,7 @@ class _RecentOrderTile extends StatelessWidget {
                             '${order.itemCount ?? 0} items',
                         style: TextStyle(
                           color: AppColors.textSecondary,
-                          fontSize: 12.sp,
+                          fontSize: 12,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -1961,7 +1940,7 @@ class _RecentOrderTile extends StatelessWidget {
                     '₹${order.totalAmount.toStringAsFixed(0)}',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: 13.sp,
+                      fontSize: 13,
                       color: Colors.white,
                     ),
                   ),
@@ -1982,11 +1961,7 @@ class _RecentOrderTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 20.sp,
-              color: AppColors.textSecondary,
-            ),
+            Icon(Icons.error_outline, size: 20, color: AppColors.textSecondary),
             SizedBox(width: 10.w),
             Expanded(
               child: AutoTranslateText(

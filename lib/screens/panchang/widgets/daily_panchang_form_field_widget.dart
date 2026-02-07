@@ -41,7 +41,7 @@ class DailyPanchangFormFieldWidget extends StatelessWidget {
         keyboardType: keyboardType,
         hintText: hintText,
         suffixIcon: suffixIcon != null
-            ? Icon(suffixIcon, size: 20.05.w, color: "#646464".toColor())
+            ? Icon(suffixIcon, size: 20.05.h, color: "#646464".toColor())
             : null,
       ),
     );

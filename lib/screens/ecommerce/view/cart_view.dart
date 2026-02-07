@@ -179,7 +179,7 @@ class CartView extends GetView<CartController> {
                         totalAmount: totalAmount,
                         currencyFormat: currencyFormat,
                       ),
-                      SizedBox(height: 24.h),
+                      SizedBox(height: 40.h),
                     ],
                   ),
                 ),
@@ -430,7 +430,7 @@ class _CouponSection extends StatelessWidget {
                       hintText: 'Enter coupon code',
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: 16.w,
-                        vertical: 14.h,
+                        vertical: 16.h,
                       ),
                       filled: true,
                       fillColor: Colors.white,

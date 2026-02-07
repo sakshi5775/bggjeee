@@ -128,7 +128,7 @@ class OrdersView extends GetView<OrdersController> {
             style: TextStyle(
               color: AppColors.textColorMaroon,
               fontWeight: FontWeight.w600,
-              fontSize: 13.sp,
+              fontSize: 13,
             ),
             items: controller.statusOptions
                 .map(
@@ -139,7 +139,7 @@ class OrdersView extends GetView<OrdersController> {
                       style: TextStyle(
                         color: AppColors.textColorMaroon,
                         fontWeight: FontWeight.w600,
-                        fontSize: 14.sp,
+                        fontSize: 14,
                       ),
                     ),
                   ),
@@ -175,7 +175,7 @@ class OrdersView extends GetView<OrdersController> {
             AutoTranslateText(
               'No Orders Yet',
               style: TextStyle(
-                fontSize: 24.sp,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textColorMaroon,
               ),
@@ -183,7 +183,7 @@ class OrdersView extends GetView<OrdersController> {
             SizedBox(height: 12.h),
             AutoTranslateText(
               'Start shopping to place your first order!',
-              style: TextStyle(fontSize: 16.sp, color: AppColors.textSecondary),
+              style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
               textAlign: TextAlign.center,
             ),
           ],
@@ -249,7 +249,7 @@ class _OrderCard extends StatelessWidget {
                           order.orderId ?? '',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 16.sp,
+                            fontSize: 16,
                             color: Colors.white,
                           ),
                           maxLines: 1,
@@ -268,7 +268,7 @@ class _OrderCard extends StatelessWidget {
                               child: AutoTranslateText(
                                 orderDate,
                                 style: TextStyle(
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                   color: AppColors.templeGold,
                                 ),
                                 maxLines: 1,
@@ -320,7 +320,7 @@ class _OrderCard extends StatelessWidget {
                               ),
                               child: Icon(
                                 Icons.image,
-                                size: 32.sp,
+                                size: 32,
                                 color: Colors.white,
                               ),
                             ),
@@ -339,7 +339,7 @@ class _OrderCard extends StatelessWidget {
                               '${order.itemCount ?? 0} items',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
-                            fontSize: 15.sp,
+                            fontSize: 15,
                             color: AppColors.textColorMaroon,
                           ),
                           maxLines: 2,
@@ -360,7 +360,7 @@ class _OrderCard extends StatelessWidget {
                             child: AutoTranslateText(
                               'SKU: ${firstItem!.productSnapshot!.sku}',
                               style: TextStyle(
-                                fontSize: 11.sp,
+                                fontSize: 11,
                                 color: AppColors.deepOrange,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -381,7 +381,7 @@ class _OrderCard extends StatelessWidget {
                               child: AutoTranslateText(
                                 'Qty: ${order.itemCount ?? firstItem?.quantity ?? 0}',
                                 style: TextStyle(
-                                  fontSize: 12.sp,
+                                  fontSize: 12,
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -420,7 +420,7 @@ class _OrderCard extends StatelessWidget {
                           AutoTranslateText(
                             'Total Amount',
                             style: TextStyle(
-                              fontSize: 11.sp,
+                              fontSize: 11,
                               color: AppColors.textSecondary,
                               fontWeight: FontWeight.w500,
                             ),
@@ -429,7 +429,7 @@ class _OrderCard extends StatelessWidget {
                           AutoTranslateText(
                             '₹${order.totalAmount.toStringAsFixed(0)}',
                             style: TextStyle(
-                              fontSize: 20.sp,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: AppColors.textColorMaroon,
                             ),
@@ -448,7 +448,7 @@ class _OrderCard extends StatelessWidget {
                         child: AutoTranslateText(
                           '${order.itemCount ?? 0} Item${(order.itemCount ?? 0) > 1 ? 's' : ''}',
                           style: TextStyle(
-                            fontSize: 11.sp,
+                            fontSize: 11,
                             color: Colors.white,
                             fontWeight: FontWeight.w600,
                           ),
@@ -461,7 +461,7 @@ class _OrderCard extends StatelessWidget {
                   AutoTranslateText(
                     'Order Status',
                     style: TextStyle(
-                      fontSize: 11.sp,
+                      fontSize: 11,
                       color: AppColors.textSecondary,
                       fontWeight: FontWeight.w600,
                     ),
@@ -518,7 +518,7 @@ class _StatusChip extends StatelessWidget {
         label,
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 10.sp,
+          fontSize: 10,
           color: Colors.white,
         ),
         maxLines: 1,
@@ -617,7 +617,7 @@ class _TimelineNode extends StatelessWidget {
                       step.number,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 9.sp,
+                        fontSize: 9,
                         color: color,
                       ),
                     ),
@@ -629,7 +629,7 @@ class _TimelineNode extends StatelessWidget {
                 step.label,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 8.sp,
+                  fontSize: 8,
                   color: color,
                   fontWeight: isCompleted ? FontWeight.w600 : FontWeight.normal,
                 ),

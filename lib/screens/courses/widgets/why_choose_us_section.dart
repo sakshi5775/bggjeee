@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class WhyChooseUsSection extends StatelessWidget {
   const WhyChooseUsSection({super.key});
@@ -17,7 +18,7 @@ class WhyChooseUsSection extends StatelessWidget {
             'Why Choose AstroBharatAI?',
             style: AppTypography.h2.copyWith(
               color: const Color(0xFF3E1212),
-              fontSize: 22.sp,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -63,12 +64,12 @@ class WhyChooseUsSection extends StatelessWidget {
     required String title,
     required String description,
   }) {
-    final double circleSize = 70.w; // Bigger circle
+    final double circleSize = 70.h;
     final double cardTopMargin = 35.h;
 
     return SizedBox(
       width: 170.w,
-      height: 225.h, // Reduced total height
+      height: 225.h,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -103,7 +104,7 @@ class WhyChooseUsSection extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: AppTypography.h3.copyWith(
                         color: AppColors.digitalEducationTextColor,
-                        fontSize: 13.sp, // Slightly smaller font
+                        fontSize: 13, // Slightly smaller font
                         fontWeight: FontWeight.bold,
                         height: 1.1,
                       ),
@@ -128,7 +129,7 @@ class WhyChooseUsSection extends StatelessWidget {
                         color: AppColors.digitalEducationTextColor.withValues(
                           alpha: 0.5,
                         ),
-                        fontSize: 11.sp,
+                        fontSize: 11,
                         height: 1.2,
                       ),
                       maxLines: 4,
@@ -148,19 +149,8 @@ class WhyChooseUsSection extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
               ),
-              child: Icon(
-                icon,
-                color: const Color(0xFF3E1212),
-                size: 32.w, // Bigger icon
-              ),
+              child: Icon(icon, color: const Color(0xFF3E1212), size: 32),
             ),
           ),
         ],

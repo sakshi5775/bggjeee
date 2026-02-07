@@ -69,6 +69,7 @@ class DailyPredictionWidget extends StatelessWidget {
             Spacing.h(20),
             if (luckyColor.isNotEmpty || luckyNumbers.isNotEmpty)
               _buildLuckyElementsCard(luckyColor, luckyNumbers),
+            Spacing.h(40),
           ],
         ),
       );

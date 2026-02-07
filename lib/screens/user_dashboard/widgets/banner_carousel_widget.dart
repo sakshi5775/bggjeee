@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 /// Skeleton shimmer placeholder for banner while image loads.
 class _BannerSkeletonShimmer extends StatefulWidget {
@@ -141,7 +142,7 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
     if (banners.isEmpty) return const SizedBox.shrink();
 
     return SizedBox(
-      height: 110.h,
+      height: Get.width > 600 ? 200.h : 110.h,
       child: PageView.builder(
         controller: _pageController,
         itemCount: banners.length * 1000,

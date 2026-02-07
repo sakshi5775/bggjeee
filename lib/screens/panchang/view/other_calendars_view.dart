@@ -171,7 +171,7 @@ class OtherCalendarsView extends BasePage<OtherCalendarsController> {
                               symbol,
                               textAlign: TextAlign.center,
                               style: MyTextTheme.mediumBCB.copyWith(
-                                fontSize: 22.sp,
+                                fontSize: 22,
                                 fontWeight: FontWeight.bold,
                                 color: "#68171E".toColor(),
                               ),
@@ -185,7 +185,7 @@ class OtherCalendarsView extends BasePage<OtherCalendarsController> {
                           textAlign: TextAlign.center,
                           style: MyTextTheme.smallBCB.copyWith(
                             color: Colors.white,
-                            fontSize: 10.sp,
+                            fontSize: 10,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Poppins',
                             height: 1.2,
@@ -227,7 +227,7 @@ class OtherCalendarsView extends BasePage<OtherCalendarsController> {
               'Select Year',
               style: MyTextTheme.largeBCB.copyWith(
                 color: "#68171E".toColor(),
-                fontSize: 20.sp,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),

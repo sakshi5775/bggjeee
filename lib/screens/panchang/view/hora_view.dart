@@ -106,7 +106,7 @@ class HoraView extends BasePage<HoraController> {
                         child: Icon(
                           Icons.arrow_back_ios,
                           color: Colors.white,
-                          size: 18.w,
+                          size: 18.h,
                         ),
                       ),
                     ),
@@ -119,7 +119,7 @@ class HoraView extends BasePage<HoraController> {
                         ).format(controller.selectedDate.value).toUpperCase(),
                         style: MyTextTheme.mediumBCB.copyWith(
                           color: "#68171E".toColor(),
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -144,7 +144,7 @@ class HoraView extends BasePage<HoraController> {
                         child: Icon(
                           Icons.arrow_forward_ios,
                           color: Colors.white,
-                          size: 18.w,
+                          size: 18.h,
                         ),
                       ),
                     ),
@@ -169,7 +169,7 @@ class HoraView extends BasePage<HoraController> {
                 'Today',
                 style: MyTextTheme.mediumBCB.copyWith(
                   color: Colors.white,
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -209,7 +209,7 @@ class HoraView extends BasePage<HoraController> {
               'Current Hora',
               style: MyTextTheme.mediumBCB.copyWith(
                 color: "#68171E".toColor(),
-                fontSize: 18.sp,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -218,7 +218,7 @@ class HoraView extends BasePage<HoraController> {
               planet,
               style: MyTextTheme.mediumBCB.copyWith(
                 color: "#68171E".toColor(),
-                fontSize: 20.sp,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -227,7 +227,7 @@ class HoraView extends BasePage<HoraController> {
               controller.formatTimeRange(startStr, endStr),
               style: MyTextTheme.smallBCN.copyWith(
                 color: "#68171E".toColor().withValues(alpha: 0.7),
-                fontSize: 14.sp,
+                fontSize: 14,
               ),
             ),
             Spacing.h(8),
@@ -237,7 +237,7 @@ class HoraView extends BasePage<HoraController> {
                   : 'Auspicious for various activities',
               style: MyTextTheme.smallBCN.copyWith(
                 color: "#68171E".toColor().withValues(alpha: 0.8),
-                fontSize: 13.sp,
+                fontSize: 13,
               ),
             ),
           ],
@@ -271,7 +271,7 @@ class HoraView extends BasePage<HoraController> {
             'Hora Table',
             style: MyTextTheme.mediumBCB.copyWith(
               color: "#68171E".toColor(),
-              fontSize: 18.sp,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -291,7 +291,7 @@ class HoraView extends BasePage<HoraController> {
                     'Planet',
                     style: MyTextTheme.mediumBCB.copyWith(
                       color: Colors.white,
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -302,7 +302,7 @@ class HoraView extends BasePage<HoraController> {
                     'Start Time',
                     style: MyTextTheme.mediumBCB.copyWith(
                       color: Colors.white,
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -313,7 +313,7 @@ class HoraView extends BasePage<HoraController> {
                     'End Time',
                     style: MyTextTheme.mediumBCB.copyWith(
                       color: Colors.white,
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -361,7 +361,7 @@ class HoraView extends BasePage<HoraController> {
                 planet,
                 style: MyTextTheme.mediumBCB.copyWith(
                   color: "#68171E".toColor(),
-                  fontSize: 15.sp,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -374,7 +374,7 @@ class HoraView extends BasePage<HoraController> {
                 controller.formatTime(startStr),
                 style: MyTextTheme.smallBCN.copyWith(
                   color: "#68171E".toColor().withValues(alpha: 0.7),
-                  fontSize: 13.sp,
+                  fontSize: 13,
                 ),
               ),
             ),
@@ -386,7 +386,7 @@ class HoraView extends BasePage<HoraController> {
                 controller.formatTime(endStr),
                 style: MyTextTheme.smallBCN.copyWith(
                   color: "#68171E".toColor().withValues(alpha: 0.7),
-                  fontSize: 13.sp,
+                  fontSize: 13,
                 ),
               ),
             ),
@@ -411,7 +411,7 @@ class HoraView extends BasePage<HoraController> {
           'Hora Properties',
           style: MyTextTheme.largeBCB.copyWith(
             color: "#68171E".toColor(),
-            fontSize: 20.sp,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -426,7 +426,7 @@ class HoraView extends BasePage<HoraController> {
                     : '$planet hora properties',
                 style: MyTextTheme.mediumBCN.copyWith(
                   color: "#68171E".toColor(),
-                  fontSize: 14.sp,
+                  fontSize: 14,
                 ),
               ),
               if (luckyGem.isNotEmpty) ...[
@@ -435,7 +435,7 @@ class HoraView extends BasePage<HoraController> {
                   'Lucky Gem: $luckyGem',
                   style: MyTextTheme.mediumBCB.copyWith(
                     color: "#68171E".toColor(),
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -455,7 +455,7 @@ class HoraView extends BasePage<HoraController> {
                 'OK',
                 style: MyTextTheme.mediumBCB.copyWith(
                   color: Colors.white,
-                  fontSize: 16.sp,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),

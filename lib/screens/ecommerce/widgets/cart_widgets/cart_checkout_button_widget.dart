@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +23,9 @@ class CartCheckoutButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 18.w),
+      padding: AppPaddings.all(6),
       width: double.infinity,
-      height: 54.71.h,
+      // height: 54.71.h,
       decoration: BoxDecoration(
         gradient: AppColors.orangeGradient,
         borderRadius: BorderRadius.circular(258.68.r),
@@ -51,7 +53,7 @@ class CartCheckoutButtonWidget extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w500,
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           color: Colors.white,
                           height: 1.56,
                         ),
@@ -62,7 +64,7 @@ class CartCheckoutButtonWidget extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w500,
-                          fontSize: 18.sp,
+                          fontSize: 18,
                           color: Colors.white,
                           height: 1.56,
                         ),

@@ -105,7 +105,7 @@ class RemedyCategoriesSection extends GetView<RemediesController> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: 11.sp,
+              fontSize: 11,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF3E1212),
             ),

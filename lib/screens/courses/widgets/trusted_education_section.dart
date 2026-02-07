@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TrustedEducationSection extends StatelessWidget {
-  const TrustedEducationSection({Key? key}) : super(key: key);
+  const TrustedEducationSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class TrustedEducationSection extends StatelessWidget {
             'Trusted Education',
             style: AppTypography.h2.copyWith(
               color: AppColors.digitalEducationTextColor,
-              fontSize: 22.sp,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -65,7 +65,7 @@ class TrustedEducationSection extends StatelessWidget {
             textAlign: TextAlign.center,
             style: AppTypography.body1.copyWith(
               color: AppColors.digitalEducationTextColor,
-              fontSize: 14.sp,
+              fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
           ),

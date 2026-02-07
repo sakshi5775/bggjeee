@@ -37,7 +37,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                         'Unable to load order detail.',
                         style: TextStyle(
                           color: AppColors.textColorMaroon,
-                          fontSize: 16.sp,
+                          fontSize: 16,
                         ),
                       ),
                     ),
@@ -138,7 +138,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                         order.orderId ?? '',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
+                          fontSize: 18,
                           color: Colors.white,
                         ),
                         maxLines: 2,
@@ -157,7 +157,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                             child: AutoTranslateText(
                               'Placed on $createdAt',
                               style: TextStyle(
-                                fontSize: 13.sp,
+                                fontSize: 13,
                                 color: AppColors.templeGold,
                               ),
                               maxLines: 1,
@@ -184,7 +184,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                   'Order Summary',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 18.sp,
+                    fontSize: 18,
                     color: AppColors.textColorMaroon,
                   ),
                 ),
@@ -267,7 +267,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                   'Order Items',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 18.sp,
+                    fontSize: 18,
                     color: Colors.white,
                   ),
                 ),
@@ -324,7 +324,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                   title,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 18.sp,
+                    fontSize: 18,
                     color: Colors.white,
                   ),
                 ),
@@ -340,7 +340,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                   address.fullName ?? '',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16.sp,
+                    fontSize: 16,
                     color: AppColors.textColorMaroon,
                   ),
                 ),
@@ -357,7 +357,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                       AutoTranslateText(
                         address.phone!,
                         style: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: 14,
                           color: AppColors.textColorMaroon,
                         ),
                       ),
@@ -367,7 +367,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                 AutoTranslateText(
                   address.formattedAddress,
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     color: AppColors.textSecondary,
                     height: 1.5,
                   ),
@@ -385,7 +385,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                       AutoTranslateText(
                         address.email!,
                         style: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: 14,
                           color: AppColors.textColorMaroon,
                         ),
                       ),
@@ -442,7 +442,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                   'Payment Information',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 18.sp,
+                    fontSize: 18,
                     color: Colors.white,
                   ),
                 ),
@@ -514,7 +514,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                             payment.failureReason!,
                             style: TextStyle(
                               color: AppColors.error,
-                              fontSize: 13.sp,
+                              fontSize: 13,
                             ),
                           ),
                         ),
@@ -543,7 +543,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 14.sp,
+                            fontSize: 14,
                           ),
                         ),
                       ],
@@ -630,7 +630,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                 child: Icon(
                   Icons.cancel_outlined,
                   color: AppColors.error,
-                  size: 24.sp,
+                  size: 24,
                 ),
               ),
               SizedBox(width: 16.w),
@@ -642,7 +642,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                       'Order Cancelled',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16.sp,
+                        fontSize: 16,
                         color: AppColors.error,
                       ),
                     ),
@@ -652,7 +652,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                       AutoTranslateText(
                         order.cancellationReason!,
                         style: TextStyle(
-                          fontSize: 13.sp,
+                          fontSize: 13,
                           color: AppColors.textSecondary,
                         ),
                       ),
@@ -713,7 +713,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                         'Order Progress',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18.sp,
+                          fontSize: 18,
                           color: Colors.white,
                         ),
                       ),
@@ -743,7 +743,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                           'Tracking information will appear here once available.',
                           style: TextStyle(
                             color: AppColors.textSecondary,
-                            fontSize: 14.sp,
+                            fontSize: 14,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -819,7 +819,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                     'Order History',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 18.sp,
+                      fontSize: 18,
                       color: Colors.white,
                     ),
                   ),
@@ -910,7 +910,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                     padding: EdgeInsets.only(top: 8.h),
                     child: AutoTranslateText(
                       errorMessage!,
-                      style: TextStyle(color: AppColors.error, fontSize: 12.sp),
+                      style: TextStyle(color: AppColors.error, fontSize: 12),
                     ),
                   ),
               ],
@@ -1070,7 +1070,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
                       style: TextStyle(
                         color: AppColors.error,
                         fontWeight: FontWeight.w600,
-                        fontSize: 12.sp,
+                        fontSize: 12,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -1115,12 +1115,12 @@ class _AmountRow extends StatelessWidget {
         children: [
           AutoTranslateText(
             label,
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 14.sp),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
           ),
           AutoTranslateText(
             '₹${value.toStringAsFixed(0)}',
             style: TextStyle(
-              fontSize: isBold ? 20.sp : 15.sp,
+              fontSize: isBold ? 20 : 15,
               fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
               color: isBold
                   ? AppColors.textColorMaroon
@@ -1148,7 +1148,7 @@ class _InfoRow extends StatelessWidget {
           width: 120.w,
           child: AutoTranslateText(
             label,
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 14.sp),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
           ),
         ),
         Expanded(
@@ -1156,7 +1156,7 @@ class _InfoRow extends StatelessWidget {
             value,
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              fontSize: 14.sp,
+              fontSize: 14,
               color: AppColors.textColorMaroon,
             ),
           ),
@@ -1215,11 +1215,7 @@ class _OrderItemTile extends StatelessWidget {
                         gradient: AppColors.orangeGradient,
                         borderRadius: BorderRadius.circular(12.r),
                       ),
-                      child: Icon(
-                        Icons.image,
-                        size: 28.sp,
-                        color: Colors.white,
-                      ),
+                      child: Icon(Icons.image, size: 28, color: Colors.white),
                     ),
             ),
           ),
@@ -1235,7 +1231,7 @@ class _OrderItemTile extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontSize: 15.sp,
+                    fontSize: 15,
                     color: AppColors.textColorMaroon,
                   ),
                 ),
@@ -1255,7 +1251,7 @@ class _OrderItemTile extends StatelessWidget {
                     child: AutoTranslateText(
                       'SKU: ${item.productSnapshot!.sku}',
                       style: TextStyle(
-                        fontSize: 11.sp,
+                        fontSize: 11,
                         color: AppColors.deepOrange,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1274,7 +1270,7 @@ class _OrderItemTile extends StatelessWidget {
                   child: AutoTranslateText(
                     'Qty: ${item.quantity ?? 0}',
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 12,
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1292,17 +1288,14 @@ class _OrderItemTile extends StatelessWidget {
                 '₹${(item.discountedPrice ?? item.price ?? 0).toStringAsFixed(0)}',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 16.sp,
+                  fontSize: 16,
                   color: AppColors.textColorMaroon,
                 ),
               ),
               SizedBox(height: 4.h),
               AutoTranslateText(
                 'Total: ₹${(item.total ?? 0).toStringAsFixed(0)}',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -1337,7 +1330,7 @@ class _StatusChip extends StatelessWidget {
         label,
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 10.sp,
+          fontSize: 10,
           color: Colors.white,
         ),
         maxLines: 1,
@@ -1447,7 +1440,7 @@ class _TimelineEntryTile extends StatelessWidget {
                   formattedStatus,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 15.sp,
+                    fontSize: 15,
                     color: AppColors.textColorMaroon,
                   ),
                 ),
@@ -1455,7 +1448,7 @@ class _TimelineEntryTile extends StatelessWidget {
                 AutoTranslateText(
                   date,
                   style: TextStyle(
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     color: AppColors.textSecondary,
                   ),
                 ),
@@ -1512,7 +1505,7 @@ class _HistoryTile extends StatelessWidget {
                   title,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     color: AppColors.textColorMaroon,
                   ),
                 ),
@@ -1520,7 +1513,7 @@ class _HistoryTile extends StatelessWidget {
                 AutoTranslateText(
                   subtitle,
                   style: TextStyle(
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     color: AppColors.textSecondary,
                     height: 1.4,
                   ),
@@ -1529,7 +1522,7 @@ class _HistoryTile extends StatelessWidget {
                 AutoTranslateText(
                   date,
                   style: TextStyle(
-                    fontSize: 11.sp,
+                    fontSize: 11,
                     color: AppColors.textSecondary.withOpacity(0.7),
                   ),
                 ),

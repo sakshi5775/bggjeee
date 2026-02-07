@@ -68,7 +68,7 @@ class LearningJourneyDialog extends StatelessWidget {
                           title,
                           style: AppTypography.h3.copyWith(
                             color: const Color(0xFF3E1212),
-                            fontSize: 18.sp,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -85,7 +85,7 @@ class LearningJourneyDialog extends StatelessWidget {
                               duration,
                               style: AppTypography.body2.copyWith(
                                 color: Colors.grey[600],
-                                fontSize: 12.sp,
+                                fontSize: 12,
                               ),
                             ),
                           ],
@@ -112,7 +112,7 @@ class LearningJourneyDialog extends StatelessWidget {
                       description, // "Foundations & Awareness"
                       style: AppTypography.h3.copyWith(
                         color: const Color(0xFF3E1212),
-                        fontSize: 16.sp,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -124,7 +124,7 @@ class LearningJourneyDialog extends StatelessWidget {
                       whoItIsFor,
                       style: AppTypography.body1.copyWith(
                         color: const Color(0xFF666666),
-                        fontSize: 14.sp,
+                        fontSize: 14,
                       ),
                     ),
                     SizedBox(height: 16.h),
@@ -135,7 +135,7 @@ class LearningJourneyDialog extends StatelessWidget {
                       objective,
                       style: AppTypography.body1.copyWith(
                         color: const Color(0xFF666666),
-                        fontSize: 14.sp,
+                        fontSize: 14,
                       ),
                     ),
                     SizedBox(height: 24.h),
@@ -162,7 +162,7 @@ class LearningJourneyDialog extends StatelessWidget {
                                 'What You Will Learn',
                                 style: AppTypography.h3.copyWith(
                                   color: const Color(0xFF3E1212),
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -181,7 +181,7 @@ class LearningJourneyDialog extends StatelessWidget {
                                   style: AppTypography.body1.copyWith(
                                     color: const Color(0xFF3E1212),
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                   ),
                                 ),
                               );
@@ -215,7 +215,7 @@ class LearningJourneyDialog extends StatelessWidget {
                                 'Learning Outcome',
                                 style: AppTypography.h3.copyWith(
                                   color: const Color(0xFF2E7D32),
-                                  fontSize: 14.sp,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -275,7 +275,7 @@ class LearningJourneyDialog extends StatelessWidget {
       title,
       style: AppTypography.label.copyWith(
         color: const Color(0xFF999999),
-        fontSize: 12.sp,
+        fontSize: 12,
         fontWeight: FontWeight.bold,
         letterSpacing: 1.0,
       ),
@@ -302,7 +302,7 @@ class LearningJourneyDialog extends StatelessWidget {
               text,
               style: AppTypography.body2.copyWith(
                 color: const Color(0xFF444444),
-                fontSize: 13.sp,
+                fontSize: 13,
                 height: 1.4,
               ),
             ),
