@@ -26,93 +26,83 @@ class CarrotAstrologyView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Padding(
-          padding: EdgeInsets.only(
-            top:
-                (MediaQuery.of(context).padding.top > 0
-                        ? MediaQuery.of(context).padding.top * 0.5
-                        : 0.0)
-                    .clamp(6.0, 24.0)
-                    .toDouble(),
-          ),
-          child: Column(
-            children: [
-              // Fixed Header
-              Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: maxWidth),
-                  child: CommonHeader(
-                    title: 'Carrot Astrology',
-                    subtitle: AutoTranslateText(
-                      'Playful Insights • AI Wisdom',
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: const Color(0xFF6F221E).withOpacity(0.7),
-                      ),
+        body: Column(
+          children: [
+            // Fixed Header
+            Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: maxWidth),
+                child: CommonHeader(
+                  title: 'Carrot Astrology',
+                  subtitle: AutoTranslateText(
+                    'Playful Insights • AI Wisdom',
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: const Color(0xFF6F221E).withOpacity(0.7),
                     ),
-                    customActions: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.history,
-                          color: '#6F221E'.toColor(),
-                          size: 24.w,
-                        ),
-                        onPressed: () async {
-                          final ok = await LoginGuard.ensureLoggedIn(
-                            message:
-                                'Login to view your carrot astrology history.',
-                          );
-                          if (ok) {
-                            Get.toNamed(AppRoutes.carrotAstrologyHistory);
-                          }
-                        },
-                      ),
-                    ],
                   ),
+                  customActions: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.history,
+                        color: '#6F221E'.toColor(),
+                        size: 24.w,
+                      ),
+                      onPressed: () async {
+                        final ok = await LoginGuard.ensureLoggedIn(
+                          message:
+                              'Login to view your carrot astrology history.',
+                        );
+                        if (ok) {
+                          Get.toNamed(AppRoutes.carrotAstrologyHistory);
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: maxWidth),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Main icon
-                          _buildMainIcon(),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxWidth),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Main icon
+                        _buildMainIcon(),
 
-                          // Title
-                          _buildTitle(),
+                        // Title
+                        _buildTitle(),
 
-                          Spacing.h(8),
+                        Spacing.h(8),
 
-                          // Subtitle
-                          _buildSubtitle(),
+                        // Subtitle
+                        _buildSubtitle(),
 
-                          Spacing.h(32),
+                        Spacing.h(32),
 
-                          // Discover Your Vegetable Match section
-                          _buildDiscoverSection(controller),
+                        // Discover Your Vegetable Match section
+                        _buildDiscoverSection(controller),
 
-                          Spacing.h(32),
+                        Spacing.h(32),
 
-                          // What You'll Discover section
-                          _buildWhatYouDiscoverSection(),
+                        // What You'll Discover section
+                        _buildWhatYouDiscoverSection(),
 
-                          Spacing.h(32),
+                        Spacing.h(32),
 
-                          // About Carrot Astrology section
-                          _buildAboutSection(),
+                        // About Carrot Astrology section
+                        _buildAboutSection(),
 
-                          Spacing.h(32),
-                        ],
-                      ),
+                        Spacing.h(32),
+                      ],
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

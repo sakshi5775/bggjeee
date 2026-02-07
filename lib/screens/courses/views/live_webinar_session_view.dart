@@ -7,6 +7,9 @@ import 'package:get/get.dart';
 import 'package:astrobharataiuser/data_model/webinar_model.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 
 class LiveWebinarSessionView extends StatelessWidget {
   final String webinarId;
@@ -70,89 +73,26 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           resizeToAvoidBottomInset: true, // Crucial for sticky input
-          body: SafeArea(
-            child: Column(
-              children: [
-                // 1. Fixed Header
-                _buildHeader(),
-
-                // 2. Video + Title + Toolbar (Potentially fixed or scrollable)
-                // Let's make Video and Toolbar scrollable with questions but Input fixed
-                // 2. Video Area (Fixed height)
-                _buildVideoArea(),
-
-                // 3. Interaction Section (Scrollable Questions)
-                Expanded(
-                  child: CustomScrollView(
-                    slivers: [
-                      SliverToBoxAdapter(child: _buildQaTitleBar()),
-                      //     SliverToBoxAdapter(child: _buildToolbar()),
-                      _buildQaListSliver(),
-                    ],
-                  ),
-                ),
-
-                // 4. Sticky Input Area
-                _buildInputArea(),
-
-                // 5. Bottom controls (Hide when keyboard is open to prevent overflow)
-                if (!isKeyboardOpen) _buildBottomControls(),
-              ],
-            ),
-          ),
-        ),
-      );
-    });
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(
-        left: 16.w,
-        right: 16.w,
-        top: 12.h,
-        bottom: 20.h,
-      ),
-      decoration: const BoxDecoration(
-        color: Color(0xFF5F2221), // Dark Brown
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          bottomRight: Radius.circular(24),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+          body: Column(
             children: [
-              GestureDetector(
-                onTap: () => Get.back(),
-                child: Container(
-                  padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.arrow_back_ios_new,
-                    color: Colors.white,
-                    size: 16.sp,
-                  ),
-                ),
-              ),
-              SizedBox(width: 16.w),
-              Expanded(
-                child: Column(
+              // 1. Fixed Header
+              CommonHeader(
+                title: '', // Custom title widget used
+                showDrawer: false,
+                showHome: false, // Minimal header for live session
+                showWallet: false,
+                showLanguage: false,
+                showCart: false,
+                showSearch: false,
+                titleWidget: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Obx(
                       () => AutoTranslateText(
                         controller.webinarTitle.value,
-                        style: TextStyle(
-                          fontSize: 16.sp,
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: '#3E2723'.toColor(),
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -170,9 +110,8 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
                         Obx(
                           () => AutoTranslateText(
                             '${controller.webinar.value?.viewerStats?.totalViewers} watching',
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Colors.white70,
+                            style: MyTextTheme.smallBCN.copyWith(
+                              color: '#3E2723'.toColor().withOpacity(0.7),
                             ),
                           ),
                         ),
@@ -180,42 +119,68 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
                     ),
                   ],
                 ),
+                customActions: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEAA92A), // Gold
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 6.w,
+                          height: 6.w,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        SizedBox(width: 6.w),
+                        AutoTranslateText(
+                          'LIVE',
+                          style: TextStyle(
+                            color: const Color(0xFF5F2221),
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const Spacer(),
-              // LIVE Badge
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEAA92A), // Gold
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 6.w,
-                      height: 6.w,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    SizedBox(width: 6.w),
-                    AutoTranslateText(
-                      'LIVE',
-                      style: TextStyle(
-                        color: const Color(0xFF5F2221),
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+
+              // 2. Video + Title + Toolbar (Potentially fixed or scrollable)
+              // Let's make Video and Toolbar scrollable with questions but Input fixed
+              // 2. Video Area (Fixed height)
+              _buildVideoArea(),
+
+              // 3. Interaction Section (Scrollable Questions)
+              Expanded(
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(child: _buildQaTitleBar()),
+                    //     SliverToBoxAdapter(child: _buildToolbar()),
+                    _buildQaListSliver(),
                   ],
                 ),
               ),
+
+              // 4. Sticky Input Area
+              _buildInputArea(),
+
+              // 5. Bottom controls (Hide when keyboard is open to prevent overflow)
+              if (!isKeyboardOpen)
+                SafeArea(top: false, child: _buildBottomControls()),
             ],
           ),
-        ],
-      ),
-    );
+        ),
+      );
+    });
   }
 
   Widget _buildVideoArea({bool isFull = false}) {
@@ -404,102 +369,6 @@ class _LiveWebinarSessionViewContent extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildToolbar() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildToolbarItem(
-            icon: Icons.forum_outlined,
-            label: 'Discuss',
-            onTap: () {},
-            isSelected: true,
-          ),
-          _buildToolbarItem(
-            icon: Icons.share_outlined,
-            label: 'Share',
-            onTap: () {
-              // Share logic
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildToolbarItem({
-    required IconData icon,
-    required String label,
-    String? badge,
-    bool isSelected = false,
-    VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFFFF4E0) : Colors.transparent,
-          borderRadius: BorderRadius.circular(8.r),
-        ),
-        child: Column(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Icon(
-                  icon,
-                  color: isSelected ? const Color(0xFFEAA92A) : Colors.grey,
-                  size: 20.sp,
-                ),
-                if (badge != null && badge != '0')
-                  Positioned(
-                    top: -6,
-                    right: -10,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 4.w),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF5F2221),
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      constraints: BoxConstraints(minWidth: 16.w),
-                      child: Text(
-                        badge,
-                        style: TextStyle(color: Colors.white, fontSize: 8.sp),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            SizedBox(height: 4.h),
-            AutoTranslateText(
-              label,
-              style: TextStyle(
-                color: isSelected ? const Color(0xFF5F2221) : Colors.grey,
-                fontSize: 10.sp,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

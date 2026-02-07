@@ -19,7 +19,8 @@ class FaceReadingScanningView extends StatefulWidget {
   const FaceReadingScanningView({Key? key}) : super(key: key);
 
   @override
-  State<FaceReadingScanningView> createState() => _FaceReadingScanningViewState();
+  State<FaceReadingScanningView> createState() =>
+      _FaceReadingScanningViewState();
 }
 
 class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
@@ -35,23 +36,24 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize controller - use put to ensure it exists
     controller = Get.put(FaceReadingController(), permanent: false);
-    
+
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeIn),
-    );
-    
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeIn));
+
     // Load image after frame is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadImage();
     });
-    
+
     _observeDetection();
   }
 
@@ -82,7 +84,7 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
 
       final codec = await ui.instantiateImageCodec(bytes);
       final frame = await codec.getNextFrame();
-      
+
       if (mounted) {
         setState(() {
           _uiImage = frame.image;
@@ -101,7 +103,7 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
             Future.delayed(const Duration(seconds: 2), () {
               if (mounted) {
                 controller.isScanning.value = false;
-                  // After scanner stops, trigger mesh fade-in if face is detected
+                // After scanner stops, trigger mesh fade-in if face is detected
                 if (controller.detectedFace.value != null) {
                   _fadeController.forward();
                   // Call API after mesh lines are visible for 3 seconds
@@ -109,13 +111,15 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                     if (mounted && !controller.isAnalyzing.value) {
                       // Cancel any existing timer
                       _loaderTimer?.cancel();
-                      
+
                       // Start API call first
                       final apiFuture = controller.analyzeFaceReading();
-                      
+
                       // Show loading dialog after 3 seconds delay (only if API is still running)
                       _loaderTimer = Timer(const Duration(seconds: 2), () {
-                        if (mounted && Get.isDialogOpen == false && controller.isAnalyzing.value) {
+                        if (mounted &&
+                            Get.isDialogOpen == false &&
+                            controller.isAnalyzing.value) {
                           try {
                             Get.dialog(
                               const FaceReadingLoadingWidget(
@@ -128,31 +132,33 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                           }
                         }
                       });
-                      
+
                       // Handle API completion
-                      apiFuture.then((_) {
-                        // Cancel timer if API completes before 3 seconds
-                        _loaderTimer?.cancel();
-                        // Close loading dialog when analysis completes
-                        if (mounted && Get.isDialogOpen == true) {
-                          try {
-                            Get.back();
-                          } catch (e) {
-                            debugPrint('Error closing dialog: $e');
-                          }
-                        }
-                      }).catchError((e) {
-                        // Cancel timer on error
-                        _loaderTimer?.cancel();
-                        // Close loading dialog on error
-                        if (mounted && Get.isDialogOpen == true) {
-                          try {
-                            Get.back();
-                          } catch (e) {
-                            debugPrint('Error closing dialog on error: $e');
-                          }
-                        }
-                      });
+                      apiFuture
+                          .then((_) {
+                            // Cancel timer if API completes before 3 seconds
+                            _loaderTimer?.cancel();
+                            // Close loading dialog when analysis completes
+                            if (mounted && Get.isDialogOpen == true) {
+                              try {
+                                Get.back();
+                              } catch (e) {
+                                debugPrint('Error closing dialog: $e');
+                              }
+                            }
+                          })
+                          .catchError((e) {
+                            // Cancel timer on error
+                            _loaderTimer?.cancel();
+                            // Close loading dialog on error
+                            if (mounted && Get.isDialogOpen == true) {
+                              try {
+                                Get.back();
+                              } catch (e) {
+                                debugPrint('Error closing dialog on error: $e');
+                              }
+                            }
+                          });
                     }
                   });
                 }
@@ -184,10 +190,11 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: '#F7EFBD'.toColor(),
-      body: SafeArea(
-        child: Stack(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
           children: [
             // Back button - hidden as per user request
 
@@ -220,7 +227,8 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
 
             // Scanner overlay - show when image is loaded and scanning (even during detection)
             Obx(() {
-              final shouldShowScanner = _isImageLoaded.value && controller.isScanning.value;
+              final shouldShowScanner =
+                  _isImageLoaded.value && controller.isScanning.value;
               return shouldShowScanner
                   ? ScannerOverlay(
                       isScanning: controller.isScanning.value,
@@ -237,9 +245,7 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
   Widget _buildImageWithMesh() {
     if (_uiImage == null || _imageSize == null || !_isImageLoaded.value) {
       return Center(
-        child: CircularProgressIndicator(
-          color: "#F38B3B".toColor(),
-        ),
+        child: CircularProgressIndicator(color: "#F38B3B".toColor()),
       );
     }
 
@@ -253,19 +259,15 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.error_outline,
-                size: 64.w,
-                color: Colors.red,
-              ),
+              Icon(Icons.error_outline, size: 64.w, color: Colors.red),
               Spacing.h(16),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: AutoTranslateText(
                   errorMessage,
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: '#3E2723'.toColor(),
-                  ).merge(AppTypography.h3),
+                  style: MyTextTheme.mediumBCN
+                      .copyWith(color: '#3E2723'.toColor())
+                      .merge(AppTypography.h3),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -296,15 +298,13 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                color: "#F38B3B".toColor(),
-              ),
+              CircularProgressIndicator(color: "#F38B3B".toColor()),
               Spacing.h(16),
               AutoTranslateText(
                 'Detecting face...',
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#3E2723'.toColor(),
-                ).merge(AppTypography.h3),
+                style: MyTextTheme.mediumBCN
+                    .copyWith(color: '#3E2723'.toColor())
+                    .merge(AppTypography.h3),
               ),
             ],
           ),
@@ -314,80 +314,82 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
       return Stack(
         fit: StackFit.expand,
         children: [
-              // Image
-              controller.selectedImage.value != null
-                  ? Image.file(
-                      controller.selectedImage.value!,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.error_outline,
-                                size: 48.w,
-                                color: Colors.red,
-                              ),
-                              Spacing.h(8),
-                              AutoTranslateText(
-                                'Failed to load image',
-                                style: MyTextTheme.mediumBCN.copyWith(
-                                  color: '#3E2723'.toColor(),
-                                ),
-                              ),
-                            ],
+          // Image
+          controller.selectedImage.value != null
+              ? Image.file(
+                  controller.selectedImage.value!,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 48.w,
+                            color: Colors.red,
                           ),
-                        );
-                      },
-                    )
-                  : const SizedBox.shrink(),
-              // Mesh overlay - only show when face is detected AND scanner has stopped
-              if (face != null && !controller.isScanning.value)
-                FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      // Calculate the actual displayed image size based on BoxFit.contain
-                      final imageAspectRatio = _imageSize!.width / _imageSize!.height;
-                      final containerAspectRatio = constraints.maxWidth / constraints.maxHeight;
-                      
-                      Size displayedSize;
-                      if (imageAspectRatio > containerAspectRatio) {
-                        // Image is wider - fit to width
-                        displayedSize = Size(
-                          constraints.maxWidth,
-                          constraints.maxWidth / imageAspectRatio,
-                        );
-                      } else {
-                        // Image is taller - fit to height
-                        displayedSize = Size(
-                          constraints.maxHeight * imageAspectRatio,
-                          constraints.maxHeight,
-                        );
-                      }
-                      
-                      return Center(
-                        child: SizedBox(
-                          width: displayedSize.width,
-                          height: displayedSize.height,
-                          child: CustomPaint(
-                            painter: DynamicMeshPainter(
-                              face: face,
-                              imageSize: _imageSize!,
-                              canvasSize: displayedSize,
-                              dotColor: "#F38B3B".toColor(),
-                              lineColor: "#F38B3B".toColor(),
-                              showGlow: true,
-                              opacity: _fadeAnimation.value,
+                          Spacing.h(8),
+                          AutoTranslateText(
+                            'Failed to load image',
+                            style: MyTextTheme.mediumBCN.copyWith(
+                              color: '#3E2723'.toColor(),
                             ),
                           ),
+                        ],
+                      ),
+                    );
+                  },
+                )
+              : const SizedBox.shrink(),
+          // Mesh overlay - only show when face is detected AND scanner has stopped
+          if (face != null && !controller.isScanning.value)
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Calculate the actual displayed image size based on BoxFit.contain
+                  final imageAspectRatio =
+                      _imageSize!.width / _imageSize!.height;
+                  final containerAspectRatio =
+                      constraints.maxWidth / constraints.maxHeight;
+
+                  Size displayedSize;
+                  if (imageAspectRatio > containerAspectRatio) {
+                    // Image is wider - fit to width
+                    displayedSize = Size(
+                      constraints.maxWidth,
+                      constraints.maxWidth / imageAspectRatio,
+                    );
+                  } else {
+                    // Image is taller - fit to height
+                    displayedSize = Size(
+                      constraints.maxHeight * imageAspectRatio,
+                      constraints.maxHeight,
+                    );
+                  }
+
+                  return Center(
+                    child: SizedBox(
+                      width: displayedSize.width,
+                      height: displayedSize.height,
+                      child: CustomPaint(
+                        painter: DynamicMeshPainter(
+                          face: face,
+                          imageSize: _imageSize!,
+                          canvasSize: displayedSize,
+                          dotColor: "#F38B3B".toColor(),
+                          lineColor: "#F38B3B".toColor(),
+                          showGlow: true,
+                          opacity: _fadeAnimation.value,
                         ),
-                      );
-                    },
-                  ),
-                ),
-            ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+        ],
       );
     });
   }
@@ -421,10 +423,12 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
             if (isScanning || isDetecting)
               AutoTranslateText(
                 isDetecting ? 'Analyzing face...' : 'Scanning...',
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: '#3E2723'.toColor(),
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h2),
+                style: MyTextTheme.mediumBCB
+                    .copyWith(
+                      color: '#3E2723'.toColor(),
+                      fontWeight: FontWeight.bold,
+                    )
+                    .merge(AppTypography.h2),
               )
             else if (face != null)
               Column(
@@ -437,10 +441,12 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                   Spacing.h(12),
                   AutoTranslateText(
                     'Face Detected!',
-                    style: MyTextTheme.largeBCB.copyWith(
-                      color: '#3E2723'.toColor(),
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.h2),
+                    style: MyTextTheme.largeBCB
+                        .copyWith(
+                          color: '#3E2723'.toColor(),
+                          fontWeight: FontWeight.bold,
+                        )
+                        .merge(AppTypography.h2),
                   ),
                   Spacing.h(24),
                   SizedBox(
@@ -461,53 +467,64 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                         onPressed: isAnalyzing
                             ? null
                             : () {
-                            // Cancel any existing timer
-                            _loaderTimer?.cancel();
-                            
-                            // Start API call first
-                            final apiFuture = controller.analyzeFaceReading();
-                            
-                            // Show loading dialog after 3 seconds delay (only if API is still running)
-                            _loaderTimer = Timer(const Duration(seconds: 2), () {
-                              if (Get.isDialogOpen == false && controller.isAnalyzing.value) {
-                                try {
-                                  Get.dialog(
-                                    const FaceReadingLoadingWidget(
-                                      message: 'Analyzing Face...',
-                                    ),
-                                    barrierDismissible: false,
-                                  );
-                                } catch (e) {
-                                  debugPrint('Error showing dialog: $e');
-                                }
-                              }
-                            });
-                            
-                            // Handle API completion
-                            apiFuture.then((_) {
-                              // Cancel timer if API completes before 3 seconds
-                              _loaderTimer?.cancel();
-                              // Close loading dialog when analysis completes
-                              if (Get.isDialogOpen == true) {
-                                try {
-                                  Get.back();
-                                } catch (e) {
-                                  debugPrint('Error closing dialog: $e');
-                                }
-                              }
-                            }).catchError((e) {
-                              // Cancel timer on error
-                              _loaderTimer?.cancel();
-                              // Close loading dialog on error
-                              if (Get.isDialogOpen == true) {
-                                try {
-                                  Get.back();
-                                } catch (e) {
-                                  debugPrint('Error closing dialog on error: $e');
-                                }
-                              }
-                            });
-                          },
+                                // Cancel any existing timer
+                                _loaderTimer?.cancel();
+
+                                // Start API call first
+                                final apiFuture = controller
+                                    .analyzeFaceReading();
+
+                                // Show loading dialog after 3 seconds delay (only if API is still running)
+                                _loaderTimer = Timer(
+                                  const Duration(seconds: 2),
+                                  () {
+                                    if (Get.isDialogOpen == false &&
+                                        controller.isAnalyzing.value) {
+                                      try {
+                                        Get.dialog(
+                                          const FaceReadingLoadingWidget(
+                                            message: 'Analyzing Face...',
+                                          ),
+                                          barrierDismissible: false,
+                                        );
+                                      } catch (e) {
+                                        debugPrint('Error showing dialog: $e');
+                                      }
+                                    }
+                                  },
+                                );
+
+                                // Handle API completion
+                                apiFuture
+                                    .then((_) {
+                                      // Cancel timer if API completes before 3 seconds
+                                      _loaderTimer?.cancel();
+                                      // Close loading dialog when analysis completes
+                                      if (Get.isDialogOpen == true) {
+                                        try {
+                                          Get.back();
+                                        } catch (e) {
+                                          debugPrint(
+                                            'Error closing dialog: $e',
+                                          );
+                                        }
+                                      }
+                                    })
+                                    .catchError((e) {
+                                      // Cancel timer on error
+                                      _loaderTimer?.cancel();
+                                      // Close loading dialog on error
+                                      if (Get.isDialogOpen == true) {
+                                        try {
+                                          Get.back();
+                                        } catch (e) {
+                                          debugPrint(
+                                            'Error closing dialog on error: $e',
+                                          );
+                                        }
+                                      }
+                                    });
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           foregroundColor: Colors.white,
@@ -519,26 +536,28 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                           shadowColor: Colors.transparent,
                         ),
                         child: isAnalyzing
-                          ? SizedBox(
-                              height: 20.h,
-                              width: 20.w,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
+                            ? SizedBox(
+                                height: 20.h,
+                                width: 20.w,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
                                 ),
+                              )
+                            : AutoTranslateText(
+                                'Analyze Face Reading',
+                                style: MyTextTheme.mediumBCB
+                                    .copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    )
+                                    .merge(AppTypography.h3),
                               ),
-                            )
-                          : AutoTranslateText(
-                              'Analyze Face Reading',
-                              style: MyTextTheme.mediumBCB.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ).merge(AppTypography.h3),
-                            ),
-                        ),
                       ),
                     ),
+                  ),
                 ],
               ),
             Spacing.h(16),

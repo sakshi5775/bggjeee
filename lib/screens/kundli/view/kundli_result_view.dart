@@ -38,37 +38,27 @@ class KundliResultView extends BasePage<KundliResultController> {
       child: Scaffold(
         drawer: UserDashboardView.buildDrawer(context),
         backgroundColor: Colors.transparent,
-        body: Padding(
-          padding: EdgeInsets.only(
-            top:
-                (MediaQuery.of(context).padding.top > 0
-                        ? MediaQuery.of(context).padding.top * 0.5
-                        : 0.0)
-                    .clamp(6.0, 24.0)
-                    .toDouble(),
-          ),
-          child: Column(
-            children: [
-              CommonHeader(title: 'Kundli Report'),
-              _buildTabs(),
-              Expanded(
-                child: PageView.builder(
-                  controller: controller.pageController,
-                  onPageChanged: controller.onPageChanged,
-                  itemCount: controller.visibleTabIndices.length,
-                  itemBuilder: (context, index) {
-                    final fullIndex = controller.visibleTabIndices[index];
-                    return RefreshIndicator(
-                      onRefresh: () async {
-                        controller.onTabSelected(fullIndex);
-                      },
-                      child: _buildTabContent(fullIndex),
-                    );
-                  },
-                ),
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Kundli Report'),
+            _buildTabs(),
+            Expanded(
+              child: PageView.builder(
+                controller: controller.pageController,
+                onPageChanged: controller.onPageChanged,
+                itemCount: controller.visibleTabIndices.length,
+                itemBuilder: (context, index) {
+                  final fullIndex = controller.visibleTabIndices[index];
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      controller.onTabSelected(fullIndex);
+                    },
+                    child: _buildTabContent(fullIndex),
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

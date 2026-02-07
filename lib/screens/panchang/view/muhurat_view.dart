@@ -23,34 +23,32 @@ class MuhuratView extends BasePage<MuhuratController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                // Header
-                _buildHeader(context),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Header
+              _buildHeader(context),
 
-                // Form Section
-                _buildFormSection(),
-                Spacing.h(16),
+              // Form Section
+              _buildFormSection(),
+              Spacing.h(16),
 
-                // Abhijit Muhurta (Today's Muhurat)
-                Obx(
-                  () => controller.abhijitMuhurta.value != null
-                      ? _buildAbhijitMuhurta()
-                      : const SizedBox.shrink(),
-                ),
+              // Abhijit Muhurta (Today's Muhurat)
+              Obx(
+                () => controller.abhijitMuhurta.value != null
+                    ? _buildAbhijitMuhurta()
+                    : const SizedBox.shrink(),
+              ),
 
-                // Choghadiya Muhurats
-                Obx(
-                  () => controller.choghadiyaMuhurta.value != null
-                      ? _buildChoghadiyaMuhurats()
-                      : const SizedBox.shrink(),
-                ),
+              // Choghadiya Muhurats
+              Obx(
+                () => controller.choghadiyaMuhurta.value != null
+                    ? _buildChoghadiyaMuhurats()
+                    : const SizedBox.shrink(),
+              ),
 
-                Spacing.h(20),
-              ],
-            ),
+              Spacing.h(20),
+            ],
           ),
         ),
       ),

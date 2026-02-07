@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/data_model/carrot_astrology_model.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/controller/carrot_astrology_history_controller.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/utils/carrot_astrology_colors.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
@@ -21,10 +22,11 @@ class CarrotAstrologyHistoryView extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 768;
     final maxWidth = isMobile ? double.infinity : 600.w;
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
             const CommonHeader(
               title: 'Carrot Astrology History',

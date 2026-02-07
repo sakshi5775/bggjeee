@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,7 +33,8 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
   void initState() {
     super.initState();
     // Check if coming from back navigation (results page)
-    _isFromBackNavigation = Get.previousRoute == AppRoutes.palmReadingResults ||
+    _isFromBackNavigation =
+        Get.previousRoute == AppRoutes.palmReadingResults ||
         Get.previousRoute == AppRoutes.palmReadingDetail;
     _initializeCamera();
   }
@@ -41,7 +43,7 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
     try {
       await _disposeController();
       _isControllerDisposed = false;
-      
+
       final cameras = await availableCameras();
       if (cameras.isEmpty) {
         setState(() {
@@ -70,9 +72,11 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
     }
   }
 
-
   Future<void> _capturePhoto() async {
-    if (_controller == null || _isControllerDisposed || !_controller!.value.isInitialized || _isCapturing) {
+    if (_controller == null ||
+        _isControllerDisposed ||
+        !_controller!.value.isInitialized ||
+        _isCapturing) {
       return;
     }
 
@@ -111,7 +115,6 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
     }
   }
 
-
   @override
   void dispose() {
     _isControllerDisposed = true;
@@ -139,12 +142,15 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
     final controller = Get.find<PalmReadingController>();
     final selectedHand = controller.selectedHand.value;
     final isLeftHand = selectedHand == 'Left';
-    final handText = selectedHand.isEmpty ? 'palm' : (isLeftHand ? 'left palm' : 'right palm');
+    final handText = selectedHand.isEmpty
+        ? 'palm'
+        : (isLeftHand ? 'left palm' : 'right palm');
 
-    return Scaffold(
-      backgroundColor: '#F7EFBD'.toColor(), // Match Face Reading background
-      body: SafeArea(
-        child: Stack(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
           children: [
             // Camera preview or error
             if (_errorMessage != null)
@@ -152,17 +158,13 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.error_outline,
-                      color: Colors.red,
-                      size: 64.w,
-                    ),
+                    Icon(Icons.error_outline, color: Colors.red, size: 64.w),
                     Spacing.h(16),
                     AutoTranslateText(
                       _errorMessage!,
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: Colors.white,
-                      ).merge(AppTypography.h3),
+                      style: MyTextTheme.mediumBCN
+                          .copyWith(color: Colors.white)
+                          .merge(AppTypography.h3),
                       textAlign: TextAlign.center,
                     ),
                     Spacing.h(24),
@@ -183,11 +185,16 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
               ),
 
             // Overlay with hand placeholder
-            if (_isCameraInitialized && _controller != null && _controller!.value.isInitialized)
+            if (_isCameraInitialized &&
+                _controller != null &&
+                _controller!.value.isInitialized)
               _buildOverlay(isLeftHand),
 
             // Top instruction - only show if not coming from back navigation
-            if (_isCameraInitialized && _controller != null && _controller!.value.isInitialized && !_isFromBackNavigation)
+            if (_isCameraInitialized &&
+                _controller != null &&
+                _controller!.value.isInitialized &&
+                !_isFromBackNavigation)
               Positioned(
                 top: 40.h,
                 left: 0,
@@ -195,17 +202,23 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                 child: Center(
                   child: AutoTranslateText(
                     'Place your $handText in the center of the screen',
-                    style: MyTextTheme.veryLargeBCB.copyWith(
-                      color: "#F38B3B".toColor(), // Match Face Reading theme
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.h2),
+                    style: MyTextTheme.veryLargeBCB
+                        .copyWith(
+                          color: "#F38B3B"
+                              .toColor(), // Match Face Reading theme
+                          fontWeight: FontWeight.bold,
+                        )
+                        .merge(AppTypography.h2),
                     textAlign: TextAlign.center,
                   ),
                 ),
               ),
 
             // Bottom instruction - hide if from back navigation
-            if (_isCameraInitialized && _controller != null && _controller!.value.isInitialized && !_isFromBackNavigation)
+            if (_isCameraInitialized &&
+                _controller != null &&
+                _controller!.value.isInitialized &&
+                !_isFromBackNavigation)
               Positioned(
                 bottom: 180.h,
                 left: 0,
@@ -213,16 +226,19 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                 child: Center(
                   child: AutoTranslateText(
                     'Place your hand inside the shape',
-                    style: MyTextTheme.mediumBCN.copyWith(
-                      color: Colors.white,
-                    ).merge(AppTypography.body1),
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(color: Colors.white)
+                        .merge(AppTypography.body1),
                     textAlign: TextAlign.center,
                   ),
                 ),
               ),
 
             // Capture button
-            if (_isCameraInitialized && _controller != null && _controller!.value.isInitialized && !_isCapturing)
+            if (_isCameraInitialized &&
+                _controller != null &&
+                _controller!.value.isInitialized &&
+                !_isCapturing)
               Positioned(
                 bottom: 100.h,
                 left: 0,
@@ -273,10 +289,7 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
-                      border: Border.all(
-                        color: "#F38B3B".toColor(),
-                        width: 4,
-                      ),
+                      border: Border.all(color: "#F38B3B".toColor(), width: 4),
                     ),
                     child: Center(
                       child: CircularProgressIndicator(
@@ -288,7 +301,9 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
               ),
 
             // Skip button
-            if (_isCameraInitialized && _controller != null && _controller!.value.isInitialized)
+            if (_isCameraInitialized &&
+                _controller != null &&
+                _controller!.value.isInitialized)
               Positioned(
                 bottom: 40.h,
                 left: 0,
@@ -298,17 +313,21 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                     onPressed: () => Get.back(),
                     child: AutoTranslateText(
                       'Skip',
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: "#F38B3B".toColor(),
-                        decoration: TextDecoration.underline,
-                      ).merge(AppTypography.h3),
+                      style: MyTextTheme.mediumBCN
+                          .copyWith(
+                            color: "#F38B3B".toColor(),
+                            decoration: TextDecoration.underline,
+                          )
+                          .merge(AppTypography.h3),
                     ),
                   ),
                 ),
               ),
 
             // Error message
-            if (_errorMessage != null && _errorMessage != 'No camera available' && _errorMessage != 'Failed to initialize camera:')
+            if (_errorMessage != null &&
+                _errorMessage != 'No camera available' &&
+                _errorMessage != 'Failed to initialize camera:')
               Positioned(
                 bottom: 200.h,
                 left: 0,
@@ -324,18 +343,20 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
                     children: [
                       AutoTranslateText(
                         'Failed to capture photo',
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ).merge(AppTypography.h3),
+                        style: MyTextTheme.mediumBCB
+                            .copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.h3),
                         textAlign: TextAlign.center,
                       ),
                       Spacing.h(8),
                       AutoTranslateText(
                         'Please try again',
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: Colors.white,
-                        ).merge(AppTypography.body2),
+                        style: MyTextTheme.smallBCN
+                            .copyWith(color: Colors.white)
+                            .merge(AppTypography.body2),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -350,9 +371,7 @@ class _PalmReadingCameraViewState extends State<PalmReadingCameraView> {
 
   Widget _buildOverlay(bool isLeftHand) {
     return Positioned.fill(
-      child: CustomPaint(
-        painter: HandOverlayPainter(isLeftHand: isLeftHand),
-      ),
+      child: CustomPaint(painter: HandOverlayPainter(isLeftHand: isLeftHand)),
     );
   }
 }
@@ -374,7 +393,10 @@ class HandOverlayPainter extends CustomPainter {
     final backgroundPaint = Paint()
       ..color = Colors.black.withOpacity(0.5)
       ..style = PaintingStyle.fill;
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), backgroundPaint);
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      backgroundPaint,
+    );
 
     // Draw hand outline (cutout area)
     final handPath = Path();
@@ -407,7 +429,8 @@ class HandOverlayPainter extends CustomPainter {
 
     // Draw hand outline border
     final borderPaint = Paint()
-      ..color = "#F38B3B".toColor() // Match Face Reading theme
+      ..color = "#F38B3B"
+          .toColor() // Match Face Reading theme
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4;
     canvas.drawRRect(handRect, borderPaint);
@@ -419,4 +442,3 @@ class HandOverlayPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-

@@ -30,50 +30,48 @@ class LiveAstrologersView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              CommonHeader(
-                title: 'Astro Live Streaming Hub',
-                customActions: [
-                  GestureDetector(
-                    onTap: () {
-                      Get.toNamed(AppRoutes.streamReports);
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 8.w),
-                      child: Icon(
-                        Icons.report_problem,
-                        color: const Color(0xFF6F221E),
-                        size: 24.w,
-                      ),
+        body: Column(
+          children: [
+            // Header
+            CommonHeader(
+              title: 'Astro Live Streaming Hub',
+              customActions: [
+                GestureDetector(
+                  onTap: () {
+                    Get.toNamed(AppRoutes.streamReports);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 8.w),
+                    child: Icon(
+                      Icons.report_problem,
+                      color: const Color(0xFF6F221E),
+                      size: 24.w,
                     ),
                   ),
-                ],
-              ),
-
-              // Tab Navigation
-              Obx(
-                () => CommonTabSlider(
-                  tabs: const ['ONGOING', 'UPCOMING'],
-                  selectedIndex: controller.selectedTab.value,
-                  onTabSelected: (index) => controller.switchTab(index),
                 ),
-              ),
+              ],
+            ),
 
-              // Content based on selected tab
-              Expanded(
-                child: Obx(() {
-                  if (controller.selectedTab.value == 0) {
-                    return _buildOngoingTab(controller);
-                  } else {
-                    return _buildUpcomingTab(controller);
-                  }
-                }),
+            // Tab Navigation
+            Obx(
+              () => CommonTabSlider(
+                tabs: const ['ONGOING', 'UPCOMING'],
+                selectedIndex: controller.selectedTab.value,
+                onTabSelected: (index) => controller.switchTab(index),
               ),
-            ],
-          ),
+            ),
+
+            // Content based on selected tab
+            Expanded(
+              child: Obx(() {
+                if (controller.selectedTab.value == 0) {
+                  return _buildOngoingTab(controller);
+                } else {
+                  return _buildUpcomingTab(controller);
+                }
+              }),
+            ),
+          ],
         ),
       ),
     );

@@ -42,79 +42,77 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
             ),
           ),
         ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              CommonHeader(title: 'Support Tickets'),
-              _buildFilters(),
-              Expanded(
-                child: Obx(() {
-                  if (controller.isLoadingTickets.value &&
-                      controller.tickets.isEmpty) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+        body: Column(
+          children: [
+            CommonHeader(title: 'Support Tickets'),
+            _buildFilters(),
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoadingTickets.value &&
+                    controller.tickets.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                  if (controller.tickets.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.support_agent_outlined,
-                            size: 64.sp,
+                if (controller.tickets.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.support_agent_outlined,
+                          size: 64.sp,
+                          color: AppColors.textSecondary,
+                        ),
+                        SizedBox(height: 16.h),
+                        AutoTranslateText(
+                          'No tickets found',
+                          style: AppTypography.h2.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        AutoTranslateText(
+                          'Create a new ticket to get support',
+                          style: AppTypography.body1.copyWith(
                             color: AppColors.textSecondary,
                           ),
-                          SizedBox(height: 16.h),
-                          AutoTranslateText(
-                            'No tickets found',
-                            style: AppTypography.h2.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          SizedBox(height: 8.h),
-                          AutoTranslateText(
-                            'Create a new ticket to get support',
-                            style: AppTypography.body1.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return RefreshIndicator(
-                    onRefresh: () => controller.loadTickets(refresh: true),
-                    child: ListView.separated(
-                      padding: EdgeInsets.all(16.w),
-                      itemCount:
-                          controller.tickets.length +
-                          (controller.pagination.value?.hasNextPage == true
-                              ? 1
-                              : 0),
-                      separatorBuilder: (_, __) => SizedBox(height: 12.h),
-                      itemBuilder: (context, index) {
-                        if (index == controller.tickets.length) {
-                          // Load more indicator
-                          controller.loadMoreTickets();
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(16.0),
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        }
-
-                        final ticket = controller.tickets[index];
-                        return _TicketCard(ticket: ticket);
-                      },
+                        ),
+                      ],
                     ),
                   );
-                }),
-              ),
-            ],
-          ),
+                }
+
+                return RefreshIndicator(
+                  onRefresh: () => controller.loadTickets(refresh: true),
+                  child: ListView.separated(
+                    padding: EdgeInsets.all(16.w),
+                    itemCount:
+                        controller.tickets.length +
+                        (controller.pagination.value?.hasNextPage == true
+                            ? 1
+                            : 0),
+                    separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                    itemBuilder: (context, index) {
+                      if (index == controller.tickets.length) {
+                        // Load more indicator
+                        controller.loadMoreTickets();
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+
+                      final ticket = controller.tickets[index];
+                      return _TicketCard(ticket: ticket);
+                    },
+                  ),
+                );
+              }),
+            ),
+          ],
         ),
       ),
     );

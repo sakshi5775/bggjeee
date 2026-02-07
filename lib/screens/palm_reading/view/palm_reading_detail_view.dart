@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_c
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -20,83 +21,90 @@ class PalmReadingDetailView extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 768;
     final maxWidth = isMobile ? double.infinity : 800.w;
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(), // Match Face Reading background
-      body: Column(
-        children: [
-          const CommonHeader(title: 'Palm Reading Detail'),
-          Expanded(
-            child: Obx(() {
-              if (controller.isLoadingReading.value) {
-                return const Center(child: CircularProgressIndicator());
-              }
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent, // Match Face Reading background
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Palm Reading Detail'),
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoadingReading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              if (controller.readingError.value.isNotEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.error_outline, size: 64.w, color: Colors.red),
-                      Spacing.h(16),
-                      AutoTranslateText(
-                        controller.readingError.value,
-                        style: MyTextTheme.mediumBCN.copyWith(
-                          color: '#3E2723'.toColor(),
+                if (controller.readingError.value.isNotEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 64.w,
+                          color: Colors.red,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      Spacing.h(24),
-                      ElevatedButton(
-                        onPressed: () => Get.back(),
-                        child: const AutoTranslateText('Go Back'),
-                      ),
-                    ],
-                  ),
-                );
-              }
+                        Spacing.h(16),
+                        AutoTranslateText(
+                          controller.readingError.value,
+                          style: MyTextTheme.mediumBCN.copyWith(
+                            color: '#3E2723'.toColor(),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        Spacing.h(24),
+                        ElevatedButton(
+                          onPressed: () => Get.back(),
+                          child: const AutoTranslateText('Go Back'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
 
-              return SingleChildScrollView(
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: maxWidth),
-                    child: Padding(
-                      padding: AppPaddings.all(24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Summary Section
-                          _buildSummarySection(controller),
+                return SingleChildScrollView(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: maxWidth),
+                      child: Padding(
+                        padding: AppPaddings.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Summary Section
+                            _buildSummarySection(controller),
 
-                          Spacing.h(32),
+                            Spacing.h(32),
 
-                          // Palm Lines Analysis
-                          _buildPalmLinesSection(controller),
+                            // Palm Lines Analysis
+                            _buildPalmLinesSection(controller),
 
-                          Spacing.h(32),
+                            Spacing.h(32),
 
-                          // Mount Analysis
-                          _buildMountAnalysisSection(controller),
+                            // Mount Analysis
+                            _buildMountAnalysisSection(controller),
 
-                          Spacing.h(32),
+                            Spacing.h(32),
 
-                          // Special Markings
-                          _buildSpecialMarkingsSection(controller),
+                            // Special Markings
+                            _buildSpecialMarkingsSection(controller),
 
-                          Spacing.h(32),
+                            Spacing.h(32),
 
-                          // Consult Expert Section
-                          _buildConsultExpertSection(),
+                            // Consult Expert Section
+                            _buildConsultExpertSection(),
 
-                          Spacing.h(32),
-                        ],
+                            Spacing.h(32),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            }),
-          ),
-        ],
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -19,41 +19,38 @@ class HoraView extends BasePage<HoraController> {
     return Container(
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Obx(() {
-            if (controller.isLoading.value && controller.horas.isEmpty) {
-              return Center(
-                child: CircularProgressIndicator(color: AppColors.templeGold),
-              );
-            }
-
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Header
-                  _buildHeader(),
-
-                  // Date Selector
-                  _buildDateSelector(),
-
-                  Spacing.h(16),
-
-                  // Current Hora Section
-                  if (controller.currentHora.value != null)
-                    _buildCurrentHoraSection(),
-
-                  Spacing.h(16),
-
-                  // Hora Table
-                  _buildHoraTable(),
-
-                  Spacing.h(20),
-                ],
-              ),
+        body: Obx(() {
+          if (controller.isLoading.value && controller.horas.isEmpty) {
+            return Center(
+              child: CircularProgressIndicator(color: AppColors.templeGold),
             );
-          }),
-        ),
+          }
+
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                // Header
+                _buildHeader(),
+
+                // Date Selector
+                _buildDateSelector(),
+
+                Spacing.h(16),
+
+                // Current Hora Section
+                if (controller.currentHora.value != null)
+                  _buildCurrentHoraSection(),
+
+                Spacing.h(16),
+
+                // Hora Table
+                _buildHoraTable(),
+
+                Spacing.h(20),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }

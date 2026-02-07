@@ -20,87 +20,77 @@ class HandwritingAstrologyView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Padding(
-          padding: EdgeInsets.only(
-            top:
-                (MediaQuery.of(context).padding.top > 0
-                        ? MediaQuery.of(context).padding.top * 0.5
-                        : 0.0)
-                    .clamp(6.0, 24.0)
-                    .toDouble(),
-          ),
-          child: Column(
-            children: [
-              // Header with back button
-              CommonHeader(
-                title: 'Handwriting Astrology',
-                subtitle: AutoTranslateText(
-                  'Ancient Graphology • AI Analysis',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: AppColors.templeGold.withOpacity(0.9),
-                  ),
-                ),
-                customActions: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.history,
-                      color: AppColors.templeGold,
-                      size: 24.w,
-                    ),
-                    onPressed: () async {
-                      final ok = await LoginGuard.ensureLoggedIn(
-                        message:
-                            'Login to view your handwriting reading history.',
-                      );
-                      if (ok) {
-                        Get.toNamed(AppRoutes.handwritingAstrologyHistory);
-                      }
-                    },
-                  ),
-                ],
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Main icon
-                      _buildMainIcon(),
-
-                      // Title
-                      _buildTitle(),
-
-                      Spacing.h(8),
-
-                      // Subtitle
-                      _buildSubtitle(),
-
-                      Spacing.h(32),
-
-                      // Unlock Your Handwriting Secrets section
-                      _buildUnlockSection(),
-
-                      Spacing.h(32),
-
-                      // What We Analyze section
-                      _buildWhatWeAnalyzeSection(),
-
-                      Spacing.h(32),
-
-                      // Handwriting Features We Read section
-                      _buildHandwritingFeaturesSection(),
-
-                      Spacing.h(32),
-
-                      // About Handwriting Astrology section
-                      _buildAboutSection(),
-                      Spacing.h(32),
-                    ],
-                  ),
+        body: Column(
+          children: [
+            // Header with back button
+            CommonHeader(
+              title: 'Handwriting Astrology',
+              subtitle: AutoTranslateText(
+                'Ancient Graphology • AI Analysis',
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: AppColors.templeGold.withValues(alpha: 0.9),
                 ),
               ),
-            ],
-          ),
+              customActions: [
+                IconButton(
+                  icon: Icon(
+                    Icons.history,
+                    color: AppColors.templeGold,
+                    size: 24.w,
+                  ),
+                  onPressed: () async {
+                    final ok = await LoginGuard.ensureLoggedIn(
+                      message:
+                          'Login to view your handwriting reading history.',
+                    );
+                    if (ok) {
+                      Get.toNamed(AppRoutes.handwritingAstrologyHistory);
+                    }
+                  },
+                ),
+              ],
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Main icon
+                    _buildMainIcon(),
+
+                    // Title
+                    _buildTitle(),
+
+                    Spacing.h(8),
+
+                    // Subtitle
+                    _buildSubtitle(),
+
+                    Spacing.h(32),
+
+                    // Unlock Your Handwriting Secrets section
+                    _buildUnlockSection(),
+
+                    Spacing.h(32),
+
+                    // What We Analyze section
+                    _buildWhatWeAnalyzeSection(),
+
+                    Spacing.h(32),
+
+                    // Handwriting Features We Read section
+                    _buildHandwritingFeaturesSection(),
+
+                    Spacing.h(32),
+
+                    // About Handwriting Astrology section
+                    _buildAboutSection(),
+                    Spacing.h(32),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

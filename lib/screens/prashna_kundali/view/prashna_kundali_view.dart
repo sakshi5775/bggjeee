@@ -23,80 +23,70 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Padding(
-          padding: EdgeInsets.only(
-            top:
-                (MediaQuery.of(context).padding.top > 0
-                        ? MediaQuery.of(context).padding.top * 0.5
-                        : 0.0)
-                    .clamp(6.0, 24.0)
-                    .toDouble(),
-          ),
-          child: Column(
-            children: [
-              // Header with back button and history
-              CommonHeader(
-                title: 'Prashna kundli',
-                customActions: [
-                  IconButton(
-                    onPressed: () async {
-                      final ok = await LoginGuard.ensureLoggedIn(
-                        message: 'Login to view your Prashna kundli history.',
-                      );
-                      if (ok) {
-                        Get.toNamed(AppRoutes.prashnaKundaliHistory);
-                      }
-                    },
-                    icon: Icon(
-                      Icons.history,
-                      color: '#EA632B'.toColor(),
-                      size: 24.w,
-                    ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Main icon
-                      _buildMainIcon(),
-
-                      // Title
-                      _buildTitle(),
-
-                      Spacing.h(8),
-
-                      // Subtitle
-                      _buildSubtitle(),
-
-                      Spacing.h(32),
-
-                      // Start Your Reading section
-                      _buildStartReadingSection(),
-
-                      Spacing.h(32),
-
-                      // How Prashna Kundali Works section
-                      _buildHowItWorksSection(),
-
-                      Spacing.h(32),
-
-                      // Key Features section
-                      _buildKeyFeaturesSection(),
-
-                      Spacing.h(32),
-
-                      // About Prashna Kundali section
-                      _buildAboutSection(),
-                      Spacing.h(32),
-                    ],
+        body: Column(
+          children: [
+            // Header with back button and history
+            CommonHeader(
+              title: 'Prashna kundli',
+              customActions: [
+                IconButton(
+                  onPressed: () async {
+                    final ok = await LoginGuard.ensureLoggedIn(
+                      message: 'Login to view your Prashna kundli history.',
+                    );
+                    if (ok) {
+                      Get.toNamed(AppRoutes.prashnaKundaliHistory);
+                    }
+                  },
+                  icon: Icon(
+                    Icons.history,
+                    color: '#EA632B'.toColor(),
+                    size: 24.w,
                   ),
                 ),
+              ],
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Main icon
+                    _buildMainIcon(),
+
+                    // Title
+                    _buildTitle(),
+
+                    Spacing.h(8),
+
+                    // Subtitle
+                    _buildSubtitle(),
+
+                    Spacing.h(32),
+
+                    // Start Your Reading section
+                    _buildStartReadingSection(),
+
+                    Spacing.h(32),
+
+                    // How Prashna Kundali Works section
+                    _buildHowItWorksSection(),
+
+                    Spacing.h(32),
+
+                    // Key Features section
+                    _buildKeyFeaturesSection(),
+
+                    Spacing.h(32),
+
+                    // About Prashna Kundali section
+                    _buildAboutSection(),
+                    Spacing.h(32),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

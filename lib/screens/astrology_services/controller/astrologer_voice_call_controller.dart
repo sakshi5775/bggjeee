@@ -1001,27 +1001,110 @@ class AstrologerVoiceCallController extends GetxController {
     });
   }
 
-  /// Start manual billing timer - calculates and deducts money every minute as fallback
+  /// Start manual billing timer - deducts money every minute
   /// IMPORTANT: First minute is deducted AFTER 1 minute completes, not immediately
+  /// This is the PRIMARY billing mechanism since backend doesn't send billing_update events for calls
   void _startBillingTimer() {
     _billingTimer?.cancel();
 
     if (!isCallConnected.value) return;
 
     if (kDebugMode) {
-      print('💰 Starting periodic billing sync timer');
+      print('═══════════════════════════════════════════════════════════');
+      print('💰 STARTING CLIENT-SIDE BILLING TIMER');
+      print('💰 Will deduct ₹${pricePerMinute.value} every minute');
+      print('💰 Current balance: ₹${walletBalance.value}');
+      print('═══════════════════════════════════════════════════════════');
     }
 
-    // This timer is now just a fallback for syncing balance from backend
-    // Backend is the source of truth for all deductions
-    _billingTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
+    // Deduct money every minute
+    _billingTimer = Timer.periodic(const Duration(minutes: 1), (timer) async {
       if (!isCallConnected.value) {
         timer.cancel();
         return;
       }
 
-      // Periodic backend sync
-      _syncWalletBalanceWithBackend();
+      // Increment minutes billed
+      totalMinutesBilled.value++;
+
+      // Calculate new cost
+      final minuteCost = pricePerMinute.value;
+      totalCost.value += minuteCost;
+
+      if (kDebugMode) {
+        print('═══════════════════════════════════════════════════════════');
+        print('💰 BILLING MINUTE ${totalMinutesBilled.value}');
+        print('💰 Cost this minute: ₹$minuteCost');
+        print('💰 Total cost so far: ₹${totalCost.value}');
+        print('💰 Current balance: ₹${walletBalance.value}');
+        print('═══════════════════════════════════════════════════════════');
+      }
+
+      // Deduct from local balance
+      final newBalance = walletBalance.value - minuteCost;
+
+      if (newBalance < 0) {
+        // Insufficient balance - end call
+        if (kDebugMode) {
+          print('❌ INSUFFICIENT BALANCE - Ending call');
+        }
+
+        timer.cancel();
+        _countdownTimer?.cancel();
+        _walletSyncTimer?.cancel();
+
+        walletBalance.value = 0;
+        _walletBalance = 0;
+        _updateGlobalWalletBalance(0);
+
+        await _agoraManager.leaveChannel();
+        await _agoraManager.dispose();
+        await _disconnectSocket();
+
+        Get.snackbar(
+          'Call Ended',
+          'Your wallet balance is insufficient to continue the call',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 4),
+        );
+
+        Future.delayed(const Duration(seconds: 1), () {
+          Get.back();
+        });
+        return;
+      }
+
+      // Update balance
+      walletBalance.value = newBalance;
+      _walletBalance = newBalance;
+      _syncMoneyAnchor(newBalance, pricePerMinute.value);
+      _updateGlobalWalletBalance(newBalance);
+
+      // Show low balance warning if less than 2 minutes remaining
+      final minutesRemaining = (newBalance / pricePerMinute.value).floor();
+      if (minutesRemaining < 2 && !showLowBalanceWarning.value) {
+        showLowBalanceWarning.value = true;
+        Get.snackbar(
+          'Low Balance',
+          'Your wallet balance is running low. Please recharge to continue.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 4),
+        );
+      }
+
+      if (kDebugMode) {
+        print('💰 New balance: ₹${walletBalance.value}');
+        print('💰 Minutes remaining: $minutesRemaining');
+      }
+
+      // Sync with backend to ensure accuracy (non-blocking)
+      _syncWalletBalanceWithBackend().catchError((e) {
+        if (kDebugMode) print('⚠️ Background sync failed: $e');
+      });
     });
   }
 
@@ -1103,8 +1186,9 @@ class AstrologerVoiceCallController extends GetxController {
     // Disconnect WebSocket first
     await _disconnectSocket();
 
-    // Sync wallet balance one final time before ending
-    await _syncWalletBalanceWithBackend();
+    // IMPORTANT: Do NOT sync wallet balance after call ends
+    // The backend doesn't deduct money, so syncing would reset our local calculations
+    // Our client-side billing is the source of truth until backend implements deduction
 
     // Calculate actual call duration and amount for backend billing
     int? actualTotalMinutes;
@@ -1125,7 +1209,9 @@ class AstrologerVoiceCallController extends GetxController {
       }
     }
 
-    // Call API to end the call with billing parameters (this will deduct money from wallet)
+    // Call API to end the call with billing parameters
+    // NOTE: Backend currently ignores these parameters and doesn't deduct money
+    // We send them anyway for when backend implements proper billing
     if (_callId != null) {
       try {
         await _callService.endCall(
@@ -1141,19 +1227,18 @@ class AstrologerVoiceCallController extends GetxController {
           print('💰 Local Total Cost: ₹${totalCost.value}');
           print('💰 Final Balance (local): ₹${walletBalance.value}');
           print('💰 Minutes Billed: ${totalMinutesBilled.value}');
+          print(
+            '⚠️  Backend does NOT deduct money - local balance is preserved',
+          );
           print('═══════════════════════════════════════════════════════════');
         }
 
-        // Sync wallet balance multiple times after call ends to ensure backend processed the deduction
-        Future.delayed(const Duration(seconds: 1), () async {
-          await _syncWalletBalanceWithBackend();
-        });
-        Future.delayed(const Duration(seconds: 3), () async {
-          await _syncWalletBalanceWithBackend();
-        });
-        Future.delayed(const Duration(seconds: 5), () async {
-          await _syncWalletBalanceWithBackend();
-        });
+        // DO NOT sync wallet balance after call ends
+        // Backend doesn't deduct money, so syncing would reset our local calculations
+        // Comment out the sync calls:
+        // Future.delayed(const Duration(seconds: 1), () async {
+        //   await _syncWalletBalanceWithBackend();
+        // });
       } catch (e) {
         debugPrint('Error calling end call API: $e');
         // Continue even if API call fails

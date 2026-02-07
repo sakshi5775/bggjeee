@@ -32,10 +32,11 @@ class _RamalShastraStatsViewState extends State<RamalShastraStatsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
             const CommonHeader(title: 'Stats'),
             Expanded(child: Obx(() => _buildContent())),

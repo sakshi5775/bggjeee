@@ -9,6 +9,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/ai_guider/controller/ai_guider_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -92,47 +93,51 @@ class _AiGuiderViewState extends State<AiGuiderView>
   Widget build(BuildContext context) {
     final controller = Get.find<AiGuiderController>();
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
-        child: SafeArea(
-          child: Column(
-            children: [
-              if (!widget.hideHeader) _buildHeader(controller),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Spacing.h(8),
-                        _buildMainIcon(),
-                        Spacing.h(8),
-                        _buildTitle(),
-                        Spacing.h(4),
-                        _buildSubtitle(),
-                        Spacing.h(12),
-                        SlideTransition(
-                          position: _slideAnimation,
-                          child: _buildAnimationArea(controller),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            if (!widget.hideHeader) const CommonHeader(title: 'AI Guide'),
+            Expanded(
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Spacing.h(8),
+                            _buildMainIcon(),
+                            Spacing.h(8),
+                            _buildTitle(),
+                            Spacing.h(4),
+                            _buildSubtitle(),
+                            Spacing.h(12),
+                            SlideTransition(
+                              position: _slideAnimation,
+                              child: _buildAnimationArea(controller),
+                            ),
+                            Spacing.h(12),
+                            _buildConversationArea(controller),
+                            Spacing.h(12),
+                            _buildServiceGrid(),
+                            Spacing.h(10),
+                            _buildCategoryFilters(),
+                            Spacing.h(14),
+                          ],
                         ),
-                        Spacing.h(12),
-                        _buildConversationArea(controller),
-                        Spacing.h(12),
-                        _buildServiceGrid(),
-                        Spacing.h(10),
-                        _buildCategoryFilters(),
-                        Spacing.h(14),
-                      ],
+                      ),
                     ),
-                  ),
+                    _buildInputArea(controller),
+                  ],
                 ),
               ),
-              _buildInputArea(controller),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

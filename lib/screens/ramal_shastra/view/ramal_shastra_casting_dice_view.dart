@@ -86,93 +86,100 @@ class _RamalShastraCastingDiceViewState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CommonHeader(title: 'Ramal Shastra'),
-              Spacing.h(24),
-              AutoTranslateText(
-                'Roll the Dice',
-                style: MyTextTheme.veryLargeBCB
-                    .copyWith(
-                      color: '#3E2723'.toColor(),
-                      fontWeight: FontWeight.bold,
-                    )
-                    .merge(AppTypography.h1),
-              ),
-              Spacing.h(8),
-              AutoTranslateText(
-                'Round ${currentRound + 1} of 4',
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#666666'.toColor(),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Ramal Shastra'),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Spacing.h(24),
+                    AutoTranslateText(
+                      'Roll the Dice',
+                      style: MyTextTheme.veryLargeBCB
+                          .copyWith(
+                            color: '#3E2723'.toColor(),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h1),
+                    ),
+                    Spacing.h(8),
+                    AutoTranslateText(
+                      'Round ${currentRound + 1} of 4',
+                      style: MyTextTheme.mediumBCN.copyWith(
+                        color: '#666666'.toColor(),
+                      ),
+                    ),
+                    Spacing.h(32),
+                    // Dice Grid
+                    _buildDiceGrid(),
+                    Spacing.h(32),
+                    // Roll Button
+                    if (currentRoundValues.any((v) => v == 0))
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: AppColors.orangeGradient,
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: ElevatedButton(
+                          onPressed: _rollDice,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 32.w,
+                              vertical: 14.h,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            elevation: 0,
+                            shadowColor: Colors.transparent,
+                          ),
+                          child: AutoTranslateText(
+                            isRolling ? 'Rolling...' : 'Roll Dice',
+                            style: MyTextTheme.mediumBCB.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      ElevatedButton(
+                        onPressed: _confirmRound,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: '#4CAF50'.toColor(),
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 32.w,
+                            vertical: 14.h,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        child: AutoTranslateText(
+                          currentRound < 3
+                              ? 'Confirm & Next Round'
+                              : 'Confirm & Proceed',
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    Spacing.h(32),
+                  ],
                 ),
               ),
-              Spacing.h(32),
-              // Dice Grid
-              _buildDiceGrid(),
-              Spacing.h(32),
-              // Roll Button
-              if (currentRoundValues.any((v) => v == 0))
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: AppColors.orangeGradient,
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child: ElevatedButton(
-                    onPressed: _rollDice,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 32.w,
-                        vertical: 14.h,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      elevation: 0,
-                      shadowColor: Colors.transparent,
-                    ),
-                    child: AutoTranslateText(
-                      isRolling ? 'Rolling...' : 'Roll Dice',
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                )
-              else
-                ElevatedButton(
-                  onPressed: _confirmRound,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: '#4CAF50'.toColor(),
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 32.w,
-                      vertical: 14.h,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                  ),
-                  child: AutoTranslateText(
-                    currentRound < 3
-                        ? 'Confirm & Next Round'
-                        : 'Confirm & Proceed',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              Spacing.h(32),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

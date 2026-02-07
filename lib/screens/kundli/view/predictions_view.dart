@@ -1,4 +1,3 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
@@ -28,51 +27,35 @@ class PredictionsView extends BasePage<PredictionsController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Predictions'),
+            _buildTabs(),
+            Expanded(
+              child: PageView(
+                controller: controller.pageController,
+                onPageChanged: controller.onPageChanged,
+                children: [
+                  PredictionsTableWidget(controller: controller),
+                  NumerologyWidget(controller: controller),
+                  DailyPredictionWidget(controller: controller),
+                  WeeklyPredictionWidget(controller: controller),
+                  MonthlyPredictionWidget(controller: controller),
+                  YearlyPredictionWidget(controller: controller),
+                  AscendantPredictionWidget(controller: controller),
+                  MoonSignPredictionWidget(controller: controller),
+                  NakshatraPredictionWidget(controller: controller),
+                  PanchangPredictionWidget(controller: controller),
+                  RudrakshaPredictionWidget(controller: controller),
+                  LalKitabPredictionsWidget(controller: controller),
+                ],
+              ),
             ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const CommonHeader(title: 'Predictions'),
-                _buildTabs(),
-                Expanded(
-                  child: PageView(
-                    controller: controller.pageController,
-                    onPageChanged: controller.onPageChanged,
-                    children: [
-                      PredictionsTableWidget(controller: controller),
-                      NumerologyWidget(controller: controller),
-                      DailyPredictionWidget(controller: controller),
-                      WeeklyPredictionWidget(controller: controller),
-                      MonthlyPredictionWidget(controller: controller),
-                      YearlyPredictionWidget(controller: controller),
-                      AscendantPredictionWidget(controller: controller),
-                      MoonSignPredictionWidget(controller: controller),
-                      NakshatraPredictionWidget(controller: controller),
-                      PanchangPredictionWidget(controller: controller),
-                      RudrakshaPredictionWidget(controller: controller),
-                      LalKitabPredictionsWidget(controller: controller),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ],
         ),
       ),
     );

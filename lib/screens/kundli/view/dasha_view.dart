@@ -1,4 +1,3 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/dasha_controller.dart';
@@ -21,44 +20,28 @@ class DashaView extends BasePage<DashaController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Dasha'),
+            _buildTabs(),
+            Expanded(
+              child: PageView(
+                controller: controller.pageController,
+                onPageChanged: controller.onPageChanged,
+                children: [
+                  DashaTableWidget(controller: controller),
+                  VimshottariDashaWidget(controller: controller),
+                  MahadashaWidget(controller: controller),
+                  CurrentMahadashaWidget(controller: controller),
+                  YoginiDashaWidget(controller: controller),
+                ],
+              ),
             ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const CommonHeader(title: 'Dasha'),
-                _buildTabs(),
-                Expanded(
-                  child: PageView(
-                    controller: controller.pageController,
-                    onPageChanged: controller.onPageChanged,
-                    children: [
-                      DashaTableWidget(controller: controller),
-                      VimshottariDashaWidget(controller: controller),
-                      MahadashaWidget(controller: controller),
-                      CurrentMahadashaWidget(controller: controller),
-                      YoginiDashaWidget(controller: controller),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ],
         ),
       ),
     );

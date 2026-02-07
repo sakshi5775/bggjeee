@@ -53,20 +53,28 @@ class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
       ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            backgroundColor: '#FFF8E7'.toColor(),
-            body: Center(
-              child: CircularProgressIndicator(color: AppColors.deepOrange),
+          return Container(
+            decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Center(
+                child: CircularProgressIndicator(color: AppColors.deepOrange),
+              ),
             ),
           );
         }
         if (snapshot.data != true) {
-          return Scaffold(
-            backgroundColor: '#FFF8E7'.toColor(),
-            body: Center(
-              child: AutoTranslateText(
-                'Please login to continue',
-                style: AppTypography.body1.copyWith(color: '#6F221E'.toColor()),
+          return Container(
+            decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Center(
+                child: AutoTranslateText(
+                  'Please login to continue',
+                  style: AppTypography.body1.copyWith(
+                    color: '#6F221E'.toColor(),
+                  ),
+                ),
               ),
             ),
           );
@@ -88,17 +96,7 @@ class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
     }
 
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            '#FCE5AA'.toColor(),
-            '#FFFCF3'.toColor(),
-            '#FFFFFF'.toColor(),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),

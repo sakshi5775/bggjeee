@@ -22,111 +22,106 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Header using CommonHeader
-              CommonHeader(title: 'Match Making'),
+        body: Column(
+          children: [
+            // Header using CommonHeader
+            const CommonHeader(title: 'Match Making'),
 
-              // Form Content
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 20.h,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Title
-                      AutoTranslateText(
-                        'Enter Details',
-                        style: MyTextTheme.largeBCB
-                            .copyWith(
-                              color: '#68171E'.toColor(),
-                              fontWeight: FontWeight.bold,
-                            )
-                            .merge(AppTypography.h2),
-                      ),
-                      Spacing.h(20),
+            // Form Content
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    AutoTranslateText(
+                      'Enter Details',
+                      style: MyTextTheme.largeBCB
+                          .copyWith(
+                            color: '#68171E'.toColor(),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h2),
+                    ),
+                    Spacing.h(20),
 
-                      // Person 1 Section
-                      _buildPersonSection(
-                        label: 'Person 1',
-                        subLabel: 'Groom Details',
-                        nameController: controller.person1NameController,
-                        dateController: controller.person1DateController,
-                        timeController: controller.person1TimeController,
-                        placeController: controller.person1PlaceController,
-                        onDateTap: () => _showDatePicker(context, true),
-                        onTimeTap: () => _showTimePicker(context, true),
-                        onPlaceSelected: (place) => controller
-                            .setPerson1LocationFromAutocomplete(place),
-                        isPerson1: true,
-                      ),
+                    // Person 1 Section
+                    _buildPersonSection(
+                      label: 'Person 1',
+                      subLabel: 'Groom Details',
+                      nameController: controller.person1NameController,
+                      dateController: controller.person1DateController,
+                      timeController: controller.person1TimeController,
+                      placeController: controller.person1PlaceController,
+                      onDateTap: () => _showDatePicker(context, true),
+                      onTimeTap: () => _showTimePicker(context, true),
+                      onPlaceSelected: (place) =>
+                          controller.setPerson1LocationFromAutocomplete(place),
+                      isPerson1: true,
+                    ),
 
-                      Spacing.h(16),
+                    Spacing.h(16),
 
-                      // Swap Icon
-                      Center(
-                        child: GestureDetector(
-                          onTap: () => controller.swapPersons(),
-                          child: Container(
-                            padding: EdgeInsets.all(8.w),
-                            decoration: BoxDecoration(
-                              gradient: AppColors.orangeGradient,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: '#F38B3B'.toColor().withOpacity(0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.swap_vert,
-                              color: Colors.white,
-                              size: 24.w,
-                            ),
+                    // Swap Icon
+                    Center(
+                      child: GestureDetector(
+                        onTap: () => controller.swapPersons(),
+                        child: Container(
+                          padding: EdgeInsets.all(8.w),
+                          decoration: BoxDecoration(
+                            gradient: AppColors.orangeGradient,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: '#F38B3B'.toColor().withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.swap_vert,
+                            color: Colors.white,
+                            size: 24.w,
                           ),
                         ),
                       ),
+                    ),
 
-                      Spacing.h(16),
+                    Spacing.h(16),
 
-                      // Person 2 Section
-                      _buildPersonSection(
-                        label: 'Person 2',
-                        subLabel: 'Bride',
-                        nameController: controller.person2NameController,
-                        dateController: controller.person2DateController,
-                        timeController: controller.person2TimeController,
-                        placeController: controller.person2PlaceController,
-                        onDateTap: () => _showDatePicker(context, false),
-                        onTimeTap: () => _showTimePicker(context, false),
-                        onPlaceSelected: (place) => controller
-                            .setPerson2LocationFromAutocomplete(place),
-                        isPerson1: false,
-                      ),
+                    // Person 2 Section
+                    _buildPersonSection(
+                      label: 'Person 2',
+                      subLabel: 'Bride',
+                      nameController: controller.person2NameController,
+                      dateController: controller.person2DateController,
+                      timeController: controller.person2TimeController,
+                      placeController: controller.person2PlaceController,
+                      onDateTap: () => _showDatePicker(context, false),
+                      onTimeTap: () => _showTimePicker(context, false),
+                      onPlaceSelected: (place) =>
+                          controller.setPerson2LocationFromAutocomplete(place),
+                      isPerson1: false,
+                    ),
 
-                      Spacing.h(20),
+                    Spacing.h(20),
 
-                      // Language Dropdown
-                      _buildLanguageDropdown(),
+                    // Language Dropdown
+                    _buildLanguageDropdown(),
 
-                      Spacing.h(30),
+                    Spacing.h(30),
 
-                      // Compare Kundlis Button
-                      _buildCompareButton(),
+                    // Compare Kundlis Button
+                    _buildCompareButton(),
 
-                      Spacing.h(20),
-                    ],
-                  ),
+                    Spacing.h(20),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

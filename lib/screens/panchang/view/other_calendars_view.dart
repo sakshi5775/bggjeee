@@ -19,27 +19,25 @@ class OtherCalendarsView extends BasePage<OtherCalendarsController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              _buildHeader(),
+        body: Column(
+          children: [
+            // Header
+            _buildHeader(),
 
-              // Content
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Spacing.h(24),
-                      // Calendar Grid
-                      _buildCalendarGrid(),
-                      Spacing.h(24),
-                    ],
-                  ),
+            // Content
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Spacing.h(24),
+                    // Calendar Grid
+                    _buildCalendarGrid(),
+                    Spacing.h(24),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -47,99 +47,92 @@ class CoursesView extends BasePage<CoursesController> {
           }
         }
       },
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        // bottomNavigationBar: hideHeader ? null : _buildBottomNav(),
-        body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: hideHeader
-              ? null
-              : BoxDecoration(gradient: AppColors.gradientBackground),
-          color: hideHeader ? Colors.transparent : null,
-          child: SafeArea(
-            top: !hideHeader,
-            child: Column(
-              children: [
-                if (!hideHeader)
-                  CommonHeader(
-                    title: 'Digital Learning',
+      child: Container(
+        decoration: hideHeader
+            ? null
+            : BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Column(
+            children: [
+              if (!hideHeader)
+                CommonHeader(
+                  title: 'Digital Learning',
 
-                    onMenuTap: showBackButton
-                        ? null
-                        : () {
-                            final scaffoldState = context
-                                .findAncestorStateOfType<ScaffoldState>();
-                            scaffoldState?.openDrawer();
-                          },
-                    customActions: [
-                      IconButton(
-                        onPressed: () {
-                          Get.toNamed(AppRoutes.myLearning);
+                  onMenuTap: showBackButton
+                      ? null
+                      : () {
+                          final scaffoldState = context
+                              .findAncestorStateOfType<ScaffoldState>();
+                          scaffoldState?.openDrawer();
                         },
-                        icon: Icon(
-                          Icons.school,
-                          color: const Color(0xFF6F221E),
-                          size: 24.w,
-                        ),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        tooltip: 'My Learning',
+                  customActions: [
+                    IconButton(
+                      onPressed: () {
+                        Get.toNamed(AppRoutes.myLearning);
+                      },
+                      icon: Icon(
+                        Icons.school,
+                        color: const Color(0xFF6F221E),
+                        size: 24.w,
                       ),
-                      SizedBox(width: 8.w),
-                      IconButton(
-                        onPressed: () {
-                          Get.toNamed(AppRoutes.liveWebinars);
-                        },
-                        icon: Icon(
-                          Icons.video_library,
-                          color: const Color(0xFF6F221E),
-                          size: 24.w,
-                        ),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        tooltip: 'Webinar',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      tooltip: 'My Learning',
+                    ),
+                    SizedBox(width: 8.w),
+                    IconButton(
+                      onPressed: () {
+                        Get.toNamed(AppRoutes.liveWebinars);
+                      },
+                      icon: Icon(
+                        Icons.video_library,
+                        color: const Color(0xFF6F221E),
+                        size: 24.w,
                       ),
-                      SizedBox(width: 8.w),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      tooltip: 'Webinar',
+                    ),
+                    SizedBox(width: 8.w),
+                  ],
+                ),
+
+              // Main Content
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Add Common Slider
+                      if (!hideHeader)
+                        Obx(
+                          () => CommonTabSlider(
+                            tabs: const ['Courses', 'Webinars'],
+                            selectedIndex: controller.selectedCategory.value,
+                            onTabSelected: (index) {
+                              if (index == 1) {
+                                Get.toNamed(AppRoutes.liveWebinars);
+                              } else {
+                                controller.selectedCategory.value = index;
+                              }
+                            },
+                          ),
+                        ),
+
+                      if (!hideHeader) ...[
+                        Obx(
+                          () => controller.hasLiveWebinar.value
+                              ? _buildLiveWebinarBanner()
+                              : const SizedBox.shrink(),
+                        ),
+                      ],
+                      Spacing.h(20),
+                      _buildCoursesSection(),
                     ],
                   ),
-
-                // Main Content
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        // Add Common Slider
-                        if (!hideHeader)
-                          Obx(
-                            () => CommonTabSlider(
-                              tabs: const ['Courses', 'Webinars'],
-                              selectedIndex: controller.selectedCategory.value,
-                              onTabSelected: (index) {
-                                if (index == 1) {
-                                  Get.toNamed(AppRoutes.liveWebinars);
-                                } else {
-                                  controller.selectedCategory.value = index;
-                                }
-                              },
-                            ),
-                          ),
-
-                        if (!hideHeader) ...[
-                          Obx(
-                            () => controller.hasLiveWebinar.value
-                                ? _buildLiveWebinarBanner()
-                                : const SizedBox.shrink(),
-                          ),
-                        ],
-                        Spacing.h(20),
-                        _buildCoursesSection(),
-                      ],
-                    ),
-                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/ramal_shastra_model.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/service/ramal_shastra_service.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -90,22 +91,28 @@ class _RamalShastraDetailViewState extends State<RamalShastraDetailView> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return Scaffold(
-        backgroundColor: Color(0xFFFFF8E1),
-        body: Center(
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFEA632B)),
+      return Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: const Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFEA632B)),
+            ),
           ),
         ),
       );
     }
 
     // While navigating, show loading or empty scaffold
-    return Scaffold(
-      backgroundColor: Color(0xFFFFF8E1),
-      body: Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFEA632B)),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: const Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFEA632B)),
+          ),
         ),
       ),
     );

@@ -20,40 +20,38 @@ class ChogadiaView extends BasePage<ChogadiaController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Obx(() {
-            if (controller.isLoading.value && controller.allChogadias.isEmpty) {
-              return Center(
-                child: CircularProgressIndicator(color: AppColors.templeGold),
-              );
-            }
-
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Header
-                  _buildHeader(),
-
-                  // Date Selector
-                  _buildDateSelector(),
-
-                  Spacing.h(16),
-
-                  // Current Chogadia Section
-                  if (controller.currentChogadia.value != null)
-                    _buildCurrentChogadiaSection(),
-
-                  Spacing.h(16),
-
-                  // Chogadia Table
-                  _buildChogadiaTable(),
-
-                  Spacing.h(20),
-                ],
-              ),
+        body: Obx(() {
+          if (controller.isLoading.value && controller.allChogadias.isEmpty) {
+            return Center(
+              child: CircularProgressIndicator(color: AppColors.templeGold),
             );
-          }),
-        ),
+          }
+
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                // Header
+                _buildHeader(),
+
+                // Date Selector
+                _buildDateSelector(),
+
+                Spacing.h(16),
+
+                // Current Chogadia Section
+                if (controller.currentChogadia.value != null)
+                  _buildCurrentChogadiaSection(),
+
+                Spacing.h(16),
+
+                // Chogadia Table
+                _buildChogadiaTable(),
+
+                Spacing.h(20),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }

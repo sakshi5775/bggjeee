@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/controller/carrot_astrology_controller.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/utils/carrot_astrology_colors.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
@@ -19,54 +20,61 @@ class CarrotAstrologyFormView extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 768;
     final maxWidth = isMobile ? double.infinity : 600.w;
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const CommonHeader(title: 'Carrot Astrology'),
-                  Spacing.h(12),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: AutoTranslateText(
-                      'Select Your Zodiac Sign',
-                      style: MyTextTheme.veryLargeBCB
-                          .copyWith(
-                            color: '#3E2723'.toColor(),
-                            fontWeight: FontWeight.bold,
-                          )
-                          .merge(AppTypography.h1),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Carrot Astrology'),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxWidth),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Spacing.h(12),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: AutoTranslateText(
+                            'Select Your Zodiac Sign',
+                            style: MyTextTheme.veryLargeBCB
+                                .copyWith(
+                                  color: '#3E2723'.toColor(),
+                                  fontWeight: FontWeight.bold,
+                                )
+                                .merge(AppTypography.h1),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: AutoTranslateText(
+                            'Choose your zodiac sign to discover your vegetable match',
+                            style: MyTextTheme.mediumBCN
+                                .copyWith(color: '#3E2723'.toColor())
+                                .merge(AppTypography.body1),
+                          ),
+                        ),
+                        Spacing.h(20),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: _buildZodiacSignGrid(controller),
+                        ),
+                        Spacing.h(24),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: _buildAnalyzeButton(controller),
+                        ),
+                        Spacing.h(24),
+                      ],
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: AutoTranslateText(
-                      'Choose your zodiac sign to discover your vegetable match',
-                      style: MyTextTheme.mediumBCN
-                          .copyWith(color: '#3E2723'.toColor())
-                          .merge(AppTypography.body1),
-                    ),
-                  ),
-                  Spacing.h(20),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: _buildZodiacSignGrid(controller),
-                  ),
-                  Spacing.h(24),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: _buildAnalyzeButton(controller),
-                  ),
-                  Spacing.h(24),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );

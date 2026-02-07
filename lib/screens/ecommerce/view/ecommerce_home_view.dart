@@ -44,13 +44,11 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
     if (!Get.isRegistered<WishlistController>()) {
       Get.lazyPut(() => WishlistController(), fenix: true);
     }
-    return Scaffold(
-      backgroundColor: hideHeader
-          ? Colors.transparent
-          : AppColors.lightBackground,
-      body: SafeArea(
-        top: !hideHeader,
-        child: Obx(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Obx(
           () => CustomScrollView(
             slivers: [
               // Header

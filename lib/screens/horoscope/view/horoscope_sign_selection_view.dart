@@ -37,31 +37,29 @@ class HoroscopeSignSelectionView extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
-        body: SafeArea(
-          child: Column(
-            children: [
-              const CommonHeader(title: 'Daily Horoscope'),
-              // Zodiac signs grid
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(16.w),
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 12.w,
-                      mainAxisSpacing: 12.h,
-                      childAspectRatio: 0.85,
-                    ),
-                    itemCount: zodiacSigns.length,
-                    itemBuilder: (context, index) {
-                      final sign = zodiacSigns[index];
-                      return _buildZodiacCard(sign['name']!, sign['image']!);
-                    },
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Daily Horoscope'),
+            // Zodiac signs grid
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(16.w),
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 12.w,
+                    mainAxisSpacing: 12.h,
+                    childAspectRatio: 0.85,
                   ),
+                  itemCount: zodiacSigns.length,
+                  itemBuilder: (context, index) {
+                    final sign = zodiacSigns[index];
+                    return _buildZodiacCard(sign['name']!, sign['image']!);
+                  },
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

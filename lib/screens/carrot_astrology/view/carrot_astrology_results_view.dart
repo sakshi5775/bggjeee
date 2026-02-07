@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/data_model/carrot_astrology_model.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/controller/carrot_astrology_controller.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/utils/carrot_astrology_colors.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
@@ -47,101 +48,90 @@ class CarrotAstrologyResultsView extends StatelessWidget {
       );
     }
 
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              "#FCE5AA".toColor(),
-              "#FFFCF3".toColor(),
-              "#FFFFFF".toColor(),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              CommonHeader(
-                title: 'Your Carrot Astrology Reading',
-                subtitle: AutoTranslateText(
-                  'Vegetable essence & wellness insights',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: '#6F221E'.toColor().withOpacity(0.7),
-                  ),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            CommonHeader(
+              title: 'Your Carrot Astrology Reading',
+              subtitle: AutoTranslateText(
+                'Vegetable essence & wellness insights',
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: '#6F221E'.toColor().withOpacity(0.7),
                 ),
-                showWallet: false,
-                showLanguage: false,
-                showCart: false,
-                showSearch: false,
-                customActions: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.history,
-                      color: '#6F221E'.toColor(),
-                      size: 24.w,
-                    ),
-                    onPressed: () =>
-                        Get.toNamed(AppRoutes.carrotAstrologyHistory),
-                  ),
-                ],
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.only(top: 20.h, bottom: 20.h),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: maxWidth),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Zodiac Info Section
-                          if (result.zodiacInfo != null) ...[
-                            _buildZodiacInfoSection(
-                              result.zodiacInfo!,
-                              controller,
-                            ),
-                            Spacing.h(20),
-                          ],
-
-                          // Vegetable Match Section
-                          if (result.vegetableMatch != null) ...[
-                            _buildVegetableMatchSection(result.vegetableMatch!),
-                            Spacing.h(20),
-                          ],
-
-                          // Remedies Section
-                          if (result.remedies != null) ...[
-                            _buildRemediesSection(result.remedies!),
-                            Spacing.h(20),
-                          ],
-
-                          // Overall Reading Section
-                          if (result.overallReading != null &&
-                              result.overallReading!.isNotEmpty) ...[
-                            _buildOverallReadingSection(result.overallReading!),
-                            Spacing.h(20),
-                          ],
-
-                          // Summary Section
-                          if (result.summary != null &&
-                              result.summary!.isNotEmpty) ...[
-                            _buildSummarySection(result.summary!),
-                            Spacing.h(20),
-                          ],
-
-                          // Consult an Astrologer Section
-                          _buildConsultAstrologerSection(),
+              showWallet: false,
+              showLanguage: false,
+              showCart: false,
+              showSearch: false,
+              customActions: [
+                IconButton(
+                  icon: Icon(
+                    Icons.history,
+                    color: '#6F221E'.toColor(),
+                    size: 24.w,
+                  ),
+                  onPressed: () =>
+                      Get.toNamed(AppRoutes.carrotAstrologyHistory),
+                ),
+              ],
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.only(top: 20.h, bottom: 20.h),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxWidth),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Zodiac Info Section
+                        if (result.zodiacInfo != null) ...[
+                          _buildZodiacInfoSection(
+                            result.zodiacInfo!,
+                            controller,
+                          ),
                           Spacing.h(20),
                         ],
-                      ),
+
+                        // Vegetable Match Section
+                        if (result.vegetableMatch != null) ...[
+                          _buildVegetableMatchSection(result.vegetableMatch!),
+                          Spacing.h(20),
+                        ],
+
+                        // Remedies Section
+                        if (result.remedies != null) ...[
+                          _buildRemediesSection(result.remedies!),
+                          Spacing.h(20),
+                        ],
+
+                        // Overall Reading Section
+                        if (result.overallReading != null &&
+                            result.overallReading!.isNotEmpty) ...[
+                          _buildOverallReadingSection(result.overallReading!),
+                          Spacing.h(20),
+                        ],
+
+                        // Summary Section
+                        if (result.summary != null &&
+                            result.summary!.isNotEmpty) ...[
+                          _buildSummarySection(result.summary!),
+                          Spacing.h(20),
+                        ],
+
+                        // Consult an Astrologer Section
+                        _buildConsultAstrologerSection(),
+                        Spacing.h(20),
+                      ],
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/otp/controller/otp_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -40,10 +41,7 @@ class OTPView extends BasePage<OTPController> {
     );
 
     final focusedPinTheme = defaultPinTheme.copyDecorationWith(
-      border: Border.all(
-        color: AppColors.saffron,
-        width: 2,
-      ),
+      border: Border.all(color: AppColors.saffron, width: 2),
       boxShadow: [
         BoxShadow(
           color: AppColors.saffron.withOpacity(0.3),
@@ -54,205 +52,168 @@ class OTPView extends BasePage<OTPController> {
     );
 
     final errorPinTheme = defaultPinTheme.copyDecorationWith(
-      border: Border.all(
-        color: AppColors.error,
-        width: 2,
-      ),
+      border: Border.all(color: AppColors.error, width: 2),
     );
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFFF7C443).withOpacity(0.3),
-                Color(0xFFFFFCF3).withOpacity(0.1),
-              ],
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            CommonHeader(
+              title: 'Verify OTP',
+              showDrawer: false,
+              onBackTap: () => controller.goBack(),
             ),
-          ),
-          child: Column(
-            children: [
-              // Back button at top
-              SafeArea(
+            Expanded(
+              child: SingleChildScrollView(
                 child: Padding(
-                  padding: EdgeInsets.all(16.w),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () {
-                          controller.goBack();
-                        },
-                        borderRadius: BorderRadius.circular(50),
-                        child: Container(
-                          padding: EdgeInsets.all(8.w),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            color: AppColors.saffron,
-                            size: 18.sp,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Spacing.h(20),
-              // Form Container
-              Container(
-                width: double.infinity,
-                child: SafeArea(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 18.w),
-                    child: Container(
-                      padding: EdgeInsets.all(24.w),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(24.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.shadowMedium.withOpacity(0.15),
-                            blurRadius: 20.r,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Title with stars (matching login page style)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                "assets/images/star.png",
-                                height: 20.h,
-                                width: 30.w,
-                              ),
-                              SizedBox(width: 8.w),
-                              AutoTranslateText(
-                                'Verify OTP',
-                                style: MyTextTheme.veryLargeWCB.copyWith(
-                                  color: AppColors.saffron,
-                                  fontSize: 24.sp,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(width: 8.w),
-                              Image.asset(
-                                "assets/images/star.png",
-                                height: 20.h,
-                                width: 30.w,
-                              ),
-                            ],
-                          ),
-                          Spacing.h(8),
-                          AutoTranslateText(
-                            'Enter the verification code',
-                            style: MyTextTheme.mediumBCN.copyWith(
-                              color: AppColors.saffron,
-                              fontSize: 14.sp,
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Column(
+                    children: [
+                      Spacing.h(40),
+                      // Form Container
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(24.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.shadowMedium.withOpacity(0.1),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                          Spacing.h(4),
-                          Obx(
-                            () => AutoTranslateText(
-                              'Sent to ${controller.maskedDestination.value.isEmpty ? 'your number' : controller.maskedDestination.value}',
-                              style: MyTextTheme.smallBCN.copyWith(
-                                color: AppColors.gray,
-                                fontSize: 12.sp,
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Title with stars
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/images/star.png",
+                                  height: 20.h,
+                                  width: 30.w,
+                                ),
+                                SizedBox(width: 8.w),
+                                AutoTranslateText(
+                                  'Verify OTP',
+                                  style: MyTextTheme.veryLargeWCB.copyWith(
+                                    color: AppColors.saffron,
+                                    fontSize: 24.sp,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(width: 8.w),
+                                Image.asset(
+                                  "assets/images/star.png",
+                                  height: 20.h,
+                                  width: 30.w,
+                                ),
+                              ],
+                            ),
+                            Spacing.h(8),
+                            AutoTranslateText(
+                              'Enter the verification code',
+                              style: MyTextTheme.mediumBCN.copyWith(
+                                color: AppColors.saffron,
+                                fontSize: 14.sp,
                               ),
                               textAlign: TextAlign.center,
                             ),
-                          ),
-                          Spacing.h(32),
-                          // OTP Input
-                          Center(
-                            child: Pinput(
-                              length: controller.otpLength,
-                              controller: controller.otpTextController,
-                              defaultPinTheme: defaultPinTheme,
-                              focusedPinTheme: focusedPinTheme,
-                              errorPinTheme: errorPinTheme,
-                              separatorBuilder: (index) => SizedBox(width: 12.w),
-                              onCompleted: controller.submitOtp,
-                              cursor: Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  width: 2,
-                                  height: 20.h,
-                                  color: AppColors.saffron,
+                            Spacing.h(4),
+                            Obx(
+                              () => AutoTranslateText(
+                                'Sent to ${controller.maskedDestination.value.isEmpty ? 'your number' : controller.maskedDestination.value}',
+                                style: MyTextTheme.smallBCN.copyWith(
+                                  color: AppColors.gray,
+                                  fontSize: 12.sp,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Spacing.h(32),
+                            // OTP Input
+                            Center(
+                              child: Pinput(
+                                length: controller.otpLength,
+                                controller: controller.otpTextController,
+                                defaultPinTheme: defaultPinTheme,
+                                focusedPinTheme: focusedPinTheme,
+                                errorPinTheme: errorPinTheme,
+                                separatorBuilder: (index) =>
+                                    SizedBox(width: 12.w),
+                                onCompleted: controller.submitOtp,
+                                cursor: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Container(
+                                    width: 2,
+                                    height: 20.h,
+                                    color: AppColors.saffron,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Spacing.h(24),
-                          // Resend OTP
-                          Obx(
-                            () => Align(
-                              alignment: Alignment.center,
-                              child: controller.secondsRemaining.value > 0
-                                  ? Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.timer_outlined,
-                                          size: 16.sp,
-                                          color: AppColors.gray,
-                                        ),
-                                        SizedBox(width: 6.w),
-                                        AutoTranslateText(
-                                          'Resend OTP in ${controller.secondsRemaining.value}s',
-                                          style: MyTextTheme.smallBCN.copyWith(
+                            Spacing.h(24),
+                            // Resend OTP
+                            Obx(
+                              () => Align(
+                                alignment: Alignment.center,
+                                child: controller.secondsRemaining.value > 0
+                                    ? Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.timer_outlined,
+                                            size: 16.sp,
                                             color: AppColors.gray,
-                                            fontSize: 13.sp,
+                                          ),
+                                          SizedBox(width: 6.w),
+                                          AutoTranslateText(
+                                            'Resend OTP in ${controller.secondsRemaining.value}s',
+                                            style: MyTextTheme.smallBCN
+                                                .copyWith(
+                                                  color: AppColors.gray,
+                                                  fontSize: 13.sp,
+                                                ),
+                                          ),
+                                        ],
+                                      )
+                                    : TextButton.icon(
+                                        onPressed: controller.resendOtp,
+                                        icon: Icon(
+                                          Icons.refresh,
+                                          color: AppColors.saffron,
+                                          size: 18.sp,
+                                        ),
+                                        label: AutoTranslateText(
+                                          'Resend OTP',
+                                          style: MyTextTheme.mediumBCB.copyWith(
+                                            color: AppColors.saffron,
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                      ],
-                                    )
-                                  : TextButton.icon(
-                                      onPressed: controller.resendOtp,
-                                      icon: Icon(
-                                        Icons.refresh,
-                                        color: AppColors.saffron,
-                                        size: 18.sp,
                                       ),
-                                      label: AutoTranslateText(
-                                        'Resend OTP',
-                                        style: MyTextTheme.mediumBCB.copyWith(
-                                          color: AppColors.saffron,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
+                              ),
                             ),
-                          ),
-                          Spacing.h(32),
-                          // Verify Button (matching login page style)
-                          Obx(
-                            () {
+                            Spacing.h(32),
+                            // Verify Button
+                            Obx(() {
                               final isLoading = controller.isSubmitting.value;
                               return GestureDetector(
-                                onTap: isLoading ? null : () => controller.submitOtp(
-                                    controller.otpTextController.text.trim(),
-                                  ),
+                                onTap: isLoading
+                                    ? null
+                                    : () => controller.submitOtp(
+                                        controller.otpTextController.text
+                                            .trim(),
+                                      ),
                                 child: Container(
                                   height: 52.h,
                                   width: double.infinity,
@@ -262,8 +223,8 @@ class OTPView extends BasePage<OTPController> {
                                       begin: Alignment.topCenter,
                                       end: Alignment.bottomCenter,
                                       colors: [
-                                        Color(0xFFF38B3B), // light orange
-                                        Color(0xFFDD2914), // deep orange/red
+                                        Color(0xFFF38B3B),
+                                        Color(0xFFDD2914),
                                       ],
                                     ),
                                     boxShadow: [
@@ -279,15 +240,18 @@ class OTPView extends BasePage<OTPController> {
                                         ? SizedBox(
                                             height: 22.h,
                                             width: 22.w,
-                                            child: const CircularProgressIndicator(
-                                              strokeWidth: 2.5,
-                                              valueColor: AlwaysStoppedAnimation<Color>(
-                                                Colors.white,
-                                              ),
-                                            ),
+                                            child:
+                                                const CircularProgressIndicator(
+                                                  strokeWidth: 2.5,
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                        Color
+                                                      >(Colors.white),
+                                                ),
                                           )
                                         : Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
                                               AutoTranslateText(
                                                 "Verify & Continue",
@@ -308,42 +272,43 @@ class OTPView extends BasePage<OTPController> {
                                   ),
                                 ),
                               );
-                            },
-                          ),
-                          Spacing.h(16),
-                          // Change Number Button
-                          Align(
-                            alignment: Alignment.center,
-                            child: TextButton(
-                              onPressed: () {
-                                controller.changeNumber();
-                              },
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16.w,
-                                  vertical: 8.h,
+                            }),
+                            Spacing.h(16),
+                            // Change Number Button
+                            Align(
+                              alignment: Alignment.center,
+                              child: TextButton(
+                                onPressed: () {
+                                  controller.changeNumber();
+                                },
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16.w,
+                                    vertical: 8.h,
+                                  ),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              child: AutoTranslateText(
-                                'Change Phone Number',
-                                style: MyTextTheme.smallBCB.copyWith(
-                                  color: AppColors.saffron,
-                                  fontSize: 13.sp,
-                                  decoration: TextDecoration.underline,
+                                child: AutoTranslateText(
+                                  'Change Phone Number',
+                                  style: MyTextTheme.smallBCB.copyWith(
+                                    color: AppColors.saffron,
+                                    fontSize: 13.sp,
+                                    decoration: TextDecoration.underline,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
+                      Spacing.h(40),
+                    ],
                   ),
                 ),
               ),
-              SizedBox(height: 40.h),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

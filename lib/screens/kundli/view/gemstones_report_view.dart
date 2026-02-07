@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/gemstones_report_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
@@ -16,31 +17,15 @@ class GemstonesReportView extends BasePage<GemstonesReportController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const CommonHeader(title: 'Gemstones Report'),
-                Expanded(child: _buildContent()),
-              ],
-            ),
-          ),
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Gemstones Report'),
+            Expanded(child: _buildContent()),
+          ],
         ),
       ),
     );

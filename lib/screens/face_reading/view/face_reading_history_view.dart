@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/face_reading_model.dart';
 import 'package:astrobharataiuser/screens/face_reading/service/face_reading_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
@@ -186,10 +187,11 @@ class _FaceReadingHistoryViewState extends State<FaceReadingHistoryView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: '#F7EFBD'.toColor(),
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
             const CommonHeader(title: 'History'),
             Expanded(child: _buildContent()),

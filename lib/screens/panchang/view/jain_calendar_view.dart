@@ -20,16 +20,14 @@ class JainCalendarView extends BasePage<JainCalendarController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              _buildHeader(),
+        body: Column(
+          children: [
+            // Header
+            _buildHeader(),
 
-              // Content
-              Expanded(child: Obx(() => _buildTabContent())),
-            ],
-          ),
+            // Content
+            Expanded(child: Obx(() => _buildTabContent())),
+          ],
         ),
       ),
     );

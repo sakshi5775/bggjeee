@@ -41,63 +41,51 @@ class VastuCorrectionView extends StatelessWidget {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Padding(
-          padding: EdgeInsets.only(
-            top:
-                (MediaQuery.of(context).padding.top > 0
-                        ? MediaQuery.of(context).padding.top * 0.5
-                        : 0.0)
-                    .clamp(6.0, 24.0)
-                    .toDouble(),
-          ),
-          child: Column(
-            children: [
-              CommonHeader(title: '${roomConfig.displayName} Correction Guide'),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.all(16.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Energy status card
-                      _buildEnergyStatusCard(energyModel),
-                      Spacing.h(24),
+        body: Column(
+          children: [
+            CommonHeader(title: '${roomConfig.displayName} Correction Guide'),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(16.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Energy status card
+                    _buildEnergyStatusCard(energyModel),
+                    Spacing.h(24),
 
-                      // Dosh warnings
-                      if (energyModel.hasDosh) ...[
-                        _buildDoshWarningCard(energyModel),
-                        Spacing.h(24),
-                      ],
-
-                      // Correction steps
-                      AutoTranslateText(
-                        'Correction Steps',
-                        style: MyTextTheme.largeBCB
-                            .copyWith(
-                              color: '#3E2723'.toColor(),
-                              fontWeight: FontWeight.bold,
-                            )
-                            .merge(AppTypography.h2),
-                      ),
-                      Spacing.h(16),
-                      ...energyModel.correctionSteps.asMap().entries.map((
-                        entry,
-                      ) {
-                        return CorrectionStepCard(
-                          stepNumber: entry.key + 1,
-                          title: _extractStepTitle(entry.value),
-                          description: entry.value,
-                          icon: _getStepIcon(entry.key),
-                        );
-                      }),
-
+                    // Dosh warnings
+                    if (energyModel.hasDosh) ...[
+                      _buildDoshWarningCard(energyModel),
                       Spacing.h(24),
                     ],
-                  ),
+
+                    // Correction steps
+                    AutoTranslateText(
+                      'Correction Steps',
+                      style: MyTextTheme.largeBCB
+                          .copyWith(
+                            color: '#3E2723'.toColor(),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h2),
+                    ),
+                    Spacing.h(16),
+                    ...energyModel.correctionSteps.asMap().entries.map((entry) {
+                      return CorrectionStepCard(
+                        stepNumber: entry.key + 1,
+                        title: _extractStepTitle(entry.value),
+                        description: entry.value,
+                        icon: _getStepIcon(entry.key),
+                      );
+                    }),
+
+                    Spacing.h(24),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -28,26 +28,30 @@ class LiveStreamView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(LiveStreamController(
-      stream: stream,
-      astrologerName: astrologerName,
-      astrologerProfilePicture: astrologerProfilePicture,
-    ));
+    final controller = Get.put(
+      LiveStreamController(
+        stream: stream,
+        astrologerName: astrologerName,
+        astrologerProfilePicture: astrologerProfilePicture,
+      ),
+    );
 
     // Listen for stream end and navigate back after 2 seconds
     ever(controller.isStreamEnded, (bool ended) {
       if (ended) {
-        debugPrint('📺 View: Stream ended detected, waiting 2 seconds then navigating...');
+        debugPrint(
+          '📺 View: Stream ended detected, waiting 2 seconds then navigating...',
+        );
         // Wait 2 seconds to show the message, then navigate
         Future.delayed(const Duration(seconds: 2), () {
           if (!controller.isStreamEnded.value) {
             return; // Stream was resumed
           }
-          
+
           debugPrint('📺 View: Attempting navigation after 2 second delay');
           debugPrint('📺 View: Current route: ${Get.currentRoute}');
           debugPrint('📺 View: Previous route: ${Get.previousRoute}');
-          
+
           // Try Navigator.pop() first (most reliable with BuildContext)
           if (Navigator.of(context).canPop()) {
             debugPrint('📺 View: Using Navigator.pop() to go back');
@@ -56,14 +60,20 @@ class LiveStreamView extends StatelessWidget {
             // Fallback: Use Get.until() to navigate to previous route
             debugPrint('📺 View: Cannot pop - using Get.until()');
             final previousRoute = Get.previousRoute;
-            if (previousRoute.isNotEmpty && previousRoute != '/' && previousRoute != '/LiveStreamView') {
-              debugPrint('📺 View: Navigating to previous route: $previousRoute');
+            if (previousRoute.isNotEmpty &&
+                previousRoute != '/' &&
+                previousRoute != '/LiveStreamView') {
+              debugPrint(
+                '📺 View: Navigating to previous route: $previousRoute',
+              );
               Get.until((route) {
                 final routeName = route.settings.name ?? '';
                 return (routeName == previousRoute) || route.isFirst;
               });
             } else {
-              debugPrint('📺 View: No valid previous route - navigating to dashboard');
+              debugPrint(
+                '📺 View: No valid previous route - navigating to dashboard',
+              );
               Get.offAllNamed('/user-dashboard');
             }
           }
@@ -80,14 +90,19 @@ class LiveStreamView extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: Colors.black,
-        body: SafeArea(
-        child: Obx(() {
+        body: Obx(() {
           // Debug: Always show something, never blank
-          debugPrint('LiveStreamView - isLoading: ${controller.isLoading.value}');
-          debugPrint('LiveStreamView - isAgoraInitialized: ${controller.isAgoraInitialized.value}');
+          debugPrint(
+            'LiveStreamView - isLoading: ${controller.isLoading.value}',
+          );
+          debugPrint(
+            'LiveStreamView - isAgoraInitialized: ${controller.isAgoraInitialized.value}',
+          );
           debugPrint('LiveStreamView - remoteUid: ${controller.remoteUid}');
-          debugPrint('LiveStreamView - errorMessage: ${controller.errorMessage.value}');
-          
+          debugPrint(
+            'LiveStreamView - errorMessage: ${controller.errorMessage.value}',
+          );
+
           if (controller.isLoading.value) {
             return Container(
               color: Colors.black,
@@ -107,17 +122,23 @@ class LiveStreamView extends StatelessWidget {
                           ),
                         );
                       }
-                      return Icon(Icons.person, size: 120.w, color: Colors.white54);
+                      return Icon(
+                        Icons.person,
+                        size: 120.w,
+                        color: Colors.white54,
+                      );
                     }),
                     Spacing.h(16),
-                    Obx(() => AutoTranslateText(
-                          controller.rxAstrologerName.value.isNotEmpty
-                              ? controller.rxAstrologerName.value
-                              : 'Astrologer',
-                          style: MyTextTheme.largeBCB.copyWith(
-                            color: Colors.white,
-                          ),
-                        )),
+                    Obx(
+                      () => AutoTranslateText(
+                        controller.rxAstrologerName.value.isNotEmpty
+                            ? controller.rxAstrologerName.value
+                            : 'Astrologer',
+                        style: MyTextTheme.largeBCB.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                     Spacing.h(16),
                     const CircularProgressIndicator(color: Colors.orange),
                     Spacing.h(8),
@@ -144,7 +165,9 @@ class LiveStreamView extends StatelessWidget {
                     Spacing.h(16),
                     AutoTranslateText(
                       controller.errorMessage.value,
-                      style: MyTextTheme.mediumBCB.copyWith(color: Colors.white),
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: Colors.white,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     Spacing.h(24),
@@ -172,41 +195,42 @@ class LiveStreamView extends StatelessWidget {
               children: [
                 // Main video feed (always show something)
                 _buildVideoFeed(controller),
-                
+
                 // Top bar
                 _buildTopBar(controller),
-                
+
                 // Side navigation arrows
                 _buildSideNavigation(controller),
-                
+
                 // Chat overlay (only if messages exist)
                 _buildChatOverlay(controller),
 
                 // Gift/reaction overlays (center animations)
                 _buildGiftOverlay(controller),
                 _buildReactionOverlay(controller),
-                
+
                 // Right side icons
                 _buildRightSideIcons(controller),
-                
+
                 // Bottom input bar
                 _buildBottomBar(controller),
-                
+
                 // Gift panel (only if shown)
-                Obx(() => controller.showGiftPanel.value
-                    ? _buildGiftPanel(controller)
-                    : const SizedBox.shrink()),
-                
+                Obx(
+                  () => controller.showGiftPanel.value
+                      ? _buildGiftPanel(controller)
+                      : const SizedBox.shrink(),
+                ),
+
                 // Leave modal
                 _buildLeaveModal(controller),
-                
+
                 // NOTE: Socket.io connection status removed - will be added later
                 // Connection status indicator removed for now
               ],
             ),
           );
         }),
-      ),
       ),
     );
   }
@@ -216,23 +240,31 @@ class LiveStreamView extends StatelessWidget {
       child: Obx(() {
         // Debug logging
         debugPrint('Video Feed State:');
-        debugPrint('  - isAgoraInitialized: ${controller.isAgoraInitialized.value}');
+        debugPrint(
+          '  - isAgoraInitialized: ${controller.isAgoraInitialized.value}',
+        );
         debugPrint('  - remoteUid: ${controller.remoteUid}');
-        debugPrint('  - isRemoteVideoMuted: ${controller.isRemoteVideoMuted.value}');
-        debugPrint('  - isRemoteAudioMuted: ${controller.isRemoteAudioMuted.value}');
-        
+        debugPrint(
+          '  - isRemoteVideoMuted: ${controller.isRemoteVideoMuted.value}',
+        );
+        debugPrint(
+          '  - isRemoteAudioMuted: ${controller.isRemoteAudioMuted.value}',
+        );
+
         // Show video if:
         // 1. Agora is initialized
         // 2. Remote user has joined (remoteUid is set)
         // 3. Video is NOT explicitly muted (camera is ON)
         // Show video as soon as remote user is present; if camera is muted we'll show an overlay/message
         final bool shouldShowVideo = controller.remoteUid.value != null;
-        
+
         debugPrint('  - shouldShowVideo: $shouldShowVideo');
-        
+
         // Show video if camera is on (even if mic is off)
         if (shouldShowVideo && controller.engine != null) {
-          debugPrint('✓ Showing Agora video for remoteUid: ${controller.remoteUid}');
+          debugPrint(
+            '✓ Showing Agora video for remoteUid: ${controller.remoteUid}',
+          );
           return Stack(
             fit: StackFit.expand,
             children: [
@@ -248,12 +280,15 @@ class LiveStreamView extends StatelessWidget {
                     ),
                   );
                 }
-                final key = '${controller.joinResponse?.channelName ?? controller.stream.streamId}-${uid ?? 0}';
+                final key =
+                    '${controller.joinResponse?.channelName ?? controller.stream.streamId}-${uid ?? 0}';
                 return AgoraVideoView(
                   key: ValueKey(key),
                   controller: VideoViewController.remote(
                     rtcEngine: engine,
-                    canvas: uid != null ? VideoCanvas(uid: uid) : const VideoCanvas(),
+                    canvas: uid != null
+                        ? VideoCanvas(uid: uid)
+                        : const VideoCanvas(),
                     connection: RtcConnection(
                       channelId: controller.joinResponse?.channelName ?? '',
                     ),
@@ -286,13 +321,20 @@ class LiveStreamView extends StatelessWidget {
                                 color: Colors.white24,
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(Icons.person, size: 70.w, color: Colors.white70),
+                              child: Icon(
+                                Icons.person,
+                                size: 70.w,
+                                color: Colors.white70,
+                              ),
                             ),
                           Spacing.h(12),
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.videocam_off, color: Colors.white70),
+                              const Icon(
+                                Icons.videocam_off,
+                                color: Colors.white70,
+                              ),
                               Spacing.w(8),
                               AutoTranslateText(
                                 'Camera is off',
@@ -307,13 +349,16 @@ class LiveStreamView extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Microphone off indicator overlay (only show if camera is on but mic is off)
-                if (controller.isRemoteAudioMuted.value)
+              // Microphone off indicator overlay (only show if camera is on but mic is off)
+              if (controller.isRemoteAudioMuted.value)
                 Positioned(
                   top: 70.h, // Position below the top bar
                   right: 16.w,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 8.h,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.75),
                       borderRadius: BorderRadius.circular(20.r),
@@ -332,11 +377,7 @@ class LiveStreamView extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.mic_off,
-                          color: Colors.red,
-                          size: 18.w,
-                        ),
+                        Icon(Icons.mic_off, color: Colors.red, size: 18.w),
                         Spacing.w(6),
                         AutoTranslateText(
                           'Microphone is off',
@@ -352,7 +393,7 @@ class LiveStreamView extends StatelessWidget {
             ],
           );
         }
-        
+
         // Placeholder UI when camera is off, waiting for broadcaster, or broadcaster hasn't joined yet
         return Container(
           color: Colors.black,
@@ -361,39 +402,45 @@ class LiveStreamView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Profile picture or icon
-                 Obx(() {
-                   final pic = controller.rxAstrologerProfile.value;
-                   if (pic.isNotEmpty) {
-                     return ClipOval(
-                       child: NetworkImageWithLoader(
-                         url: pic,
-                         width: 140.w,
-                         height: 140.h,
-                         isCircular: true,
-                       ),
-                     );
-                   }
-                   return Container(
-                     width: 140.w,
-                     height: 140.h,
-                     decoration: const BoxDecoration(
-                       color: Colors.white24,
-                       shape: BoxShape.circle,
-                     ),
-                     child: Icon(Icons.person, size: 80.w, color: Colors.white54),
-                   );
-                 }),
+                Obx(() {
+                  final pic = controller.rxAstrologerProfile.value;
+                  if (pic.isNotEmpty) {
+                    return ClipOval(
+                      child: NetworkImageWithLoader(
+                        url: pic,
+                        width: 140.w,
+                        height: 140.h,
+                        isCircular: true,
+                      ),
+                    );
+                  }
+                  return Container(
+                    width: 140.w,
+                    height: 140.h,
+                    decoration: const BoxDecoration(
+                      color: Colors.white24,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.person,
+                      size: 80.w,
+                      color: Colors.white54,
+                    ),
+                  );
+                }),
                 Spacing.h(24),
                 // Astrologer name
-                 Obx(() => AutoTranslateText(
-                       controller.rxAstrologerName.value.isNotEmpty
-                           ? controller.rxAstrologerName.value
-                           : 'Astrologer',
-                       style: MyTextTheme.largeBCB.copyWith(
-                         color: Colors.white,
-                         fontWeight: FontWeight.bold,
-                       ),
-                     )),
+                Obx(
+                  () => AutoTranslateText(
+                    controller.rxAstrologerName.value.isNotEmpty
+                        ? controller.rxAstrologerName.value
+                        : 'Astrologer',
+                    style: MyTextTheme.largeBCB.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
                 Spacing.h(16),
                 // Status message based on state
                 if (controller.remoteUid.value != null)
@@ -404,13 +451,17 @@ class LiveStreamView extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            controller.isRemoteVideoMuted.value ? Icons.videocam_off : Icons.videocam,
+                            controller.isRemoteVideoMuted.value
+                                ? Icons.videocam_off
+                                : Icons.videocam,
                             color: Colors.white70,
                             size: 20.w,
                           ),
                           Spacing.w(8),
                           AutoTranslateText(
-                            controller.isRemoteVideoMuted.value ? 'Camera is off' : 'Camera on',
+                            controller.isRemoteVideoMuted.value
+                                ? 'Camera is off'
+                                : 'Camera on',
                             style: MyTextTheme.mediumBCN.copyWith(
                               color: Colors.white70,
                             ),
@@ -422,7 +473,11 @@ class LiveStreamView extends StatelessWidget {
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.mic_off, color: Colors.white70, size: 20.w),
+                            Icon(
+                              Icons.mic_off,
+                              color: Colors.white70,
+                              size: 20.w,
+                            ),
                             Spacing.w(8),
                             AutoTranslateText(
                               'Microphone is off',
@@ -483,10 +538,7 @@ class LiveStreamView extends StatelessWidget {
             return const SizedBox.shrink();
           }
 
-          return GiftAnimationWidget(
-            key: ValueKey(gift.giftId),
-            gift: gift,
-          );
+          return GiftAnimationWidget(key: ValueKey(gift.giftId), gift: gift);
         }),
       ),
     );
@@ -523,10 +575,7 @@ class LiveStreamView extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.black.withOpacity(0.7),
-              Colors.transparent,
-            ],
+            colors: [Colors.black.withOpacity(0.7), Colors.transparent],
           ),
         ),
         child: Wrap(
@@ -548,26 +597,28 @@ class LiveStreamView extends StatelessWidget {
               ),
             ),
             // Astrologer name pill
-            Obx(() => Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                  decoration: BoxDecoration(
-                    color: Colors.black54,
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 140.w),
-                    child: AutoTranslateText(
-                      controller.rxAstrologerName.value.isNotEmpty
-                          ? controller.rxAstrologerName.value
-                          : (controller.astrologerName ?? 'Astrologer'),
-                      overflow: TextOverflow.ellipsis,
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+            Obx(
+              () => Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 140.w),
+                  child: AutoTranslateText(
+                    controller.rxAstrologerName.value.isNotEmpty
+                        ? controller.rxAstrologerName.value
+                        : (controller.astrologerName ?? 'Astrologer'),
+                    overflow: TextOverflow.ellipsis,
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                )),
+                ),
+              ),
+            ),
             // Viewer count pill
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
@@ -578,14 +629,18 @@ class LiveStreamView extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.remove_red_eye, color: Colors.white, size: 16),
+                  const Icon(
+                    Icons.remove_red_eye,
+                    color: Colors.white,
+                    size: 16,
+                  ),
                   Spacing.w(4),
-                  Obx(() => AutoTranslateText(
-                        _formatViewerCount(controller.currentViewers.value),
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: Colors.white,
-                        ),
-                      )),
+                  Obx(
+                    () => AutoTranslateText(
+                      _formatViewerCount(controller.currentViewers.value),
+                      style: MyTextTheme.smallBCB.copyWith(color: Colors.white),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -596,7 +651,10 @@ class LiveStreamView extends StatelessWidget {
               return GestureDetector(
                 onTap: isToggling ? null : () => controller.toggleFollow(),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 6.h,
+                  ),
                   decoration: BoxDecoration(
                     gradient: isFollowing
                         ? null
@@ -681,47 +739,59 @@ class LiveStreamView extends StatelessWidget {
     return Positioned.fill(
       child: IgnorePointer(
         ignoring: false,
-        child: Obx(() => Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (controller.hasPrev)
-                  Padding(
-                    padding: EdgeInsets.only(left: 8.w),
-                    child: GestureDetector(
-                      onTap: controller.goPrev,
-                      child: Container(
-                        width: 40.w,
-                        height: 40.w,
-                        decoration: const BoxDecoration(
-                          color: Colors.black54,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+        child: Obx(
+          () => Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (controller.hasPrev)
+                Padding(
+                  padding: EdgeInsets.only(left: 8.w),
+                  child: GestureDetector(
+                    onTap: controller.goPrev,
+                    child: Container(
+                      width: 40.w,
+                      height: 40.w,
+                      decoration: const BoxDecoration(
+                        color: Colors.black54,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                        size: 20,
                       ),
                     ),
-                  )
-                else
-                  const SizedBox(width: 56), // reserve space to keep layout stable
-                if (controller.hasNext)
-                  Padding(
-                    padding: EdgeInsets.only(right: 8.w),
-                    child: GestureDetector(
-                      onTap: controller.goNext,
-                      child: Container(
-                        width: 40.w,
-                        height: 40.w,
-                        decoration: const BoxDecoration(
-                          color: Colors.black54,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 20),
+                  ),
+                )
+              else
+                const SizedBox(
+                  width: 56,
+                ), // reserve space to keep layout stable
+              if (controller.hasNext)
+                Padding(
+                  padding: EdgeInsets.only(right: 8.w),
+                  child: GestureDetector(
+                    onTap: controller.goNext,
+                    child: Container(
+                      width: 40.w,
+                      height: 40.w,
+                      decoration: const BoxDecoration(
+                        color: Colors.black54,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                        size: 20,
                       ),
                     ),
-                  )
-                else
-                  const SizedBox(width: 56),
-              ],
-            )),
+                  ),
+                )
+              else
+                const SizedBox(width: 56),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -737,9 +807,7 @@ class LiveStreamView extends StatelessWidget {
         }
 
         return Container(
-          constraints: BoxConstraints(
-            maxHeight: 320.h,
-          ),
+          constraints: BoxConstraints(maxHeight: 320.h),
           decoration: BoxDecoration(
             // Subtle gradient overlay for better readability
             gradient: LinearGradient(
@@ -763,9 +831,10 @@ class LiveStreamView extends StatelessWidget {
               itemCount: controller.messages.length,
               itemBuilder: (context, index) {
                 final message = controller.messages[index];
-                
+
                 // Keep only last 50 messages for performance
-                if (controller.messages.length > 50 && index < controller.messages.length - 50) {
+                if (controller.messages.length > 50 &&
+                    index < controller.messages.length - 50) {
                   return const SizedBox.shrink();
                 }
 
@@ -796,7 +865,6 @@ class LiveStreamView extends StatelessWidget {
     );
   }
 
-
   Widget _buildRightSideIcons(LiveStreamController controller) {
     return Positioned(
       right: 16.w,
@@ -810,9 +878,8 @@ class LiveStreamView extends StatelessWidget {
                 context: Get.context!,
                 isScrollControlled: true,
                 backgroundColor: Colors.transparent,
-                builder: (context) => ReportAbusePopup(
-                  streamId: controller.stream.streamId,
-                ),
+                builder: (context) =>
+                    ReportAbusePopup(streamId: controller.stream.streamId),
               );
             },
             child: Container(
@@ -829,19 +896,21 @@ class LiveStreamView extends StatelessWidget {
           // Volume icon
           GestureDetector(
             onTap: () => controller.toggleMute(),
-            child: Obx(() => Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: const BoxDecoration(
-                color: Colors.black54,
-                shape: BoxShape.circle,
+            child: Obx(
+              () => Container(
+                width: 40.w,
+                height: 40.w,
+                decoration: const BoxDecoration(
+                  color: Colors.black54,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  controller.isMuted.value ? Icons.volume_off : Icons.volume_up,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
-              child: Icon(
-                controller.isMuted.value ? Icons.volume_off : Icons.volume_up,
-                color: Colors.white,
-                size: 20,
-              ),
-            )),
+            ),
           ),
         ],
       ),
@@ -859,10 +928,7 @@ class LiveStreamView extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            colors: [
-              Colors.black.withOpacity(0.7),
-              Colors.transparent,
-            ],
+            colors: [Colors.black.withOpacity(0.7), Colors.transparent],
           ),
         ),
         child: Row(
@@ -881,14 +947,14 @@ class LiveStreamView extends StatelessWidget {
                 ),
                 child: TextField(
                   controller: controller.messageController,
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: Colors.black87,
-                  ).merge(AppTypography.body1),
+                  style: MyTextTheme.mediumBCN
+                      .copyWith(color: Colors.black87)
+                      .merge(AppTypography.body1),
                   decoration: InputDecoration(
                     hintText: 'Write comment..',
-                    hintStyle: MyTextTheme.mediumBCN.copyWith(
-                      color: Colors.grey,
-                    ).merge(AppTypography.body1),
+                    hintStyle: MyTextTheme.mediumBCN
+                        .copyWith(color: Colors.grey)
+                        .merge(AppTypography.body1),
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
@@ -927,7 +993,11 @@ class LiveStreamView extends StatelessWidget {
                   color: Color(0xFFF38B3B),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.card_giftcard, color: Colors.white, size: 20),
+                child: const Icon(
+                  Icons.card_giftcard,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
             ),
           ],
@@ -941,7 +1011,7 @@ class LiveStreamView extends StatelessWidget {
       if (!controller.showGiftPanel.value) {
         return const SizedBox.shrink();
       }
-      
+
       return Positioned(
         bottom: 0,
         left: 0,
@@ -1014,59 +1084,61 @@ class LiveStreamView extends StatelessWidget {
               // Tabs for Gifts and Reactions
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Obx(() => Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => controller.giftPanelTabIndex.value = 0,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          decoration: BoxDecoration(
-                            color: controller.giftPanelTabIndex.value == 0
-                                ? const Color(0xFFFFD700)
-                                : Colors.grey[800],
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          child: AutoTranslateText(
-                            'Gifts',
-                            textAlign: TextAlign.center,
-                            style: MyTextTheme.mediumBCB.copyWith(
+                child: Obx(
+                  () => Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => controller.giftPanelTabIndex.value = 0,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            decoration: BoxDecoration(
                               color: controller.giftPanelTabIndex.value == 0
-                                  ? const Color(0xFF3E2723)
-                                  : Colors.white,
-                              fontWeight: FontWeight.bold,
+                                  ? const Color(0xFFFFD700)
+                                  : Colors.grey[800],
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: AutoTranslateText(
+                              'Gifts',
+                              textAlign: TextAlign.center,
+                              style: MyTextTheme.mediumBCB.copyWith(
+                                color: controller.giftPanelTabIndex.value == 0
+                                    ? const Color(0xFF3E2723)
+                                    : Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Spacing.w(12),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => controller.giftPanelTabIndex.value = 1,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          decoration: BoxDecoration(
-                            color: controller.giftPanelTabIndex.value == 1
-                                ? const Color(0xFFFFD700)
-                                : Colors.grey[800],
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          child: AutoTranslateText(
-                            'Reactions',
-                            textAlign: TextAlign.center,
-                            style: MyTextTheme.mediumBCB.copyWith(
+                      Spacing.w(12),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => controller.giftPanelTabIndex.value = 1,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            decoration: BoxDecoration(
                               color: controller.giftPanelTabIndex.value == 1
-                                  ? const Color(0xFF3E2723)
-                                  : Colors.white,
-                              fontWeight: FontWeight.bold,
+                                  ? const Color(0xFFFFD700)
+                                  : Colors.grey[800],
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: AutoTranslateText(
+                              'Reactions',
+                              textAlign: TextAlign.center,
+                              style: MyTextTheme.mediumBCB.copyWith(
+                                color: controller.giftPanelTabIndex.value == 1
+                                    ? const Color(0xFF3E2723)
+                                    : Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                )),
+                    ],
+                  ),
+                ),
               ),
               Spacing.h(16),
               // Content based on selected tab
@@ -1091,9 +1163,11 @@ class LiveStreamView extends StatelessWidget {
                         ),
                       );
                     }
-                    
-                    debugPrint('🎁 Displaying ${controller.availableGifts.length} gifts in gift panel');
-                    
+
+                    debugPrint(
+                      '🎁 Displaying ${controller.availableGifts.length} gifts in gift panel',
+                    );
+
                     return GridView.builder(
                       padding: EdgeInsets.all(16.w),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -1105,7 +1179,9 @@ class LiveStreamView extends StatelessWidget {
                       itemCount: controller.availableGifts.length,
                       itemBuilder: (context, index) {
                         final gift = controller.availableGifts[index];
-                        debugPrint('🎁 Rendering gift ${index + 1}/${controller.availableGifts.length}: ${gift.name}');
+                        debugPrint(
+                          '🎁 Rendering gift ${index + 1}/${controller.availableGifts.length}: ${gift.name}',
+                        );
                         return GestureDetector(
                           onTap: () => controller.sendGift(gift.type),
                           child: Container(
@@ -1146,7 +1222,9 @@ class LiveStreamView extends StatelessWidget {
                                   child: AutoTranslateText(
                                     '₹${gift.value}',
                                     style: MyTextTheme.smallBCB.copyWith(
-                                      color: const Color(0xFF3E2723), // Dark brown text
+                                      color: const Color(
+                                        0xFF3E2723,
+                                      ), // Dark brown text
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -1176,25 +1254,33 @@ class LiveStreamView extends StatelessWidget {
                         ),
                       );
                     }
-                    
-                    debugPrint('✨ Displaying ${controller.availableReactions.length} reactions in gift panel');
-                    
+
+                    debugPrint(
+                      '✨ Displaying ${controller.availableReactions.length} reactions in gift panel',
+                    );
+
                     return GridView.builder(
                       padding: EdgeInsets.all(16.w),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 4,
                         crossAxisSpacing: 12.w,
                         mainAxisSpacing: 12.h,
-                        childAspectRatio: 1.0, // Increased from 0.9 to give more vertical space
+                        childAspectRatio:
+                            1.0, // Increased from 0.9 to give more vertical space
                       ),
                       itemCount: controller.availableReactions.length,
                       itemBuilder: (context, index) {
                         final reaction = controller.availableReactions[index];
-                        debugPrint('✨ Rendering reaction ${index + 1}/${controller.availableReactions.length}: ${reaction.name}');
+                        debugPrint(
+                          '✨ Rendering reaction ${index + 1}/${controller.availableReactions.length}: ${reaction.name}',
+                        );
                         return GestureDetector(
                           onTap: () => controller.sendReaction(reaction.type),
                           child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
+                            padding: EdgeInsets.symmetric(
+                              vertical: 8.h,
+                              horizontal: 4.w,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.grey[900],
                               borderRadius: BorderRadius.circular(12.r),
@@ -1267,7 +1353,9 @@ class LiveStreamView extends StatelessWidget {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  margin: EdgeInsets.only(top: MediaQuery.of(Get.context!).size.height * 0.3),
+                  margin: EdgeInsets.only(
+                    top: MediaQuery.of(Get.context!).size.height * 0.3,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
@@ -1290,7 +1378,10 @@ class LiveStreamView extends StatelessWidget {
                       ),
                       // Header
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 16.h,
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -1307,7 +1398,9 @@ class LiveStreamView extends StatelessWidget {
                                 width: 32.w,
                                 height: 32.w,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFFD700), // Light yellow
+                                  color: const Color(
+                                    0xFFFFD700,
+                                  ), // Light yellow
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
@@ -1325,7 +1418,9 @@ class LiveStreamView extends StatelessWidget {
                         if (controller.isLoadingOtherStreams.value) {
                           return Padding(
                             padding: EdgeInsets.symmetric(vertical: 40.h),
-                            child: CircularProgressIndicator(color: const Color(0xFFF38B3B)),
+                            child: CircularProgressIndicator(
+                              color: const Color(0xFFF38B3B),
+                            ),
                           );
                         }
 
@@ -1346,113 +1441,134 @@ class LiveStreamView extends StatelessWidget {
                           child: LayoutBuilder(
                             builder: (context, constraints) {
                               // Responsive: 5 columns on larger screens, 4 on medium, 3 on small
-                              final crossAxisCount = constraints.maxWidth > 400 
-                                  ? 5 
-                                  : constraints.maxWidth > 300 
-                                      ? 4 
-                                      : 3;
+                              final crossAxisCount = constraints.maxWidth > 400
+                                  ? 5
+                                  : constraints.maxWidth > 300
+                                  ? 4
+                                  : 3;
                               return GridView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: crossAxisCount,
-                                  crossAxisSpacing: 12.w,
-                                  mainAxisSpacing: 16.h,
-                                  childAspectRatio: 0.75,
-                                ),
-                                itemCount: controller.otherLiveStreams.length > 10 
-                                    ? 10 
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: crossAxisCount,
+                                      crossAxisSpacing: 12.w,
+                                      mainAxisSpacing: 16.h,
+                                      childAspectRatio: 0.75,
+                                    ),
+                                itemCount:
+                                    controller.otherLiveStreams.length > 10
+                                    ? 10
                                     : controller.otherLiveStreams.length,
                                 itemBuilder: (context, index) {
-                              final otherStream = controller.otherLiveStreams[index];
-                              final astrologerId = otherStream.astrologerId;
-                              final profilePicture = controller.getProfilePictureForAstrologer(astrologerId);
-                              final name = controller.getAstrologerName(astrologerId);
-                              
-                              return GestureDetector(
-                                onTap: () {
-                                  // Navigate to other stream using same controller
-                                  controller.hideLeaveModal();
-                                  final idx = controller.livePlaylist.indexWhere((s) => s.streamId == otherStream.streamId);
-                                  int targetIndex = idx;
-                                  if (idx == -1) {
-                                    controller.livePlaylist.add(otherStream);
-                                    targetIndex = controller.livePlaylist.length - 1;
-                                  }
-                                  controller.switchToStream(otherStream, targetIndex);
-                                },
-                                child: Column(
-                                  children: [
-                                    Stack(
+                                  final otherStream =
+                                      controller.otherLiveStreams[index];
+                                  final astrologerId = otherStream.astrologerId;
+                                  final profilePicture = controller
+                                      .getProfilePictureForAstrologer(
+                                        astrologerId,
+                                      );
+                                  final name = controller.getAstrologerName(
+                                    astrologerId,
+                                  );
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      // Navigate to other stream using same controller
+                                      controller.hideLeaveModal();
+                                      final idx = controller.livePlaylist
+                                          .indexWhere(
+                                            (s) =>
+                                                s.streamId ==
+                                                otherStream.streamId,
+                                          );
+                                      int targetIndex = idx;
+                                      if (idx == -1) {
+                                        controller.livePlaylist.add(
+                                          otherStream,
+                                        );
+                                        targetIndex =
+                                            controller.livePlaylist.length - 1;
+                                      }
+                                      controller.switchToStream(
+                                        otherStream,
+                                        targetIndex,
+                                      );
+                                    },
+                                    child: Column(
                                       children: [
-                                        // Profile picture with green border
-                                        Container(
-                                          width: 60.w,
-                                          height: 60.w,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: Colors.green,
-                                              width: 2.5,
+                                        Stack(
+                                          children: [
+                                            // Profile picture with green border
+                                            Container(
+                                              width: 60.w,
+                                              height: 60.w,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: Colors.green,
+                                                  width: 2.5,
+                                                ),
+                                              ),
+                                              child: ClipOval(
+                                                child: profilePicture != null
+                                                    ? NetworkImageWithLoader(
+                                                        url: profilePicture,
+                                                        width: 60.w,
+                                                        height: 60.w,
+                                                        isCircular: true,
+                                                      )
+                                                    : Container(
+                                                        color: Colors.grey[300],
+                                                        child: Icon(
+                                                          Icons.person,
+                                                          size: 30.w,
+                                                          color:
+                                                              Colors.grey[600],
+                                                        ),
+                                                      ),
+                                              ),
                                             ),
-                                          ),
-                                          child: ClipOval(
-                                            child: profilePicture != null
-                                                ? NetworkImageWithLoader(
-                                                    url: profilePicture,
-                                                    width: 60.w,
-                                                    height: 60.w,
-                                                    isCircular: true,
-                                                  )
-                                                : Container(
-                                                    color: Colors.grey[300],
-                                                    child: Icon(
-                                                      Icons.person,
-                                                      size: 30.w,
-                                                      color: Colors.grey[600],
+                                            // LIVE indicator
+                                            Positioned(
+                                              bottom: 0,
+                                              right: 0,
+                                              child: Container(
+                                                width: 18.w,
+                                                height: 18.w,
+                                                decoration: const BoxDecoration(
+                                                  color: Colors.green,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: Center(
+                                                  child: AutoTranslateText(
+                                                    'LIVE',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
                                                   ),
-                                          ),
-                                        ),
-                                        // LIVE indicator
-                                        Positioned(
-                                          bottom: 0,
-                                          right: 0,
-                                          child: Container(
-                                            width: 18.w,
-                                            height: 18.w,
-                                            decoration: const BoxDecoration(
-                                              color: Colors.green,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Center(
-                                              child: AutoTranslateText(
-                                                'LIVE',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
+                                          ],
+                                        ),
+                                        Spacing.h(6),
+                                        // Name
+                                        AutoTranslateText(
+                                          name,
+                                          style: MyTextTheme.smallBCN.copyWith(
+                                            color: const Color(0xFF3E2723),
+                                            fontWeight: FontWeight.w500,
                                           ),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ],
                                     ),
-                                    Spacing.h(6),
-                                    // Name
-                                    AutoTranslateText(
-                                      name,
-                                      style: MyTextTheme.smallBCN.copyWith(
-                                        color: const Color(0xFF3E2723),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
-                              );
+                                  );
                                 },
                               );
                             },
@@ -1464,7 +1580,10 @@ class LiveStreamView extends StatelessWidget {
                       Obx(() {
                         final isFollowing = controller.isFollowing.value;
                         return Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20.w,
+                            vertical: 16.h,
+                          ),
                           child: Row(
                             children: [
                               // Leave button - always visible
@@ -1472,12 +1591,18 @@ class LiveStreamView extends StatelessWidget {
                                 child: GestureDetector(
                                   onTap: () => controller.leaveStreamOnly(),
                                   child: Container(
-                                    padding: EdgeInsets.symmetric(vertical: 14.h),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 14.h,
+                                    ),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFFFFCF3), // Light yellow/cream
+                                      color: const Color(
+                                        0xFFFFFCF3,
+                                      ), // Light yellow/cream
                                       borderRadius: BorderRadius.circular(25.r),
                                       border: Border.all(
-                                        color: const Color(0xFFF38B3B), // Orange
+                                        color: const Color(
+                                          0xFFF38B3B,
+                                        ), // Orange
                                         width: 2,
                                       ),
                                     ),
@@ -1485,7 +1610,9 @@ class LiveStreamView extends StatelessWidget {
                                       'Leave',
                                       textAlign: TextAlign.center,
                                       style: MyTextTheme.mediumBCB.copyWith(
-                                        color: const Color(0xFF3E2723), // Dark brown
+                                        color: const Color(
+                                          0xFF3E2723,
+                                        ), // Dark brown
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -1499,12 +1626,19 @@ class LiveStreamView extends StatelessWidget {
                                   child: GestureDetector(
                                     onTap: () => controller.followAndLeave(),
                                     child: Container(
-                                      padding: EdgeInsets.symmetric(vertical: 14.h),
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 14.h,
+                                      ),
                                       decoration: BoxDecoration(
                                         gradient: const LinearGradient(
-                                          colors: [Color(0xFFF38B3B), Color(0xFFDD2914)],
+                                          colors: [
+                                            Color(0xFFF38B3B),
+                                            Color(0xFFDD2914),
+                                          ],
                                         ),
-                                        borderRadius: BorderRadius.circular(25.r),
+                                        borderRadius: BorderRadius.circular(
+                                          25.r,
+                                        ),
                                       ),
                                       child: AutoTranslateText(
                                         'Follow & Leave',
@@ -1534,5 +1668,3 @@ class LiveStreamView extends StatelessWidget {
     });
   }
 }
-
-

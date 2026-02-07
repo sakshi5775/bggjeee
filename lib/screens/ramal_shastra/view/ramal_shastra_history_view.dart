@@ -72,10 +72,11 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
             const CommonHeader(title: 'History'),
             Expanded(child: Obx(() => _buildContent())),

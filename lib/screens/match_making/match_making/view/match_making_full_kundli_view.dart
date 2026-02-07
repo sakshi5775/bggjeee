@@ -3,8 +3,10 @@ import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,12 +18,15 @@ class MatchMakingFullKundliView extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = Get.arguments as Map<String, dynamic>?;
     if (args == null) {
-      return Scaffold(
-        backgroundColor: const Color(0xFFF5F0E8),
-        body: Center(
-          child: AutoTranslateText(
-            'No data available',
-            style: MyTextTheme.mediumBCB.copyWith(color: "#6F221E".toColor()),
+      return Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Center(
+            child: AutoTranslateText(
+              'No data available',
+              style: MyTextTheme.mediumBCB.copyWith(color: "#6F221E".toColor()),
+            ),
           ),
         ),
       );
@@ -32,13 +37,14 @@ class MatchMakingFullKundliView extends StatelessWidget {
     final planetaryDetails =
         args['planetaryDetails'] as Map<String, dynamic>? ?? {};
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F0E8),
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
             // Header
-            _buildHeader(isBoy ? 'Boy' : 'Girl'),
+            CommonHeader(title: '${isBoy ? 'Boy' : 'Girl'} Full Kundli'),
 
             // Content
             Expanded(
@@ -66,37 +72,6 @@ class MatchMakingFullKundliView extends StatelessWidget {
                     if (planetaryDetails.isNotEmpty)
                       _buildPlanetaryDetailsSection(planetaryDetails),
                   ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(String title) {
-    return Container(
-      decoration: BoxDecoration(color: "#6F221E".toColor()),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () => Get.back(),
-              child: Icon(
-                Icons.arrow_back,
-                color: const Color(0xFFDFB343),
-                size: 24.w,
-              ),
-            ),
-            Spacing.w(16),
-            Expanded(
-              child: AutoTranslateText(
-                '$title Full Kundli',
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: const Color(0xFFDFB343),
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),

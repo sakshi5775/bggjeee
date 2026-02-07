@@ -18,40 +18,46 @@ class SavedItemsView extends GetView<CartController> {
   Widget build(BuildContext context) {
     final currencyFormat = NumberFormat.currency(symbol: '₹', decimalDigits: 0);
 
-    return Scaffold(
-      backgroundColor: AppColors.lightBackground,
-      body: Column(
-        children: [
-          CommonHeader(title: 'Saved Items'),
-          Expanded(
-            child: Obx(() {
-              final savedItems = controller.savedItems;
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Saved Items'),
+            Expanded(
+              child: Obx(() {
+                final savedItems = controller.savedItems;
 
-              if ((controller.isLoading.value ||
-                      controller.isUpdatingCart.value) &&
-                  savedItems.isEmpty) {
-                return Center(
-                  child: CircularProgressIndicator(color: AppColors.saffron),
+                if ((controller.isLoading.value ||
+                        controller.isUpdatingCart.value) &&
+                    savedItems.isEmpty) {
+                  return Center(
+                    child: CircularProgressIndicator(color: AppColors.saffron),
+                  );
+                }
+
+                if (savedItems.isEmpty) {
+                  return _EmptySavedItems(onShopNow: () => Get.back());
+                }
+
+                return ListView.separated(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 12.h,
+                  ),
+                  itemCount: savedItems.length,
+                  separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                  itemBuilder: (_, index) => _SavedItemTile(
+                    item: savedItems[index],
+                    currencyFormat: currencyFormat,
+                    controller: controller,
+                  ),
                 );
-              }
-
-              if (savedItems.isEmpty) {
-                return _EmptySavedItems(onShopNow: () => Get.back());
-              }
-
-              return ListView.separated(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                itemCount: savedItems.length,
-                separatorBuilder: (_, __) => SizedBox(height: 12.h),
-                itemBuilder: (_, index) => _SavedItemTile(
-                  item: savedItems[index],
-                  currencyFormat: currencyFormat,
-                  controller: controller,
-                ),
-              );
-            }),
-          ),
-        ],
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -22,21 +22,16 @@ class KundliFormView extends BasePage<KundliFormController> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
-        body: SafeArea(
-          child: Column(
-            children: [
-              const CommonHeader(title: 'Generate Kundli'),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 0.h,
-                  ),
-                  child: _buildFormSection(),
-                ),
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Generate Kundli'),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 0.h),
+                child: _buildFormSection(),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

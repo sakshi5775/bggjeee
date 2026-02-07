@@ -22,28 +22,26 @@ class BhadraView extends BasePage<BhadraController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                _buildFormSection(),
-                Spacing.h(16),
-                // Daily Bhadrakaal
-                Obx(
-                  () => controller.dailyPanchang.value != null
-                      ? _buildDailyBhadrakaal()
-                      : const SizedBox.shrink(),
-                ),
-                // Monthly Bhadrakaal list
-                Obx(
-                  () => controller.monthlyBhadrakaal.isNotEmpty
-                      ? _buildMonthlyBhadrakaal()
-                      : const SizedBox.shrink(),
-                ),
-                Spacing.h(20),
-              ],
-            ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              _buildFormSection(),
+              Spacing.h(16),
+              // Daily Bhadrakaal
+              Obx(
+                () => controller.dailyPanchang.value != null
+                    ? _buildDailyBhadrakaal()
+                    : const SizedBox.shrink(),
+              ),
+              // Monthly Bhadrakaal list
+              Obx(
+                () => controller.monthlyBhadrakaal.isNotEmpty
+                    ? _buildMonthlyBhadrakaal()
+                    : const SizedBox.shrink(),
+              ),
+              Spacing.h(20),
+            ],
           ),
         ),
       ),

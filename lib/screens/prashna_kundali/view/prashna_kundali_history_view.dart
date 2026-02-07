@@ -20,10 +20,11 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
     // Fetch history on load
     controller.fetchHistory(page: 1);
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
             CommonHeader(title: 'Reading History'),
             Expanded(

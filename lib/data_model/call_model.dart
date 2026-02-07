@@ -52,6 +52,11 @@ class CallData {
   });
 
   factory CallData.fromJson(Map<String, dynamic> json) {
+    // Parse costBreakdown first so we can use it as fallback
+    final costBreakdownData = json['costBreakdown'] != null
+        ? CostBreakdown.fromJson(json['costBreakdown'] as Map<String, dynamic>)
+        : null;
+
     return CallData(
       callId: json['callId'] as String? ?? '',
       channelName: json['channelName'] as String? ?? '',
@@ -60,12 +65,14 @@ class CallData {
       expirySeconds: (json['expirySeconds'] as num?)?.toInt() ?? 3600,
       timeoutSeconds: (json['timeoutSeconds'] as num?)?.toInt() ?? 60,
       durationMinutes: (json['durationMinutes'] as num?)?.toInt() ?? 0,
-      pricePerMinute: (json['pricePerMinute'] as num?)?.toDouble() ?? 0.0,
+      // Try top-level pricePerMinute first, then fallback to costBreakdown.pricePerMinute
+      pricePerMinute:
+          (json['pricePerMinute'] as num?)?.toDouble() ??
+          costBreakdownData?.pricePerMinute ??
+          0.0,
       astrologerName: json['astrologerName'] as String? ?? '',
       astrologerImage: json['astrologerImage'] as String? ?? '',
-      costBreakdown: json['costBreakdown'] != null
-          ? CostBreakdown.fromJson(json['costBreakdown'] as Map<String, dynamic>)
-          : null,
+      costBreakdown: costBreakdownData,
       walletBalance: (json['walletBalance'] as num?)?.toDouble(),
       availableMinutes: (json['availableMinutes'] as num?)?.toInt(),
     );
@@ -105,17 +112,23 @@ class CostBreakdown {
       astrologerName: json['astrologerName'] as String? ?? '',
       callType: json['callType'] as String? ?? '',
       durationMinutes: (json['durationMinutes'] as num?)?.toInt() ?? 0,
-      pricePerMinute: (json['pricePerMinute'] as num?)?.toDouble() ?? 
-                      (json['ratePerMinute'] as num?)?.toDouble() ?? 0.0, // Support both for backward compatibility
+      pricePerMinute:
+          (json['pricePerMinute'] as num?)?.toDouble() ??
+          (json['ratePerMinute'] as num?)?.toDouble() ??
+          0.0, // Support both for backward compatibility
       subtotal: (json['subtotal'] as num?)?.toDouble() ?? 0.0,
       discounts: json['discounts'] != null
           ? AppliedDiscounts.fromJson(json['discounts'] as Map<String, dynamic>)
-          : (json['appliedDiscounts'] != null // Support both for backward compatibility
-              ? AppliedDiscounts.fromJson(json['appliedDiscounts'] as Map<String, dynamic>)
-              : AppliedDiscounts.empty()),
+          : (json['appliedDiscounts'] !=
+                    null // Support both for backward compatibility
+                ? AppliedDiscounts.fromJson(
+                    json['appliedDiscounts'] as Map<String, dynamic>,
+                  )
+                : AppliedDiscounts.empty()),
       totalAmount: (json['totalAmount'] as num?)?.toDouble() ?? 0.0,
       platformFee: (json['platformFee'] as num?)?.toDouble() ?? 0.0,
-      astrologerEarnings: (json['astrologerEarnings'] as num?)?.toDouble() ?? 0.0,
+      astrologerEarnings:
+          (json['astrologerEarnings'] as num?)?.toDouble() ?? 0.0,
       currency: json['currency'] as String? ?? 'INR',
     );
   }
@@ -134,12 +147,16 @@ class AppliedDiscounts {
 
   factory AppliedDiscounts.fromJson(Map<String, dynamic> json) {
     // Handle new API structure where discounts might be nested or flat
-    final firstSessionData = json['firstSessionDiscount'] ?? json['discounts']?['firstSessionDiscount'];
+    final firstSessionData =
+        json['firstSessionDiscount'] ??
+        json['discounts']?['firstSessionDiscount'];
     final bulkData = json['bulkDiscount'] ?? json['discounts']?['bulkDiscount'];
-    
+
     return AppliedDiscounts(
       firstSessionDiscount: firstSessionData != null
-          ? FirstSessionDiscount.fromJson(firstSessionData as Map<String, dynamic>)
+          ? FirstSessionDiscount.fromJson(
+              firstSessionData as Map<String, dynamic>,
+            )
           : FirstSessionDiscount.empty(),
       bulkDiscount: bulkData != null
           ? BulkDiscount.fromJson(bulkData as Map<String, dynamic>)
@@ -177,11 +194,7 @@ class FirstSessionDiscount {
   }
 
   factory FirstSessionDiscount.empty() {
-    return FirstSessionDiscount(
-      applied: false,
-      percentage: 0.0,
-      amount: 0.0,
-    );
+    return FirstSessionDiscount(applied: false, percentage: 0.0, amount: 0.0);
   }
 }
 
@@ -205,14 +218,8 @@ class BulkDiscount {
   }
 
   factory BulkDiscount.empty() {
-    return BulkDiscount(
-      applied: false,
-      percentage: 0.0,
-      amount: 0.0,
-    );
+    return BulkDiscount(applied: false, percentage: 0.0, amount: 0.0);
   }
 }
 
 // REMOVED: SelectedTier class - no longer used in per-minute pricing model
-
-

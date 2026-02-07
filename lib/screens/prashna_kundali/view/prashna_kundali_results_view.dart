@@ -23,21 +23,25 @@ class PrashnaKundaliResultsView extends StatelessWidget {
         : (Get.arguments is Map ? Get.arguments['result'] : null);
 
     if (result == null) {
-      return Scaffold(
-        backgroundColor: '#FFF8E1'.toColor(),
-        body: Center(
-          child: AutoTranslateText(
-            "No result data found",
-            style: MyTextTheme.mediumBCB.copyWith(color: '#3E2723'.toColor()),
+      return Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Center(
+            child: AutoTranslateText(
+              "No result data found",
+              style: MyTextTheme.mediumBCB.copyWith(color: '#3E2723'.toColor()),
+            ),
           ),
         ),
       );
     }
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
             CommonHeader(
               title: 'Your Reading',

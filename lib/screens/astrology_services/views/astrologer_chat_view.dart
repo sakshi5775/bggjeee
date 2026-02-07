@@ -74,219 +74,227 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: PopScope(
-        canPop: false,
-        onPopInvoked: (didPop) {
-          if (didPop) return;
-          controller.onBackPressed();
-        },
-        child: SafeArea(
-          bottom: false,
-          child: Column(
-            children: [
-              CommonHeader(
-                title: '',
-                showDrawer: false,
-                showHome: false,
-                onMenuTap: controller.onBackPressed,
-                customActions: [
-                  // End Chat Button
-                  Obx(
-                    () => controller.sessionStatus.value == 'ACTIVE'
-                        ? TextButton(
-                            onPressed: _showEndChatDialog,
-                            child: AutoTranslateText(
-                              'End Chat',
-                              style: MyTextTheme.smallBCB.copyWith(
-                                color: '#6F221E'.toColor(),
-                              ),
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                ],
-                titleWidget: Row(
-                  children: [
-                    // Profile Pic
-                    Container(
-                      width: 40.w,
-                      height: 40.w,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: '#6F221E'.toColor().withOpacity(0.3),
-                          width: 2,
-                        ),
-                      ),
-                      child: Obx(() {
-                        final astrologer = controller.astrologerRx.value;
-                        final imageUrl =
-                            astrologer?.profilePicture ??
-                            controller.astrologerImage;
-
-                        return ClipOval(
-                          child: imageUrl != null && imageUrl.isNotEmpty
-                              ? CachedNetworkImage(
-                                  imageUrl: imageUrl,
-                                  fit: BoxFit.cover,
-                                  placeholder: (_, __) => Icon(
-                                    Icons.person,
-                                    color: '#6F221E'.toColor(),
-                                  ),
-                                  errorWidget: (_, __, ___) => Icon(
-                                    Icons.person,
-                                    color: '#6F221E'.toColor(),
-                                  ),
-                                )
-                              : Icon(Icons.person, color: '#6F221E'.toColor()),
-                        );
-                      }),
-                    ),
-                    SizedBox(width: 10.w),
-
-                    Expanded(
-                      child: Obx(() {
-                        final astrologer = controller.astrologerRx.value;
-                        final name =
-                            astrologer?.displayName ??
-                            controller.astrologerName;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AutoTranslateText(
-                              name,
-                              style: MyTextTheme.mediumBCB.copyWith(
-                                color: '#6F221E'.toColor(),
-                                fontWeight: FontWeight.w600,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            SizedBox(height: 2.h),
-                            // Billing Info Row
-                            Wrap(
-                              spacing: 4.w,
-                              runSpacing: 2.h,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                // Rate
-                                if (controller.pricePerMinute.value > 0)
-                                  _buildPill(
-                                    '₹${controller.pricePerMinute.value.toStringAsFixed(0)}/min',
-                                    Colors.black26,
-                                  ),
-                                // Balance
-                                _buildPill(
-                                  '₹${controller.walletBalance.value.toStringAsFixed(0)}',
-                                  Colors.indigo[900]!,
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            if (didPop) return;
+            controller.onBackPressed();
+          },
+          child: SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                CommonHeader(
+                  title: '',
+                  showDrawer: false,
+                  showHome: false,
+                  onBackTap: controller.onBackPressed,
+                  customActions: [
+                    // End Chat Button
+                    Obx(
+                      () => controller.sessionStatus.value == 'ACTIVE'
+                          ? TextButton(
+                              onPressed: _showEndChatDialog,
+                              child: AutoTranslateText(
+                                'End Chat',
+                                style: MyTextTheme.smallBCB.copyWith(
+                                  color: '#6F221E'.toColor(),
                                 ),
-                                // Timer
-                                if (controller.sessionStatus.value == 'ACTIVE')
-                                  _buildPill(
-                                    _formatTime(
-                                      controller.visualSecondsRemaining.value,
-                                    ),
-                                    controller.visualSecondsRemaining.value < 60
-                                        ? Colors.red
-                                        : Colors.green,
-                                  ),
-                              ],
-                            ),
-                          ],
-                        );
-                      }),
+                              ),
+                            )
+                          : const SizedBox.shrink(),
                     ),
                   ],
+                  titleWidget: Row(
+                    children: [
+                      // Profile Pic
+                      Container(
+                        width: 40.w,
+                        height: 40.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: '#6F221E'.toColor().withOpacity(0.3),
+                            width: 2,
+                          ),
+                        ),
+                        child: Obx(() {
+                          final astrologer = controller.astrologerRx.value;
+                          final imageUrl =
+                              astrologer?.profilePicture ??
+                              controller.astrologerImage;
+
+                          return ClipOval(
+                            child: imageUrl != null && imageUrl.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: imageUrl,
+                                    fit: BoxFit.cover,
+                                    placeholder: (_, __) => Icon(
+                                      Icons.person,
+                                      color: '#6F221E'.toColor(),
+                                    ),
+                                    errorWidget: (_, __, ___) => Icon(
+                                      Icons.person,
+                                      color: '#6F221E'.toColor(),
+                                    ),
+                                  )
+                                : Icon(
+                                    Icons.person,
+                                    color: '#6F221E'.toColor(),
+                                  ),
+                          );
+                        }),
+                      ),
+                      SizedBox(width: 10.w),
+
+                      Expanded(
+                        child: Obx(() {
+                          final astrologer = controller.astrologerRx.value;
+                          final name =
+                              astrologer?.displayName ??
+                              controller.astrologerName;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              AutoTranslateText(
+                                name,
+                                style: MyTextTheme.mediumBCB.copyWith(
+                                  color: '#6F221E'.toColor(),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              SizedBox(height: 2.h),
+                              // Billing Info Row
+                              Wrap(
+                                spacing: 4.w,
+                                runSpacing: 2.h,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  // Rate
+                                  if (controller.pricePerMinute.value > 0)
+                                    _buildPill(
+                                      '₹${controller.pricePerMinute.value.toStringAsFixed(0)}/min',
+                                      Colors.black26,
+                                    ),
+                                  // Balance
+                                  _buildPill(
+                                    '₹${controller.walletBalance.value.toStringAsFixed(0)}',
+                                    Colors.indigo[900]!,
+                                  ),
+                                  // Timer
+                                  if (controller.sessionStatus.value ==
+                                      'ACTIVE')
+                                    _buildPill(
+                                      _formatTime(
+                                        controller.visualSecondsRemaining.value,
+                                      ),
+                                      controller.visualSecondsRemaining.value <
+                                              60
+                                          ? Colors.red
+                                          : Colors.green,
+                                    ),
+                                ],
+                              ),
+                            ],
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
 
-              // LOW BALANCE WARNING BANNER
-              Obx(() {
-                // CRITICAL: Only show warning if:
-                // 1. Explicitly set by socket event (server confirmed low balance), AND
-                // 2. Balance/minutes are actually loaded AND low (not just uninitialized)
-                // IMPORTANT: Don't show if user has 2+ minutes - only show when actually low
-                final hasLowBalance =
-                    controller.showLowBalanceWarning.value &&
-                    controller.walletBalance.value > 0 && // Balance is loaded
-                    controller.availableMinutes.value >=
-                        0 && // Minutes are calculated
-                    controller.availableMinutes.value <
-                        2 && // Actually less than 2 minutes
-                    controller.sessionStatus.value == 'ACTIVE';
+                // LOW BALANCE WARNING BANNER
+                Obx(() {
+                  // CRITICAL: Only show warning if:
+                  // 1. Explicitly set by socket event (server confirmed low balance), AND
+                  // 2. Balance/minutes are actually loaded AND low (not just uninitialized)
+                  // IMPORTANT: Don't show if user has 2+ minutes - only show when actually low
+                  final hasLowBalance =
+                      controller.showLowBalanceWarning.value &&
+                      controller.walletBalance.value > 0 && // Balance is loaded
+                      controller.availableMinutes.value >=
+                          0 && // Minutes are calculated
+                      controller.availableMinutes.value <
+                          2 && // Actually less than 2 minutes
+                      controller.sessionStatus.value == 'ACTIVE';
 
-                if (hasLowBalance) {
-                  return Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                      vertical: 4.h,
-                      horizontal: 16.w,
-                    ),
-                    color: Colors.red[50],
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.warning_amber_rounded,
-                          size: 16.sp,
-                          color: Colors.red[700],
-                        ),
-                        SizedBox(width: 8.w),
-                        Flexible(
-                          child: AutoTranslateText(
-                            "Low Balance! Recharge now to continue.",
-                            style: TextStyle(
-                              color: Colors.red[700],
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            textAlign: TextAlign.center,
+                  if (hasLowBalance) {
+                    return Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        vertical: 4.h,
+                        horizontal: 16.w,
+                      ),
+                      color: Colors.red[50],
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.warning_amber_rounded,
+                            size: 16.sp,
+                            color: Colors.red[700],
                           ),
-                        ),
-                        SizedBox(width: 8.w),
-                        ElevatedButton(
-                          onPressed: () {
-                            Get.toNamed(
-                              '/wallet',
-                            ); // Assuming /wallet is the route
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red[700],
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(horizontal: 12.w),
-                            minimumSize: Size(0, 28.h),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.r),
+                          SizedBox(width: 8.w),
+                          Flexible(
+                            child: AutoTranslateText(
+                              "Low Balance! Recharge now to continue.",
+                              style: TextStyle(
+                                color: Colors.red[700],
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
                           ),
-                          child: Text(
-                            'Recharge',
-                            style: TextStyle(
-                              fontSize: 11.sp,
-                              fontWeight: FontWeight.bold,
+                          SizedBox(width: 8.w),
+                          ElevatedButton(
+                            onPressed: () {
+                              Get.toNamed(
+                                '/wallet',
+                              ); // Assuming /wallet is the route
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red[700],
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(horizontal: 12.w),
+                              minimumSize: Size(0, 28.h),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.r),
+                              ),
+                            ),
+                            child: Text(
+                              'Recharge',
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              }),
+                        ],
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                }),
 
-              Expanded(child: _buildChatArea()),
+                Expanded(child: _buildChatArea()),
 
-              Obx(
-                () => controller.replyingToMessage.value != null
-                    ? _buildReplyComposerBar()
-                    : const SizedBox.shrink(),
-              ),
+                Obx(
+                  () => controller.replyingToMessage.value != null
+                      ? _buildReplyComposerBar()
+                      : const SizedBox.shrink(),
+                ),
 
-              _buildMessageInput(),
-            ],
+                _buildMessageInput(),
+              ],
+            ),
           ),
         ),
       ),
@@ -323,7 +331,7 @@ class _AstrologerChatViewState extends State<AstrologerChatView> {
 
   Widget _buildChatArea() {
     return Container(
-      color: const Color(0xFFFFF8F0),
+      color: Colors.transparent,
       child: Obx(() {
         if (controller.messages.isEmpty &&
             controller.sessionStatus.value == 'CREATED') {

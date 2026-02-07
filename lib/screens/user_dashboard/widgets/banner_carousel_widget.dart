@@ -8,6 +8,8 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:video_player/video_player.dart';
 
 /// Skeleton shimmer placeholder for banner while image loads.
 class _BannerSkeletonShimmer extends StatefulWidget {
@@ -79,7 +81,172 @@ class _BannerSkeletonShimmerState extends State<_BannerSkeletonShimmer>
   }
 }
 
-/// Banner carousel styled like [OurServicesCarouselWidget]: same height, margin, infinite scroll, 2s auto-slide.
+/// Widget for displaying SVG banners
+class _BannerSvgWidget extends StatelessWidget {
+  final String url;
+
+  const _BannerSvgWidget({required this.url});
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.network(
+      url,
+      width: double.infinity,
+      height: double.infinity,
+      fit: BoxFit.fill,
+      placeholderBuilder: (context) => const _BannerSkeletonShimmer(),
+    );
+  }
+}
+
+/// Widget for displaying video banners
+class _BannerVideoWidget extends StatefulWidget {
+  final String url;
+  final VoidCallback? onVideoComplete;
+
+  const _BannerVideoWidget({required this.url, this.onVideoComplete});
+
+  @override
+  State<_BannerVideoWidget> createState() => _BannerVideoWidgetState();
+}
+
+class _BannerVideoWidgetState extends State<_BannerVideoWidget> {
+  late VideoPlayerController _controller;
+  bool _isInitialized = false;
+  bool _isMuted = true;
+  bool _hasNotifiedCompletion = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeVideo();
+  }
+
+  Future<void> _initializeVideo() async {
+    try {
+      _controller = VideoPlayerController.networkUrl(
+        Uri.parse(widget.url),
+        videoPlayerOptions: VideoPlayerOptions(
+          mixWithOthers: true,
+          allowBackgroundPlayback: false,
+        ),
+      );
+
+      await _controller.initialize();
+      await _controller.setVolume(_isMuted ? 0.0 : 1.0);
+      _controller.addListener(_videoListener);
+      await _controller.play();
+
+      if (mounted) {
+        setState(() {
+          _isInitialized = true;
+        });
+      }
+    } catch (e) {
+      debugPrint('❌ Error loading video: $e');
+      if (mounted) {
+        setState(() {
+          _isInitialized = true;
+        });
+
+        // Auto-advance carousel after 3 seconds if video fails
+        Future.delayed(const Duration(seconds: 3), () {
+          if (mounted && !_hasNotifiedCompletion) {
+            debugPrint('⏭️ Video failed, auto-advancing carousel');
+            _hasNotifiedCompletion = true;
+            widget.onVideoComplete?.call();
+          }
+        });
+      }
+    }
+  }
+
+  void _videoListener() {
+    if (!mounted || !_isInitialized) return;
+
+    if (_controller.value.position >= _controller.value.duration &&
+        !_hasNotifiedCompletion) {
+      _hasNotifiedCompletion = true;
+      widget.onVideoComplete?.call();
+    }
+  }
+
+  void _toggleMute() {
+    setState(() {
+      _isMuted = !_isMuted;
+      _controller.setVolume(_isMuted ? 0.0 : 1.0);
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_videoListener);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_isInitialized) {
+      return const _BannerSkeletonShimmer();
+    }
+
+    if (_controller.value.hasError) {
+      return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              "#F38B3B".toColor().withOpacity(0.2),
+              "#6F221E".toColor().withOpacity(0.2),
+            ],
+          ),
+        ),
+        child: Center(
+          child: Icon(
+            Icons.play_circle_outline,
+            color: "#F38B3B".toColor(),
+            size: 60.w,
+          ),
+        ),
+      );
+    }
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Center(
+          child: AspectRatio(
+            aspectRatio: _controller.value.aspectRatio,
+            child: VideoPlayer(_controller),
+          ),
+        ),
+        Positioned(
+          bottom: 8.h,
+          right: 8.w,
+          child: GestureDetector(
+            onTap: _toggleMute,
+            child: Container(
+              padding: EdgeInsets.all(6.w),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                _isMuted ? Icons.volume_off : Icons.volume_up,
+                color: Colors.white,
+                size: 18.w,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Banner carousel with smart auto-slide: videos play full duration, images show for 5 seconds
 class BannerCarouselWidget extends StatefulWidget {
   final List<BannerItem> banners;
 
@@ -92,17 +259,18 @@ class BannerCarouselWidget extends StatefulWidget {
 class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
   late PageController _pageController;
   Timer? _timer;
+  int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
     final length = widget.banners.length;
-    _pageController = PageController(
-      initialPage: length == 0 ? 0 : 500 * length,
-    );
+    _currentPage = length == 0 ? 0 : 500 * length;
+    _pageController = PageController(initialPage: _currentPage);
+
     if (length > 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Future.delayed(const Duration(milliseconds: 500), _startAutoSlide);
+        _scheduleNextSlide();
       });
     }
   }
@@ -114,18 +282,51 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
       _timer?.cancel();
       _pageController.dispose();
       final length = widget.banners.length;
-      _pageController = PageController(
-        initialPage: length == 0 ? 0 : 500 * length,
-      );
+      _currentPage = length == 0 ? 0 : 500 * length;
+      _pageController = PageController(initialPage: _currentPage);
       if (length > 0) {
-        _startAutoSlide();
+        _scheduleNextSlide();
       }
     }
   }
 
-  void _startAutoSlide() {
-    // Animation removed as per user request
-    return;
+  void _scheduleNextSlide() {
+    _timer?.cancel();
+
+    if (widget.banners.isEmpty) return;
+
+    final actualIndex = _currentPage % widget.banners.length;
+    final currentBanner = widget.banners[actualIndex];
+
+    // For videos, we'll wait for completion callback
+    // For images/SVG, wait 5 seconds
+    if (!currentBanner.isVideo) {
+      _timer = Timer(const Duration(seconds: 5), _goToNextSlide);
+    }
+  }
+
+  void _goToNextSlide() {
+    if (!mounted || widget.banners.isEmpty) return;
+
+    _currentPage++;
+    _pageController
+        .animateToPage(
+          _currentPage,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        )
+        .then((_) {
+          if (mounted) {
+            _scheduleNextSlide();
+          }
+        });
+  }
+
+  void _onVideoComplete() {
+    // Video finished, move to next slide
+    if (mounted) {
+      _goToNextSlide();
+    }
   }
 
   @override
@@ -141,10 +342,14 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
     if (banners.isEmpty) return const SizedBox.shrink();
 
     return SizedBox(
-      height: 110.h,
+      height: 135.h,
       child: PageView.builder(
         controller: _pageController,
         itemCount: banners.length * 1000,
+        onPageChanged: (index) {
+          _currentPage = index;
+          _scheduleNextSlide();
+        },
         itemBuilder: (context, index) {
           final actualIndex = index % banners.length;
           return _buildBannerCard(banners[actualIndex]);
@@ -166,47 +371,87 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            CachedNetworkImage(
-              imageUrl: banner.image,
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.fill,
-              placeholder: (context, url) => const _BannerSkeletonShimmer(),
-              errorWidget: (context, url, error) => Container(
-                color: "#6F221E".toColor().withOpacity(0.1),
-                child: Center(
-                  child: Icon(
-                    Icons.ads_click,
-                    color: "#6F221E".toColor(),
-                    size: 40.w,
-                  ),
-                ),
-              ),
-            ),
-            // Gradient overlay removed as per user request
+            // Render appropriate media widget based on type
+            _buildMediaWidget(banner),
+            // Title overlay (if present)
             if (banner.title != null && banner.title!.trim().isNotEmpty)
-              Padding(
-                padding: EdgeInsets.all(12.w),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AutoTranslateText(
-                      banner.title!,
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: Colors.white,
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: EdgeInsets.all(12.w),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.7),
+                      ],
                     ),
-                  ],
+                  ),
+                  child: AutoTranslateText(
+                    banner.title!,
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: Colors.white,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
           ],
         ),
       ),
+    );
+  }
+
+  /// Build the appropriate media widget based on banner type
+  Widget _buildMediaWidget(BannerItem banner) {
+    print('🎨 Building media widget for banner: ${banner.toString()}');
+
+    // Check if it's a video
+    if (banner.isVideo) {
+      print('🎨 Rendering VIDEO widget');
+      return _BannerVideoWidget(
+        url: banner.mediaUrl,
+        onVideoComplete: _onVideoComplete,
+      );
+    }
+
+    // Check if it's an SVG
+    if (banner.isSvg) {
+      print('🎨 Rendering SVG widget');
+      return _BannerSvgWidget(url: banner.mediaUrl);
+    }
+
+    // Default: render as image (PNG, JPG, JPEG)
+    print('🎨 Rendering IMAGE widget (PNG/JPG/JPEG)');
+    return CachedNetworkImage(
+      imageUrl: banner.mediaUrl,
+      width: double.infinity,
+      height: double.infinity,
+      fit: BoxFit.cover,
+      placeholder: (context, url) {
+        print('🖼️ Loading image: $url');
+        return const _BannerSkeletonShimmer();
+      },
+      errorWidget: (context, url, error) {
+        print('❌ Error loading banner image: $url - $error');
+        return Container(
+          color: "#6F221E".toColor().withOpacity(0.1),
+          child: Center(
+            child: Icon(
+              Icons.image_not_supported,
+              color: "#6F221E".toColor(),
+              size: 40.w,
+            ),
+          ),
+        );
+      },
     );
   }
 }

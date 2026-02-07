@@ -101,10 +101,11 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
       }
     }
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: GetBuilder<RoyalCompassController>(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: GetBuilder<RoyalCompassController>(
           tag: 'royal_compass',
           builder: (controller) {
             // Camera mode
@@ -118,101 +119,129 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
               );
             }
 
-            // History view
-            if (_showHistory) {
-              return _buildHistoryView(controller);
-            }
-
-            // Main compass view
+            // History view or Main compass view
             return Column(
               children: [
-                CommonHeader(
-                  title: roomConfig?.displayName ?? 'Vastu Compass',
-                  customActions: [
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _showHistory = !_showHistory;
-                        });
-                      },
-                      icon: Icon(
-                        Icons.history,
-                        color: '#6F221E'.toColor(),
-                        size: 24.w,
-                      ),
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Royal compass (image-based)
-                      RoyalVastuCompass(
-                        heading: controller.heading,
-                        isCalibrated: controller.isCalibrated,
-                        roomConfig: roomConfig,
-                        currentDirection: controller.currentDirection,
-                        isLocked: controller.isLocked,
-                        onCenterTap: () {
-                          if (controller.isLocked) {
-                            controller.unlockDirection();
-                          } else {
-                            controller.lockDirection();
-                            // Locked - can show remedy layer here if needed
-                            setState(() {});
-                          }
+                if (_showHistory)
+                  CommonHeader(
+                    title: 'Vastu History',
+                    customActions: [
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _showHistory = !_showHistory;
+                          });
                         },
-                        tiltX: controller.tiltX,
-                        tiltY: controller.tiltY,
-                        compassSize: 320.0,
-                      ),
-
-                      // Direction overlay
-                      Positioned(
-                        top: 80.h,
-                        child: DirectionOverlay(
-                          direction: controller.currentDirection,
-                          heading: controller.heading,
+                        icon: Icon(
+                          Icons.close,
+                          color: '#6F221E'.toColor(),
+                          size: 24.w,
                         ),
                       ),
-
-                      // Degree indicator
-                      Positioned(
-                        top: 140.h,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.w,
-                            vertical: 8.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: '#D4AF37'.toColor().withOpacity(0.9),
-                            borderRadius: BorderRadius.circular(20.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: AutoTranslateText(
-                            '${controller.heading.toStringAsFixed(1)}°',
-                            style: MyTextTheme.mediumBCB
-                                .copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                )
-                                .merge(AppTypography.h3),
-                          ),
+                    ],
+                  )
+                else
+                  CommonHeader(
+                    title: roomConfig?.displayName ?? 'Vastu Compass',
+                    customActions: [
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _showHistory = !_showHistory;
+                          });
+                        },
+                        icon: Icon(
+                          Icons.history,
+                          color: '#6F221E'.toColor(),
+                          size: 24.w,
                         ),
                       ),
-
-                      // Calibration hint
-                      if (!controller.isCalibrated)
-                        Positioned(bottom: 120.h, child: CalibrationHint()),
                     ],
                   ),
+                Expanded(
+                  child: _showHistory
+                      ? VastuHistoryTimeline(
+                          history: controller.getHistory(),
+                          onItemTap: (entry) {
+                            // Show details or navigate
+                          },
+                          onClear: () {
+                            controller.clearHistory();
+                            setState(() {});
+                          },
+                        )
+                      : Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Royal compass (image-based)
+                            RoyalVastuCompass(
+                              heading: controller.heading,
+                              isCalibrated: controller.isCalibrated,
+                              roomConfig: roomConfig,
+                              currentDirection: controller.currentDirection,
+                              isLocked: controller.isLocked,
+                              onCenterTap: () {
+                                if (controller.isLocked) {
+                                  controller.unlockDirection();
+                                } else {
+                                  controller.lockDirection();
+                                  // Locked - can show remedy layer here if needed
+                                  setState(() {});
+                                }
+                              },
+                              tiltX: controller.tiltX,
+                              tiltY: controller.tiltY,
+                              compassSize: 320.0,
+                            ),
+
+                            // Direction overlay
+                            Positioned(
+                              top: 80.h,
+                              child: DirectionOverlay(
+                                direction: controller.currentDirection,
+                                heading: controller.heading,
+                              ),
+                            ),
+
+                            // Degree indicator
+                            Positioned(
+                              top: 140.h,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 8.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: '#D4AF37'.toColor().withOpacity(0.9),
+                                  borderRadius: BorderRadius.circular(20.r),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: AutoTranslateText(
+                                  '${controller.heading.toStringAsFixed(1)}°',
+                                  style: MyTextTheme.mediumBCB
+                                      .copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      )
+                                      .merge(AppTypography.h3),
+                                ),
+                              ),
+                            ),
+
+                            // Calibration hint
+                            if (!controller.isCalibrated)
+                              Positioned(
+                                bottom: 120.h,
+                                child: CalibrationHint(),
+                              ),
+                          ],
+                        ),
                 ),
                 _buildBottomControls(controller, roomConfig),
               ],
@@ -381,40 +410,6 @@ class _RoyalVastuCompassViewState extends State<RoyalVastuCompassView>
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildHistoryView(RoyalCompassController controller) {
-    final history = controller.getHistory();
-
-    return Column(
-      children: [
-        CommonHeader(
-          title: 'Vastu History',
-          customActions: [
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _showHistory = !_showHistory;
-                });
-              },
-              icon: Icon(Icons.close, color: '#6F221E'.toColor(), size: 24.w),
-            ),
-          ],
-        ),
-        Expanded(
-          child: VastuHistoryTimeline(
-            history: history,
-            onItemTap: (entry) {
-              // Show details or navigate
-            },
-            onClear: () {
-              controller.clearHistory();
-              setState(() {});
-            },
-          ),
-        ),
-      ],
     );
   }
 }

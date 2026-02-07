@@ -23,28 +23,26 @@ class RahukaalView extends BasePage<RahukaalController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildHeader(context),
-                _buildFormSection(),
-                Spacing.h(16),
-                // Daily Rahukaal
-                Obx(
-                  () => controller.dailyPanchang.value != null
-                      ? _buildDailyRahukaal()
-                      : const SizedBox.shrink(),
-                ),
-                // Monthly Rahukaal list
-                Obx(
-                  () => controller.monthlyRahukaal.isNotEmpty
-                      ? _buildMonthlyRahukaal()
-                      : const SizedBox.shrink(),
-                ),
-                Spacing.h(20),
-              ],
-            ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              _buildFormSection(),
+              Spacing.h(16),
+              // Daily Rahukaal
+              Obx(
+                () => controller.dailyPanchang.value != null
+                    ? _buildDailyRahukaal()
+                    : const SizedBox.shrink(),
+              ),
+              // Monthly Rahukaal list
+              Obx(
+                () => controller.monthlyRahukaal.isNotEmpty
+                    ? _buildMonthlyRahukaal()
+                    : const SizedBox.shrink(),
+              ),
+              Spacing.h(20),
+            ],
           ),
         ),
       ),

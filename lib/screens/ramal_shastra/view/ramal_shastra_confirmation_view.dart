@@ -18,117 +18,126 @@ class RamalShastraConfirmationView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<RamalShastraController>();
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const CommonHeader(title: 'Confirmation'),
-              Spacing.h(24),
-              AutoTranslateText(
-                'Generated Matrix',
-                style: MyTextTheme.veryLargeBCB
-                    .copyWith(
-                      color: '#3E2723'.toColor(),
-                      fontWeight: FontWeight.bold,
-                    )
-                    .merge(AppTypography.h1),
-              ),
-              Spacing.h(32),
-              Obx(() => _buildMatrix(controller.generatedPoints)),
-              Spacing.h(32),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Row(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Confirmation'),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          controller.regeneratePoints();
-                          Get.back();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey[600],
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 14.h),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                        ),
-                        child: AutoTranslateText(
-                          'Regenerate',
-                          style: MyTextTheme.mediumBCB.copyWith(
-                            color: Colors.white,
+                    Spacing.h(24),
+                    AutoTranslateText(
+                      'Generated Matrix',
+                      style: MyTextTheme.veryLargeBCB
+                          .copyWith(
+                            color: '#3E2723'.toColor(),
                             fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                          )
+                          .merge(AppTypography.h1),
                     ),
-                    Spacing.w(16),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: AppColors.orangeGradient,
-                          borderRadius: BorderRadius.circular(12.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: "#F38B3B".toColor().withOpacity(0.35),
-                              blurRadius: 6,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            // Show loading widget
-                            Get.dialog(
-                              RamalShastraLoadingWidget(
-                                message:
-                                    'Ramal Shastra is analyzing your question...',
-                              ),
-                              barrierDismissible: false,
-                            );
-
-                            try {
-                              await controller.analyzeRamal();
-                              // Dialog will be closed by navigation in controller
-                              // If navigation happens, dialog auto-closes
-                            } catch (e) {
-                              // Close loading dialog on error
-                              if (Get.isDialogOpen ?? false) {
+                    Spacing.h(32),
+                    Obx(() => _buildMatrix(controller.generatedPoints)),
+                    Spacing.h(32),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                controller.regeneratePoints();
                                 Get.back();
-                              }
-                              // Error is already shown in controller's analyzeRamal method
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(vertical: 14.h),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            elevation: 0,
-                            shadowColor: Colors.transparent,
-                          ),
-                          child: AutoTranslateText(
-                            'Confirm & Analyze',
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.grey[600],
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(vertical: 14.h),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                              ),
+                              child: AutoTranslateText(
+                                'Regenerate',
+                                style: MyTextTheme.mediumBCB.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          Spacing.w(16),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: AppColors.orangeGradient,
+                                borderRadius: BorderRadius.circular(12.r),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: "#F38B3B".toColor().withOpacity(
+                                      0.35,
+                                    ),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  // Show loading widget
+                                  Get.dialog(
+                                    RamalShastraLoadingWidget(
+                                      message:
+                                          'Ramal Shastra is analyzing your question...',
+                                    ),
+                                    barrierDismissible: false,
+                                  );
+
+                                  try {
+                                    await controller.analyzeRamal();
+                                    // Dialog will be closed by navigation in controller
+                                    // If navigation happens, dialog auto-closes
+                                  } catch (e) {
+                                    // Close loading dialog on error
+                                    if (Get.isDialogOpen ?? false) {
+                                      Get.back();
+                                    }
+                                    // Error is already shown in controller's analyzeRamal method
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  foregroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  elevation: 0,
+                                  shadowColor: Colors.transparent,
+                                ),
+                                child: AutoTranslateText(
+                                  'Confirm & Analyze',
+                                  style: MyTextTheme.mediumBCB.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    Spacing.h(32),
                   ],
                 ),
               ),
-              Spacing.h(32),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

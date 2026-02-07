@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_c
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,68 +20,52 @@ class PalmReadingHandGenderView extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 768;
     final maxWidth = isMobile ? double.infinity : 500.w;
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(), // Match face reading background
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth),
-              child: Padding(
-                padding: AppPaddings.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Back button
-                    GestureDetector(
-                      onTap: () => Get.back(),
-                      child: Container(
-                        padding: EdgeInsets.all(8.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: '#3E2723'.toColor(),
-                          size: 20.w,
-                        ),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent, // Match face reading background
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Palm Reading'),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxWidth),
+                    child: Padding(
+                      padding: AppPaddings.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Spacing.h(8),
+
+                          // Choose Your Hand Section
+                          _buildChooseHandSection(controller),
+
+                          Spacing.h(40),
+
+                          // Select Gender Section
+                          _buildSelectGenderSection(controller),
+
+                          Spacing.h(40),
+
+                          // Continue button
+                          _buildContinueButton(controller),
+
+                          Spacing.h(16),
+
+                          // Skip button
+                          _buildSkipButton(controller),
+
+                          Spacing.h(32),
+                        ],
                       ),
                     ),
-                    
-                    Spacing.h(32),
-                    
-                    // Choose Your Hand Section
-                    _buildChooseHandSection(controller),
-                    
-                    Spacing.h(40),
-                    
-                    // Select Gender Section
-                    _buildSelectGenderSection(controller),
-                    
-                    Spacing.h(40),
-                    
-                    // Continue button
-                    _buildContinueButton(controller),
-                    
-                    Spacing.h(16),
-                    
-                    // Skip button
-                    _buildSkipButton(controller),
-                    
-                    Spacing.h(32),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -92,33 +77,24 @@ class PalmReadingHandGenderView extends StatelessWidget {
       children: [
         AutoTranslateText(
           'Choose Your Hand (Optional)',
-          style: MyTextTheme.veryLargeBCB.copyWith(
-            color: '#3E2723'.toColor(),
-            fontWeight: FontWeight.bold,
-          ).merge(AppTypography.h2),
+          style: MyTextTheme.veryLargeBCB
+              .copyWith(color: '#3E2723'.toColor(), fontWeight: FontWeight.bold)
+              .merge(AppTypography.h2),
         ),
         Spacing.h(8),
         AutoTranslateText(
           'Select which hand you want to analyze (optional)',
-          style: MyTextTheme.mediumBCN.copyWith(
-            color: Colors.grey[700],
-          ),
+          style: MyTextTheme.mediumBCN.copyWith(color: Colors.grey[700]),
         ),
         Spacing.h(20),
         Row(
           children: [
             Expanded(
-              child: _buildHandButton(
-                controller: controller,
-                hand: 'Left',
-              ),
+              child: _buildHandButton(controller: controller, hand: 'Left'),
             ),
             Spacing.w(16),
             Expanded(
-              child: _buildHandButton(
-                controller: controller,
-                hand: 'Right',
-              ),
+              child: _buildHandButton(controller: controller, hand: 'Right'),
             ),
           ],
         ),
@@ -133,7 +109,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
     return Obx(() {
       final isSelected = controller.selectedHand.value == hand;
       final isLeftHand = hand == 'Left';
-      
+
       return GestureDetector(
         onTap: () => controller.selectHand(hand),
         child: Container(
@@ -170,7 +146,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
                     child: Icon(
                       Icons.pan_tool,
                       size: 48.w,
-                      color: isSelected 
+                      color: isSelected
                           ? "#F38B3B".toColor()
                           : "#F38B3B".toColor().withOpacity(0.5),
                     ),
@@ -198,17 +174,14 @@ class PalmReadingHandGenderView extends StatelessWidget {
       children: [
         AutoTranslateText(
           'Select Gender (Optional)',
-          style: MyTextTheme.veryLargeBCB.copyWith(
-            color: '#3E2723'.toColor(),
-            fontWeight: FontWeight.bold,
-          ).merge(AppTypography.h2),
+          style: MyTextTheme.veryLargeBCB
+              .copyWith(color: '#3E2723'.toColor(), fontWeight: FontWeight.bold)
+              .merge(AppTypography.h2),
         ),
         Spacing.h(8),
         AutoTranslateText(
           'This helps us provide personalized insights (optional)',
-          style: MyTextTheme.mediumBCN.copyWith(
-            color: Colors.grey[700],
-          ),
+          style: MyTextTheme.mediumBCN.copyWith(color: Colors.grey[700]),
         ),
         Spacing.h(20),
         Row(
@@ -272,10 +245,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
           ),
           child: Column(
             children: [
-              AutoTranslateText(
-                emoji,
-                style: AppTypography.h1,
-              ),
+              AutoTranslateText(emoji, style: AppTypography.h1),
               Spacing.h(8),
               AutoTranslateText(
                 gender,
@@ -330,11 +300,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
                 ),
               ),
               Spacing.w(8),
-              Icon(
-                Icons.arrow_forward,
-                color: Colors.white,
-                size: 20.w,
-              ),
+              Icon(Icons.arrow_forward, color: Colors.white, size: 20.w),
             ],
           ),
         ),
@@ -358,4 +324,3 @@ class PalmReadingHandGenderView extends StatelessWidget {
     );
   }
 }
-

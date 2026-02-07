@@ -41,39 +41,29 @@ class TarotReadingView extends BasePage<TarotController> {
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          body: Padding(
-            padding: EdgeInsets.only(
-              top:
-                  (MediaQuery.of(context).padding.top > 0
-                          ? MediaQuery.of(context).padding.top * 0.5
-                          : 0.0)
-                      .clamp(6.0, 24.0)
-                      .toDouble(),
-            ),
-            child: Column(
-              children: [
-                // Fixed Header
-                const CommonHeader(title: 'CARD READING'),
-                Expanded(
-                  child: Stack(
-                    children: [
-                      SingleChildScrollView(child: _buildMainContentBody()),
-                      // Reading overlays
-                      const TarotYesNoPopup(),
-                      const TarotCareerWidget(),
-                      const TarotLoveWidget(),
-                      const TarotDailyWidget(),
-                      const TarotBreakupWidget(isRomantic: true),
-                      const TarotBreakupWidget(isRomantic: false),
-                      const TarotFortuneCookieWidget(),
-                      // Card unsuitable message overlay (should be on top)
-                      _buildUnsuitableCardMessage(),
-                    ],
-                  ),
+          body: Column(
+            children: [
+              // Fixed Header
+              const CommonHeader(title: 'CARD READING'),
+              Expanded(
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(child: _buildMainContentBody()),
+                    // Reading overlays
+                    const TarotYesNoPopup(),
+                    const TarotCareerWidget(),
+                    const TarotLoveWidget(),
+                    const TarotDailyWidget(),
+                    const TarotBreakupWidget(isRomantic: true),
+                    const TarotBreakupWidget(isRomantic: false),
+                    const TarotFortuneCookieWidget(),
+                    // Card unsuitable message overlay (should be on top)
+                    _buildUnsuitableCardMessage(),
+                  ],
                 ),
-                Spacing.h(32),
-              ],
-            ),
+              ),
+              Spacing.h(32),
+            ],
           ),
         ),
       ),

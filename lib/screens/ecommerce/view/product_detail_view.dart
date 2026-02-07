@@ -28,94 +28,97 @@ class ProductDetailView extends StatelessWidget {
     final controller = Get.find<ProductDetailController>();
 
     return Scaffold(
-      body: Column(
-        children: [
-          CommonHeader(
-            title: 'Product Details',
-            customActions: [
-              IconButton(
-                onPressed: () => controller.shareProduct(),
-                icon: Icon(Icons.share_outlined, color: '#6F221E'.toColor()),
-              ),
-            ],
-          ),
-          Expanded(
-            child: Obx(() {
-              if (controller.isLoading.value &&
-                  controller.product.value == null) {
-                return Center(
-                  child: CircularProgressIndicator(color: AppColors.saffron),
-                );
-              }
+      body: Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Column(
+          children: [
+            CommonHeader(
+              title: 'Product Details',
+              customActions: [
+                IconButton(
+                  onPressed: () => controller.shareProduct(),
+                  icon: Icon(Icons.share_outlined, color: '#6F221E'.toColor()),
+                ),
+              ],
+            ),
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value &&
+                    controller.product.value == null) {
+                  return Center(
+                    child: CircularProgressIndicator(color: AppColors.saffron),
+                  );
+                }
 
-              final product = controller.product.value;
-              if (product == null) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        size: 64,
-                        color: AppColors.textSecondary,
-                      ),
-                      SizedBox(height: 16.h),
-                      AutoTranslateText(
-                        'Product not found',
-                        style: AppTypography.h2.copyWith(
+                final product = controller.product.value;
+                if (product == null) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 64,
                           color: AppColors.textSecondary,
                         ),
+                        SizedBox(height: 16.h),
+                        AutoTranslateText(
+                          'Product not found',
+                          style: AppTypography.h2.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Product Images
+                      ImageCarousel(controller: controller, product: product),
+
+                      Spacing.h(15),
+                      Padding(
+                        padding: AppPaddings.symmetric(h: 8),
+                        child: ProductMainDetails(productModel: product),
                       ),
+                      SizedBox(height: 24.h),
+                      // Product Info
+                      Padding(
+                        padding: AppPaddings.symmetric(h: 16),
+                        child: ProductDescriptionWidget(),
+                      ),
+                      SizedBox(height: 24.h),
+                      // Specifications
+                      Padding(
+                        padding: AppPaddings.symmetric(h: 16),
+                        child: ProductSpecificationsWidget(),
+                      ),
+                      SizedBox(height: 24.h),
+                      // Customer Reviews
+                      Padding(
+                        padding: AppPaddings.symmetric(h: 16),
+                        child: ProductReviewsWidget(),
+                      ),
+                      SizedBox(height: 24.h),
+                      // You May Also Like Section
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: _buildYouMayAlsoLike(context, controller),
+                      ),
+                      SizedBox(height: 100.h), // Space for bottom bar
                     ],
                   ),
                 );
-              }
-
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Product Images
-                    ImageCarousel(controller: controller, product: product),
-
-                    Spacing.h(15),
-                    Padding(
-                      padding: AppPaddings.symmetric(h: 8),
-                      child: ProductMainDetails(productModel: product),
-                    ),
-                    SizedBox(height: 24.h),
-                    // Product Info
-                    Padding(
-                      padding: AppPaddings.symmetric(h: 16),
-                      child: ProductDescriptionWidget(),
-                    ),
-                    SizedBox(height: 24.h),
-                    // Specifications
-                    Padding(
-                      padding: AppPaddings.symmetric(h: 16),
-                      child: ProductSpecificationsWidget(),
-                    ),
-                    SizedBox(height: 24.h),
-                    // Customer Reviews
-                    Padding(
-                      padding: AppPaddings.symmetric(h: 16),
-                      child: ProductReviewsWidget(),
-                    ),
-                    SizedBox(height: 24.h),
-                    // You May Also Like Section
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: _buildYouMayAlsoLike(context, controller),
-                    ),
-                    SizedBox(height: 100.h), // Space for bottom bar
-                  ],
-                ),
-              );
-            }),
-          ),
-          // Fixed Bottom Bar with Quantity and Action Buttons
-          _buildBottomActionBar(context, controller),
-        ],
+              }),
+            ),
+            // Fixed Bottom Bar with Quantity and Action Buttons
+            _buildBottomActionBar(context, controller),
+          ],
+        ),
       ),
     );
   }

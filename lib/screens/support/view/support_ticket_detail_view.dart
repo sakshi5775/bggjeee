@@ -46,62 +46,60 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Column(
-            children: [
-              CommonHeader(title: 'Ticket Details'),
-              Expanded(
-                child: Obx(() {
-                  if (controller.isLoadingTicketDetails.value &&
-                      controller.selectedTicket.value == null) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+        body: Column(
+          children: [
+            CommonHeader(title: 'Ticket Details'),
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoadingTicketDetails.value &&
+                    controller.selectedTicket.value == null) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                  final ticket = controller.selectedTicket.value;
-                  if (ticket == null) {
-                    return Center(
-                      child: AutoTranslateText(
-                        'Ticket not found',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                        ).merge(AppTypography.h3),
-                      ),
-                    );
-                  }
+                final ticket = controller.selectedTicket.value;
+                if (ticket == null) {
+                  return Center(
+                    child: AutoTranslateText(
+                      'Ticket not found',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                      ).merge(AppTypography.h3),
+                    ),
+                  );
+                }
 
-                  final isClosed = controller.isTicketClosed(ticket.status);
+                final isClosed = controller.isTicketClosed(ticket.status);
 
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          controller: scrollController,
-                          padding: EdgeInsets.all(16.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildTicketHeader(ticket, controller),
+                return Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        padding: EdgeInsets.all(16.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildTicketHeader(ticket, controller),
+                            SizedBox(height: 16.h),
+                            _buildTicketInfo(ticket, controller),
+                            SizedBox(height: 16.h),
+                            _buildDescription(ticket),
+                            if (ticket.attachments.isNotEmpty) ...[
                               SizedBox(height: 16.h),
-                              _buildTicketInfo(ticket, controller),
-                              SizedBox(height: 16.h),
-                              _buildDescription(ticket),
-                              if (ticket.attachments.isNotEmpty) ...[
-                                SizedBox(height: 16.h),
-                                _buildAttachments(ticket.attachments),
-                              ],
-                              SizedBox(height: 24.h),
-                              _buildActivitiesSection(controller),
+                              _buildAttachments(ticket.attachments),
                             ],
-                          ),
+                            SizedBox(height: 24.h),
+                            _buildActivitiesSection(controller),
+                          ],
                         ),
                       ),
-                      if (!isClosed) _buildReplySection(controller),
-                    ],
-                  );
-                }),
-              ),
-            ],
-          ),
+                    ),
+                    if (!isClosed) _buildReplySection(controller),
+                  ],
+                );
+              }),
+            ),
+          ],
         ),
       ),
     );

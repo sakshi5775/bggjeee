@@ -119,10 +119,11 @@ class _HomeVastuCompassViewState extends State<HomeVastuCompassView>
       );
     }
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: SafeVastuGetBuilder(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeVastuGetBuilder(
           controllerInstance:
               _controller, // Pass controller instance to avoid duplicate creation
           builder: (controller) {

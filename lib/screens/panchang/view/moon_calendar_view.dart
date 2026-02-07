@@ -21,34 +21,32 @@ class MoonCalendarView extends BasePage<MoonCalendarController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              _buildHeader(),
+        body: Column(
+          children: [
+            // Header
+            _buildHeader(),
 
-              // Date and Location Selector
-              _buildDateLocationSelector(),
+            // Date and Location Selector
+            _buildDateLocationSelector(),
 
-              Spacing.h(10),
+            Spacing.h(10),
 
-              // Content
-              Expanded(
-                child: Obx(() {
-                  if (controller.isLoading.value &&
-                      controller.moonCalendarData.isEmpty) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.templeGold,
-                      ),
-                    );
-                  }
+            // Content
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value &&
+                    controller.moonCalendarData.isEmpty) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.templeGold,
+                    ),
+                  );
+                }
 
-                  return _buildMoonCalendarList();
-                }),
-              ),
-            ],
-          ),
+                return _buildMoonCalendarList();
+              }),
+            ),
+          ],
         ),
       ),
     );

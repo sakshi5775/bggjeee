@@ -25,24 +25,21 @@ class AllVideosView extends BasePage<AllVideosController> {
         decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          body: SafeArea(
-            top: !hideHeader,
-            child: Column(
-              children: [
-                if (!hideHeader) ...[_buildHeader(), SizedBox(height: 4.h)],
-                _buildTabBar(),
-                SizedBox(height: 12.h),
-                Expanded(
-                  child: TabBarView(
-                    physics: const BouncingScrollPhysics(),
-                    children: [
-                      _buildYouTubeTab(context),
-                      _buildInstagramTab(context),
-                    ],
-                  ),
+          body: Column(
+            children: [
+              if (!hideHeader) ...[_buildHeader(), SizedBox(height: 4.h)],
+              _buildTabBar(),
+              SizedBox(height: 12.h),
+              Expanded(
+                child: TabBarView(
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    _buildYouTubeTab(context),
+                    _buildInstagramTab(context),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

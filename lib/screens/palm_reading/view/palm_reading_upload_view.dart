@@ -3,8 +3,10 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -18,94 +20,73 @@ class PalmReadingUploadView extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 768;
     final maxWidth = isMobile ? double.infinity : 500.w;
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(), // Match face reading background
-      body: SafeArea(
-        child: Stack(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
-            SingleChildScrollView(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: maxWidth),
-                  child: Padding(
-                    padding: AppPaddings.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Back button
-                        GestureDetector(
-                          onTap: () => Get.back(),
-                          child: Container(
-                            padding: EdgeInsets.all(8.w),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: '#3E2723'.toColor(),
-                              size: 20.w,
+            const CommonHeader(title: 'Upload Palm'),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxWidth),
+                    child: Padding(
+                      padding: AppPaddings.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Spacing.h(8),
+                          // Title
+                          AutoTranslateText(
+                            'Upload Palm Photo',
+                            style: MyTextTheme.veryLargeBCB
+                                .copyWith(
+                                  color: '#3E2723'.toColor(),
+                                  fontWeight: FontWeight.bold,
+                                )
+                                .merge(AppTypography.h1),
+                          ),
+
+                          Spacing.h(8),
+
+                          // Subtitle
+                          AutoTranslateText(
+                            'Take a clear photo of your palm for accurate reading',
+                            style: MyTextTheme.mediumBCN.copyWith(
+                              color: Colors.grey[700],
                             ),
                           ),
-                        ),
 
-                        Spacing.h(24),
-
-                        // Title
-                        AutoTranslateText(
-                          'Upload Palm Photo',
-                          style: MyTextTheme.veryLargeBCB
-                              .copyWith(
-                                color: '#3E2723'.toColor(),
-                                fontWeight: FontWeight.bold,
-                              )
-                              .merge(AppTypography.h1),
-                        ),
-
-                        Spacing.h(8),
-
-                        // Subtitle
-                        AutoTranslateText(
-                          'Take a clear photo of your palm for accurate reading',
-                          style: MyTextTheme.mediumBCN.copyWith(
-                            color: Colors.grey[700],
-                          ),
-                        ),
-
-                        Spacing.h(32),
-
-                        // Upload Method Card
-                        _buildUploadMethodCard(context, controller),
-
-                        Spacing.h(32),
-
-                        // Photo Guidelines Section
-                        _buildPhotoGuidelinesSection(),
-
-                        Spacing.h(32),
-
-                        // Palm Analysis Section (shown when image is uploaded)
-                        Obx(
-                          () => controller.selectedPalmImage.value != null
-                              ? _buildPalmAnalysisSection(controller)
-                              : const SizedBox.shrink(),
-                        ),
-
-                        if (controller.selectedPalmImage.value != null)
                           Spacing.h(32),
 
-                        // Continue button
-                        Obx(() => _buildContinueButton(context, controller)),
+                          // Upload Method Card
+                          _buildUploadMethodCard(context, controller),
 
-                        Spacing.h(32),
-                      ],
+                          Spacing.h(32),
+
+                          // Photo Guidelines Section
+                          _buildPhotoGuidelinesSection(),
+
+                          Spacing.h(32),
+
+                          // Palm Analysis Section (shown when image is uploaded)
+                          Obx(
+                            () => controller.selectedPalmImage.value != null
+                                ? _buildPalmAnalysisSection(controller)
+                                : const SizedBox.shrink(),
+                          ),
+
+                          if (controller.selectedPalmImage.value != null)
+                            Spacing.h(32),
+
+                          // Continue button
+                          Obx(() => _buildContinueButton(context, controller)),
+
+                          Spacing.h(32),
+                        ],
+                      ),
                     ),
                   ),
                 ),

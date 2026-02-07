@@ -4,6 +4,7 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/booking_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -37,70 +38,76 @@ class BookingView extends StatelessWidget {
       );
     }
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFf8f0be), // Light cream background
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            CommonHeader(
-              title: 'Booking',
-              subtitle: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    controller.getHeaderIcon(),
-                    color: const Color(0xFF6F221E),
-                    size: 16.w,
-                  ),
-                  Spacing.w(8),
-                  AutoTranslateText(
-                    controller.getHeaderTitle(),
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: const Color(0xFF6F221E),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Main Content
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              CommonHeader(
+                title: 'Booking',
+                subtitle: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Profile Card
-                    _buildProfileCard(controller),
-                    Spacing.h(24),
-
-                    // Choose Time Slot Section
-                    _buildTimeSlotSection(controller),
-                    Spacing.h(24),
-
-                    // Estimated Duration Section
-                    _buildDurationSection(controller),
-                    Spacing.h(24),
-
-                    // Cost Summary Section
-                    _buildCostSummary(controller),
-                    Spacing.h(24),
-
-                    // Payment Method Section
-                    _buildPaymentMethodSection(controller),
-                    Spacing.h(100), // Space for bottom button
+                    Icon(
+                      controller.getHeaderIcon(),
+                      color: const Color(0xFF6F221E),
+                      size: 16.w,
+                    ),
+                    Spacing.w(8),
+                    AutoTranslateText(
+                      controller.getHeaderTitle(),
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: const Color(0xFF6F221E),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14.sp,
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ),
-          ],
+
+              // Main Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 16.h,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Profile Card
+                      _buildProfileCard(controller),
+                      Spacing.h(24),
+
+                      // Choose Time Slot Section
+                      _buildTimeSlotSection(controller),
+                      Spacing.h(24),
+
+                      // Estimated Duration Section
+                      _buildDurationSection(controller),
+                      Spacing.h(24),
+
+                      // Cost Summary Section
+                      _buildCostSummary(controller),
+                      Spacing.h(24),
+
+                      // Payment Method Section
+                      _buildPaymentMethodSection(controller),
+                      Spacing.h(100), // Space for bottom button
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
+        // Fixed Bottom Button
+        bottomNavigationBar: _buildConfirmButton(controller),
       ),
-      // Fixed Bottom Button
-      bottomNavigationBar: _buildConfirmButton(controller),
     );
   }
 

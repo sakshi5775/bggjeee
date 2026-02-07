@@ -85,15 +85,18 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
     final response = _currentResponse!;
 
     if (_showMatchingImage) {
-      return Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-          child: Lottie.network(
-            AppConstant.matchMakingKundliJson,
-            fit: BoxFit.contain,
-            width: double.infinity,
-            height: double.infinity,
-            repeat: true,
+      return Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Center(
+            child: Lottie.network(
+              AppConstant.matchMakingKundliJson,
+              fit: BoxFit.contain,
+              width: double.infinity,
+              height: double.infinity,
+              repeat: true,
+            ),
           ),
         ),
       );
@@ -103,82 +106,77 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Column(
-            children: [
-              CommonHeader(
-                title: 'Match Making Result',
-                showCart: false,
-                showWallet: false,
-                showSearch: false,
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.only(bottom: 20.h),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 12.h,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _buildMatchTabs(),
-                            if (_isFetching) ...[
-                              Spacing.h(12),
-                              const LinearProgressIndicator(minHeight: 2),
-                            ],
-                            Spacing.h(16),
-                            CompatibilityReportWidget(
-                              data: response,
-                              formData: _formData,
-                              showProfile:
-                                  _activeTab == 'North Match' ||
-                                  _activeTab == 'South Match',
-                              showGunMilan: _activeTab == 'North Match',
-                              matchScoreTotalOverride: _resolveTotal(response),
-                              showTotalSeparately:
-                                  _activeTab == 'Western Match',
-                              rawTotal: response['total'] as num?,
-                              kundliSection:
-                                  (_activeTab == 'North Match' &&
-                                      response['boy_planetary_details'] !=
-                                          null &&
-                                      response['girl_planetary_details'] !=
-                                          null)
-                                  ? KundliChartWidget(
-                                      boyPlanetaryDetails:
-                                          response['boy_planetary_details']
-                                              as Map<String, dynamic>,
-                                      girlPlanetaryDetails:
-                                          response['girl_planetary_details']
-                                              as Map<String, dynamic>,
-                                      boyAstroDetails:
-                                          response['boy_astro_details']
-                                              as Map<String, dynamic>?,
-                                      girlAstroDetails:
-                                          response['girl_astro_details']
-                                              as Map<String, dynamic>?,
-                                    )
-                                  : null,
-                            ),
-                          ],
-                        ),
+        body: Column(
+          children: [
+            CommonHeader(
+              title: 'Match Making Result',
+              showCart: false,
+              showWallet: false,
+              showSearch: false,
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.only(bottom: 20.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 12.h,
                       ),
-                      Spacing.h(20),
-                      const AstrologersSectionWidget(),
-                      Spacing.h(20),
-                    ],
-                  ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildMatchTabs(),
+                          if (_isFetching) ...[
+                            Spacing.h(12),
+                            const LinearProgressIndicator(minHeight: 2),
+                          ],
+                          Spacing.h(16),
+                          CompatibilityReportWidget(
+                            data: response,
+                            formData: _formData,
+                            showProfile:
+                                _activeTab == 'North Match' ||
+                                _activeTab == 'South Match',
+                            showGunMilan: _activeTab == 'North Match',
+                            matchScoreTotalOverride: _resolveTotal(response),
+                            showTotalSeparately: _activeTab == 'Western Match',
+                            rawTotal: response['total'] as num?,
+                            kundliSection:
+                                (_activeTab == 'North Match' &&
+                                    response['boy_planetary_details'] != null &&
+                                    response['girl_planetary_details'] != null)
+                                ? KundliChartWidget(
+                                    boyPlanetaryDetails:
+                                        response['boy_planetary_details']
+                                            as Map<String, dynamic>,
+                                    girlPlanetaryDetails:
+                                        response['girl_planetary_details']
+                                            as Map<String, dynamic>,
+                                    boyAstroDetails:
+                                        response['boy_astro_details']
+                                            as Map<String, dynamic>?,
+                                    girlAstroDetails:
+                                        response['girl_astro_details']
+                                            as Map<String, dynamic>?,
+                                  )
+                                : null,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Spacing.h(20),
+                    const AstrologersSectionWidget(),
+                    Spacing.h(20),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -521,64 +519,62 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Column(
-            children: [
-              const CommonHeader(title: 'Match Making Result'),
-              Expanded(
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 64.w,
-                          color: "#6F221E".toColor(),
-                        ),
-                        Spacing.h(24),
-                        AutoTranslateText(
-                          'Error',
-                          style: MyTextTheme.largeBCB
-                              .copyWith(
-                                color: "#6F221E".toColor(),
-                                fontWeight: FontWeight.bold,
-                              )
-                              .merge(AppTypography.h1),
-                        ),
-                        Spacing.h(16),
-                        AutoTranslateText(
-                          errorMessage,
-                          textAlign: TextAlign.center,
-                          style: MyTextTheme.mediumBCN
-                              .copyWith(color: Colors.black87)
-                              .merge(AppTypography.h3),
-                        ),
-                        Spacing.h(32),
-                        ElevatedButton(
-                          onPressed: () => Get.back(),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: "#6F221E".toColor(),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 32.w,
-                              vertical: 12.h,
-                            ),
-                          ),
-                          child: AutoTranslateText(
-                            'Go Back',
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: const Color(0xFFDFB343),
-                            ),
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Match Making Result'),
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 64.w,
+                        color: "#6F221E".toColor(),
+                      ),
+                      Spacing.h(24),
+                      AutoTranslateText(
+                        'Error',
+                        style: MyTextTheme.largeBCB
+                            .copyWith(
+                              color: "#6F221E".toColor(),
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.h1),
+                      ),
+                      Spacing.h(16),
+                      AutoTranslateText(
+                        errorMessage,
+                        textAlign: TextAlign.center,
+                        style: MyTextTheme.mediumBCN
+                            .copyWith(color: Colors.black87)
+                            .merge(AppTypography.h3),
+                      ),
+                      Spacing.h(32),
+                      ElevatedButton(
+                        onPressed: () => Get.back(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: "#6F221E".toColor(),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 32.w,
+                            vertical: 12.h,
                           ),
                         ),
-                      ],
-                    ),
+                        child: AutoTranslateText(
+                          'Go Back',
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: const Color(0xFFDFB343),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

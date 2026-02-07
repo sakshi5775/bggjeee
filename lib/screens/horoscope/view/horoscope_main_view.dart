@@ -1,4 +1,3 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_main_controller.dart';
 import 'package:astrobharataiuser/screens/horoscope/widgets/ascendant_sign_widget.dart';
@@ -32,46 +31,39 @@ class HoroscopeMainView extends StatelessWidget {
     final controller = Get.put(HoroscopeMainController());
 
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Shared Header
-              Obx(
-                () => CommonHeader(
-                  title: controller.selectedSign.value ?? 'Horoscope',
-                ),
+        body: Column(
+          children: [
+            // Shared Header
+            Obx(
+              () => CommonHeader(
+                title: controller.selectedSign.value ?? 'Horoscope',
+                showDrawer: true,
               ),
-              // Tab Slider
-              _buildTabs(controller),
+            ),
+            // Tab Slider
+            _buildTabs(controller),
 
-              // Tab Content with PageView for swipe
-              Expanded(
-                child: PageView.builder(
-                  controller: controller.pageController,
-                  onPageChanged: controller.onPageChanged,
-                  itemCount: controller.tabs.length,
-                  itemBuilder: (context, index) {
-                    return RefreshIndicator(
-                      onRefresh: () async {
-                        controller.onTabChanged(index);
-                      },
-                      child: _buildTabContent(controller, index),
-                    );
-                  },
-                ),
+            // Tab Content with PageView for swipe
+            Expanded(
+              child: PageView.builder(
+                controller: controller.pageController,
+                onPageChanged: controller.onPageChanged,
+                itemCount: controller.tabs.length,
+                itemBuilder: (context, index) {
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      controller.onTabChanged(index);
+                    },
+                    child: _buildTabContent(controller, index),
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

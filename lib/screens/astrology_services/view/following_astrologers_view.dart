@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/following_astrologers_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -17,124 +18,131 @@ class FollowingAstrologersView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(FollowingAstrologersController());
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFf8f0be), // Light cream background
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header Section
-            CommonHeader(
-              title: 'Following',
-              customActions: [
-                Obx(() {
-                  final controller = Get.find<FollowingAstrologersController>();
-                  return Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 6.h,
-                    ),
-                    decoration: BoxDecoration(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header Section
+              CommonHeader(
+                title: 'Following',
+                customActions: [
+                  Obx(() {
+                    final controller =
+                        Get.find<FollowingAstrologersController>();
+                    return Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 6.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFDFB343),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: AutoTranslateText(
+                        '${controller.totalFollowing.value}',
+                        style: MyTextTheme.smallBCB
+                            .copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.body1),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+
+              // Astrologer List
+              Expanded(
+                child: Obx(() {
+                  if (controller.isLoading.value &&
+                      controller.followingAstrologers.isEmpty) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFFDFB343),
+                      ),
+                    );
+                  }
+
+                  if (controller.followingAstrologers.isEmpty) {
+                    return RefreshIndicator(
+                      onRefresh: controller.refreshFollowing,
                       color: const Color(0xFFDFB343),
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: AutoTranslateText(
-                      '${controller.totalFollowing.value}',
-                      style: MyTextTheme.smallBCB
-                          .copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          )
-                          .merge(AppTypography.body1),
-                    ),
-                  );
-                }),
-              ],
-            ),
-
-            // Astrologer List
-            Expanded(
-              child: Obx(() {
-                if (controller.isLoading.value &&
-                    controller.followingAstrologers.isEmpty) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: Color(0xFFDFB343)),
-                  );
-                }
-
-                if (controller.followingAstrologers.isEmpty) {
-                  return RefreshIndicator(
-                    onRefresh: controller.refreshFollowing,
-                    color: const Color(0xFFDFB343),
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.7,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.favorite_border,
-                                size: 64.w,
-                                color: const Color(0xFFDFB343),
-                              ),
-                              Spacing.h(16),
-                              AutoTranslateText(
-                                'No Following Astrologers',
-                                style: MyTextTheme.mediumBCB.copyWith(
-                                  color: const Color(0xFF5F2221),
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.7,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.favorite_border,
+                                  size: 64.w,
+                                  color: const Color(0xFFDFB343),
                                 ),
-                              ),
-                              Spacing.h(8),
-                              AutoTranslateText(
-                                'Start following astrologers to see them here',
-                                style: MyTextTheme.smallBCN.copyWith(
-                                  color: const Color(0xFF666666),
+                                Spacing.h(16),
+                                AutoTranslateText(
+                                  'No Following Astrologers',
+                                  style: MyTextTheme.mediumBCB.copyWith(
+                                    color: const Color(0xFF5F2221),
+                                  ),
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
+                                Spacing.h(8),
+                                AutoTranslateText(
+                                  'Start following astrologers to see them here',
+                                  style: MyTextTheme.smallBCN.copyWith(
+                                    color: const Color(0xFF666666),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
+                    );
+                  }
+
+                  return RefreshIndicator(
+                    onRefresh: controller.refreshFollowing,
+                    color: const Color(0xFFDFB343),
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 16.h,
+                      ),
+                      itemCount:
+                          controller.followingAstrologers.length +
+                          (controller.hasMore.value ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == controller.followingAstrologers.length) {
+                          // Load more when reaching the end
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            controller.loadMore();
+                          });
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: CircularProgressIndicator(
+                                color: Color(0xFFDFB343),
+                              ),
+                            ),
+                          );
+                        }
+                        final astrologer =
+                            controller.followingAstrologers[index];
+                        return _buildAstrologerCard(astrologer);
+                      },
                     ),
                   );
-                }
-
-                return RefreshIndicator(
-                  onRefresh: controller.refreshFollowing,
-                  color: const Color(0xFFDFB343),
-                  child: ListView.builder(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 16.h,
-                    ),
-                    itemCount:
-                        controller.followingAstrologers.length +
-                        (controller.hasMore.value ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == controller.followingAstrologers.length) {
-                        // Load more when reaching the end
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          controller.loadMore();
-                        });
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: CircularProgressIndicator(
-                              color: Color(0xFFDFB343),
-                            ),
-                          ),
-                        );
-                      }
-                      final astrologer = controller.followingAstrologers[index];
-                      return _buildAstrologerCard(astrologer);
-                    },
-                  ),
-                );
-              }),
-            ),
-          ],
+                }),
+              ),
+            ],
+          ),
         ),
       ),
     );

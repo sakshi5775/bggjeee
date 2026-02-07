@@ -30,112 +30,119 @@ class _RamalShastraCastingCardsViewState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CommonHeader(title: 'Ramal Shastra'),
-              Spacing.h(24),
-              AutoTranslateText(
-                'Draw 16 Cards',
-                style: MyTextTheme.veryLargeBCB
-                    .copyWith(
-                      color: '#3E2723'.toColor(),
-                      fontWeight: FontWeight.bold,
-                    )
-                    .merge(AppTypography.h1),
-              ),
-              Spacing.h(8),
-              AutoTranslateText(
-                'Card ${currentIndex + 1} of 16',
-                style: MyTextTheme.mediumBCN.copyWith(
-                  color: '#666666'.toColor(),
-                ),
-              ),
-              Spacing.h(32),
-              // Card Grid
-              _buildCardGrid(),
-              Spacing.h(32),
-              if (currentIndex < 16)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Ramal Shastra'),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ElevatedButton(
-                      onPressed: () => _drawCard(true),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 32.w,
-                          vertical: 14.h,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                      ),
-                      child: AutoTranslateText(
-                        'Red Card',
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Spacing.h(24),
+                    AutoTranslateText(
+                      'Draw 16 Cards',
+                      style: MyTextTheme.veryLargeBCB
+                          .copyWith(
+                            color: '#3E2723'.toColor(),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h1),
+                    ),
+                    Spacing.h(8),
+                    AutoTranslateText(
+                      'Card ${currentIndex + 1} of 16',
+                      style: MyTextTheme.mediumBCN.copyWith(
+                        color: '#666666'.toColor(),
                       ),
                     ),
-                    Spacing.w(16),
-                    ElevatedButton(
-                      onPressed: () => _drawCard(false),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black87,
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 32.w,
-                          vertical: 14.h,
+                    Spacing.h(32),
+                    // Card Grid
+                    _buildCardGrid(),
+                    Spacing.h(32),
+                    if (currentIndex < 16)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () => _drawCard(true),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 32.w,
+                                vertical: 14.h,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                            ),
+                            child: AutoTranslateText(
+                              'Red Card',
+                              style: MyTextTheme.mediumBCB.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Spacing.w(16),
+                          ElevatedButton(
+                            onPressed: () => _drawCard(false),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black87,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 32.w,
+                                vertical: 14.h,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                            ),
+                            child: AutoTranslateText(
+                              'Black Card',
+                              style: MyTextTheme.mediumBCB.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    else
+                      ElevatedButton(
+                        onPressed: () {
+                          controller.generatePointsFromCards(cardResults);
+                          Get.toNamed(AppRoutes.ramalShastraConfirmation);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: '#4CAF50'.toColor(),
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 32.w,
+                            vertical: 14.h,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
+                        child: AutoTranslateText(
+                          'Confirm & Proceed',
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      child: AutoTranslateText(
-                        'Black Card',
-                        style: MyTextTheme.mediumBCB.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                    Spacing.h(32),
                   ],
-                )
-              else
-                ElevatedButton(
-                  onPressed: () {
-                    controller.generatePointsFromCards(cardResults);
-                    Get.toNamed(AppRoutes.ramalShastraConfirmation);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: '#4CAF50'.toColor(),
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 32.w,
-                      vertical: 14.h,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                  ),
-                  child: AutoTranslateText(
-                    'Confirm & Proceed',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                 ),
-              Spacing.h(32),
-            ],
-          ),
+              ),
+            ),
+          ],
         ),
       ),
     );

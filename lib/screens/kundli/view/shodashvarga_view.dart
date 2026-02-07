@@ -19,68 +19,50 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Shodashvarga'),
+            _buildTabs(),
+            Expanded(
+              child: PageView.builder(
+                controller: controller.pageController,
+                onPageChanged: controller.onPageChanged,
+                itemCount: controller.tabs.length,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _buildDivisionsTable(),
+                          Spacing.h(12),
+                          const ConsultAstrologerCard(),
+                          Spacing.h(12),
+                        ],
+                      ),
+                    );
+                  }
+                  final division = controller.tabs[index];
+                  // Obx ensures chart appears as soon as fetch completes (svgDataMap updates)
+                  return Obx(() {
+                    final svgData = controller.getSvgDataForDivision(division);
+                    return DivisionChartWidget(
+                      svgData: svgData,
+                      divisionName: division,
+                    );
+                  });
+                },
+              ),
             ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const CommonHeader(title: 'Shodashvarga'),
-                _buildTabs(),
-                Expanded(
-                  child: PageView.builder(
-                    controller: controller.pageController,
-                    onPageChanged: controller.onPageChanged,
-                    itemCount: controller.tabs.length,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return SingleChildScrollView(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
-                            vertical: 8.h,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _buildDivisionsTable(),
-                              Spacing.h(12),
-                              const ConsultAstrologerCard(),
-                              Spacing.h(12),
-                            ],
-                          ),
-                        );
-                      }
-                      final division = controller.tabs[index];
-                      // Obx ensures chart appears as soon as fetch completes (svgDataMap updates)
-                      return Obx(() {
-                        final svgData = controller.getSvgDataForDivision(
-                          division,
-                        );
-                        return DivisionChartWidget(
-                          svgData: svgData,
-                          divisionName: division,
-                        );
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ],
         ),
       ),
     );

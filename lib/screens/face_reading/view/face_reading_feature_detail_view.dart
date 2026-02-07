@@ -6,6 +6,7 @@ import 'package:astrobharataiuser/data_model/face_reading_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -30,13 +31,21 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
       );
     }
 
-    return Scaffold(
-      backgroundColor: '#F7EFBD'.toColor(),
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
-            // Top Navigation Bar
-            _buildTopBar(title),
+            CommonHeader(
+              title: title,
+              subtitle: AutoTranslateText(
+                'AI-Powered Physiognomy reading',
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: const Color(0x666F221E),
+                ),
+              ),
+            ),
             // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
@@ -51,14 +60,18 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
                       _buildInterpretationCard(featureReading!.interpretation!),
                     if (featureReading?.interpretation != null) Spacing.h(16),
                     // Issues (if any)
-                    if (featureReading?.hasIssue == true && featureReading?.issueDescription != null)
+                    if (featureReading?.hasIssue == true &&
+                        featureReading?.issueDescription != null)
                       _buildIssuesCard(featureReading!.issueDescription!),
-                    if (featureReading?.hasIssue == true && featureReading?.issueDescription != null)
+                    if (featureReading?.hasIssue == true &&
+                        featureReading?.issueDescription != null)
                       Spacing.h(16),
                     // Remedy (if any)
-                    if (featureReading?.remedy != null && featureReading!.remedy!.isNotEmpty)
+                    if (featureReading?.remedy != null &&
+                        featureReading!.remedy!.isNotEmpty)
                       _buildRemedyCard(featureReading.remedy!),
-                    if (featureReading?.remedy != null && featureReading!.remedy!.isNotEmpty)
+                    if (featureReading?.remedy != null &&
+                        featureReading!.remedy!.isNotEmpty)
                       Spacing.h(16),
                     // Want Deeper Insights
                     _buildDeeperInsightsSection(),
@@ -69,47 +82,6 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildTopBar(String title) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: '#6B2C1F'.toColor(), // Dark red/maroon header
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20.r),
-          bottomRight: Radius.circular(20.r),
-        ),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
-            onPressed: () => Get.back(),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AutoTranslateText(
-                  title,
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
-                ),
-                AutoTranslateText(
-                  'AI-Powered Physiognomy reading',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: Colors.white.withOpacity(0.9),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -130,15 +102,21 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
                   children: [
                     AutoTranslateText(
                       title,
-                      style: MyTextTheme.largeBCB.copyWith(
-                        color: '#3E2723'.toColor(),
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h2),
+                      style: MyTextTheme.largeBCB
+                          .copyWith(
+                            color: '#3E2723'.toColor(),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h2),
                     ),
                     Spacing.h(8),
                     Row(
                       children: [
-                        Icon(Icons.star, color: "#F38B3B".toColor(), size: 24.w),
+                        Icon(
+                          Icons.star,
+                          color: "#F38B3B".toColor(),
+                          size: 24.w,
+                        ),
                         Spacing.w(8),
                         AutoTranslateText(
                           rating,
@@ -164,10 +142,9 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
             ),
             child: AutoTranslateText(
               text,
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: '#3E2723'.toColor(),
-                height: 1.5,
-              ).merge(AppTypography.body1),
+              style: MyTextTheme.mediumBCN
+                  .copyWith(color: '#3E2723'.toColor(), height: 1.5)
+                  .merge(AppTypography.body1),
             ),
           ),
         ],
@@ -210,10 +187,12 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
           // Parse and display the interpretation text (may contain markdown-like formatting)
           ...interpretation.split('\n\n').map((paragraph) {
             if (paragraph.trim().isEmpty) return const SizedBox.shrink();
-            
+
             // Check if paragraph is a heading (starts with **)
-            final isHeading = paragraph.trim().startsWith('**') && paragraph.trim().endsWith('**');
-            
+            final isHeading =
+                paragraph.trim().startsWith('**') &&
+                paragraph.trim().endsWith('**');
+
             return Padding(
               padding: EdgeInsets.only(bottom: 12.h),
               child: AutoTranslateText(
@@ -223,10 +202,9 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
                         color: '#3E2723'.toColor(),
                         fontWeight: FontWeight.bold,
                       )
-                    : MyTextTheme.mediumBCN.copyWith(
-                        color: '#3E2723'.toColor(),
-                        height: 1.6,
-                      ).merge(AppTypography.body1),
+                    : MyTextTheme.mediumBCN
+                          .copyWith(color: '#3E2723'.toColor(), height: 1.6)
+                          .merge(AppTypography.body1),
               ),
             );
           }).toList(),
@@ -242,7 +220,10 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: "#F38B3B".toColor().withOpacity(0.3), width: 1),
+        border: Border.all(
+          color: "#F38B3B".toColor().withOpacity(0.3),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -256,7 +237,11 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.warning_amber_rounded, color: "#F38B3B".toColor(), size: 20.w),
+              Icon(
+                Icons.warning_amber_rounded,
+                color: "#F38B3B".toColor(),
+                size: 20.w,
+              ),
               Spacing.w(8),
               AutoTranslateText(
                 'Areas of Concern',
@@ -270,10 +255,9 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
           Spacing.h(12),
           AutoTranslateText(
             issueDescription,
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: '#3E2723'.toColor(),
-              height: 1.6,
-            ).merge(AppTypography.body1),
+            style: MyTextTheme.mediumBCN
+                .copyWith(color: '#3E2723'.toColor(), height: 1.6)
+                .merge(AppTypography.body1),
           ),
         ],
       ),
@@ -315,10 +299,9 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
           Spacing.h(12),
           AutoTranslateText(
             remedy,
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: '#3E2723'.toColor(),
-              height: 1.6,
-            ).merge(AppTypography.body1),
+            style: MyTextTheme.mediumBCN
+                .copyWith(color: '#3E2723'.toColor(), height: 1.6)
+                .merge(AppTypography.body1),
           ),
         ],
       ),
@@ -346,10 +329,9 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
           Spacing.h(12),
           AutoTranslateText(
             'Want Deeper Insights',
-            style: MyTextTheme.largeBCB.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ).merge(AppTypography.h2),
+            style: MyTextTheme.largeBCB
+                .copyWith(color: Colors.white, fontWeight: FontWeight.bold)
+                .merge(AppTypography.h2),
           ),
           Spacing.h(8),
           AutoTranslateText(
@@ -386,4 +368,3 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
     );
   }
 }
-

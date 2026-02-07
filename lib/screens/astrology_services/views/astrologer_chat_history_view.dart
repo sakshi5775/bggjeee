@@ -19,75 +19,79 @@ class AstrologerChatHistoryView extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 768;
     final maxWidth = isMobile ? double.infinity : 600.w;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFFFF8E1), // Light yellow background
-      body: Column(
-        children: [
-          const CommonHeader(title: 'Chat History', showSearch: false),
-          Expanded(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: maxWidth),
-                child: Column(
-                  children: [
-                    // Search Section
-                    _buildSearchSection(controller),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Chat History', showSearch: false),
+            Expanded(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: maxWidth),
+                  child: Column(
+                    children: [
+                      // Search Section
+                      _buildSearchSection(controller),
 
-                    // Content Section
-                    Expanded(
-                      child: Obx(() {
-                        if (controller.isLoading.value &&
-                            controller.historyList.isEmpty) {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.saffron,
+                      // Content Section
+                      Expanded(
+                        child: Obx(() {
+                          if (controller.isLoading.value &&
+                              controller.historyList.isEmpty) {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.saffron,
+                              ),
+                            );
+                          }
+
+                          final filteredList = controller.filteredHistoryList;
+
+                          if (filteredList.isEmpty &&
+                              !controller.isLoading.value) {
+                            return _buildEmptyState(controller);
+                          }
+
+                          return RefreshIndicator(
+                            onRefresh: () =>
+                                controller.loadHistory(reset: true),
+                            color: AppColors.saffron,
+                            child: ListView.builder(
+                              padding: AppPaddings.all(16),
+                              itemCount:
+                                  filteredList.length +
+                                  (controller.hasMore &&
+                                          controller.searchQuery.value.isEmpty
+                                      ? 1
+                                      : 0),
+                              itemBuilder: (context, index) {
+                                // Show "Load More" button at the end
+                                if (index == filteredList.length &&
+                                    controller.hasMore &&
+                                    controller.searchQuery.value.isEmpty) {
+                                  return _buildLoadMoreButton(controller);
+                                }
+
+                                final session = filteredList[index];
+                                return _buildHistoryItem(
+                                  context,
+                                  controller,
+                                  session,
+                                );
+                              },
                             ),
                           );
-                        }
-
-                        final filteredList = controller.filteredHistoryList;
-
-                        if (filteredList.isEmpty &&
-                            !controller.isLoading.value) {
-                          return _buildEmptyState(controller);
-                        }
-
-                        return RefreshIndicator(
-                          onRefresh: () => controller.loadHistory(reset: true),
-                          color: AppColors.saffron,
-                          child: ListView.builder(
-                            padding: AppPaddings.all(16),
-                            itemCount:
-                                filteredList.length +
-                                (controller.hasMore &&
-                                        controller.searchQuery.value.isEmpty
-                                    ? 1
-                                    : 0),
-                            itemBuilder: (context, index) {
-                              // Show "Load More" button at the end
-                              if (index == filteredList.length &&
-                                  controller.hasMore &&
-                                  controller.searchQuery.value.isEmpty) {
-                                return _buildLoadMoreButton(controller);
-                              }
-
-                              final session = filteredList[index];
-                              return _buildHistoryItem(
-                                context,
-                                controller,
-                                session,
-                              );
-                            },
-                          ),
-                        );
-                      }),
-                    ),
-                  ],
+                        }),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

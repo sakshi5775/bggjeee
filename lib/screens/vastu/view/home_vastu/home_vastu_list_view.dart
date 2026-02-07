@@ -18,12 +18,13 @@ class HomeVastuListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final homeRooms = VastuRoomData.getHomeRooms();
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
-            CommonHeader(title: 'Home Vastu'),
+            const CommonHeader(title: 'Home Vastu'),
 
             // Title section
             Padding(

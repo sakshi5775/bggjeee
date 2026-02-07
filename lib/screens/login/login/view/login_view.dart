@@ -18,16 +18,7 @@ class LoginView extends BasePage<LoginController> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFFF7C443).withOpacity(0.3),
-                Color(0xFFFFFCF3).withOpacity(0.1),
-              ],
-            ),
-          ),
+          decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
             children: [
               // Container(

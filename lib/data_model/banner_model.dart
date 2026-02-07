@@ -1,9 +1,20 @@
 class BannerItem {
   final String id;
   final String? title;
-  final String image;
+  final String image; // Legacy field for backward compatibility
   final String category;
   final int displayOrder;
+
+  // New media fields
+  final String? mediaPrimary;
+  final String? mediaPrimaryType; // "image" or "video"
+  final String? mediaThumbnail;
+
+  // Media metadata
+  final int? mediaSize;
+  final int? mediaDuration;
+  final int? mediaWidth;
+  final int? mediaHeight;
 
   BannerItem({
     required this.id,
@@ -11,16 +22,65 @@ class BannerItem {
     required this.image,
     required this.category,
     this.displayOrder = 0,
+    this.mediaPrimary,
+    this.mediaPrimaryType,
+    this.mediaThumbnail,
+    this.mediaSize,
+    this.mediaDuration,
+    this.mediaWidth,
+    this.mediaHeight,
   });
 
+  /// Check if this banner is a video
+  bool get isVideo => mediaPrimaryType?.toLowerCase() == 'video';
+
+  /// Check if this banner is an image
+  bool get isImage =>
+      mediaPrimaryType?.toLowerCase() == 'image' || mediaPrimaryType == null;
+
+  /// Check if this banner is an SVG
+  bool get isSvg {
+    final url = mediaUrl.toLowerCase();
+    return url.endsWith('.svg');
+  }
+
+  /// Get the media URL (prefer new media.primary, fallback to legacy image field)
+  String get mediaUrl => mediaPrimary ?? image;
+
+  /// Get thumbnail URL if available, otherwise return primary media URL
+  String get thumbnailUrl => mediaThumbnail ?? mediaUrl;
+
   factory BannerItem.fromJson(Map<String, dynamic> json) {
-    return BannerItem(
+    // Parse media object
+    final media = json['media'] as Map<String, dynamic>?;
+    final mediaMetadata = json['mediaMetadata'] as Map<String, dynamic>?;
+
+    final banner = BannerItem(
       id: json['id'] as String? ?? json['_id'] as String? ?? '',
       title: json['title'] as String?,
-      image: json['image'] as String? ?? '',
+      image: json['image'] as String? ?? json['imageUrl'] as String? ?? '',
       category: json['category'] as String? ?? '',
       displayOrder: json['displayOrder'] as int? ?? 0,
+      // New media fields
+      mediaPrimary: media?['primary'] as String?,
+      mediaPrimaryType: media?['primaryType'] as String?,
+      mediaThumbnail: media?['thumbnail'] as String?,
+      // Media metadata
+      mediaSize: mediaMetadata?['size'] as int?,
+      mediaDuration: mediaMetadata?['duration'] as int?,
+      mediaWidth: mediaMetadata?['width'] as int?,
+      mediaHeight: mediaMetadata?['height'] as int?,
     );
+
+    // Debug logging
+    print('🎬 BannerItem parsed: ${banner.toString()}');
+
+    return banner;
+  }
+
+  @override
+  String toString() {
+    return 'BannerItem(id: $id, type: $mediaPrimaryType, isVideo: $isVideo, isSvg: $isSvg, url: $mediaUrl)';
   }
 }
 

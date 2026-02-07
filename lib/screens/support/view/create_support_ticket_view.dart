@@ -17,217 +17,215 @@ class CreateSupportTicketView extends GetView<SupportTicketController> {
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Column(
-            children: [
-              CommonHeader(title: 'Create Support Ticket'),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.all(16.w),
-                  child: Form(
-                    key: controller.formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildSectionTitle('Category *'),
-                        SizedBox(height: 8.h),
-                        _buildCategoryDropdown(),
-                        SizedBox(height: 16.h),
-                        _buildSectionTitle('Priority *'),
-                        SizedBox(height: 8.h),
-                        _buildPriorityDropdown(),
-                        SizedBox(height: 16.h),
-                        _buildSectionTitle('Subject *'),
-                        SizedBox(height: 8.h),
-                        TextFormField(
-                          controller: controller.subjectController,
-                          decoration: InputDecoration(
-                            hintText: 'Ticket subject (5-200 characters)',
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 12.h,
-                            ),
+        body: Column(
+          children: [
+            CommonHeader(title: 'Create Support Ticket'),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(16.w),
+                child: Form(
+                  key: controller.formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionTitle('Category *'),
+                      SizedBox(height: 8.h),
+                      _buildCategoryDropdown(),
+                      SizedBox(height: 16.h),
+                      _buildSectionTitle('Priority *'),
+                      SizedBox(height: 8.h),
+                      _buildPriorityDropdown(),
+                      SizedBox(height: 16.h),
+                      _buildSectionTitle('Subject *'),
+                      SizedBox(height: 8.h),
+                      TextFormField(
+                        controller: controller.subjectController,
+                        decoration: InputDecoration(
+                          hintText: 'Ticket subject (5-200 characters)',
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                            borderSide: BorderSide.none,
                           ),
-                          maxLength: 200,
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Subject is required';
-                            }
-                            if (value.trim().length < 5) {
-                              return 'Subject must be at least 5 characters';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 16.h),
-                        _buildSectionTitle('Description *'),
-                        SizedBox(height: 8.h),
-                        TextFormField(
-                          controller: controller.descriptionController,
-                          decoration: InputDecoration(
-                            hintText:
-                                'Detailed description (10-5000 characters)',
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: EdgeInsets.all(16.w),
-                          ),
-                          maxLines: 8,
-                          maxLength: 5000,
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Description is required';
-                            }
-                            if (value.trim().length < 10) {
-                              return 'Description must be at least 10 characters';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 16.h),
-                        _buildSectionTitle('Tags (Optional)'),
-                        SizedBox(height: 8.h),
-                        TextFormField(
-                          controller: controller.tagsController,
-                          decoration: InputDecoration(
-                            hintText: 'Enter tags separated by commas',
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 12.h,
-                            ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 12.h,
                           ),
                         ),
-                        SizedBox(height: 16.h),
-                        _buildSectionTitle('Attachments (Optional)'),
-                        SizedBox(height: 8.h),
-                        AutoTranslateText(
-                          'Max 5 files, JPEG/PNG/WebP/GIF/PDF, 5MB each',
-                          style: TextStyle(
-                            color: AppColors.textSecondary,
-                          ).merge(AppTypography.body2),
+                        maxLength: 200,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Subject is required';
+                          }
+                          if (value.trim().length < 5) {
+                            return 'Subject must be at least 5 characters';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 16.h),
+                      _buildSectionTitle('Description *'),
+                      SizedBox(height: 8.h),
+                      TextFormField(
+                        controller: controller.descriptionController,
+                        decoration: InputDecoration(
+                          hintText: 'Detailed description (10-5000 characters)',
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: EdgeInsets.all(16.w),
                         ),
-                        SizedBox(height: 8.h),
-                        Obx(() => _buildAttachmentsList()),
-                        SizedBox(height: 8.h),
-                        if (controller.attachments.length < 5)
-                          Container(
+                        maxLines: 8,
+                        maxLength: 5000,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Description is required';
+                          }
+                          if (value.trim().length < 10) {
+                            return 'Description must be at least 10 characters';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 16.h),
+                      _buildSectionTitle('Tags (Optional)'),
+                      SizedBox(height: 8.h),
+                      TextFormField(
+                        controller: controller.tagsController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter tags separated by commas',
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 12.h,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16.h),
+                      _buildSectionTitle('Attachments (Optional)'),
+                      SizedBox(height: 8.h),
+                      AutoTranslateText(
+                        'Max 5 files, JPEG/PNG/WebP/GIF/PDF, 5MB each',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                        ).merge(AppTypography.body2),
+                      ),
+                      SizedBox(height: 8.h),
+                      Obx(() => _buildAttachmentsList()),
+                      SizedBox(height: 8.h),
+                      if (controller.attachments.length < 5)
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: AppColors.orangeGradient,
+                            borderRadius: BorderRadius.circular(12.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.deepOrange.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: ElevatedButton.icon(
+                            onPressed: () => _pickAttachment(context),
+                            icon: const Icon(Icons.attach_file),
+                            label: const AutoTranslateText('Add Attachment'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              foregroundColor: Colors.white,
+                              shadowColor: Colors.transparent,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16.w,
+                                vertical: 12.h,
+                              ),
+                            ),
+                          ),
+                        ),
+                      SizedBox(height: 32.h),
+                      Obx(
+                        () => SizedBox(
+                          width: double.infinity,
+                          child: Container(
                             decoration: BoxDecoration(
-                              gradient: AppColors.orangeGradient,
+                              gradient: controller.isCreatingTicket.value
+                                  ? null
+                                  : AppColors.orangeGradient,
+                              color: controller.isCreatingTicket.value
+                                  ? Colors.grey[300]
+                                  : null,
                               borderRadius: BorderRadius.circular(12.r),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.deepOrange.withOpacity(0.3),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
+                              boxShadow: controller.isCreatingTicket.value
+                                  ? null
+                                  : [
+                                      BoxShadow(
+                                        color: AppColors.deepOrange.withOpacity(
+                                          0.3,
+                                        ),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
                             ),
-                            child: ElevatedButton.icon(
-                              onPressed: () => _pickAttachment(context),
-                              icon: const Icon(Icons.attach_file),
-                              label: const AutoTranslateText('Add Attachment'),
+                            child: ElevatedButton(
+                              onPressed: controller.isCreatingTicket.value
+                                  ? null
+                                  : () async {
+                                      final success = await controller
+                                          .createTicket();
+                                      if (success) {
+                                        // Wait for snackbar to show before navigating
+                                        await Future.delayed(
+                                          const Duration(milliseconds: 500),
+                                        );
+                                        Get.back();
+                                      }
+                                    },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.transparent,
                                 foregroundColor: Colors.white,
                                 shadowColor: Colors.transparent,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16.w,
-                                  vertical: 12.h,
+                                padding: EdgeInsets.symmetric(vertical: 16.h),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.r),
                                 ),
                               ),
-                            ),
-                          ),
-                        SizedBox(height: 32.h),
-                        Obx(
-                          () => SizedBox(
-                            width: double.infinity,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                gradient: controller.isCreatingTicket.value
-                                    ? null
-                                    : AppColors.orangeGradient,
-                                color: controller.isCreatingTicket.value
-                                    ? Colors.grey[300]
-                                    : null,
-                                borderRadius: BorderRadius.circular(12.r),
-                                boxShadow: controller.isCreatingTicket.value
-                                    ? null
-                                    : [
-                                        BoxShadow(
-                                          color: AppColors.deepOrange
-                                              .withOpacity(0.3),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 4),
-                                        ),
-                                      ],
-                              ),
-                              child: ElevatedButton(
-                                onPressed: controller.isCreatingTicket.value
-                                    ? null
-                                    : () async {
-                                        final success = await controller
-                                            .createTicket();
-                                        if (success) {
-                                          // Wait for snackbar to show before navigating
-                                          await Future.delayed(
-                                            const Duration(milliseconds: 500),
-                                          );
-                                          Get.back();
-                                        }
-                                      },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
-                                  foregroundColor: Colors.white,
-                                  shadowColor: Colors.transparent,
-                                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.r),
-                                  ),
-                                ),
-                                child: controller.isCreatingTicket.value
-                                    ? const SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                Colors.white,
-                                              ),
-                                        ),
-                                      )
-                                    : AutoTranslateText(
-                                        'Create Ticket',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                        ).merge(AppTypography.h3),
+                              child: controller.isCreatingTicket.value
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
                                       ),
-                              ),
+                                    )
+                                  : AutoTranslateText(
+                                      'Create Ticket',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                      ).merge(AppTypography.h3),
+                                    ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/vastu/model/vastu_room_config.dart';
@@ -17,12 +18,13 @@ class OfficeVastuListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final officeRooms = VastuRoomData.getOfficeRooms();
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
-            CommonHeader(title: 'Office Vastu'),
+            const CommonHeader(title: 'Office Vastu'),
 
             // Title section
             Padding(

@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 
 import 'package:astrobharataiuser/data_model/persona_model.dart';
@@ -38,249 +39,215 @@ class _ChatViewState extends State<ChatView> {
   Widget build(BuildContext context) {
     final controller = Get.find<ChatController>();
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            _buildHeader(controller),
-
-            // Chat Messages Area
-            Expanded(child: _buildChatArea(controller)),
-
-            // Topic selection chips (shown after AI's first response)
-            Obx(() {
-              if (!controller.showTopicChips.value ||
-                  controller.messages.length < 2) {
-                return const SizedBox.shrink();
-              }
-              return _buildTopicChips(controller);
-            }),
-
-            // Message Input
-            _buildMessageInput(controller),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(ChatController controller) {
     return Container(
-      height: 70.h,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Back arrow
-          IconButton(
-            onPressed: () {
-              // Check if user has sent messages (has conversation)
-              if (controller.messages.isNotEmpty &&
-                  controller.conversationId.value.isNotEmpty) {
-                // Show review popup before going back
-                _showReviewPromptOnBack(controller);
-              } else {
-                Get.back();
-              }
-            },
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-          ),
-          SizedBox(width: 12.w),
-
-          // Profile picture
-          Container(
-            width: 40.w,
-            height: 40.w,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.white.withOpacity(0.3),
-                width: 2,
-              ),
-            ),
-            child: ClipOval(
-              child:
-                  widget.persona.image != null &&
-                      widget.persona.image!.isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: widget.persona.image!,
-                      width: 40.w,
-                      height: 40.w,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: Colors.white.withOpacity(0.2),
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: 24.w,
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.saffron.withOpacity(0.3),
-                              const Color(0xFF5F2221).withOpacity(0.3),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Standardized Header
+              CommonHeader(
+                onBackTap: () {
+                  // Check if user has sent messages (has conversation)
+                  if (controller.messages.isNotEmpty &&
+                      controller.conversationId.value.isNotEmpty) {
+                    // Show review popup before going back
+                    _showReviewPromptOnBack(controller);
+                  } else {
+                    Get.back();
+                  }
+                },
+                showSearch: false,
+                customActions: [
+                  // End Session Button
+                  Obx(() {
+                    if (controller.messages.isEmpty)
+                      return const SizedBox.shrink();
+                    return GestureDetector(
+                      onTap: () {
+                        Get.dialog(
+                          AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            title: AutoTranslateText(
+                              'End Chat',
+                              style: MyTextTheme.mediumBCB.copyWith(
+                                color: const Color(0xFF5F2221),
+                              ),
+                            ),
+                            content: AutoTranslateText(
+                              'Are you sure you want to end this chat?',
+                              style: MyTextTheme.smallBCN.copyWith(
+                                color: const Color(0xFF666666),
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Get.back(),
+                                child: AutoTranslateText(
+                                  'Cancel',
+                                  style: MyTextTheme.smallBCB.copyWith(
+                                    color: const Color(0xFF666666),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  gradient: AppColors.orangeGradient,
+                                  borderRadius: BorderRadius.circular(8.r),
+                                ),
+                                child: TextButton(
+                                  onPressed: () {
+                                    Get.back(); // Close confirmation dialog
+                                    // Show review prompt before ending chat
+                                    _showReviewPromptOnEndChat(controller);
+                                  },
+                                  child: AutoTranslateText(
+                                    'End Chat',
+                                    style: MyTextTheme.smallBCB.copyWith(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 6.h,
                         ),
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: 24.w,
+                        decoration: BoxDecoration(
+                          color: AppColors.saffron.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20.r),
+                          border: Border.all(
+                            color: AppColors.saffron.withOpacity(0.3),
+                          ),
                         ),
-                      ),
-                    )
-                  : Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            AppColors.saffron.withOpacity(0.3),
-                            const Color(0xFF5F2221).withOpacity(0.3),
-                          ],
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.person,
-                        color: Colors.white,
-                        size: 24.w,
-                      ),
-                    ),
-            ),
-          ),
-          SizedBox(width: 12.w),
-
-          // Name and status
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AutoTranslateText(
-                  widget.persona.displayName,
-                  style: MyTextTheme.mediumBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 2.h),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: AutoTranslateText(
-                        'AI Astrologer',
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: Colors.white.withOpacity(0.9),
-                          fontSize: 11.sp,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    SizedBox(width: 3.w),
-                    Text(
-                      '•',
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: 11.sp,
-                      ),
-                    ),
-                    SizedBox(width: 3.w),
-                    Container(
-                      width: 6.w,
-                      height: 6.w,
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    SizedBox(width: 3.w),
-                    Flexible(
-                      child: AutoTranslateText(
-                        'Online',
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: Colors.white.withOpacity(0.9),
-                          fontSize: 11.sp,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // End Chat button
-          TextButton(
-            onPressed: () {
-              Get.dialog(
-                AlertDialog(
-                  title: AutoTranslateText(
-                    'End Chat',
-                    style: MyTextTheme.mediumBCB,
-                  ),
-                  content: AutoTranslateText(
-                    'Are you sure you want to end this chat?',
-                    style: MyTextTheme.smallBCN,
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Get.back(),
-                      child: AutoTranslateText(
-                        'Cancel',
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: AppColors.orangeGradient.colors.first,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: AppColors.orangeGradient,
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: TextButton(
-                        onPressed: () {
-                          Get.back(); // Close confirmation dialog
-                          final chatCtrl = Get.find<ChatController>();
-                          // Show review prompt before ending chat
-                          _showReviewPromptOnEndChat(chatCtrl);
-                        },
                         child: AutoTranslateText(
-                          'End Chat',
+                          "End",
                           style: MyTextTheme.smallBCB.copyWith(
-                            color: Colors.white,
+                            color: const Color(0xFF6F221E),
                           ),
                         ),
                       ),
+                    );
+                  }),
+                ],
+                titleWidget: Row(
+                  children: [
+                    // Profile picture
+                    Container(
+                      width: 36.w,
+                      height: 36.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.3),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: ClipOval(
+                        child:
+                            widget.persona.image != null &&
+                                widget.persona.image!.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: widget.persona.image!,
+                                width: 36.w,
+                                height: 36.w,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  color: Colors.white.withOpacity(0.2),
+                                  child: Icon(
+                                    Icons.person,
+                                    color: AppColors.saffron,
+                                    size: 20.w,
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  color: AppColors.saffron.withOpacity(0.1),
+                                  child: Icon(
+                                    Icons.person,
+                                    color: AppColors.saffron,
+                                    size: 20.w,
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                color: AppColors.saffron.withOpacity(0.1),
+                                child: Icon(
+                                  Icons.person,
+                                  color: AppColors.saffron,
+                                  size: 20.w,
+                                ),
+                              ),
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    // Name and Online status
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AutoTranslateText(
+                            widget.persona.name,
+                            style: MyTextTheme.mediumBCB.copyWith(
+                              color: const Color(0xFF6F221E),
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                width: 8.w,
+                                height: 8.w,
+                                decoration: const BoxDecoration(
+                                  color: Colors.green,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              SizedBox(width: 4.w),
+                              AutoTranslateText(
+                                "Online",
+                                style: MyTextTheme.smallBCN.copyWith(
+                                  color: Colors.green,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              );
-            },
-            child: AutoTranslateText(
-              'End Chat',
-              style: MyTextTheme.smallBCB.copyWith(color: Colors.white),
-            ),
+              ),
+
+              // Chat Messages Area
+              Expanded(child: _buildChatArea(controller)),
+
+              // Topic selection chips (shown after AI's first response)
+              Obx(() {
+                if (!controller.showTopicChips.value ||
+                    controller.messages.length < 2) {
+                  return const SizedBox.shrink();
+                }
+                return _buildTopicChips(controller);
+              }),
+
+              // Message Input
+              _buildMessageInput(controller),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

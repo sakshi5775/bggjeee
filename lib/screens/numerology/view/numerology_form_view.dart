@@ -20,11 +20,11 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
             // Header
             CommonHeader(title: 'Numerology'),

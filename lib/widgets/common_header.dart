@@ -29,12 +29,15 @@ class CommonHeader extends StatelessWidget {
   final bool showSearch;
   final VoidCallback? onSearchTap;
 
+  final VoidCallback? onBackTap;
+
   const CommonHeader({
     super.key,
     this.title,
     this.titleWidget,
     this.subtitle,
     this.onMenuTap,
+    this.onBackTap,
     this.showDrawer = false,
     this.showHome = true,
     this.customActions,
@@ -317,7 +320,7 @@ class CommonHeader extends StatelessWidget {
                   // Back button (Navigator.canPop)
                   if (Navigator.canPop(context))
                     IconButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: onBackTap ?? () => Navigator.pop(context),
                       style: IconButton.styleFrom(
                         padding: EdgeInsets.zero,
                         minimumSize: Size(36.w, 36.h),

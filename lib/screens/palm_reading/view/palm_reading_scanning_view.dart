@@ -16,7 +16,8 @@ class PalmReadingScanningView extends StatefulWidget {
   const PalmReadingScanningView({Key? key}) : super(key: key);
 
   @override
-  State<PalmReadingScanningView> createState() => _PalmReadingScanningViewState();
+  State<PalmReadingScanningView> createState() =>
+      _PalmReadingScanningViewState();
 }
 
 class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
@@ -30,18 +31,19 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
   @override
   void initState() {
     super.initState();
-    
+
     try {
       final controller = Get.find<PalmReadingController>();
-      
+
       _fadeController = AnimationController(
         duration: const Duration(milliseconds: 800),
         vsync: this,
       );
-      _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(parent: _fadeController, curve: Curves.easeIn),
-      );
-      
+      _fadeAnimation = Tween<double>(
+        begin: 0.0,
+        end: 1.0,
+      ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeIn));
+
       // Load image after frame is built
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _loadImage();
@@ -73,26 +75,31 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
                       Future.delayed(const Duration(seconds: 1), () {
                         if (mounted) {
                           try {
-                            controller.startScanning().then((_) {
-                              // Close loading dialog when scanning completes
-                              if (mounted && Get.isDialogOpen == true) {
-                                try {
-                                  Get.back();
-                                } catch (e) {
-                                  debugPrint('Error closing dialog: $e');
-                                }
-                              }
-                            }).catchError((e) {
-                              debugPrint('Error in startScanning: $e');
-                              // Close loading dialog on error
-                              if (mounted && Get.isDialogOpen == true) {
-                                try {
-                                  Get.back();
-                                } catch (e) {
-                                  debugPrint('Error closing dialog on error: $e');
-                                }
-                              }
-                            });
+                            controller
+                                .startScanning()
+                                .then((_) {
+                                  // Close loading dialog when scanning completes
+                                  if (mounted && Get.isDialogOpen == true) {
+                                    try {
+                                      Get.back();
+                                    } catch (e) {
+                                      debugPrint('Error closing dialog: $e');
+                                    }
+                                  }
+                                })
+                                .catchError((e) {
+                                  debugPrint('Error in startScanning: $e');
+                                  // Close loading dialog on error
+                                  if (mounted && Get.isDialogOpen == true) {
+                                    try {
+                                      Get.back();
+                                    } catch (e) {
+                                      debugPrint(
+                                        'Error closing dialog on error: $e',
+                                      );
+                                    }
+                                  }
+                                });
                           } catch (e) {
                             debugPrint('Error calling startScanning: $e');
                             if (mounted && Get.isDialogOpen == true) {
@@ -154,7 +161,7 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
 
       final codec = await ui.instantiateImageCodec(bytes);
       final frame = await codec.getNextFrame();
-      
+
       if (mounted) {
         setState(() {
           _uiImage = frame.image;
@@ -192,10 +199,11 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
     try {
       final controller = Get.find<PalmReadingController>();
 
-      return Scaffold(
-        backgroundColor: '#F7EFBD'.toColor(), // Match face reading background
-        body: SafeArea(
-          child: Stack(
+      return Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Stack(
             children: [
               // Main content
               Center(
@@ -266,18 +274,15 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
       );
     } catch (e) {
       debugPrint('Error in build: $e');
-      return Scaffold(
-        backgroundColor: '#F7EFBD'.toColor(),
-        body: SafeArea(
-          child: Center(
+      return Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64.w,
-                  color: Colors.red,
-                ),
+                Icon(Icons.error_outline, size: 64.w, color: Colors.red),
                 Spacing.h(16),
                 AutoTranslateText(
                   'An error occurred',
@@ -313,9 +318,7 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
   Widget _buildPalmImageWithOverlay(PalmReadingController controller) {
     if (_uiImage == null || _imageSize == null || !_isImageLoaded) {
       return Center(
-        child: CircularProgressIndicator(
-          color: "#F38B3B".toColor(),
-        ),
+        child: CircularProgressIndicator(color: "#F38B3B".toColor()),
       );
     }
 
@@ -328,11 +331,7 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 48.w,
-                  color: Colors.red,
-                ),
+                Icon(Icons.error_outline, size: 48.w, color: Colors.red),
                 Spacing.h(16),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -389,9 +388,7 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
         return Center(
           child: AutoTranslateText(
             'Error displaying image',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: '#3E2723'.toColor(),
-            ),
+            style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
           ),
         );
       }
@@ -408,18 +405,20 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
               children: [
                 AutoTranslateText(
                   'Analyzing your palm, please wait...',
-                  style: MyTextTheme.largeBCB.copyWith(
-                    color: '#3E2723'.toColor(),
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.h2),
+                  style: MyTextTheme.largeBCB
+                      .copyWith(
+                        color: '#3E2723'.toColor(),
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.h2),
                   textAlign: TextAlign.center,
                 ),
                 Spacing.h(12),
                 AutoTranslateText(
                   'Our AI is processing your palm lines',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: '#666666'.toColor(),
-                  ).merge(AppTypography.body1),
+                  style: MyTextTheme.mediumBCN
+                      .copyWith(color: '#666666'.toColor())
+                      .merge(AppTypography.body1),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -450,18 +449,16 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
               ),
               child: Column(
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    color: Colors.red,
-                    size: 48.w,
-                  ),
+                  Icon(Icons.error_outline, color: Colors.red, size: 48.w),
                   Spacing.h(16),
                   AutoTranslateText(
                     errorMessage,
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: '#3E2723'.toColor(),
-                      fontWeight: FontWeight.bold,
-                    ).merge(AppTypography.h3),
+                    style: MyTextTheme.mediumBCB
+                        .copyWith(
+                          color: '#3E2723'.toColor(),
+                          fontWeight: FontWeight.bold,
+                        )
+                        .merge(AppTypography.h3),
                     textAlign: TextAlign.center,
                   ),
                   Spacing.h(16),
@@ -502,4 +499,3 @@ class _PalmReadingScanningViewState extends State<PalmReadingScanningView>
     });
   }
 }
-

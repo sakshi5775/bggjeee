@@ -19,75 +19,79 @@ class PalmReadingHistoryView extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 768;
     final maxWidth = isMobile ? double.infinity : 600.w;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFFFF8E1), // Light yellow background
-      body: Column(
-        children: [
-          const CommonHeader(title: 'History'),
-          Expanded(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: maxWidth),
-                child: Column(
-                  children: [
-                    // Search and Filter Section
-                    _buildSearchAndFilterSection(controller),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent, // Light yellow background
+        body: Column(
+          children: [
+            const CommonHeader(title: 'History'),
+            Expanded(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: maxWidth),
+                  child: Column(
+                    children: [
+                      // Search and Filter Section
+                      _buildSearchAndFilterSection(controller),
 
-                    // Content Section
-                    Expanded(
-                      child: Obx(() {
-                        if (controller.isLoading.value &&
-                            controller.historyList.isEmpty) {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.saffron,
+                      // Content Section
+                      Expanded(
+                        child: Obx(() {
+                          if (controller.isLoading.value &&
+                              controller.historyList.isEmpty) {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.saffron,
+                              ),
+                            );
+                          }
+
+                          final filteredList = controller.filteredHistoryList;
+
+                          if (filteredList.isEmpty &&
+                              !controller.isLoading.value) {
+                            return _buildEmptyState(controller);
+                          }
+
+                          return RefreshIndicator(
+                            onRefresh: () =>
+                                controller.loadHistory(reset: true),
+                            color: AppColors.saffron,
+                            child: ListView.builder(
+                              padding: AppPaddings.all(16),
+                              itemCount:
+                                  filteredList.length +
+                                  (controller.hasMore &&
+                                          controller.searchQuery.value.isEmpty
+                                      ? 1
+                                      : 0),
+                              itemBuilder: (context, index) {
+                                // Show "Load More" button at the end (only if no search query)
+                                if (index == filteredList.length &&
+                                    controller.hasMore &&
+                                    controller.searchQuery.value.isEmpty) {
+                                  return _buildLoadMoreButton(controller);
+                                }
+
+                                final item = filteredList[index];
+                                return _buildHistoryItem(
+                                  context,
+                                  controller,
+                                  item,
+                                );
+                              },
                             ),
                           );
-                        }
-
-                        final filteredList = controller.filteredHistoryList;
-
-                        if (filteredList.isEmpty &&
-                            !controller.isLoading.value) {
-                          return _buildEmptyState(controller);
-                        }
-
-                        return RefreshIndicator(
-                          onRefresh: () => controller.loadHistory(reset: true),
-                          color: AppColors.saffron,
-                          child: ListView.builder(
-                            padding: AppPaddings.all(16),
-                            itemCount:
-                                filteredList.length +
-                                (controller.hasMore &&
-                                        controller.searchQuery.value.isEmpty
-                                    ? 1
-                                    : 0),
-                            itemBuilder: (context, index) {
-                              // Show "Load More" button at the end (only if no search query)
-                              if (index == filteredList.length &&
-                                  controller.hasMore &&
-                                  controller.searchQuery.value.isEmpty) {
-                                return _buildLoadMoreButton(controller);
-                              }
-
-                              final item = filteredList[index];
-                              return _buildHistoryItem(
-                                context,
-                                controller,
-                                item,
-                              );
-                            },
-                          ),
-                        );
-                      }),
-                    ),
-                  ],
+                        }),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

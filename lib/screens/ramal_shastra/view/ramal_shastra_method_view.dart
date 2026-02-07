@@ -18,81 +18,88 @@ class RamalShastraMethodView extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<RamalShastraController>();
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CommonHeader(title: 'Ramal Shastra'),
-              Spacing.h(24),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: AutoTranslateText(
-                  'Choose Casting Method',
-                  style: MyTextTheme.veryLargeBCB
-                      .copyWith(
-                        color: '#3E2723'.toColor(),
-                        fontWeight: FontWeight.bold,
-                      )
-                      .merge(AppTypography.h1),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: AutoTranslateText(
-                  'Select your preferred method to generate the pattern',
-                  style: MyTextTheme.mediumBCN.copyWith(
-                    color: '#666666'.toColor(),
-                  ),
-                ),
-              ),
-              Spacing.h(32),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Ramal Shastra'),
+            Expanded(
+              child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildMethodCard(
-                      icon: Icons.casino,
-                      emoji: '🎲',
-                      title: 'Dice',
-                      description:
-                          'Roll 4 dice × 4 rounds to generate 16 values',
-                      onTap: () {
-                        controller.setCastingMethod('dice');
-                        Get.toNamed(AppRoutes.ramalShastraCastingDice);
-                      },
+                    Spacing.h(24),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: AutoTranslateText(
+                        'Choose Casting Method',
+                        style: MyTextTheme.veryLargeBCB
+                            .copyWith(
+                              color: '#3E2723'.toColor(),
+                              fontWeight: FontWeight.bold,
+                            )
+                            .merge(AppTypography.h1),
+                      ),
                     ),
-                    Spacing.h(16),
-                    _buildMethodCard(
-                      icon: Icons.style,
-                      emoji: '🃏',
-                      title: 'Cards',
-                      description: 'Draw 16 cards - Red = 1, Black = 0',
-                      onTap: () {
-                        controller.setCastingMethod('cards');
-                        Get.toNamed(AppRoutes.ramalShastraCastingCards);
-                      },
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: AutoTranslateText(
+                        'Select your preferred method to generate the pattern',
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: '#666666'.toColor(),
+                        ),
+                      ),
                     ),
-                    Spacing.h(16),
-                    _buildMethodCard(
-                      icon: Icons.brightness_1,
-                      emoji: '●●',
-                      title: 'Dots',
-                      description:
-                          'Tap randomly on screen 16 times - Odd taps = 1, Even taps = 0',
-                      onTap: () {
-                        controller.setCastingMethod('dots');
-                        Get.toNamed(AppRoutes.ramalShastraCastingDots);
-                      },
+                    Spacing.h(32),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Column(
+                        children: [
+                          _buildMethodCard(
+                            icon: Icons.casino,
+                            emoji: '🎲',
+                            title: 'Dice',
+                            description:
+                                'Roll 4 dice × 4 rounds to generate 16 values',
+                            onTap: () {
+                              controller.setCastingMethod('dice');
+                              Get.toNamed(AppRoutes.ramalShastraCastingDice);
+                            },
+                          ),
+                          Spacing.h(16),
+                          _buildMethodCard(
+                            icon: Icons.style,
+                            emoji: '🃏',
+                            title: 'Cards',
+                            description: 'Draw 16 cards - Red = 1, Black = 0',
+                            onTap: () {
+                              controller.setCastingMethod('cards');
+                              Get.toNamed(AppRoutes.ramalShastraCastingCards);
+                            },
+                          ),
+                          Spacing.h(16),
+                          _buildMethodCard(
+                            icon: Icons.brightness_1,
+                            emoji: '●●',
+                            title: 'Dots',
+                            description:
+                                'Tap randomly on screen 16 times - Odd taps = 1, Even taps = 0',
+                            onTap: () {
+                              controller.setCastingMethod('dots');
+                              Get.toNamed(AppRoutes.ramalShastraCastingDots);
+                            },
+                          ),
+                        ],
+                      ),
                     ),
+                    Spacing.h(32),
                   ],
                 ),
               ),
-              Spacing.h(32),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

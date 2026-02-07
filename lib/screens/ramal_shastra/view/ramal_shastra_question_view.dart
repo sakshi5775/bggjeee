@@ -45,113 +45,126 @@ class RamalShastraQuestionView extends StatelessWidget {
       'punjabi',
     ];
 
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 24.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CommonHeader(title: 'Ramal Shastra'),
-                Spacing.h(8),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: AutoTranslateText(
-                    'Enter Your Question',
-                    style: MyTextTheme.veryLargeBCB
-                        .copyWith(
-                          color: '#3E2723'.toColor(),
-                          fontWeight: FontWeight.bold,
-                        )
-                        .merge(AppTypography.h1),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: AutoTranslateText(
-                    'For accurate Ramal Shastra analysis',
-                    style: MyTextTheme.mediumBCN
-                        .copyWith(color: '#3E2723'.toColor())
-                        .merge(AppTypography.body1),
-                  ),
-                ),
-                Spacing.h(20),
-                Form(
-                  key: formKey,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Question Field
-                        _buildQuestionField(controller),
-                        Spacing.h(20),
-                        // Category Dropdown
-                        _buildCategoryDropdown(controller, categories),
-                        Spacing.h(20),
-                        // Language Dropdown
-                        _buildLanguageDropdown(controller, languages),
-                        Spacing.h(20),
-                        // Name Field
-                        _buildNameField(controller),
-                        Spacing.h(20),
-                        // Date of Birth Field
-                        _buildDateOfBirthField(controller, context),
-                        Spacing.h(32),
-                        // Proceed Button
-                        SizedBox(
-                          width: double.infinity,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: AppColors.orangeGradient,
-                              borderRadius: BorderRadius.circular(12.r),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: "#F38B3B".toColor().withOpacity(0.35),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 3),
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Ramal Shastra'),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 24.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Spacing.h(8),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: AutoTranslateText(
+                          'Enter Your Question',
+                          style: MyTextTheme.veryLargeBCB
+                              .copyWith(
+                                color: '#3E2723'.toColor(),
+                                fontWeight: FontWeight.bold,
+                              )
+                              .merge(AppTypography.h1),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: AutoTranslateText(
+                          'For accurate Ramal Shastra analysis',
+                          style: MyTextTheme.mediumBCN
+                              .copyWith(color: '#3E2723'.toColor())
+                              .merge(AppTypography.body1),
+                        ),
+                      ),
+                      Spacing.h(20),
+                      Form(
+                        key: formKey,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Question Field
+                              _buildQuestionField(controller),
+                              Spacing.h(20),
+                              // Category Dropdown
+                              _buildCategoryDropdown(controller, categories),
+                              Spacing.h(20),
+                              // Language Dropdown
+                              _buildLanguageDropdown(controller, languages),
+                              Spacing.h(20),
+                              // Name Field
+                              _buildNameField(controller),
+                              Spacing.h(20),
+                              // Date of Birth Field
+                              _buildDateOfBirthField(controller, context),
+                              Spacing.h(32),
+                              // Proceed Button
+                              SizedBox(
+                                width: double.infinity,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: AppColors.orangeGradient,
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: "#F38B3B".toColor().withOpacity(
+                                          0.35,
+                                        ),
+                                        blurRadius: 6,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      if (formKey.currentState!.validate()) {
+                                        Get.toNamed(
+                                          AppRoutes.ramalShastraMethod,
+                                        );
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.transparent,
+                                      foregroundColor: '#ffffff'.toColor(),
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 14.h,
+                                        horizontal: 24.w,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          12.r,
+                                        ),
+                                      ),
+                                      elevation: 0,
+                                      shadowColor: Colors.transparent,
+                                    ),
+                                    child: AutoTranslateText(
+                                      'Proceed to Casting',
+                                      style: MyTextTheme.mediumBCB.copyWith(
+                                        color: '#ffffff'.toColor(),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ],
-                            ),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                if (formKey.currentState!.validate()) {
-                                  Get.toNamed(AppRoutes.ramalShastraMethod);
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                foregroundColor: '#ffffff'.toColor(),
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 14.h,
-                                  horizontal: 24.w,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                elevation: 0,
-                                shadowColor: Colors.transparent,
                               ),
-                              child: AutoTranslateText(
-                                'Proceed to Casting',
-                                style: MyTextTheme.mediumBCB.copyWith(
-                                  color: '#ffffff'.toColor(),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                              Spacing.h(16),
+                            ],
                           ),
                         ),
-                        Spacing.h(16),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

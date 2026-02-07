@@ -45,92 +45,95 @@ class _ProductListViewState extends State<ProductListView> {
         ? Get.find<CartController>()
         : Get.put(CartController());
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          // Header with CommonHeader
-          Obx(() {
-            final category = controller.selectedCategory.value;
-            final productCount = controller.products.length;
-            return CommonHeader(
-              title: category?.name ?? 'Products',
-              subtitle: AutoTranslateText(
-                'Showing $productCount Premium items',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w400,
-                  fontSize: 11.sp,
-                  color: '#6F221E'.toColor().withOpacity(0.6),
-                  height: 1.33,
-                ),
-              ),
-              customActions: [
-                // Cart Icon with Badge
-                Obx(() {
-                  final cartItemCount = cartController.itemCount;
-                  return IconButton(
-                    onPressed: () {
-                      Get.toNamed(AppRoutes.cart);
-                    },
-                    icon: Badge.count(
-                      count: cartItemCount,
-                      child: Icon(
-                        Icons.shopping_cart,
-                        size: 22.w,
-                        color: '#6F221E'.toColor(),
-                      ),
-                    ),
-                  );
-                }),
-              ],
-            );
-          }),
-          Expanded(
-            child: Obx(() {
-              if (controller.isLoadingProducts.value &&
-                  controller.products.isEmpty) {
-                return Center(
-                  child: CircularProgressIndicator(color: AppColors.saffron),
-                );
-              }
-
-              if (controller.products.isEmpty &&
-                  !controller.isLoadingProducts.value) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.inventory_2_outlined,
-                        size: 64,
-                        color: AppColors.textSecondary,
-                      ),
-                      SizedBox(height: 16.h),
-                      AutoTranslateText(
-                        'No products found',
-                        style: TextStyle(color: AppColors.textSecondary),
-                      ),
-                    ],
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            // Header with CommonHeader
+            Obx(() {
+              final category = controller.selectedCategory.value;
+              final productCount = controller.products.length;
+              return CommonHeader(
+                title: category?.name ?? 'Products',
+                subtitle: AutoTranslateText(
+                  'Showing $productCount Premium items',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11.sp,
+                    color: '#6F221E'.toColor().withOpacity(0.6),
+                    height: 1.33,
                   ),
-                );
-              }
-
-              return Column(
-                children: [
-                  SizedBox(height: 10.14.h),
-                  // Search and Filter Bar
-                  _buildSearchAndFilterBar(context, controller),
-                  SizedBox(height: 14.71.h),
-                  // Category Filters (Horizontal Scroll)
-
-                  // Products Grid
-                  Expanded(child: _buildGridView(context, controller)),
+                ),
+                customActions: [
+                  // Cart Icon with Badge
+                  Obx(() {
+                    final cartItemCount = cartController.itemCount;
+                    return IconButton(
+                      onPressed: () {
+                        Get.toNamed(AppRoutes.cart);
+                      },
+                      icon: Badge.count(
+                        count: cartItemCount,
+                        child: Icon(
+                          Icons.shopping_cart,
+                          size: 22.w,
+                          color: '#6F221E'.toColor(),
+                        ),
+                      ),
+                    );
+                  }),
                 ],
               );
             }),
-          ),
-        ],
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoadingProducts.value &&
+                    controller.products.isEmpty) {
+                  return Center(
+                    child: CircularProgressIndicator(color: AppColors.saffron),
+                  );
+                }
+
+                if (controller.products.isEmpty &&
+                    !controller.isLoadingProducts.value) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.inventory_2_outlined,
+                          size: 64,
+                          color: AppColors.textSecondary,
+                        ),
+                        SizedBox(height: 16.h),
+                        AutoTranslateText(
+                          'No products found',
+                          style: TextStyle(color: AppColors.textSecondary),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return Column(
+                  children: [
+                    SizedBox(height: 10.14.h),
+                    // Search and Filter Bar
+                    _buildSearchAndFilterBar(context, controller),
+                    SizedBox(height: 14.71.h),
+                    // Category Filters (Horizontal Scroll)
+
+                    // Products Grid
+                    Expanded(child: _buildGridView(context, controller)),
+                  ],
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -3,8 +3,8 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/festival_detail_controller.dart';
-import 'package:astrobharataiuser/screens/panchang/widgets/festival_detail_header_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,10 +16,11 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: Obx(() {
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Obx(() {
           if (controller.isLoading.value) {
             return Center(
               child: CircularProgressIndicator(color: "#DFB343".toColor()),
@@ -30,7 +31,17 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
             child: Column(
               children: [
                 // Header
-                const FestivalDetailHeaderWidget(),
+                const CommonHeader(
+                  title: 'Festival Details',
+                  subtitle: AutoTranslateText(
+                    'Traditional Indian Calendar System',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0x666F221E),
+                    ),
+                  ),
+                ),
 
                 // Content
                 _buildContent(),

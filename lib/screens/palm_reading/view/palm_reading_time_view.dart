@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/palm_reading/controller/palm_reading_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,10 +18,11 @@ class PalmReadingTimeView extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 768;
     final maxWidth = isMobile ? double.infinity : 500.w;
 
-    return Scaffold(
-      backgroundColor: '#F7EFBD'.toColor(), // Match face reading background
-      body: SafeArea(
-        child: SingleChildScrollView(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SingleChildScrollView(
           child: Center(
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: maxWidth),
@@ -55,37 +57,39 @@ class PalmReadingTimeView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    
+
                     Spacing.h(40),
-                    
+
                     // Question
                     AutoTranslateText(
                       'What time were you born? (Optional)',
-                      style: MyTextTheme.veryLargeBCB.copyWith(
-                        color: '#3E2723'.toColor(),
-                        fontWeight: FontWeight.bold,
-                      ).merge(AppTypography.h1),
+                      style: MyTextTheme.veryLargeBCB
+                          .copyWith(
+                            color: '#3E2723'.toColor(),
+                            fontWeight: FontWeight.bold,
+                          )
+                          .merge(AppTypography.h1),
                       textAlign: TextAlign.center,
                     ),
-                    
+
                     Spacing.h(12),
-                    
+
                     // Subtitle
                     AutoTranslateText(
                       'Help us calculate your planetary position (optional)',
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: Colors.grey[700],
-                      ).merge(AppTypography.body1),
+                      style: MyTextTheme.mediumBCN
+                          .copyWith(color: Colors.grey[700])
+                          .merge(AppTypography.body1),
                       textAlign: TextAlign.center,
                     ),
-                    
+
                     Spacing.h(60),
-                    
+
                     // Time picker
                     _buildTimePicker(controller),
-                    
+
                     Spacing.h(60),
-                    
+
                     // Next button
                     _buildNextButton(controller),
                   ],
@@ -123,7 +127,7 @@ class PalmReadingTimeView extends StatelessWidget {
               List.generate(12, (i) => i + 1),
             ),
           ),
-          
+
           // Separator
           AutoTranslateText(
             ':',
@@ -132,7 +136,7 @@ class PalmReadingTimeView extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ).merge(AppTypography.h1),
           ),
-          
+
           // Minutes picker
           Expanded(
             child: _buildPickerColumn(
@@ -141,15 +145,9 @@ class PalmReadingTimeView extends StatelessWidget {
               List.generate(60, (i) => i),
             ),
           ),
-          
+
           // AM/PM picker
-          Expanded(
-            child: _buildPickerColumn(
-              controller,
-              'ampm',
-              ['AM', 'PM'],
-            ),
-          ),
+          Expanded(child: _buildPickerColumn(controller, 'ampm', ['AM', 'PM'])),
         ],
       ),
     );
@@ -190,14 +188,12 @@ class PalmReadingTimeView extends StatelessWidget {
             if (index >= items.length) return null;
             final item = items[index];
             final isSelected = index == selectedIndex;
-            
+
             return Center(
               child: AutoTranslateText(
                 item.toString().padLeft(type == 'hours' ? 2 : 0, '0'),
                 style: TextStyle(
-                  color: isSelected
-                      ? '#EA632B'.toColor()
-                      : Colors.grey[600],
+                  color: isSelected ? '#EA632B'.toColor() : Colors.grey[600],
                   fontSize: isSelected ? 24.sp : 18.sp,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   decoration: isSelected
@@ -229,14 +225,11 @@ class PalmReadingTimeView extends StatelessWidget {
         ),
         child: AutoTranslateText(
           'Next',
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ).merge(AppTypography.h3),
+          style: MyTextTheme.mediumBCB
+              .copyWith(color: Colors.white, fontWeight: FontWeight.bold)
+              .merge(AppTypography.h3),
         ),
       ),
     );
   }
 }
-
-

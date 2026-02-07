@@ -1,4 +1,3 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/dosh_controller.dart';
@@ -12,8 +11,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
-import '../../../utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
 
 class DoshView extends BasePage<DoshController> {
   const DoshView({super.key});
@@ -21,43 +19,27 @@ class DoshView extends BasePage<DoshController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Dosh Report'),
+            _buildTabs(),
+            Expanded(
+              child: PageView(
+                controller: controller.pageController,
+                onPageChanged: controller.onPageChanged,
+                children: [
+                  DoshTableWidget(controller: controller),
+                  MangalDoshWidget(controller: controller),
+                  KaalsarpDoshWidget(controller: controller),
+                  PitraDoshWidget(controller: controller),
+                ],
+              ),
             ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const CommonHeader(title: 'Dosh Report'),
-                _buildTabs(),
-                Expanded(
-                  child: PageView(
-                    controller: controller.pageController,
-                    onPageChanged: controller.onPageChanged,
-                    children: [
-                      DoshTableWidget(controller: controller),
-                      MangalDoshWidget(controller: controller),
-                      KaalsarpDoshWidget(controller: controller),
-                      PitraDoshWidget(controller: controller),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ],
         ),
       ),
     );

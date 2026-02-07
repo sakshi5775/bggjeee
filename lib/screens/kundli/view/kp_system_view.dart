@@ -1,4 +1,3 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/kp_system_controller.dart';
@@ -28,51 +27,31 @@ class KpSystemView extends BasePage<KpSystemController> {
     const maroon = Color(0xFF6F221E);
 
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+        body: Column(
+          children: [
+            const CommonHeader(title: 'KP System'),
+            _buildTabs(orange, orangeLight, maroon),
+            Expanded(
+              child: PageView(
+                controller: controller.pageController,
+                onPageChanged: controller.onPageChanged,
+                children: [
+                  KpSystemTableWidget(controller: controller),
+                  KpChartWidget(controller: controller),
+                  KpRasiChartWidget(controller: controller),
+                  KpPlanetsWidget(controller: controller),
+                  KpCuspsWidget(controller: controller),
+                  KpPlanetSignificationWidget(controller: controller),
+                  KpHouseSignificatorsWidget(controller: controller),
+                  KpPlanetSignificationLevelWiseWidget(controller: controller),
+                ],
+              ),
             ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const CommonHeader(title: 'KP System'),
-                _buildTabs(orange, orangeLight, maroon),
-                Expanded(
-                  child: PageView(
-                    controller: controller.pageController,
-                    onPageChanged: controller.onPageChanged,
-                    children: [
-                      KpSystemTableWidget(controller: controller),
-                      KpChartWidget(controller: controller),
-                      KpRasiChartWidget(controller: controller),
-                      KpPlanetsWidget(controller: controller),
-                      KpCuspsWidget(controller: controller),
-                      KpPlanetSignificationWidget(controller: controller),
-                      KpHouseSignificatorsWidget(controller: controller),
-                      KpPlanetSignificationLevelWiseWidget(
-                        controller: controller,
-                      ),
-                      // Nakshatra Nadi commented out
-                      // KpComingSoonWidget(title: 'Nakshatra Nadi'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ],
         ),
       ),
     );

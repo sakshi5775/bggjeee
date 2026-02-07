@@ -40,17 +40,18 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
     final categoryTitle = _getCategoryTitle(categoryType);
     final icon = _getCategoryIcon(categoryType);
 
-    return Scaffold(
-      backgroundColor: '#F7EFBD'.toColor(),
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
             CommonHeader(
               title: categoryTitle,
               subtitle: AutoTranslateText(
                 'AI-Powered Physiognomy reading',
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: const Color(0xFF5F2221).withValues(alpha: 0.7),
+                  color: const Color(0x666F221E),
                 ),
               ),
               showSearch: false,

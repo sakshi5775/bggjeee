@@ -324,10 +324,11 @@ class _HandwritingAstrologyHistoryViewState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: '#F7EFBD'.toColor(),
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
             const CommonHeader(
               title: 'Handwriting History',

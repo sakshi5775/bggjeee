@@ -58,12 +58,13 @@ class _RamalShastraCastingDotsViewState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: '#FFF8E1'.toColor(),
-      body: SafeArea(
-        child: Column(
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
           children: [
-            CommonHeader(title: 'Ramal Shastra'),
+            const CommonHeader(title: 'Ramal Shastra'),
             Spacing.h(24),
             AutoTranslateText(
               'Tap Randomly on Screen',

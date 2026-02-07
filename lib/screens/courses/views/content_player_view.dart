@@ -1,3 +1,7 @@
+import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/screens/courses/services/courses_service.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/pdf_progress.dart';
@@ -19,17 +23,32 @@ class ContentPlayerView extends StatelessWidget {
   Widget build(BuildContext context) {
     final contentId = arguments['contentId'] as String?;
     final lectureId = arguments['lectureId'] as String?;
-    final content = arguments['content'] as ContentModel?; // Get content from arguments
+    final content =
+        arguments['content'] as ContentModel?; // Get content from arguments
     final isEnrolled = arguments['isEnrolled'] as bool? ?? false;
     final isPreview = arguments['isPreview'] as bool? ?? false;
 
     if (contentId == null) {
       return Scaffold(
-        appBar: AppBar(
-          title: const AutoTranslateText('Error'),
-        ),
-        body: const Center(
-          child: AutoTranslateText('Content ID is required'),
+        body: Container(
+          decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+          child: Column(
+            children: [
+              const CommonHeader(
+                title: 'Error',
+                showDrawer: false,
+                showHome: true,
+              ),
+              Expanded(
+                child: Center(
+                  child: AutoTranslateText(
+                    'Content ID is required',
+                    style: MyTextTheme.mediumBCN,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -42,14 +61,20 @@ class ContentPlayerView extends StatelessWidget {
 
     // CRITICAL: If content object is passed, use it directly (has URL from lectures)
     final passedContent = arguments?['content'] as ContentModel?;
-    
+
     // If content is passed with URL, use it directly; otherwise load from API
-    if (passedContent != null && passedContent.url != null && passedContent.url!.isNotEmpty) {
+    if (passedContent != null && passedContent.url.isNotEmpty) {
       // Track progress for PDFs when they're opened (will be tracked again when PDF loads)
       // For now, we'll track it in the PDF viewer's onDocumentLoaded callback
-      return _buildDirectPlayer(passedContent, lectureId, isEnrolled, isPreview, arguments);
+      return _buildDirectPlayer(
+        passedContent,
+        lectureId,
+        isEnrolled,
+        isPreview,
+        arguments,
+      );
     }
-    
+
     return Scaffold(
       body: ContentPlayerController(
         contentId: contentId,
@@ -57,46 +82,55 @@ class ContentPlayerView extends StatelessWidget {
         isEnrolled: isEnrolled,
         isPreview: isPreview,
         arguments: arguments, // Pass arguments for courseId access
-        initialContent: passedContent, // Pass content object if available (has URL)
+        initialContent:
+            passedContent, // Pass content object if available (has URL)
       ),
     );
   }
 
   Widget _buildLockedContentScreen(String title) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        title: AutoTranslateText(
-          title,
-          style: AppTypography.h2.copyWith(color: Colors.white),
-        ),
-      ),
-      body: Center(
+      body: Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.lock_outline,
-              size: 64.w,
-              color: Colors.white70,
-            ),
-            SizedBox(height: 16.h),
-            AutoTranslateText(
-              'Content Locked',
-              style: AppTypography.h2.copyWith(color: Colors.white70),
-            ),
-            SizedBox(height: 8.h),
-            AutoTranslateText(
-              'Please enroll in the course to access this content.',
-              textAlign: TextAlign.center,
-              style: AppTypography.body1.copyWith(color: Colors.white54),
-            ),
-            SizedBox(height: 24.h),
-            ElevatedButton(
-              onPressed: () => Get.back(),
-              child: const AutoTranslateText('Go Back'),
+            CommonHeader(title: title, showDrawer: false, showHome: true),
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.lock_outline,
+                      size: 64.w,
+                      color: '#3E2723'.toColor(),
+                    ),
+                    SizedBox(height: 16.h),
+                    AutoTranslateText(
+                      'Content Locked',
+                      style: MyTextTheme.largeBCB
+                          .copyWith(color: '#3E2723'.toColor())
+                          .merge(AppTypography.h2),
+                    ),
+                    SizedBox(height: 8.h),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: AutoTranslateText(
+                        'Please enroll in the course to access this content.',
+                        textAlign: TextAlign.center,
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: '#3E2723'.toColor(),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 24.h),
+                    ElevatedButton(
+                      onPressed: () => Get.back(),
+                      child: const AutoTranslateText('Go Back'),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
@@ -117,34 +151,42 @@ class ContentPlayerView extends StatelessWidget {
     // Check access
     if (!canAccess && !content.isPreview) {
       return Scaffold(
-        backgroundColor: Colors.black,
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
-          title: AutoTranslateText(
-            content.title,
-            style: AppTypography.h2.copyWith(color: Colors.white),
-          ),
-        ),
-        body: Center(
+        body: Container(
+          decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.lock_outline,
-                size: 64.w,
-                color: Colors.white70,
-              ),
-              SizedBox(height: 16.h),
-              AutoTranslateText(
-                'Content Locked',
-                style: AppTypography.h2.copyWith(color: Colors.white70),
-              ),
-              SizedBox(height: 8.h),
-              AutoTranslateText(
-                'Please enroll in the course to access this content.',
-                textAlign: TextAlign.center,
-                style: AppTypography.body1.copyWith(color: Colors.white54),
+              CommonHeader(title: content.title, showDrawer: false),
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.lock_outline,
+                        size: 64.w,
+                        color: '#3E2723'.toColor(),
+                      ),
+                      SizedBox(height: 16.h),
+                      AutoTranslateText(
+                        'Content Locked',
+                        style: MyTextTheme.largeBCB
+                            .copyWith(color: '#3E2723'.toColor())
+                            .merge(AppTypography.h2),
+                      ),
+                      SizedBox(height: 8.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: AutoTranslateText(
+                          'Please enroll in the course to access this content.',
+                          textAlign: TextAlign.center,
+                          style: MyTextTheme.mediumBCN.copyWith(
+                            color: '#3E2723'.toColor(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -153,38 +195,48 @@ class ContentPlayerView extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        title: AutoTranslateText(
-          content.title,
-          style: AppTypography.h2.copyWith(color: Colors.white),
+      body: Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Column(
+          children: [
+            CommonHeader(
+              title: content.title,
+              showDrawer: false,
+              showHome: true,
+            ),
+            Expanded(
+              child: Center(
+                child: content.type == 'video'
+                    ? VideoPlayerWidget(
+                        key: ValueKey(
+                          content.id,
+                        ), // Force rebuild when content changes
+                        videoUrl: url,
+                        autoPlay: true,
+                        showControls: true,
+                      )
+                    : content.type == 'pdf'
+                    ? PdfViewerWithProgress(
+                        pdfUrl: url,
+                        title: content.title,
+                        content: content,
+                        lectureId: lectureId,
+                        courseId: arguments?['courseId'] as String?,
+                      )
+                    : content.type == 'image' ||
+                          content.type == 'image/jpeg' ||
+                          content.type == 'image/png'
+                    ? _buildImageViewer(url, content.title)
+                    : AutoTranslateText(
+                        'Unsupported content type: ${content.type}',
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: Colors.red,
+                        ),
+                      ),
+              ),
+            ),
+          ],
         ),
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-      ),
-      body: Center(
-                  child: content.type == 'video'
-                      ? VideoPlayerWidget(
-                          key: ValueKey(content.id), // Force rebuild when content changes
-                          videoUrl: url,
-                          autoPlay: true,
-                          showControls: true,
-                        )
-            : content.type == 'pdf'
-                ? PdfViewerWithProgress(
-                    pdfUrl: url,
-                    title: content.title,
-                    content: content,
-                    lectureId: lectureId,
-                    courseId: arguments?['courseId'] as String?,
-                  )
-            : content.type == 'image' || content.type == 'image/jpeg' || content.type == 'image/png'
-                ? _buildImageViewer(url, content.title)
-                : AutoTranslateText(
-                    'Unsupported content type: ${content.type}',
-                    style: AppTypography.body1.copyWith(color: Colors.white),
-                  ),
       ),
     );
   }
@@ -198,9 +250,7 @@ class ContentPlayerView extends StatelessWidget {
           imageUrl: imageUrl,
           fit: BoxFit.contain,
           placeholder: (context, url) => const Center(
-            child: CircularProgressIndicator(
-              color: Colors.white,
-            ),
+            child: CircularProgressIndicator(color: Colors.white),
           ),
           errorWidget: (context, url, error) => Center(
             child: Column(
@@ -208,13 +258,15 @@ class ContentPlayerView extends StatelessWidget {
               children: [
                 Icon(
                   Icons.error_outline,
-                  color: Colors.white70,
+                  color: '#3E2723'.toColor(),
                   size: 48.w,
                 ),
                 SizedBox(height: 16.h),
                 AutoTranslateText(
                   'Failed to load image',
-                  style: AppTypography.body1.copyWith(color: Colors.white70),
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    color: '#3E2723'.toColor(),
+                  ),
                 ),
               ],
             ),
@@ -231,7 +283,8 @@ class ContentPlayerController extends StatefulWidget {
   final bool isEnrolled;
   final bool isPreview;
   final Map<String, dynamic>? arguments; // Store arguments for courseId access
-  final ContentModel? initialContent; // Content object passed from course detail (has URL)
+  final ContentModel?
+  initialContent; // Content object passed from course detail (has URL)
 
   const ContentPlayerController({
     super.key,
@@ -244,7 +297,8 @@ class ContentPlayerController extends StatefulWidget {
   });
 
   @override
-  State<ContentPlayerController> createState() => _ContentPlayerControllerState();
+  State<ContentPlayerController> createState() =>
+      _ContentPlayerControllerState();
 }
 
 class _ContentPlayerControllerState extends State<ContentPlayerController> {
@@ -267,10 +321,12 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
       });
 
       // CRITICAL: Use initialContent if provided (has URL from lectures)
-      if (widget.initialContent != null && 
-          widget.initialContent!.url != null && 
+      if (widget.initialContent != null &&
+          widget.initialContent!.url != null &&
           widget.initialContent!.url!.isNotEmpty) {
-        debugPrint('✅ Using initial content with URL: ${widget.initialContent!.title}');
+        debugPrint(
+          '✅ Using initial content with URL: ${widget.initialContent!.title}',
+        );
         debugPrint('✅ Content URL: ${widget.initialContent!.url}');
         setState(() {
           _content = widget.initialContent;
@@ -296,7 +352,7 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
               debugPrint('✅ Content loaded from lecture: ${contentItem.title}');
               debugPrint('✅ Content URL: ${contentItem.url}');
               debugPrint('✅ Content type: ${contentItem.type}');
-              
+
               setState(() {
                 _content = contentItem;
                 _isLoading = false;
@@ -321,13 +377,17 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
         if (lectures != null) {
           debugPrint('📚 Found ${lectures.length} lectures');
           for (var lecture in lectures) {
-            debugPrint('📖 Checking lecture: ${lecture.title} (${lecture.content.length} items)');
+            debugPrint(
+              '📖 Checking lecture: ${lecture.title} (${lecture.content.length} items)',
+            );
             for (var contentItem in lecture.content) {
               if (contentItem.id == widget.contentId) {
-                debugPrint('✅ Content found in course lectures: ${contentItem.title}');
+                debugPrint(
+                  '✅ Content found in course lectures: ${contentItem.title}',
+                );
                 debugPrint('✅ Content URL: ${contentItem.url}');
                 debugPrint('✅ Content type: ${contentItem.type}');
-                
+
                 if (contentItem.url != null && contentItem.url!.isNotEmpty) {
                   setState(() {
                     _content = contentItem;
@@ -353,7 +413,7 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
       if (content != null && content.url != null && content.url!.isNotEmpty) {
         debugPrint('✅ Content loaded from individual API: ${content.title}');
         debugPrint('✅ Content URL: ${content.url}');
-        
+
         setState(() {
           _content = content;
           _isLoading = false;
@@ -379,7 +439,10 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
   }
 
   // Track progress for PDFs/images when opened
-  Future<void> _trackContentProgress(ContentModel content, String lectureId) async {
+  Future<void> _trackContentProgress(
+    ContentModel content,
+    String lectureId,
+  ) async {
     try {
       // Get courseId from arguments
       final courseId = widget.arguments?['courseId'] as String?;
@@ -391,8 +454,9 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
       // For PDFs and images, mark as viewed when opened
       // For PDFs, we can mark as completed immediately (user has accessed it)
       // For images, mark as viewed
-      final isCompleted = content.type == 'pdf'; // PDFs are completed when opened
-      
+      final isCompleted =
+          content.type == 'pdf'; // PDFs are completed when opened
+
       await _coursesService.updateContentProgress(
         courseId: courseId,
         contentId: content.id,
@@ -400,7 +464,8 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
         isViewed: true,
         isCompleted: isCompleted,
         watchTime: 0.0, // PDFs/images don't have watch time
-        totalDuration: (content.duration * 60).toDouble(), // Convert minutes to seconds
+        totalDuration: (content.duration * 60)
+            .toDouble(), // Convert minutes to seconds
       );
 
       debugPrint('✅ Progress tracked for ${content.type}: ${content.title}');
@@ -413,17 +478,13 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Get.back(),
-          ),
-        ),
-        backgroundColor: Colors.black,
-        body: const Center(
-          child: CircularProgressIndicator(
-            color: Colors.white,
+        body: Container(
+          decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+          child: Column(
+            children: [
+              const CommonHeader(title: '', showDrawer: false),
+              const Expanded(child: Center(child: CircularProgressIndicator())),
+            ],
           ),
         ),
       );
@@ -431,32 +492,30 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
 
     if (_error != null || _content == null) {
       return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Get.back(),
-          ),
-          title: const AutoTranslateText(
-            'Error',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-        backgroundColor: Colors.black,
-        body: Center(
+        body: Container(
+          decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.error_outline,
-                size: 64.w,
-                color: Colors.white70,
-              ),
-              SizedBox(height: 16.h),
-              AutoTranslateText(
-                _error ?? 'Content not found',
-                style: AppTypography.body1.copyWith(
-                  color: Colors.white70,
+              const CommonHeader(title: 'Error', showDrawer: false),
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 64.w,
+                        color: '#3E2723'.toColor(),
+                      ),
+                      SizedBox(height: 16.h),
+                      AutoTranslateText(
+                        _error ?? 'Content not found',
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: '#3E2723'.toColor(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -472,38 +531,42 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
     // Check access
     if (!canAccess && !content.isPreview) {
       return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Get.back(),
-          ),
-          title: AutoTranslateText(
-            content.title,
-            style: AppTypography.h2.copyWith(color: Colors.white),
-          ),
-        ),
-        backgroundColor: Colors.black,
-        body: Center(
+        body: Container(
+          decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.lock_outline,
-                size: 64.w,
-                color: Colors.white70,
-              ),
-              SizedBox(height: 16.h),
-              AutoTranslateText(
-                'Content Locked',
-                style: AppTypography.h2.copyWith(color: Colors.white70),
-              ),
-              SizedBox(height: 8.h),
-              AutoTranslateText(
-                'Please enroll in the course to access this content.',
-                textAlign: TextAlign.center,
-                style: AppTypography.body1.copyWith(color: Colors.white54),
+              CommonHeader(title: content.title, showDrawer: false),
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.lock_outline,
+                        size: 64.w,
+                        color: '#3E2723'.toColor(),
+                      ),
+                      SizedBox(height: 16.h),
+                      AutoTranslateText(
+                        'Content Locked',
+                        style: MyTextTheme.largeBCB
+                            .copyWith(color: '#3E2723'.toColor())
+                            .merge(AppTypography.h2),
+                      ),
+                      SizedBox(height: 8.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: AutoTranslateText(
+                          'Please enroll in the course to access this content.',
+                          textAlign: TextAlign.center,
+                          style: MyTextTheme.mediumBCN.copyWith(
+                            color: '#3E2723'.toColor(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -513,38 +576,39 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
 
     if (url == null || url.isEmpty) {
       return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Get.back(),
-          ),
-          title: AutoTranslateText(
-            content.title,
-            style: AppTypography.h2.copyWith(color: Colors.white),
-          ),
-        ),
-        backgroundColor: Colors.black,
-        body: Center(
+        body: Container(
+          decoration: BoxDecoration(gradient: AppColors.gradientBackground),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.error_outline,
-                size: 64.w,
-                color: Colors.white70,
-              ),
-              SizedBox(height: 16.h),
-              AutoTranslateText(
-                'Content URL is not available',
-                style: AppTypography.h2.copyWith(color: Colors.white70),
-              ),
-              SizedBox(height: 8.h),
-              AutoTranslateText(
-                'The content file is not available at this time.',
-                textAlign: TextAlign.center,
-                style: AppTypography.body1.copyWith(color: Colors.white54),
+              CommonHeader(title: content.title, showDrawer: false),
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 64.w,
+                        color: '#3E2723'.toColor(),
+                      ),
+                      SizedBox(height: 16.h),
+                      AutoTranslateText(
+                        'Content URL is not available',
+                        style: MyTextTheme.largeBCB
+                            .copyWith(color: '#3E2723'.toColor())
+                            .merge(AppTypography.h2),
+                      ),
+                      SizedBox(height: 8.h),
+                      AutoTranslateText(
+                        'The content file is not available at this time.',
+                        textAlign: TextAlign.center,
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: '#3E2723'.toColor(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -553,45 +617,45 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Get.back(),
+      body: Container(
+        decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+        child: Column(
+          children: [
+            CommonHeader(
+              title: content.title,
+              showDrawer: false,
+              showHome: true,
+            ),
+            Expanded(
+              child: content.type == 'video'
+                  ? VideoPlayerWidget(
+                      key: ValueKey(
+                        content.id,
+                      ), // Force rebuild when content changes
+                      videoUrl: url,
+                      autoPlay: true,
+                      showControls: true,
+                    )
+                  : content.type == 'pdf'
+                  ? PdfViewerWithProgress(
+                      pdfUrl: url,
+                      title: content.title,
+                      content: content,
+                      lectureId: widget.lectureId,
+                      courseId: widget.arguments?['courseId'] as String?,
+                    )
+                  : content.type == 'image' ||
+                        content.type == 'image/jpeg' ||
+                        content.type == 'image/png'
+                  ? _buildImageViewerForController(url, content.title)
+                  : AutoTranslateText(
+                      'Unsupported content type: ${content.type}',
+                      style: MyTextTheme.mediumBCN.copyWith(color: Colors.red),
+                    ),
+            ),
+          ],
         ),
-        title: AutoTranslateText(
-          content.title,
-          style: AppTypography.h3.copyWith(
-            color: Colors.white,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      body: content.type == 'video'
-          ? VideoPlayerWidget(
-              key: ValueKey(content.id), // Force rebuild when content changes
-              videoUrl: url,
-              autoPlay: true,
-              showControls: true,
-            )
-          : content.type == 'pdf'
-              ? PdfViewerWithProgress(
-                  pdfUrl: url,
-                  title: content.title,
-                  content: content,
-                  lectureId: widget.lectureId,
-                  courseId: widget.arguments?['courseId'] as String?,
-                )
-          : content.type == 'image' || content.type == 'image/jpeg' || content.type == 'image/png'
-              ? _buildImageViewerForController(url, content.title)
-              : AutoTranslateText(
-                  'Unsupported content type: ${content.type}',
-                  style: AppTypography.body1.copyWith(color: Colors.white),
-                ),
     );
   }
 
@@ -604,9 +668,7 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
           imageUrl: imageUrl,
           fit: BoxFit.contain,
           placeholder: (context, url) => const Center(
-            child: CircularProgressIndicator(
-              color: Colors.white,
-            ),
+            child: CircularProgressIndicator(color: Colors.white),
           ),
           errorWidget: (context, url, error) => Center(
             child: Column(
@@ -614,13 +676,15 @@ class _ContentPlayerControllerState extends State<ContentPlayerController> {
               children: [
                 Icon(
                   Icons.error_outline,
-                  color: Colors.white70,
+                  color: '#3E2723'.toColor(),
                   size: 48.w,
                 ),
                 SizedBox(height: 16.h),
                 AutoTranslateText(
                   'Failed to load image',
-                  style: AppTypography.body1.copyWith(color: Colors.white70),
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    color: '#3E2723'.toColor(),
+                  ),
                 ),
               ],
             ),

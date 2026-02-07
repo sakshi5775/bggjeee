@@ -1,4 +1,3 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/lal_kitab_controller.dart';
@@ -25,46 +24,30 @@ class LalKitabView extends BasePage<LalKitabController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         drawer: UserDashboardView.buildDrawer(context),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: ['#FFF6C2'.toColor(), '#FFF9E5'.toColor()],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const CommonHeader(title: 'Lal Kitab'),
-                _buildTabs(),
-                Expanded(
-                  child: PageView.builder(
-                    controller: controller.pageController,
-                    onPageChanged: controller.onPageChanged,
-                    itemCount: controller.tabNames.length,
-                    itemBuilder: (context, index) {
-                      return RefreshIndicator(
-                        onRefresh: () async {
-                          controller.onTabSelected(index);
-                        },
-                        child: _buildTabContent(index),
-                      );
+        body: Column(
+          children: [
+            const CommonHeader(title: 'Lal Kitab'),
+            _buildTabs(),
+            Expanded(
+              child: PageView.builder(
+                controller: controller.pageController,
+                onPageChanged: controller.onPageChanged,
+                itemCount: controller.tabNames.length,
+                itemBuilder: (context, index) {
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      controller.onTabSelected(index);
                     },
-                  ),
-                ),
-              ],
+                    child: _buildTabContent(index),
+                  );
+                },
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
