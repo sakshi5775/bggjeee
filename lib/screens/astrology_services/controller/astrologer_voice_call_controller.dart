@@ -602,26 +602,20 @@ class AstrologerVoiceCallController extends GetxController {
           );
       }
 
-      // Start periodic wallet sync (every 30 seconds) to ensure we have latest balance
-      _startWalletSyncTimer();
+      // DO NOT start wallet sync timer - it resets balance
+      // Backend will send billing_update events with the correct balance
+
+      // DO NOT start client-side billing timer
+      // Backend will handle billing and send billing_update events every minute
+      if (kDebugMode) {
+        print('═══════════════════════════════════════════════════════════');
+        print('✅ Waiting for backend billing_update events');
+        print('✅ Backend will deduct money and send updates every minute');
+        print('═══════════════════════════════════════════════════════════');
+      }
 
       // Start countdown timer when call is connected
       _startCountdownTimer();
-
-      // Start manual billing timer (fallback if WebSocket doesn't work)
-      // Wait a moment to ensure pricePerMinute is set
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _startBillingTimer();
-        // Also try again after 2 seconds if it didn't start (check if timer was created)
-        Future.delayed(const Duration(seconds: 2), () {
-          if (_billingTimer == null &&
-              isCallConnected.value &&
-              pricePerMinute.value > 0) {
-            if (kDebugMode) print('🔄 Retrying to start billing timer...');
-            _startBillingTimer();
-          }
-        });
-      });
 
       Get.snackbar(
         'Call Connected',
@@ -1001,113 +995,6 @@ class AstrologerVoiceCallController extends GetxController {
     });
   }
 
-  /// Start manual billing timer - deducts money every minute
-  /// IMPORTANT: First minute is deducted AFTER 1 minute completes, not immediately
-  /// This is the PRIMARY billing mechanism since backend doesn't send billing_update events for calls
-  void _startBillingTimer() {
-    _billingTimer?.cancel();
-
-    if (!isCallConnected.value) return;
-
-    if (kDebugMode) {
-      print('═══════════════════════════════════════════════════════════');
-      print('💰 STARTING CLIENT-SIDE BILLING TIMER');
-      print('💰 Will deduct ₹${pricePerMinute.value} every minute');
-      print('💰 Current balance: ₹${walletBalance.value}');
-      print('═══════════════════════════════════════════════════════════');
-    }
-
-    // Deduct money every minute
-    _billingTimer = Timer.periodic(const Duration(minutes: 1), (timer) async {
-      if (!isCallConnected.value) {
-        timer.cancel();
-        return;
-      }
-
-      // Increment minutes billed
-      totalMinutesBilled.value++;
-
-      // Calculate new cost
-      final minuteCost = pricePerMinute.value;
-      totalCost.value += minuteCost;
-
-      if (kDebugMode) {
-        print('═══════════════════════════════════════════════════════════');
-        print('💰 BILLING MINUTE ${totalMinutesBilled.value}');
-        print('💰 Cost this minute: ₹$minuteCost');
-        print('💰 Total cost so far: ₹${totalCost.value}');
-        print('💰 Current balance: ₹${walletBalance.value}');
-        print('═══════════════════════════════════════════════════════════');
-      }
-
-      // Deduct from local balance
-      final newBalance = walletBalance.value - minuteCost;
-
-      if (newBalance < 0) {
-        // Insufficient balance - end call
-        if (kDebugMode) {
-          print('❌ INSUFFICIENT BALANCE - Ending call');
-        }
-
-        timer.cancel();
-        _countdownTimer?.cancel();
-        _walletSyncTimer?.cancel();
-
-        walletBalance.value = 0;
-        _walletBalance = 0;
-        _updateGlobalWalletBalance(0);
-
-        await _agoraManager.leaveChannel();
-        await _agoraManager.dispose();
-        await _disconnectSocket();
-
-        Get.snackbar(
-          'Call Ended',
-          'Your wallet balance is insufficient to continue the call',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 4),
-        );
-
-        Future.delayed(const Duration(seconds: 1), () {
-          Get.back();
-        });
-        return;
-      }
-
-      // Update balance
-      walletBalance.value = newBalance;
-      _walletBalance = newBalance;
-      _syncMoneyAnchor(newBalance, pricePerMinute.value);
-      _updateGlobalWalletBalance(newBalance);
-
-      // Show low balance warning if less than 2 minutes remaining
-      final minutesRemaining = (newBalance / pricePerMinute.value).floor();
-      if (minutesRemaining < 2 && !showLowBalanceWarning.value) {
-        showLowBalanceWarning.value = true;
-        Get.snackbar(
-          'Low Balance',
-          'Your wallet balance is running low. Please recharge to continue.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orange,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 4),
-        );
-      }
-
-      if (kDebugMode) {
-        print('💰 New balance: ₹${walletBalance.value}');
-        print('💰 Minutes remaining: $minutesRemaining');
-      }
-
-      // Sync with backend to ensure accuracy (non-blocking)
-      _syncWalletBalanceWithBackend().catchError((e) {
-        if (kDebugMode) print('⚠️ Background sync failed: $e');
-      });
-    });
-  }
-
   void _notifyDurationExpired() {
     if (_durationExpiredNotified) return;
     _durationExpiredNotified = true;
@@ -1132,20 +1019,6 @@ class AstrologerVoiceCallController extends GetxController {
   Future<void> toggleSpeaker() async {
     await _agoraManager.toggleSpeaker();
     isSpeakerOn.value = _agoraManager.isSpeakerEnabled;
-  }
-
-  /// Start periodic wallet sync timer
-  void _startWalletSyncTimer() {
-    _walletSyncTimer?.cancel();
-    _walletSyncTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
-      if (!isCallConnected.value) {
-        timer.cancel();
-        return;
-      }
-      _syncWalletBalanceWithBackend();
-    });
-    if (kDebugMode)
-      print('✅ Wallet sync timer started - will sync every 30 seconds');
   }
 
   /// Sync wallet balance with backend

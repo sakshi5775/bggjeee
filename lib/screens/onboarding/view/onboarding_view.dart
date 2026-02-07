@@ -53,41 +53,26 @@ class OnboardingView extends BasePage<OnboardingController> {
             ),
           ),
 
-          /// 3️⃣ BOTTOM BLUR (70 HEIGHT)
+          /// 3️⃣ BOTTOM GRADIENT OVERLAY (70% HEIGHT)
+          /// Note: BackdropFilter causes rendering issues on Flutter Web with CanvasKit
+          /// Using gradient overlay instead for better compatibility
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                child: Container(
-                  height: blurHeight,
-                  color: Colors.black.withOpacity(0.1),
-                ),
-              ),
-            ),
-          ),
-
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: blurHeight - 10,
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: -1, sigmaY: -1),
-                child: Container(
-                  height: 20,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.black.withOpacity(0.1),
-                        Colors.black.withOpacity(0.1),
-                      ],
-                    ),
-                  ),
+            child: Container(
+              height: blurHeight,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.0),
+                    Colors.black.withOpacity(0.3),
+                    Colors.black.withOpacity(0.5),
+                    Colors.black.withOpacity(0.7),
+                  ],
+                  stops: const [0.0, 0.3, 0.6, 1.0],
                 ),
               ),
             ),

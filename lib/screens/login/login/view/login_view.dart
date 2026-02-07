@@ -35,9 +35,9 @@ class LoginView extends BasePage<LoginController> {
               // ),
               SizedBox(
                 width: double.infinity,
-                height: 320.h, // Increased height to accommodate padding
+                height: 350.h, // Increased height to accommodate padding
                 child: Padding(
-                  padding: EdgeInsets.only(top: 20.h), // Added top spacing
+                  padding: EdgeInsets.only(top: 0.h), // Added top spacing
                   child: Stack(
                     children: [
                       /// 🔹 Main Image
