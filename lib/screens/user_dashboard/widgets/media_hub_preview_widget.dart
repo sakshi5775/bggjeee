@@ -21,7 +21,7 @@ class MediaHubPreviewWidget extends StatelessWidget {
       children: [
         // YouTube Section
         _buildSectionHeader(
-          title: 'Meadia Hub',
+          title: 'Media Hub',
           onViewAll: () => _navigateToTab(0),
         ),
         SizedBox(height: 12.h),

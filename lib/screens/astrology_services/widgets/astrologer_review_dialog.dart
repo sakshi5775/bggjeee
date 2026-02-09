@@ -3,12 +3,105 @@ import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_review_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class AstrologerReviewDialog {
+  /// Show compact prompt asking if user wants to rate
+  static void showPrompt({
+    required BuildContext context,
+    required AstrologerModel astrologer,
+    required String serviceType,
+    AstrologerReview? existingReview,
+  }) {
+    final isEditing = existingReview != null;
+
+    Get.dialog(
+      barrierDismissible: false,
+      AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        contentPadding: EdgeInsets.all(16.w),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.star, color: AppColors.saffron, size: 20.w),
+            SizedBox(width: 8.w),
+            Flexible(
+              child: AutoTranslateText(
+                isEditing ? 'Update Your Review' : 'Rate Your Experience',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: const Color(0xFF5F2221),
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        content: AutoTranslateText(
+          isEditing
+              ? 'You have already reviewed ${astrologer.displayName}. Would you like to update it?'
+              : 'Would you like to rate your experience with ${astrologer.displayName}?',
+          style: MyTextTheme.smallBCN.copyWith(
+            color: const Color(0xFF666666),
+            fontSize: 13.sp,
+          ),
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: AutoTranslateText(
+              'Maybe Later',
+              style: MyTextTheme.smallBCN.copyWith(
+                color: const Color(0xFF666666),
+                fontSize: 13.sp,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back(); // Close prompt
+              // Show full review dialog
+              show(
+                context: context,
+                astrologerId: astrologer.astrologerId,
+                astrologer: astrologer,
+                serviceType: serviceType,
+                existingReview: existingReview,
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.saffron,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              elevation: 0,
+            ),
+            child: AutoTranslateText(
+              isEditing ? 'Update Now' : 'Rate Now',
+              style: MyTextTheme.smallBCB.copyWith(
+                color: Colors.white,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Show full review dialog
   static void show({
     required BuildContext context,
     required String astrologerId,
@@ -23,7 +116,6 @@ class AstrologerReviewDialog {
     final isEditing = existingReview != null;
     final isSubmitting = false.obs;
     final errorMessage = ''.obs;
-    final currentFollowing = isFollowing.obs; // Make follow status reactive
 
     // Get or create controller
     final controller = Get.put(
@@ -46,7 +138,7 @@ class AstrologerReviewDialog {
           ),
           child: Container(
             constraints: BoxConstraints(maxWidth: 400.w),
-            padding: EdgeInsets.all(24.w),
+            padding: EdgeInsets.all(16.w),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -57,13 +149,13 @@ class AstrologerReviewDialog {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: Text(
+                        child: AutoTranslateText(
                           isEditing
                               ? 'Edit Your Review'
                               : 'Rate Your Experience',
                           style: MyTextTheme.largeBCB.copyWith(
                             color: const Color(0xFF5F2221),
-                            fontSize: 20.sp,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -80,7 +172,7 @@ class AstrologerReviewDialog {
                       ),
                     ],
                   ),
-                  Spacing.h(12),
+                  Spacing.h(8),
                   Row(
                     children: [
                       if (astrologer.profilePicture != null &&
@@ -109,7 +201,7 @@ class AstrologerReviewDialog {
                         ),
                       SizedBox(width: 12.w),
                       Expanded(
-                        child: Text(
+                        child: AutoTranslateText(
                           astrologer.displayName,
                           style: MyTextTheme.mediumBCB.copyWith(
                             color: const Color(0xFF333333),
@@ -119,55 +211,10 @@ class AstrologerReviewDialog {
                       ),
                     ],
                   ),
-                  Spacing.h(24),
-
-                  // Follow Button (if not already following and callback provided)
-                  // Use Obx to reactively update follow status
-                  // Obx(() {
-                  //   // Re-fetch follow status if needed (this will be reactive)
-                  //   if (!currentFollowing.value) {
-                  //     return Padding(
-                  //       padding: EdgeInsets.only(bottom: 16.h),
-                  //       child: SizedBox(
-                  //         width: double.infinity,
-                  //         child: OutlinedButton.icon(
-                  //           onPressed: () {
-                  //             onFollow ??
-                  //                 () {}; // Safe since we check null in Obx condition
-                  //             // Update follow status after toggle
-                  //             currentFollowing.value = true;
-                  //           },
-                  //           icon: Icon(
-                  //             Icons.person_add,
-                  //             size: 18.w,
-                  //             color: AppColors.saffron,
-                  //           ),
-                  //           label: Text(
-                  //             'Follow ${astrologer.displayName}',
-                  //             style: MyTextTheme.mediumBCB.copyWith(
-                  //               color: AppColors.saffron,
-                  //               fontSize: 14.sp,
-                  //             ),
-                  //           ),
-                  //           style: OutlinedButton.styleFrom(
-                  //             side: BorderSide(
-                  //               color: AppColors.saffron,
-                  //               width: 1.5,
-                  //             ),
-                  //             padding: EdgeInsets.symmetric(vertical: 12.h),
-                  //             shape: RoundedRectangleBorder(
-                  //               borderRadius: BorderRadius.circular(10.r),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     );
-                  //   }
-                  //   return const SizedBox.shrink();
-                  // }),
+                  Spacing.h(16),
 
                   // Rating Section
-                  Text(
+                  AutoTranslateText(
                     'How would you rate this experience?',
                     style: MyTextTheme.mediumBCB.copyWith(
                       color: const Color(0xFF333333),
@@ -175,7 +222,7 @@ class AstrologerReviewDialog {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Spacing.h(12),
+                  Spacing.h(8),
                   Center(
                     child: Obx(
                       () => Row(
@@ -194,7 +241,7 @@ class AstrologerReviewDialog {
                                 padding: EdgeInsets.symmetric(horizontal: 2.w),
                                 child: Icon(
                                   Icons.star_rounded,
-                                  size: 40.w,
+                                  size: 32.w,
                                   color: index < rating.value
                                       ? AppColors.saffron
                                       : Colors.grey[300]!,
@@ -209,7 +256,7 @@ class AstrologerReviewDialog {
                   Spacing.h(8),
                   Center(
                     child: Obx(
-                      () => Text(
+                      () => AutoTranslateText(
                         _getRatingText(rating.value),
                         style: MyTextTheme.smallBCN.copyWith(
                           color: AppColors.saffron,
@@ -219,10 +266,10 @@ class AstrologerReviewDialog {
                       ),
                     ),
                   ),
-                  Spacing.h(24),
+                  Spacing.h(16),
 
                   // Review Text Section
-                  Text(
+                  AutoTranslateText(
                     'Share your experience',
                     style: MyTextTheme.mediumBCB.copyWith(
                       color: const Color(0xFF333333),
@@ -233,8 +280,8 @@ class AstrologerReviewDialog {
                   Spacing.h(8),
                   TextField(
                     controller: reviewTextController,
-                    maxLines: 6,
-                    minLines: 4,
+                    maxLines: 4,
+                    minLines: 2,
                     enabled: !isSubmitting.value,
                     decoration: InputDecoration(
                       hintText:
@@ -279,7 +326,7 @@ class AstrologerReviewDialog {
                                 ),
                                 SizedBox(width: 6.w),
                                 Expanded(
-                                  child: Text(
+                                  child: AutoTranslateText(
                                     errorMessage.value,
                                     style: MyTextTheme.smallBCN.copyWith(
                                       color: Colors.red,
@@ -293,7 +340,7 @@ class AstrologerReviewDialog {
                         : const SizedBox.shrink(),
                   ),
 
-                  Spacing.h(24),
+                  Spacing.h(16),
 
                   // Action Buttons
                   Row(
@@ -320,7 +367,7 @@ class AstrologerReviewDialog {
                                 borderRadius: BorderRadius.circular(10.r),
                               ),
                             ),
-                            child: Text(
+                            child: AutoTranslateText(
                               'Delete',
                               style: MyTextTheme.mediumBCB.copyWith(
                                 color: Colors.red,
@@ -352,7 +399,7 @@ class AstrologerReviewDialog {
                                       final success = isEditing
                                           ? await controller.updateReview(
                                               astrologerId,
-                                              existingReview.id,
+                                              existingReview!.id,
                                               rating: rating.value,
                                               reviewText: reviewTextController
                                                   .text
@@ -399,7 +446,7 @@ class AstrologerReviewDialog {
                                       ),
                                     ),
                                   )
-                                : Text(
+                                : AutoTranslateText(
                                     isEditing
                                         ? 'Update Review'
                                         : 'Submit Review',

@@ -19,6 +19,10 @@ class AllAstrologersController extends GetxController {
   final RxBool isLoadingBanners = false.obs;
   final RxString errorMessage = ''.obs;
 
+  // Follow/unfollow state tracking
+  final RxMap<String, bool> followStatus = <String, bool>{}.obs;
+  final RxMap<String, bool> followLoading = <String, bool>{}.obs;
+
   // Filter variables (specialization + category)
   final RxString selectedFilter =
       'All'.obs; // All, Vedic, Tarots, Vastu, Prashana, Celebrity, Kids
@@ -103,6 +107,8 @@ class AllAstrologersController extends GetxController {
         } else {
           astrologers.addAll(response.astrologers);
         }
+        // Initialize follow status for new astrologers
+        _initializeFollowStatus();
         hasMoreData.value = response.pagination.hasNextPage;
         currentPage.value = response.pagination.currentPage;
       } else {
@@ -231,5 +237,87 @@ class AllAstrologersController extends GetxController {
   /// Initiate chat directly (bypasses booking screen)
   Future<void> initiateChat(AstrologerModel astrologer) async {
     await CallInitiationHelper.initiateChat(astrologer);
+  }
+
+  /// Toggle follow/unfollow for an astrologer
+  Future<void> toggleFollow(AstrologerModel astrologer) async {
+    final astrologerId = astrologer.astrologerId;
+
+    // Prevent multiple simultaneous requests
+    if (followLoading[astrologerId] == true) return;
+
+    final currentState = followStatus[astrologerId] ?? false;
+
+    try {
+      followLoading[astrologerId] = true;
+
+      final result = currentState
+          ? await _astrologerService.unfollowAstrologer(astrologerId)
+          : await _astrologerService.followAstrologer(
+              astrologerId,
+              source: 'PROFILE',
+            );
+
+      if (result['success'] == true) {
+        // Update follow state - use proper reactive update
+        final newState = !currentState;
+        followStatus[astrologerId] = newState;
+        followStatus.refresh(); // Force reactive update
+
+        Get.snackbar(
+          'Success',
+          currentState
+              ? 'Unfollowed ${astrologer.displayName}'
+              : 'Following ${astrologer.displayName}',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to ${currentState ? 'unfollow' : 'follow'} astrologer',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to ${currentState ? 'unfollow' : 'follow'}: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+    } finally {
+      followLoading[astrologerId] = false;
+    }
+  }
+
+  /// Initialize follow status for loaded astrologers
+  Future<void> _initializeFollowStatus() async {
+    for (var astrologer in astrologers) {
+      // Fetch actual follow status from API if not already loaded
+      if (!followStatus.containsKey(astrologer.astrologerId)) {
+        try {
+          final status = await _astrologerService.getFollowStatus(
+            astrologer.astrologerId,
+          );
+          if (status != null) {
+            followStatus[astrologer.astrologerId] =
+                status['isFollowing'] as bool? ?? false;
+          } else {
+            followStatus[astrologer.astrologerId] = false;
+          }
+        } catch (e) {
+          // Default to false if API call fails
+          followStatus[astrologer.astrologerId] = false;
+        }
+      }
+    }
   }
 }

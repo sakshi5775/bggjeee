@@ -4,9 +4,6 @@ import 'package:astrobharataiuser/screens/astrology_services/controller/astrolog
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/widgets/astrologer_review_dialog.dart';
 import 'package:astrobharataiuser/utils/call_initiation_helper.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -56,89 +53,13 @@ class AstrologerDetailController extends GetxController {
     if (args is Map<String, dynamic> && args['showReviewPrompt'] == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(const Duration(milliseconds: 500), () {
-          if (reviewController.myReview.value == null) {
-            // Show review dialog
-            Get.dialog(
-              barrierDismissible: false,
-              AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
-                title: Row(
-                  children: [
-                    Icon(Icons.star, color: AppColors.saffron, size: 24.w),
-                    SizedBox(width: 8.w),
-                    Expanded(
-                      child: AutoTranslateText(
-                        'Rate Your Experience',
-                        style: MyTextTheme.mediumBCB
-                            .copyWith(color: const Color(0xFF5F2221))
-                            .merge(AppTypography.h2),
-                      ),
-                    ),
-                  ],
-                ),
-                content: AutoTranslateText(
-                  'Would you like to rate your experience with ${astrologer.displayName}?',
-                  style: MyTextTheme.smallBCN
-                      .copyWith(color: const Color(0xFF666666))
-                      .merge(AppTypography.body1),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Get.back(),
-                    child: AutoTranslateText(
-                      'Maybe Later',
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: const Color(0xFF666666),
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Get.back(); // Close prompt dialog
-                      // Show review dialog
-                      Future.delayed(const Duration(milliseconds: 300), () async {
-                        // Fetch current follow status before showing dialog
-                        bool currentFollowing = isFollowing.value;
-                        try {
-                          final status = await _astrologerService
-                              .getFollowStatus(astrologer.astrologerId);
-                          currentFollowing = status?['isFollowing'] ?? false;
-                        } catch (e) {
-                          // Use current value if fetch fails
-                          if (kDebugMode)
-                            print(
-                              'Error fetching follow status for review dialog: $e',
-                            );
-                        }
-
-                        AstrologerReviewDialog.show(
-                          context: Get.context!,
-                          astrologerId: astrologer.astrologerId,
-                          astrologer: astrologer,
-                          serviceType:
-                              args['serviceType'] as String? ?? 'VIDEO',
-                          isFollowing: currentFollowing,
-                          onFollow: () async {
-                            await toggleFollow();
-                            // Refresh follow status after toggle
-                            await loadFollowStatus();
-                          },
-                        );
-                      });
-                    },
-                    child: AutoTranslateText(
-                      'Rate Now',
-                      style: MyTextTheme.smallBCB.copyWith(
-                        color: AppColors.saffron,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
+          // Show review prompt using global widget
+          AstrologerReviewDialog.showPrompt(
+            context: Get.context!,
+            astrologer: astrologer,
+            serviceType: args['serviceType'] as String? ?? 'VIDEO',
+            existingReview: reviewController.myReview.value,
+          );
         });
       });
     }

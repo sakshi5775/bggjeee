@@ -3,6 +3,8 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/astrologer_chat_model.dart';
+import 'package:astrobharataiuser/data_model/call_model.dart';
+import 'package:astrobharataiuser/screens/astrology_services/controllers/astrologer_call_history_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controllers/astrologer_chat_history_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
@@ -156,12 +158,8 @@ class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
                 controller: _tabController,
                 children: [
                   _ChatHistoryTab(),
-                  _EmptyHistoryTab(
-                    onTap: () => Get.to(() => const AstrologyServicesView()),
-                  ),
-                  _EmptyHistoryTab(
-                    onTap: () => Get.to(() => const AstrologyServicesView()),
-                  ),
+                  _CallHistoryTab(callType: 'VOICE'),
+                  _CallHistoryTab(callType: 'VIDEO'),
                 ],
               ),
             ),
@@ -187,6 +185,7 @@ class _ChatHistoryTab extends StatelessWidget {
       if (list.isEmpty) {
         return _EmptyHistoryTab(
           onTap: () => Get.to(() => const AstrologyServicesView()),
+          actionText: 'Make Your First Chat',
         );
       }
       return RefreshIndicator(
@@ -328,8 +327,12 @@ class _ChatHistoryTab extends StatelessWidget {
 
 class _EmptyHistoryTab extends StatelessWidget {
   final VoidCallback onTap;
+  final String actionText;
 
-  const _EmptyHistoryTab({required this.onTap});
+  const _EmptyHistoryTab({
+    required this.onTap,
+    this.actionText = 'Make Your First Call',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -387,7 +390,7 @@ class _EmptyHistoryTab extends StatelessWidget {
             GestureDetector(
               onTap: onTap,
               child: AutoTranslateText(
-                'Make Your First Call',
+                actionText,
                 style: AppTypography.body1.copyWith(
                   color: AppColors.deepOrange,
                   fontWeight: FontWeight.w600,
@@ -397,6 +400,167 @@ class _EmptyHistoryTab extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _CallHistoryTab extends StatelessWidget {
+  final String callType;
+
+  const _CallHistoryTab({required this.callType});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.put(
+      AstrologerCallHistoryController(callType: callType),
+      tag: callType,
+    );
+
+    return Obx(() {
+      if (controller.isLoading.value && controller.historyList.isEmpty) {
+        return Center(
+          child: CircularProgressIndicator(color: AppColors.deepOrange),
+        );
+      }
+      final list = controller.historyList;
+      if (list.isEmpty) {
+        return _EmptyHistoryTab(
+          onTap: () => Get.to(() => const AstrologyServicesView()),
+          actionText: callType == 'VOICE'
+              ? 'Make Your First Call'
+              : 'Make Your First Video Call',
+        );
+      }
+      return RefreshIndicator(
+        onRefresh: () => controller.loadHistory(reset: true),
+        color: AppColors.deepOrange,
+        child: ListView.builder(
+          padding: AppPaddings.all(16),
+          itemCount: list.length + (controller.hasMore ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (index == list.length) {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                child: Center(
+                  child: TextButton(
+                    onPressed: controller.loadMore,
+                    child: AutoTranslateText(
+                      'Load More',
+                      style: AppTypography.body1.copyWith(
+                        color: AppColors.deepOrange,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }
+            return _buildHistoryCard(controller, list[index]);
+          },
+        ),
+      );
+    });
+  }
+
+  Widget _buildHistoryCard(
+    AstrologerCallHistoryController controller,
+    CallHistoryItem session,
+  ) {
+    final date = session.createdAt;
+    final statusColor = controller.getStatusColor(session.status);
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 12.h),
+      padding: AppPaddings.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: '#DBCCA8'.toColor().withOpacity(0.5)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: statusColor.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(color: statusColor, width: 1),
+                ),
+                child: AutoTranslateText(
+                  session.status.toUpperCase(),
+                  style: MyTextTheme.smallBCB
+                      .copyWith(color: statusColor, fontWeight: FontWeight.w600)
+                      .merge(AppTypography.label),
+                ),
+              ),
+              AutoTranslateText(
+                controller.formatDate(date),
+                style: MyTextTheme.smallBCN.copyWith(
+                  color: '#6F221E'.toColor().withOpacity(0.7),
+                ),
+              ),
+            ],
+          ),
+          Spacing.h(8),
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 20.r,
+                backgroundImage: session.astrologerImage != null
+                    ? NetworkImage(session.astrologerImage!)
+                    : null,
+                child: session.astrologerImage == null
+                    ? Icon(Icons.person, color: Colors.grey)
+                    : null,
+              ),
+              Spacing.w(12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AutoTranslateText(
+                      session.astrologerName,
+                      style: AppTypography.body1.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: '#3D0C11'.toColor(),
+                      ),
+                    ),
+                    AutoTranslateText(
+                      '${callType == 'VOICE' ? 'Voice' : 'Video'} Call • ${controller.formatDuration(session.durationSeconds)}',
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: '#6F221E'.toColor().withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  AutoTranslateText(
+                    '₹${session.totalAmount}',
+                    style: AppTypography.body1.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.deepOrange,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

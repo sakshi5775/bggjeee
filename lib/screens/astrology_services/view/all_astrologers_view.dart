@@ -36,11 +36,14 @@ class AllAstrologersView extends StatelessWidget {
     );
 
     return Container(
-      decoration: BoxDecoration(gradient: AppColors.gradientBackground),
+      decoration: hideHeader
+          ? null
+          : BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
           top: !hideHeader,
+          bottom: false,
           child: Column(
             children: [
               if (hideHeader)
@@ -186,57 +189,89 @@ class AllAstrologersView extends StatelessWidget {
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.primaryGradient.colors.first,
+        color: Colors.transparent,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(26.r),
           bottomRight: Radius.circular(26.r),
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(16.w, 0, 0, 16.h),
+        padding: EdgeInsets.fromLTRB(
+          0,
+          hideHeader ? 12.h : 0,
+          0,
+          hideHeader ? 8.h : 16.h,
+        ),
         child: SizedBox(
           height: 36.h,
-          child: ListView.builder(
+          child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.only(right: 16.w),
-            itemCount: controller.filterOptions.length,
-            itemBuilder: (context, index) {
-              final filter = controller.filterOptions[index];
-              return Obx(() {
-                final isSelected = controller.selectedFilter.value == filter;
-                return GestureDetector(
-                  onTap: () => controller.setFilter(filter),
-                  child: Container(
-                    margin: EdgeInsets.only(right: 12.w),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 8.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.white : Color(0xFF5D1C21),
-                      borderRadius: BorderRadius.circular(8.r),
-                      border: isSelected
-                          ? Border.all(color: '#DEAF3E'.toColor(), width: 1)
-                          : null,
-                    ),
-                    child: Center(
-                      child: AutoTranslateText(
-                        filter,
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-
-                          color: isSelected
-                              ? '#DDAF3E'.toColor()
-                              : Colors.white,
-                          height: 1,
+            physics: const BouncingScrollPhysics(),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(width: 16.w),
+                ...controller.filterOptions.map((filter) {
+                  return Obx(() {
+                    final isSelected =
+                        controller.selectedFilter.value == filter;
+                    return Padding(
+                      padding: EdgeInsets.only(right: 6.w),
+                      child: GestureDetector(
+                        onTap: () => controller.setFilter(filter),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeOut,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: Get.width > 600 ? 10.h : 5.h,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: isSelected
+                                ? AppColors.orangeGradient
+                                : null,
+                            color: isSelected ? null : Colors.transparent,
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: isSelected
+                                ? null
+                                : Border.all(
+                                    color: AppColors.saffron.withOpacity(0.3),
+                                    width: 1,
+                                  ),
+                            boxShadow: isSelected
+                                ? [
+                                    BoxShadow(
+                                      color: const Color(
+                                        0xFFed6f30,
+                                      ).withOpacity(0.25),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 1),
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: Center(
+                            child: AutoTranslateText(
+                              filter,
+                              textAlign: TextAlign.center,
+                              style: MyTextTheme.mediumBCB.copyWith(
+                                color: isSelected
+                                    ? Colors.white
+                                    : AppColors.saffron,
+                                fontWeight: isSelected
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                );
-              });
-            },
+                    );
+                  });
+                }),
+                SizedBox(width: 10.w),
+              ],
+            ),
           ),
         ),
       ),
@@ -366,7 +401,7 @@ class AllAstrologersView extends StatelessWidget {
                       Expanded(
                         child: AutoTranslateText(
                           astrologer.displayName,
-                          style: AppTypography.h1.copyWith(
+                          style: AppTypography.h2.copyWith(
                             color: '#68171E'.toColor(),
                           ),
                           maxLines: 1,
@@ -375,31 +410,78 @@ class AllAstrologersView extends StatelessWidget {
                       ),
                       SizedBox(width: 8.w),
                       // Follow Button
-                      GestureDetector(
-                        onTap: () {
-                          // Handle follow action
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.w,
-                            vertical: 4.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(4.r),
-                            border: Border.all(
-                              color: AppColors.orangeGradient.colors.first,
-                              width: 1,
+                      Obx(() {
+                        final astrologerId = astrologer.astrologerId;
+                        final isFollowing =
+                            controller.followStatus[astrologerId] ?? false;
+                        final isLoading =
+                            controller.followLoading[astrologerId] ?? false;
+
+                        return GestureDetector(
+                          onTap: isLoading
+                              ? null
+                              : () => controller.toggleFollow(astrologer),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 4.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isFollowing
+                                  ? Colors.grey[300]
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(4.r),
+                              border: Border.all(
+                                color: isFollowing
+                                    ? Colors.grey
+                                    : AppColors.orangeGradient.colors.first,
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (isLoading)
+                                  SizedBox(
+                                    width: 12.w,
+                                    height: 12.h,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        isFollowing
+                                            ? Colors.black87
+                                            : AppColors
+                                                  .orangeGradient
+                                                  .colors
+                                                  .first,
+                                      ),
+                                    ),
+                                  )
+                                else
+                                  Icon(
+                                    isFollowing
+                                        ? Icons.check
+                                        : Icons.person_add,
+                                    color: isFollowing
+                                        ? Colors.black87
+                                        : AppColors.orangeGradient.colors.first,
+                                    size: 14.w,
+                                  ),
+                                SizedBox(width: 4.w),
+                                AutoTranslateText(
+                                  isFollowing ? 'Following' : 'Follow',
+                                  style: AppTypography.body1.copyWith(
+                                    color: isFollowing
+                                        ? Colors.black87
+                                        : AppColors.orangeGradient.colors.first,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: AutoTranslateText(
-                            'Follow',
-                            style: AppTypography.body1.copyWith(
-                              color: AppColors.orangeGradient.colors.first,
-                            ),
-                          ),
-                        ),
-                      ),
+                        );
+                      }),
                     ],
                   ),
                   SizedBox(height: 6.h),

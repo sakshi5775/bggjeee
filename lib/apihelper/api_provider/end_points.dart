@@ -301,6 +301,7 @@ class EndPoints {
 
   /// Call APIs
   static const String callInitiate = 'calls/initiate';
+  static const String callHistory = 'calls/history';
   static String callEnd(String callId) => 'calls/$callId/end';
 
   /// Live Streams APIs

@@ -10,6 +10,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AllVideosView extends BasePage<AllVideosController> {
@@ -27,7 +28,45 @@ class AllVideosView extends BasePage<AllVideosController> {
           backgroundColor: Colors.transparent,
           body: Column(
             children: [
-              if (!hideHeader) ...[_buildHeader(), SizedBox(height: 4.h)],
+              if (!hideHeader) ...[
+                CommonHeader(
+                  title: 'Media Hub',
+                  showDrawer: false,
+                  showHome: false,
+                  onBackTap: () => Get.back(),
+                  customActions: [
+                    Obx(() {
+                      if (controller.selectedTabIndex.value != 0) {
+                        return const SizedBox.shrink();
+                      }
+                      return GestureDetector(
+                        onTap: controller.toggleViewMode,
+                        child: Container(
+                          width: 32.w,
+                          height: 32.h,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8.r),
+                            border: Border.all(
+                              color: const Color(0xFFE0E0E0),
+                              width: 1,
+                            ),
+                          ),
+                          child: Icon(
+                            controller.isGridView.value
+                                ? Icons.view_list
+                                : Icons.grid_view,
+                            size: 17.w,
+                            color: const Color(0xFF5F2221),
+                          ),
+                        ),
+                      );
+                    }),
+                    SizedBox(width: 16.w),
+                  ],
+                ),
+                SizedBox(height: 4.h),
+              ],
               _buildTabBar(),
               SizedBox(height: 12.h),
               Expanded(
@@ -42,69 +81,6 @@ class AllVideosView extends BasePage<AllVideosController> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-              width: 34.w,
-              height: 34.w,
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.circular(8.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: '#68171E'.toColor().withOpacity(0.2),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(Icons.arrow_back, color: Colors.white, size: 17.w),
-            ),
-          ),
-          SizedBox(width: 8.w),
-          AutoTranslateText(
-            'Media Hub',
-            style: AppTypography.h2.copyWith(
-              color: '#3D0C11'.toColor(),
-              fontWeight: FontWeight.bold,
-              fontSize: 17.sp,
-            ),
-          ),
-          const Spacer(),
-          Obx(() {
-            // Only show grid/list toggle for YouTube tab
-            if (controller.selectedTabIndex.value != 0)
-              return const SizedBox.shrink();
-            return GestureDetector(
-              onTap: controller.toggleViewMode,
-              child: Container(
-                width: 32.w,
-                height: 32.h,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
-                ),
-                child: Icon(
-                  controller.isGridView.value
-                      ? Icons.view_list
-                      : Icons.grid_view,
-                  size: 17.w,
-                  color: const Color(0xFF5F2221),
-                ),
-              ),
-            );
-          }),
-        ],
       ),
     );
   }
