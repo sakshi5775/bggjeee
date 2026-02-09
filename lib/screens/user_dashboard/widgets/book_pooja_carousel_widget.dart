@@ -20,45 +20,48 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: AppPaddings.symmetric(h: 16),
+      padding: AppPaddings.symmetric(h: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header Section
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              AutoTranslateText(
-                'Book Pooja',
-                style: MyTextTheme.largeBCB
-                    .copyWith(
-                      color: "#3D0C11".toColor(),
-                      fontWeight: FontWeight.bold,
-                    )
-                    .merge(AppTypography.h2),
-              ),
-              GestureDetector(
-                onTap: () {
-                  // Navigate to view all poojas
-                  Get.toNamed(AppRoutes.bookPuja);
-                },
-                child: AutoTranslateText(
-                  'View all',
-                  style: MyTextTheme.mediumBCN
+          Padding(
+            padding: AppPaddings.symmetric(h: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AutoTranslateText(
+                  'Book Pooja',
+                  style: MyTextTheme.largeBCB
                       .copyWith(
-                        color: "#666666".toColor(),
-                        fontWeight: FontWeight.w400,
+                        color: "#3D0C11".toColor(),
+                        fontWeight: FontWeight.bold,
                       )
-                      .merge(AppTypography.body1),
+                      .merge(AppTypography.h2),
                 ),
-              ),
-            ],
+                GestureDetector(
+                  onTap: () {
+                    // Navigate to view all poojas
+                    Get.toNamed(AppRoutes.bookPuja);
+                  },
+                  child: AutoTranslateText(
+                    'View all',
+                    style: MyTextTheme.mediumBCN
+                        .copyWith(
+                          color: "#666666".toColor(),
+                          fontWeight: FontWeight.w400,
+                        )
+                        .merge(AppTypography.body1),
+                  ),
+                ),
+              ],
+            ),
           ),
           // Spacing.h(2),
           // Carousel Section
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxHeight: Get.width > 600 ? 130.h : 130.h,
+              maxHeight: Get.width > 600 ? 165.h : 160.h,
             ),
             child: Obx(() {
               if (controller.isLoadingPujas.value) {
@@ -74,6 +77,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
               return PageView.builder(
                 key: const ValueKey('book_pooja_pageview'),
                 controller: controller.bookPoojaPageController.value,
+
                 onPageChanged: (index) {
                   controller.bookPoojaCurrentPage.value = index;
                 },
@@ -132,7 +136,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
       child: Card(
         elevation: 2,
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: isTablet ? 165.h : 120.h),
+          constraints: BoxConstraints(maxHeight: isTablet ? 165.h : 150.h),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -148,8 +152,8 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                     children: [
                       // Puja Image
                       Container(
-                        width: isTablet ? 60.w : 42.w,
-                        height: isTablet ? 60.w : 42.w,
+                        width: isTablet ? 60.w : null,
+                        height: isTablet ? 60.w : null,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.r),
                           border: Border.all(
@@ -162,12 +166,12 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                           child: puja.image != null && puja.image!.isNotEmpty
                               ? Image.network(
                                   puja.image!,
-                                  width: isTablet ? 60.w : 42.w,
-                                  height: isTablet ? 60.w : 42.w,
-                                  fit: BoxFit.cover,
+                                  width: isTablet ? 60.w : 100,
+                                  height: isTablet ? 60.w : 100,
+                                  fit: BoxFit.fill,
                                   errorBuilder: (context, error, stackTrace) {
                                     return Container(
-                                      width: isTablet ? 60.w : 42.w,
+                                      width: isTablet ? 60.w : 60,
                                       height: isTablet ? 60.w : 42.w,
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
@@ -246,55 +250,109 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                             // Price, Timing and Button Row
                             Row(
                               children: [
-                                // Price
-                                Flexible(
-                                  child: AutoTranslateText(
-                                    priceText,
-                                    style: MyTextTheme.mediumBCB
-                                        .copyWith(
-                                          color: AppColors.deepOrange,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: isTablet ? 20.sp : 16.sp,
-                                        )
-                                        .merge(AppTypography.h3),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                if (timingText.isNotEmpty) ...[
-                                  Spacing.w(isTablet ? 12 : 8),
-                                  // Timing with icon
+                                if (isTablet) ...[
+                                  // Tablet: Horizontal Layout (Price - Space - Time - Spacer)
                                   Flexible(
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.access_time,
-                                          size: isTablet ? 12.w : 12.w,
-                                          color: "#666666".toColor(),
-                                        ),
-                                        Spacing.w(3),
-                                        Flexible(
-                                          child: AutoTranslateText(
-                                            timingText,
-                                            style: MyTextTheme.smallBCN
-                                                .copyWith(
-                                                  color: "#666666".toColor(),
-                                                  fontSize: isTablet
-                                                      ? 12.sp
-                                                      : 10.sp,
-                                                )
-                                                .merge(AppTypography.body2),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
+                                    child: AutoTranslateText(
+                                      priceText,
+                                      style: MyTextTheme.mediumBCB
+                                          .copyWith(
+                                            color: AppColors.deepOrange,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20.sp,
+                                          )
+                                          .merge(AppTypography.h3),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  if (timingText.isNotEmpty) ...[
+                                    Spacing.w(12),
+                                    Flexible(
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.access_time,
+                                            size: 12.w,
+                                            color: "#666666".toColor(),
                                           ),
+                                          Spacing.w(3),
+                                          Flexible(
+                                            child: AutoTranslateText(
+                                              timingText,
+                                              style: MyTextTheme.smallBCN
+                                                  .copyWith(
+                                                    color: "#666666".toColor(),
+                                                    fontSize: 12.sp,
+                                                  )
+                                                  .merge(AppTypography.body2),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                  const Spacer(),
+                                ] else ...[
+                                  // Mobile: Vertical Layout (Price over Time)
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        AutoTranslateText(
+                                          priceText,
+                                          style: MyTextTheme.mediumBCB
+                                              .copyWith(
+                                                color: AppColors.deepOrange,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14.sp,
+                                              )
+                                              .merge(AppTypography.h3),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
+                                        if (timingText.isNotEmpty) ...[
+                                          Spacing.h(2),
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.access_time,
+                                                size: 10.w,
+                                                color: "#666666".toColor(),
+                                              ),
+                                              Spacing.w(3),
+                                              Flexible(
+                                                child: AutoTranslateText(
+                                                  timingText,
+                                                  style: MyTextTheme.smallBCN
+                                                      .copyWith(
+                                                        color: "#666666"
+                                                            .toColor(),
+                                                        fontSize: 9.sp,
+                                                      )
+                                                      .merge(
+                                                        AppTypography.body2,
+                                                      ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ],
                                     ),
                                   ),
                                 ],
-                                const Spacer(),
-                                // Book Now Button
+                                // Book Now Button - Consistent across both
                                 GestureDetector(
                                   onTap: () {
                                     // Navigate to puja detail page
@@ -311,8 +369,8 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                                   },
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: isTablet ? 24.w : 16.w,
-                                      vertical: isTablet ? 10.h : 8.h,
+                                      horizontal: isTablet ? 24.w : 12.w,
+                                      vertical: isTablet ? 10.h : 6.h,
                                     ),
                                     decoration: BoxDecoration(
                                       gradient: AppColors.orangeGradient,

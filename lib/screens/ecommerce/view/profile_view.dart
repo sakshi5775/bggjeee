@@ -385,14 +385,23 @@ class ProfileView extends GetView<ProfileController> {
                         ),
                         SizedBox(height: 16.h),
                         // Name
-                        AutoTranslateText(
-                          controller.userName.value,
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textColorMaroon,
-                          ),
-                        ),
+                        controller.userName.value.isNotEmpty
+                            ? Text(
+                                controller.userName.value,
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textColorMaroon,
+                                ),
+                              )
+                            : AutoTranslateText(
+                                'Loading...',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textColorMaroon,
+                                ),
+                              ),
                         SizedBox(height: 6.h),
                         // Email
                         if (controller.userEmail.value.isNotEmpty)

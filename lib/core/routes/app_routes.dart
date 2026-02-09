@@ -4,6 +4,9 @@ class AppRoutes {
   static const String login = '/login';
   static const String signup = '/signup';
   static const String otp = '/otp';
+  static const String forgotPassword = '/forgot-password';
+  static const String forgotPasswordOtp = '/forgot-password-otp';
+  static const String resetPassword = '/reset-password';
 
   // Dashboard Routes
   static const String userDashboard = '/user-dashboard';
@@ -240,4 +243,5 @@ class AppRoutes {
       '/astrologer-registration-form';
   static const String astrologerRegistrationOtp =
       '/astrologer-registration-otp';
+  static const String userPrivacyPolicy = '/user-privacy-policy';
 }

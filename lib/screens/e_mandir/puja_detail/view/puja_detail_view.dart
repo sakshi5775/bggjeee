@@ -14,7 +14,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class PujaDetailView extends BasePage<PujaDetailController> {
-  const PujaDetailView({super.key});
+  PujaDetailView({super.key});
+
+  final GlobalKey aboutSectionKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -76,11 +78,23 @@ class PujaDetailView extends BasePage<PujaDetailController> {
                     children: [
                       // const PujaDetailHeaderWidget(), // Removed as replaced by CommonHeader
                       const SizedBox(height: 16),
-                      const PujaMediaCardWidget(),
+                      GestureDetector(
+                        onTap: () {
+                          if (aboutSectionKey.currentContext != null) {
+                            Scrollable.ensureVisible(
+                              aboutSectionKey.currentContext!,
+                              duration: const Duration(milliseconds: 600),
+                              curve: Curves.easeInOut,
+                              alignment: 0.1, // Aligns to near top of viewport
+                            );
+                          }
+                        },
+                        child: const PujaMediaCardWidget(),
+                      ),
                       const SizedBox(height: 16),
                       const PujaInfoCardsWidget(),
                       const SizedBox(height: 24),
-                      const PujaAboutSectionWidget(),
+                      PujaAboutSectionWidget(key: aboutSectionKey),
                       const SizedBox(height: 24),
                       const PujaTempleSectionWidget(),
                       const SizedBox(height: 24),

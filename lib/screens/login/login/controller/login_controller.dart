@@ -18,6 +18,7 @@ class LoginController extends BaseController {
   late final GlobalKey<FormState> formKey;
 
   final RxBool isEmailMode = false.obs;
+  final RxBool isTermsAccepted = false.obs;
   final Rx<CountryCode> selectedCountryCode = CountryCode.fromCountryCode(
     'IN',
   ).obs;
@@ -69,6 +70,17 @@ class LoginController extends BaseController {
 
   void login() async {
     if (!formKey.currentState!.validate()) {
+      return;
+    }
+
+    if (!isTermsAccepted.value) {
+      Get.snackbar(
+        'Required',
+        'Please accept Terms of Service and Privacy Policy to continue',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
 
@@ -136,7 +148,7 @@ class LoginController extends BaseController {
 
   String? validatePhone(String? value) {
     if (isEmailMode.value) {
-      return null; // Skip validation if in email mode
+      return null;
     }
     if (value == null || value.isEmpty) {
       return 'Please enter your phone number';

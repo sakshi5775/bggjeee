@@ -565,27 +565,22 @@ class AllBlogsView extends BasePage<AllBlogsController> {
             ),
           ],
         ),
+        padding: AppPaddings.all(12),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Thumbnail
             Container(
               width: 100.w,
               height: 100.h,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16.r),
-                  bottomLeft: Radius.circular(16.r),
-                ),
+                borderRadius: BorderRadius.circular(16.r),
                 color: Colors.black,
               ),
               child: Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(16.r),
-                      bottomLeft: Radius.circular(16.r),
-                    ),
+                    borderRadius: BorderRadius.circular(16.r),
                     child:
                         isVideo &&
                             blog.featuredImage != null &&
@@ -611,10 +606,11 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                             url: blog.featuredImage!,
                             width: 100.w,
                             height: 100.h,
+                            fit: BoxFit.cover,
                           )
                         : Container(
                             color: Colors.grey.withValues(alpha: 0.3),
-                            child: Icon(Icons.image, size: 30.w),
+                            child: Center(child: Icon(Icons.image, size: 30.w)),
                           ),
                   ),
                   Positioned(
@@ -632,41 +628,10 @@ class AllBlogsView extends BasePage<AllBlogsController> {
             // Content
             Expanded(
               child: Padding(
-                padding: AppPaddings.all(12),
+                padding: EdgeInsets.only(left: 12.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 10.r,
-                          backgroundColor: '#FF6B35'.toColor().withValues(
-                            alpha: 0.2,
-                          ),
-                          child: Icon(
-                            Icons.person,
-                            size: 10.w,
-                            color: '#FF6B35'.toColor(),
-                          ),
-                        ),
-                        Spacing.w(6),
-                        Expanded(
-                          child: AutoTranslateText(
-                            blog.author ?? 'Author',
-                            style: MyTextTheme.smallBCN.copyWith(
-                              color: '#3E2723'.toColor().withValues(alpha: 0.7),
-                            ),
-                          ),
-                        ),
-                        AutoTranslateText(
-                          _formatDate(blog.publishDate ?? blog.createdAt ?? ''),
-                          style: MyTextTheme.smallBCN.copyWith(
-                            color: '#3E2723'.toColor().withValues(alpha: 0.7),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Spacing.h(6),
                     AutoTranslateText(
                       blog.title ?? 'Untitled',
                       style: MyTextTheme.mediumBCB.copyWith(

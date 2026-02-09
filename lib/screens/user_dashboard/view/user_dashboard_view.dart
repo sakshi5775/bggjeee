@@ -891,11 +891,11 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                 },
                                 child: AutoTranslateText(
                                   'Astro Live Streaming Hub',
+                                  maxLines: 1,
                                   style: AppTypography.h2.copyWith(
                                     color: '#820B17'.toColor(),
                                     letterSpacing: -0.05,
                                   ),
-                                  maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -988,15 +988,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
 
           // Chat/Call Section (same data as All Astrologers, reversed order)
           const ChatCallAstrologerWidget(),
-          Spacing.h(2),
+          Spacing.h(5),
 
           // All Astrologers Section
           AllAstrologerWidget(),
-          Spacing.h(2),
+          Spacing.h(5),
 
           // AI Astrologers Section
           _buildAIAstrologersSection(context),
-          Spacing.h(2),
+          Spacing.h(5),
 
           // History Section
           const HistorySectionWidget(),

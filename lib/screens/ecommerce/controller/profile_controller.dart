@@ -29,7 +29,7 @@ class ProfileController extends BaseController {
   final isUpdatingProfile = false.obs;
 
   final profile = Rxn<UserProfileModel>();
-  final userName = 'Guest User'.obs;
+  final userName = ''.obs;
   final userEmail = ''.obs;
   final userPhone = ''.obs;
   final profileImageUrl = ''.obs;
@@ -43,11 +43,11 @@ class ProfileController extends BaseController {
   final maritalStatusController = TextEditingController();
   final occupationController = TextEditingController();
   final profilePicture = Rxn<File>();
-  
+
   // Dropdown values
   final selectedGender = Rxn<String>();
   final selectedMaritalStatus = Rxn<String>();
-  
+
   // Dropdown options
   static const List<String> genderOptions = ['MALE', 'FEMALE', 'OTHER'];
   static const List<String> maritalStatusOptions = ['SINGLE', 'MARRIED'];
@@ -90,7 +90,9 @@ class ProfileController extends BaseController {
   AuthService get _authService => Get.find<AuthService>();
 
   WishlistController? get wishlistController =>
-      Get.isRegistered<WishlistController>() ? Get.find<WishlistController>() : null;
+      Get.isRegistered<WishlistController>()
+      ? Get.find<WishlistController>()
+      : null;
 
   int get wishlistCount => wishlistController?.items.length ?? 0;
 
@@ -155,7 +157,8 @@ class ProfileController extends BaseController {
     try {
       final response = await _ecommerceService.getOrders(page: 1, limit: 5);
       if (response != null) {
-        ordersCount.value = response.pagination?.totalItems ?? response.items.length;
+        ordersCount.value =
+            response.pagination?.totalItems ?? response.items.length;
         recentOrders
           ..clear()
           ..addAll(response.items);
@@ -195,7 +198,10 @@ class ProfileController extends BaseController {
     }
 
     try {
-      final result = await _astrologerService.getFollowingAstrologers(page: 1, limit: 1);
+      final result = await _astrologerService.getFollowingAstrologers(
+        page: 1,
+        limit: 1,
+      );
       if (result != null) {
         final pagination = result['pagination'] as Map<String, dynamic>?;
         followingCount.value = pagination?['totalFollowing'] as int? ?? 0;
@@ -211,7 +217,8 @@ class ProfileController extends BaseController {
 
   void _applyProfile(UserProfileModel userProfile) {
     profile.value = userProfile;
-    userName.value = userProfile.personalInfo?.fullName?.trim().isNotEmpty == true
+    userName.value =
+        userProfile.personalInfo?.fullName?.trim().isNotEmpty == true
         ? userProfile.personalInfo!.fullName!.trim()
         : 'Guest User';
     userEmail.value = userProfile.contactInfo?.email?.trim() ?? '';
@@ -236,12 +243,15 @@ class ProfileController extends BaseController {
     }
 
     if (userProfile.contactInfo != null) {
-      alternatePhoneController.text = userProfile.contactInfo!.alternatePhone ?? '';
+      alternatePhoneController.text =
+          userProfile.contactInfo!.alternatePhone ?? '';
       if (userProfile.contactInfo!.address != null) {
         cityController.text = userProfile.contactInfo!.address!.city ?? '';
         stateController.text = userProfile.contactInfo!.address!.state ?? '';
-        pincodeController.text = userProfile.contactInfo!.address!.pincode ?? '';
-        countryController.text = userProfile.contactInfo!.address!.country ?? 'India';
+        pincodeController.text =
+            userProfile.contactInfo!.address!.pincode ?? '';
+        countryController.text =
+            userProfile.contactInfo!.address!.country ?? 'India';
       }
     }
 
@@ -273,7 +283,8 @@ class ProfileController extends BaseController {
       }
     }
 
-    if (userProfile.birthChart != null && userProfile.birthChart!.birthPlace != null) {
+    if (userProfile.birthChart != null &&
+        userProfile.birthChart!.birthPlace != null) {
       final birthPlace = userProfile.birthChart!.birthPlace!;
       birthCityController.text = birthPlace.city ?? '';
       birthStateController.text = birthPlace.state ?? '';
@@ -283,7 +294,8 @@ class ProfileController extends BaseController {
       birthTimezoneController.text = birthPlace.timezone ?? '';
     }
 
-    if (userProfile.birthChart != null && userProfile.birthChart!.birthTime != null) {
+    if (userProfile.birthChart != null &&
+        userProfile.birthChart!.birthTime != null) {
       final birthTime = userProfile.birthChart!.birthTime!;
       birthHourController.text = birthTime.hour?.toString() ?? '';
       birthMinuteController.text = birthTime.minute?.toString() ?? '';
@@ -302,7 +314,9 @@ class ProfileController extends BaseController {
         whatsappNotificationController.value =
             userProfile.preferences!.notificationSettings!.whatsapp ?? false;
       }
-      interestsController.value = List<String>.from(userProfile.preferences!.interests ?? []);
+      interestsController.value = List<String>.from(
+        userProfile.preferences!.interests ?? [],
+      );
     }
   }
 
@@ -316,9 +330,15 @@ class ProfileController extends BaseController {
       isFetchingCoordinates.value = true;
       final addressDetails = await AddressHelper.fetchAddressDetails(
         city: cityController.text.trim(),
-        state: stateController.text.trim().isNotEmpty ? stateController.text.trim() : null,
-        country: countryController.text.trim().isNotEmpty ? countryController.text.trim() : null,
-        pincode: pincodeController.text.trim().isNotEmpty ? pincodeController.text.trim() : null,
+        state: stateController.text.trim().isNotEmpty
+            ? stateController.text.trim()
+            : null,
+        country: countryController.text.trim().isNotEmpty
+            ? countryController.text.trim()
+            : null,
+        pincode: pincodeController.text.trim().isNotEmpty
+            ? pincodeController.text.trim()
+            : null,
       );
 
       if (addressDetails != null) {
@@ -329,40 +349,48 @@ class ProfileController extends BaseController {
             // Only update if current state is empty or significantly different
             final currentState = stateController.text.trim().toLowerCase();
             final newState = extractedState.toLowerCase();
-            if (currentState.isEmpty || !currentState.contains(newState) && !newState.contains(currentState)) {
+            if (currentState.isEmpty ||
+                !currentState.contains(newState) &&
+                    !newState.contains(currentState)) {
               stateController.text = extractedState;
             }
           }
         }
-        
+
         // Update country if found
         if (addressDetails['country'] != null) {
           final extractedCountry = addressDetails['country']?.toString() ?? '';
           if (extractedCountry.isNotEmpty) {
             final currentCountry = countryController.text.trim().toLowerCase();
             final newCountry = extractedCountry.toLowerCase();
-            if (currentCountry.isEmpty || !currentCountry.contains(newCountry) && !newCountry.contains(currentCountry)) {
+            if (currentCountry.isEmpty ||
+                !currentCountry.contains(newCountry) &&
+                    !newCountry.contains(currentCountry)) {
               countryController.text = extractedCountry;
             }
           }
         }
-        
+
         // Update pincode if found
         if (addressDetails['pincode'] != null) {
           final extractedPincode = addressDetails['pincode']?.toString() ?? '';
-          if (extractedPincode.isNotEmpty && pincodeController.text.trim().isEmpty) {
+          if (extractedPincode.isNotEmpty &&
+              pincodeController.text.trim().isEmpty) {
             pincodeController.text = extractedPincode;
           }
         }
-        
+
         // Also update city if a more accurate name was found
         if (addressDetails['city'] != null) {
           final extractedCity = addressDetails['city']?.toString() ?? '';
-          if (extractedCity.isNotEmpty && extractedCity.toLowerCase() != cityController.text.trim().toLowerCase()) {
+          if (extractedCity.isNotEmpty &&
+              extractedCity.toLowerCase() !=
+                  cityController.text.trim().toLowerCase()) {
             // Only update if the extracted city is more specific or matches better
             final currentCity = cityController.text.trim().toLowerCase();
             final newCity = extractedCity.toLowerCase();
-            if (!currentCity.contains(newCity) && newCity.contains(currentCity)) {
+            if (!currentCity.contains(newCity) &&
+                newCity.contains(currentCity)) {
               cityController.text = extractedCity;
             }
           }
@@ -400,10 +428,13 @@ class ProfileController extends BaseController {
 
       if (addressDetails != null) {
         // Always update coordinates and timezone - these are critical
-        birthLatitudeController.text = addressDetails['latitude']?.toString() ?? '';
-        birthLongitudeController.text = addressDetails['longitude']?.toString() ?? '';
-        birthTimezoneController.text = addressDetails['timezone']?.toString() ?? '';
-        
+        birthLatitudeController.text =
+            addressDetails['latitude']?.toString() ?? '';
+        birthLongitudeController.text =
+            addressDetails['longitude']?.toString() ?? '';
+        birthTimezoneController.text =
+            addressDetails['timezone']?.toString() ?? '';
+
         // Update state if found and more accurate
         if (addressDetails['state'] != null) {
           final extractedState = addressDetails['state']?.toString() ?? '';
@@ -411,32 +442,41 @@ class ProfileController extends BaseController {
             final currentState = birthStateController.text.trim().toLowerCase();
             final newState = extractedState.toLowerCase();
             // Update if empty or if the extracted state is more specific
-            if (currentState.isEmpty || (!currentState.contains(newState) && newState.contains(currentState))) {
+            if (currentState.isEmpty ||
+                (!currentState.contains(newState) &&
+                    newState.contains(currentState))) {
               birthStateController.text = extractedState;
             }
           }
         }
-        
+
         // Update country if found and more accurate
         if (addressDetails['country'] != null) {
           final extractedCountry = addressDetails['country']?.toString() ?? '';
           if (extractedCountry.isNotEmpty) {
-            final currentCountry = birthCountryController.text.trim().toLowerCase();
+            final currentCountry = birthCountryController.text
+                .trim()
+                .toLowerCase();
             final newCountry = extractedCountry.toLowerCase();
-            if (currentCountry.isEmpty || (!currentCountry.contains(newCountry) && newCountry.contains(currentCountry))) {
+            if (currentCountry.isEmpty ||
+                (!currentCountry.contains(newCountry) &&
+                    newCountry.contains(currentCountry))) {
               birthCountryController.text = extractedCountry;
             }
           }
         }
-        
+
         // Update city if a more accurate name was found
         if (addressDetails['city'] != null) {
           final extractedCity = addressDetails['city']?.toString() ?? '';
-          if (extractedCity.isNotEmpty && extractedCity.toLowerCase() != birthCityController.text.trim().toLowerCase()) {
+          if (extractedCity.isNotEmpty &&
+              extractedCity.toLowerCase() !=
+                  birthCityController.text.trim().toLowerCase()) {
             final currentCity = birthCityController.text.trim().toLowerCase();
             final newCity = extractedCity.toLowerCase();
             // Only update if extracted city is more specific
-            if (!currentCity.contains(newCity) && newCity.contains(currentCity)) {
+            if (!currentCity.contains(newCity) &&
+                newCity.contains(currentCity)) {
               birthCityController.text = extractedCity;
             }
           }
@@ -446,7 +486,8 @@ class ProfileController extends BaseController {
       // Show error only if critical fields failed
       showErrorMessage(
         title: 'Address',
-        message: 'Failed to fetch address details. Please verify and enter coordinates manually.',
+        message:
+            'Failed to fetch address details. Please verify and enter coordinates manually.',
       );
     } finally {
       isFetchingCoordinates.value = false;
@@ -457,7 +498,10 @@ class ProfileController extends BaseController {
     // Use userId from login data, or fallback to profile (from GET profile response)
     final effectiveUserId = userId ?? profile.value?.userId;
     if (effectiveUserId == null || effectiveUserId.isEmpty) {
-      showErrorMessage(title: 'Profile', message: 'User ID not found. Please log in again.');
+      showErrorMessage(
+        title: 'Profile',
+        message: 'User ID not found. Please log in again.',
+      );
       return false;
     }
 
@@ -467,9 +511,13 @@ class ProfileController extends BaseController {
       // Format dateOfBirth for API (personalInfo expects yyyy-MM-dd)
       String? dateOfBirthStr;
       if (selectedBirthDate.value != null) {
-        dateOfBirthStr = DateFormat('yyyy-MM-dd').format(selectedBirthDate.value!);
+        dateOfBirthStr = DateFormat(
+          'yyyy-MM-dd',
+        ).format(selectedBirthDate.value!);
       } else if (profile.value?.birthChart?.generatedAt != null) {
-        dateOfBirthStr = _formatDateToISO(profile.value!.birthChart!.generatedAt!);
+        dateOfBirthStr = _formatDateToISO(
+          profile.value!.birthChart!.generatedAt!,
+        );
       }
 
       // Prepare PersonalInfo (API expects fullName, dateOfBirth, gender, maritalStatus, occupation)
@@ -480,10 +528,14 @@ class ProfileController extends BaseController {
         dateOfBirth: dateOfBirthStr,
         gender: selectedGender.value?.isNotEmpty == true
             ? selectedGender.value
-            : (genderController.text.trim().isNotEmpty ? genderController.text.trim() : null),
+            : (genderController.text.trim().isNotEmpty
+                  ? genderController.text.trim()
+                  : null),
         maritalStatus: selectedMaritalStatus.value?.isNotEmpty == true
             ? selectedMaritalStatus.value
-            : (maritalStatusController.text.trim().isNotEmpty ? maritalStatusController.text.trim() : null),
+            : (maritalStatusController.text.trim().isNotEmpty
+                  ? maritalStatusController.text.trim()
+                  : null),
         occupation: occupationController.text.trim().isNotEmpty
             ? occupationController.text.trim()
             : null,
@@ -494,7 +546,8 @@ class ProfileController extends BaseController {
         alternatePhone: alternatePhoneController.text.trim().isNotEmpty
             ? alternatePhoneController.text.trim()
             : null,
-        address: (cityController.text.trim().isNotEmpty ||
+        address:
+            (cityController.text.trim().isNotEmpty ||
                 stateController.text.trim().isNotEmpty ||
                 pincodeController.text.trim().isNotEmpty)
             ? Address(
@@ -525,7 +578,9 @@ class ProfileController extends BaseController {
           push: pushNotificationController.value,
           whatsapp: whatsappNotificationController.value,
         ),
-        interests: interestsController.isNotEmpty ? interestsController.toList() : null,
+        interests: interestsController.isNotEmpty
+            ? interestsController.toList()
+            : null,
       );
 
       // Call PATCH API to update profile (with empty birthChart)
@@ -543,7 +598,8 @@ class ProfileController extends BaseController {
       }
 
       // Prepare BirthChart data if provided
-      bool shouldUpdateBirthChart = birthCityController.text.trim().isNotEmpty ||
+      bool shouldUpdateBirthChart =
+          birthCityController.text.trim().isNotEmpty ||
           birthHourController.text.trim().isNotEmpty;
 
       if (shouldUpdateBirthChart) {
@@ -583,18 +639,18 @@ class ProfileController extends BaseController {
               : null,
         );
 
-        final birthTime = BirthTime(
-          hour: hour,
-          minute: minute,
-          second: second,
-        );
+        final birthTime = BirthTime(hour: hour, minute: minute, second: second);
 
         // Extract and format dateOfBirth from selected date or profile
         String? dateOfBirth;
         if (selectedBirthDate.value != null) {
-          dateOfBirth = DateFormat('yyyy-MM-dd').format(selectedBirthDate.value!);
+          dateOfBirth = DateFormat(
+            'yyyy-MM-dd',
+          ).format(selectedBirthDate.value!);
         } else if (profile.value?.birthChart?.generatedAt != null) {
-          dateOfBirth = _formatDateToISO(profile.value!.birthChart!.generatedAt!);
+          dateOfBirth = _formatDateToISO(
+            profile.value!.birthChart!.generatedAt!,
+          );
         }
 
         if (dateOfBirth == null || dateOfBirth.isEmpty) {
@@ -614,7 +670,8 @@ class ProfileController extends BaseController {
         if (!_isValidBirthDateForChart(dateOfBirth)) {
           showErrorMessage(
             title: 'Birth Chart',
-            message: 'Age must be between 13 and 120 years. Birth chart was not updated.',
+            message:
+                'Age must be between 13 and 120 years. Birth chart was not updated.',
           );
           await loadProfile();
           showSuccessMessage(
@@ -670,7 +727,8 @@ class ProfileController extends BaseController {
     final now = DateTime.now();
     if (birth.isAfter(now)) return false;
     int age = now.year - birth.year;
-    if (birth.month > now.month || (birth.month == now.month && birth.day > now.day)) {
+    if (birth.month > now.month ||
+        (birth.month == now.month && birth.day > now.day)) {
       age--;
     }
     return age >= 13 && age <= 120;
@@ -680,14 +738,14 @@ class ProfileController extends BaseController {
   /// Handles both DD/MM/YYYY and ISO formats
   String? _formatDateToISO(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return null;
-    
+
     try {
       // Try parsing as ISO date first
       final isoDate = DateTime.tryParse(dateStr);
       if (isoDate != null) {
         return '${isoDate.year.toString().padLeft(4, '0')}-${isoDate.month.toString().padLeft(2, '0')}-${isoDate.day.toString().padLeft(2, '0')}';
       }
-      
+
       // Try parsing as DD/MM/YYYY
       final parts = dateStr.split('/');
       if (parts.length == 3) {
@@ -701,7 +759,7 @@ class ProfileController extends BaseController {
     } catch (e) {
       // Return default if parsing fails
     }
-    
+
     return '1990-01-15'; // Default date as per requirement
   }
 
@@ -709,7 +767,9 @@ class ProfileController extends BaseController {
   Future<void> selectBirthDate() async {
     final pickedDate = await showDatePicker(
       context: Get.context!,
-      initialDate: selectedBirthDate.value ?? DateTime.now().subtract(Duration(days: 365 * 25)),
+      initialDate:
+          selectedBirthDate.value ??
+          DateTime.now().subtract(Duration(days: 365 * 25)),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       helpText: 'Select Date of Birth',
@@ -739,7 +799,10 @@ class ProfileController extends BaseController {
     final minute = int.tryParse(birthMinuteController.text.trim()) ?? 0;
     final pickedTime = await TimePickerHelper.showTimePicker12h(
       Get.context!,
-      initialTime: TimeOfDay(hour: hour.clamp(0, 23), minute: minute.clamp(0, 59)),
+      initialTime: TimeOfDay(
+        hour: hour.clamp(0, 23),
+        minute: minute.clamp(0, 59),
+      ),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -763,7 +826,11 @@ class ProfileController extends BaseController {
 
   /// Called when user selects birth place from location bottom sheet (city, state, country);
   /// fills controllers and fetches lat/long/timezone.
-  Future<void> onBirthPlaceSelectedFromSheet(String city, String? state, String? country) async {
+  Future<void> onBirthPlaceSelectedFromSheet(
+    String city,
+    String? state,
+    String? country,
+  ) async {
     birthCityController.text = city;
     birthStateController.text = state ?? '';
     birthCountryController.text = country ?? 'India';
@@ -799,10 +866,13 @@ class ProfileController extends BaseController {
   }
 
   Future<void> onLogoutTap({bool allDevices = false}) async {
-    final result = await Get.dialog<String?>(
+    final result =
+        await Get.dialog<String?>(
           AlertDialog(
             title: const AutoTranslateText('Sign out'),
-            content: const AutoTranslateText('Choose how you would like to logout.'),
+            content: const AutoTranslateText(
+              'Choose how you would like to logout.',
+            ),
             actions: [
               TextButton(
                 onPressed: () => Get.back(result: null),

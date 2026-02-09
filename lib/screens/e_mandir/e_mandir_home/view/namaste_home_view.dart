@@ -21,13 +21,42 @@ class NamasteHomeView extends StatefulWidget {
   State<NamasteHomeView> createState() => _NamasteHomeViewState();
 }
 
-class _NamasteHomeViewState extends State<NamasteHomeView> {
+class _NamasteHomeViewState extends State<NamasteHomeView>
+    with WidgetsBindingObserver {
   late NamasteHomeController controller;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     controller = Get.find<NamasteHomeController>();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      controller.stopShankh();
+    } else if (state == AppLifecycleState.resumed) {
+      // Check if this view is currently visible before resuming
+      final route = ModalRoute.of(context);
+      if (route != null && route.isCurrent) {
+        controller.resumeAudioIfNeeded();
+      }
+    }
+  }
+
+  @override
+  void deactivate() {
+    // Stop sound when widget is deactivated (e.g. navigated away or removed from tree)
+    controller.stopShankh();
+    super.deactivate();
   }
 
   @override

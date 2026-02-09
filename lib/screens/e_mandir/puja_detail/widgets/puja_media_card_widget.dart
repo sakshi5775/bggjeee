@@ -129,20 +129,6 @@ class PujaMediaCardWidget extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Play button
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.play_arrow,
-                        color: Color(0xFF3E2723),
-                        size: 24,
-                      ),
-                    ),
                   ],
                 ),
               ),

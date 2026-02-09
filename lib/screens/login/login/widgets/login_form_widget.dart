@@ -41,7 +41,9 @@ class LoginFormWidget extends StatelessWidget {
                 controller: controller.phoneController,
                 headerText: 'Phone Number',
                 hintText: 'Enter phone number',
-                validator: controller.validatePhone,
+                validator: (value) {
+                  return controller.validatePhone(value);
+                },
                 onCountryChanged: controller.onCountryChanged,
                 initialCountry: controller.selectedCountryCode.value,
               );
@@ -72,7 +74,7 @@ class LoginFormWidget extends StatelessWidget {
             alignment: Alignment.bottomRight,
             child: TextButton(
               onPressed: () {
-                // Implement forgot password functionality
+                Get.toNamed(AppRoutes.forgotPassword);
               },
               child: AutoTranslateText(
                 'Forgot Password?',
@@ -149,21 +151,7 @@ class LoginFormWidget extends StatelessWidget {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  gradient: const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFFF38B3B), // light orange
-                      Color(0xFFDD2914), // deep orange/red
-                    ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.orange.withValues(alpha: 0.45),
-                      blurRadius: 18,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
+                  gradient: AppColors.orangeGradient,
                 ),
                 child: Center(
                   child: isLoading
@@ -190,17 +178,78 @@ class LoginFormWidget extends StatelessWidget {
             );
           }),
 
-          Spacing.h(8),
+          Spacing.h(16),
 
-          Center(
+          // Terms and Privacy Checkbox
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AutoTranslateText(
-                  'By continuing, you agree to our Terms of Service \n and Privacy Policy',
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: AppColors.gray,
-                    fontWeight: FontWeight.normal,
+                Obx(
+                  () => SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: Checkbox(
+                      value: controller.isTermsAccepted.value,
+                      onChanged: (value) {
+                        controller.isTermsAccepted.value = value ?? false;
+                      },
+                      activeColor: AppColors.saffron,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8, top: 2),
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        AutoTranslateText(
+                          'By continuing, you agree to our ',
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: AppColors.gray,
+                            fontSize: 12,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Get.toNamed(AppRoutes.userPrivacyPolicy);
+                          },
+                          child: AutoTranslateText(
+                            'Terms of Service',
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: AppColors.saffron,
+                              fontSize: 12,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                        AutoTranslateText(
+                          ' and ',
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: AppColors.gray,
+                            fontSize: 12,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Get.toNamed(AppRoutes.userPrivacyPolicy);
+                          },
+                          child: AutoTranslateText(
+                            'Privacy Policy',
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: AppColors.saffron,
+                              fontSize: 12,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

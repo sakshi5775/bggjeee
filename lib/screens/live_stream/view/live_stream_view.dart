@@ -20,11 +20,11 @@ class LiveStreamView extends StatelessWidget {
   final String? astrologerProfilePicture;
 
   const LiveStreamView({
-    Key? key,
+    super.key,
     required this.stream,
     this.astrologerName,
     this.astrologerProfilePicture,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

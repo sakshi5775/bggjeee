@@ -14,7 +14,7 @@ class NamasteHomeController extends GetxController
   final isShankhPlaying = false.obs;
   final volume = 1.0.obs; // Volume range: 0.0 to 1.0
   final showVolumeSlider = false.obs;
-  bool _hasNavigatedAway = false; // Track if we've navigated away
+  bool _hasNavigatedAway = false;
 
   // Animation for fullscreen button
   late AnimationController fullscreenAnimationController;
@@ -130,6 +130,18 @@ class NamasteHomeController extends GetxController
     super.onClose();
   }
 
+  void stopShankh() {
+    try {
+      if (shankhPlayer.state == PlayerState.playing) {
+        shankhPlayer.stop();
+      }
+      isShankhPlaying.value = false;
+      _hasNavigatedAway = true; // Mark as navigated away so it can resume later
+    } catch (e) {
+      print("Error stopping shankh player: $e");
+    }
+  }
+
   void _playShankhOnInit() {
     try {
       shankhPlayer.setReleaseMode(ReleaseMode.loop);
@@ -189,33 +201,22 @@ class NamasteHomeController extends GetxController
   }
 
   void navigateToVirtualDarshan() {
-    // Only stop audio, don't dispose - we'll restart when coming back
-    shankhPlayer.stop();
-    isShankhPlaying.value = false;
-    _hasNavigatedAway = true; // Mark that we're navigating away
+    stopShankh();
     Get.toNamed(AppRoutes.virtualDarshan);
   }
 
   void navigateToDevotionalLibrary() {
-    // Only stop audio, don't dispose - we'll restart when coming back
-    shankhPlayer.stop();
-    isShankhPlaying.value = false;
-    _hasNavigatedAway = true; // Mark that we're navigating away
+    stopShankh();
     Get.toNamed(AppRoutes.devotionalLibrary);
   }
 
   void navigateToPunyaMudra() {
-    // Only stop audio, don't dispose - we'll restart when coming back
-    shankhPlayer.stop();
-    isShankhPlaying.value = false;
-    _hasNavigatedAway = true; // Mark that we're navigating away
+    stopShankh();
     Get.toNamed(AppRoutes.punyaMudra);
   }
 
   void navigateQuickAction(int index) {
-    shankhPlayer.stop();
-    isShankhPlaying.value = false;
-    _hasNavigatedAway = true;
+    stopShankh();
     switch (index) {
       case 0:
         Get.toNamed(AppRoutes.comingSoon);

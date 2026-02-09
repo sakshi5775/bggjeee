@@ -16,6 +16,11 @@ import 'package:astrobharataiuser/screens/astrologer_registration/binding/astrol
 import 'package:astrobharataiuser/screens/astrologer_registration/view/astrologer_registration_intro_view.dart';
 import 'package:astrobharataiuser/screens/astrologer_registration/view/astrologer_registration_form_view.dart';
 import 'package:astrobharataiuser/screens/astrologer_registration/view/astrologer_registration_otp_view.dart';
+import 'package:astrobharataiuser/screens/login/login/view/user_privacy_policy_view.dart';
+import 'package:astrobharataiuser/screens/login/forgot_password/view/forgot_password_view.dart';
+import 'package:astrobharataiuser/screens/login/forgot_password/view/forgot_password_otp_view.dart';
+import 'package:astrobharataiuser/screens/login/forgot_password/view/reset_password_view.dart';
+import 'package:astrobharataiuser/screens/login/forgot_password/binding/forgot_password_binding.dart';
 
 import 'package:astrobharataiuser/screens/ecommerce/remedies/view/remedies_view.dart';
 import 'package:astrobharataiuser/screens/ecommerce/remedies/bindings/remedies_binding.dart';
@@ -324,6 +329,24 @@ class PageRoutes {
       page: () => const LoginView(),
       transition: Transition.upToDown,
       binding: LoginBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.forgotPassword,
+      page: () => const ForgotPasswordView(),
+      transition: Transition.rightToLeft,
+      binding: ForgotPasswordBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.forgotPasswordOtp,
+      page: () => const ForgotPasswordOtpView(),
+      transition: Transition.rightToLeft,
+      binding: ForgotPasswordBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.resetPassword,
+      page: () => const ResetPasswordView(),
+      transition: Transition.rightToLeft,
+      binding: ForgotPasswordBinding(),
     ),
     GetPage(
       name: AppRoutes.otp,
@@ -1544,7 +1567,7 @@ class PageRoutes {
     ),
     GetPage(
       name: AppRoutes.pujaDetail,
-      page: () => const PujaDetailView(),
+      page: () => PujaDetailView(),
       binding: PoojaDetailsBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
@@ -1583,6 +1606,11 @@ class PageRoutes {
       binding: MyBookingDetailBinding(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.userPrivacyPolicy,
+      page: () => const UserPrivacyPolicyView(),
+      transition: Transition.rightToLeft,
     ),
   ];
 }

@@ -9,6 +9,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
 /// Skeleton shimmer placeholder for banner while image loads.
@@ -214,12 +215,16 @@ class _BannerVideoWidgetState extends State<_BannerVideoWidget> {
     }
 
     return Stack(
-      fit: StackFit.expand,
+      // fit: StackFit.expand,
       children: [
-        Center(
-          child: AspectRatio(
-            aspectRatio: _controller.value.aspectRatio,
-            child: VideoPlayer(_controller),
+        SizedBox.expand(
+          child: FittedBox(
+            fit: BoxFit.cover,
+            child: SizedBox(
+              width: _controller.value.size.width,
+              height: _controller.value.size.height,
+              child: VideoPlayer(_controller),
+            ),
           ),
         ),
         Positioned(
