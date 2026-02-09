@@ -223,3 +223,81 @@ class BulkDiscount {
 }
 
 // REMOVED: SelectedTier class - no longer used in per-minute pricing model
+
+class CallHistoryItem {
+  final String callId;
+  final String callType; // VOICE, VIDEO
+  final String status; // COMPLETED, MISSED, REJECTED, BUSY, FAILED
+  final String astrologerId;
+  final String astrologerName;
+  final String? astrologerImage;
+  final int durationSeconds;
+  final double totalAmount;
+  final DateTime createdAt;
+  final DateTime? startedAt;
+  final DateTime? endedAt;
+  final String? recordingUrl;
+
+  CallHistoryItem({
+    required this.callId,
+    required this.callType,
+    required this.status,
+    required this.astrologerId,
+    required this.astrologerName,
+    this.astrologerImage,
+    required this.durationSeconds,
+    required this.totalAmount,
+    required this.createdAt,
+    this.startedAt,
+    this.endedAt,
+    this.recordingUrl,
+  });
+
+  factory CallHistoryItem.fromJson(Map<String, dynamic> json) {
+    String extractAstrologerName() {
+      if (json['astrologer'] != null && json['astrologer'] is Map) {
+        return json['astrologer']['displayName'] ??
+            json['astrologer']['name'] ??
+            'Unknown Astrologer';
+      }
+      return json['astrologerName'] as String? ?? 'Unknown Astrologer';
+    }
+
+    String? extractAstrologerImage() {
+      if (json['astrologer'] != null && json['astrologer'] is Map) {
+        return json['astrologer']['profilePicture'] ??
+            json['astrologer']['image'];
+      }
+      return json['astrologerImage'] as String?;
+    }
+
+    String extractAstrologerId() {
+      if (json['astrologer'] != null && json['astrologer'] is Map) {
+        return (json['astrologer']['id'] ?? json['astrologer']['_id'] ?? '')
+            .toString();
+      }
+      return (json['astrologerId'] ?? '').toString();
+    }
+
+    return CallHistoryItem(
+      callId: (json['callId'] ?? json['_id'] ?? '').toString(),
+      callType: json['callType'] as String? ?? 'VOICE',
+      status: json['status'] as String? ?? 'COMPLETED',
+      astrologerId: extractAstrologerId(),
+      astrologerName: extractAstrologerName(),
+      astrologerImage: extractAstrologerImage(),
+      durationSeconds: (json['durationSeconds'] as num?)?.toInt() ?? 0,
+      totalAmount: (json['totalAmount'] as num?)?.toDouble() ?? 0.0,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : DateTime.now(),
+      startedAt: json['startedAt'] != null
+          ? DateTime.parse(json['startedAt'] as String)
+          : null,
+      endedAt: json['endedAt'] != null
+          ? DateTime.parse(json['endedAt'] as String)
+          : null,
+      recordingUrl: json['recordingUrl'] as String?,
+    );
+  }
+}

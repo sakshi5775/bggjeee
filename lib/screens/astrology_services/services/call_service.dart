@@ -25,12 +25,13 @@ class CallService {
   /// [durationMinutes] - Optional duration estimate (for UI display only, not used for billing)
   ///
   /// Throws [ServiceNotEnabledException] if the service is not enabled for the astrologer
-  /// 
+  ///
   /// Note: Billing is per-minute and handled by backend. durationMinutes is for UI estimate only.
   Future<CallInitiateResponse?> initiateCall({
     required String astrologerId,
     required String callType, // "VOICE" or "VIDEO"
-    int? durationMinutes, // OPTIONAL - only for UI estimate, not used for billing
+    int?
+    durationMinutes, // OPTIONAL - only for UI estimate, not used for billing
   }) async {
     try {
       final body = {
@@ -96,7 +97,6 @@ class CallService {
     }
   }
 
-
   /// End a call
   ///
   /// [callId] - The ID of the call to end
@@ -116,9 +116,9 @@ class CallService {
         print('   Total Amount: $totalAmount');
         print('═══════════════════════════════════════════════════════════');
       }
-      
+
       final body = <String, dynamic>{};
-      
+
       // Include billing parameters if provided
       if (totalMinutes != null) {
         body['totalMinutes'] = totalMinutes;
@@ -126,7 +126,7 @@ class CallService {
       if (totalAmount != null) {
         body['totalAmount'] = totalAmount;
       }
-      
+
       final response = await _apiRepository.postApi(
         EndPoints.callEnd(callId),
         body,
@@ -136,30 +136,40 @@ class CallService {
       if (kDebugMode) {
         print('End call API response status: ${response.statusCode}');
         print('End call API response body: ${response.body}');
-        
+
         // Check if backend processed our billing parameters
         final responseData = response.body['data'];
         if (responseData != null) {
           final backendTotalMinutes = responseData['totalMinutes'];
           final backendTotalAmount = responseData['totalAmount'];
-          
+
           if (totalMinutes != null && backendTotalMinutes == null) {
-            print('═══════════════════════════════════════════════════════════');
+            print(
+              '═══════════════════════════════════════════════════════════',
+            );
             print('❌ CRITICAL: Backend ignored totalMinutes parameter!');
             print('   Sent: $totalMinutes, Received: $backendTotalMinutes');
-            print('   This indicates backend billing is NOT implemented for calls!');
-            print('═══════════════════════════════════════════════════════════');
+            print(
+              '   This indicates backend billing is NOT implemented for calls!',
+            );
+            print(
+              '═══════════════════════════════════════════════════════════',
+            );
           }
-          
+
           if (totalAmount != null) {
             final expectedAmount = totalAmount.toInt();
             if (backendTotalAmount != expectedAmount) {
-              print('═══════════════════════════════════════════════════════════');
+              print(
+                '═══════════════════════════════════════════════════════════',
+              );
               print('❌ CRITICAL: Backend amount mismatch!');
               print('   Sent: ₹$totalAmount, Received: ₹$backendTotalAmount');
               print('   Backend is NOT processing billing parameters!');
               print('   This means wallet is NOT being deducted on backend!');
-              print('═══════════════════════════════════════════════════════════');
+              print(
+                '═══════════════════════════════════════════════════════════',
+              );
             }
           }
         }
@@ -172,6 +182,74 @@ class CallService {
     } catch (e) {
       debugPrint('Error ending call: $e');
       return false;
+    }
+  }
+
+  /// Get call history
+  Future<Map<String, dynamic>> getCallHistory({
+    int page = 1,
+    int limit = 20,
+    String? callType,
+  }) async {
+    try {
+      final query = {'page': page.toString(), 'limit': limit.toString()};
+      if (callType != null) {
+        query['callType'] = callType;
+      }
+
+      final response = await _apiRepository.getApi(
+        EndPoints.callHistory,
+        query: query,
+        useAuthHeader: true,
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception(
+          'HTTP ${response.statusCode}: Failed to get call history',
+        );
+      }
+
+      final body = response.body;
+      if (body == null || body['success'] != true) {
+        return {'sessions': <CallHistoryItem>[], 'pagination': null};
+      }
+
+      final data = body;
+      List<dynamic> rawList = [];
+      final payload = data['data'] ?? data['calls'] ?? data['history'];
+
+      if (payload is List) {
+        rawList = payload;
+      } else if (payload is Map<String, dynamic>) {
+        final inner = payload['calls'] ?? payload['data'] ?? payload['list'];
+        if (inner is List) {
+          rawList = inner;
+        }
+      }
+
+      final List<CallHistoryItem> items = [];
+      for (final s in rawList) {
+        try {
+          if (s is Map<String, dynamic>) {
+            items.add(CallHistoryItem.fromJson(s));
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('Skip invalid call history item: $e');
+          }
+        }
+      }
+
+      final pagination = data['pagination'];
+      return {
+        'sessions': items,
+        'pagination': pagination is Map<String, dynamic> ? pagination : null,
+      };
+    } catch (e) {
+      if (kDebugMode) {
+        print('Call history API error: $e');
+      }
+      rethrow;
     }
   }
 }

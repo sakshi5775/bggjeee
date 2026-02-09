@@ -1443,25 +1443,11 @@ class AstrologerChatController extends BaseController
             await reviewController.loadMyReview(astroId);
             final existing = reviewController.myReview.value;
 
-            bool isFollowing = false;
-            try {
-              final status = await _astrologerService.getFollowStatus(astroId);
-              isFollowing = status?['isFollowing'] ?? false;
-            } catch (_) {
-              // ignore follow status errors
-            }
-
-            inlineFollowProvided = true;
-            AstrologerReviewDialog.show(
+            AstrologerReviewDialog.showPrompt(
               context: Get.context!,
-              astrologerId: astroId,
               astrologer: _astrologer!,
               serviceType: 'CHAT',
               existingReview: existing,
-              isFollowing: isFollowing,
-              onFollow: () async {
-                await followAstrologer();
-              },
             );
           } catch (e) {
             if (kDebugMode) print('Failed to preload review/follow: $e');

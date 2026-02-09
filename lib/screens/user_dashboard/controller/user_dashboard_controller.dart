@@ -270,7 +270,7 @@ class UserDashboardController extends BaseController
     'Digital Mart',
     'Digital Mandir',
     'Digital Learning',
-    'Video',
+    'Media Hub',
     'Panchang',
     'Horoscope',
   ];

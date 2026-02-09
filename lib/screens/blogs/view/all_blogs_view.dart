@@ -43,37 +43,7 @@ class AllBlogsView extends BasePage<AllBlogsController> {
             children: [
               // Header
               // Header
-              CommonHeader(
-                title: 'Blog & News',
-
-                customActions: [
-                  Container(
-                    padding: AppPaddings.symmetric(h: 12, v: 6),
-                    decoration: BoxDecoration(
-                      color: '#FF6B35'.toColor(),
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.trending_up,
-                          color: Colors.white,
-                          size: 16.w,
-                        ),
-                        Spacing.w(4),
-                        AutoTranslateText(
-                          'Trending',
-                          style: MyTextTheme.smallBCB.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              CommonHeader(title: 'Blog & News', customActions: []),
 
               // Search Bar
               Container(
@@ -93,20 +63,19 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                   ),
                   child: TextField(
                     decoration: InputDecoration(
-                      hintText: 'Search articles...',
-                      hintStyle: MyTextTheme.mediumBCN.copyWith(
-                        color: Colors.grey,
+                      label: AutoTranslateText(
+                        'Search articles...',
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: Colors.grey,
+                        ),
                       ),
+                      floatingLabelBehavior: FloatingLabelBehavior.never,
                       prefixIcon: Icon(
                         Icons.search,
                         color: Colors.grey,
                         size: 20.w,
                       ),
-                      suffixIcon: Icon(
-                        Icons.tune,
-                        color: Colors.grey,
-                        size: 20.w,
-                      ),
+
                       border: InputBorder.none,
                       contentPadding: AppPaddings.symmetric(h: 16, v: 12),
                     ),
@@ -415,15 +384,7 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                     ),
                   ),
                 ),
-                Positioned(
-                  top: 8.h,
-                  right: 8.w,
-                  child: Icon(
-                    Icons.bookmark_border,
-                    color: Colors.white,
-                    size: 20.w,
-                  ),
-                ),
+
                 Positioned(
                   bottom: 8.h,
                   left: 8.w,
@@ -616,15 +577,6 @@ class AllBlogsView extends BasePage<AllBlogsController> {
                             color: Colors.grey.withValues(alpha: 0.3),
                             child: Icon(Icons.image, size: 30.w),
                           ),
-                  ),
-                  Positioned(
-                    top: 4.h,
-                    right: 4.w,
-                    child: Icon(
-                      Icons.bookmark_border,
-                      color: Colors.white,
-                      size: 16.w,
-                    ),
                   ),
                 ],
               ),

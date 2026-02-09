@@ -122,7 +122,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                   tabs[5] == 'Digital Learning') ||
                               (i == 6 &&
                                   tabs.length > 6 &&
-                                  tabs[6] == 'Video') ||
+                                  tabs[6] == 'Media Hub') ||
                               (i == 7 &&
                                   tabs.length > 7 &&
                                   tabs[7] == 'Panchang') ||
@@ -348,7 +348,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: const CoursesView(hideHeader: true),
         );
       }
-      if (i == 6 && controller.sliderTabs[i] == 'Video') {
+      if (i == 6 && controller.sliderTabs[i] == 'Media Hub') {
         if (!Get.isRegistered<AllVideosController>()) {
           Get.put(AllVideosController(), permanent: false);
         }
@@ -2864,7 +2864,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
             Spacing.h(4),
             // Horizontal Scrollable List
             SizedBox(
-              height: Get.width > 600 ? 250.h : 220.h,
+              height: Get.width > 600 ? 250.h : 225.h,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: controller.vedicAstrologers.length >= 5
@@ -2928,8 +2928,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 children: [
                   // Background decorative border image
                   Container(
-                    width: 120.w,
-                    height: 120.w,
+                    width: 110.w,
+                    height: 110.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
@@ -2942,8 +2942,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                   ),
                   // Profile Image
                   Container(
-                    width: 70.w,
-                    height: 70.w,
+                    width: 90.w,
+                    height: 90.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(color: AppColors.deepOrange, width: 1),

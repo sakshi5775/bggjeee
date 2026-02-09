@@ -292,11 +292,16 @@ class AstrologerDetailView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AutoTranslateText(
-                astrologer.displayName,
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: const Color(0xFF5F2221),
-                  fontWeight: FontWeight.bold,
+              Flexible(
+                child: AutoTranslateText(
+                  astrologer.displayName,
+                  style: MyTextTheme.largeBCB.copyWith(
+                    color: const Color(0xFF5F2221),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                 ),
               ),
               Spacing.w(8),
@@ -315,9 +320,11 @@ class AstrologerDetailView extends StatelessWidget {
           ),
           Spacing.h(20),
 
-          // Statistics Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          // Statistics Row - Wrap for small screens
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 8.w,
+            runSpacing: 12.h,
             children: [
               _buildStatItem(
                 icon: Icons.star,
@@ -385,23 +392,34 @@ class AstrologerDetailView extends StatelessWidget {
     required String label,
     required Color iconColor,
   }) {
-    return Column(
-      children: [
-        Icon(icon, color: iconColor, size: 24.w),
-        Spacing.h(4),
-        AutoTranslateText(
-          value,
-          style: MyTextTheme.mediumBCB.copyWith(
-            color: const Color(0xFF5F2221),
-            fontWeight: FontWeight.bold,
+    return Container(
+      constraints: BoxConstraints(minWidth: 70.w, maxWidth: 90.w),
+      child: Column(
+        children: [
+          Icon(icon, color: iconColor, size: 24.w),
+          Spacing.h(4),
+          AutoTranslateText(
+            value,
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: const Color(0xFF5F2221),
+              fontWeight: FontWeight.bold,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
           ),
-        ),
-        Spacing.h(2),
-        AutoTranslateText(
-          label,
-          style: MyTextTheme.smallBCN.copyWith(color: const Color(0xFF666666)),
-        ),
-      ],
+          Spacing.h(2),
+          AutoTranslateText(
+            label,
+            style: MyTextTheme.smallBCN.copyWith(
+              color: const Color(0xFF666666),
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 
@@ -1046,124 +1064,77 @@ class AstrologerDetailView extends StatelessWidget {
               ),
             ),
             Spacing.h(12),
-            // Action Buttons
+            // Action Buttons - Always in one responsive row
             Row(
               children: [
-                // Start Chat Button
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      controller.initiateChat();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFDFB343), // Gold
-                      padding: EdgeInsets.symmetric(vertical: 12.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.chat_bubble_outline,
-                          color: Colors.white,
-                          size: 16.w,
-                        ),
-                        Spacing.w(4),
-                        Flexible(
-                          child: AutoTranslateText(
-                            'Chat',
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: _buildActionButton(
+                    onPressed: () => controller.initiateChat(),
+                    backgroundColor: const Color(0xFFDFB343),
+                    icon: Icons.chat_bubble_outline,
+                    label: 'Chat',
                   ),
                 ),
-                Spacing.w(8),
-                // Voice Call Button
+                Spacing.w(6),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      controller.initiateVoiceCall();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF5D1C21), // Dark maroon
-                      padding: EdgeInsets.symmetric(vertical: 12.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.phone, color: Colors.white, size: 16.w),
-                        Spacing.w(4),
-                        Flexible(
-                          child: AutoTranslateText(
-                            'Call',
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: _buildActionButton(
+                    onPressed: () => controller.initiateVoiceCall(),
+                    backgroundColor: const Color(0xFF5D1C21),
+                    icon: Icons.phone,
+                    label: 'Call',
                   ),
                 ),
-                Spacing.w(8),
-                // Video Call Button
+                Spacing.w(6),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      controller.initiateVideoCall();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF5D1C21), // Dark maroon
-                      padding: EdgeInsets.symmetric(vertical: 12.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.videocam, color: Colors.white, size: 16.w),
-                        Spacing.w(4),
-                        Flexible(
-                          child: AutoTranslateText(
-                            'Video',
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
+                  child: _buildActionButton(
+                    onPressed: () => controller.initiateVideoCall(),
+                    backgroundColor: const Color(0xFF5D1C21),
+                    icon: Icons.videocam,
+                    label: 'Video',
                   ),
                 ),
               ],
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required VoidCallback onPressed,
+    required Color backgroundColor,
+    required IconData icon,
+    required String label,
+  }) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: backgroundColor,
+        padding: EdgeInsets.symmetric(vertical: 12.h),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        elevation: 0,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white, size: 16.w),
+          Spacing.w(4),
+          Flexible(
+            child: AutoTranslateText(
+              label,
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
     );
   }

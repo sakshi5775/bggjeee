@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/blog_model.dart';
 import 'package:astrobharataiuser/screens/blogs/service/blog_service.dart';
+
 import 'package:astrobharataiuser/screens/blogs/widgets/comments/comments_sheet.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/video_player_widget.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
@@ -28,6 +29,7 @@ class _BlogDetailViewState extends State<BlogDetailView> {
   final BlogService _blogService = BlogService();
   final RxBool _liked = false.obs;
   final RxInt _likeCount = 0.obs;
+  final RxInt _commentCount = 0.obs;
   final RxList<Blog> _relatedBlogs = <Blog>[].obs;
   final RxBool _loadingRelated = false.obs;
   final RxList<Map<String, dynamic>> _popularTags =
@@ -38,7 +40,20 @@ class _BlogDetailViewState extends State<BlogDetailView> {
     super.initState();
     _loadBlogReactions();
     _loadRelatedBlogs();
+    _loadRelatedBlogs();
     _loadPopularTags();
+    _loadCommentCount();
+  }
+
+  Future<void> _loadCommentCount() async {
+    if (widget.blog.id != null) {
+      try {
+        final comments = await _blogService.getComments(widget.blog.id!);
+        _commentCount.value = comments.length;
+      } catch (e) {
+        debugPrint('Error loading comments count: $e');
+      }
+    }
   }
 
   Future<void> _loadBlogReactions() async {
@@ -287,7 +302,7 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                       Spacing.w(6),
                                       Obx(
                                         () => AutoTranslateText(
-                                          '${_formatNumber(_likeCount.value + 20)} comments',
+                                          '${_formatNumber(_commentCount.value)} comments',
                                           style: MyTextTheme.smallBCN.copyWith(
                                             color: '#3E2723'.toColor(),
                                           ),
@@ -296,64 +311,64 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                     ],
                                   ),
                                 ),
-                                Spacing.h(16),
-                                // Author Information
-                                Container(
-                                  padding: AppPaddings.all(16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16.r),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.05),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 24.r,
-                                        backgroundColor: "#F38B3B"
-                                            .toColor()
-                                            .withOpacity(0.2),
-                                        child: Icon(
-                                          Icons.person,
-                                          color: '#3E2723'.toColor(),
-                                          size: 24.w,
-                                        ),
-                                      ),
-                                      Spacing.w(12),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            AutoTranslateText(
-                                              widget.blog.author ?? 'Author',
-                                              style: MyTextTheme.mediumBCB
-                                                  .copyWith(
-                                                    color: '#3E2723'.toColor(),
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                            ),
-                                            Spacing.h(4),
-                                            AutoTranslateText(
-                                              '${widget.blog.authorType?.toUpperCase() ?? "USER"} • ${_formatDate(widget.blog.publishDate ?? widget.blog.createdAt ?? "")}',
-                                              style: MyTextTheme.smallBCN
-                                                  .copyWith(
-                                                    color: '#3E2723'
-                                                        .toColor()
-                                                        .withOpacity(0.7),
-                                                  ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                //   Spacing.h(16),
+                                //   // Author Information
+                                //   Container(
+                                //     padding: AppPaddings.all(16),
+                                //     decoration: BoxDecoration(
+                                //       color: Colors.white,
+                                //       borderRadius: BorderRadius.circular(16.r),
+                                //       boxShadow: [
+                                //         BoxShadow(
+                                //           color: Colors.black.withOpacity(0.05),
+                                //           blurRadius: 8,
+                                //           offset: const Offset(0, 2),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //     // child: Row(
+                                //     //   children: [
+                                //     //     CircleAvatar(
+                                //     //       radius: 24.r,
+                                //     //       backgroundColor: "#F38B3B"
+                                //     //           .toColor()
+                                //     //           .withOpacity(0.2),
+                                //     //       child: Icon(
+                                //     //         Icons.person,
+                                //     //         color: '#3E2723'.toColor(),
+                                //     //         size: 24.w,
+                                //     //       ),
+                                //     //     ),
+                                //     //     Spacing.w(12),
+                                //     //     // Expanded(
+                                //     //     //   child: Column(
+                                //     //     //     crossAxisAlignment:
+                                //     //     //         CrossAxisAlignment.start,
+                                //     //     //     children: [
+                                //     //     //       AutoTranslateText(
+                                //     //     //         widget.blog.author ?? 'Author',
+                                //     //     //         style: MyTextTheme.mediumBCB
+                                //     //     //             .copyWith(
+                                //     //     //               color: '#3E2723'.toColor(),
+                                //     //     //               fontWeight: FontWeight.w600,
+                                //     //     //             ),
+                                //     //     //       ),
+                                //     //     //       Spacing.h(4),
+                                //     //     //       AutoTranslateText(
+                                //     //     //         '${widget.blog.authorType?.toUpperCase() ?? "USER"} • ${_formatDate(widget.blog.publishDate ?? widget.blog.createdAt ?? "")}',
+                                //     //     //         style: MyTextTheme.smallBCN
+                                //     //     //             .copyWith(
+                                //     //     //               color: '#3E2723'
+                                //     //     //                   .toColor()
+                                //     //     //                   .withOpacity(0.7),
+                                //     //     //             ),
+                                //     //     //       ),
+                                //     //     //     ],
+                                //     //     //   ),
+                                //     //     // ),
+                                //     //   ],
+                                //     // ),
+                                //   ),
                               ],
                             ),
                           ),
@@ -595,13 +610,14 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                     _openCommentsSheet(widget.blog.id ?? '');
                                   },
                                   child: AutoTranslateText(
-                                    'Comments (${_likeCount.value + 20})',
+                                    'Comments (${_commentCount.value})',
                                     style: MyTextTheme.mediumBCB.copyWith(
                                       color: '#3E2723'.toColor(),
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
+                                Spacing.h(16),
                                 Spacing.h(16),
                                 // Comment Input
                                 Container(
@@ -637,29 +653,11 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                         ),
                                       ),
                                     ),
-                                    onSubmitted: (value) {
-                                      if (value.trim().isNotEmpty) {
-                                        _openCommentsSheet(
-                                          widget.blog.id ?? '',
-                                        );
-                                      }
+                                    readOnly: true,
+                                    onTap: () {
+                                      _openCommentsSheet(widget.blog.id ?? '');
                                     },
                                   ),
-                                ),
-                                Spacing.h(16),
-                                // Sample Comments (will be replaced with actual comments)
-                                _buildCommentItem(
-                                  'Anjali Mehra',
-                                  '1 day ago',
-                                  'Great article!',
-                                  3,
-                                ),
-                                Spacing.h(12),
-                                _buildCommentItem(
-                                  'Rahul Kapoor',
-                                  '4 days ago',
-                                  'Very informative.',
-                                  1,
                                 ),
                                 Spacing.h(24),
                               ],
@@ -721,89 +719,29 @@ class _BlogDetailViewState extends State<BlogDetailView> {
     );
   }
 
-  Widget _buildCommentItem(
-    String name,
-    String time,
-    String comment,
-    int likes,
-  ) {
-    return Container(
-      padding: AppPaddings.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            radius: 18.r,
-            backgroundColor: '#FF6B35'.toColor().withOpacity(0.2),
-            child: Icon(Icons.person, size: 18.w, color: '#FF6B35'.toColor()),
-          ),
-          Spacing.w(12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    AutoTranslateText(
-                      name,
-                      style: MyTextTheme.smallBCB.copyWith(
-                        color: '#3E2723'.toColor(),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Spacing.w(8),
-                    AutoTranslateText(
-                      time,
-                      style: MyTextTheme.smallBCN.copyWith(color: Colors.grey),
-                    ),
-                  ],
-                ),
-                Spacing.h(6),
-                AutoTranslateText(
-                  comment,
-                  style: MyTextTheme.smallBCN.copyWith(
-                    color: '#3E2723'.toColor(),
-                    height: 1.4,
-                  ),
-                ),
-                Spacing.h(8),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.thumb_up_outlined,
-                      size: 16.w,
-                      color: Colors.grey,
-                    ),
-                    Spacing.w(4),
-                    AutoTranslateText(
-                      '$likes',
-                      style: MyTextTheme.smallBCN.copyWith(color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+  void _navigateToBlogDetail(Blog blog) {
+    Get.toNamed(
+      AppRoutes.blogDetail,
+      arguments: blog,
+      preventDuplicates: false,
+    )?.then((_) => _loadBlogReactions());
+  }
+
+  void _openCommentsSheet(String blogId) async {
+    await Get.bottomSheet(
+      CommentsSheet(blogId: blogId),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
     );
+    // Refresh comments count and reactions after sheet closes
+    _loadCommentCount();
+    _loadBlogReactions();
   }
 
   Widget _buildRelatedArticleCard(Blog blog) {
     final isVideo = _isVideoUrl(blog.featuredImage ?? '');
     return GestureDetector(
-      onTap: () => Get.toNamed(AppRoutes.blogDetail, arguments: blog),
+      onTap: () => _navigateToBlogDetail(blog),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -925,14 +863,6 @@ class _BlogDetailViewState extends State<BlogDetailView> {
           ],
         ),
       ),
-    );
-  }
-
-  void _openCommentsSheet(String blogId) {
-    Get.bottomSheet(
-      CommentsSheet(blogId: blogId),
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
     );
   }
 

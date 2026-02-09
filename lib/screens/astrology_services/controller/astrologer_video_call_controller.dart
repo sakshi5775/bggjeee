@@ -8,6 +8,8 @@ import 'package:astrobharataiuser/screens/astrology_services/services/agora_call
 import 'package:astrobharataiuser/screens/astrology_services/services/call_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/call_service.dart'
     show ServiceNotEnabledException;
+import 'package:astrobharataiuser/screens/astrology_services/widgets/astrologer_review_dialog.dart';
+import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_review_controller.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/profile_check_helper.dart';
@@ -1132,66 +1134,25 @@ class AstrologerVideoCallController extends GetxController {
     }
   }
 
-  void _showReviewPrompt() {
-    Get.dialog(
-      barrierDismissible: false,
-      AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        title: Row(
-          children: [
-            Icon(Icons.star, color: AppColors.saffron, size: 24.w),
-            SizedBox(width: 8.w),
-            Expanded(
-              child: AutoTranslateText(
-                'Rate Your Experience',
-                style: MyTextTheme.mediumBCB
-                    .copyWith(color: const Color(0xFF5F2221))
-                    .merge(AppTypography.h2),
-              ),
-            ),
-          ],
-        ),
-        content: AutoTranslateText(
-          'Would you like to rate your experience with ${astrologer.displayName}?',
-          style: MyTextTheme.smallBCN
-              .copyWith(color: const Color(0xFF666666))
-              .merge(AppTypography.body1),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: AutoTranslateText(
-              'Maybe Later',
-              style: MyTextTheme.smallBCN.copyWith(
-                color: const Color(0xFF666666),
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back(); // Close prompt dialog
-              Get.back(); // Go back from call screen
-              // Navigate to astrologer detail with review prompt
-              Future.delayed(const Duration(milliseconds: 300), () {
-                Get.toNamed(
-                  AppRoutes.astrologerDetail,
-                  arguments: {
-                    'astrologer': astrologer,
-                    'showReviewPrompt': true,
-                    'serviceType': 'VIDEO',
-                  },
-                );
-              });
-            },
-            child: AutoTranslateText(
-              'Rate Now',
-              style: MyTextTheme.smallBCB.copyWith(color: AppColors.saffron),
-            ),
-          ),
-        ],
-      ),
+  Future<void> _showReviewPrompt() async {
+    AstrologerReview? existingReview;
+    try {
+      final reviewController = Get.put(
+        AstrologerReviewController(),
+        tag: astrologer.astrologerId,
+        permanent: false,
+      );
+      await reviewController.loadMyReview(astrologer.astrologerId);
+      existingReview = reviewController.myReview.value;
+    } catch (e) {
+      if (kDebugMode) print('Failed to load existing review: $e');
+    }
+
+    AstrologerReviewDialog.showPrompt(
+      context: Get.context!,
+      astrologer: astrologer,
+      serviceType: 'VIDEO',
+      existingReview: existingReview,
     );
   }
 
