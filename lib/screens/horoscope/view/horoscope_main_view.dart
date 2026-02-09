@@ -166,7 +166,7 @@ class HoroscopeMainView extends StatelessWidget {
                             curve: Curves.easeOut,
                             padding: EdgeInsets.symmetric(
                               horizontal: 14.w,
-                              vertical: 8.h,
+                              // vertical: 8.h,
                             ),
                             decoration: BoxDecoration(
                               gradient: isSelected
@@ -179,15 +179,6 @@ class HoroscopeMainView extends StatelessWidget {
                                       color: maroon.withOpacity(0.2),
                                       width: 1,
                                     ),
-                              boxShadow: isSelected
-                                  ? [
-                                      BoxShadow(
-                                        color: orange.withOpacity(0.25),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 1),
-                                      ),
-                                    ]
-                                  : null,
                             ),
                             child: Center(
                               child: AutoTranslateText(
@@ -195,9 +186,9 @@ class HoroscopeMainView extends StatelessWidget {
                                 textAlign: TextAlign.center,
                                 style: MyTextTheme.mediumBCB.copyWith(
                                   color: isSelected ? Colors.white : maroon,
-                                  fontWeight: isSelected
-                                      ? FontWeight.w700
-                                      : FontWeight.w500,
+                                  // fontWeight: isSelected
+                                  //     ? FontWeight.w700
+                                  //     : FontWeight.w500,
                                 ),
                               ),
                             ),
