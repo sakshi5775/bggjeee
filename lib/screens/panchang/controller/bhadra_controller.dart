@@ -55,11 +55,15 @@ class BhadraController extends BaseController {
     final now = DateTime.now();
     selectedDate.value = now;
     dateController.text = DateFormat('dd/MM/yyyy').format(now);
-    timeController.text = TimePickerHelper.formatTime24To12Display(now.hour, now.minute);
+    timeController.text = TimePickerHelper.formatTime24To12Display(
+      now.hour,
+      now.minute,
+    );
     timezoneController.text = '5.5';
 
     _tryGetCurrentLocation().then((_) {
-      if (latitudeController.text.isNotEmpty && longitudeController.text.isNotEmpty) {
+      if (latitudeController.text.isNotEmpty &&
+          longitudeController.text.isNotEmpty) {
         Future.delayed(const Duration(milliseconds: 300), () {
           fetchBhadrakaalData();
         });
@@ -79,8 +83,8 @@ class BhadraController extends BaseController {
   }
 
   Future<void> selectDate() async {
-    final picked = await showDatePicker(
-      context: Get.context!,
+    final picked = await TimePickerHelper.showDatePicker(
+      Get.context!,
       initialDate: selectedDate.value,
       firstDate: DateTime(1900),
       lastDate: DateTime(2100),
@@ -104,11 +108,17 @@ class BhadraController extends BaseController {
       return;
     }
     if (latitudeController.text.isEmpty) {
-      showErrorMessage(title: 'Error', message: 'Please enter latitude or get current location');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Please enter latitude or get current location',
+      );
       return;
     }
     if (longitudeController.text.isEmpty) {
-      showErrorMessage(title: 'Error', message: 'Please enter longitude or get current location');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Please enter longitude or get current location',
+      );
       return;
     }
     if (timezoneController.text.isEmpty) {
@@ -123,11 +133,16 @@ class BhadraController extends BaseController {
       final tz = double.tryParse(timezoneController.text);
 
       if (latitude == null || longitude == null || tz == null) {
-        showErrorMessage(title: 'Error', message: 'Invalid latitude, longitude, or timezone');
+        showErrorMessage(
+          title: 'Error',
+          message: 'Invalid latitude, longitude, or timezone',
+        );
         return;
       }
 
-      final time24 = TimePickerHelper.parseTime12To24(timeController.text) ?? timeController.text;
+      final time24 =
+          TimePickerHelper.parseTime12To24(timeController.text) ??
+          timeController.text;
       final results = await Future.wait([
         _panchangService.getDailyPanchang(
           date: dateController.text,
@@ -191,15 +206,23 @@ class BhadraController extends BaseController {
         return;
       }
 
-      final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium,
+      );
       if (_isDisposed) return;
 
       latitudeController.text = position.latitude.toStringAsFixed(6);
       longitudeController.text = position.longitude.toStringAsFixed(6);
 
-      await _updateLocationFromCoordinates(position.latitude, position.longitude);
+      await _updateLocationFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
-      final offset = await _getTimezoneOffsetFromCoordinates(position.latitude, position.longitude);
+      final offset = await _getTimezoneOffsetFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
       if (!_isDisposed) timezoneController.text = offset.toString();
     } catch (e) {
       if (!_isDisposed) selectedLocation.value = 'Select Location';
@@ -219,7 +242,10 @@ class BhadraController extends BaseController {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          showErrorMessage(title: 'Permission Denied', message: 'Location permissions are denied.');
+          showErrorMessage(
+            title: 'Permission Denied',
+            message: 'Location permissions are denied.',
+          );
           return;
         }
       }
@@ -231,35 +257,57 @@ class BhadraController extends BaseController {
         return;
       }
 
-      final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
       if (_isDisposed) return;
 
       latitudeController.text = position.latitude.toStringAsFixed(6);
       longitudeController.text = position.longitude.toStringAsFixed(6);
 
-      await _updateLocationFromCoordinates(position.latitude, position.longitude);
+      await _updateLocationFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
-      final timezone = await AddressHelper.getTimezoneFromCoordinates(position.latitude, position.longitude);
+      final timezone = await AddressHelper.getTimezoneFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
       double offset;
       if (timezone != null && timezone.isNotEmpty) {
         offset = await _getTimezoneOffset(timezone);
       } else {
-        offset = await _getTimezoneOffsetFromCoordinates(position.latitude, position.longitude);
+        offset = await _getTimezoneOffsetFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
       }
       timezoneController.text = offset.toString();
 
-      showSuccessMessage(title: 'Success', message: 'Location fetched successfully');
+      showSuccessMessage(
+        title: 'Success',
+        message: 'Location fetched successfully',
+      );
     } catch (e) {
-      showErrorMessage(title: 'Error', message: 'Failed to get location: ${e.toString()}');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Failed to get location: ${e.toString()}',
+      );
     } finally {
       isFetchingLocation.value = false;
     }
   }
 
-  Future<double> _getTimezoneOffsetFromCoordinates(double lat, double lon) async {
+  Future<double> _getTimezoneOffsetFromCoordinates(
+    double lat,
+    double lon,
+  ) async {
     try {
       final response = await http.get(
-        Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon'),
+        Uri.parse(
+          'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+        ),
         headers: {'Accept': 'application/json'},
       );
       if (response.statusCode == 200) {
@@ -283,7 +331,9 @@ class BhadraController extends BaseController {
       if (lat != null && lon != null) {
         try {
           final response = await http.get(
-            Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon'),
+            Uri.parse(
+              'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+            ),
             headers: {'Accept': 'application/json'},
           );
           if (response.statusCode == 200) {
@@ -345,23 +395,22 @@ class BhadraController extends BaseController {
         Uri.parse(
           'https://nominatim.openstreetmap.org/reverse?lat=$lat&lon=$lon&format=json&addressdetails=1&accept-language=en',
         ),
-        headers: {
-          'User-Agent': 'AstrologyApp/1.0',
-          'Accept-Language': 'en',
-        },
+        headers: {'User-Agent': 'AstrologyApp/1.0', 'Accept-Language': 'en'},
       );
       if (response.statusCode == 200) {
         final result = json.decode(response.body) as Map<String, dynamic>?;
         final address = result?['address'] as Map<String, dynamic>?;
         if (address != null) {
-          final city = address['city']?.toString() ??
+          final city =
+              address['city']?.toString() ??
               address['town']?.toString() ??
               address['village']?.toString() ??
               address['municipality']?.toString() ??
               address['city_district']?.toString();
           return {
             'city': city,
-            'state': address['state']?.toString() ??
+            'state':
+                address['state']?.toString() ??
                 address['region']?.toString() ??
                 address['province']?.toString(),
             'country': address['country']?.toString(),
@@ -374,12 +423,3 @@ class BhadraController extends BaseController {
     return null;
   }
 }
-
-
-
-
-
-
-
-
-

@@ -25,7 +25,7 @@ class PujaBookingFormView extends BasePage<PujaBookingFormController> {
           children: [
             // Header
             CommonHeader(
-              title: 'Book Puja',
+              title: 'Book Pooja',
               subtitle: AutoTranslateText(
                 controller.pujaTitle ?? 'Complete your booking',
                 style: MyTextTheme.smallWCN.copyWith(
@@ -161,7 +161,7 @@ class PujaBookingFormView extends BasePage<PujaBookingFormController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AutoTranslateText(
-                      controller.pujaTitle ?? 'Puja Booking',
+                      controller.pujaTitle ?? 'Pooja Booking',
                       style: MyTextTheme.mediumWCB.copyWith(
                         fontSize: 16,
                         color: Colors.white,

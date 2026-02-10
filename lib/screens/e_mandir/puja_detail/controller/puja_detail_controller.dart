@@ -19,7 +19,7 @@ class PujaDetailController extends BaseController {
     if (pujaId != null && pujaId!.isNotEmpty) {
       loadPujaDetail();
     } else {
-      errorMessage.value = 'Puja ID not provided';
+      errorMessage.value = 'Pooja ID not provided';
     }
   }
 

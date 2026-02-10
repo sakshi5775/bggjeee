@@ -18,7 +18,13 @@ class PanchangController extends BaseController {
   final RxString selectedNavTab = 'Panchang'.obs;
 
   // Navigation tabs
-  final List<String> navTabs = ['ult', 'Reports', 'Video', 'Panchang', 'Horoscope'];
+  final List<String> navTabs = [
+    'ult',
+    'Reports',
+    'Video',
+    'Panchang',
+    'Horoscope',
+  ];
 
   // Sun/Moon times
   final sunriseTime = ''.obs;
@@ -33,7 +39,7 @@ class PanchangController extends BaseController {
   double? currentLatitude;
   double? currentLongitude;
   double? currentTimezone;
-  
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
@@ -64,21 +70,13 @@ class PanchangController extends BaseController {
       'icon': Icons.event,
       'route': AppRoutes.festivalYearly,
     },
-    {
-      'title': 'Hora',
-      'icon': Icons.access_time,
-      'route': AppRoutes.hora,
-    },
-    {
-      'title': 'Chogadia',
-      'icon': Icons.schedule,
-      'route': AppRoutes.chogadia,
-    },
-    {
-      'title': 'Do Ghati',
-      'icon': Icons.timer,
-      'route': null,
-    },
+    {'title': 'Hora', 'icon': Icons.access_time, 'route': AppRoutes.hora},
+    {'title': 'Chogadia', 'icon': Icons.schedule, 'route': AppRoutes.chogadia},
+    // {
+    //   'title': 'Do Ghati',
+    //   'icon': Icons.timer,
+    //   'route': null,
+    // },
     {
       'title': 'Rahu Kaal',
       'icon': Icons.watch_later,
@@ -89,26 +87,18 @@ class PanchangController extends BaseController {
       'icon': Icons.calendar_view_month,
       'route': AppRoutes.otherCalendars,
     },
-    {
-      'title': 'Panchak',
-      'icon': Icons.all_inclusive,
-      'route': null,
-    },
-    {
-      'title': 'Bhadra',
-      'icon': Icons.timer_outlined,
-      'route': null,
-    },
-    {
-      'title': 'Muhurat',
-      'icon': Icons.celebration,
-      'route': null,
-    },
-    {
-      'title': 'Lagna Table',
-      'icon': Icons.table_chart,
-      'route': null,
-    },
+    // {
+    //   'title': 'Panchak',
+    //   'icon': Icons.all_inclusive,
+    //   'route': null,
+    // },
+    {'title': 'Bhadra', 'icon': Icons.timer_outlined, 'route': null},
+    {'title': 'Muhurat', 'icon': Icons.celebration, 'route': null},
+    // {
+    //   'title': 'Lagna Table',
+    //   'icon': Icons.table_chart,
+    //   'route': null,
+    // },
   ];
 
   @override
@@ -195,7 +185,9 @@ class PanchangController extends BaseController {
   Future<double> _getTimezoneOffset(String timezone) async {
     try {
       final response = await http.get(
-        Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=${currentLatitude ?? 28.6139}&longitude=${currentLongitude ?? 77.2090}'),
+        Uri.parse(
+          'https://timeapi.io/api/TimeZone/coordinate?latitude=${currentLatitude ?? 28.6139}&longitude=${currentLongitude ?? 77.2090}',
+        ),
         headers: {'Accept': 'application/json'},
       );
 
@@ -210,7 +202,7 @@ class PanchangController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone offset: $e');
     }
-    
+
     return await _getTimezoneOffsetFromCoordinates(
       currentLatitude ?? 28.6139,
       currentLongitude ?? 77.2090,
@@ -218,10 +210,15 @@ class PanchangController extends BaseController {
   }
 
   /// Get timezone offset from coordinates
-  Future<double> _getTimezoneOffsetFromCoordinates(double lat, double lon) async {
+  Future<double> _getTimezoneOffsetFromCoordinates(
+    double lat,
+    double lon,
+  ) async {
     try {
       final response = await http.get(
-        Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon'),
+        Uri.parse(
+          'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+        ),
         headers: {'Accept': 'application/json'},
       );
 
@@ -236,7 +233,7 @@ class PanchangController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone from coordinates: $e');
     }
-    
+
     return 5.5;
   }
 
@@ -262,7 +259,9 @@ class PanchangController extends BaseController {
 
   /// Fetch sun and moon times
   Future<void> fetchSunMoonTimes() async {
-    if (currentLatitude == null || currentLongitude == null || currentTimezone == null) {
+    if (currentLatitude == null ||
+        currentLongitude == null ||
+        currentTimezone == null) {
       // Use default values if location not available
       currentLatitude = 28.6139; // Delhi default
       currentLongitude = 77.2090;
@@ -333,22 +332,22 @@ class PanchangController extends BaseController {
         final response = results[0]!['response'] as Map<String, dynamic>;
         sunriseTime.value = response['sunrise']?.toString() ?? '';
       }
-      
+
       if (results[1] != null && results[1]!['response'] != null) {
         final response = results[1]!['response'] as Map<String, dynamic>;
         sunsetTime.value = response['sunset']?.toString() ?? '';
       }
-      
+
       if (results[2] != null && results[2]!['response'] != null) {
         final response = results[2]!['response'] as Map<String, dynamic>;
         moonriseTime.value = response['moonrise']?.toString() ?? '';
       }
-      
+
       if (results[3] != null && results[3]!['response'] != null) {
         final response = results[3]!['response'] as Map<String, dynamic>;
         moonsetTime.value = response['moonset']?.toString() ?? '';
       }
-      
+
       if (results[4] != null) {
         if (kDebugMode) {
           debugPrint('Solar Noon API Response: ${results[4]}');
@@ -373,7 +372,7 @@ class PanchangController extends BaseController {
           debugPrint('Solar Noon: results[4] is null');
         }
       }
-      
+
       if (results[5] != null && results[5]!['response'] != null) {
         final response = results[5]!['response'] as Map<String, dynamic>;
         moonPhaseData.value = response;
@@ -429,4 +428,3 @@ class PanchangController extends BaseController {
     }
   }
 }
-

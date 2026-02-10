@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../utils/app_colors.dart';
-import '../../astrology_services/view/astrology_services_view.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 
 class FloatingAstrologerButton extends StatefulWidget {
   const FloatingAstrologerButton({super.key});
@@ -28,7 +28,7 @@ class _FloatingAstrologerButtonState extends State<FloatingAstrologerButton>
             label: "Chat",
             onTap: () {
               setState(() => isOpen = false);
-              Get.to(() => const AstrologyServicesView());
+              Get.toNamed(AppRoutes.allAstrologers);
             },
           ),
           const SizedBox(height: 12),
@@ -37,7 +37,7 @@ class _FloatingAstrologerButtonState extends State<FloatingAstrologerButton>
             label: "Call",
             onTap: () {
               setState(() => isOpen = false);
-              Get.to(() => const AstrologyServicesView());
+              Get.toNamed(AppRoutes.allAstrologers);
             },
           ),
           const SizedBox(height: 16),

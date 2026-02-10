@@ -100,7 +100,7 @@ class ImageCarousel extends StatelessWidget {
               // Discount Banner
               if (discount > 0)
                 Positioned(
-                  top: 20.h,
+                  bottom: 20.h,
                   left: 20.w,
                   child: Container(
                     padding: EdgeInsets.symmetric(

@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 
 class BookPujaController extends BaseController {
   final PujaService _pujaService = PujaService();
-  
+
   // Filter types
   final RxString selectedFilter = 'All'.obs;
   final List<Map<String, dynamic>> filters = [
@@ -22,7 +22,7 @@ class BookPujaController extends BaseController {
   final FocusNode searchFocusNode = FocusNode();
   Timer? _searchDebounce;
 
-  // Puja list
+  // Pooja list
   final RxList<PujaModel> pujas = <PujaModel>[].obs;
   final RxString errorMessage = ''.obs;
 
@@ -35,17 +35,17 @@ class BookPujaController extends BaseController {
   void onInit() {
     super.onInit();
     loadPujas();
-    
+
     // Listen to search text changes with debounce
     searchController.addListener(_onSearchChanged);
   }
 
   void _onSearchChanged() {
     searchQuery.value = searchController.text;
-    
+
     // Cancel previous timer
     _searchDebounce?.cancel();
-    
+
     // Create new timer for debounce (500ms delay)
     _searchDebounce = Timer(const Duration(milliseconds: 500), () {
       loadPujas(refresh: true);
@@ -90,7 +90,7 @@ class BookPujaController extends BaseController {
 
       if (response != null && response.success == true) {
         final newPujas = response.data?.items ?? [];
-        
+
         if (refresh) {
           pujas.value = newPujas;
         } else {
@@ -104,7 +104,7 @@ class BookPujaController extends BaseController {
         } else {
           hasMore.value = newPujas.length >= limit;
         }
-        
+
         // Increment page for next load if there are more pages
         if (hasMore.value) {
           currentPage++;
@@ -177,7 +177,10 @@ class BookPujaController extends BaseController {
     if (puja.packages == null || puja.packages!.isEmpty) {
       return null;
     }
-    final prices = puja.packages!.map((p) => p.price ?? 0.0).where((p) => p > 0).toList();
+    final prices = puja.packages!
+        .map((p) => p.price ?? 0.0)
+        .where((p) => p > 0)
+        .toList();
     if (prices.isEmpty) return null;
     return prices.reduce((a, b) => a < b ? a : b);
   }

@@ -139,24 +139,11 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
   }
 
   Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
+    final DateTime? picked = await TimePickerHelper.showDatePicker(
+      context,
       initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFFDFB343),
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Color(0xFF5F2221),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
     if (picked != null) {
       setState(() {
@@ -170,19 +157,6 @@ class _ProfileCompletionDialogState extends State<ProfileCompletionDialog> {
     final TimeOfDay? picked = await TimePickerHelper.showTimePicker12h(
       context,
       initialTime: _selectedTime ?? TimeOfDay.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFFDFB343),
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Color(0xFF5F2221),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
     if (picked != null) {
       setState(() {

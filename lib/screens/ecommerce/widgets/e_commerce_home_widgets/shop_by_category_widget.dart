@@ -30,7 +30,7 @@ class ShopByCategoryWidget extends StatelessWidget {
                     AutoTranslateText(
                       'Shop by Category',
                       style: TextStyle(
-                        fontFamily: 'Baloo 2',
+                        fontFamily: 'Baloo',
                         fontWeight: FontWeight.w500,
                         fontSize: 24,
                         color: '#8B1925'.toColor(),
@@ -40,7 +40,7 @@ class ShopByCategoryWidget extends StatelessWidget {
                     AutoTranslateText(
                       'Explore our divine collections',
                       style: TextStyle(
-                        fontFamily: 'Poppins',
+                        fontFamily: 'Baloo',
                         fontWeight: FontWeight.w400,
                         fontSize: 12.88,
                         color: '#6A7282'.toColor(),
@@ -57,7 +57,7 @@ class ShopByCategoryWidget extends StatelessWidget {
                       AutoTranslateText(
                         'View All',
                         style: TextStyle(
-                          fontFamily: 'Poppins',
+                          fontFamily: 'Baloo',
                           fontWeight: FontWeight.w400,
                           fontSize: 12.88,
                           color: '#8B1925'.toColor(),

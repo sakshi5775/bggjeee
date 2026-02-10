@@ -19,7 +19,7 @@ class QuickActionsWidget extends GetView<NamasteHomeController> {
       children: [
         AutoTranslateText(
           'Quick Actions',
-          style: AppTypography.h3.copyWith(color: AppColors.textColorMaroon),
+          style: AppTypography.h2.copyWith(color: AppColors.textColorMaroon),
         ),
         SizedBox(height: 8.h),
         GridView.count(
@@ -38,7 +38,7 @@ class QuickActionsWidget extends GetView<NamasteHomeController> {
             ),
             _QuickActionCard(
               icon: Image.asset(AppConstant.eMandirEPuja, height: 50.h),
-              title: 'E-Puja Booking',
+              title: 'E-Pooja Booking',
               subtitle: 'Book online',
               onTap: () => controller.navigateQuickAction(1),
             ),

@@ -147,7 +147,7 @@ class VirtualDarshanController extends GetxController
   final selectedFlowerAsset = AppConstant.eMandirFlower1.obs;
   final selectedInstrumentAsset = AppConstant.eMandirSankhIcon.obs;
 
-  // Puja Item Categories API
+  // Pooja Item Categories API
   final PujaItemCategoryService _pujaItemCategoryService =
       PujaItemCategoryService();
   final RxList<PujaItemCategory> pujaItemCategories = <PujaItemCategory>[].obs;

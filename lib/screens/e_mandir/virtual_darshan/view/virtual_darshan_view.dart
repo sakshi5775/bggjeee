@@ -243,35 +243,35 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                 child: Image.asset(AppConstant.eMandirSankhIcon),
               ),
             ),
-            Positioned(
-              bottom: 22.h,
-              right: 18.w,
-              child: InkWell(
-                onTap: controller.navigateToDevotionalLibrary,
-                child: Image.asset(AppConstant.eMandirListenNowIcon),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: EdgeInsets.only(right: 15.w),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: AutoTranslateText(
-                    'Listen Now',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // Positioned(
+            //   bottom: 22.h,
+            //   right: 18.w,
+            //   child: InkWell(
+            //     onTap: controller.navigateToDevotionalLibrary,
+            //     child: Image.asset(AppConstant.eMandirListenNowIcon),
+            //   ),
+            // ),
+            // Align(
+            //   alignment: Alignment.bottomRight,
+            //   child: Padding(
+            //     padding: EdgeInsets.only(right: 15.w),
+            //     child: Container(
+            //       padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+            //       decoration: BoxDecoration(
+            //         color: Colors.black.withOpacity(0.4),
+            //         borderRadius: BorderRadius.circular(20.r),
+            //       ),
+            //       child: AutoTranslateText(
+            //         'Listen Now',
+            //         style: TextStyle(
+            //           color: Colors.white,
+            //           fontSize: 13.sp,
+            //           fontWeight: FontWeight.w500,
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

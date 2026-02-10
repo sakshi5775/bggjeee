@@ -26,7 +26,7 @@ class KundliFormController extends BaseController {
   final latitudeController = TextEditingController();
   final longitudeController = TextEditingController();
   final timezoneController = TextEditingController();
-  
+
   // Gender selection
   final selectedGender = Rxn<String>();
   final List<String> genderOptions = ['Male', 'Female', 'Other'];
@@ -57,7 +57,7 @@ class KundliFormController extends BaseController {
   final selectedDate = DateTime.now().obs;
   final selectedTime = TimeOfDay.now().obs;
   final selectedLocation = 'Fetching Location...'.obs;
-  
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
@@ -86,11 +86,15 @@ class KundliFormController extends BaseController {
       // Prefill name and gender
       if (profile.personalInfo != null) {
         final fullName = profile.personalInfo!.fullName;
-        if (fullName != null && fullName.isNotEmpty && nameController.text.isEmpty) {
+        if (fullName != null &&
+            fullName.isNotEmpty &&
+            nameController.text.isEmpty) {
           nameController.text = fullName;
         }
         final gender = profile.personalInfo!.gender;
-        if (gender != null && gender.isNotEmpty && selectedGender.value == null) {
+        if (gender != null &&
+            gender.isNotEmpty &&
+            selectedGender.value == null) {
           if (gender.toUpperCase() == 'MALE') {
             selectedGender.value = 'Male';
           } else if (gender.toUpperCase() == 'FEMALE') {
@@ -146,9 +150,9 @@ class KundliFormController extends BaseController {
         final h = (bt.hour ?? 0).clamp(0, 23);
         final m = (bt.minute ?? 0).clamp(0, 59);
         selectedTime.value = TimeOfDay(hour: h, minute: m);
-        timeController.text = DateFormat('HH:mm').format(
-          DateTime(0, 1, 1, h, m),
-        );
+        timeController.text = DateFormat(
+          'HH:mm',
+        ).format(DateTime(0, 1, 1, h, m));
       }
 
       // Prefill birth place / location from birthChart.birthPlace
@@ -192,10 +196,16 @@ class KundliFormController extends BaseController {
     final currentTime = TimeOfDay.now();
     selectedTime.value = currentTime;
     timeController.text = DateFormat('HH:mm').format(
-      DateTime(now.year, now.month, now.day, currentTime.hour, currentTime.minute),
+      DateTime(
+        now.year,
+        now.month,
+        now.day,
+        currentTime.hour,
+        currentTime.minute,
+      ),
     );
     timezoneController.text = '5.5'; // Default IST
-    
+
     // Try to get current location on init
     _tryGetCurrentLocation();
   }
@@ -248,14 +258,17 @@ class KundliFormController extends BaseController {
       longitudeController.text = position.longitude.toStringAsFixed(6);
 
       // Update location name
-      await _updateLocationFromCoordinates(position.latitude, position.longitude);
+      await _updateLocationFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
       // Get timezone
       final offset = await _getTimezoneOffsetFromCoordinates(
         position.latitude,
         position.longitude,
       );
-      
+
       // Final check before setting timezone
       if (!_isDisposed) {
         timezoneController.text = offset.toString();
@@ -275,7 +288,11 @@ class KundliFormController extends BaseController {
       if (_isDisposed) return;
 
       if (reverseGeocode != null) {
-        final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+        final city =
+            reverseGeocode['city'] ??
+            reverseGeocode['town'] ??
+            reverseGeocode['village'] ??
+            '';
         final state = reverseGeocode['state'] ?? '';
         if (city.isNotEmpty) {
           selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
@@ -299,13 +316,10 @@ class KundliFormController extends BaseController {
       final url = Uri.parse(
         'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon&zoom=18&addressdetails=1',
       );
-      
-      final response = await http.get(
-        url,
-        headers: {
-          'User-Agent': 'AstrologyApp',
-        },
-      ).timeout(const Duration(seconds: 10));
+
+      final response = await http
+          .get(url, headers: {'User-Agent': 'AstrologyApp'})
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
@@ -319,11 +333,16 @@ class KundliFormController extends BaseController {
   }
 
   /// Get timezone offset from coordinates
-  Future<double> _getTimezoneOffsetFromCoordinates(double lat, double lon) async {
+  Future<double> _getTimezoneOffsetFromCoordinates(
+    double lat,
+    double lon,
+  ) async {
     try {
-      final url = Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon');
+      final url = Uri.parse(
+        'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+      );
       final response = await http.get(url).timeout(const Duration(seconds: 10));
-      
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>?;
         if (data?['currentUtcOffset'] != null) {
@@ -396,7 +415,8 @@ class KundliFormController extends BaseController {
         if (permission == LocationPermission.denied) {
           showErrorMessage(
             title: 'Permission Denied',
-            message: 'Location permissions are denied. Please enable them in settings.',
+            message:
+                'Location permissions are denied. Please enable them in settings.',
           );
           return;
         }
@@ -405,7 +425,8 @@ class KundliFormController extends BaseController {
       if (permission == LocationPermission.deniedForever) {
         showErrorMessage(
           title: 'Permission Denied',
-          message: 'Location permissions are permanently denied. Please enable them in app settings.',
+          message:
+              'Location permissions are permanently denied. Please enable them in app settings.',
         );
         return;
       }
@@ -413,6 +434,7 @@ class KundliFormController extends BaseController {
       // Get current position
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
       );
 
       // Check if controller is disposed before using it
@@ -423,7 +445,10 @@ class KundliFormController extends BaseController {
       longitudeController.text = position.longitude.toStringAsFixed(6);
 
       // Get city name from coordinates using reverse geocoding
-      await _updateLocationFromCoordinates(position.latitude, position.longitude);
+      await _updateLocationFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
       // Get timezone from coordinates
       final timezone = await AddressHelper.getTimezoneFromCoordinates(
@@ -443,10 +468,12 @@ class KundliFormController extends BaseController {
           position.longitude,
         );
       }
-      
+
       // Set the timezone offset
       timezoneController.text = offset.toString();
-      debugPrint('Timezone offset set: $offset for coordinates (${position.latitude}, ${position.longitude})');
+      debugPrint(
+        'Timezone offset set: $offset for coordinates (${position.latitude}, ${position.longitude})',
+      );
     } catch (e) {
       debugPrint('Error getting current location: $e');
       showErrorMessage(
@@ -461,9 +488,11 @@ class KundliFormController extends BaseController {
   /// Get timezone offset from timezone string
   Future<double> _getTimezoneOffset(String timezone) async {
     try {
-      final url = Uri.parse('https://timeapi.io/api/TimeZone/zone?timeZone=$timezone');
+      final url = Uri.parse(
+        'https://timeapi.io/api/TimeZone/zone?timeZone=$timezone',
+      );
       final response = await http.get(url).timeout(const Duration(seconds: 10));
-      
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>?;
         if (data?['currentUtcOffset'] != null) {
@@ -479,10 +508,14 @@ class KundliFormController extends BaseController {
   }
 
   /// Select city and auto-fill coordinates
-  Future<void> selectCity(String cityName, String? state, String? country) async {
+  Future<void> selectCity(
+    String cityName,
+    String? state,
+    String? country,
+  ) async {
     try {
       selectedLocation.value = cityName;
-      
+
       // Fetch coordinates for the city
       final coords = await AddressHelper.fetchCoordinatesFromCity(
         city: cityName,
@@ -491,15 +524,17 @@ class KundliFormController extends BaseController {
       );
 
       if (coords != null) {
-        latitudeController.text = (coords['latitude'] as double).toStringAsFixed(6);
-        longitudeController.text = (coords['longitude'] as double).toStringAsFixed(6);
-        
+        latitudeController.text = (coords['latitude'] as double)
+            .toStringAsFixed(6);
+        longitudeController.text = (coords['longitude'] as double)
+            .toStringAsFixed(6);
+
         // Get timezone
         final timezone = await AddressHelper.getTimezoneFromCoordinates(
           coords['latitude'] as double,
           coords['longitude'] as double,
         );
-        
+
         // Calculate timezone offset
         double offset;
         if (timezone != null) {
@@ -510,7 +545,7 @@ class KundliFormController extends BaseController {
             coords['longitude'] as double,
           );
         }
-        
+
         timezoneController.text = offset.toString();
       }
     } catch (e) {
@@ -534,11 +569,17 @@ class KundliFormController extends BaseController {
       return;
     }
     if (latitudeController.text.isEmpty) {
-      showErrorMessage(title: 'Error', message: 'Please enter latitude or get current location');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Please enter latitude or get current location',
+      );
       return;
     }
     if (longitudeController.text.isEmpty) {
-      showErrorMessage(title: 'Error', message: 'Please enter longitude or get current location');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Please enter longitude or get current location',
+      );
       return;
     }
     if (timezoneController.text.isEmpty) {
@@ -554,7 +595,10 @@ class KundliFormController extends BaseController {
       final tz = double.tryParse(timezoneController.text);
 
       if (latitude == null || longitude == null || tz == null) {
-        showErrorMessage(title: 'Error', message: 'Invalid latitude, longitude, or timezone');
+        showErrorMessage(
+          title: 'Error',
+          message: 'Invalid latitude, longitude, or timezone',
+        );
         return;
       }
 
@@ -576,7 +620,9 @@ class KundliFormController extends BaseController {
       if (data != null) {
         // Prepare formData to pass to next screen
         final formDataMap = {
-          'name': nameController.text.trim().isNotEmpty ? nameController.text.trim() : null,
+          'name': nameController.text.trim().isNotEmpty
+              ? nameController.text.trim()
+              : null,
           'gender': selectedGender.value,
           'date': dateController.text,
           'time': timeController.text,
@@ -594,16 +640,14 @@ class KundliFormController extends BaseController {
 
         // If targetRoute is provided, navigate to that route instead of kundliResult
         if (targetRoute != null && targetRoute!.isNotEmpty) {
-          Get.toNamed(targetRoute!, arguments: {
-            'formData': formDataMap,
-          });
+          Get.toNamed(targetRoute!, arguments: {'formData': formDataMap});
         } else {
           // Navigate to result page with data (default behavior)
           // Note: name and gender are included in formData but NOT sent to API
-          Get.toNamed(AppRoutes.kundliResult, arguments: {
-            'kundliData': data,
-            'formData': formDataMap,
-          });
+          Get.toNamed(
+            AppRoutes.kundliResult,
+            arguments: {'kundliData': data, 'formData': formDataMap},
+          );
         }
       } else {
         showErrorMessage(title: 'Error', message: 'Failed to generate kundli');
@@ -615,4 +659,3 @@ class KundliFormController extends BaseController {
     }
   }
 }
-

@@ -438,6 +438,8 @@ class AppConstant {
 
   static const String dESpecializedMasteryBundles4 =
       '$s3BaseUrl/Digital+Learning/GrandMasterImage.png';
+  static const String consultation =
+      '$s3BaseUrl/Astro+Service/3D+Logos/consultation+3d.png';
 
   ///
 }

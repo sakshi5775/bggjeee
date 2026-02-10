@@ -78,7 +78,10 @@ class DailyPanchangController extends BaseController {
 
       // Set current time (12h display)
       final now = DateTime.now();
-      timeController.text = TimePickerHelper.formatTime24To12Display(now.hour, now.minute);
+      timeController.text = TimePickerHelper.formatTime24To12Display(
+        now.hour,
+        now.minute,
+      );
 
       // Auto-fetch panchang data
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -89,7 +92,10 @@ class DailyPanchangController extends BaseController {
       final now = DateTime.now();
       selectedDate.value = now;
       dateController.text = DateFormat('dd/MM/yyyy').format(now);
-      timeController.text = TimePickerHelper.formatTime24To12Display(now.hour, now.minute);
+      timeController.text = TimePickerHelper.formatTime24To12Display(
+        now.hour,
+        now.minute,
+      );
       timezoneController.text = '5.5'; // Default IST
 
       // Try to get current location on init
@@ -134,8 +140,8 @@ class DailyPanchangController extends BaseController {
 
       // Get current position
       Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy:
-            LocationAccuracy.medium, // Use medium for faster response
+        desiredAccuracy: LocationAccuracy.high, // Use high for better accuracy
+        timeLimit: const Duration(seconds: 5),
       );
 
       // Check again if controller is disposed before using it
@@ -240,6 +246,7 @@ class DailyPanchangController extends BaseController {
       // Get current position
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
       );
 
       // Check if controller is disposed before using it
@@ -494,8 +501,8 @@ class DailyPanchangController extends BaseController {
 
   /// Select date
   Future<void> selectDate() async {
-    final picked = await showDatePicker(
-      context: Get.context!,
+    final picked = await TimePickerHelper.showDatePicker(
+      Get.context!,
       initialDate: selectedDate.value,
       firstDate: DateTime(1900),
       lastDate: DateTime(2100),
@@ -516,7 +523,10 @@ class DailyPanchangController extends BaseController {
     );
 
     if (picked != null) {
-      timeController.text = TimePickerHelper.formatTime24To12Display(picked.hour, picked.minute);
+      timeController.text = TimePickerHelper.formatTime24To12Display(
+        picked.hour,
+        picked.minute,
+      );
     }
   }
 
@@ -543,7 +553,10 @@ class DailyPanchangController extends BaseController {
     selectedDate.value = DateTime.now();
     dateController.text = DateFormat('dd/MM/yyyy').format(selectedDate.value);
     final now = DateTime.now();
-    timeController.text = TimePickerHelper.formatTime24To12Display(now.hour, now.minute);
+    timeController.text = TimePickerHelper.formatTime24To12Display(
+      now.hour,
+      now.minute,
+    );
     if (panchangData.value != null) {
       fetchPanchang();
     }
@@ -594,7 +607,9 @@ class DailyPanchangController extends BaseController {
         return;
       }
 
-      final time24 = TimePickerHelper.parseTime12To24(timeController.text) ?? timeController.text;
+      final time24 =
+          TimePickerHelper.parseTime12To24(timeController.text) ??
+          timeController.text;
       final data = await _panchangService.getDailyPanchang(
         date: dateController.text,
         time: time24,

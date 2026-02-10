@@ -7,11 +7,12 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:astrobharataiuser/app_manager/common/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 
 class HandwritingAstrologyUploadView extends StatefulWidget {
   const HandwritingAstrologyUploadView({Key? key}) : super(key: key);
@@ -26,7 +27,6 @@ class _HandwritingAstrologyUploadViewState
   final HandwritingAstrologyController controller = Get.put(
     HandwritingAstrologyController(),
   );
-  final ImagePicker _picker = ImagePicker();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
   DateTime? _selectedDate;
@@ -640,31 +640,13 @@ class _HandwritingAstrologyUploadViewState
 
   Future<void> _pickFromCamera() async {
     try {
-      final XFile? pickedFile = await _picker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 80,
-      );
+      final pickedFile = await ImagePickerHelper.pickImage(context);
 
       if (!mounted) return;
 
       if (pickedFile == null) return;
 
-      final file = File(pickedFile.path);
-      if (!await file.exists()) {
-        if (mounted) {
-          Get.snackbar(
-            'Error',
-            'Captured image file does not exist.',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-        }
-        return;
-      }
-
-      if (!mounted) return;
-      controller.addImage(file);
+      controller.addImage(pickedFile);
     } catch (e) {
       if (mounted) {
         Get.snackbar(
@@ -680,31 +662,13 @@ class _HandwritingAstrologyUploadViewState
 
   Future<void> _pickFromGallery() async {
     try {
-      final XFile? pickedFile = await _picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 80,
-      );
+      final pickedFile = await ImagePickerHelper.pickImage(context);
 
       if (!mounted) return;
 
       if (pickedFile == null) return;
 
-      final file = File(pickedFile.path);
-      if (!await file.exists()) {
-        if (mounted) {
-          Get.snackbar(
-            'Error',
-            'Selected image file does not exist.',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-        }
-        return;
-      }
-
-      if (!mounted) return;
-      controller.addImage(file);
+      controller.addImage(pickedFile);
     } catch (e) {
       if (mounted) {
         Get.snackbar(
@@ -719,8 +683,8 @@ class _HandwritingAstrologyUploadViewState
   }
 
   Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
+    final DateTime? picked = await TimePickerHelper.showDatePicker(
+      context,
       initialDate: DateTime.now().subtract(Duration(days: 365 * 25)),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),

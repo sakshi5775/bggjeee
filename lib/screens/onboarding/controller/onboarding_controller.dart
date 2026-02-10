@@ -23,7 +23,7 @@ class OnboardingController extends BaseController {
   final pageButtons = [
     ["AI Astrologer Chat", "Live Video Consultation", "Expert Pandit"],
     ["AI Astrologer Chat", "Live Video Consultation", "Expert Pandit"],
-    ["Kundli & Horoscope", "Virtual Temple & Puja", "Remedies & shop"],
+    ["Kundli & Horoscope", "Virtual Temple & Pooja", "Remedies & shop"],
   ];
 
   @override

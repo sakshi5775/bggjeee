@@ -765,27 +765,14 @@ class ProfileController extends BaseController {
 
   /// Select birth date
   Future<void> selectBirthDate() async {
-    final pickedDate = await showDatePicker(
-      context: Get.context!,
+    final pickedDate = await TimePickerHelper.showDatePicker(
+      Get.context!,
       initialDate:
           selectedBirthDate.value ??
           DateTime.now().subtract(Duration(days: 365 * 25)),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       helpText: 'Select Date of Birth',
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: const Color(0xFFed6f30),
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: const Color(0xFF6F221E),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
     if (pickedDate != null) {
       selectedBirthDate.value = pickedDate;
@@ -803,19 +790,6 @@ class ProfileController extends BaseController {
         hour: hour.clamp(0, 23),
         minute: minute.clamp(0, 59),
       ),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: const Color(0xFFed6f30),
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: const Color(0xFF6F221E),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
     if (pickedTime != null) {
       birthHourController.text = pickedTime.hour.toString();

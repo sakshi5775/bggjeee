@@ -129,19 +129,38 @@ class AllAstrologerWidget extends BasePage<UserDashboardController> {
                                 ],
                               ),
                             ),
-                            Spacing.h(4),
+                            Spacing.h(1),
                             SizedBox(
                               width: 70.w,
                               child: AutoTranslateText(
                                 astrologerName,
-                                style: AppTypography.body2.copyWith(
-                                  color: '#3D0C11'.toColor(),
+                                style: AppTypography.h3.copyWith(
+                                  color: '#68171E'.toColor(),
                                   fontWeight: FontWeight.w500,
+                                  fontSize: 12.sp,
                                 ),
                                 textAlign: TextAlign.center,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.currency_rupee,
+                                  size: 9.w,
+                                  color: AppColors.deepOrange,
+                                ),
+                                AutoTranslateText(
+                                  '${astrologer.chatPricePerMin?.toInt() ?? 0}/min',
+                                  style: TextStyle(
+                                    fontSize: 9.sp,
+                                    color: AppColors.deepOrange,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -292,19 +311,38 @@ class ChatCallAstrologerWidget extends BasePage<UserDashboardController> {
                                   ),
                               ],
                             ),
-                            Spacing.h(4),
+                            Spacing.h(1),
                             SizedBox(
                               width: 70.w,
                               child: AutoTranslateText(
                                 astrologerName,
-                                style: AppTypography.body2.copyWith(
-                                  color: '#3D0C11'.toColor(),
+                                style: AppTypography.h3.copyWith(
+                                  color: '#68171E'.toColor(),
                                   fontWeight: FontWeight.w500,
+                                  fontSize: 12.sp,
                                 ),
                                 textAlign: TextAlign.center,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.currency_rupee,
+                                  size: 9.w,
+                                  color: AppColors.deepOrange,
+                                ),
+                                AutoTranslateText(
+                                  '${astrologer.chatPricePerMin?.toInt() ?? 0}/min',
+                                  style: TextStyle(
+                                    fontSize: 9.sp,
+                                    color: AppColors.deepOrange,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

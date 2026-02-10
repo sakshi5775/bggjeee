@@ -15,6 +15,28 @@ import 'package:file_picker/file_picker.dart';
 class ImagePickerHelper {
   static final ImagePicker _picker = ImagePicker();
 
+  /// Allowed file extensions across the project
+  static const List<String> allowedExtensions = [
+    'png',
+    'jpg',
+    'jpeg',
+    'svg',
+    'pdf',
+  ];
+
+  /// Check if file extension is allowed
+  static bool isExtensionAllowed(String filePath) {
+    final ext = filePath.split('.').last.toLowerCase();
+    return allowedExtensions.contains(ext);
+  }
+
+  /// Show invalid format error
+  static void _showFormatError(BuildContext context) {
+    ErrorUiUtils.showWarningSnackbar(
+      'Invalid file format. Allowed: ${allowedExtensions.join(', ').toUpperCase()}',
+    );
+  }
+
   static Future<File?> pickImage(context) async {
     return await showModalBottomSheet<File?>(
       context: context,
@@ -119,6 +141,10 @@ class ImagePickerHelper {
         imageQuality: 80,
       );
       if (pickedFile != null) {
+        if (!isExtensionAllowed(pickedFile.path)) {
+          _showFormatError(context);
+          return null;
+        }
         final file = File(pickedFile.path);
         final bytes = await file.length();
         final maxSizeInBytes = maxSizeInMB * 1024 * 1024;
@@ -168,6 +194,10 @@ class ImagePickerHelper {
       );
 
       if (image != null) {
+        if (!isExtensionAllowed(image.path)) {
+          _showFormatError(context);
+          return null;
+        }
         final bytes = await image.length();
         final maxSizeInBytes = maxSizeInMB * 1024 * 1024;
         if (bytes <= maxSizeInBytes) {
@@ -339,7 +369,12 @@ class ImagePickerHelper {
       );
 
       if (result != null && result.files.isNotEmpty) {
-        final file = File(result.files.first.path!);
+        final filePath = result.files.first.path!;
+        if (!isExtensionAllowed(filePath)) {
+          _showFormatError(context);
+          return null;
+        }
+        final file = File(filePath);
         final bytes = await file.length();
         final maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 

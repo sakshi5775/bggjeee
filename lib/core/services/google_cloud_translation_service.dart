@@ -47,17 +47,19 @@ class GoogleCloudTranslationService {
         'https://translation.googleapis.com/language/translate/v2',
       );
 
-      final response = await http.post(
-        url,
-        body: {
-          'q': text,
-          'target': targetLanguage,
-          'format':
-              'text', // Use 'text' to avoid HTML entities if possible, or 'html'
-          'source': sourceLanguage,
-          'key': AppConstant.googleTranslateApiKey,
-        },
-      );
+      final response = await http
+          .post(
+            url,
+            body: {
+              'q': text,
+              'target': targetLanguage,
+              'format':
+                  'text', // Use 'text' to avoid HTML entities if possible, or 'html'
+              'source': sourceLanguage,
+              'key': AppConstant.googleTranslateApiKey,
+            },
+          )
+          .timeout(const Duration(seconds: 5)); // 5 second timeout
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);

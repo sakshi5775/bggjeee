@@ -43,7 +43,7 @@ class HoroscopeSignSelectionView extends StatelessWidget {
             // Zodiac signs grid
             Expanded(
               child: Padding(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.fromLTRB(16.w, 0.h, 16.w, 16.h),
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,

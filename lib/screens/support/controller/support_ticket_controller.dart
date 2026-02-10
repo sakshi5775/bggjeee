@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/support_ticket_model.dart';
 import 'package:astrobharataiuser/screens/support/service/support_ticket_service.dart';
 import 'package:flutter/material.dart';
@@ -172,7 +173,8 @@ class SupportTicketController extends BaseController {
       return false;
     }
 
-    return await runWithLoading(
+    final result =
+        await runWithLoading(
           () async {
             List<String>? tags;
             if (tagsController.text.trim().isNotEmpty) {
@@ -208,9 +210,14 @@ class SupportTicketController extends BaseController {
             return false;
           },
           showBusy: true,
-          successMessage: 'Ticket created successfully',
+          successMessage: 'your support ticket of the issue is submitted',
         ) ??
         false;
+
+    if (result) {
+      Get.offNamed(AppRoutes.supportTickets);
+    }
+    return result;
   }
 
   /// Load ticket details

@@ -405,19 +405,23 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     },
     {
       'label': 'Predictions',
-      'route': AppRoutes.predictions,
+      'route': AppRoutes.kundliForm,
       'icon': AppConstant.lifePredictions,
     },
-    {'label': 'Dasha', 'route': AppRoutes.dasha, 'icon': AppConstant.dasha},
-    {'label': 'Dosh', 'route': AppRoutes.dosh, 'icon': AppConstant.dosh},
+    {
+      'label': 'Dasha',
+      'route': AppRoutes.kundliForm,
+      'icon': AppConstant.dasha,
+    },
+    {'label': 'Dosh', 'route': AppRoutes.kundliForm, 'icon': AppConstant.dosh},
     {
       'label': 'Lal Kitab',
-      'route': AppRoutes.lalKitab,
+      'route': AppRoutes.kundliForm,
       'icon': AppConstant.lalKitab,
     },
     {
       'label': 'KP Astrology',
-      'route': AppRoutes.kpSystem,
+      'route': AppRoutes.kundliForm,
       'icon': AppConstant.kpN,
     },
     {
@@ -1983,7 +1987,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 if (index == 0) {
                   return _buildPoojaCard(
                     'Anuj Kumar',
-                    'Hawan Puja • Birthday Puja',
+                    'Hawan Pooja • Birthday Pooja',
                     '10:25 AM, 15th Sep',
                     AppConstant.poojaAnuj,
                     235.w,
@@ -1991,7 +1995,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 }
                 return _buildPoojaCard(
                   'Abhishek Singh',
-                  'Wedding Puja • Rituals',
+                  'Wedding Pooja • Rituals',
                   '10:25 AM, 15th Sep',
                   AppConstant.poojaAbhishek,
                   207.19.w,
@@ -3584,14 +3588,16 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ],
             ),
           ),
-          Spacing.h(4),
+          Spacing.h(1),
           SizedBox(
             width: 70.w,
+
             child: AutoTranslateText(
               displayName,
-              style: AppTypography.body2.copyWith(
-                color: '#3D0C11'.toColor(),
+              style: AppTypography.h3.copyWith(
+                color: '#68171E'.toColor(),
                 fontWeight: FontWeight.w500,
+                fontSize: 12.sp,
               ),
               textAlign: TextAlign.center,
               maxLines: 1,
@@ -5572,17 +5578,18 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ),
             ),
           ),
-          Spacing.h(4),
+          Spacing.h(1),
           SizedBox(
             width: 70.w,
             child: AutoTranslateText(
               stream.astrologerName,
-              style: AppTypography.body2.copyWith(
-                color: "#3D0C11".toColor(),
+              style: AppTypography.h3.copyWith(
+                color: '#68171E'.toColor(),
                 fontWeight: FontWeight.w500,
+                fontSize: 12.sp,
               ),
               textAlign: TextAlign.center,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -5693,17 +5700,18 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ),
             ),
           ),
-          Spacing.h(4),
+          Spacing.h(1),
           SizedBox(
             width: 70.w,
             child: AutoTranslateText(
               astrologerName,
-              style: AppTypography.body2.copyWith(
-                color: "#3D0C11".toColor(),
+              style: AppTypography.h3.copyWith(
+                color: '#68171E'.toColor(),
                 fontWeight: FontWeight.w500,
+                fontSize: 12.sp,
               ),
               textAlign: TextAlign.center,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),

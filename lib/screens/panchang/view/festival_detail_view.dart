@@ -380,7 +380,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AutoTranslateText(
-            '${controller.festival.value?['name']} Puja Vidhi',
+            '${controller.festival.value?['name']} Pooja Vidhi',
             style: MyTextTheme.mediumBCB.copyWith(
               color: "#6F221E".toColor(),
               fontSize: 18,

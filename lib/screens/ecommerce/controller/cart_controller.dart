@@ -23,7 +23,7 @@ class CartController extends BaseController {
   final cart = Rxn<CartModel>();
   final savedItems = <CartItem>[].obs;
 
-  final isLoading = false.obs;
+  final isLoading = true.obs;
   final isUpdatingCart = false.obs;
   final isApplyingCoupon = false.obs;
   final isLoadingAddresses = false.obs;

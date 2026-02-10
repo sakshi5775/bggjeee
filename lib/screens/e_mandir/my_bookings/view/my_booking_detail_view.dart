@@ -320,7 +320,7 @@ class MyBookingDetailView extends BasePage<MyBookingDetailController> {
         ? temple!.images!.first
         : null;
     return BookingInfoSection(
-      title: 'Puja Details',
+      title: 'Pooja Details',
       icon: Icons.temple_hindu_rounded,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -368,7 +368,7 @@ class MyBookingDetailView extends BasePage<MyBookingDetailController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AutoTranslateText(
-                  puja?.title ?? pujaSnapshot?.name ?? 'Puja',
+                  puja?.title ?? pujaSnapshot?.name ?? 'Pooja',
                   style: AppTypography.h3.copyWith(
                     color: const Color(0xFF212121),
                   ),

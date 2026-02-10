@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:intl/intl.dart';
 
 class YearlyVratView extends BasePage<YearlyVratController> {
@@ -381,8 +382,8 @@ class YearlyVratView extends BasePage<YearlyVratController> {
   }
 
   void _showYearPicker() async {
-    final picked = await showDatePicker(
-      context: Get.context!,
+    final picked = await TimePickerHelper.showDatePicker(
+      Get.context!,
       initialDate: DateTime(controller.selectedYear.value, 1, 1),
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),

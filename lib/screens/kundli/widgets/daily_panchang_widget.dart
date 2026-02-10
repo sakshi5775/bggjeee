@@ -12,10 +12,7 @@ import 'package:intl/intl.dart';
 class DailyPanchangWidget extends StatelessWidget {
   final KundliResultController controller;
 
-  const DailyPanchangWidget({
-    super.key,
-    required this.controller,
-  });
+  const DailyPanchangWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -76,18 +73,25 @@ class DailyPanchangWidget extends StatelessWidget {
     final yoga = data['yoga'] as Map<String, dynamic>?;
     final dateStr = controller.formData.value?['date']?.toString() ?? '';
     final formattedDate = _formatDateForDisplay(dateStr);
-    final oc = AppColors.orangeGradient.colors.first;
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: oc.withOpacity(0.2)),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: AppColors.deepOrange.withOpacity(0.2),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
+            color: AppColors.deepOrange.withOpacity(0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
             color: Colors.black.withOpacity(0.04),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -131,9 +135,7 @@ class DailyPanchangWidget extends StatelessWidget {
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        gradient: AppColors.orangeGradient,
-      ),
+      decoration: BoxDecoration(gradient: AppColors.orangeGradient),
       child: Row(
         children: [
           Icon(Icons.calendar_today, size: 16.w, color: Colors.white),
@@ -168,7 +170,11 @@ class DailyPanchangWidget extends StatelessWidget {
           Spacing.h(4),
           Row(
             children: [
-              Icon(Icons.location_on, size: 14.w, color: AppColors.orangeGradient.colors.first),
+              Icon(
+                Icons.location_on,
+                size: 14.w,
+                color: AppColors.orangeGradient.colors.first,
+              ),
               Spacing.w(4),
               Expanded(
                 child: AutoTranslateText(
@@ -198,11 +204,21 @@ class DailyPanchangWidget extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _buildTimeItem(Icons.wb_sunny, 'Sunrise', advancedDetails?['sun_rise']?.toString() ?? '--', oc),
+              child: _buildTimeItem(
+                Icons.wb_sunny,
+                'Sunrise',
+                advancedDetails?['sun_rise']?.toString() ?? '--',
+                oc,
+              ),
             ),
             Spacing.w(6),
             Expanded(
-              child: _buildTimeItem(Icons.wb_twilight, 'Sunset', advancedDetails?['sun_set']?.toString() ?? '--', oc),
+              child: _buildTimeItem(
+                Icons.wb_twilight,
+                'Sunset',
+                advancedDetails?['sun_set']?.toString() ?? '--',
+                oc,
+              ),
             ),
           ],
         ),
@@ -210,17 +226,32 @@ class DailyPanchangWidget extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _buildTimeItem(Icons.nightlight_round, 'Moonrise', advancedDetails?['moon_rise']?.toString() ?? '--', oc),
+              child: _buildTimeItem(
+                Icons.nightlight_round,
+                'Moonrise',
+                advancedDetails?['moon_rise']?.toString() ?? '--',
+                oc,
+              ),
             ),
             Spacing.w(6),
             Expanded(
-              child: _buildTimeItem(Icons.brightness_2, 'Moonset', advancedDetails?['moon_set']?.toString() ?? '--', oc),
+              child: _buildTimeItem(
+                Icons.brightness_2,
+                'Moonset',
+                advancedDetails?['moon_set']?.toString() ?? '--',
+                oc,
+              ),
             ),
           ],
         ),
         if (advancedDetails?['solar_noon'] != null) ...[
           Spacing.h(6),
-          _buildTimeItem(Icons.access_time, 'Solar Noon', advancedDetails?['solar_noon']?.toString() ?? '--', oc),
+          _buildTimeItem(
+            Icons.access_time,
+            'Solar Noon',
+            advancedDetails?['solar_noon']?.toString() ?? '--',
+            oc,
+          ),
         ],
       ],
     );
@@ -237,7 +268,12 @@ class DailyPanchangWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTimeItem(IconData icon, String label, String value, Color accent) {
+  Widget _buildTimeItem(
+    IconData icon,
+    String label,
+    String value,
+    Color accent,
+  ) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
       decoration: BoxDecoration(
@@ -292,57 +328,79 @@ class DailyPanchangWidget extends StatelessWidget {
         Spacing.h(8),
         if (tithi != null) ...[
           _buildAstroItem(
-            Icons.access_time, 'Tithi', tithi['name']?.toString() ?? '--',
+            Icons.access_time,
+            'Tithi',
+            tithi['name']?.toString() ?? '--',
             '${_formatDateTime(tithi['start'])} → ${_formatDateTime(tithi['end'])}',
             oc,
             details: {
-              'Type': tithi['type']?.toString(), 'Number': tithi['number']?.toString(),
-              'Diety': tithi['diety']?.toString(), 'Next Tithi': tithi['next_tithi']?.toString(),
-              'Meaning': tithi['meaning']?.toString(), 'Special': tithi['special']?.toString(),
+              'Type': tithi['type']?.toString(),
+              'Number': tithi['number']?.toString(),
+              'Diety': tithi['diety']?.toString(),
+              'Next Tithi': tithi['next_tithi']?.toString(),
+              'Meaning': tithi['meaning']?.toString(),
+              'Special': tithi['special']?.toString(),
             },
           ),
           Spacing.h(6),
         ],
         if (nakshatra != null) ...[
           _buildAstroItem(
-            Icons.star, 'Nakshatra', nakshatra['name']?.toString() ?? '--',
+            Icons.star,
+            'Nakshatra',
+            nakshatra['name']?.toString() ?? '--',
             '${_formatDateTime(nakshatra['start'])} → ${_formatDateTime(nakshatra['end'])}',
             oc,
             details: {
-              'Lord': nakshatra['lord']?.toString(), 'Diety': nakshatra['diety']?.toString(),
-              'Number': nakshatra['number']?.toString(), 'Pada': nakshatra['pada']?.toString(),
+              'Lord': nakshatra['lord']?.toString(),
+              'Diety': nakshatra['diety']?.toString(),
+              'Number': nakshatra['number']?.toString(),
+              'Pada': nakshatra['pada']?.toString(),
               'Next Nakshatra': nakshatra['next_nakshatra']?.toString(),
-              'Meaning': nakshatra['meaning']?.toString(), 'Special': nakshatra['special']?.toString(),
-              'Summary': nakshatra['summary']?.toString(), 'Words': nakshatra['words']?.toString(),
+              'Meaning': nakshatra['meaning']?.toString(),
+              'Special': nakshatra['special']?.toString(),
+              'Summary': nakshatra['summary']?.toString(),
+              'Words': nakshatra['words']?.toString(),
             },
           ),
           Spacing.h(6),
         ],
         if (yoga != null) ...[
           _buildAstroItem(
-            Icons.my_location, 'Yoga', yoga['name']?.toString() ?? '--',
+            Icons.my_location,
+            'Yoga',
+            yoga['name']?.toString() ?? '--',
             '${_formatDateTime(yoga['start'])} → ${_formatDateTime(yoga['end'])}',
             oc,
             details: {
-              'Number': yoga['number']?.toString(), 'Next Yoga': yoga['next_yoga']?.toString(),
-              'Meaning': yoga['meaning']?.toString(), 'Special': yoga['special']?.toString(),
+              'Number': yoga['number']?.toString(),
+              'Next Yoga': yoga['next_yoga']?.toString(),
+              'Meaning': yoga['meaning']?.toString(),
+              'Special': yoga['special']?.toString(),
             },
           ),
           Spacing.h(6),
         ],
         if (karana != null)
           _buildAstroItem(
-            Icons.grid_view, 'Karana', karana['name']?.toString() ?? '--',
+            Icons.grid_view,
+            'Karana',
+            karana['name']?.toString() ?? '--',
             '${_formatDateTime(karana['start'])} → ${_formatDateTime(karana['end'])}',
             oc,
             details: {
-              'Type': karana['type']?.toString(), 'Lord': karana['lord']?.toString(),
-              'Diety': karana['diety']?.toString(), 'Number': karana['number']?.toString(),
-              'Next Karana': karana['next_karana']?.toString(), 'Special': karana['special']?.toString(),
+              'Type': karana['type']?.toString(),
+              'Lord': karana['lord']?.toString(),
+              'Diety': karana['diety']?.toString(),
+              'Number': karana['number']?.toString(),
+              'Next Karana': karana['next_karana']?.toString(),
+              'Special': karana['special']?.toString(),
             },
           ),
-        if (data['day'] != null) _buildDetailRow('Day', data['day']?.toString() ?? '--'),
-        if (data['day_lord'] != null) _buildDetailRow('Day Lord', data['day_lord']?.toString() ?? '--'),
+        if (data['day'] != null)
+          _buildDetailRow('Day', data['day']?.toString() ?? '--'),
+        if (data['day_lord'] != null)
+          _buildDetailRow('Day Lord', data['day_lord']?.toString() ?? '--'),
       ],
     );
   }
@@ -406,39 +464,41 @@ class DailyPanchangWidget extends StatelessWidget {
             Spacing.h(6),
             ...details.entries
                 .where((e) => e.value != null && e.value!.isNotEmpty)
-                .map((entry) => Padding(
-                      padding: EdgeInsets.only(top: 3.h),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AutoTranslateText(
-                            entry.key,
-                            style: MyTextTheme.smallBCN.copyWith(
-                              color: "#6F221E".toColor().withOpacity(0.6),
+                .map(
+                  (entry) => Padding(
+                    padding: EdgeInsets.only(top: 3.h),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AutoTranslateText(
+                          entry.key,
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: "#6F221E".toColor().withOpacity(0.6),
+                            fontSize: 10.sp,
+                          ),
+                        ),
+                        Expanded(
+                          child: AutoTranslateText(
+                            entry.value ?? '',
+                            style: MyTextTheme.smallBCB.copyWith(
+                              color: "#6F221E".toColor(),
+                              fontWeight: FontWeight.w500,
                               fontSize: 10.sp,
                             ),
+                            textAlign: TextAlign.right,
                           ),
-                          Expanded(
-                            child: AutoTranslateText(
-                              entry.value ?? '',
-                              style: MyTextTheme.smallBCB.copyWith(
-                                color: "#6F221E".toColor(),
-                                fontWeight: FontWeight.w500,
-                                fontSize: 10.sp,
-                              ),
-                              textAlign: TextAlign.right,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
           ],
         ],
       ),
     );
   }
-  
+
   String _formatDateTime(dynamic dateTime) {
     if (dateTime == null) return '--';
     try {
@@ -494,14 +554,22 @@ class DailyPanchangWidget extends StatelessWidget {
   ) {
     final oc = AppColors.orangeGradient.colors.first;
     final rows = <Widget>[
-      _buildVaarRow('Day of Week', data['day']?['name']?.toString() ?? data['day']?.toString() ?? '--'),
+      _buildVaarRow(
+        'Day of Week',
+        data['day']?['name']?.toString() ?? data['day']?.toString() ?? '--',
+      ),
     ];
     if (masa?['paksha'] != null) {
       rows.add(Spacing.h(6));
       rows.add(
         Row(
           children: [
-            Expanded(child: _buildVaarRow('Paksha', masa!['paksha']?.toString() ?? '--')),
+            Expanded(
+              child: _buildVaarRow(
+                'Paksha',
+                masa!['paksha']?.toString() ?? '--',
+              ),
+            ),
             Spacing.w(6),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
@@ -526,16 +594,25 @@ class DailyPanchangWidget extends StatelessWidget {
       rows.add(Spacing.h(6));
       rows.add(_buildVaarRow(k, v));
     }
-    if (masa?['amanta_name'] != null) add('Lunar Month', masa!['amanta_name']?.toString() ?? '--');
+
+    if (masa?['amanta_name'] != null)
+      add('Lunar Month', masa!['amanta_name']?.toString() ?? '--');
     if (masa?['name'] != null) add('Masa', masa!['name']?.toString() ?? '--');
-    if (years?['vikram_samvaat_name'] != null) add('Lunar Year', years!['vikram_samvaat_name']?.toString() ?? '--');
-    if (years?['vikram_samvaat'] != null) add('Vikram Samvat', years!['vikram_samvaat']?.toString() ?? '--');
-    if (years?['saka'] != null) add('Shaka Samvat', years!['saka']?.toString() ?? '--');
-    if (years?['kali'] != null) add('Kali Yuga', years!['kali']?.toString() ?? '--');
+    if (years?['vikram_samvaat_name'] != null)
+      add('Lunar Year', years!['vikram_samvaat_name']?.toString() ?? '--');
+    if (years?['vikram_samvaat'] != null)
+      add('Vikram Samvat', years!['vikram_samvaat']?.toString() ?? '--');
+    if (years?['saka'] != null)
+      add('Shaka Samvat', years!['saka']?.toString() ?? '--');
+    if (years?['kali'] != null)
+      add('Kali Yuga', years!['kali']?.toString() ?? '--');
     if (masa?['ritu'] != null) add('Ritu', masa!['ritu']?.toString() ?? '--');
-    if (masa?['ayana'] != null) add('Ayana', masa!['ayana']?.toString() ?? '--');
-    if (data['ayanamsa']?['name'] != null) add('Ayanamsa', data['ayanamsa']!['name']?.toString() ?? '--');
-    if (data['rasi']?['name'] != null) add('Moon Sign', data['rasi']!['name']?.toString() ?? '--');
+    if (masa?['ayana'] != null)
+      add('Ayana', masa!['ayana']?.toString() ?? '--');
+    if (data['ayanamsa']?['name'] != null)
+      add('Ayanamsa', data['ayanamsa']!['name']?.toString() ?? '--');
+    if (data['rasi']?['name'] != null)
+      add('Moon Sign', data['rasi']!['name']?.toString() ?? '--');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -593,16 +670,19 @@ class DailyPanchangWidget extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildMuhurtaTimings(
     Map<String, dynamic>? advancedDetails,
     Map<String, dynamic> data,
   ) {
     final oc = AppColors.orangeGradient.colors.first;
-    final hasInauspicious = (data['rahukaal'] != null && data['rahukaal'].toString().isNotEmpty) ||
+    final hasInauspicious =
+        (data['rahukaal'] != null && data['rahukaal'].toString().isNotEmpty) ||
         (data['gulika'] != null && data['gulika'].toString().isNotEmpty) ||
-        (data['yamakanta'] != null && data['yamakanta'].toString().isNotEmpty) ||
-        (data['bhadrakaal'] != null && data['bhadrakaal'].toString().isNotEmpty);
+        (data['yamakanta'] != null &&
+            data['yamakanta'].toString().isNotEmpty) ||
+        (data['bhadrakaal'] != null &&
+            data['bhadrakaal'].toString().isNotEmpty);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -644,19 +724,35 @@ class DailyPanchangWidget extends StatelessWidget {
                   ],
                 ),
                 Spacing.h(6),
-                if (data['rahukaal'] != null && data['rahukaal'].toString().isNotEmpty)
-                  _buildTimingRow('Rahu Kaal', data['rahukaal']?.toString() ?? ''),
-                if (data['gulika'] != null && data['gulika'].toString().isNotEmpty) ...[
+                if (data['rahukaal'] != null &&
+                    data['rahukaal'].toString().isNotEmpty)
+                  _buildTimingRow(
+                    'Rahu Kaal',
+                    data['rahukaal']?.toString() ?? '',
+                  ),
+                if (data['gulika'] != null &&
+                    data['gulika'].toString().isNotEmpty) ...[
                   Spacing.h(4),
-                  _buildTimingRow('Gulika Kaal', data['gulika']?.toString() ?? ''),
+                  _buildTimingRow(
+                    'Gulika Kaal',
+                    data['gulika']?.toString() ?? '',
+                  ),
                 ],
-                if (data['yamakanta'] != null && data['yamakanta'].toString().isNotEmpty) ...[
+                if (data['yamakanta'] != null &&
+                    data['yamakanta'].toString().isNotEmpty) ...[
                   Spacing.h(4),
-                  _buildTimingRow('Yamakanta', data['yamakanta']?.toString() ?? ''),
+                  _buildTimingRow(
+                    'Yamakanta',
+                    data['yamakanta']?.toString() ?? '',
+                  ),
                 ],
-                if (data['bhadrakaal'] != null && data['bhadrakaal'].toString().isNotEmpty) ...[
+                if (data['bhadrakaal'] != null &&
+                    data['bhadrakaal'].toString().isNotEmpty) ...[
                   Spacing.h(4),
-                  _buildTimingRow('Bhadrakaal', data['bhadrakaal']?.toString() ?? ''),
+                  _buildTimingRow(
+                    'Bhadrakaal',
+                    data['bhadrakaal']?.toString() ?? '',
+                  ),
                 ],
               ],
             ),
@@ -674,7 +770,12 @@ class DailyPanchangWidget extends StatelessWidget {
     );
   }
 
-  Widget _muhurtaChip(IconData icon, String title, String subtitle, Color accent) {
+  Widget _muhurtaChip(
+    IconData icon,
+    String title,
+    String subtitle,
+    Color accent,
+  ) {
     return Container(
       padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
@@ -752,7 +853,7 @@ class DailyPanchangWidget extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildAdditionalDetails(
     Map<String, dynamic> data,
     Map<String, dynamic>? advancedDetails,
@@ -773,11 +874,26 @@ class DailyPanchangWidget extends StatelessWidget {
       if (rows.isNotEmpty) rows.add(Spacing.h(6));
       rows.add(_buildVaarRow(k, v));
     }
-    if (masa?['moon_phase'] != null) add('Moon Phase', masa!['moon_phase']?.toString() ?? '--');
-    if (advancedDetails?['moon_yogini_nivas'] != null) add('Moon Yogini Nivas', advancedDetails!['moon_yogini_nivas']?.toString() ?? '--');
-    if (advancedDetails?['ahargana'] != null) add('Ahargana', advancedDetails!['ahargana']?.toString() ?? '--');
-    if (advancedDetails?['next_full_moon'] != null) add('Next Full Moon', advancedDetails!['next_full_moon']?.toString() ?? '--');
-    if (advancedDetails?['next_new_moon'] != null) add('Next New Moon', advancedDetails!['next_new_moon']?.toString() ?? '--');
+
+    if (masa?['moon_phase'] != null)
+      add('Moon Phase', masa!['moon_phase']?.toString() ?? '--');
+    if (advancedDetails?['moon_yogini_nivas'] != null)
+      add(
+        'Moon Yogini Nivas',
+        advancedDetails!['moon_yogini_nivas']?.toString() ?? '--',
+      );
+    if (advancedDetails?['ahargana'] != null)
+      add('Ahargana', advancedDetails!['ahargana']?.toString() ?? '--');
+    if (advancedDetails?['next_full_moon'] != null)
+      add(
+        'Next Full Moon',
+        advancedDetails!['next_full_moon']?.toString() ?? '--',
+      );
+    if (advancedDetails?['next_new_moon'] != null)
+      add(
+        'Next New Moon',
+        advancedDetails!['next_new_moon']?.toString() ?? '--',
+      );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -823,4 +939,3 @@ class DailyPanchangWidget extends StatelessWidget {
     return dateStr;
   }
 }
-

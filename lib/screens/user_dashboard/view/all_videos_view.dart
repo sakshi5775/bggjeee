@@ -118,9 +118,9 @@ class AllVideosView extends BasePage<AllVideosController> {
           fontWeight: FontWeight.w600,
           fontSize: 13.sp,
         ),
-        tabs: const [
-          Tab(text: 'YouTube'),
-          Tab(text: 'Instagram'),
+        tabs: [
+          Tab(child: AutoTranslateText('YouTube')),
+          Tab(child: AutoTranslateText('Instagram')),
         ],
       ),
     );

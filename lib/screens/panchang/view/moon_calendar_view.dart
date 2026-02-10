@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:intl/intl.dart';
 
 class MoonCalendarView extends BasePage<MoonCalendarController> {
@@ -306,24 +307,11 @@ class MoonCalendarView extends BasePage<MoonCalendarController> {
   }
 
   void _showDatePicker() async {
-    final pickedDate = await showDatePicker(
-      context: Get.context!,
+    final pickedDate = await TimePickerHelper.showDatePicker(
+      Get.context!,
       initialDate: controller.selectedDate.value,
       firstDate: DateTime(1900),
       lastDate: DateTime(2100),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.templeGold,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: "#68171E".toColor(),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (pickedDate != null) {

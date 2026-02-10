@@ -26,8 +26,8 @@ class UserMainController extends GetxController {
   final RxList<BottomNavItem> navItems = <BottomNavItem>[
     const BottomNavItem(label: 'Home', icon: Icons.home),
     const BottomNavItem(label: 'Consult', icon: Icons.chat_bubble_outline),
-    const BottomNavItem(label: 'Live', icon: Icons.live_tv),
-    const BottomNavItem(label: 'AI', icon: Icons.smart_toy),
+    const BottomNavItem(label: 'AstroStream', icon: Icons.live_tv_rounded),
+    const BottomNavItem(label: 'AI Guru', icon: Icons.smart_toy),
     const BottomNavItem(label: 'Profile', icon: Icons.person),
   ].obs;
 

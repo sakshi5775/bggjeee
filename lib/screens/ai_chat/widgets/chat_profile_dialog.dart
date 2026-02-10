@@ -170,10 +170,6 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final cardColor = theme.cardColor;
-    final fieldColor = theme.colorScheme.surface;
-
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
@@ -181,9 +177,15 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
         constraints: BoxConstraints(maxWidth: 520.w),
         child: Container(
           decoration: BoxDecoration(
-            color: cardColor,
-            borderRadius: BorderRadius.circular(18.r),
-            border: Border.all(color: Colors.white10),
+            gradient: AppColors.gradientBackground,
+            borderRadius: BorderRadius.circular(24.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
           ),
           child: SingleChildScrollView(
             child: Padding(
@@ -222,10 +224,10 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                               controller: _fullNameController,
                               hint: 'Enter name',
                               prefixIcon: Icon(
-                                Icons.person,
-                                color: AppColors.saffron,
+                                Icons.person_outline,
+                                color: AppColors.deepOrange,
                               ),
-                              fillColor: fieldColor,
+                              fillColor: Colors.white,
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
                                   return 'Please enter a name';
@@ -237,7 +239,11 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                               label: 'Gender',
                               value: _selectedGender,
                               options: _genderOptions,
-                              fillColor: fieldColor,
+                              fillColor: Colors.white,
+                              prefixIcon: Icon(
+                                Icons.wc_outlined,
+                                color: AppColors.deepOrange,
+                              ),
                               onChanged: (value) {
                                 if (value != null) {
                                   setState(() => _selectedGender = value);
@@ -245,9 +251,9 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                               },
                             ),
                           ],
-                          spacing: 12,
+                          spacing: 16,
                         ),
-                        Spacing.h(12),
+                        Spacing.h(16),
                         _buildResponsiveGroup(
                           children: [
                             _buildLanguageDropdown(),
@@ -255,7 +261,11 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                               label: 'Marital Status',
                               value: _selectedMaritalStatus,
                               options: _maritalStatusOptions,
-                              fillColor: fieldColor,
+                              fillColor: Colors.white,
+                              prefixIcon: Icon(
+                                Icons.favorite_border,
+                                color: AppColors.deepOrange,
+                              ),
                               onChanged: (value) {
                                 if (value != null) {
                                   setState(
@@ -265,37 +275,37 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                               },
                             ),
                           ],
-                          spacing: 12,
+                          spacing: 16,
                         ),
-                        Spacing.h(12),
+                        Spacing.h(16),
                         _buildResponsiveGroup(
                           children: [
                             _buildTextField(
                               label: 'Date of Birth',
                               hint: 'DD/MM/YYYY',
                               controller: _birthDateController,
-                              fillColor: fieldColor,
+                              fillColor: Colors.white,
                               readOnly: true,
                               onTap: () => _pickBirthDate(context),
-                              suffixIcon: Icon(
-                                Icons.calendar_today,
-                                color: AppColors.saffron,
+                              prefixIcon: Icon(
+                                Icons.calendar_today_outlined,
+                                color: AppColors.deepOrange,
                               ),
                             ),
                             _buildTextField(
                               label: 'Time of Birth',
                               hint: 'HH:MM:SS',
                               controller: _birthTimeController,
-                              fillColor: fieldColor,
+                              fillColor: Colors.white,
                               readOnly: true,
                               onTap: () => _pickBirthTime(context),
-                              suffixIcon: Icon(
-                                Icons.access_time,
-                                color: AppColors.saffron,
+                              prefixIcon: Icon(
+                                Icons.access_time_outlined,
+                                color: AppColors.deepOrange,
                               ),
                             ),
                           ],
-                          spacing: 12,
+                          spacing: 16,
                         ),
                         Spacing.h(16),
                         _buildResponsiveGroup(
@@ -304,24 +314,24 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                               label: 'Place of Birth',
                               hint: 'City, State, Country',
                               controller: _birthPlaceController,
-                              fillColor: fieldColor,
+                              fillColor: Colors.white,
                               prefixIcon: Icon(
-                                Icons.location_on,
-                                color: AppColors.saffron,
+                                Icons.location_on_outlined,
+                                color: AppColors.deepOrange,
                               ),
                             ),
                             _buildTextField(
                               label: 'Occupation',
                               controller: _occupationController,
                               hint: 'Occupation',
-                              fillColor: fieldColor,
+                              fillColor: Colors.white,
                               prefixIcon: Icon(
                                 Icons.work_outline,
-                                color: AppColors.saffron,
+                                color: AppColors.deepOrange,
                               ),
                             ),
                           ],
-                          spacing: 12,
+                          spacing: 16,
                         ),
                       ],
                     ),
@@ -330,20 +340,27 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      ElevatedButton(
-                        onPressed: _handleSubmit,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.saffron,
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: AppColors.orangeGradient,
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
-                        child: AutoTranslateText(
-                          'Proceed Chat',
-                          style: MyTextTheme.mediumBCB
-                              .copyWith(color: Colors.white)
-                              .merge(AppTypography.h3),
+                        child: ElevatedButton(
+                          onPressed: _handleSubmit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: EdgeInsets.symmetric(vertical: 16.h),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                          ),
+                          child: AutoTranslateText(
+                            'Proceed Chat',
+                            style: MyTextTheme.mediumBCB
+                                .copyWith(color: Colors.white)
+                                .merge(AppTypography.h3),
+                          ),
                         ),
                       ),
                       Spacing.h(12),
@@ -352,7 +369,7 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
                         child: AutoTranslateText(
                           'Cancel Chat',
                           style: MyTextTheme.smallBCB.copyWith(
-                            color: AppColors.saffron,
+                            color: AppColors.deepOrange,
                           ),
                         ),
                       ),
@@ -370,28 +387,11 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
   Future<void> _pickBirthDate(BuildContext context) async {
     final today = DateTime.now();
     final initial = _selectedBirthDate ?? today;
-    final picked = await showDatePicker(
-      context: context,
+    final picked = await TimePickerHelper.showDatePicker(
+      context,
       initialDate: initial,
       firstDate: DateTime(1900),
       lastDate: today,
-      builder: (context, child) {
-        if (child == null) return const SizedBox.shrink();
-        final theme = Theme.of(context);
-        return Theme(
-          data: theme.copyWith(
-            colorScheme: theme.colorScheme.copyWith(
-              primary: AppColors.saffron,
-              onPrimary: Colors.white,
-              onSurface: AppColors.saffron,
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(foregroundColor: AppColors.saffron),
-            ),
-          ),
-          child: child,
-        );
-      },
     );
     if (picked != null) {
       _selectedBirthDate = picked;
@@ -404,20 +404,6 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
     final picked = await TimePickerHelper.showTimePicker12h(
       context,
       initialTime: initial,
-      builder: (context, child) {
-        if (child == null) return const SizedBox.shrink();
-        final theme = Theme.of(context);
-        return Theme(
-          data: theme.copyWith(
-            colorScheme: theme.colorScheme.copyWith(
-              primary: AppColors.saffron,
-              onPrimary: Colors.white,
-              onSurface: AppColors.saffron,
-            ),
-          ),
-          child: child,
-        );
-      },
     );
     if (picked != null) {
       _selectedBirthTime = picked;
@@ -506,16 +492,25 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
   }
 
   BirthTime? _buildBirthTime() {
-    final timeText = _birthTimeController.text.trim();
-    if (timeText.isEmpty) return null;
-    final parts = timeText.split(':');
-    if (parts.length < 2) return null;
-    final hour = int.tryParse(parts[0]);
-    final minute = int.tryParse(parts[1]);
-    final second = parts.length >= 3
-        ? int.tryParse(parts[2])
-        : _selectedBirthSeconds;
-    return BirthTime(hour: hour, minute: minute, second: second);
+    if (_selectedBirthTime == null) {
+      final timeText = _birthTimeController.text.trim();
+      if (timeText.isEmpty) return null;
+      // Fallback parsing logic (less reliable)
+      final parts = timeText.split(':');
+      if (parts.length < 2) return null;
+      final hour = int.tryParse(parts[0]);
+      final minute = int.tryParse(parts[1]);
+      return BirthTime(
+        hour: hour,
+        minute: minute,
+        second: _selectedBirthSeconds,
+      );
+    }
+    return BirthTime(
+      hour: _selectedBirthTime!.hour,
+      minute: _selectedBirthTime!.minute,
+      second: _selectedBirthSeconds,
+    );
   }
 
   Future<int?> _pickBirthSeconds(BuildContext context, int initialSeconds) {
@@ -572,40 +567,75 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
     List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
     String? hint,
-    Color fillColor = const Color(0xFF1F1F26),
+    Color fillColor = Colors.white,
     Widget? prefixIcon,
     Widget? suffixIcon,
     bool readOnly = false,
     VoidCallback? onTap,
   }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      inputFormatters: inputFormatters,
-      readOnly: readOnly,
-      onTap: onTap,
-      style: MyTextTheme.smallBCN.copyWith(color: AppColors.saffron),
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        hintStyle: MyTextTheme.smallBCN.copyWith(
-          color: AppColors.saffron.withOpacity(0.6),
-        ),
-        labelStyle: MyTextTheme.smallBCN.copyWith(color: AppColors.saffron),
-        filled: true,
-        fillColor: fillColor,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: const BorderSide(color: Colors.transparent),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: AppColors.saffron),
-        ),
-        prefixIcon: prefixIcon,
-        suffixIcon: suffixIcon,
+    return Container(
+      margin: EdgeInsets.only(bottom: 4.h),
+      decoration: BoxDecoration(
+        color: fillColor,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      validator: validator,
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
+        readOnly: readOnly,
+        onTap: onTap,
+        style: MyTextTheme.smallBCN.copyWith(
+          color: AppColors.textColorMaroon,
+          fontWeight: FontWeight.w500,
+        ),
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          hintStyle: MyTextTheme.smallBCN.copyWith(
+            color: AppColors.textColorMaroon.withOpacity(0.4),
+          ),
+          labelStyle: MyTextTheme.smallBCN.copyWith(
+            color: AppColors.deepOrange.withOpacity(0.8),
+          ),
+          filled: true,
+          fillColor: Colors.transparent, // Controlled by container
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: AppColors.deepOrange.withOpacity(0.1),
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: AppColors.deepOrange.withOpacity(0.1),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(color: AppColors.deepOrange, width: 1.5),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: const BorderSide(color: Colors.red),
+          ),
+          prefixIcon: prefixIcon,
+          suffixIcon: suffixIcon,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 16.w,
+            vertical: 16.h,
+          ),
+        ),
+        validator: validator,
+      ),
     );
   }
 
@@ -614,103 +644,165 @@ class _ChatProfileDialogState extends State<ChatProfileDialog> {
     required String value,
     required List<String> options,
     required ValueChanged<String?> onChanged,
-    Color fillColor = const Color(0xFF1F1F26),
+    Color fillColor = Colors.white,
+    Widget? prefixIcon,
   }) {
-    return InputDecorator(
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: MyTextTheme.smallBCN.copyWith(color: AppColors.saffron),
-        filled: true,
-        fillColor: fillColor,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: const BorderSide(color: Colors.transparent),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: AppColors.saffron),
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        color: fillColor,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: value,
-          isExpanded: true,
-          dropdownColor: fillColor,
-          style: MyTextTheme.smallBCN.copyWith(color: AppColors.saffron),
-          iconEnabledColor: AppColors.saffron,
-          items: options
-              .map(
-                (option) => DropdownMenuItem<String>(
-                  value: option,
-                  child: AutoTranslateText(option),
-                ),
-              )
-              .toList(),
-          onChanged: onChanged,
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: MyTextTheme.smallBCN.copyWith(
+            color: AppColors.deepOrange.withOpacity(0.8),
+          ),
+          filled: true,
+          fillColor: Colors.transparent, // Controlled by container
+          prefixIcon: prefixIcon,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: AppColors.deepOrange.withOpacity(0.1),
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: AppColors.deepOrange.withOpacity(0.1),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(color: AppColors.deepOrange),
+          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: value,
+            isExpanded: true,
+            dropdownColor: Colors.white,
+            style: MyTextTheme.smallBCN.copyWith(
+              color: AppColors.textColorMaroon,
+              fontWeight: FontWeight.w500,
+            ),
+            iconEnabledColor: AppColors.deepOrange,
+            items: options
+                .map(
+                  (option) => DropdownMenuItem<String>(
+                    value: option,
+                    child: AutoTranslateText(option),
+                  ),
+                )
+                .toList(),
+            onChanged: onChanged,
+          ),
         ),
       ),
     );
   }
 
   Widget _buildLanguageDropdown() {
-    return InputDecorator(
-      decoration: InputDecoration(
-        labelText: 'Language',
-        labelStyle: MyTextTheme.smallBCN.copyWith(color: AppColors.saffron),
-        filled: true,
-        fillColor: const Color(0xFFffffff),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: const BorderSide(color: Colors.transparent),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(color: AppColors.saffron),
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: _selectedLanguageCode,
-          isExpanded: true,
-          dropdownColor: const Color(0xFFffffff),
-          style: MyTextTheme.smallBCN.copyWith(color: AppColors.saffron),
-          iconEnabledColor: AppColors.saffron,
-          items: _languageOptions.entries
-              .map(
-                (entry) => DropdownMenuItem<String>(
-                  value: entry.key,
-                  child: AutoTranslateText(entry.value),
-                ),
-              )
-              .toList(),
-          onChanged: (value) {
-            if (value != null) {
-              setState(() => _selectedLanguageCode = value);
-            }
-          },
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: 'Language',
+          labelStyle: MyTextTheme.smallBCN.copyWith(
+            color: AppColors.deepOrange.withOpacity(0.8),
+          ),
+          filled: true,
+          fillColor: Colors.transparent, // Controlled by container
+          prefixIcon: Icon(Icons.language, color: AppColors.deepOrange),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: AppColors.deepOrange.withOpacity(0.1),
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: AppColors.deepOrange.withOpacity(0.1),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(color: AppColors.deepOrange),
+          ),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: _selectedLanguageCode,
+            isExpanded: true,
+            dropdownColor: Colors.white,
+            style: MyTextTheme.smallBCN.copyWith(
+              color: AppColors.textColorMaroon,
+              fontWeight: FontWeight.w500,
+            ),
+            iconEnabledColor: AppColors.deepOrange,
+            items: _languageOptions.entries
+                .map(
+                  (entry) => DropdownMenuItem<String>(
+                    value: entry.key,
+                    child: AutoTranslateText(entry.value),
+                  ),
+                )
+                .toList(),
+            onChanged: (value) {
+              if (value != null) {
+                setState(() => _selectedLanguageCode = value);
+              }
+            },
+          ),
         ),
       ),
     );
   }
 
   Widget _buildOpenProfileButton() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 12.w),
-      decoration: BoxDecoration(
-        color: AppColors.saffron,
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.folder, color: Colors.white, size: 18.w),
-          SizedBox(width: 6.w),
-          AutoTranslateText(
-            'Open Profile',
-            style: MyTextTheme.smallBCB.copyWith(color: Colors.white),
-          ),
-        ],
+    return InkWell(
+      onTap: () {
+        // Handle open profile or show existing profiles
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
+        decoration: BoxDecoration(
+          color: AppColors.deepOrange.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8.r),
+          border: Border.all(color: AppColors.deepOrange.withOpacity(0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.folder_open, color: AppColors.deepOrange, size: 18.w),
+            SizedBox(width: 8.w),
+            AutoTranslateText(
+              'Select from saved Profile',
+              style: MyTextTheme.smallBCB.copyWith(color: AppColors.deepOrange),
+            ),
+          ],
+        ),
       ),
     );
   }

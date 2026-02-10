@@ -286,7 +286,6 @@ class AllAstrologersView extends StatelessWidget {
     final isOnline = astrologer.isOnline;
     final rating = astrologer.rating;
     final totalRatings = astrologer.totalRatings;
-    final price = controller.getPrice(astrologer);
     final specializations = controller.getSpecializations(astrologer);
     final languages = controller.getLanguages(astrologer);
     final experience = '${astrologer.experienceYears} years';
@@ -401,8 +400,9 @@ class AllAstrologersView extends StatelessWidget {
                       Expanded(
                         child: AutoTranslateText(
                           astrologer.displayName,
-                          style: AppTypography.h2.copyWith(
+                          style: AppTypography.h3.copyWith(
                             color: '#68171E'.toColor(),
+                            fontSize: 12.sp,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -484,6 +484,36 @@ class AllAstrologersView extends StatelessWidget {
                       }),
                     ],
                   ),
+                  SizedBox(height: 2.h),
+                  // Price directly below name
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.currency_rupee,
+                        color: AppColors.templeGold,
+                        size: 11.w, // Smaller icon
+                      ),
+                      AutoTranslateText(
+                        '${astrologer.chatPricePerMin?.toInt() ?? 0}/min',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.templeGold,
+                          fontSize: 11.sp,
+                        ),
+                      ),
+                      SizedBox(width: 6.w),
+                      AutoTranslateText(
+                        '($totalRatings)',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                          color: '#3D0C11'.toColor().withOpacity(0.5),
+                          fontSize: 10.sp, // Smaller font
+                        ),
+                      ),
+                    ],
+                  ),
                   SizedBox(height: 6.h),
                   // Specialization
                   AutoTranslateText(
@@ -544,46 +574,6 @@ class AllAstrologersView extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 4.h),
-                  // Price and Reviews Row
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    spacing: 8.w,
-                    runSpacing: 4.h,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.currency_rupee,
-                            color: AppColors.templeGold,
-                            size: 13.w,
-                          ),
-                          Flexible(
-                            child: AutoTranslateText(
-                              '$price/min',
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.templeGold,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      AutoTranslateText(
-                        '($totalRatings reviews)',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
-                          color: '#3D0C11'.toColor().withOpacity(0.5),
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
                   SizedBox(height: 12.h),
                   // Action Buttons
                   Row(

@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_form_controller.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
@@ -149,8 +150,106 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
           _buildLanguageDropdown(),
           Spacing.h(20),
           _buildSubmitButton(),
+          Spacing.h(24),
+          _buildOrDivider(),
+          Spacing.h(24),
+          _buildSelectSignSection(),
         ],
       ),
+    );
+  }
+
+  Widget _buildOrDivider() {
+    return Row(
+      children: [
+        Expanded(
+          child: Divider(
+            color: AppColors.deepOrange.withOpacity(0.3),
+            thickness: 1,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: AutoTranslateText(
+            'OR',
+            style: MyTextTheme.smallBCB.copyWith(
+              color: AppColors.deepOrange,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Divider(
+            color: AppColors.deepOrange.withOpacity(0.3),
+            thickness: 1,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSelectSignSection() {
+    return Column(
+      children: [
+        AutoTranslateText(
+          'If you already know your sign then proceed here',
+          textAlign: TextAlign.center,
+          style: MyTextTheme.smallBCN.copyWith(
+            color: AppColors.textSecondary,
+            fontSize: 13.sp,
+          ),
+        ),
+        Spacing.h(12),
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: AppColors.deepOrange, width: 1.5),
+          ),
+          child: TextButton(
+            onPressed: () {
+              Get.toNamed(
+                AppRoutes.horoscopeSignSelection,
+                arguments: {
+                  'formData': {
+                    'date': controller.dateController.text,
+                    'time':
+                        TimePickerHelper.parseTime12To24(
+                          controller.timeController.text,
+                        ) ??
+                        controller.timeController.text,
+                    'latitude':
+                        double.tryParse(controller.latitudeController.text) ??
+                        0.0,
+                    'longitude':
+                        double.tryParse(controller.longitudeController.text) ??
+                        0.0,
+                    'timezone':
+                        double.tryParse(controller.timezoneController.text) ??
+                        0.0,
+                    'place': controller.selectedLocation.value,
+                    'language': controller.selectedLanguage.value,
+                  },
+                },
+              );
+            },
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 16.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
+            child: AutoTranslateText(
+              'Select Zodiac Sign Directly',
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: AppColors.deepOrange,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -363,7 +462,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
                   ),
                 )
               : AutoTranslateText(
-                  'Continue to Sign Selection',
+                  'Continue to get your zodiac sign',
                   style: MyTextTheme.mediumBCB.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

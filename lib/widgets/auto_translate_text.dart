@@ -103,6 +103,20 @@ class _AutoTranslateTextState extends State<AutoTranslateText> {
   }
 
   @override
+  void didUpdateWidget(AutoTranslateText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If text changed, clear cache for this specific widget instance
+    // so it picks up the new text and translates it.
+    if (oldWidget.text != widget.text) {
+      _cachedTranslation = null;
+      _translationFuture = null;
+      _futureKey++; // Force new future
+      // We don't reset _cachedLanguageCode here because we typically want to
+      // keep the same target language, just translate new text.
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     // If translation is disabled, show original text
     if (!widget.translate) {

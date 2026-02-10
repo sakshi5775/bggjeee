@@ -39,7 +39,12 @@ class CartView extends GetView<CartController> {
           final items = cart?.items ?? [];
 
           if (items.isEmpty) {
-            return _EmptyCartWidget(onShopNow: () => Get.back());
+            return _EmptyCartWidget(
+              onShopNow: () => Get.offNamedUntil(
+                AppRoutes.ecommerceHome,
+                (route) => route.settings.name == AppRoutes.userDashboard,
+              ),
+            );
           }
 
           final totalAmount = currencyFormat.format(controller.total);
@@ -388,7 +393,7 @@ class _CouponSection extends StatelessWidget {
       final coupon = appliedCoupon;
 
       return Padding(
-        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 12.h),
+        padding: EdgeInsets.fromLTRB(18.w, 8.h, 18.w, 12.h),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

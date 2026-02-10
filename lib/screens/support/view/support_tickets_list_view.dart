@@ -45,7 +45,7 @@ class SupportTicketsListView extends GetView<SupportTicketController> {
         body: Column(
           children: [
             CommonHeader(title: 'Support Tickets'),
-            _buildFilters(),
+            Obx(() => _buildFilters()),
             Expanded(
               child: Obx(() {
                 if (controller.isLoadingTickets.value &&
