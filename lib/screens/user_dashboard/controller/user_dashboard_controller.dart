@@ -273,6 +273,7 @@ class UserDashboardController extends BaseController
     'Media Hub',
     'Panchang',
     'Horoscope',
+    'Reports',
   ];
 
   // Book Pooja Carousel

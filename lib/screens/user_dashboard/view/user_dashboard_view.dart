@@ -50,7 +50,7 @@ import '../widgets/what_else_widget.dart';
 import '../widgets/banner_carousel_widget.dart';
 import '../widgets/our_services_carousel_widget.dart';
 import '../widgets/floating_astrologer_button.dart';
-// import '../widgets/reports_tab_widget.dart';
+import '../widgets/reports_tab_widget.dart';
 import '../widgets/horoscope_tab_widget.dart';
 import '../widgets/daily_astrologers_widget.dart';
 // import '../widgets/quote_of_the_day_widget.dart';
@@ -128,7 +128,10 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                   tabs[7] == 'Panchang') ||
                               (i == 8 &&
                                   tabs.length > 8 &&
-                                  tabs[8] == 'Horoscope');
+                                  tabs[8] == 'Horoscope') ||
+                              (i == 9 &&
+                                  tabs.length > 9 &&
+                                  tabs[9] == 'Reports');
                           return Spacing.h(noGap ? 0 : 8);
                         }),
                         _buildSliderBodyWithSwipe(context),
@@ -373,6 +376,13 @@ class UserDashboardView extends BasePage<UserDashboardController> {
         return SizedBox(
           height: (h - 240).clamp(400.0, h * 0.85),
           child: const HoroscopeTabWidget(),
+        );
+      }
+      if (i == 9 && controller.sliderTabs[i] == 'Reports') {
+        final h = MediaQuery.sizeOf(context).height;
+        return SizedBox(
+          height: (h - 240).clamp(400.0, h * 0.85),
+          child: const ReportsTabWidget(),
         );
       }
       return Padding(

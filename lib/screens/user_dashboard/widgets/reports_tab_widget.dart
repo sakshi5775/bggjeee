@@ -53,38 +53,116 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
   }
 
   static const List<Map<String, dynamic>> _reportItems = [
-    {'title': 'Life Report', 'icon': Icons.description_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Monthly Report', 'icon': Icons.calendar_month_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Daily Report', 'icon': Icons.today_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Sade Sati Report', 'icon': Icons.brightness_6_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Ascendant Prediction', 'icon': Icons.insights_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Annual Prediction', 'icon': Icons.calendar_today_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Mangal Dosh', 'icon': Icons.whatshot_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Kaal Sarp Dosh', 'icon': Icons.waves_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Moon Sign', 'icon': Icons.nightlight_round_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Lal Kitab Debt', 'icon': Icons.menu_book_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Lal Kitab Teva', 'icon': Icons.menu_book_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Baby Names', 'icon': Icons.child_care_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Lal Kitab Remedies', 'icon': Icons.menu_book_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Planet Consideration', 'icon': Icons.public_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Gemstones Report', 'icon': Icons.diamond_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Transit Today', 'icon': Icons.autorenew_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Mahadasha Phala', 'icon': Icons.star_outline_outlined, 'route': AppRoutes.allReports},
-    {'title': 'Nakshatra Report', 'icon': Icons.star_outline_rounded, 'route': AppRoutes.allReports},
+    {
+      'title': 'Horoscope PDF (Kundli) Report',
+      'icon': Icons.description_outlined,
+      'route': AppRoutes.allReports,
+      'api': '/api/pdf/generate',
+    },
+    {
+      'title': 'Matching PDF Report',
+      'icon': Icons.favorite_outline,
+      'route': AppRoutes.allReports,
+      'api': '/api/pdf/generate_matching',
+    },
+    {
+      'title': 'Foreign Travel PDF Report',
+      'icon': Icons.flight_takeoff_outlined,
+      'route': AppRoutes.allReports,
+      'api': '/api/pdf/foreign_travel_report',
+    },
+    {
+      'title': 'Government Job PDF Report',
+      'icon': Icons.work_outline,
+      'route': AppRoutes.allReports,
+      'api': '/api/pdf/government_job_report',
+    },
+    {
+      'title': 'Financial Opportunities and Challenges PDF Report',
+      'icon': Icons.account_balance_wallet_outlined,
+      'route': AppRoutes.allReports,
+      'api': '/api/pdf/financial_opportunities_and_challenges_report',
+    },
+    {
+      'title': 'Education and Learning Pathways PDF Report',
+      'icon': Icons.school_outlined,
+      'route': AppRoutes.allReports,
+      'api': '/api/pdf/education_and_learning_pathways_report',
+    },
+    {
+      'title': 'Kundali Samyak PDF Report',
+      'icon': Icons.star_border_purple500_outlined,
+      'route': AppRoutes.allReports,
+      'api': '/api/pdf/kundali_samyak',
+    },
+    {
+      'title': 'Kundali Dirgha Drishti PDF Report',
+      'icon': Icons.remove_red_eye_outlined,
+      'route': AppRoutes.allReports,
+      'api': '/api/pdf/kundali_dirghaDrishti',
+    },
+    {
+      'title': 'Kundali Mool Patrika PDF Report',
+      'icon': Icons.auto_awesome_outlined,
+      'route': AppRoutes.allReports,
+      'api': '/api/pdf/Kundali_moolPatrika',
+    },
+    {
+      'title': 'Vedic 5 Year Predictions PDF Report',
+      'icon': Icons.event_available_outlined,
+      'route': AppRoutes.allReports,
+      'api': '/api/pdf/vedic_five_year_predictions',
+    },
+    {
+      'title': 'Vedic 10 Year Predictions PDF Report',
+      'icon': Icons.event_available_outlined,
+      'route': AppRoutes.allReports,
+      'api': '/api/pdf/vedic_ten_year_predictions',
+    },
+    {
+      'title': 'Vedic 15 Year Predictions PDF Report',
+      'icon': Icons.event_available_outlined,
+      'route': AppRoutes.allReports,
+      'api': '/api/pdf/vedic_fifteen_year_predictions',
+    },
+    {
+      'title': 'Destiny Of Heart (Love Life) PDF Report',
+      'icon': Icons.favorite_border_outlined,
+      'route': AppRoutes.allReports,
+      'api': '/api/pdf/destiny_of_heart',
+    },
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.w),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildBannersSection(),
-          SizedBox(height: 8),
-          _buildGrid(),
-        ],
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildBannersSection(),
+            SizedBox(height: 16.h),
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.zero,
+              itemCount: _reportItems.length,
+              separatorBuilder: (context, index) => SizedBox(height: 12.h),
+              itemBuilder: (context, index) {
+                final item = _reportItems[index];
+                return _buildListItem(
+                  title: item['title'] as String,
+                  icon: item['icon'] as IconData,
+                  route: item['route'] as String?,
+                );
+              },
+            ),
+            SizedBox(height: 24.h),
+          ],
+        ),
       ),
     );
   }
@@ -112,30 +190,7 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
     );
   }
 
-  Widget _buildGrid() {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.zero,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 10.w,
-        mainAxisSpacing: 12.h,
-        childAspectRatio: 0.85,
-      ),
-      itemCount: _reportItems.length,
-      itemBuilder: (context, index) {
-        final item = _reportItems[index];
-        return _buildGridItem(
-          title: item['title'] as String,
-          icon: item['icon'] as IconData,
-          route: item['route'] as String?,
-        );
-      },
-    );
-  }
-
-  Widget _buildGridItem({
+  Widget _buildListItem({
     required String title,
     required IconData icon,
     required String? route,
@@ -150,42 +205,71 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
         }
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+        padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: '#DBCCA8'.toColor().withOpacity(0.6)),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: '#DBCCA8'.toColor().withOpacity(0.4)),
           boxShadow: [
             BoxShadow(
-              color: '#6F221E'.toColor().withOpacity(0.06),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
           children: [
             Container(
-              width: 40.w,
-              height: 40.h,
+              width: 48.w,
+              height: 48.w,
               decoration: BoxDecoration(
-                color: '#FCE5AA'.toColor().withOpacity(0.5),
-                borderRadius: BorderRadius.circular(10.r),
+                color: '#FCE5AA'.toColor().withOpacity(0.3),
+                shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 22.w, color: AppColors.deepOrange),
+              child: Icon(icon, size: 24.w, color: '#6F221E'.toColor()),
             ),
-            SizedBox(height: 6.h),
-            AutoTranslateText(
-              title,
-              style: AppTypography.body2.copyWith(
-                color: '#3D0C11'.toColor(),
-                fontWeight: FontWeight.w500,
-                fontSize: 10.sp,
+            SizedBox(width: 16.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AutoTranslateText(
+                    title,
+                    style: AppTypography.h3.copyWith(
+                      color: '#3D0C11'.toColor(),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12.sp,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 4.h),
+                  AutoTranslateText(
+                    'Get detailed PDF report',
+                    style: AppTypography.body2.copyWith(
+                      color: Colors.grey[600],
+                      fontSize: 10.sp,
+                    ),
+                  ),
+                ],
               ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+            ),
+            SizedBox(width: 12.w),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+              decoration: BoxDecoration(
+                gradient: AppColors.orangeGradient,
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: AutoTranslateText(
+                'Generate',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10.sp,
+                ),
+              ),
             ),
           ],
         ),
