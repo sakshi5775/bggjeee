@@ -31,9 +31,7 @@ class PujaPackageSelectionBottomSheet extends StatelessWidget {
         return Container(
           decoration: BoxDecoration(
             color: const Color(0xFFFAFAFA),
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(24.r),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
           ),
           child: Column(
             children: [
@@ -109,9 +107,7 @@ class PujaPackageSelectionBottomSheet extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(20.w, 8.h, 16.w, 16.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(24.r),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
@@ -201,8 +197,9 @@ class PujaPackageSelectionBottomSheet extends StatelessWidget {
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: AppColors.orangeGradient.colors.first
-                          .withValues(alpha: 0.15),
+                      color: AppColors.orangeGradient.colors.first.withValues(
+                        alpha: 0.15,
+                      ),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                       spreadRadius: 0,
@@ -230,8 +227,7 @@ class PujaPackageSelectionBottomSheet extends StatelessWidget {
                     margin: EdgeInsets.only(top: 2.h),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient:
-                          isSelected ? AppColors.orangeGradient : null,
+                      gradient: isSelected ? AppColors.orangeGradient : null,
                       color: isSelected ? null : Colors.white,
                       border: Border.all(
                         color: isSelected
@@ -242,8 +238,7 @@ class PujaPackageSelectionBottomSheet extends StatelessWidget {
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: AppColors
-                                    .orangeGradient.colors.first
+                                color: AppColors.orangeGradient.colors.first
                                     .withValues(alpha: 0.3),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
@@ -291,8 +286,7 @@ class PujaPackageSelectionBottomSheet extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
-                                      AppColors
-                                          .orangeGradient.colors.first,
+                                      AppColors.orangeGradient.colors.first,
                                       AppColors.orangeGradient.colors.last,
                                     ],
                                   ),
@@ -332,16 +326,14 @@ class PujaPackageSelectionBottomSheet extends StatelessWidget {
                             children: [
                               Icon(
                                 Icons.people_rounded,
-                                color:
-                                    AppColors.orangeGradient.colors.first,
+                                color: AppColors.orangeGradient.colors.first,
                                 size: 16.sp,
                               ),
                               SizedBox(width: 6.w),
                               AutoTranslateText(
                                 '${package.personCount ?? 1} ${(package.personCount ?? 1) == 1 ? 'Person' : 'Persons'}',
                                 style: MyTextTheme.smallBCB.copyWith(
-                                  color:
-                                      AppColors.orangeGradient.colors.first,
+                                  color: AppColors.orangeGradient.colors.first,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -382,7 +374,6 @@ class PujaPackageSelectionBottomSheet extends StatelessWidget {
                   ),
                 ],
               ),
-           
             ],
           ),
         ),
@@ -404,9 +395,7 @@ class PujaPackageSelectionBottomSheet extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 16.h),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(20.r),
-          ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.1),
