@@ -15,15 +15,7 @@ class NavtaraTimingTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final maroon = Color(0xFF6F221E);
-    final activities = [
-      'GENERAL',
-      'MARRIAGE',
-      'BUSINESS_START',
-      'TRAVEL',
-      'PROPERTY_PURCHASE',
-      'EDUCATION_START',
-      'MEDICAL_TREATMENT',
-    ];
+    final activities = controller.activityTypes;
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(16.w),
@@ -72,6 +64,7 @@ class NavtaraTimingTab extends StatelessWidget {
             style: MyTextTheme.mediumBCB.copyWith(color: maroon),
           ),
           Spacing.h(16),
+
           _buildLabel('Select Activity'),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w),
@@ -105,38 +98,28 @@ class NavtaraTimingTab extends StatelessWidget {
             ),
           ),
           Spacing.h(16),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLabel('Start Date'),
-                    _buildDatePickerField(
-                      context,
-                      controller.startDate,
-                      true,
-                      maroon,
+
+          // Display Date Range (Read-only info)
+          Container(
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              color: maroon.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.calendar_today, color: maroon, size: 16.w),
+                Spacing.w(8),
+                Expanded(
+                  child: Obx(
+                    () => AutoTranslateText(
+                      'Analyzing for: ${DateFormat('dd MMM').format(controller.startDate.value)} - ${DateFormat('dd MMM yyyy').format(controller.endDate.value)}',
+                      style: MyTextTheme.smallBCN.copyWith(color: maroon),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-              Spacing.w(12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLabel('End Date'),
-                    _buildDatePickerField(
-                      context,
-                      controller.endDate,
-                      false,
-                      maroon,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -149,41 +132,6 @@ class NavtaraTimingTab extends StatelessWidget {
       child: AutoTranslateText(
         text,
         style: MyTextTheme.smallBCB.copyWith(fontSize: 12.sp),
-      ),
-    );
-  }
-
-  Widget _buildDatePickerField(
-    BuildContext context,
-    Rx<DateTime> dateObs,
-    bool isStart,
-    Color maroon,
-  ) {
-    return GestureDetector(
-      onTap: () => controller.selectDate(context, isStart),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: maroon.withOpacity(0.2)),
-          color: maroon.withOpacity(0.02),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Obx(
-              () => AutoTranslateText(
-                DateFormat('dd/MM/yyyy').format(dateObs.value),
-                style: MyTextTheme.smallBCN,
-              ),
-            ),
-            Icon(
-              Icons.calendar_today,
-              size: 16.w,
-              color: maroon.withOpacity(0.5),
-            ),
-          ],
-        ),
       ),
     );
   }

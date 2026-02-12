@@ -20,7 +20,8 @@ class NavtaraController extends BaseController
   // Input states
   final primaryNakshatra = Rxn<String>();
   final secondaryNakshatra = Rxn<String>();
-  final selectedActivity = 'GENERAL'.obs;
+  final selectedAnalysisType = 'GENERAL'.obs;
+  final selectedActivity = 'MARRIAGE'.obs;
   final selectedLanguage = 'en'.obs;
   final fullName = "".obs;
   final dateOfBirth = "".obs;
@@ -28,6 +29,8 @@ class NavtaraController extends BaseController
   final endDate = Rx<DateTime>(DateTime.now().add(const Duration(days: 30)));
   final questionController = TextEditingController();
   final isMatchmaking = false.obs;
+  final selectedHistoryType = Rxn<String>(); // Null means 'All'
+  final selectedHistoryStatus = Rxn<String>(); // Null means 'All'
 
   late TabController tabController;
   late PageController pageController;
@@ -35,26 +38,18 @@ class NavtaraController extends BaseController
   final ScrollController tabsScrollController = ScrollController();
   final Map<int, GlobalKey> tabKeys = {};
 
-  final List<String> tabNames = [
-    'Analyze',
-    'Timing',
-    'Compatibility',
-    'History',
-    'Stats',
-  ];
+  final List<String> tabNames = ['Analyze', 'Timing', 'History', 'Stats'];
 
   @override
   void onInit() {
     super.onInit();
-    // 5 tabs: Analyze, Timing, Compatibility, History, Stats
-    tabController = TabController(length: 5, vsync: this);
+    // 4 tabs: Analyze, Timing, History, Stats
+    tabController = TabController(length: 4, vsync: this);
     pageController = PageController(initialPage: 0);
 
     // Initialize from arguments if provided
     _initFromArgs();
 
-    fetchNakshatras();
-    fetchHistory();
     fetchStats();
   }
 
@@ -103,11 +98,9 @@ class NavtaraController extends BaseController
       analyzeGeneral();
     } else if (index == 1 && timing.value == null) {
       findAuspiciousTiming();
-    } else if (index == 2 && compatibility.value == null) {
-      checkCompatibility();
-    } else if (index == 3) {
+    } else if (index == 2) {
       fetchHistory();
-    } else if (index == 4) {
+    } else if (index == 3) {
       fetchStats();
     }
   }
@@ -182,6 +175,7 @@ class NavtaraController extends BaseController
             : null,
         name: fullName.value.isNotEmpty ? fullName.value : null,
         dateOfBirth: dateOfBirth.value.isNotEmpty ? dateOfBirth.value : null,
+        currentDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
         language: _getLanguageName(selectedLanguage.value),
       );
       if (analysis.value != null) {
@@ -195,7 +189,11 @@ class NavtaraController extends BaseController
   }
 
   Future<void> analyzeSpecific(String type) async {
-    await analyzeGeneral(analysisType: type);
+    if (type == 'TIMING') {
+      onTabSelected(1);
+    } else {
+      await analyzeGeneral(analysisType: type);
+    }
   }
 
   Future<void> checkCompatibility() async {
@@ -240,10 +238,14 @@ class NavtaraController extends BaseController
   Future<void> fetchHistory({String? analysisType, String? status}) async {
     try {
       isLoading.value = true;
-      final data = await _service.getHistory(
-        analysisType: analysisType,
-        status: status,
-      );
+      // Update observables if args provided
+      if (analysisType != null) selectedHistoryType.value = analysisType;
+      if (status != null) selectedHistoryStatus.value = status;
+
+      final type = analysisType ?? selectedHistoryType.value;
+      final stat = status ?? selectedHistoryStatus.value;
+
+      final data = await _service.getHistory(analysisType: type, status: stat);
       history.assignAll(data);
     } catch (e) {
       debugPrint('Error in fetchHistory: $e');
@@ -337,7 +339,7 @@ class NavtaraController extends BaseController
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: DateTime.now().subtract(const Duration(days: 365)),
+      firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
     if (picked != null) {
@@ -373,4 +375,18 @@ class NavtaraController extends BaseController
         return 'english';
     }
   }
+
+  final List<String> analysisTypes = [
+    'GENERAL',
+    'TRANSIT',
+    'TIMING',
+    'COMPATIBILITY',
+  ];
+
+  final List<String> activityTypes = [
+    'MARRIAGE',
+    'BUSINESS START',
+    'TRAVEL',
+    'PROPERTY PURCHASE',
+  ];
 }

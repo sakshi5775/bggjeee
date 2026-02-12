@@ -356,7 +356,19 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
           );
           break;
         case 'Navtara Compatibility':
-          // Navtara doesn't need a separate API call here, it uses the controller
+          final boyAstro =
+              _currentResponse?['boy_astro_details'] as Map<String, dynamic>?;
+          final girlAstro =
+              _currentResponse?['girl_astro_details'] as Map<String, dynamic>?;
+          if (boyAstro != null && girlAstro != null) {
+            final navtaraCtl = Get.find<NavtaraController>();
+            navtaraCtl.initFromMatching(
+              boyName: form['boyName'] ?? 'Boy',
+              boyNakshatra: boyAstro['nakshatra'] ?? '',
+              girlName: form['girlName'] ?? 'Girl',
+              girlNakshatra: girlAstro['nakshatra'] ?? '',
+            );
+          }
           res = _currentResponse;
           break;
       }

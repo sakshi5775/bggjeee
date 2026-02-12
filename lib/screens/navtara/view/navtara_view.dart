@@ -11,7 +11,6 @@ import 'package:get/get.dart';
 
 import '../widgets/navtara_analyze_tab.dart';
 import '../widgets/navtara_timing_tab.dart';
-import '../widgets/navtara_compatibility_widget.dart';
 import '../widgets/navtara_history_tab.dart';
 import '../widgets/navtara_stats_tab.dart';
 
@@ -51,46 +50,48 @@ class NavtaraView extends BasePage<NavtaraController> {
   }
 
   Widget _buildTabs() {
+    const orange = Color(0xFFed6f30);
     const maroon = Color(0xFF6F221E);
 
     return Container(
       height: 48.h,
       color: Colors.transparent,
       padding: EdgeInsets.symmetric(vertical: 6.h),
-      child: Row(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 12.w, right: 10.w),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                gradient: AppColors.orangeGradient,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.auto_awesome, size: 14.w, color: Colors.white),
-                  SizedBox(width: 6.w),
-                  AutoTranslateText(
-                    'Navtara',
-                    style: MyTextTheme.mediumBCB.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
+      child: Obx(() {
+        final selectedIndex = controller.selectedTabIndex.value;
+
+        return Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 12.w, right: 10.w),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  gradient: AppColors.orangeGradient,
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.auto_awesome, size: 14.w, color: Colors.white),
+                    SizedBox(width: 6.w),
+                    AutoTranslateText(
+                      'Navtara',
+                      style: MyTextTheme.mediumBCB.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              controller: controller.tabsScrollController,
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              child: Obx(() {
-                final selectedIndex = controller.selectedTabIndex.value;
-                return Row(
+            Expanded(
+              child: SingleChildScrollView(
+                controller: controller.tabsScrollController,
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(width: 4.w),
@@ -98,12 +99,6 @@ class NavtaraView extends BasePage<NavtaraController> {
                       final index = entry.key;
                       final tab = entry.value;
                       final isSelected = selectedIndex == index;
-
-                      // Conditionally hide Compatibility tab if not matchmaking
-                      if (tab == 'Compatibility' &&
-                          !controller.isMatchmaking.value) {
-                        return const SizedBox.shrink();
-                      }
 
                       if (!controller.tabKeys.containsKey(index)) {
                         controller.tabKeys[index] = GlobalKey();
@@ -133,6 +128,15 @@ class NavtaraView extends BasePage<NavtaraController> {
                                       color: maroon.withOpacity(0.2),
                                       width: 1,
                                     ),
+                              boxShadow: isSelected
+                                  ? [
+                                      BoxShadow(
+                                        color: orange.withOpacity(0.25),
+                                        blurRadius: 4,
+                                        offset: const Offset(0, 1),
+                                      ),
+                                    ]
+                                  : null,
                             ),
                             child: Center(
                               child: AutoTranslateText(
@@ -152,26 +156,24 @@ class NavtaraView extends BasePage<NavtaraController> {
                     }),
                     SizedBox(width: 10.w),
                   ],
-                );
-              }),
+                ),
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
     );
   }
 
   Widget _buildTabContent(int index) {
     switch (index) {
-      case 0:
+      case 0: // Analyze (General, Transit)
         return NavtaraAnalyzeTab(controller: controller);
-      case 1:
+      case 1: // Timing
         return NavtaraTimingTab(controller: controller);
-      case 2:
-        return NavtaraCompatibilityWidget(controller: controller);
-      case 3:
+      case 2: // History
         return NavtaraHistoryTab(controller: controller);
-      case 4:
+      case 3: // Stats
         return NavtaraStatsTab(controller: controller);
       default:
         return NavtaraAnalyzeTab(controller: controller);

@@ -59,50 +59,51 @@ class NavtaraAnalyzeTab extends StatelessWidget {
             style: MyTextTheme.mediumBCB.copyWith(color: maroon),
           ),
           Spacing.h(12),
+
+          // Question
           AutoTranslateText(
-            'What do you want to analyze?',
+            'Your Question (optional)',
             style: MyTextTheme.smallBCB,
           ),
           Spacing.h(8),
           TextField(
             controller: controller.questionController,
-            decoration: InputDecoration(
-              hintText: 'Enter your question (optional)',
-              hintStyle: MyTextTheme.smallBCN.copyWith(color: Colors.grey),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: maroon.withOpacity(0.2)),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: maroon.withOpacity(0.2)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: maroon),
-              ),
-              filled: true,
-              fillColor: maroon.withOpacity(0.02),
+            decoration: _inputDecoration(
+              'Enter your question (optional)',
+              maroon,
             ),
             maxLines: 2,
           ),
           Spacing.h(16),
-          Row(
+
+          Wrap(
+            spacing: 12.w,
+            runSpacing: 12.h,
             children: [
-              Expanded(
+              SizedBox(
+                width: 150.w,
                 child: _buildActionButton(
                   'GENERAL',
-                  'Check General',
+                  'General Analysis',
                   Icons.auto_awesome,
                   maroon,
                 ),
               ),
-              Spacing.w(12),
-              Expanded(
+              SizedBox(
+                width: 150.w,
                 child: _buildActionButton(
                   'TRANSIT',
-                  'Check Transit',
+                  'Transit Analysis',
                   Icons.trending_up,
+                  maroon,
+                ),
+              ),
+              SizedBox(
+                width: 150.w,
+                child: _buildActionButton(
+                  'TIMING',
+                  'Timing Analysis',
+                  Icons.access_time,
                   maroon,
                 ),
               ),
@@ -110,6 +111,29 @@ class NavtaraAnalyzeTab extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String hint, Color maroon) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: MyTextTheme.smallBCN.copyWith(color: Colors.grey),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(color: maroon.withOpacity(0.2)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(color: maroon.withOpacity(0.2)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(color: maroon),
+      ),
+      filled: true,
+      fillColor: maroon.withOpacity(0.02),
+      isDense: true,
+      contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
     );
   }
 

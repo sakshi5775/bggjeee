@@ -781,9 +781,14 @@ class KundliResultController extends BaseController {
     }
   }
 
-  void _initNavtaraController() {
+  Future<void> _initNavtaraController() async {
     final form = formData.value;
     if (form == null) return;
+
+    // Ensure Nakshatra is available
+    if (detectedNakshatra.value == null || detectedNakshatra.value!.isEmpty) {
+      await fetchPlanetDetails();
+    }
 
     // Get nakshatra from planet details if not already in detectedNakshatra
     final nakshatra = detectedNakshatra.value ?? "";

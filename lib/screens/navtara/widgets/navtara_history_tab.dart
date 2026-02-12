@@ -49,42 +49,96 @@ class NavtaraHistoryTab extends StatelessWidget {
   Widget _buildFilters(Color maroon) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            _buildFilterChip('All', null, maroon),
-            Spacing.w(8),
-            _buildFilterChip('General', 'GENERAL', maroon),
-            Spacing.w(8),
-            _buildFilterChip('Transit', 'TRANSIT', maroon),
-            Spacing.w(8),
-            _buildFilterChip('Timing', 'TIMING', maroon),
-            Spacing.w(8),
-            _buildFilterChip('Compatibility', 'COMPATIBILITY', maroon),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildFilterChip('All Types', null, maroon, isType: true),
+                Spacing.w(8),
+                _buildFilterChip('General', 'GENERAL', maroon, isType: true),
+                Spacing.w(8),
+                _buildFilterChip('Transit', 'TRANSIT', maroon, isType: true),
+                Spacing.w(8),
+                _buildFilterChip('Timing', 'TIMING', maroon, isType: true),
+                Spacing.w(8),
+                _buildFilterChip(
+                  'Compatibility',
+                  'COMPATIBILITY',
+                  maroon,
+                  isType: true,
+                ),
+              ],
+            ),
+          ),
+          Spacing.h(8),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildFilterChip('All Status', null, maroon, isType: false),
+                Spacing.w(8),
+                _buildFilterChip(
+                  'Completed',
+                  'COMPLETED',
+                  maroon,
+                  isType: false,
+                ),
+                Spacing.w(8),
+                _buildFilterChip('Pending', 'PENDING', maroon, isType: false),
+                Spacing.w(8),
+                _buildFilterChip('Failed', 'FAILED', maroon, isType: false),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildFilterChip(String label, String? type, Color maroon) {
-    return FilterChip(
-      label: AutoTranslateText(label),
-      // Current implementation doesn't have an observable for active filter type,
-      // but we could add one if needed. For now, we'll just trigger fetch with type.
-      onSelected: (selected) {
-        controller.fetchHistory(analysisType: type);
-      },
-      selectedColor: AppColors.deepOrange.withOpacity(0.2),
-      checkmarkColor: AppColors.deepOrange,
-      labelStyle: MyTextTheme.smallBCN.copyWith(fontSize: 10.sp, color: maroon),
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.r),
-        side: BorderSide(color: maroon.withOpacity(0.1)),
-      ),
-    );
+  Widget _buildFilterChip(
+    String label,
+    String? value,
+    Color maroon, {
+    required bool isType,
+  }) {
+    return Obx(() {
+      final selectedValue = isType
+          ? controller.selectedHistoryType.value
+          : controller.selectedHistoryStatus.value;
+      final isSelected = selectedValue == value;
+
+      return FilterChip(
+        label: AutoTranslateText(
+          label,
+          style: MyTextTheme.smallBCB.copyWith(
+            fontSize: 10.sp,
+            color: isSelected ? Colors.white : maroon,
+          ),
+        ),
+        selected: isSelected,
+        onSelected: (selected) {
+          if (isType) {
+            controller.selectedHistoryType.value = value;
+            controller.fetchHistory(analysisType: value);
+          } else {
+            controller.selectedHistoryStatus.value = value;
+            controller.fetchHistory(status: value);
+          }
+        },
+        selectedColor: AppColors.deepOrange,
+        checkmarkColor: Colors.white,
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+          side: BorderSide(
+            color: isSelected ? AppColors.deepOrange : maroon.withOpacity(0.1),
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildHistoryCard(BuildContext context, dynamic item, Color maroon) {
