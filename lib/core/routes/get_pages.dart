@@ -12,6 +12,7 @@ import 'package:astrobharataiuser/binding/waiting_screen_binding/waiting_screen_
 import 'package:astrobharataiuser/binding/onboarding_binding/onboarding_binding.dart';
 import 'package:astrobharataiuser/binding/ai_chat_binding/ai_chat_binding.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+// import 'package:astrobharataiuser/screens/navtara/view/navtara_dashboard_view.dart';
 import 'package:astrobharataiuser/screens/astrologer_registration/binding/astrologer_registration_binding.dart';
 import 'package:astrobharataiuser/screens/astrologer_registration/view/astrologer_registration_intro_view.dart';
 import 'package:astrobharataiuser/screens/astrologer_registration/view/astrologer_registration_form_view.dart';
@@ -95,6 +96,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/view/all_reports_view.d
 import 'package:astrobharataiuser/screens/user_dashboard/view/all_videos_view.dart';
 import 'package:astrobharataiuser/binding/dashboard_binding/all_videos_binding.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/report_pdf_view.dart';
 
 import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/all_astrologers_view.dart';
@@ -138,6 +140,8 @@ import 'package:astrobharataiuser/screens/support/view/create_support_ticket_vie
 import 'package:astrobharataiuser/screens/support/view/support_ticket_detail_view.dart';
 import 'package:astrobharataiuser/screens/support/binding/support_ticket_binding.dart';
 import 'package:astrobharataiuser/screens/wallet/view/wallet_view.dart';
+import 'package:astrobharataiuser/binding/navtara_binding/navtara_binding.dart';
+import 'package:astrobharataiuser/screens/navtara/view/navtara_view.dart';
 import 'package:astrobharataiuser/screens/horoscope/view/horoscope_form_view.dart';
 import 'package:astrobharataiuser/screens/horoscope/view/horoscope_sign_selection_view.dart';
 import 'package:astrobharataiuser/screens/horoscope/view/horoscope_main_view.dart';
@@ -427,6 +431,19 @@ class PageRoutes {
       page: () => const ConsultationHistoryView(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.reportPdfView,
+      page: () => const ReportPdfView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.navtaraDashboard,
+      page: () => const NavtaraView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+      binding: NavtaraBinding(),
     ),
     GetPage(
       name: AppRoutes.allReports,
@@ -1610,6 +1627,11 @@ class PageRoutes {
     GetPage(
       name: AppRoutes.userPrivacyPolicy,
       page: () => const UserPrivacyPolicyView(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.reportPdfView,
+      page: () => const ReportPdfView(),
       transition: Transition.rightToLeft,
     ),
   ];

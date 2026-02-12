@@ -126,8 +126,20 @@ class EndPoints {
       'users/api/users/profile/$userId';
   static String updateUserProfile(String userId) =>
       'users/api/users/profile/$userId';
+
   static String updateBirthChart(String userId) =>
       'users/api/users/birth-chart/$userId';
+
+  /// Navtara APIs
+  static const String navtaraNakshatras = 'users/api/users/navtara/nakshatras';
+  static const String navtaraAnalyze = 'users/api/users/navtara/analyze';
+  static const String navtaraCompatibility =
+      'users/api/users/navtara/compatibility';
+  static const String navtaraTiming = 'users/api/users/navtara/timing';
+  static const String navtaraHistory = 'users/api/users/navtara/history';
+  static const String navtaraStats = 'users/api/users/navtara/stats';
+  static String navtaraReadingById(String readingId) =>
+      'users/api/users/navtara/$readingId';
 
   // Support Tickets
   static const String supportTickets = 'auth/support/tickets';
@@ -624,4 +636,24 @@ class EndPoints {
       'astrologers/api/astrologers/registration-request/verify-otp';
   static const String astrologerRegistrationResendOtp =
       'astrologers/api/astrologers/registration-request/resend-otp';
+
+  /// Report APIs
+  static const String reportBaseUrl = 'numerology/api/';
+  static const String pdfPricing = 'pdf/pricing';
+  static const String generatePdf = 'pdf/generate';
+  static const String generateMatchingPdf = 'pdf/generate_matching';
+
+  /// Specialized Report Endpoints (Supported dynamically via ReportService)
+  /// These include:
+  /// - foreign_travel_report
+  /// - government_job_report
+  /// - financial_opportunities_and_challenges_report
+  /// - education_and_learning_pathways_report
+  /// - kundali_samyak
+  /// - kundali_dirghaDrishti
+  /// - Kundali_moolPatrika
+  /// - vedic_five_year_predictions
+  /// - vedic_ten_year_predictions
+  /// - vedic_fifteen_year_predictions
+  /// - destiny_of_heart
 }

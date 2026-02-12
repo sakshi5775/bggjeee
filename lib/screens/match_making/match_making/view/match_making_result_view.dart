@@ -8,6 +8,8 @@ import 'package:astrobharataiuser/screens/match_making/match_making/widgets/kund
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 
+import 'package:astrobharataiuser/screens/navtara/widgets/navtara_compatibility_widget.dart';
+import 'package:astrobharataiuser/screens/navtara/controller/navtara_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -34,6 +36,10 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
   @override
   void initState() {
     super.initState();
+    // Register NavtaraController if not already registered
+    if (!Get.isRegistered<NavtaraController>()) {
+      Get.put(NavtaraController());
+    }
     // Show matching animation for 3 seconds, then show report
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
@@ -165,6 +171,14 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
                                             as Map<String, dynamic>?,
                                   )
                                 : null,
+                            showNavtaraOnly:
+                                _activeTab == 'Navtara Compatibility',
+                            showNavtaraSection: _activeTab == 'North Match',
+                            navtaraWidget: _activeTab == 'Navtara Compatibility'
+                                ? NavtaraCompatibilityWidget(
+                                    controller: Get.find<NavtaraController>(),
+                                  )
+                                : null,
                           ),
                         ],
                       ),
@@ -191,6 +205,7 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
       'Papasamaya Match',
       'Nakshatra Match',
       'Western Match',
+      'Navtara Compatibility',
     ];
 
     return SingleChildScrollView(
@@ -339,6 +354,10 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
             girlSign: form['girlSign']?.toString() ?? '',
             lang: form['lang'] ?? 'en',
           );
+          break;
+        case 'Navtara Compatibility':
+          // Navtara doesn't need a separate API call here, it uses the controller
+          res = _currentResponse;
           break;
       }
 

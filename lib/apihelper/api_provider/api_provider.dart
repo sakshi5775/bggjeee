@@ -166,6 +166,12 @@ class ApiClient extends GetConnect
         _handleSessionExpired();
       }
 
+      if (kDebugMode &&
+          response.statusCode != 200 &&
+          response.statusCode != 201) {
+        print('Error Response Body: ${response.bodyString}');
+      }
+
       throw returnException(response);
     });
   }

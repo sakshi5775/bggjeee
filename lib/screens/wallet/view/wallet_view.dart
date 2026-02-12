@@ -56,7 +56,7 @@ class WalletView extends StatelessWidget {
                         Spacing.h(24),
 
                         // Transaction History Section
-                        _buildTransactionHistorySection(controller),
+                        _buildWalletHistorySection(controller),
                       ],
                     ),
                   ),
@@ -206,7 +206,7 @@ class WalletView extends StatelessWidget {
     );
   }
 
-  Widget _buildTransactionHistorySection(WalletController controller) {
+  Widget _buildWalletHistorySection(WalletController controller) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(20.w),
@@ -235,7 +235,7 @@ class WalletView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: AutoTranslateText(
-                  'Recharge History',
+                  'Wallet History',
                   style: MyTextTheme.largeBCB
                       .copyWith(color: Colors.white)
                       .merge(AppTypography.h3),
@@ -368,7 +368,7 @@ class WalletView extends StatelessWidget {
           // Transaction List
           Obx(() {
             if (controller.isLoadingHistory.value &&
-                controller.rechargeHistory.isEmpty) {
+                controller.combinedHistory.isEmpty) {
               return Center(
                 child: Padding(
                   padding: EdgeInsets.all(40.h),
@@ -377,7 +377,7 @@ class WalletView extends StatelessWidget {
               );
             }
 
-            if (controller.rechargeHistory.isEmpty) {
+            if (controller.combinedHistory.isEmpty) {
               return Center(
                 child: Padding(
                   padding: EdgeInsets.all(40.h),
@@ -402,7 +402,7 @@ class WalletView extends StatelessWidget {
                       ),
                       Spacing.h(16),
                       AutoTranslateText(
-                        'No recharge history',
+                        'No wallet history',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 14,
@@ -417,9 +417,14 @@ class WalletView extends StatelessWidget {
 
             return Column(
               children: [
-                ...controller.rechargeHistory.map(
-                  (recharge) => _buildRechargeItem(recharge, controller),
-                ),
+                ...controller.combinedHistory.map((item) {
+                  if (item is WalletRechargeHistoryItem) {
+                    return _buildRechargeItem(item, controller);
+                  } else if (item is WalletTransaction) {
+                    return _buildTransactionItem(item, controller);
+                  }
+                  return const SizedBox.shrink();
+                }),
                 if (controller.hasMore.value)
                   Padding(
                     padding: EdgeInsets.only(top: 16.h),
@@ -723,6 +728,158 @@ class WalletView extends StatelessWidget {
       default:
         return Icons.info;
     }
+  }
+
+  Widget _buildTransactionItem(
+    WalletTransaction transaction,
+    WalletController controller,
+  ) {
+    final isDeduction = transaction.type == 'DEDUCTION';
+    final statusColor = isDeduction ? Colors.red : const Color(0xFF4CAF50);
+    final statusBgColor = isDeduction
+        ? Colors.red.withOpacity(0.05)
+        : const Color(0xFFE8F5E9);
+    final date = transaction.createdAtDate;
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.h),
+      padding: EdgeInsets.all(18.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: Colors.grey.withOpacity(0.15), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              // Status icon
+              Container(
+                width: 56.w,
+                height: 56.w,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [statusBgColor, statusBgColor.withOpacity(0.7)],
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: statusColor.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  isDeduction
+                      ? Icons.remove_circle_rounded
+                      : Icons.check_circle_rounded,
+                  color: statusColor,
+                  size: 28.w,
+                ),
+              ),
+
+              Spacing.w(16),
+
+              // Transaction details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AutoTranslateText(
+                      transaction.description ??
+                          (isDeduction ? 'Consultation' : 'Wallet Update'),
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: '#68171E'.toColor(),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Spacing.h(6),
+                    if (date != null)
+                      AutoTranslateText(
+                        _formatTransactionDate(date),
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    Spacing.h(8),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 5.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: statusBgColor,
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(
+                          color: statusColor.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: AutoTranslateText(
+                        transaction.status,
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: statusColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Amount
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  AutoTranslateText(
+                    '${isDeduction ? '-' : '+'}₹${transaction.amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: statusColor,
+                    ),
+                  ),
+                  if (transaction.transactionId.isNotEmpty) ...[
+                    Spacing.h(4),
+                    AutoTranslateText(
+                      transaction.transactionId.substring(
+                        0,
+                        transaction.transactionId.length > 12
+                            ? 12
+                            : transaction.transactionId.length,
+                      ),
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 10,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   void _showCancelDialog(

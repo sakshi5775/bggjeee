@@ -49,20 +49,20 @@ dynamic returnException(Response response) {
 
   switch (response.statusCode) {
     case 400:
-      return BadRequestException(message);
+      return BadRequestException(message, response.body);
     case 401:
-      return UnauthorisedException(message);
+      return UnauthorisedException(message, response.body);
     case 404:
-      return UnauthorisedException(message);
+      return UnauthorisedException(message, response.body);
     case 429:
       return FetchDataException('Too many requests. Please try again later.');
     case 500:
     case 502:
     case 503:
     case 504:
-      return FetchDataException(message);
+      return FetchDataException(message, response.body);
     default:
-      return FetchDataException(message);
+      return FetchDataException(message, response.body);
   }
 }
 
@@ -134,8 +134,9 @@ String _extractErrorMessage(Map<dynamic, dynamic> body, String defaultMessage) {
 class NetworkException implements Exception {
   final dynamic message;
   final dynamic prefix;
+  final dynamic fullBody;
 
-  NetworkException([this.message, this.prefix]);
+  NetworkException([this.message, this.prefix, this.fullBody]);
 
   @override
   String toString() {
@@ -144,15 +145,18 @@ class NetworkException implements Exception {
 }
 
 class FetchDataException extends NetworkException {
-  FetchDataException([String? message]) : super(message, "");
+  FetchDataException([String? message, dynamic fullBody])
+    : super(message, "", fullBody);
 }
 
 class BadRequestException extends NetworkException {
-  BadRequestException([message]) : super(message, "");
+  BadRequestException([message, dynamic fullBody])
+    : super(message, "", fullBody);
 }
 
 class UnauthorisedException extends NetworkException {
-  UnauthorisedException([message]) : super(message, "");
+  UnauthorisedException([message, dynamic fullBody])
+    : super(message, "", fullBody);
 }
 
 class AlreadyReportedException extends NetworkException {

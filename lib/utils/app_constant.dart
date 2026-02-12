@@ -113,7 +113,8 @@ class AppConstant {
   static const String templeImage = 'assets/app/temple_image.png';
   static const String templeMahakaleshwar =
       'assets/app/temple_mahakaleshwar.png';
-  static const String videoThumbnail = 'assets/app/astrology.svg';
+  static const String videoThumbnail =
+      'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/3D+Logos/video+3d.png';
   static const String horoscopeGuru = 'assets/app/guru.png';
   static const String divineShop = 'assets/app/pill_digital_mart.png';
   static const String ePooja = 'assets/app/e_pooja.png';

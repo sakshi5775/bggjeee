@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/screens/navtara/controller/navtara_controller.dart';
 import 'package:intl/intl.dart';
 
 class KundliResultController extends BaseController {
@@ -43,6 +44,7 @@ class KundliResultController extends BaseController {
     'Panchang',
     'Binnashtakvarga',
     'Transit',
+    'Navtara',
     'Ashtakvarga Chart',
     'Bhav Madhya',
     'Person Details',
@@ -109,6 +111,7 @@ class KundliResultController extends BaseController {
       'icon': Icons.calendar_today,
       'imageUrl': AppConstant.varshpal3d,
     },
+    {'title': 'Navtara\nAnalysis', 'icon': Icons.star_half, 'imageUrl': null},
   ];
 
   // Feature list items (left column)
@@ -184,6 +187,7 @@ class KundliResultController extends BaseController {
   // Planet details data
   final planetDetailsData = Rxn<Map<String, dynamic>>();
   final isLoadingPlanetDetails = false.obs;
+  final detectedNakshatra = Rxn<String>();
 
   // Birth details data
   final mangalDoshData = Rxn<Map<String, dynamic>>();
@@ -689,6 +693,14 @@ class KundliResultController extends BaseController {
       fetchTransitChart();
     }
 
+    // Fetch Navtara data when Navtara tab is selected
+    final navtaraIndex = tabs.indexWhere(
+      (tab) => tab.toLowerCase() == 'navtara',
+    );
+    if (navtaraIndex != -1 && index == navtaraIndex) {
+      _initNavtaraController();
+    }
+
     // Fetch Planet details when LAGNA or PLANETS tab is selected
     if (index == 1) {
       fetchPlanetDetails();
@@ -767,6 +779,25 @@ class KundliResultController extends BaseController {
     if (shadBalaIndex != -1 && index == shadBalaIndex) {
       fetchShadBalaDetails();
     }
+  }
+
+  void _initNavtaraController() {
+    final form = formData.value;
+    if (form == null) return;
+
+    // Get nakshatra from planet details if not already in detectedNakshatra
+    final nakshatra = detectedNakshatra.value ?? "";
+
+    if (!Get.isRegistered<NavtaraController>()) {
+      Get.put(NavtaraController());
+    }
+
+    final navtaraController = Get.find<NavtaraController>();
+    navtaraController.initFromFullKundli(
+      nakshatraName: nakshatra,
+      name: form['name'] ?? 'User',
+      dob: form['date'] ?? '',
+    );
   }
 
   /// Fetch Ashtakvarga Chart (SVG)
@@ -948,6 +979,7 @@ class KundliResultController extends BaseController {
 
       if (data != null && data['response'] != null) {
         ashtakvargaData.value = data['response'] as Map<String, dynamic>;
+        _extractFromResponse(ashtakvargaData.value);
         debugPrint('Ashtakvarga data loaded successfully');
       } else {
         debugPrint('Failed to fetch Ashtakvarga data');
@@ -1062,6 +1094,7 @@ class KundliResultController extends BaseController {
           debugPrint('Ascendant Report data loaded successfully');
         } else if (response is Map) {
           ascendantReportData.value = response as Map<String, dynamic>;
+          _extractFromResponse(ascendantReportData.value);
           debugPrint('Ascendant Report data loaded successfully');
         } else {
           debugPrint(
@@ -1130,6 +1163,7 @@ class KundliResultController extends BaseController {
         }
         if (responseMap != null && responseMap.isNotEmpty) {
           shadBalaData.value = responseMap;
+          _extractFromResponse(shadBalaData.value);
           debugPrint('Shad Bala data loaded successfully');
         } else {
           debugPrint('Shad Bala: response map empty or invalid');
@@ -1209,9 +1243,11 @@ class KundliResultController extends BaseController {
         if (data['data'] != null && data['data']['response'] != null) {
           varshphalDetailsData.value =
               data['data']['response'] as Map<String, dynamic>;
+          _extractFromResponse(varshphalDetailsData.value);
           debugPrint('Varshphal Details data loaded successfully');
         } else if (data['response'] != null) {
           varshphalDetailsData.value = data['response'] as Map<String, dynamic>;
+          _extractFromResponse(varshphalDetailsData.value);
           debugPrint('Varshphal Details data loaded successfully');
         } else {
           debugPrint(
@@ -1277,10 +1313,12 @@ class KundliResultController extends BaseController {
         if (data['data'] != null && data['data']['response'] != null) {
           varshphalYearlyChartData.value =
               data['data']['response'] as Map<String, dynamic>;
+          _extractFromResponse(varshphalYearlyChartData.value);
           debugPrint('Varshphal Yearly Chart data loaded successfully');
         } else if (data['response'] != null) {
           varshphalYearlyChartData.value =
               data['response'] as Map<String, dynamic>;
+          _extractFromResponse(varshphalYearlyChartData.value);
           debugPrint('Varshphal Yearly Chart data loaded successfully');
         } else {
           debugPrint(
@@ -1397,6 +1435,8 @@ class KundliResultController extends BaseController {
 
       if (data != null && data['response'] != null) {
         panchangData.value = data['response'] as Map<String, dynamic>;
+        // Extract Nakshatra using deep scan
+        _extractFromResponse(panchangData.value);
         debugPrint('Panchang data loaded successfully');
       } else {
         debugPrint('Failed to fetch Panchang data');
@@ -1466,6 +1506,7 @@ class KundliResultController extends BaseController {
 
       if (data != null) {
         mangalDoshData.value = data;
+        _extractFromResponse(data);
         debugPrint('Mangal Dosh data loaded successfully');
       } else {
         debugPrint('Failed to fetch Mangal Dosh data');
@@ -1595,6 +1636,33 @@ class KundliResultController extends BaseController {
     if (planetDetailsData.value == null) return '-';
     return planetDetailsData.value!['rasi']?.toString() ?? '-';
   }
+
+  // // Get Nakshatra from planet details or panchang data
+  // String getNakshatra() {
+  //   if (detectedNakshatra.value != null && detectedNakshatra.value != '-') {
+  //     return detectedNakshatra.value!;
+  //   }
+
+  //   if (planetDetailsData.value != null) {
+  //     final nk = planetDetailsData.value!['nakshatra']?.toString();
+  //     if (nk != null && nk != '-') {
+  //       detectedNakshatra.value = nk;
+  //       return nk;
+  //     }
+  //   }
+
+  //   if (panchangData.value != null) {
+  //     final nakshatraMap =
+  //         panchangData.value!['nakshatra'] as Map<String, dynamic>?;
+  //     final nk = nakshatraMap?['name']?.toString();
+  //     if (nk != null && nk != '-') {
+  //       detectedNakshatra.value = nk;
+  //       return nk;
+  //     }
+  //   }
+
+  //   return '-';
+  // }
 
   // Calculate Age from date
   String getAge() {
@@ -1733,6 +1801,8 @@ class KundliResultController extends BaseController {
 
       if (data != null && data['response'] != null) {
         planetDetailsData.value = data['response'] as Map<String, dynamic>;
+        // Extract Nakshatra using deep scan
+        _extractFromResponse(planetDetailsData.value);
         debugPrint('Planet Details data loaded successfully');
       } else {
         debugPrint('Failed to fetch Planet Details data');
@@ -1745,7 +1815,7 @@ class KundliResultController extends BaseController {
 
   void onFeatureTap(String feature) {
     // Find matching tab by name (case-insensitive)
-    final featureLower = feature.toLowerCase();
+    final featureLower = feature.replaceAll('\n', ' ').toLowerCase();
 
     // Handle Planets: switch to Planets tab (slider + PlanetsWidget below, no navigation)
     if (featureLower == 'planet' || featureLower == 'planets') {
@@ -1853,6 +1923,31 @@ class KundliResultController extends BaseController {
       return;
     }
 
+    // Handle Navtara Analyze - switch to Navtara dashboard
+    if (featureLower.contains('navtara')) {
+      Get.toNamed(
+        AppRoutes.navtaraDashboard,
+        arguments: {
+          'nakshatra': detectedNakshatra.value,
+          'name': formData.value?['name'] ?? '',
+          'dob': formData.value?['date'] ?? '',
+          'initialTab': featureLower.contains('timing') ? 1 : 0,
+        },
+      );
+      return;
+    }
+
+    // Handle Mangal Dosh - switch to Mangal Dosh tab
+    if (featureLower == 'mangal dosh') {
+      final shadBalaIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == 'shad bala',
+      );
+      if (shadBalaIndex != -1) {
+        onTabSelected(shadBalaIndex);
+      }
+      return;
+    }
+
     // Handle Shad Bala - switch to Shad Bala tab
     if (featureLower == 'shad bala') {
       final shadBalaIndex = tabs.indexWhere(
@@ -1936,6 +2031,18 @@ class KundliResultController extends BaseController {
       return;
     }
 
+    // Handle Navtara Analysis - switch to Navtara tab
+    if (featureLower == 'navtara analysis' ||
+        featureLower == 'navtara timing') {
+      final navtaraIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == 'navtara',
+      );
+      if (navtaraIndex != -1) {
+        onTabSelected(navtaraIndex);
+      }
+      return;
+    }
+
     // Coming-soon tabs: no navigation (hidden from UI)
     if (_isComingSoonTab(featureLower) ||
         featureLower == 'personal details' ||
@@ -1968,6 +2075,8 @@ class KundliResultController extends BaseController {
       'friendship': 'Friendship',
       'avkahada chakra': 'Avkahada Chakra',
       'download pdf': 'Download PDF',
+      'navtara analysis': 'Navtara',
+      'navtara timing': 'Navtara',
     };
 
     // Get the tab name from the map
@@ -2046,8 +2155,85 @@ class KundliResultController extends BaseController {
       return;
     }
 
+    // Handle Navtara navigation - switch to Navtara tab
+    if (feature.toLowerCase().contains('navtara')) {
+      final navtaraIndex = tabs.indexWhere(
+        (tab) => tab.toLowerCase() == 'navtara',
+      );
+      if (navtaraIndex != -1) {
+        onTabSelected(navtaraIndex);
+      }
+      return;
+    }
+
     // Handle other features - navigate to specific feature page
     // This will be implemented based on API endpoints
     debugPrint('Feature tapped: $feature (no matching tab found)');
+  }
+
+  /// Returns the detected Nakshatra or '-' if none found.
+  String getNakshatra() {
+    if (detectedNakshatra.value != null &&
+        detectedNakshatra.value!.isNotEmpty &&
+        detectedNakshatra.value != '-') {
+      return detectedNakshatra.value!;
+    }
+    return '-';
+  }
+
+  /// Deep scan a response (Map or List) to find and extract Nakshatra names.
+  /// This eliminates the need for manual user input.
+  void _extractFromResponse(dynamic data) {
+    if (data == null) return;
+
+    void scan(dynamic obj) {
+      if (obj is Map) {
+        // Common keys for Nakshatra names in various APIs
+        final potentialKeys = [
+          'nakshatra',
+          'nakshatra_name',
+          'nakshtra',
+          'nakshtra_name',
+          'birth_nakshatra',
+        ];
+
+        for (final key in potentialKeys) {
+          if (obj.containsKey(key)) {
+            final val = obj[key];
+            if (val is String && val.isNotEmpty && val != '-') {
+              detectedNakshatra.value = val;
+              debugPrint('Auto-detected Nakshatra: $val');
+              return;
+            } else if (val is Map && val.containsKey('name')) {
+              final name = val['name'].toString();
+              if (name.isNotEmpty && name != '-') {
+                detectedNakshatra.value = name;
+                debugPrint('Auto-detected Nakshatra from map: $name');
+                return;
+              }
+            }
+          }
+        }
+
+        // Depth-first search through the map
+        for (final value in obj.values) {
+          scan(value);
+          if (detectedNakshatra.value != null &&
+              detectedNakshatra.value != '-') {
+            return;
+          }
+        }
+      } else if (obj is List) {
+        for (final item in obj) {
+          scan(item);
+          if (detectedNakshatra.value != null &&
+              detectedNakshatra.value != '-') {
+            return;
+          }
+        }
+      }
+    }
+
+    scan(data);
   }
 }

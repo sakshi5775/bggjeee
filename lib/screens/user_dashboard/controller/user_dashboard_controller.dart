@@ -264,16 +264,17 @@ class UserDashboardController extends BaseController
   // Slider Tabs
   List<String> get sliderTabs => [
     'Home',
+    'Reports',
     // DateTime.now().year.toString(),
     'Astrologers',
     'AI Astrologers',
+
     'Digital Mart',
     'Digital Mandir',
     'Digital Learning',
     'Media Hub',
     'Panchang',
     'Horoscope',
-    'Reports',
   ];
 
   // Book Pooja Carousel

@@ -5,16 +5,26 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/report_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'package:astrobharataiuser/widgets/report_insufficient_balance_dialog.dart';
+import 'package:astrobharataiuser/apihelper/api_provider/networkException/exception.dart';
 
 class KundliFormController extends BaseController {
   final KundliService _kundliService = KundliService();
   final UserProfileService _userProfileService = UserProfileService();
+  final ReportService _reportService = ReportService();
+
+  // PDF Generation Mode
+  bool isGeneratePdfMode = false;
+  String? reportKey;
+  String? reportType;
+  String? reportVariant;
 
   // Target route to navigate to after form submission (if provided)
   String? targetRoute;
@@ -65,9 +75,17 @@ class KundliFormController extends BaseController {
   void onInit() {
     super.onInit();
     // Load target route from arguments if provided
-    final arguments = Get.arguments as Map<String, dynamic>?;
-    if (arguments != null && arguments['targetRoute'] != null) {
-      targetRoute = arguments['targetRoute'] as String;
+    final dynamic args = Get.arguments;
+    if (args != null && args is Map<String, dynamic>) {
+      if (args['targetRoute'] != null) {
+        targetRoute = args['targetRoute'] as String;
+      }
+      if (args['generatePdf'] == true) {
+        isGeneratePdfMode = true;
+        reportKey = args['reportKey'];
+        reportType = args['reportType'];
+        reportVariant = args['variant'];
+      }
     }
     _initializeForm();
     _loadUserProfileData();
@@ -602,6 +620,11 @@ class KundliFormController extends BaseController {
         return;
       }
 
+      if (isGeneratePdfMode) {
+        await _generatePdfReport(latitude, longitude, tz);
+        return;
+      }
+
       // Use orange color for SVG (#ed6f30)
       const colorHex = '#ed6f30';
 
@@ -651,6 +674,88 @@ class KundliFormController extends BaseController {
         }
       } else {
         showErrorMessage(title: 'Error', message: 'Failed to generate kundli');
+      }
+    } catch (e) {
+      showErrorMessage(title: 'Error', message: 'Error: ${e.toString()}');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Internal method to handle PDF report generation
+  Future<void> _generatePdfReport(
+    double latitude,
+    double longitude,
+    double tz,
+  ) async {
+    try {
+      final params = {
+        'name': nameController.text.trim().isNotEmpty
+            ? nameController.text.trim()
+            : 'User',
+        'date': dateController.text, // dd/MM/yyyy
+        'time': timeController.text, // HH:mm
+        'lat': latitude.toString(),
+        'lon': longitude.toString(),
+        'tz': tz.toString(),
+        'gender': (selectedGender.value ?? 'Male').toLowerCase(),
+        'lang': selectedLanguage.value,
+        'style': selectedStyle.value,
+        'place': selectedLocation.value,
+        'pdf_type': reportVariant ?? 'small',
+      };
+
+      final downloadUrl = await _reportService.generateReport(
+        params: params,
+        reportPath: reportKey,
+      );
+
+      print('KundliFormController: Received downloadUrl: $downloadUrl');
+
+      if (downloadUrl != null && downloadUrl.isNotEmpty) {
+        // Navigate to the new in-app PDF viewer
+        Get.toNamed(
+          AppRoutes.reportPdfView,
+          arguments: {
+            'pdfUrl': downloadUrl,
+            'title': nameController.text.trim().isNotEmpty
+                ? '${nameController.text.trim()} Kundli'
+                : 'Kundli Report',
+          },
+        );
+      } else {
+        showErrorMessage(
+          title: 'Error',
+          message: 'Failed to generate PDF report. Please try again.',
+        );
+      }
+    } on BadRequestException catch (e) {
+      if (e.message.toLowerCase().contains('insufficient balance')) {
+        // Parse balance info if available in e.fullBody
+        double available = 0;
+        double required = 0;
+
+        try {
+          if (e.fullBody is Map) {
+            final data = (e.fullBody as Map)['data'] ?? e.fullBody;
+            available = (data['available_balance'] ?? data['available'] ?? 0)
+                .toDouble();
+            required = (data['required_balance'] ?? data['required'] ?? 0)
+                .toDouble();
+          }
+        } catch (err) {
+          debugPrint('Error parsing balance from body: $err');
+        }
+
+        Get.dialog(
+          ReportInsufficientBalanceDialog(
+            currentBalance: available,
+            requiredBalance: required,
+            reportName: reportKey ?? 'Kundli Report',
+          ),
+        );
+      } else {
+        showErrorMessage(title: 'Error', message: e.message);
       }
     } catch (e) {
       showErrorMessage(title: 'Error', message: 'Error: ${e.toString()}');

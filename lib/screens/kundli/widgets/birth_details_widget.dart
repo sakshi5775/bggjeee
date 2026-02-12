@@ -25,6 +25,7 @@ class BirthDetailsWidget extends StatelessWidget {
     ('DST', _dst),
     ('Mangal Dosh', _mangalDosh),
     ('Rashi', _rashi),
+    ('Nakshatra', _nakshatra),
     ('Age', _age),
     ('Bal. Dasa', _balDasa),
   ];
@@ -38,6 +39,7 @@ class BirthDetailsWidget extends StatelessWidget {
   static String _dst(KundliResultController c) => c.getDST();
   static String _mangalDosh(KundliResultController c) => c.getMangalDosh();
   static String _rashi(KundliResultController c) => c.getRashi();
+  static String _nakshatra(KundliResultController c) => c.getNakshatra();
   static String _age(KundliResultController c) => c.getAge();
   static String _balDasa(KundliResultController c) => c.getBalDasa();
 

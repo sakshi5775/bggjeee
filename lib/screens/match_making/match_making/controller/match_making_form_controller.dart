@@ -1,13 +1,22 @@
 import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/match_making/match_making/service/match_making_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/report_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:astrobharataiuser/widgets/report_insufficient_balance_dialog.dart';
+import 'package:astrobharataiuser/apihelper/api_provider/networkException/exception.dart';
 
 class MatchMakingFormController extends BaseController {
   final MatchMakingService _matchMakingService = MatchMakingService();
+  final ReportService _reportService = ReportService();
+
+  // PDF Generation Mode
+  bool isGeneratePdfMode = false;
+  String? reportKey;
 
   // Person 1 (Groom) Controllers - All dynamic, no hardcoded values
   final person1NameController = TextEditingController();
@@ -64,6 +73,13 @@ class MatchMakingFormController extends BaseController {
   @override
   void onInit() {
     super.onInit();
+    final dynamic args = Get.arguments;
+    if (args != null && args is Map<String, dynamic>) {
+      if (args['generatePdf'] == true) {
+        isGeneratePdfMode = true;
+        reportKey = args['reportKey'];
+      }
+    }
     _initializeForm();
   }
 
@@ -508,6 +524,22 @@ class MatchMakingFormController extends BaseController {
         lang: selectedLanguage.value,
       );
 
+      if (isGeneratePdfMode) {
+        await _generateMatchingPdfReport(
+          boyDob,
+          boyTob,
+          boyTz,
+          boyLat,
+          boyLon,
+          girlDob,
+          girlTob,
+          girlTz,
+          girlLat,
+          girlLon,
+        );
+        return;
+      }
+
       isLoading.value = false;
 
       if (result != null) {
@@ -574,6 +606,115 @@ class MatchMakingFormController extends BaseController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+    }
+  }
+
+  /// Internal method to handle PDF matching report generation
+  Future<void> _generateMatchingPdfReport(
+    String boyDob,
+    String boyTob,
+    double boyTz,
+    double boyLat,
+    double boyLon,
+    String girlDob,
+    String girlTob,
+    double girlTz,
+    double girlLat,
+    double girlLon,
+  ) async {
+    try {
+      final params = {
+        'boy_name': person1NameController.text.trim().isNotEmpty
+            ? person1NameController.text.trim()
+            : 'Boy',
+        'boy_dob': boyDob,
+        'boy_tob': boyTob,
+        'boy_tz': boyTz.toString(),
+        'boy_lat': boyLat.toString(),
+        'boy_lon': boyLon.toString(),
+        'boy_place': person1PlaceController.text,
+        'girl_name': person2NameController.text.trim().isNotEmpty
+            ? person2NameController.text.trim()
+            : 'Girl',
+        'girl_dob': girlDob,
+        'girl_tob': girlTob,
+        'girl_tz': girlTz.toString(),
+        'girl_lat': girlLat.toString(),
+        'girl_lon': girlLon.toString(),
+        'girl_place': person2PlaceController.text,
+        'lang': selectedLanguage.value,
+        'style': 'north', // Default
+      };
+
+      final downloadUrl = await _reportService.generateMatchingReport(
+        params: params,
+        reportPath: reportKey,
+      );
+
+      print('MatchMakingController: Received downloadUrl: $downloadUrl');
+
+      isLoading.value = false;
+
+      if (downloadUrl != null && downloadUrl.isNotEmpty) {
+        // Navigate to the new in-app PDF viewer
+        Get.toNamed(
+          AppRoutes.reportPdfView,
+          arguments: {'pdfUrl': downloadUrl, 'title': 'Matchmaking Report'},
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to generate PDF report. Please try again.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } on BadRequestException catch (e) {
+      if (e.message.toLowerCase().contains('insufficient balance')) {
+        // Parse balance info if available in e.fullBody
+        double available = 0;
+        double required = 0;
+
+        try {
+          if (e.fullBody is Map) {
+            final data = (e.fullBody as Map)['data'] ?? e.fullBody;
+            available = (data['available_balance'] ?? data['available'] ?? 0)
+                .toDouble();
+            required = (data['required_balance'] ?? data['required'] ?? 0)
+                .toDouble();
+          }
+        } catch (err) {
+          debugPrint('Error parsing balance from body: $err');
+        }
+
+        Get.dialog(
+          ReportInsufficientBalanceDialog(
+            currentBalance: available,
+            requiredBalance: required,
+            reportName: reportKey ?? 'Matchmaking Report',
+          ),
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          e.message,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error generating matching PDF: $e');
+      Get.snackbar(
+        'Error',
+        'An error occurred: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
     }
   }
 }

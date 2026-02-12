@@ -94,6 +94,7 @@ class HoroscopeMainController extends BaseController {
   final isLoadingRudrakshSuggestion = false.obs;
   final isLoadingFriendshipTable = false.obs;
   final isLoadingPlanetKp = false.obs;
+  final detectedNakshatra = Rxn<String>();
 
   @override
   void onInit() {
@@ -352,6 +353,7 @@ class HoroscopeMainController extends BaseController {
           data['data']['response'] != null) {
         extendedKundaliData.value =
             data['data']['response'] as Map<String, dynamic>;
+        _extractFromResponse(extendedKundaliData.value);
       }
     } catch (e) {
       debugPrint('Error fetching Extended Kundali: $e');
@@ -461,6 +463,7 @@ class HoroscopeMainController extends BaseController {
           data['data'] != null &&
           data['data']['response'] != null) {
         moonSignData.value = data['data']['response'] as Map<String, dynamic>;
+        _extractFromResponse(moonSignData.value);
       }
     } catch (e) {
       debugPrint('Error fetching Moon Sign: $e');
@@ -664,5 +667,58 @@ class HoroscopeMainController extends BaseController {
       'Pisces': 12,
     };
     return zodiacMap[sign] ?? 1;
+  }
+
+  /// Deep scan a response (Map or List) to find and extract Nakshatra names.
+  void _extractFromResponse(dynamic data) {
+    if (data == null) return;
+
+    void scan(dynamic obj) {
+      if (obj is Map) {
+        final potentialKeys = [
+          'nakshatra',
+          'nakshatra_name',
+          'nakshtra',
+          'nakshtra_name',
+          'birth_nakshatra',
+        ];
+
+        for (final key in potentialKeys) {
+          if (obj.containsKey(key)) {
+            final val = obj[key];
+            if (val is String && val.isNotEmpty && val != '-') {
+              detectedNakshatra.value = val;
+              debugPrint('Auto-detected Nakshatra: $val');
+              return;
+            } else if (val is Map && val.containsKey('name')) {
+              final name = val['name'].toString();
+              if (name.isNotEmpty && name != '-') {
+                detectedNakshatra.value = name;
+                debugPrint('Auto-detected Nakshatra from map: $name');
+                return;
+              }
+            }
+          }
+        }
+
+        for (final value in obj.values) {
+          scan(value);
+          if (detectedNakshatra.value != null &&
+              detectedNakshatra.value != '-') {
+            return;
+          }
+        }
+      } else if (obj is List) {
+        for (final item in obj) {
+          scan(item);
+          if (detectedNakshatra.value != null &&
+              detectedNakshatra.value != '-') {
+            return;
+          }
+        }
+      }
+    }
+
+    scan(data);
   }
 }

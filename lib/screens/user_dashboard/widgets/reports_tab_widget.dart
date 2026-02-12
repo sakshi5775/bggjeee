@@ -1,17 +1,19 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
+import 'package:astrobharataiuser/data_model/report_model.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/banner_service.dart';
-import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/service/report_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/banner_carousel_widget.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-/// Reports tab: grid of report types matching Year tab design.
+/// Reports tab: grid of report types with live pricing.
 class ReportsTabWidget extends StatefulWidget {
   const ReportsTabWidget({super.key});
 
@@ -21,13 +23,19 @@ class ReportsTabWidget extends StatefulWidget {
 
 class _ReportsTabWidgetState extends State<ReportsTabWidget> {
   final BannerService _bannerService = BannerService();
+  final ReportService _reportService = ReportService();
+
   final List<BannerItem> _banners = [];
+  final List<ReportPricing> _reports = [];
+
   bool _loadingBanners = true;
+  bool _loadingReports = true;
 
   @override
   void initState() {
     super.initState();
     _loadBanners();
+    _fetchPricing();
   }
 
   Future<void> _loadBanners() async {
@@ -52,86 +60,24 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
     }
   }
 
-  static const List<Map<String, dynamic>> _reportItems = [
-    {
-      'title': 'Horoscope PDF (Kundli) Report',
-      'icon': Icons.description_outlined,
-      'route': AppRoutes.allReports,
-      'api': '/api/pdf/generate',
-    },
-    {
-      'title': 'Matching PDF Report',
-      'icon': Icons.favorite_outline,
-      'route': AppRoutes.allReports,
-      'api': '/api/pdf/generate_matching',
-    },
-    {
-      'title': 'Foreign Travel PDF Report',
-      'icon': Icons.flight_takeoff_outlined,
-      'route': AppRoutes.allReports,
-      'api': '/api/pdf/foreign_travel_report',
-    },
-    {
-      'title': 'Government Job PDF Report',
-      'icon': Icons.work_outline,
-      'route': AppRoutes.allReports,
-      'api': '/api/pdf/government_job_report',
-    },
-    {
-      'title': 'Financial Opportunities and Challenges PDF Report',
-      'icon': Icons.account_balance_wallet_outlined,
-      'route': AppRoutes.allReports,
-      'api': '/api/pdf/financial_opportunities_and_challenges_report',
-    },
-    {
-      'title': 'Education and Learning Pathways PDF Report',
-      'icon': Icons.school_outlined,
-      'route': AppRoutes.allReports,
-      'api': '/api/pdf/education_and_learning_pathways_report',
-    },
-    {
-      'title': 'Kundali Samyak PDF Report',
-      'icon': Icons.star_border_purple500_outlined,
-      'route': AppRoutes.allReports,
-      'api': '/api/pdf/kundali_samyak',
-    },
-    {
-      'title': 'Kundali Dirgha Drishti PDF Report',
-      'icon': Icons.remove_red_eye_outlined,
-      'route': AppRoutes.allReports,
-      'api': '/api/pdf/kundali_dirghaDrishti',
-    },
-    {
-      'title': 'Kundali Mool Patrika PDF Report',
-      'icon': Icons.auto_awesome_outlined,
-      'route': AppRoutes.allReports,
-      'api': '/api/pdf/Kundali_moolPatrika',
-    },
-    {
-      'title': 'Vedic 5 Year Predictions PDF Report',
-      'icon': Icons.event_available_outlined,
-      'route': AppRoutes.allReports,
-      'api': '/api/pdf/vedic_five_year_predictions',
-    },
-    {
-      'title': 'Vedic 10 Year Predictions PDF Report',
-      'icon': Icons.event_available_outlined,
-      'route': AppRoutes.allReports,
-      'api': '/api/pdf/vedic_ten_year_predictions',
-    },
-    {
-      'title': 'Vedic 15 Year Predictions PDF Report',
-      'icon': Icons.event_available_outlined,
-      'route': AppRoutes.allReports,
-      'api': '/api/pdf/vedic_fifteen_year_predictions',
-    },
-    {
-      'title': 'Destiny Of Heart (Love Life) PDF Report',
-      'icon': Icons.favorite_border_outlined,
-      'route': AppRoutes.allReports,
-      'api': '/api/pdf/destiny_of_heart',
-    },
-  ];
+  Future<void> _fetchPricing() async {
+    if (!mounted) return;
+    setState(() => _loadingReports = true);
+    try {
+      final pricing = await _reportService.getPricing();
+      if (mounted && pricing != null) {
+        setState(() {
+          _reports
+            ..clear()
+            ..addAll(pricing);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading report pricing: $e');
+    } finally {
+      if (mounted) setState(() => _loadingReports = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,21 +91,22 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
           children: [
             _buildBannersSection(),
             SizedBox(height: 16.h),
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.zero,
-              itemCount: _reportItems.length,
-              separatorBuilder: (context, index) => SizedBox(height: 12.h),
-              itemBuilder: (context, index) {
-                final item = _reportItems[index];
-                return _buildListItem(
-                  title: item['title'] as String,
-                  icon: item['icon'] as IconData,
-                  route: item['route'] as String?,
-                );
-              },
-            ),
+            if (_loadingReports && _reports.isEmpty)
+              _buildShimmerLoader()
+            else if (_reports.isEmpty)
+              _buildEmptyState()
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                itemCount: _reports.length,
+                separatorBuilder: (context, index) => SizedBox(height: 12.h),
+                itemBuilder: (context, index) {
+                  final report = _reports[index];
+                  return _buildReportItem(report);
+                },
+              ),
             SizedBox(height: 24.h),
           ],
         ),
@@ -170,15 +117,11 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
   Widget _buildBannersSection() {
     if (_loadingBanners && _banners.isEmpty) {
       return SizedBox(
-        height: 80.h,
+        height: 100.h,
         child: Center(
-          child: SizedBox(
-            width: 24.w,
-            height: 24.w,
-            child: CircularProgressIndicator(
-              color: "#6F221E".toColor(),
-              strokeWidth: 2,
-            ),
+          child: CircularProgressIndicator(
+            color: "#6F221E".toColor(),
+            strokeWidth: 2,
           ),
         ),
       );
@@ -190,20 +133,49 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
     );
   }
 
-  Widget _buildListItem({
-    required String title,
-    required IconData icon,
-    required String? route,
-  }) {
-    final isComingSoon = route == null;
+  Widget _buildShimmerLoader() {
+    return Column(
+      children: List.generate(
+        5,
+        (index) => Container(
+          height: 80.h,
+          margin: EdgeInsets.only(bottom: 12.h),
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 40.h),
+        child: Column(
+          children: [
+            Icon(Icons.description_outlined, size: 48.w, color: Colors.grey),
+            SizedBox(height: 12.h),
+            AutoTranslateText(
+              'No reports available at the moment',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+            TextButton(
+              onPressed: _fetchPricing,
+              child: const AutoTranslateText('Retry'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReportItem(ReportPricing report) {
+    final bool isMatching = report.reportType == 'matching_pdf';
+
     return GestureDetector(
-      onTap: () {
-        if (isComingSoon) {
-          Get.to(() => const ComingSoonPage());
-        } else {
-          Get.toNamed(route);
-        }
-      },
+      onTap: () => _onReportTap(report),
       child: Container(
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
@@ -227,7 +199,13 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
                 color: '#FCE5AA'.toColor().withOpacity(0.3),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 24.w, color: '#6F221E'.toColor()),
+              child: Icon(
+                isMatching
+                    ? Icons.favorite_outline
+                    : Icons.description_outlined,
+                size: 24.w,
+                color: '#6F221E'.toColor(),
+              ),
             ),
             SizedBox(width: 16.w),
             Expanded(
@@ -235,29 +213,51 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AutoTranslateText(
-                    title,
+                    report.displayName ?? 'Report',
                     style: AppTypography.h3.copyWith(
                       color: '#3D0C11'.toColor(),
                       fontWeight: FontWeight.w600,
-                      fontSize: 12.sp,
+                      fontSize: 13.sp,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 4.h),
-                  AutoTranslateText(
-                    'Get detailed PDF report',
-                    style: AppTypography.body2.copyWith(
-                      color: Colors.grey[600],
-                      fontSize: 10.sp,
-                    ),
+                  Row(
+                    children: [
+                      if (report.pages != null) ...[
+                        Icon(
+                          Icons.auto_stories_outlined,
+                          size: 12.w,
+                          color: Colors.grey[600],
+                        ),
+                        SizedBox(width: 4.w),
+                        AutoTranslateText(
+                          '${report.pages} pages',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 10.sp,
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                      ],
+                      if (report.priceOffer != null)
+                        AutoTranslateText(
+                          '₹${report.priceOffer}',
+                          style: TextStyle(
+                            color: Colors.green[700],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                    ],
                   ),
                 ],
               ),
             ),
             SizedBox(width: 12.w),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
               decoration: BoxDecoration(
                 gradient: AppColors.orangeGradient,
                 borderRadius: BorderRadius.circular(20.r),
@@ -267,7 +267,7 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 10.sp,
+                  fontSize: 11.sp,
                 ),
               ),
             ),
@@ -275,5 +275,32 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
         ),
       ),
     );
+  }
+
+  void _onReportTap(ReportPricing report) async {
+    if (!await LoginGuard.ensureLoggedIn(
+      message: 'Please login to access reports',
+    )) {
+      return;
+    }
+
+    if (report.reportType == 'matching_pdf') {
+      // Navigate to Match-making form with a special flag
+      Get.toNamed(
+        AppRoutes.matchMakingForm,
+        arguments: {'generatePdf': true, 'reportKey': report.key},
+      );
+    } else {
+      // Navigate to Kundli form with a special flag
+      Get.toNamed(
+        AppRoutes.kundliForm,
+        arguments: {
+          'generatePdf': true,
+          'reportKey': report.key,
+          'reportType': report.reportType,
+          'variant': report.variant,
+        },
+      );
+    }
   }
 }
