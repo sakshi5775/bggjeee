@@ -292,12 +292,10 @@ class CelebrityAstrologerWidget extends BasePage<UserDashboardController> {
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               child: AutoTranslateText(
                 name,
-                style: MyTextTheme.mediumBCB
-                    .copyWith(
-                      color: "#E3B341".toColor(),
-                      fontWeight: FontWeight.bold,
-                    )
-                    .merge(AppTypography.h2),
+                style: AppTypography.h3.copyWith(
+                  color: '#68171E'.toColor(),
+                  fontSize: 12.sp,
+                ),
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

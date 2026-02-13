@@ -229,24 +229,33 @@ class WalletRechargeVerifyData {
 }
 
 class WalletTransaction {
+  final String? id;
   final String transactionId;
   final String type;
   final int amount;
   final int balanceAfter;
   final String status;
+  final String? description;
+  final String? paymentMethod;
+  final String? referenceId;
   final String? createdAt;
 
   WalletTransaction({
+    this.id,
     required this.transactionId,
     required this.type,
     required this.amount,
     required this.balanceAfter,
     required this.status,
+    this.description,
+    this.paymentMethod,
+    this.referenceId,
     this.createdAt,
   });
 
   factory WalletTransaction.fromJson(Map<String, dynamic> json) {
     return WalletTransaction(
+      id: json['_id']?.toString(),
       transactionId: json['transactionId']?.toString() ?? '',
       type: json['type']?.toString() ?? '',
       amount: json['amount'] != null
@@ -256,8 +265,35 @@ class WalletTransaction {
           ? int.tryParse(json['balanceAfter'].toString()) ?? 0
           : 0,
       status: json['status']?.toString() ?? '',
+      description: json['description']?.toString(),
+      paymentMethod: json['paymentMethod']?.toString(),
+      referenceId: json['referenceId']?.toString(),
       createdAt: json['createdAt']?.toString(),
     );
+  }
+
+  DateTime? get createdAtDate {
+    if (createdAt == null) return null;
+    try {
+      return DateTime.parse(createdAt!);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'transactionId': transactionId,
+      'type': type,
+      'amount': amount,
+      'balanceAfter': balanceAfter,
+      'status': status,
+      'description': description,
+      'paymentMethod': paymentMethod,
+      'referenceId': referenceId,
+      'createdAt': createdAt,
+    };
   }
 }
 

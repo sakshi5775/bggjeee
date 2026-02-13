@@ -1,0 +1,392 @@
+import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/screens/navtara/model/navtara_models.dart';
+import 'package:astrobharataiuser/screens/navtara/service/navtara_service.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+
+class NavtaraController extends BaseController
+    with GetSingleTickerProviderStateMixin {
+  final NavtaraService _service = NavtaraService();
+
+  final isLoading = false.obs;
+  final analysis = Rxn<NavtaraAnalysis>();
+  final compatibility = Rxn<NavtaraCompatibility>();
+  final timing = Rxn<NavtaraTiming>();
+  final history = <dynamic>[].obs;
+  final stats = Rxn<NavtaraStats>();
+  final nakshatras = <Nakshatra>[].obs;
+
+  // Input states
+  final primaryNakshatra = Rxn<String>();
+  final secondaryNakshatra = Rxn<String>();
+  final selectedAnalysisType = 'GENERAL'.obs;
+  final selectedActivity = 'MARRIAGE'.obs;
+  final selectedLanguage = 'en'.obs;
+  final fullName = "".obs;
+  final dateOfBirth = "".obs;
+  final startDate = Rx<DateTime>(DateTime.now());
+  final endDate = Rx<DateTime>(DateTime.now().add(const Duration(days: 30)));
+  final questionController = TextEditingController();
+  final isMatchmaking = false.obs;
+  final selectedHistoryType = Rxn<String>(); // Null means 'All'
+  final selectedHistoryStatus = Rxn<String>(); // Null means 'All'
+
+  late TabController tabController;
+  late PageController pageController;
+  final selectedTabIndex = 0.obs;
+  final ScrollController tabsScrollController = ScrollController();
+  final Map<int, GlobalKey> tabKeys = {};
+
+  final List<String> tabNames = ['Analyze', 'Timing', 'History', 'Stats'];
+
+  @override
+  void onInit() {
+    super.onInit();
+    // 4 tabs: Analyze, Timing, History, Stats
+    tabController = TabController(length: 4, vsync: this);
+    pageController = PageController(initialPage: 0);
+
+    // Initialize from arguments if provided
+    _initFromArgs();
+
+    fetchStats();
+  }
+
+  void _initFromArgs() {
+    final args = Get.arguments as Map<String, dynamic>?;
+    if (args != null) {
+      final nakshatra = args['nakshatra'] as String?;
+      final name = args['name'] as String?;
+      final dob = args['dob'] as String?;
+      final isMatch = args['isMatchmaking'] as bool? ?? false;
+      final secondaryNak = args['secondaryNakshatra'] as String?;
+      final initialTab = args['initialTab'] as int? ?? 0;
+
+      isMatchmaking.value = isMatch;
+      if (nakshatra != null && nakshatra.isNotEmpty) {
+        primaryNakshatra.value = nakshatra;
+        fullName.value = name ?? "";
+        dateOfBirth.value = dob ?? "";
+        if (secondaryNak != null) secondaryNakshatra.value = secondaryNak;
+
+        // Ensure UI stays in sync
+        Future.delayed(Duration.zero, () {
+          onTabSelected(initialTab);
+        });
+      }
+    }
+  }
+
+  @override
+  void onClose() {
+    tabController.dispose();
+    pageController.dispose();
+    tabsScrollController.dispose();
+    questionController.dispose();
+    super.onClose();
+  }
+
+  // Handle page change from swipe
+  void onPageChanged(int index) {
+    selectedTabIndex.value = index;
+    _handleDataFetch(index);
+  }
+
+  void _handleDataFetch(int index) {
+    if (index == 0 && analysis.value == null) {
+      analyzeGeneral();
+    } else if (index == 1 && timing.value == null) {
+      findAuspiciousTiming();
+    } else if (index == 2) {
+      fetchHistory();
+    } else if (index == 3) {
+      fetchStats();
+    }
+  }
+
+  // Navigate to specific tab (called from tab tap)
+  void onTabSelected(int index) {
+    if (pageController.hasClients) {
+      pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+    tabController.animateTo(index);
+    selectedTabIndex.value = index;
+    _handleDataFetch(index);
+  }
+
+  void initFromMatching({
+    required String boyName,
+    required String boyNakshatra,
+    required String girlName,
+    required String girlNakshatra,
+  }) {
+    isMatchmaking.value = true;
+    fullName.value = boyName;
+    primaryNakshatra.value = boyNakshatra;
+    secondaryNakshatra.value = girlNakshatra;
+    checkCompatibility();
+  }
+
+  /// Initialize from Kundli Result
+  void initFromKundli(String? nakshatraName) {
+    if (nakshatraName != null && nakshatraName.isNotEmpty) {
+      primaryNakshatra.value = nakshatraName;
+      analyzeGeneral();
+    }
+  }
+
+  /// Initialize from Kundli Result with full data
+  void initFromFullKundli({
+    required String nakshatraName,
+    required String name,
+    required String dob,
+  }) {
+    primaryNakshatra.value = nakshatraName;
+    fullName.value = name;
+    dateOfBirth.value = dob;
+    analyzeGeneral();
+  }
+
+  Future<void> fetchNakshatras() async {
+    try {
+      final list = await _service.getNakshatras();
+      nakshatras.value = list;
+    } catch (e) {
+      debugPrint('Error fetching nakshatras: $e');
+    }
+  }
+
+  Future<void> analyzeGeneral({String analysisType = 'GENERAL'}) async {
+    if (primaryNakshatra.value == null || primaryNakshatra.value!.isEmpty) {
+      return;
+    }
+    try {
+      isLoading.value = true;
+      analysis.value = await _service.analyzeNavtara(
+        janmaNakshatra: primaryNakshatra.value!,
+        analysisType: analysisType,
+        question: questionController.text.isNotEmpty
+            ? questionController.text
+            : null,
+        name: fullName.value.isNotEmpty ? fullName.value : null,
+        dateOfBirth: dateOfBirth.value.isNotEmpty ? dateOfBirth.value : null,
+        currentDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        language: _getLanguageName(selectedLanguage.value),
+      );
+      if (analysis.value != null) {
+        questionController.clear();
+      }
+    } catch (e) {
+      debugPrint('Error in analyzeGeneral: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> analyzeSpecific(String type) async {
+    if (type == 'TIMING') {
+      onTabSelected(1);
+    } else {
+      await analyzeGeneral(analysisType: type);
+    }
+  }
+
+  Future<void> checkCompatibility() async {
+    if (primaryNakshatra.value == null || secondaryNakshatra.value == null) {
+      return;
+    }
+    try {
+      isLoading.value = true;
+      compatibility.value = await _service.checkCompatibility(
+        nakshatra1: primaryNakshatra.value!,
+        nakshatra2: secondaryNakshatra.value!,
+        relationshipType: 'ROMANTIC',
+        language: _getLanguageName(selectedLanguage.value),
+      );
+    } catch (e) {
+      debugPrint('Error in checkCompatibility: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> findAuspiciousTiming() async {
+    if (primaryNakshatra.value == null || primaryNakshatra.value!.isEmpty) {
+      return;
+    }
+    try {
+      isLoading.value = true;
+      timing.value = await _service.findTiming(
+        janmaNakshatra: primaryNakshatra.value!,
+        activityType: selectedActivity.value,
+        startDate: DateFormat('yyyy-MM-dd').format(startDate.value),
+        endDate: DateFormat('yyyy-MM-dd').format(endDate.value),
+        language: _getLanguageName(selectedLanguage.value),
+      );
+    } catch (e) {
+      debugPrint('Error in findAuspiciousTiming: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchHistory({String? analysisType, String? status}) async {
+    try {
+      isLoading.value = true;
+      // Update observables if args provided
+      if (analysisType != null) selectedHistoryType.value = analysisType;
+      if (status != null) selectedHistoryStatus.value = status;
+
+      final type = analysisType ?? selectedHistoryType.value;
+      final stat = status ?? selectedHistoryStatus.value;
+
+      final data = await _service.getHistory(analysisType: type, status: stat);
+      history.assignAll(data);
+    } catch (e) {
+      debugPrint('Error in fetchHistory: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchStats() async {
+    try {
+      stats.value = await _service.getStats();
+    } catch (e) {
+      debugPrint('Error fetching stats: $e');
+    }
+  }
+
+  Future<void> fetchReadingDetail(String id) async {
+    try {
+      isLoading.value = true;
+      final data = await _service.getReadingById(id);
+      if (data != null) {
+        final String type = data['userInput']?['analysisType'] ?? '';
+        if (type == 'TRANSIT') {
+          analysis.value = NavtaraAnalysis.fromJson(data);
+          onTabSelected(0);
+        } else if (type == 'COMPATIBILITY') {
+          compatibility.value = NavtaraCompatibility.fromJson(data);
+          onTabSelected(2);
+        } else if (type == 'TIMING') {
+          timing.value = NavtaraTiming.fromJson(data);
+          onTabSelected(1);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching reading detail: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> deleteReading(String id) async {
+    try {
+      final success = await _service.deleteReading(id);
+      if (success) {
+        fetchHistory(); // Refresh
+      }
+    } catch (e) {
+      debugPrint('Error deleting reading: $e');
+    }
+  }
+
+  void updatePrimaryNakshatra(String val) {
+    primaryNakshatra.value = val;
+    analyzeGeneral();
+    fetchStats();
+  }
+
+  Future<void> fetchReadingDetails(String id) async {
+    try {
+      isLoading.value = true;
+      final details = await _service.getReadingById(id);
+      if (details != null) {
+        if (details['analysisType'] == 'GENERAL' ||
+            details['analysisType'] == 'TRANSIT') {
+          analysis.value = NavtaraAnalysis.fromJson(details['data']);
+          onTabSelected(0);
+        } else if (details['analysisType'] == 'TIMING') {
+          timing.value = NavtaraTiming.fromJson(details['data']);
+          onTabSelected(1);
+        } else if (details['analysisType'] == 'COMPATIBILITY') {
+          compatibility.value = NavtaraCompatibility.fromJson(details['data']);
+          onTabSelected(2);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error in fetchReadingDetails: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void updateSecondaryNakshatra(String val) {
+    secondaryNakshatra.value = val;
+    if (primaryNakshatra.value != null) {
+      checkCompatibility();
+    }
+  }
+
+  Future<void> selectDate(BuildContext context, bool isStart) async {
+    final initialDate = isStart ? startDate.value : endDate.value;
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked != null) {
+      if (isStart) {
+        startDate.value = picked;
+      } else {
+        endDate.value = picked;
+      }
+      findAuspiciousTiming();
+    }
+  }
+
+  String _getLanguageName(String code) {
+    switch (code.toLowerCase()) {
+      case 'hi':
+        return 'hindi';
+      case 'kn':
+        return 'kannada';
+      case 'te':
+        return 'telugu';
+      case 'ta':
+        return 'tamil';
+      case 'ml':
+        return 'malayalam';
+      case 'mr':
+        return 'marathi';
+      case 'bn':
+        return 'bengali';
+      case 'gu':
+        return 'gujarati';
+      case 'en':
+      default:
+        return 'english';
+    }
+  }
+
+  final List<String> analysisTypes = [
+    'GENERAL',
+    'TRANSIT',
+    'TIMING',
+    'COMPATIBILITY',
+  ];
+
+  final List<String> activityTypes = [
+    'MARRIAGE',
+    'BUSINESS START',
+    'TRAVEL',
+    'PROPERTY PURCHASE',
+  ];
+}

@@ -38,7 +38,7 @@ class AiChatView extends BasePage<AiChatController> {
           top: !hideHeader,
           child: Column(
             children: [
-              if (!hideHeader) CommonHeader(),
+              if (!hideHeader) CommonHeader(title: 'AI Chat'),
 
               // Category Filter Chips
               // SizedBox(height: 16.h),

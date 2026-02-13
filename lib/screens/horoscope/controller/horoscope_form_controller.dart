@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:astrobharataiuser/utils/time_picker_helper.dart';
@@ -42,7 +42,7 @@ class HoroscopeFormController extends BaseController {
   final selectedDate = DateTime.now().obs;
   final selectedTime = TimeOfDay.now().obs;
   final selectedLocation = 'Fetching Location...'.obs;
-  
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
@@ -71,9 +71,12 @@ class HoroscopeFormController extends BaseController {
     dateController.text = DateFormat('dd/MM/yyyy').format(now);
     final currentTime = TimeOfDay.now();
     selectedTime.value = currentTime;
-    timeController.text = TimePickerHelper.formatTime24To12Display(currentTime.hour, currentTime.minute);
+    timeController.text = TimePickerHelper.formatTime24To12Display(
+      currentTime.hour,
+      currentTime.minute,
+    );
     timezoneController.text = '5.5'; // Default IST
-    
+
     // Try to get current location on init
     _tryGetCurrentLocation();
   }
@@ -101,12 +104,14 @@ class HoroscopeFormController extends BaseController {
                 final y = int.tryParse(parts[0]);
                 final m = int.tryParse(parts[1]);
                 final d = int.tryParse(parts[2]);
-                if (y != null && m != null && d != null) dob = DateTime(y, m, d);
+                if (y != null && m != null && d != null)
+                  dob = DateTime(y, m, d);
               } else {
                 final d = int.tryParse(parts[0]);
                 final m = int.tryParse(parts[1]);
                 final y = int.tryParse(parts[2]);
-                if (d != null && m != null && y != null) dob = DateTime(y, m, d);
+                if (d != null && m != null && y != null)
+                  dob = DateTime(y, m, d);
               }
             }
           }
@@ -199,14 +204,17 @@ class HoroscopeFormController extends BaseController {
       longitudeController.text = position.longitude.toStringAsFixed(6);
 
       // Update location name
-      await _updateLocationFromCoordinates(position.latitude, position.longitude);
+      await _updateLocationFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
       // Get timezone
       final offset = await _getTimezoneOffsetFromCoordinates(
         position.latitude,
         position.longitude,
       );
-      
+
       // Final check before setting timezone
       if (!_isDisposed) {
         timezoneController.text = offset.toString();
@@ -226,7 +234,11 @@ class HoroscopeFormController extends BaseController {
       if (_isDisposed) return;
 
       if (reverseGeocode != null) {
-        final city = reverseGeocode['city'] ?? reverseGeocode['town'] ?? reverseGeocode['village'] ?? '';
+        final city =
+            reverseGeocode['city'] ??
+            reverseGeocode['town'] ??
+            reverseGeocode['village'] ??
+            '';
         final state = reverseGeocode['state'] ?? '';
         if (city.isNotEmpty) {
           selectedLocation.value = state.isNotEmpty ? '$city, $state' : city;
@@ -250,13 +262,10 @@ class HoroscopeFormController extends BaseController {
       final url = Uri.parse(
         'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lon&zoom=18&addressdetails=1',
       );
-      
-      final response = await http.get(
-        url,
-        headers: {
-          'User-Agent': 'AstrologyApp',
-        },
-      ).timeout(const Duration(seconds: 10));
+
+      final response = await http
+          .get(url, headers: {'User-Agent': 'AstrologyApp'})
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
@@ -270,16 +279,25 @@ class HoroscopeFormController extends BaseController {
   }
 
   /// Get timezone offset from coordinates
-  Future<double> _getTimezoneOffsetFromCoordinates(double lat, double lon) async {
+  Future<double> _getTimezoneOffsetFromCoordinates(
+    double lat,
+    double lon,
+  ) async {
     try {
-      final url = Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon');
+      final url = Uri.parse(
+        'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+      );
       final response = await http.get(url).timeout(const Duration(seconds: 10));
-      
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
         final offsetString = data['currentUtcOffset']?.toString() ?? '5.5';
         // Parse offset like "+05:30" to 5.5
-        final offset = double.tryParse(offsetString.replaceAll(':', '.').replaceAll('+', '')) ?? 5.5;
+        final offset =
+            double.tryParse(
+              offsetString.replaceAll(':', '.').replaceAll('+', ''),
+            ) ??
+            5.5;
         return offset;
       }
     } catch (e) {
@@ -290,7 +308,14 @@ class HoroscopeFormController extends BaseController {
 
   /// Fetch location from city name
   /// Can be called with lat/long/timezone from location bottom sheet, or will fetch them if not provided
-  Future<void> fetchLocationFromCity(String city, {String? state, String? country, double? latitude, double? longitude, double? timezone}) async {
+  Future<void> fetchLocationFromCity(
+    String city, {
+    String? state,
+    String? country,
+    double? latitude,
+    double? longitude,
+    double? timezone,
+  }) async {
     try {
       isFetchingLocation.value = true;
 
@@ -300,16 +325,19 @@ class HoroscopeFormController extends BaseController {
       if (latitude != null && longitude != null) {
         latitudeController.text = latitude.toStringAsFixed(6);
         longitudeController.text = longitude.toStringAsFixed(6);
-        
-        selectedLocation.value = state != null && state.isNotEmpty 
-            ? '$city, $state' 
+
+        selectedLocation.value = state != null && state.isNotEmpty
+            ? '$city, $state'
             : city;
 
         // Use provided timezone or fetch it
         if (timezone != null) {
           timezoneController.text = timezone.toString();
         } else {
-          final offset = await _getTimezoneOffsetFromCoordinates(latitude, longitude);
+          final offset = await _getTimezoneOffsetFromCoordinates(
+            latitude,
+            longitude,
+          );
           timezoneController.text = offset.toString();
         }
       } else {
@@ -330,9 +358,9 @@ class HoroscopeFormController extends BaseController {
           if (lat != null && lon != null) {
             latitudeController.text = lat.toStringAsFixed(6);
             longitudeController.text = lon.toStringAsFixed(6);
-            
-            selectedLocation.value = state != null && state.isNotEmpty 
-                ? '$city, $state' 
+
+            selectedLocation.value = state != null && state.isNotEmpty
+                ? '$city, $state'
                 : city;
 
             // Update timezone
@@ -344,15 +372,24 @@ class HoroscopeFormController extends BaseController {
               timezoneController.text = offset.toString();
             }
           } else {
-            showErrorMessage(title: 'Error', message: 'Could not fetch coordinates for $city');
+            showErrorMessage(
+              title: 'Error',
+              message: 'Could not fetch coordinates for $city',
+            );
           }
         } else {
-          showErrorMessage(title: 'Error', message: 'Location not found. Please try again.');
+          showErrorMessage(
+            title: 'Error',
+            message: 'Location not found. Please try again.',
+          );
         }
       }
     } catch (e) {
       debugPrint('Error fetching location: $e');
-      showErrorMessage(title: 'Error', message: 'Failed to fetch location. Please try again.');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Failed to fetch location. Please try again.',
+      );
     } finally {
       if (!_isDisposed) {
         isFetchingLocation.value = false;
@@ -364,11 +401,15 @@ class HoroscopeFormController extends BaseController {
   Future<void> useCurrentLocation() async {
     try {
       isFetchingLocation.value = true;
-      
+
       // Check if location services are enabled
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        showErrorMessage(title: 'Error', message: 'Location services are disabled. Please enable them in settings.');
+        showErrorMessage(
+          title: 'Error',
+          message:
+              'Location services are disabled. Please enable them in settings.',
+        );
         isFetchingLocation.value = false;
         return;
       }
@@ -378,14 +419,22 @@ class HoroscopeFormController extends BaseController {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          showErrorMessage(title: 'Error', message: 'Location permission is required. Please grant permission in settings.');
+          showErrorMessage(
+            title: 'Error',
+            message:
+                'Location permission is required. Please grant permission in settings.',
+          );
           isFetchingLocation.value = false;
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        showErrorMessage(title: 'Error', message: 'Location permission is permanently denied. Please enable it in app settings.');
+        showErrorMessage(
+          title: 'Error',
+          message:
+              'Location permission is permanently denied. Please enable it in app settings.',
+        );
         isFetchingLocation.value = false;
         return;
       }
@@ -404,20 +453,26 @@ class HoroscopeFormController extends BaseController {
       longitudeController.text = position.longitude.toStringAsFixed(6);
 
       // Update location name
-      await _updateLocationFromCoordinates(position.latitude, position.longitude);
+      await _updateLocationFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
       // Get timezone
       final offset = await _getTimezoneOffsetFromCoordinates(
         position.latitude,
         position.longitude,
       );
-      
+
       if (!_isDisposed) {
         timezoneController.text = offset.toString();
       }
     } catch (e) {
       debugPrint('Error using current location: $e');
-      showErrorMessage(title: 'Error', message: 'Failed to get current location. Please try again.');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Failed to get current location. Please try again.',
+      );
     } finally {
       if (!_isDisposed) {
         isFetchingLocation.value = false;
@@ -435,26 +490,13 @@ class HoroscopeFormController extends BaseController {
 
   /// Show date picker
   Future<void> selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
+    final DateTime? picked = await TimePickerHelper.showDatePicker(
+      context,
       initialDate: selectedDate.value,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: "#6F221E".toColor(),
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: "#6F221E".toColor(),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
-    
+
     if (picked != null) {
       _setSelectedDate(picked);
     }
@@ -464,7 +506,10 @@ class HoroscopeFormController extends BaseController {
   void _setSelectedTime(TimeOfDay picked) {
     if (!_isDisposed && picked != selectedTime.value) {
       selectedTime.value = picked;
-      timeController.text = TimePickerHelper.formatTime24To12Display(picked.hour, picked.minute);
+      timeController.text = TimePickerHelper.formatTime24To12Display(
+        picked.hour,
+        picked.minute,
+      );
     }
   }
 
@@ -473,21 +518,8 @@ class HoroscopeFormController extends BaseController {
     final TimeOfDay? picked = await TimePickerHelper.showTimePicker12h(
       context,
       initialTime: selectedTime.value,
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: "#6F221E".toColor(),
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: "#6F221E".toColor(),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
-    
+
     if (picked != null) {
       _setSelectedTime(picked);
     }
@@ -511,38 +543,122 @@ class HoroscopeFormController extends BaseController {
     }
 
     if (timezoneController.text.isEmpty) {
-      showErrorMessage(title: 'Error', message: 'Timezone is missing. Please select location again.');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Timezone is missing. Please select location again.',
+      );
       return false;
     }
 
     return true;
   }
 
-  /// Submit form and navigate to sign selection
-  void submitForm() {
+  final KundliService _kundliService = KundliService();
+
+  // ... (existing code)
+
+  /// Submit form and navigate to sign selection or direct result
+  Future<void> submitForm() async {
     if (!_validateForm()) {
       return;
     }
 
-    // Prepare form data (time sent to API as 24h)
-    final time24 = TimePickerHelper.parseTime12To24(timeController.text) ?? timeController.text;
-    final formData = {
-      'date': dateController.text,
-      'time': time24,
-      'latitude': double.parse(latitudeController.text),
-      'longitude': double.parse(longitudeController.text),
-      'timezone': double.parse(timezoneController.text),
-      'place': selectedLocation.value,
-      'language': selectedLanguage.value,
-    };
+    isLoading.value = true;
 
-    // Navigate to sign selection with form data
-    Get.toNamed(
-      AppRoutes.horoscopeSignSelection,
-      arguments: {
-        'formData': formData,
-      },
-    );
+    try {
+      // Prepare form data (time sent to API as 24h)
+      final time24 =
+          TimePickerHelper.parseTime12To24(timeController.text) ??
+          timeController.text;
+      final latitude = double.parse(latitudeController.text);
+      final longitude = double.parse(longitudeController.text);
+      final timezone = double.parse(timezoneController.text);
+
+      final formData = {
+        'date': dateController.text,
+        'time': time24,
+        'latitude': latitude,
+        'longitude': longitude,
+        'timezone': timezone,
+        'place': selectedLocation.value,
+        'language': selectedLanguage.value,
+      };
+
+      // Try to fetch Moon Sign to auto-detect zodiac
+      // Logic borrowed from PredictionsController
+      final data = await _kundliService.getMoonSignPrediction(
+        date: dateController.text,
+        time: time24,
+        latitude: latitude,
+        longitude: longitude,
+        tz: timezone,
+        lang: selectedLanguage.value,
+      );
+
+      String? detectedSign;
+      if (data != null) {
+        final response = data['response'] as Map<String, dynamic>?;
+        final zodiacName = response?['zodiac']?.toString();
+        if (zodiacName != null && zodiacName.isNotEmpty) {
+          // Validate if it's a valid sign name
+          if (_isValidSign(zodiacName)) {
+            detectedSign = zodiacName;
+          }
+        }
+      }
+
+      if (detectedSign != null) {
+        // Navigate directly to result
+        Get.toNamed(
+          AppRoutes.horoscopeMain,
+          arguments: {'selectedSign': detectedSign, 'formData': formData},
+        );
+      } else {
+        // Fallback to manual selection
+        Get.toNamed(
+          AppRoutes.horoscopeSignSelection,
+          arguments: {'formData': formData},
+        );
+      }
+    } catch (e) {
+      debugPrint('Error in horoscope submit: $e');
+      // Fallback to manual selection on error
+      Get.toNamed(
+        AppRoutes.horoscopeSignSelection,
+        arguments: {
+          'formData': {
+            'date': dateController.text,
+            'time':
+                TimePickerHelper.parseTime12To24(timeController.text) ??
+                timeController.text,
+            'latitude': double.parse(latitudeController.text),
+            'longitude': double.parse(longitudeController.text),
+            'timezone': double.parse(timezoneController.text),
+            'place': selectedLocation.value,
+            'language': selectedLanguage.value,
+          },
+        },
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  bool _isValidSign(String sign) {
+    final validSigns = [
+      'Aries',
+      'Taurus',
+      'Gemini',
+      'Cancer',
+      'Leo',
+      'Virgo',
+      'Libra',
+      'Scorpio',
+      'Sagittarius',
+      'Capricorn',
+      'Aquarius',
+      'Pisces',
+    ];
+    return validSigns.any((s) => s.toLowerCase() == sign.toLowerCase());
   }
 }
-

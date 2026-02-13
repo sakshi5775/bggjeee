@@ -230,10 +230,11 @@ class LiveAstrologersView extends StatelessWidget {
                 astrologerName,
                 style: MyTextTheme.smallBCB
                     .copyWith(
-                      color: const Color(0xFF5F2221),
+                      color: const Color(0xFF68171E),
                       fontWeight: FontWeight.w500,
+                      fontSize: 12.sp,
                     )
-                    .merge(AppTypography.body2),
+                    .merge(AppTypography.h3),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
@@ -359,8 +360,9 @@ class LiveAstrologersView extends StatelessWidget {
                   astrologerName,
                   style: MyTextTheme.mediumBCB
                       .copyWith(
-                        color: const Color(0xFF5F2221),
+                        color: const Color(0xFF68171E),
                         fontWeight: FontWeight.bold,
+                        fontSize: 12.sp,
                       )
                       .merge(AppTypography.h3),
                 ),

@@ -265,7 +265,9 @@ class PujaPackageSelectionBottomSheet extends StatelessWidget {
                           children: [
                             Expanded(
                               child: AutoTranslateText(
-                                package.packageName ?? 'Package',
+                                package.packageName == 'Single Package'
+                                    ? 'व्यक्तिगत पूजा'
+                                    : package.packageName ?? 'Package',
                                 style: MyTextTheme.mediumBCB.copyWith(
                                   color: const Color(0xFF212121),
                                   fontSize: 17,

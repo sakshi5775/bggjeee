@@ -149,14 +149,17 @@ class ForgotPasswordController extends GetxController {
         passwordController.text.trim(),
       );
       if (success) {
-        Get.offAllNamed(AppRoutes.login);
         Get.snackbar(
           'Success',
           'Password changed successfully. Please login with new password.',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          duration: const Duration(seconds: 2),
         );
+
+        await Future.delayed(const Duration(seconds: 2));
+        Get.offAllNamed(AppRoutes.login);
       } else {
         Get.snackbar('Error', 'Failed to reset password');
       }

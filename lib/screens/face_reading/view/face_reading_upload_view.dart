@@ -10,10 +10,10 @@ import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/app_manager/common/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 
 class FaceReadingUploadView extends StatefulWidget {
   const FaceReadingUploadView({Key? key}) : super(key: key);
@@ -24,7 +24,6 @@ class FaceReadingUploadView extends StatefulWidget {
 
 class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
   File? _selectedImage;
-  final ImagePicker _picker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -452,57 +451,21 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
     if (!allowed) return;
 
     try {
-      final XFile? pickedFile = await _picker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 80,
-      );
+      final pickedFile = await ImagePickerHelper.pickImage(context);
 
       if (!mounted) return;
 
       if (pickedFile == null) {
-        // User cancelled - no error needed
         return;
       }
-
-      final path = pickedFile.path;
-      if (path.isEmpty) {
-        if (mounted) {
-          Get.snackbar(
-            'Error',
-            'Invalid image path.',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-        }
-        return;
-      }
-
-      final file = File(path);
-
-      // Check if file exists
-      if (!await file.exists()) {
-        if (mounted) {
-          Get.snackbar(
-            'Error',
-            'Captured image file does not exist.',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-        }
-        return;
-      }
-
-      if (!mounted) return;
 
       setState(() {
-        _selectedImage = file;
+        _selectedImage = pickedFile;
       });
 
       // Navigate to scanning screen
       final controller = Get.put(FaceReadingController());
-      controller.setImage(file);
+      controller.setImage(pickedFile);
       Get.toNamed(AppRoutes.faceReadingScanning);
     } catch (e, stackTrace) {
       debugPrint('Camera error: $e');
@@ -527,57 +490,21 @@ class _FaceReadingUploadViewState extends State<FaceReadingUploadView> {
     if (!allowed) return;
 
     try {
-      final XFile? pickedFile = await _picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 80,
-      );
+      final pickedFile = await ImagePickerHelper.pickImage(context);
 
       if (!mounted) return;
 
       if (pickedFile == null) {
-        // User cancelled - no error needed
         return;
       }
-
-      final path = pickedFile.path;
-      if (path.isEmpty) {
-        if (mounted) {
-          Get.snackbar(
-            'Error',
-            'Invalid image path.',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-        }
-        return;
-      }
-
-      final file = File(path);
-
-      // Check if file exists
-      if (!await file.exists()) {
-        if (mounted) {
-          Get.snackbar(
-            'Error',
-            'Selected image file does not exist.',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-        }
-        return;
-      }
-
-      if (!mounted) return;
 
       setState(() {
-        _selectedImage = file;
+        _selectedImage = pickedFile;
       });
 
       // Navigate to scanning screen
       final controller = Get.put(FaceReadingController());
-      controller.setImage(file);
+      controller.setImage(pickedFile);
       Get.toNamed(AppRoutes.faceReadingScanning);
     } catch (e, stackTrace) {
       debugPrint('Gallery error: $e');

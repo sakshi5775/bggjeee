@@ -75,7 +75,7 @@ class PujaCardWidget extends StatelessWidget {
                         children: [
                           Expanded(
                             child: AutoTranslateText(
-                              puja.title ?? 'Puja',
+                              puja.title ?? 'Pooja',
                               style: MyTextTheme.mediumBCB.copyWith(
                                 color: const Color(0xFF3E2723),
                                 fontSize: 16,

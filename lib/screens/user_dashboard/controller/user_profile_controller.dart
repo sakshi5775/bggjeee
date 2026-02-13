@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/utils/address_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 
 class UserProfileController extends BaseController {
   final UserProfileService _service = UserProfileService();
@@ -410,8 +411,8 @@ class UserProfileController extends BaseController {
 
   /// Select birth date
   Future<void> selectBirthDate() async {
-    final pickedDate = await showDatePicker(
-      context: Get.context!,
+    final pickedDate = await TimePickerHelper.showDatePicker(
+      Get.context!,
       initialDate:
           selectedBirthDate.value ??
           DateTime.now().subtract(Duration(days: 365 * 25)),

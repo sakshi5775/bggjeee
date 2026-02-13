@@ -52,12 +52,26 @@ class YouTubeService {
     );
 
     final response = await http
-        .get(rssUrl)
+        .get(
+          rssUrl,
+          headers: {
+            'User-Agent':
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept':
+                'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          },
+        )
         .timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
       final xml = response.body;
       final videos = <YouTubeVideo>[];
+
+      // Check if XML is valid feed
+      if (!xml.contains('<feed')) {
+        debugPrint('Invalid RSS feed format');
+        throw 'Invalid RSS feed format';
+      }
 
       // Parse XML to extract video data
       final videoIdRegExp = RegExp(r'<yt:videoId>(.*?)</yt:videoId>');

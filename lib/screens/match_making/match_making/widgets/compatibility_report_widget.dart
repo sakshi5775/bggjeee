@@ -6,6 +6,8 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/screens/navtara/controller/navtara_controller.dart';
+import 'package:astrobharataiuser/screens/navtara/model/navtara_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,6 +23,9 @@ class CompatibilityReportWidget extends StatelessWidget {
   final num? matchScoreTotalOverride;
   final bool showTotalSeparately;
   final num? rawTotal;
+  final bool showNavtaraOnly;
+  final bool showNavtaraSection;
+  final Widget? navtaraWidget;
 
   const CompatibilityReportWidget({
     super.key,
@@ -33,6 +38,9 @@ class CompatibilityReportWidget extends StatelessWidget {
     this.matchScoreTotalOverride,
     this.showTotalSeparately = false,
     this.rawTotal,
+    this.showNavtaraOnly = false,
+    this.showNavtaraSection = true,
+    this.navtaraWidget,
   });
 
   @override
@@ -85,6 +93,11 @@ class CompatibilityReportWidget extends StatelessWidget {
     // Extract bot response
     final botResponse = response['bot_response'] as String? ?? '';
 
+    if (showNavtaraOnly) {
+      return navtaraWidget ??
+          _buildNavtaraCompatibility(boyAstroDetails, girlAstroDetails);
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -108,6 +121,12 @@ class CompatibilityReportWidget extends StatelessWidget {
           ),
           Spacing.h(20),
         ],
+
+        // Navtara Compatibility Section
+        if (showNavtaraSection || showNavtaraOnly)
+          _buildNavtaraCompatibility(boyAstroDetails, girlAstroDetails),
+
+        Spacing.h(20),
 
         // Kundli Charts (if provided from parent)
         if (kundliSection != null) ...[kundliSection!, Spacing.h(20)],
@@ -1288,6 +1307,270 @@ class CompatibilityReportWidget extends StatelessWidget {
             errorMessage,
             textAlign: TextAlign.center,
             style: MyTextTheme.mediumBCN.copyWith(color: Colors.black87),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavtaraCompatibility(
+    Map<String, dynamic>? boyAstro,
+    Map<String, dynamic>? girlAstro,
+  ) {
+    if (!Get.isRegistered<NavtaraController>()) return const SizedBox.shrink();
+    final navtaraController = Get.find<NavtaraController>();
+
+    String extract(dynamic data) {
+      if (data == null) return '';
+      final potentialKeys = [
+        'nakshatra',
+        'nakshatra_name',
+        'nakshtra',
+        'nakshtra_name',
+        'birth_nakshatra',
+      ];
+
+      if (data is Map) {
+        for (final key in potentialKeys) {
+          if (data.containsKey(key)) {
+            final val = data[key];
+            if (val is String && val.isNotEmpty && val != '-') return val;
+            if (val is Map && val.containsKey('name')) {
+              final name = val['name'].toString();
+              if (name.isNotEmpty && name != '-') return name;
+            }
+          }
+        }
+        // Deep scan if not found in top level
+        for (final val in data.values) {
+          final res = extract(val);
+          if (res.isNotEmpty) return res;
+        }
+      } else if (data is List) {
+        for (final item in data) {
+          final res = extract(item);
+          if (res.isNotEmpty) return res;
+        }
+      }
+      return '';
+    }
+
+    final boyNakshatra = extract(boyAstro);
+    final girlNakshatra = extract(girlAstro);
+
+    if (boyNakshatra.isEmpty || girlNakshatra.isEmpty)
+      return const SizedBox.shrink();
+
+    // Initialize if not already set
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (navtaraController.primaryNakshatra.value != boyNakshatra ||
+          navtaraController.secondaryNakshatra.value != girlNakshatra) {
+        navtaraController.initFromMatching(
+          boyName: boyAstro?['name'] ?? 'Boy',
+          boyNakshatra: boyNakshatra,
+          girlName: girlAstro?['name'] ?? 'Girl',
+          girlNakshatra: girlNakshatra,
+        );
+      }
+    });
+
+    return Obx(() {
+      final compatibility = navtaraController.compatibility.value;
+      if (navtaraController.isLoading.value && compatibility == null) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(20.0),
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+
+      if (compatibility == null) return const SizedBox.shrink();
+
+      final analysis = compatibility.compatibilityAnalysis;
+
+      return _ExpandableSection(
+        title: 'Nakshatra Compatibility (Navtara)',
+        subtitle: 'Deeper Nakshatra Analysis',
+        icon: Icons.favorite,
+        child: Column(
+          children: [
+            Spacing.h(16),
+            // Compatibility Score
+            Center(
+              child: Column(
+                children: [
+                  AutoTranslateText(
+                    '${analysis.compatibilityScore.toInt()}%',
+                    style: AppTypography.h1.copyWith(
+                      color: AppColors.deepOrange,
+                    ),
+                  ),
+                  AutoTranslateText(
+                    analysis.compatibilityLevel,
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: AppColors.deepOrange,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Spacing.h(20),
+
+            // Categories
+            _buildNavtaraCategoryTile('Boy to Girl', analysis.person1ToPerson2),
+            Spacing.h(12),
+            _buildNavtaraCategoryTile('Girl to Boy', analysis.person2ToPerson1),
+
+            Spacing.h(20),
+            _buildCompatibilityList(
+              'Strengths',
+              analysis.strengths,
+              Colors.green,
+            ),
+            Spacing.h(12),
+            _buildCompatibilityList(
+              'Challenges',
+              analysis.challenges,
+              Colors.orange,
+            ),
+
+            Spacing.h(20),
+            _buildAdviceCard('Advice', analysis.advice),
+            Spacing.h(16),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildNavtaraCategoryTile(
+    String title,
+    CompatibilityCategory category,
+  ) {
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFDF3E6),
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AutoTranslateText(
+                  title,
+                  style: MyTextTheme.smallBCB.copyWith(
+                    color: "#6F221E".toColor(),
+                  ),
+                ),
+                Spacing.h(4),
+                AutoTranslateText(
+                  '${category.category} (${category.nature})',
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: "#6F221E".toColor().withOpacity(0.9),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+            decoration: BoxDecoration(
+              color: AppColors.deepOrange.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: AutoTranslateText(
+              '${category.favorability}%',
+              style: MyTextTheme.smallBCB.copyWith(color: AppColors.deepOrange),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompatibilityList(
+    String title,
+    List<String> items,
+    Color color,
+  ) {
+    if (items.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AutoTranslateText(
+          title,
+          style: MyTextTheme.mediumBCB.copyWith(color: color),
+        ),
+        Spacing.h(8),
+        ...items
+            .map(
+              (item) => Padding(
+                padding: EdgeInsets.only(bottom: 6.h),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(Icons.check_circle_outline, size: 14.w, color: color),
+                    Spacing.w(8),
+                    Expanded(
+                      child: AutoTranslateText(
+                        item,
+                        style: MyTextTheme.smallBCN.copyWith(
+                          color: "#6F221E".toColor().withOpacity(0.8),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+            .toList(),
+      ],
+    );
+  }
+
+  Widget _buildAdviceCard(String title, String advice) {
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: AppColors.deepOrange.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.lightbulb_outline,
+                color: AppColors.deepOrange,
+                size: 20.w,
+              ),
+              Spacing.w(8),
+              Expanded(
+                child: AutoTranslateText(
+                  title,
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: AppColors.deepOrange,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Spacing.h(10),
+          AutoTranslateText(
+            advice,
+            style: MyTextTheme.smallBCN.copyWith(
+              color: "#6F221E".toColor(),
+              height: 1.5,
+            ),
           ),
         ],
       ),

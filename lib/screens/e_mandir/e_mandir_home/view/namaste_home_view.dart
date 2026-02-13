@@ -43,12 +43,6 @@ class _NamasteHomeViewState extends State<NamasteHomeView>
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
       controller.stopShankh();
-    } else if (state == AppLifecycleState.resumed) {
-      // Check if this view is currently visible before resuming
-      final route = ModalRoute.of(context);
-      if (route != null && route.isCurrent) {
-        controller.resumeAudioIfNeeded();
-      }
     }
   }
 
@@ -57,22 +51,6 @@ class _NamasteHomeViewState extends State<NamasteHomeView>
     // Stop sound when widget is deactivated (e.g. navigated away or removed from tree)
     controller.stopShankh();
     super.deactivate();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Only resume audio when route is current (screen is visible)
-    // This prevents multiple calls and works in both debug and release mode
-    final route = ModalRoute.of(context);
-    if (route != null && route.isCurrent) {
-      // Small delay to ensure route is fully active
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (mounted && route.isCurrent) {
-          controller.resumeAudioIfNeeded();
-        }
-      });
-    }
   }
 
   @override
@@ -97,19 +75,19 @@ class _NamasteHomeViewState extends State<NamasteHomeView>
                   SizedBox(height: 15.h),
                   const QuickActionsWidget(),
                   SizedBox(height: 15.h),
-                  const LiveDarshanWidget(),
-                  SizedBox(height: 15.h),
-                  AutoTranslateText(
-                    "Today's Special",
-                    style: AppTypography.h3.copyWith(
-                      color: AppColors.textColorMaroon,
-                    ),
-                  ),
-                  SizedBox(height: 12.h),
-                  const TodaysSpecialWidget(),
-                  SizedBox(height: 24.h),
-                  const TempleHighlightsWidget(),
-                  SizedBox(height: 20.h),
+                  // const LiveDarshanWidget(),
+                  // SizedBox(height: 15.h),
+                  // AutoTranslateText(
+                  //   "Today's Special",
+                  //   style: AppTypography.h3.copyWith(
+                  //     color: AppColors.textColorMaroon,
+                  //   ),
+                  // ),
+                  // SizedBox(height: 12.h),
+                  // const TodaysSpecialWidget(),
+                  // SizedBox(height: 24.h),
+                  // const TempleHighlightsWidget(),
+                  // SizedBox(height: 20.h),
                 ],
               ),
             ),

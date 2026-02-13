@@ -292,27 +292,27 @@ class PanchangView extends BasePage<PanchangController> {
         case 'Chogadia':
           iconPath = AppConstant.chogadiaIcon;
           break;
-        case 'Do Ghati':
-          iconPath = AppConstant.doGhatiIcon;
-          break;
+        // case 'Do Ghati':
+        //   iconPath = AppConstant.doGhatiIcon;
+        //   break;
         case 'Rahu Kaal':
           iconPath = AppConstant.rahuKaalIcon;
           break;
         case 'Other Calendars':
           iconPath = AppConstant.otherCalendarsIcon;
           break;
-        case 'Panchak':
-          iconPath = AppConstant.panchakIcon;
-          break;
+        // case 'Panchak':
+        //   iconPath = AppConstant.panchakIcon;
+        //   break;
         case 'Bhadra':
           iconPath = AppConstant.bhadraIcon;
           break;
         case 'Muhurat':
           iconPath = AppConstant.muhuratIcon;
           break;
-        case 'Lagna Table':
-          iconPath = AppConstant.lagnaTableIcon;
-          break;
+        // case 'Lagna Table':
+        //   iconPath = AppConstant.lagnaTableIcon;
+        //   break;
         default:
           iconPath = AppConstant.servicePanchang;
       }

@@ -128,8 +128,8 @@ class PersonaCard extends StatelessWidget {
                         AutoTranslateText(
                           persona.displayName,
                           style: MyTextTheme.mediumBCB.copyWith(
-                            color: const Color(0xFF5F2221),
-                            fontSize: (13.sp).clamp(11.sp, 14.sp),
+                            color: const Color(0xFF68171E),
+                            fontSize: 12.sp,
                             fontWeight: FontWeight.bold,
                           ),
                           maxLines: 1,
@@ -207,7 +207,7 @@ class PersonaCard extends StatelessWidget {
                               child: AutoTranslateText(
                                 persona.price != null
                                     ? '₹${persona.price!.toStringAsFixed(0)}/min'
-                                    : 'Coming soon',
+                                    : 'Free',
                                 style: persona.price != null
                                     ? MyTextTheme.smallBCB.copyWith(
                                         color: AppColors.saffron,

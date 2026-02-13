@@ -23,6 +23,10 @@ class WalletController extends BaseController {
   // Recharge history
   final RxList<WalletRechargeHistoryItem> rechargeHistory =
       <WalletRechargeHistoryItem>[].obs;
+
+  // Combined history (Recharges + Missing Deductions from profile)
+  final RxList<dynamic> combinedHistory = <dynamic>[].obs;
+
   final RxBool isLoadingHistory = false.obs;
   final RxBool isLoadingMore = false.obs;
 
@@ -257,50 +261,95 @@ class WalletController extends BaseController {
         if (balanceResponse != null && balanceResponse.data != null) {
           walletBalance.value = balanceResponse.data!.balance.toDouble();
           currency.value = balanceResponse.data!.currency;
-        } else {
-          // Fallback to profile
-          final profile = await _profileService.getProfile(userId);
-          if (profile?.wallet != null) {
+        }
+
+        // Fetch profile to get transactions
+        final profile = await _profileService.getProfile(userId);
+        if (profile?.wallet != null) {
+          // If walletBalance wasn't updated by API, use profile one
+          if (balanceResponse == null) {
             walletBalance.value = profile!.wallet!.balance ?? 0.0;
             currency.value = profile.wallet!.currency ?? 'INR';
           }
+
+          _updateCombinedHistory(profile!.wallet!.transactions ?? []);
         }
       },
-      showBusy: false, // Don't show global loader for balance update
-      showError: false, // Handle errors silently for background updates
+      showBusy: false,
+      showError: false,
     );
+  }
+
+  /// Merge recharge history with profile transactions
+  void _updateCombinedHistory(List<WalletTransaction> transactions) {
+    // Start with all recharges
+    List<dynamic> merged = List.from(rechargeHistory);
+
+    // Add deductions from profile if they are not already in merged
+    // (Recharges are handled by getRechargeHistory API which has more info)
+    for (var tx in transactions) {
+      if (tx.type == 'DEDUCTION') {
+        // Check if already exists by transactionId or id
+        bool exists = merged.any((e) {
+          if (e is WalletRechargeHistoryItem)
+            return e.transactionId == tx.transactionId;
+          if (e is WalletTransaction)
+            return e.transactionId == tx.transactionId;
+          return false;
+        });
+
+        if (!exists) {
+          merged.add(tx);
+        }
+      }
+    }
+
+    // Sort combined history by date descending
+    merged.sort((a, b) {
+      DateTime? dateA = (a is WalletRechargeHistoryItem)
+          ? (a.initiatedAtDate ?? a.createdAtDate)
+          : (a as WalletTransaction).createdAtDate;
+      DateTime? dateB = (b is WalletRechargeHistoryItem)
+          ? (b.initiatedAtDate ?? b.createdAtDate)
+          : (b as WalletTransaction).createdAtDate;
+
+      if (dateA == null) return 1;
+      if (dateB == null) return -1;
+      return dateB.compareTo(dateA);
+    });
+
+    combinedHistory.value = merged;
   }
 
   /// Load recharge history
   Future<void> loadRechargeHistory({bool refresh = false}) async {
-    await runWithLoading(
-      () async {
+    await runWithLoading(() async {
+      if (refresh) {
+        currentOffset.value = 0;
+      }
+
+      isLoadingHistory.value = true;
+      final response = await _walletService.getRechargeHistory(
+        limit: limit.value,
+        offset: currentOffset.value,
+        status: selectedStatus.value.isEmpty ? null : selectedStatus.value,
+      );
+
+      if (response?.data != null) {
         if (refresh) {
-          currentOffset.value = 0;
+          rechargeHistory.value = response!.data!.recharges;
+        } else {
+          rechargeHistory.addAll(response!.data!.recharges);
         }
+        hasMore.value = response.data!.pagination.hasMore;
+        total.value = response.data!.pagination.total;
+        currentOffset.value =
+            response.data!.pagination.offset + response.data!.recharges.length;
 
-        isLoadingHistory.value = true;
-        final response = await _walletService.getRechargeHistory(
-          limit: limit.value,
-          offset: currentOffset.value,
-          status: selectedStatus.value.isEmpty ? null : selectedStatus.value,
-        );
-
-        if (response?.data != null) {
-          if (refresh) {
-            rechargeHistory.value = response!.data!.recharges;
-          } else {
-            rechargeHistory.addAll(response!.data!.recharges);
-          }
-          hasMore.value = response.data!.pagination.hasMore;
-          total.value = response.data!.pagination.total;
-          currentOffset.value =
-              response.data!.pagination.offset +
-              response.data!.recharges.length;
-        }
-      },
-      showBusy: false, // Use local isLoadingHistory instead
-    );
+        // Refresh combined history whenever recharge history changes
+        loadWalletBalance();
+      }
+    }, showBusy: false);
     isLoadingHistory.value = false;
   }
 

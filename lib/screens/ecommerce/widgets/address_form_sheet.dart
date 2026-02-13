@@ -43,7 +43,7 @@ Future<AddressFormResult?> showAddressFormSheet({
   final result = await showModalBottomSheet<AddressFormResult>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+    backgroundColor: Colors.white,
     builder: (_) {
       return StatefulBuilder(
         builder: (context, setState) {

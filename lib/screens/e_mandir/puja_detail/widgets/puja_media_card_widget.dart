@@ -104,7 +104,7 @@ class PujaMediaCardWidget extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           AutoTranslateText(
-                            puja.title ?? 'Puja',
+                            puja.title ?? 'Pooja',
                             style: MyTextTheme.veryLargeBCB.copyWith(
                               color: Colors.white,
                               fontSize: 20,

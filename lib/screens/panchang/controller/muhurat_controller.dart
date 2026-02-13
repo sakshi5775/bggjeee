@@ -20,7 +20,7 @@ class MuhuratController extends BaseController {
   final latitudeController = TextEditingController();
   final longitudeController = TextEditingController();
   final timezoneController = TextEditingController();
-  
+
   // Language selection
   final selectedLanguage = 'en'.obs;
   final Map<String, String> languages = {
@@ -39,11 +39,11 @@ class MuhuratController extends BaseController {
   final isFetchingLocation = false.obs;
   final selectedDate = DateTime.now().obs;
   final selectedLocation = 'Fetching Location...'.obs;
-  
+
   // Data observables
   final abhijitMuhurta = Rxn<Map<String, dynamic>>();
   final choghadiyaMuhurta = Rxn<Map<String, dynamic>>();
-  
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
@@ -59,11 +59,11 @@ class MuhuratController extends BaseController {
     dateController.text = DateFormat('dd/MM/yyyy').format(now);
     timeController.text = DateFormat('HH:mm').format(now);
     timezoneController.text = '5.5'; // Default IST
-    
+
     // Try to get current location on init, then fetch data
     _tryGetCurrentLocation().then((_) {
       // Auto-fetch data after location is ready
-      if (latitudeController.text.isNotEmpty && 
+      if (latitudeController.text.isNotEmpty &&
           longitudeController.text.isNotEmpty) {
         Future.delayed(const Duration(milliseconds: 500), () {
           fetchMuhuratData();
@@ -123,13 +123,16 @@ class MuhuratController extends BaseController {
       latitudeController.text = position.latitude.toStringAsFixed(6);
       longitudeController.text = position.longitude.toStringAsFixed(6);
 
-      await _updateLocationFromCoordinates(position.latitude, position.longitude);
+      await _updateLocationFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
       final offset = await _getTimezoneOffsetFromCoordinates(
         position.latitude,
         position.longitude,
       );
-      
+
       if (!_isDisposed) {
         timezoneController.text = offset.toString();
       }
@@ -192,7 +195,10 @@ class MuhuratController extends BaseController {
       latitudeController.text = position.latitude.toStringAsFixed(6);
       longitudeController.text = position.longitude.toStringAsFixed(6);
 
-      await _updateLocationFromCoordinates(position.latitude, position.longitude);
+      await _updateLocationFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
       final timezone = await AddressHelper.getTimezoneFromCoordinates(
         position.latitude,
@@ -208,7 +214,7 @@ class MuhuratController extends BaseController {
           position.longitude,
         );
       }
-      
+
       timezoneController.text = offset.toString();
 
       showSuccessMessage(
@@ -227,10 +233,15 @@ class MuhuratController extends BaseController {
   }
 
   /// Get timezone offset from coordinates
-  Future<double> _getTimezoneOffsetFromCoordinates(double lat, double lon) async {
+  Future<double> _getTimezoneOffsetFromCoordinates(
+    double lat,
+    double lon,
+  ) async {
     try {
       final response = await http.get(
-        Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon'),
+        Uri.parse(
+          'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+        ),
         headers: {'Accept': 'application/json'},
       );
 
@@ -245,7 +256,7 @@ class MuhuratController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone from coordinates: $e');
     }
-    
+
     return 5.5;
   }
 
@@ -254,14 +265,16 @@ class MuhuratController extends BaseController {
     try {
       final lat = double.tryParse(latitudeController.text);
       final lon = double.tryParse(longitudeController.text);
-      
+
       if (lat != null && lon != null) {
         try {
           final response = await http.get(
-            Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon'),
+            Uri.parse(
+              'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+            ),
             headers: {'Accept': 'application/json'},
           );
-          
+
           if (response.statusCode == 200) {
             final data = json.decode(response.body) as Map<String, dynamic>?;
             if (data?['currentUtcOffset'] != null) {
@@ -274,14 +287,14 @@ class MuhuratController extends BaseController {
           debugPrint('Error fetching timezone offset from API: $e');
         }
       }
-      
+
       return 5.5;
     } catch (e) {
       debugPrint('Error calculating timezone offset: $e');
       return 5.5;
     }
   }
-  
+
   /// Parse timezone offset string
   double? _parseTimezoneOffset(String offsetStr) {
     try {
@@ -304,8 +317,8 @@ class MuhuratController extends BaseController {
 
   /// Select date
   Future<void> selectDate() async {
-    final picked = await showDatePicker(
-      context: Get.context!,
+    final picked = await TimePickerHelper.showDatePicker(
+      Get.context!,
       initialDate: selectedDate.value,
       firstDate: DateTime(1900),
       lastDate: DateTime(2100),
@@ -329,11 +342,17 @@ class MuhuratController extends BaseController {
       return;
     }
     if (latitudeController.text.isEmpty) {
-      showErrorMessage(title: 'Error', message: 'Please enter latitude or get current location');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Please enter latitude or get current location',
+      );
       return;
     }
     if (longitudeController.text.isEmpty) {
-      showErrorMessage(title: 'Error', message: 'Please enter longitude or get current location');
+      showErrorMessage(
+        title: 'Error',
+        message: 'Please enter longitude or get current location',
+      );
       return;
     }
     if (timezoneController.text.isEmpty) {
@@ -349,12 +368,17 @@ class MuhuratController extends BaseController {
       final tz = double.tryParse(timezoneController.text);
 
       if (latitude == null || longitude == null || tz == null) {
-        showErrorMessage(title: 'Error', message: 'Invalid latitude, longitude, or timezone');
+        showErrorMessage(
+          title: 'Error',
+          message: 'Invalid latitude, longitude, or timezone',
+        );
         return;
       }
 
       // Fetch both APIs in parallel (convert 12h display to 24h for API)
-      final time24 = TimePickerHelper.parseTime12To24(timeController.text) ?? timeController.text;
+      final time24 =
+          TimePickerHelper.parseTime12To24(timeController.text) ??
+          timeController.text;
       final results = await Future.wait([
         _panchangService.getDailyPanchang(
           date: dateController.text,
@@ -377,9 +401,11 @@ class MuhuratController extends BaseController {
       // Extract Abhijit Muhurta from daily panchang
       if (results[0] != null) {
         final panchangData = results[0]!['response'] as Map<String, dynamic>?;
-        final advancedDetails = panchangData?['advanced_details'] as Map<String, dynamic>?;
+        final advancedDetails =
+            panchangData?['advanced_details'] as Map<String, dynamic>?;
         if (advancedDetails?['abhijitMuhurta'] != null) {
-          abhijitMuhurta.value = advancedDetails!['abhijitMuhurta'] as Map<String, dynamic>?;
+          abhijitMuhurta.value =
+              advancedDetails!['abhijitMuhurta'] as Map<String, dynamic>?;
         }
       }
 
@@ -401,7 +427,7 @@ class MuhuratController extends BaseController {
       if (_isDisposed) return;
 
       final reverseGeocode = await _reverseGeocode(lat, lon);
-      
+
       if (_isDisposed) return;
 
       if (reverseGeocode != null && reverseGeocode['city'] != null) {
@@ -426,10 +452,7 @@ class MuhuratController extends BaseController {
         Uri.parse(
           'https://nominatim.openstreetmap.org/reverse?lat=$lat&lon=$lon&format=json&addressdetails=1&accept-language=en',
         ),
-        headers: {
-          'User-Agent': 'AstrologyApp/1.0',
-          'Accept-Language': 'en',
-        },
+        headers: {'User-Agent': 'AstrologyApp/1.0', 'Accept-Language': 'en'},
       );
 
       if (response.statusCode == 200) {
@@ -437,7 +460,8 @@ class MuhuratController extends BaseController {
         final address = result?['address'] as Map<String, dynamic>?;
 
         if (address != null) {
-          final city = address['city']?.toString() ??
+          final city =
+              address['city']?.toString() ??
               address['town']?.toString() ??
               address['village']?.toString() ??
               address['municipality']?.toString() ??
@@ -445,7 +469,8 @@ class MuhuratController extends BaseController {
 
           return {
             'city': city,
-            'state': address['state']?.toString() ??
+            'state':
+                address['state']?.toString() ??
                 address['region']?.toString() ??
                 address['province']?.toString(),
             'country': address['country']?.toString(),
@@ -458,4 +483,3 @@ class MuhuratController extends BaseController {
     return null;
   }
 }
-

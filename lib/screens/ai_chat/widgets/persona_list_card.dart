@@ -87,8 +87,9 @@ class PersonaListCard extends StatelessWidget {
                       persona.displayName,
                       style: MyTextTheme.mediumBCB
                           .copyWith(
-                            color: const Color(0xFF5F2221),
+                            color: const Color(0xFF68171E),
                             fontWeight: FontWeight.bold,
+                            fontSize: 12.sp,
                           )
                           .merge(AppTypography.h3),
                       maxLines: 1,

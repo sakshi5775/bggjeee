@@ -1,3 +1,5 @@
+import 'wallet_model.dart';
+
 /// User Profile Model matching the new API structure
 class UserProfileModel {
   UserProfileModel({
@@ -104,6 +106,7 @@ class PersonalInfo {
   });
 
   String? fullName;
+
   /// Date of birth in yyyy-MM-dd format (for API update)
   String? dateOfBirth;
   String? gender;
@@ -133,12 +136,7 @@ class PersonalInfo {
 }
 
 class ContactInfo {
-  ContactInfo({
-    this.address,
-    this.phone,
-    this.email,
-    this.alternatePhone,
-  });
+  ContactInfo({this.address, this.phone, this.email, this.alternatePhone});
 
   Address? address;
   String? phone;
@@ -171,12 +169,7 @@ class ContactInfo {
 }
 
 class Address {
-  Address({
-    this.city,
-    this.state,
-    this.country,
-    this.pincode,
-  });
+  Address({this.city, this.state, this.country, this.pincode});
 
   String? city;
   String? state;
@@ -287,11 +280,7 @@ class BirthPlace {
 }
 
 class BirthTime {
-  BirthTime({
-    this.hour,
-    this.minute,
-    this.second,
-  });
+  BirthTime({this.hour, this.minute, this.second});
 
   int? hour;
   int? minute;
@@ -299,10 +288,12 @@ class BirthTime {
 
   BirthTime.fromJson(Map<String, dynamic> json) {
     hour = json['hour'] != null ? int.tryParse(json['hour'].toString()) : null;
-    minute =
-        json['minute'] != null ? int.tryParse(json['minute'].toString()) : null;
-    second =
-        json['second'] != null ? int.tryParse(json['second'].toString()) : null;
+    minute = json['minute'] != null
+        ? int.tryParse(json['minute'].toString())
+        : null;
+    second = json['second'] != null
+        ? int.tryParse(json['second'].toString())
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -315,22 +306,25 @@ class BirthTime {
 }
 
 class Wallet {
-  Wallet({
-    this.balance,
-    this.currency,
-    this.transactions,
-  });
+  Wallet({this.balance, this.currency, this.transactions});
 
   double? balance;
   String? currency;
-  List<dynamic>? transactions;
+  List<WalletTransaction>? transactions;
 
   Wallet.fromJson(Map<String, dynamic> json) {
     balance = json['balance'] != null
         ? double.tryParse(json['balance'].toString())
         : null;
     currency = json['currency']?.toString();
-    transactions = json['transactions'] as List<dynamic>?;
+    if (json['transactions'] != null) {
+      transactions = <WalletTransaction>[];
+      json['transactions'].forEach((v) {
+        transactions!.add(
+          WalletTransaction.fromJson(v as Map<String, dynamic>),
+        );
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -338,7 +332,7 @@ class Wallet {
     data['balance'] = balance;
     data['currency'] = currency;
     if (transactions != null) {
-      data['transactions'] = transactions;
+      data['transactions'] = transactions!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -392,7 +386,8 @@ class Preferences {
   Preferences.fromJson(Map<String, dynamic> json) {
     notificationSettings = json['notificationSettings'] != null
         ? NotificationSettings.fromJson(
-            json['notificationSettings'] as Map<String, dynamic>)
+            json['notificationSettings'] as Map<String, dynamic>,
+          )
         : null;
     language = json['language']?.toString();
     favoriteAstrologers = json['favoriteAstrologers'] as List<dynamic>?;
@@ -418,12 +413,7 @@ class Preferences {
 }
 
 class NotificationSettings {
-  NotificationSettings({
-    this.email,
-    this.sms,
-    this.push,
-    this.whatsapp,
-  });
+  NotificationSettings({this.email, this.sms, this.push, this.whatsapp});
 
   bool? email;
   bool? sms;
@@ -448,10 +438,7 @@ class NotificationSettings {
 }
 
 class Stats {
-  Stats({
-    this.totalSpent,
-    this.totalRecharges,
-  });
+  Stats({this.totalSpent, this.totalRecharges});
 
   double? totalSpent;
   double? totalRecharges;
@@ -517,18 +504,15 @@ class Metadata {
 
 /// Response wrapper for User Profile API
 class UserProfileResponse {
-  UserProfileResponse({
-    bool? success,
-    this.message,
-    this.data,
-  }) : success = success ?? false;
+  UserProfileResponse({bool? success, this.message, this.data})
+    : success = success ?? false;
 
   bool success;
   String? message;
   UserProfileModel? data;
 
   UserProfileResponse.fromJson(Map<String, dynamic> json)
-      : success = json['success'] == true {
+    : success = json['success'] == true {
     message = json['message']?.toString();
     if (json['data'] != null && json['data'] is Map<String, dynamic>) {
       data = UserProfileModel.fromJson(json['data'] as Map<String, dynamic>);
@@ -559,4 +543,3 @@ class BirthChartUpdateRequest {
     return data;
   }
 }
-

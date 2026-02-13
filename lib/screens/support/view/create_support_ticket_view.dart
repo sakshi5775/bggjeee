@@ -114,7 +114,7 @@ class CreateSupportTicketView extends GetView<SupportTicketController> {
                       _buildSectionTitle('Attachments (Optional)'),
                       SizedBox(height: 8.h),
                       AutoTranslateText(
-                        'Max 5 files, JPEG/PNG/WebP/GIF/PDF, 5MB each',
+                        'Max 5 files, JPG/JPEG/PNG/PDF, 5MB each',
                         style: TextStyle(
                           color: AppColors.textSecondary,
                         ).merge(AppTypography.body2),

@@ -1503,7 +1503,10 @@ class AstrologerChatController extends BaseController
       final dob = chatProfile!.birthChart?.generatedAt ?? '';
 
       final birthTime = chatProfile!.birthChart?.birthTime;
-      final tob = birthTime != null
+      final tob =
+          birthTime != null &&
+              birthTime.hour != null &&
+              birthTime.minute != null
           ? '${birthTime.hour.toString().padLeft(2, '0')}:${birthTime.minute.toString().padLeft(2, '0')}:${(birthTime.second ?? 0).toString().padLeft(2, '0')}'
           : '';
 

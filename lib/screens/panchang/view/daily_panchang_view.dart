@@ -4,9 +4,6 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/daily_panchang_controller.dart';
-import 'package:astrobharataiuser/screens/panchang/widgets/daily_panchang_button_widget.dart';
-import 'package:astrobharataiuser/screens/panchang/widgets/daily_panchang_form_field_widget.dart';
-import 'package:astrobharataiuser/screens/panchang/widgets/daily_panchang_language_field_widget.dart';
 import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -29,13 +26,27 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           children: [
             // Header
             CommonHeader(
-              title: "Today's Panchang",
-              subtitle: AutoTranslateText(
-                'Vedic Details for the seleceted date',
-                style: MyTextTheme.smallBCN.copyWith(
-                  fontSize: 12,
-                  color: "#6F221E".toColor().withOpacity(0.7),
-                ),
+              titleWidget: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AutoTranslateText(
+                    "Today's Panchang",
+                    style: MyTextTheme.largeBCB.copyWith(
+                      color: '#6F221E'.toColor(),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.sp,
+                    ),
+                  ),
+                  Spacing.h(2),
+                  AutoTranslateText(
+                    'Vedic Details for the selected date',
+                    style: MyTextTheme.smallBCN.copyWith(
+                      fontSize: 12,
+                      color: "#6F221E".toColor().withOpacity(0.7),
+                    ),
+                  ),
+                ],
               ),
             ),
 
@@ -89,69 +100,334 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
     );
   }
 
+  BoxDecoration _formCardDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16.r),
+      border: Border.all(
+        color: AppColors.deepOrange.withOpacity(0.2),
+        width: 1.5,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: AppColors.deepOrange.withOpacity(0.08),
+          blurRadius: 16,
+          offset: const Offset(0, 4),
+        ),
+        BoxShadow(
+          color: Colors.black.withOpacity(0.04),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    );
+  }
+
+  InputDecoration _inputDecoration({
+    required String hint,
+    required IconData icon,
+    Widget? suffix,
+  }) {
+    return InputDecoration(
+      isDense: true,
+      contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.w),
+      hintText: hint,
+      hintStyle: MyTextTheme.smallBCN.copyWith(
+        color: AppColors.textSecondary.withOpacity(0.6),
+        fontSize: 13.sp,
+      ),
+      prefixIcon: Padding(
+        padding: EdgeInsets.only(left: 12.w, right: 8.w),
+        child: Icon(icon, color: AppColors.deepOrange, size: 20.w),
+      ),
+      suffixIcon: suffix,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(color: AppColors.deepOrange.withOpacity(0.2)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(color: AppColors.deepOrange.withOpacity(0.2)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(color: AppColors.deepOrange, width: 1.5),
+      ),
+      filled: true,
+      fillColor: Colors.white,
+    );
+  }
+
   Widget _buildFormSection() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15.w),
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      decoration: _formCardDecoration(),
+      padding: EdgeInsets.all(16.w),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Section Title
-          AutoTranslateText(
-            'Enter Details',
-            style: MyTextTheme.largeBCB.copyWith(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-              color: "#68171E".toColor(),
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: _buildCompactField(
+                  controller: controller.dateController,
+                  hint: 'Date (dd/mm/yyyy)',
+                  icon: Icons.calendar_today,
+                  readOnly: true,
+                  onTap: () => controller.selectDate(),
+                ),
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: _buildCompactField(
+                  controller: controller.timeController,
+                  hint: 'Time',
+                  icon: Icons.access_time,
+                  readOnly: true,
+                  onTap: () => controller.selectTime(),
+                ),
+              ),
+            ],
           ),
+          Spacing.h(12),
+          _buildCompactLocation(),
+          Spacing.h(12),
+          _buildLanguageDropdown(),
           Spacing.h(20),
-          // Date field
-          DailyPanchangFormFieldWidget(
-            label: 'Date (dd/mm/yyyy)',
-            hintText: 'DD/MM/YYYY',
-            controller: controller.dateController,
-            suffixIcon: Icons.calendar_today,
-            readOnly: true,
-            onTap: controller.selectDate,
-          ),
-          Spacing.h(15.33),
-          // Time field
-          DailyPanchangFormFieldWidget(
-            label: 'Time(HH:mm)',
-            hintText: 'HH:MM',
-            controller: controller.timeController,
-            suffixIcon: Icons.access_time,
-            readOnly: true,
-            onTap: controller.selectTime,
-          ),
-          Spacing.h(15.33),
-
-          // Timezone and Language row
-          Container(
-            padding: AppPaddings.all(16),
-            decoration: BoxDecoration(
-              color: "#FFFFFF".toColor(),
-              borderRadius: BorderRadius.circular(14.04.r),
-            ),
-            child: Expanded(
-              child: DailyPanchangLanguageFieldWidget(controller: controller),
-            ),
-          ),
-
-          Spacing.h(15.33),
-          // Get Panchang button
-          Obx(
-            () => DailyPanchangButtonWidget(
-              text: ' Get Panchang',
-              onPressed: controller.isLoading.value
-                  ? null
-                  : controller.fetchPanchang,
-              isLoading: controller.isLoading.value,
-              isPrimary: true, // Orange gradient
-            ),
-          ),
-          Spacing.h(20),
+          _buildGetPanchangButton(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCompactField({
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+    bool readOnly = false,
+    VoidCallback? onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.deepOrange.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextFormField(
+        controller: controller,
+        readOnly: readOnly,
+        onTap: onTap,
+        style: MyTextTheme.mediumBCN.copyWith(color: AppColors.textColorMaroon),
+        decoration: _inputDecoration(
+          hint: hint,
+          icon: icon,
+          suffix: readOnly && onTap != null
+              ? Padding(
+                  padding: EdgeInsets.only(right: 10.w),
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    color: AppColors.deepOrange,
+                    size: 12.w,
+                  ),
+                )
+              : null,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompactLocation() {
+    return GestureDetector(
+      onTap: () => _showLocationBottomSheet(),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.deepOrange.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.location_on, color: AppColors.deepOrange, size: 20.w),
+            SizedBox(width: 10.w),
+            Expanded(
+              child: Obx(
+                () => AutoTranslateText(
+                  controller.selectedLocation.value,
+                  style: MyTextTheme.mediumBCN.copyWith(
+                    color: AppColors.textColorMaroon,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+            Icon(Icons.chevron_right, color: AppColors.deepOrange, size: 22.w),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageDropdown() {
+    return Obx(
+      () => _buildCompactDropdown<String>(
+        value: controller.selectedLanguage.value,
+        hint: 'Language',
+        icon: Icons.language,
+        items: controller.languages.entries
+            .map(
+              (e) => DropdownMenuItem(
+                value: e.key,
+                child: AutoTranslateText(e.value),
+              ),
+            )
+            .toList(),
+        onChanged: (v) {
+          if (v != null) controller.selectedLanguage.value = v;
+        },
+      ),
+    );
+  }
+
+  Widget _buildCompactDropdown<T>({
+    required T? value,
+    required String hint,
+    required IconData icon,
+    required List<DropdownMenuItem<T>> items,
+    required ValueChanged<T?> onChanged,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.deepOrange.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: DropdownButtonFormField<T>(
+        value: value,
+        hint: AutoTranslateText(
+          hint,
+          style: MyTextTheme.smallBCN.copyWith(
+            color: AppColors.textSecondary.withOpacity(0.6),
+            fontSize: 13.sp,
+          ),
+        ),
+        decoration: _inputDecoration(
+          hint: hint,
+          icon: icon,
+          suffix: Icon(
+            Icons.arrow_drop_down,
+            color: AppColors.deepOrange,
+            size: 24.w,
+          ),
+        ),
+        isExpanded: true,
+        items: items,
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  Widget _buildGetPanchangButton() {
+    return Obx(
+      () => Container(
+        width: double.infinity,
+        height: 52.h,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.deepOrange.withOpacity(0.4),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+              spreadRadius: 0,
+            ),
+            BoxShadow(
+              color: AppColors.deepOrange.withOpacity(0.2),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ElevatedButton(
+          onPressed: controller.isLoading.value
+              ? null
+              : controller.fetchPanchang,
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.zero,
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+            elevation: 0,
+          ),
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: controller.isLoading.value
+                  ? LinearGradient(
+                      colors: [
+                        AppColors.deepOrange.withOpacity(0.5),
+                        AppColors.templeGold.withOpacity(0.5),
+                      ],
+                    )
+                  : AppColors.orangeGradient,
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+            child: Container(
+              alignment: Alignment.center,
+              child: controller.isLoading.value
+                  ? SizedBox(
+                      height: 24.h,
+                      width: 24.w,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 3,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.auto_awesome,
+                          color: AppColors.white,
+                          size: 22.w,
+                        ),
+                        SizedBox(width: 12.w),
+                        AutoTranslateText(
+                          'Get Panchang',
+                          style: MyTextTheme.largeBCB.copyWith(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.sp,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+        ),
       ),
     );
   }

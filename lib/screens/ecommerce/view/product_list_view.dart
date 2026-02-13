@@ -5,6 +5,7 @@ import 'package:astrobharataiuser/data_model/category_model.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/product_list_controller.dart';
+import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -422,6 +423,9 @@ class _ProductListViewState extends State<ProductListView> {
     final cartController = Get.isRegistered<CartController>()
         ? Get.find<CartController>()
         : Get.put(CartController());
+    final wishlistController = Get.isRegistered<WishlistController>()
+        ? Get.find<WishlistController>()
+        : Get.put(WishlistController());
 
     ProductImage? primaryImage;
     if (product.images != null && product.images!.isNotEmpty) {
@@ -464,24 +468,61 @@ class _ProductListViewState extends State<ProductListView> {
             // Product Image
             Container(
               width: double.infinity,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10.28.r),
-                child: imageUrl != null
-                    ? NetworkImageWithLoader(
-                        url: imageUrl,
-                        width: double.infinity,
-                        height: 124.76.h,
-                      )
-                    : Container(
-                        width: double.infinity,
-                        height: 124.76.h,
-                        color: Colors.grey[200],
-                        child: Icon(
-                          Icons.image_outlined,
-                          size: 40.w,
-                          color: AppColors.textSecondary,
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10.28.r),
+                    child: imageUrl != null
+                        ? NetworkImageWithLoader(
+                            url: imageUrl,
+                            width: double.infinity,
+                            height: 124.76.h,
+                          )
+                        : Container(
+                            width: double.infinity,
+                            height: 124.76.h,
+                            color: Colors.grey[200],
+                            child: Icon(
+                              Icons.image_outlined,
+                              size: 40.w,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                  ),
+                  Positioned(
+                    top: 8.h,
+                    right: 8.w,
+                    child: Obx(() {
+                      final isFavorite = wishlistController.isInWishlist(
+                        product,
+                      );
+                      return GestureDetector(
+                        onTap: () => wishlistController.toggleWishlist(product),
+                        child: Container(
+                          padding: EdgeInsets.all(6.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 4,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            size: 16.sp,
+                            color: isFavorite
+                                ? AppColors.sacredRed
+                                : AppColors.textSecondary,
+                          ),
                         ),
-                      ),
+                      );
+                    }),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 7.34.h),

@@ -110,7 +110,7 @@ class KundliFormView extends BasePage<KundliFormController> {
               child: AutoTranslateText(
                 'Generate your Kundli, get your predictions',
                 style: MyTextTheme.mediumBCB.copyWith(
-                  fontSize: 14.sp,
+                  fontSize: 12.sp,
                   color: Colors.white,
                 ),
               ),
@@ -511,24 +511,11 @@ class KundliFormView extends BasePage<KundliFormController> {
   }
 
   void _showDatePicker() async {
-    final pickedDate = await showDatePicker(
-      context: Get.context!,
+    final pickedDate = await TimePickerHelper.showDatePicker(
+      Get.context!,
       initialDate: controller.selectedDate.value,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.deepOrange,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: AppColors.textColorMaroon,
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (pickedDate != null) {
@@ -540,19 +527,6 @@ class KundliFormView extends BasePage<KundliFormController> {
     final pickedTime = await TimePickerHelper.showTimePicker12h(
       Get.context!,
       initialTime: controller.selectedTime.value,
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.deepOrange,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: AppColors.textColorMaroon,
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (pickedTime != null) {

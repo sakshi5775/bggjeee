@@ -55,7 +55,7 @@ class PujaDetailView extends BasePage<PujaDetailController> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const AutoTranslateText(
-                    'Puja not found',
+                    'Pooja not found',
                     style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                   SizedBox(height: 16),
@@ -70,7 +70,7 @@ class PujaDetailView extends BasePage<PujaDetailController> {
 
           return Column(
             children: [
-              CommonHeader(title: 'Puja Details'),
+              CommonHeader(title: 'Pooja Details'),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(

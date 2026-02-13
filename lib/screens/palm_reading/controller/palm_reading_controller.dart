@@ -9,9 +9,10 @@ import 'package:astrobharataiuser/data_model/palm_reading_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/error_formatter.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:astrobharataiuser/app_manager/common/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class PalmReadingController extends GetxController {
@@ -49,7 +50,6 @@ class PalmReadingController extends GetxController {
 
   DateTime? _selectedDate;
   AppLanguageModel? _selectedLanguageModel;
-  final ImagePicker _imagePicker = ImagePicker();
   final ApiRepository _apiRepository = Get.find();
 
   @override
@@ -115,25 +115,11 @@ class PalmReadingController extends GetxController {
     final context = Get.context;
     if (context == null) return;
 
-    final pickedDate = await showDatePicker(
-      context: context,
+    final pickedDate = await TimePickerHelper.showDatePicker(
+      context,
       initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Color(0xFFF38B3B),
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Color(0xFF5F2221),
-            ),
-            dialogBackgroundColor: Colors.white,
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (pickedDate != null) {
@@ -225,12 +211,9 @@ class PalmReadingController extends GetxController {
   // Direct upload method - allows skipping form
   Future<void> uploadPalmImage(BuildContext context) async {
     try {
-      final pickedFile = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 80,
-      );
+      final pickedFile = await ImagePickerHelper.pickImage(context);
       if (pickedFile != null) {
-        selectedPalmImage.value = File(pickedFile.path);
+        selectedPalmImage.value = pickedFile;
         // Navigate directly to scanning screen
         Get.toNamed(AppRoutes.palmReadingScanning);
       }
@@ -242,12 +225,9 @@ class PalmReadingController extends GetxController {
   // Take photo directly
   Future<void> takePalmPhoto(BuildContext context) async {
     try {
-      final pickedFile = await _imagePicker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 80,
-      );
+      final pickedFile = await ImagePickerHelper.pickImage(context);
       if (pickedFile != null) {
-        selectedPalmImage.value = File(pickedFile.path);
+        selectedPalmImage.value = pickedFile;
         // Navigate directly to scanning screen
         Get.toNamed(AppRoutes.palmReadingScanning);
       }
@@ -278,12 +258,9 @@ class PalmReadingController extends GetxController {
 
   Future<void> uploadFromGallery(BuildContext context) async {
     try {
-      final pickedFile = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 80,
-      );
+      final pickedFile = await ImagePickerHelper.pickImage(context);
       if (pickedFile != null) {
-        selectedPalmImage.value = File(pickedFile.path);
+        selectedPalmImage.value = pickedFile;
         // Navigate to scanning screen
         Get.toNamed(AppRoutes.palmReadingScanning);
       }

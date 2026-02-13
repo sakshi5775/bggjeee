@@ -52,47 +52,47 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
                     width: double.infinity,
                     height: 450.h,
                   ),
-            // Overlay content
-            Positioned(
-              top: 10.h,
-              left: 10.w,
-              child: InkWell(
-                onTap: controller.navigateToPunyaMudra,
-                child: Container(
-                  height: 50.h,
-                  padding: EdgeInsets.all(2.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30.r),
-                    color: Colors.white,
-                    border: Border.all(color: Colors.orange),
-                  ),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(8.0.w),
-                        child: AutoTranslateText(
-                          '66',
-                          style: AppTypography.h3.copyWith(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(4.0.w),
-                        child: CircleAvatar(
-                          radius: 20.r,
-                          backgroundImage: const AssetImage(
-                            AppConstant.eMandirOmmIcon,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
 
+            // // Overlay content
+            // Positioned(
+            //   top: 10.h,
+            //   left: 10.w,
+            //   child: InkWell(
+            //     onTap: controller.navigateToPunyaMudra,
+            //     child: Container(
+            //       height: 50.h,
+            //       padding: EdgeInsets.all(2.w),
+            //       decoration: BoxDecoration(
+            //         borderRadius: BorderRadius.circular(30.r),
+            //         color: Colors.white,
+            //         border: Border.all(color: Colors.orange),
+            //       ),
+            //       child: Row(
+            //         children: [
+            //           Padding(
+            //             padding: EdgeInsets.all(8.0.w),
+            //             child: AutoTranslateText(
+            //               '66',
+            //               style: AppTypography.h3.copyWith(
+            //                 color: Colors.black,
+            //                 fontWeight: FontWeight.w500,
+            //               ),
+            //             ),
+            //           ),
+            //           Padding(
+            //             padding: EdgeInsets.all(4.0.w),
+            //             child: CircleAvatar(
+            //               radius: 20.r,
+            //               backgroundImage: const AssetImage(
+            //                 AppConstant.eMandirOmmIcon,
+            //               ),
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
             Positioned(
               top: 10.h,
               right: 10.w,
@@ -222,46 +222,46 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
             //   ),
             // ),
             Positioned(
-              bottom: 90.h,
+              bottom: 10.h,
               right: 18.w,
               child: InkWell(
                 onTap: controller.toggleShankh,
                 child: Image.asset(AppConstant.eMandirSankhIcon),
               ),
             ),
-            Positioned(
-              bottom: 22.h,
-              right: 18.w,
-              child: InkWell(
-                onTap: controller.navigateToDevotionalLibrary,
-                child: Image.asset(
-                  AppConstant.eMandirListenNowIcon,
-                  width: 50.w,
-                  height: 50.h,
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: EdgeInsets.only(right: 6.w),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
-                  child: AutoTranslateText(
-                    'Listen Now',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // Positioned(
+            //   bottom: 22.h,
+            //   right: 18.w,
+            //   child: InkWell(
+            //     onTap: controller.navigateToDevotionalLibrary,
+            //     child: Image.asset(
+            //       AppConstant.eMandirListenNowIcon,
+            //       width: 50.w,
+            //       height: 50.h,
+            //     ),
+            //   ),
+            // ),
+            // Align(
+            //   alignment: Alignment.bottomRight,
+            //   child: Padding(
+            //     padding: EdgeInsets.only(right: 6.w),
+            //     child: Container(
+            //       decoration: BoxDecoration(
+            //         color: Colors.black.withOpacity(0.4),
+            //         borderRadius: BorderRadius.circular(20.r),
+            //       ),
+            //       padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
+            //       child: AutoTranslateText(
+            //         'Listen Now',
+            //         style: TextStyle(
+            //           color: Colors.white,
+            //           fontSize: 13.sp,
+            //           fontWeight: FontWeight.w500,
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

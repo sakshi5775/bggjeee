@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.dart';
+import 'package:astrobharataiuser/screens/ecommerce/controller/wishlist_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/service/ecommerce_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,6 +12,7 @@ import 'package:intl/intl.dart';
 class ProductDetailController extends BaseController {
   final EcommerceService _ecommerceService = EcommerceService();
   late final CartController cartController;
+  late final WishlistController wishlistController;
 
   final product = Rxn<ProductModel>();
   final relatedProducts = <ProductModel>[].obs;
@@ -45,6 +47,9 @@ class ProductDetailController extends BaseController {
     cartController = Get.isRegistered<CartController>()
         ? Get.find<CartController>()
         : Get.put(CartController());
+    wishlistController = Get.isRegistered<WishlistController>()
+        ? Get.find<WishlistController>()
+        : Get.put(WishlistController());
     ever(cartController.cart, (_) => syncQuantityWithCart());
     _handleArguments();
     pageController.value = PageController();
@@ -636,5 +641,18 @@ Download AstroBharatAI App to explore more products!
         colorText: Colors.white,
       );
     }
+  }
+
+  void toggleWishlist() {
+    final currentProduct = product.value;
+    if (currentProduct != null) {
+      wishlistController.toggleWishlist(currentProduct);
+    }
+  }
+
+  bool get isFavorite {
+    final currentProduct = product.value;
+    if (currentProduct == null) return false;
+    return wishlistController.isInWishlist(currentProduct);
   }
 }

@@ -66,7 +66,7 @@ class BookingListCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AutoTranslateText(
-                        booking.pujaSnapshot?.name ?? 'Puja Booking',
+                        booking.pujaSnapshot?.name ?? 'Pooja Booking',
                         style: AppTypography.h2.copyWith(
                           color: const Color(0xFF212121),
                         ),

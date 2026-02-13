@@ -466,11 +466,22 @@ class PersonaDetailView extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 8.w),
-                      AutoTranslateText(
-                        '${persona.followers ?? 0} Followers',
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: const Color(0xFF666666),
-                        ),
+                      Row(
+                        children: [
+                          AutoTranslateText(
+                            '${persona.followers ?? 0}',
+                            style: MyTextTheme.smallBCN.copyWith(
+                              color: const Color(0xFF666666),
+                            ),
+                          ),
+                          SizedBox(width: 4.w),
+                          AutoTranslateText(
+                            'Followers',
+                            style: MyTextTheme.smallBCN.copyWith(
+                              color: const Color(0xFF666666),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   );
@@ -510,7 +521,7 @@ class PersonaDetailView extends StatelessWidget {
                   children: [
                     if (persona.pricePerMin == null || persona.pricePerMin == 0)
                       AutoTranslateText(
-                        'FREE',
+                        'Free',
                         style: MyTextTheme.mediumBCB.copyWith(
                           color: Colors.green,
                           fontWeight: FontWeight.bold,

@@ -29,7 +29,7 @@ class BookPujaHeaderWidget extends StatelessWidget {
           // Title
           Center(
             child: AutoTranslateText(
-              'Book Your Puja',
+              'Book Your Pooja',
               style: MyTextTheme.veryLargeBCB.copyWith(
                 color: const Color(0xFF3E2723),
                 fontSize: 24,

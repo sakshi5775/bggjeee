@@ -24,6 +24,8 @@ import 'package:astrobharataiuser/screens/kundli/widgets/moon_chart_widget.dart'
 import 'package:astrobharataiuser/screens/kundli/widgets/navamsha_chart_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/sun_chart_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/transit_chart_widget.dart';
+import 'package:astrobharataiuser/screens/navtara/widgets/navtara_tab_widget.dart';
+import 'package:astrobharataiuser/screens/navtara/controller/navtara_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -609,6 +611,28 @@ class KundliResultView extends BasePage<KundliResultController> {
     // Show Transit chart when TRANSIT tab is selected
     if (tabName == 'transit') {
       return const TransitChartWidget();
+    }
+
+    // Show Navtara Analysis when Navtara tab is selected
+    if (tabName == 'navtara') {
+      if (!Get.isRegistered<NavtaraController>()) {
+        Get.put(NavtaraController());
+      }
+      final navtaraController = Get.find<NavtaraController>();
+      // Auto-initialize if not set
+      if (navtaraController.primaryNakshatra.value == null) {
+        final nakshatra =
+            controller.detectedNakshatra.value ??
+            controller.kundliData.value?['nakshatra'];
+        if (nakshatra != null) {
+          navtaraController.initFromFullKundli(
+            nakshatraName: nakshatra,
+            name: controller.formData.value?['name'] ?? 'User',
+            dob: controller.formData.value?['dob'] ?? '',
+          );
+        }
+      }
+      return NavtaraTabWidget(controller: navtaraController);
     }
 
     // Show Ashtakvarga Chart when ASHTAKVARGA CHART tab is selected

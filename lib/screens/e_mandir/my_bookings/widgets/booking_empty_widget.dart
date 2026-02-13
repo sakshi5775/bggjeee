@@ -67,7 +67,7 @@ class BookingEmptyWidget extends StatelessWidget {
                     ],
                   ),
                   child: AutoTranslateText(
-                    'Book a Puja',
+                    'Book a Pooja',
                     style: AppTypography.body1.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,

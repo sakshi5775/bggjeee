@@ -395,27 +395,15 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
   }
 
   void _showDatePicker(BuildContext context, bool isPerson1) async {
-    final pickedDate = await showDatePicker(
-      context: context,
-
-      initialDate: isPerson1
-          ? controller.person1Date.value
-          : controller.person2Date.value,
+    final pickedDate = await TimePickerHelper.showDatePicker(
+      context,
+      initialDate:
+          (isPerson1
+              ? controller.person1Date.value
+              : controller.person2Date.value) ??
+          DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.deepOrange,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: '#68171E'.toColor(),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (pickedDate != null) {
@@ -433,19 +421,6 @@ class MatchMakingFormView extends BasePage<MatchMakingFormController> {
       initialTime: isPerson1
           ? (controller.person1Time.value ?? TimeOfDay.now())
           : (controller.person2Time.value ?? TimeOfDay.now()),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.deepOrange,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: '#68171E'.toColor(),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (pickedTime != null) {

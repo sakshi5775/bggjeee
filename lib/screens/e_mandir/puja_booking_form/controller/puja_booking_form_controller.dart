@@ -306,7 +306,7 @@ class PujaBookingFormController extends BaseController {
       'currency': paymentData.order!.currency,
       'order_id': paymentData.order!.id,
       'name': 'AstroBharatai',
-      'description': 'Puja Booking Payment',
+      'description': 'Pooja Booking Payment',
       'theme': {
         'color': '#FF9933', // Saffron color
       },

@@ -316,16 +316,44 @@ class _CartItemCard extends StatelessWidget {
                                         : () => controller.decrementItem(item),
                                     isRemove: quantity <= 1,
                                   ),
-                                  Container(
-                                    width: 50.w,
-                                    alignment: Alignment.center,
-                                    child: AutoTranslateText(
-                                      quantity.toString(),
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 16,
-                                        color: '#68171E'.toColor(),
+                                  InkWell(
+                                    onTap: isProcessing
+                                        ? null
+                                        : () => _showQuantityDialog(
+                                            context,
+                                            quantity,
+                                            (val) =>
+                                                controller.setProductQuantity(
+                                                  product: item.product!,
+                                                  targetQuantity: val,
+                                                  variantId: item.variantId,
+                                                ),
+                                          ),
+                                    borderRadius: BorderRadius.circular(8.r),
+                                    child: Container(
+                                      width: 50.w,
+                                      height: 36.h,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                          8.r,
+                                        ),
+                                        border: Border.all(
+                                          color: AppColors.saffron.withOpacity(
+                                            0.3,
+                                          ),
+                                          width: 1,
+                                        ),
+                                        color: Colors.white,
+                                      ),
+                                      child: AutoTranslateText(
+                                        quantity.toString(),
+                                        style: TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16,
+                                          color: '#68171E'.toColor(),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -429,4 +457,61 @@ class _QuantityButton extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _showQuantityDialog(
+  BuildContext context,
+  int currentQuantity,
+  Function(int) onConfirm,
+) async {
+  final textController = TextEditingController(
+    text: currentQuantity.toString(),
+  );
+  await showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const AutoTranslateText(
+        'Update Quantity',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: TextField(
+        controller: textController,
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        decoration: InputDecoration(
+          hintText: 'Enter quantity',
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
+        ),
+        autofocus: true,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const AutoTranslateText(
+            'Cancel',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final val = int.tryParse(textController.text);
+            if (val != null && val > 0) {
+              Navigator.of(context).pop();
+              onConfirm(val);
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.saffron,
+            foregroundColor: Colors.white,
+          ),
+          child: const AutoTranslateText('Update'),
+        ),
+      ],
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
+  );
 }

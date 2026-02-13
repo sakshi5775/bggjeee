@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -193,24 +194,11 @@ class LoShuGridFormView extends BasePage<LoShuGridFormController> {
         Obx(
           () => GestureDetector(
             onTap: () async {
-              final picked = await showDatePicker(
-                context: Get.context!,
+              final picked = await TimePickerHelper.showDatePicker(
+                Get.context!,
                 initialDate: controller.selectedDate.value ?? DateTime.now(),
                 firstDate: DateTime(1900),
                 lastDate: DateTime.now(),
-                builder: (context, child) {
-                  return Theme(
-                    data: Theme.of(context).copyWith(
-                      colorScheme: ColorScheme.light(
-                        primary: "#DFB343".toColor(),
-                        onPrimary: Colors.white,
-                        surface: Colors.white,
-                        onSurface: "#6F221E".toColor(),
-                      ),
-                    ),
-                    child: child!,
-                  );
-                },
               );
               if (picked != null) {
                 controller.selectDate(picked);

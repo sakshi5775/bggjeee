@@ -14,7 +14,6 @@ class NamasteHomeController extends GetxController
   final isShankhPlaying = false.obs;
   final volume = 1.0.obs; // Volume range: 0.0 to 1.0
   final showVolumeSlider = false.obs;
-  bool _hasNavigatedAway = false;
 
   // Animation for fullscreen button
   late AnimationController fullscreenAnimationController;
@@ -75,34 +74,6 @@ class NamasteHomeController extends GetxController
   @override
   void onReady() {
     super.onReady();
-    // Resume audio if we've navigated away and come back
-    // This will be called when the route becomes active again
-    if (_hasNavigatedAway) {
-      Future.delayed(const Duration(milliseconds: 300), () {
-        resumeAudioIfNeeded();
-        _hasNavigatedAway = false; // Reset flag
-      });
-    }
-  }
-
-  void resumeAudioIfNeeded() {
-    // Only resume if audio is not playing, we've navigated away, and player is not disposed
-    if (!isShankhPlaying.value && _hasNavigatedAway) {
-      try {
-        // Check if player is still valid (not disposed)
-        if (shankhPlayer.state != PlayerState.disposed) {
-          shankhPlayer.setReleaseMode(ReleaseMode.loop);
-          shankhPlayer.setVolume(volume.value);
-          shankhPlayer.play(UrlSource(AppConstant.shankhMp3)).catchError((e) {
-            print("SHANKH AUDIO ERROR on resume: $e");
-          });
-          isShankhPlaying.value = true;
-          _hasNavigatedAway = false; // Reset flag after resuming
-        }
-      } catch (e) {
-        print("Error resuming shankh audio: $e");
-      }
-    }
   }
 
   @override
@@ -136,7 +107,6 @@ class NamasteHomeController extends GetxController
         shankhPlayer.stop();
       }
       isShankhPlaying.value = false;
-      _hasNavigatedAway = true; // Mark as navigated away so it can resume later
     } catch (e) {
       print("Error stopping shankh player: $e");
     }

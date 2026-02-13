@@ -13,7 +13,9 @@ class PujaAboutSectionWidget extends StatelessWidget {
 
     return Obx(() {
       final puja = controller.puja.value;
-      if (puja == null || puja.longDescription == null || puja.longDescription!.isEmpty) {
+      if (puja == null ||
+          puja.longDescription == null ||
+          puja.longDescription!.isEmpty) {
         return const SizedBox.shrink();
       }
 
@@ -23,7 +25,7 @@ class PujaAboutSectionWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AutoTranslateText(
-              'About This Puja',
+              'About This Pooja',
               style: MyTextTheme.mediumBCB.copyWith(
                 color: const Color(0xFF5D1C21),
                 fontSize: 18,

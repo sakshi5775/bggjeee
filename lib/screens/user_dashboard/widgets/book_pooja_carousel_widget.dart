@@ -150,7 +150,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Puja Image
+                      // Pooja Image
                       Container(
                         width: isTablet ? 60.w : null,
                         height: isTablet ? 60.w : null,
@@ -220,7 +220,7 @@ class BookPoojaCarouselWidget extends BasePage<UserDashboardController> {
                           children: [
                             // Title
                             AutoTranslateText(
-                              puja.title ?? 'Puja',
+                              puja.title ?? 'Pooja',
                               style: MyTextTheme.largeBCB
                                   .copyWith(
                                     color: "#5D1C21".toColor(),

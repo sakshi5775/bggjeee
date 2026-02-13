@@ -3,7 +3,6 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/numerology/controller/numerology_form_controller.dart';
-import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -12,8 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:intl/intl.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 
 class NumerologyFormView extends BasePage<NumerologyFormController> {
   const NumerologyFormView({super.key});
@@ -434,23 +433,11 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
   }
 
   Future<void> _showDatePicker() async {
-    final DateTime? picked = await showDatePicker(
-      context: Get.context!,
+    final DateTime? picked = await TimePickerHelper.showDatePicker(
+      Get.context!,
       initialDate: controller.selectedDate.value ?? DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: "#DFB343".toColor(),
-              onPrimary: Colors.white,
-              onSurface: "#6F221E".toColor(),
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
     if (picked != null) {
       controller.selectDate(picked);

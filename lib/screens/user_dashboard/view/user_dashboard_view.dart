@@ -50,7 +50,7 @@ import '../widgets/what_else_widget.dart';
 import '../widgets/banner_carousel_widget.dart';
 import '../widgets/our_services_carousel_widget.dart';
 import '../widgets/floating_astrologer_button.dart';
-// import '../widgets/reports_tab_widget.dart';
+import '../widgets/reports_tab_widget.dart';
 import '../widgets/horoscope_tab_widget.dart';
 import '../widgets/daily_astrologers_widget.dart';
 // import '../widgets/quote_of_the_day_widget.dart';
@@ -107,28 +107,32 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           final noGap =
                               (i == 1 &&
                                   tabs.length > 1 &&
-                                  tabs[1] == 'Astrologers') ||
+                                  tabs[1] == 'Reports') ||
                               (i == 2 &&
                                   tabs.length > 2 &&
-                                  tabs[2] == 'AI Astrologers') ||
+                                  tabs[2] == 'Astrologers') ||
                               (i == 3 &&
                                   tabs.length > 3 &&
-                                  tabs[3] == 'Digital Mart') ||
+                                  tabs[3] == 'AI Astrologers') ||
                               (i == 4 &&
                                   tabs.length > 4 &&
-                                  tabs[4] == 'Digital Mandir') ||
+                                  tabs[4] == 'Digital Mart') ||
                               (i == 5 &&
                                   tabs.length > 5 &&
-                                  tabs[5] == 'Digital Learning') ||
+                                  tabs[5] == 'Digital Mandir') ||
                               (i == 6 &&
                                   tabs.length > 6 &&
-                                  tabs[6] == 'Media Hub') ||
+                                  tabs[6] == 'Digital Learning') ||
                               (i == 7 &&
                                   tabs.length > 7 &&
-                                  tabs[7] == 'Panchang') ||
+                                  tabs[7] == 'Media Hub') ||
                               (i == 8 &&
                                   tabs.length > 8 &&
-                                  tabs[8] == 'Horoscope');
+                                  tabs[8] == 'Panchang') ||
+                              (i == 9 &&
+                                  tabs.length > 9 &&
+                                  tabs[9] == 'Horoscope');
+
                           return Spacing.h(noGap ? 0 : 8);
                         }),
                         _buildSliderBodyWithSwipe(context),
@@ -297,15 +301,23 @@ class UserDashboardView extends BasePage<UserDashboardController> {
       // if (i == 1) {
       //   return const YearTabWidget();
       // }
-      if (i == 1 && controller.sliderTabs[i] == 'Astrologers') {
+      if (i == 1 && controller.sliderTabs[i] == 'Reports') {
+        final h = MediaQuery.sizeOf(context).height;
+        return SizedBox(
+          height: (h - 240).clamp(400.0, h * 0.85),
+          child: const ReportsTabWidget(),
+        );
+      }
+
+      if (i == 2 && controller.sliderTabs[i] == 'Astrologers') {
         final h = MediaQuery.sizeOf(context).height;
         return SizedBox(
           height: (h - 240).clamp(400.0, h * 0.85),
           child: const AllAstrologersView(hideHeader: true),
         );
       }
-      if (i == 2 && controller.sliderTabs[i] == 'AI Astrologers') {
-        // AI Chat (aichat) embedded below slider like other tabs, without header
+
+      if (i == 3 && controller.sliderTabs[i] == 'AI Astrologers') {
         if (!Get.isRegistered<AiChatController>()) {
           Get.put(AiChatController(), permanent: false);
         }
@@ -315,7 +327,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: const AiChatView(hideHeader: true, showBackButton: false),
         );
       }
-      if (i == 3 && controller.sliderTabs[i] == 'Digital Mart') {
+
+      if (i == 4 && controller.sliderTabs[i] == 'Digital Mart') {
         if (!Get.isRegistered<EcommerceHomeController>()) {
           Get.put(EcommerceHomeController(), permanent: false);
         }
@@ -325,7 +338,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: const EcommerceHomeView(hideHeader: true),
         );
       }
-      if (i == 4 && controller.sliderTabs[i] == 'Digital Mandir') {
+
+      if (i == 5 && controller.sliderTabs[i] == 'Digital Mandir') {
         if (!Get.isRegistered<NamasteHomeController>()) {
           Get.put(NamasteHomeController(), permanent: false);
         }
@@ -338,7 +352,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           ),
         );
       }
-      if (i == 5 && controller.sliderTabs[i] == 'Digital Learning') {
+
+      if (i == 6 && controller.sliderTabs[i] == 'Digital Learning') {
         if (!Get.isRegistered<CoursesController>()) {
           Get.put(CoursesController(), permanent: false);
         }
@@ -348,7 +363,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: const CoursesView(hideHeader: true),
         );
       }
-      if (i == 6 && controller.sliderTabs[i] == 'Media Hub') {
+
+      if (i == 7 && controller.sliderTabs[i] == 'Media Hub') {
         if (!Get.isRegistered<AllVideosController>()) {
           Get.put(AllVideosController(), permanent: false);
         }
@@ -358,7 +374,8 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: const AllVideosView(hideHeader: true),
         );
       }
-      if (i == 7 && controller.sliderTabs[i] == 'Panchang') {
+
+      if (i == 8 && controller.sliderTabs[i] == 'Panchang') {
         if (!Get.isRegistered<PanchangController>()) {
           Get.put(PanchangController(), permanent: false);
         }
@@ -368,13 +385,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
           child: const PanchangView(hideHeader: true),
         );
       }
-      if (i == 8 && controller.sliderTabs[i] == 'Horoscope') {
+
+      if (i == 9 && controller.sliderTabs[i] == 'Horoscope') {
         final h = MediaQuery.sizeOf(context).height;
         return SizedBox(
           height: (h - 240).clamp(400.0, h * 0.85),
           child: const HoroscopeTabWidget(),
         );
       }
+
       return Padding(
         padding: EdgeInsets.symmetric(vertical: 48.h, horizontal: 24.w),
         child: Center(
@@ -405,19 +424,23 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     },
     {
       'label': 'Predictions',
-      'route': AppRoutes.predictions,
+      'route': AppRoutes.kundliForm,
       'icon': AppConstant.lifePredictions,
     },
-    {'label': 'Dasha', 'route': AppRoutes.dasha, 'icon': AppConstant.dasha},
-    {'label': 'Dosh', 'route': AppRoutes.dosh, 'icon': AppConstant.dosh},
+    {
+      'label': 'Dasha',
+      'route': AppRoutes.kundliForm,
+      'icon': AppConstant.dasha,
+    },
+    {'label': 'Dosh', 'route': AppRoutes.kundliForm, 'icon': AppConstant.dosh},
     {
       'label': 'Lal Kitab',
-      'route': AppRoutes.lalKitab,
+      'route': AppRoutes.kundliForm,
       'icon': AppConstant.lalKitab,
     },
     {
       'label': 'KP Astrology',
-      'route': AppRoutes.kpSystem,
+      'route': AppRoutes.kundliForm,
       'icon': AppConstant.kpN,
     },
     {
@@ -1983,7 +2006,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 if (index == 0) {
                   return _buildPoojaCard(
                     'Anuj Kumar',
-                    'Hawan Puja • Birthday Puja',
+                    'Hawan Pooja • Birthday Pooja',
                     '10:25 AM, 15th Sep',
                     AppConstant.poojaAnuj,
                     235.w,
@@ -1991,7 +2014,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 }
                 return _buildPoojaCard(
                   'Abhishek Singh',
-                  'Wedding Puja • Rituals',
+                  'Wedding Pooja • Rituals',
                   '10:25 AM, 15th Sep',
                   AppConstant.poojaAbhishek,
                   207.19.w,
@@ -3584,14 +3607,16 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ],
             ),
           ),
-          Spacing.h(4),
+          Spacing.h(1),
           SizedBox(
             width: 70.w,
+
             child: AutoTranslateText(
               displayName,
-              style: AppTypography.body2.copyWith(
-                color: '#3D0C11'.toColor(),
+              style: AppTypography.h3.copyWith(
+                color: '#68171E'.toColor(),
                 fontWeight: FontWeight.w500,
+                fontSize: 12.sp,
               ),
               textAlign: TextAlign.center,
               maxLines: 1,
@@ -5572,17 +5597,18 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ),
             ),
           ),
-          Spacing.h(4),
+          Spacing.h(1),
           SizedBox(
             width: 70.w,
             child: AutoTranslateText(
               stream.astrologerName,
-              style: AppTypography.body2.copyWith(
-                color: "#3D0C11".toColor(),
+              style: AppTypography.h3.copyWith(
+                color: '#68171E'.toColor(),
                 fontWeight: FontWeight.w500,
+                fontSize: 12.sp,
               ),
               textAlign: TextAlign.center,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -5693,17 +5719,18 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               ),
             ),
           ),
-          Spacing.h(4),
+          Spacing.h(1),
           SizedBox(
             width: 70.w,
             child: AutoTranslateText(
               astrologerName,
-              style: AppTypography.body2.copyWith(
-                color: "#3D0C11".toColor(),
+              style: AppTypography.h3.copyWith(
+                color: '#68171E'.toColor(),
                 fontWeight: FontWeight.w500,
+                fontSize: 12.sp,
               ),
               textAlign: TextAlign.center,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),

@@ -126,7 +126,7 @@ class CoursesView extends BasePage<CoursesController> {
                               : const SizedBox.shrink(),
                         ),
                       ],
-                      Spacing.h(20),
+                      Spacing.h(10),
                       _buildCoursesSection(),
                     ],
                   ),

@@ -21,6 +21,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:astrobharataiuser/core/services/notification_service.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import './apihelper/dependencies/dependencies.dart' as dep;
 
 // Cache supported locales globally
@@ -31,6 +32,14 @@ void main() async {
     () async {
       // Initialize Flutter bindings first (required before Firebase initialization)
       WidgetsFlutterBinding.ensureInitialized();
+
+      // Initialize FlutterDownloader for report downloads
+      await FlutterDownloader.initialize(
+        debug:
+            kDebugMode, // optional: set to false to disable printing logs to console (default: true)
+        ignoreSsl:
+            true, // option: set to false to disable HTTP with certificate which can't be verified
+      );
 
       // Initialize Firebase with error handling
       // Check if platform supports Firebase before initializing

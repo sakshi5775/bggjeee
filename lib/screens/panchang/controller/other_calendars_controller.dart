@@ -11,20 +11,20 @@ class OtherCalendarsController extends BaseController {
   final List<Map<String, dynamic>> calendarOptions = [
     {
       'title': 'Hindu Calendar',
-      'icon': Icons.auto_awesome,
-      'symbol': 'ॐ',
+      // 'icon': Icons.auto_awesome,
+      // 'symbol': '🕉',
       'route': AppRoutes.hinduCalendarMonthlyPanchang,
     },
     {
       'title': 'Jain Calendar',
-      'icon': Icons.pan_tool,
-      'symbol': '🕉',
+      // 'icon': Icons.pan_tool,
+      // 'symbol': '🕉',
       'route': AppRoutes.jainCalendar,
     },
     {
       'title': 'Moon Calendar',
-      'icon': Icons.nightlight_round,
-      'symbol': '🌙',
+      // 'icon': Icons.nightlight_round,
+      // 'symbol': '🌙',
       'route': AppRoutes.moonCalendar,
     },
   ];

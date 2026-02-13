@@ -35,6 +35,19 @@ class ProductDetailView extends StatelessWidget {
             CommonHeader(
               title: 'Product Details',
               customActions: [
+                Obx(
+                  () => IconButton(
+                    onPressed: () => controller.toggleWishlist(),
+                    icon: Icon(
+                      controller.isFavorite
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: controller.isFavorite
+                          ? AppColors.sacredRed
+                          : '#6F221E'.toColor(),
+                    ),
+                  ),
+                ),
                 IconButton(
                   onPressed: () => controller.shareProduct(),
                   icon: Icon(Icons.share_outlined, color: '#6F221E'.toColor()),

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,12 +22,12 @@ class MonthlyCalendarController extends BaseController {
   final selectedLocation = 'Fetching Location...'.obs;
   final panchangDataForSelectedDate = Rxn<Map<String, dynamic>>();
   final isFetchingPanchang = false.obs;
-  
+
   // Location coordinates
   double? currentLatitude;
   double? currentLongitude;
   double? currentTimezone;
-  
+
   // Flag to track if controller is disposed
   bool _isDisposed = false;
 
@@ -54,7 +55,9 @@ class MonthlyCalendarController extends BaseController {
       } on MissingPluginException {
         if (_isDisposed) return;
         selectedLocation.value = 'Select Location';
-        debugPrint('[Location Service Unavailable] Location service is not available. Please rebuild the app after running "flutter pub get".');
+        debugPrint(
+          '[Location Service Unavailable] Location service is not available. Please rebuild the app after running "flutter pub get".',
+        );
         return;
       }
 
@@ -156,10 +159,7 @@ class MonthlyCalendarController extends BaseController {
         );
       }
     } catch (e) {
-      showErrorMessage(
-        title: 'Error',
-        message: 'Error: ${e.toString()}',
-      );
+      showErrorMessage(title: 'Error', message: 'Error: ${e.toString()}');
       debugPrint('Error fetching monthly calendar: $e');
     } finally {
       isLoading.value = false;
@@ -210,7 +210,9 @@ class MonthlyCalendarController extends BaseController {
 
   /// Fetch panchang data for selected date
   Future<void> fetchPanchangForSelectedDate() async {
-    if (currentLatitude == null || currentLongitude == null || currentTimezone == null) {
+    if (currentLatitude == null ||
+        currentLongitude == null ||
+        currentTimezone == null) {
       // Use default values if location not available
       currentLatitude = 28.6139; // Delhi default
       currentLongitude = 77.2090;
@@ -219,10 +221,10 @@ class MonthlyCalendarController extends BaseController {
 
     try {
       isFetchingPanchang.value = true;
-      
+
       final date = DateFormat('dd/MM/yyyy').format(selectedDate.value);
       final time = DateFormat('HH:mm').format(DateTime.now());
-      
+
       final data = await _panchangService.getDailyPanchang(
         date: date,
         time: time,
@@ -233,7 +235,8 @@ class MonthlyCalendarController extends BaseController {
       );
 
       if (data != null && data['response'] != null) {
-        panchangDataForSelectedDate.value = data['response'] as Map<String, dynamic>;
+        panchangDataForSelectedDate.value =
+            data['response'] as Map<String, dynamic>;
       }
     } catch (e) {
       debugPrint('Error fetching panchang for selected date: $e');
@@ -244,8 +247,8 @@ class MonthlyCalendarController extends BaseController {
 
   /// Select date using calendar picker
   Future<void> selectDate() async {
-    final picked = await showDatePicker(
-      context: Get.context!,
+    final picked = await TimePickerHelper.showDatePicker(
+      Get.context!,
       initialDate: selectedDate.value,
       firstDate: DateTime(1900),
       lastDate: DateTime(2100),
@@ -259,10 +262,14 @@ class MonthlyCalendarController extends BaseController {
   }
 
   /// Select city from location bottom sheet
-  Future<void> selectCity(String cityName, String? state, String? country) async {
+  Future<void> selectCity(
+    String cityName,
+    String? state,
+    String? country,
+  ) async {
     try {
       selectedLocation.value = cityName;
-      
+
       // Fetch coordinates for the city
       final coords = await AddressHelper.fetchCoordinatesFromCity(
         city: cityName,
@@ -273,14 +280,14 @@ class MonthlyCalendarController extends BaseController {
       if (coords != null) {
         currentLatitude = coords['latitude'] as double?;
         currentLongitude = coords['longitude'] as double?;
-        
+
         // Get timezone
         if (currentLatitude != null && currentLongitude != null) {
           final timezone = await AddressHelper.getTimezoneFromCoordinates(
             currentLatitude!,
             currentLongitude!,
           );
-          
+
           // Calculate timezone offset
           if (timezone != null) {
             currentTimezone = await _getTimezoneOffset(timezone);
@@ -292,7 +299,7 @@ class MonthlyCalendarController extends BaseController {
             );
           }
         }
-        
+
         // Refresh panchang data for selected date
         fetchPanchangForSelectedDate();
       }
@@ -348,7 +355,7 @@ class MonthlyCalendarController extends BaseController {
         position.latitude,
         position.longitude,
       );
-      
+
       if (timezone != null) {
         currentTimezone = await _getTimezoneOffset(timezone);
       } else {
@@ -357,7 +364,7 @@ class MonthlyCalendarController extends BaseController {
           position.longitude,
         );
       }
-      
+
       // Refresh panchang data
       fetchPanchangForSelectedDate();
     } catch (e) {
@@ -369,7 +376,9 @@ class MonthlyCalendarController extends BaseController {
   Future<double> _getTimezoneOffset(String timezone) async {
     try {
       final response = await http.get(
-        Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=${currentLatitude ?? 28.6139}&longitude=${currentLongitude ?? 77.2090}'),
+        Uri.parse(
+          'https://timeapi.io/api/TimeZone/coordinate?latitude=${currentLatitude ?? 28.6139}&longitude=${currentLongitude ?? 77.2090}',
+        ),
         headers: {'Accept': 'application/json'},
       );
 
@@ -384,7 +393,7 @@ class MonthlyCalendarController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone offset: $e');
     }
-    
+
     // Fallback: calculate from coordinates
     return await _getTimezoneOffsetFromCoordinates(
       currentLatitude ?? 28.6139,
@@ -393,10 +402,15 @@ class MonthlyCalendarController extends BaseController {
   }
 
   /// Get timezone offset from coordinates
-  Future<double> _getTimezoneOffsetFromCoordinates(double lat, double lon) async {
+  Future<double> _getTimezoneOffsetFromCoordinates(
+    double lat,
+    double lon,
+  ) async {
     try {
       final response = await http.get(
-        Uri.parse('https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon'),
+        Uri.parse(
+          'https://timeapi.io/api/TimeZone/coordinate?latitude=$lat&longitude=$lon',
+        ),
         headers: {'Accept': 'application/json'},
       );
 
@@ -411,7 +425,7 @@ class MonthlyCalendarController extends BaseController {
     } catch (e) {
       debugPrint('Error getting timezone from coordinates: $e');
     }
-    
+
     // Default to IST (5.5)
     return 5.5;
   }
@@ -440,7 +454,7 @@ class MonthlyCalendarController extends BaseController {
   String getCurrentHinduDetails() {
     final data = panchangDataForSelectedDate.value;
     if (data == null) return 'Loading...';
-    
+
     final masa = data['advanced_details']?['masa'] as Map<String, dynamic>?;
     if (masa != null) {
       final amanta = masa['amanta_name']?.toString() ?? '';
@@ -456,13 +470,13 @@ class MonthlyCalendarController extends BaseController {
   String getPakshaTithi() {
     final data = panchangDataForSelectedDate.value;
     if (data == null) return 'Loading...';
-    
+
     final masa = data['advanced_details']?['masa'] as Map<String, dynamic>?;
     final tithi = data['tithi'] as Map<String, dynamic>?;
-    
+
     String paksha = masa?['paksha']?.toString() ?? '';
     String tithiName = tithi?['name']?.toString() ?? '';
-    
+
     if (paksha.isNotEmpty && tithiName.isNotEmpty) {
       return '$paksha | $tithiName';
     }
@@ -474,31 +488,29 @@ class MonthlyCalendarController extends BaseController {
     try {
       // Rate limiting: wait 1.1 seconds between requests
       await Future.delayed(const Duration(milliseconds: 1100));
-      
+
       final uri = Uri.parse(
         'https://nominatim.openstreetmap.org/reverse?lat=$lat&lon=$lon&format=json&addressdetails=1',
       );
 
       final response = await http.get(
         uri,
-        headers: {
-          'User-Agent': 'AstrologyApp/1.0',
-          'Accept-Language': 'en',
-        },
+        headers: {'User-Agent': 'AstrologyApp/1.0', 'Accept-Language': 'en'},
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>?;
         final address = data?['address'] as Map<String, dynamic>?;
-        
+
         if (address != null) {
           return {
-            'city': address['city'] ?? 
-                    address['town'] ?? 
-                    address['village'] ?? 
-                    address['municipality'] ?? 
-                    address['county'] ?? 
-                    'Unknown',
+            'city':
+                address['city'] ??
+                address['town'] ??
+                address['village'] ??
+                address['municipality'] ??
+                address['county'] ??
+                'Unknown',
             'state': address['state'] ?? address['region'] ?? '',
             'country': address['country'] ?? '',
           };
@@ -510,4 +522,3 @@ class MonthlyCalendarController extends BaseController {
     return null;
   }
 }
-

@@ -103,6 +103,7 @@ class LoginFormWidget extends StatelessWidget {
               child: controller.isEmailMode.value
                   ? TextButton.icon(
                       onPressed: () {
+                        if (controller.isClosed) return;
                         controller.isEmailMode.value = false;
                         controller.emailController.clear();
                       },
@@ -120,6 +121,7 @@ class LoginFormWidget extends StatelessWidget {
                     )
                   : TextButton.icon(
                       onPressed: () {
+                        if (controller.isClosed) return;
                         controller.isEmailMode.value = true;
                         controller.emailController.clear();
                       },

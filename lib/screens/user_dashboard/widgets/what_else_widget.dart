@@ -24,8 +24,8 @@ class WhatElseWidget extends StatelessWidget {
     },
     {
       'title': 'Talk to Astrologer',
-      'image': AppConstant.cardConsultation,
-      'route': AppRoutes.astrologyServices,
+      'image': AppConstant.consultation,
+      'route': AppRoutes.allAstrologers,
     },
     {
       'title': 'Digital Mart',
@@ -45,7 +45,7 @@ class WhatElseWidget extends StatelessWidget {
     {
       'title': 'KP System',
       'image': AppConstant.kpN,
-      'route': AppRoutes.kpSystem,
+      'route': AppRoutes.kundliForm,
     },
     {
       'title': 'Varshphal',
@@ -55,7 +55,7 @@ class WhatElseWidget extends StatelessWidget {
     {
       'title': 'Lal Kitab',
       'image': AppConstant.lalKitab,
-      'route': AppRoutes.lalKitab,
+      'route': AppRoutes.kundliForm,
     },
     {
       'title': 'Digital Learning',

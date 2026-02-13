@@ -30,7 +30,7 @@ class ComingSoonPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SvgAssets(
-                    path: AppConstant.fullChakra,
+                    path: AppConstant.logo,
                     width: 160.w,
                     height: 160.h,
                   ),

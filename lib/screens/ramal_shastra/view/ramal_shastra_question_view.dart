@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 
 class RamalShastraQuestionView extends StatelessWidget {
   const RamalShastraQuestionView({Key? key}) : super(key: key);
@@ -415,8 +416,8 @@ class RamalShastraQuestionView extends StatelessWidget {
         Obx(
           () => InkWell(
             onTap: () async {
-              final date = await showDatePicker(
-                context: context,
+              final date = await TimePickerHelper.showDatePicker(
+                context,
                 initialDate: controller.dateOfBirth.value.isNotEmpty
                     ? DateTime.tryParse(controller.dateOfBirth.value) ??
                           DateTime.now()
