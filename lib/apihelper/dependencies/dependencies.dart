@@ -1,5 +1,6 @@
 import 'package:astrobharataiuser/controllers/global_chat_controller.dart';
 import 'package:astrobharataiuser/services/global_free_service_manager.dart';
+import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:get/get.dart';
 import '../api_provider/api_provider.dart';
 import '../repositories/apirepository.dart';
@@ -23,4 +24,7 @@ Future<void> init() async {
   // Register global free service manager (will be started after login and dashboard load)
   Get.put(GlobalFreeServiceManager(), permanent: true);
   Get.put(GlobalChatController(), permanent: true);
+
+  // Register notification service (permanent across app lifecycle)
+  await Get.putAsync(() => NotificationService().init(), permanent: true);
 }

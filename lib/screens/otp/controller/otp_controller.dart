@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:astrobharataiuser/screens/otp/service/otp_service.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +18,11 @@ class OTPController extends BaseController {
 
   RxString get maskedDestination =>
       (Get.arguments?['destination'] ?? '').toString().obs;
-  
+
   RxString get userType =>
       (Get.arguments?['userType'] ?? 'USER').toString().obs;
-  
-  RxBool get isRegistration =>
-      (Get.arguments?['isRegistration'] ?? false).obs;
+
+  RxBool get isRegistration => (Get.arguments?['isRegistration'] ?? false).obs;
 
   @override
   void onInit() {
@@ -54,7 +54,7 @@ class OTPController extends BaseController {
     try {
       setLoadingState(true);
       final identifier = maskedDestination.value;
-      
+
       if (identifier.isEmpty) {
         showErrorMessage(
           title: 'Error',
@@ -65,7 +65,7 @@ class OTPController extends BaseController {
       }
 
       final success = await _otpService.resendOtp(identifier: identifier);
-      
+
       if (success) {
         showSuccessMessage(
           title: 'OTP Sent',
@@ -123,14 +123,14 @@ class OTPController extends BaseController {
       );
       return;
     }
-    
+
     isSubmitting.value = true;
     setLoadingState(true);
-    
+
     try {
       final identifier = maskedDestination.value;
       final userTypeValue = userType.value;
-      
+
       if (identifier.isEmpty) {
         showErrorMessage(
           title: 'Error',
@@ -151,11 +151,17 @@ class OTPController extends BaseController {
         try {
           // Save user data and tokens
           UserData().addLoginData(loginModel.toJson());
-          
+
+          // Link user to OneSignal for targeted notifications
+          final userId = loginModel.user?.userId;
+          if (userId != null && userId.isNotEmpty) {
+            NotificationService.instance.setExternalUserId(userId);
+          }
+
           // Show success message (don't await to avoid blocking)
           showSuccessMessage(
             title: 'Verified',
-            message: isRegistration.value 
+            message: isRegistration.value
                 ? 'Registration completed successfully!'
                 : 'Verification successful.',
           );
@@ -205,7 +211,7 @@ class OTPController extends BaseController {
   void changeNumber() {
     Get.offNamed(AppRoutes.login);
   }
-  
+
   void goBack() {
     Get.offNamed(AppRoutes.login);
   }

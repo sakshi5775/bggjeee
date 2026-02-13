@@ -7,6 +7,9 @@ class AppConstant {
   /// (full description or "What's New") so old installs get the minimum version from the store.
   static const String minAppVersion = '9.9.9';
 
+  // OneSignal App ID (from OneSignal Dashboard → Settings → Keys & IDs)
+  static const String oneSignalAppId = '67ddfe0f-eadf-41fa-a1d2-7f9d35e8c766';
+
   static const String s3BaseUrl =
       'https://astrobharatai.s3.ap-south-1.amazonaws.com';
 

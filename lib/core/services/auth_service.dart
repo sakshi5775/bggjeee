@@ -2,6 +2,7 @@ import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/core/base/api_helper_mixin.dart';
+import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:get/get.dart';
 
 class AuthService with ApiHelperMixin {
@@ -14,11 +15,9 @@ class AuthService with ApiHelperMixin {
     }
 
     try {
-      final response = await _apiRepository.postApi(
-        EndPoints.refreshToken,
-        {'refreshToken': refreshToken},
-        useAuthHeader: false,
-      );
+      final response = await _apiRepository.postApi(EndPoints.refreshToken, {
+        'refreshToken': refreshToken,
+      }, useAuthHeader: false);
 
       if (response.body?['success'] == true) {
         final data = response.body?['data'] ?? {};
@@ -51,7 +50,9 @@ class AuthService with ApiHelperMixin {
           return true;
         } else {
           // Even if API fails, clear local data
-          final errorMsg = response.body?['message']?.toString() ?? 'Unable to logout from all devices.';
+          final errorMsg =
+              response.body?['message']?.toString() ??
+              'Unable to logout from all devices.';
           forceLogout(message: 'Logged out locally. $errorMsg');
           return true;
         }
@@ -61,21 +62,23 @@ class AuthService with ApiHelperMixin {
           forceLogout();
           return true;
         }
-        
+
         try {
-          final response = await _apiRepository.postApi(
-            EndPoints.logout,
-            {'refreshToken': refreshToken},
-          );
+          final response = await _apiRepository.postApi(EndPoints.logout, {
+            'refreshToken': refreshToken,
+          });
           if (response.body?['success'] == true) {
             forceLogout(message: 'Logged out successfully.');
             return true;
           } else {
             // Check if it's a token mismatch error (403)
             final statusCode = response.statusCode;
-            final errorMsg = response.body?['message']?.toString() ?? 'Unable to logout.';
-            
-            if (statusCode == 403 || errorMsg.toLowerCase().contains('another user') || errorMsg.toLowerCase().contains('token')) {
+            final errorMsg =
+                response.body?['message']?.toString() ?? 'Unable to logout.';
+
+            if (statusCode == 403 ||
+                errorMsg.toLowerCase().contains('another user') ||
+                errorMsg.toLowerCase().contains('token')) {
               // Token mismatch - clear local data anyway
               forceLogout(message: 'Logged out successfully.');
               return true;
@@ -88,15 +91,17 @@ class AuthService with ApiHelperMixin {
         } catch (e) {
           // If API call fails (network error, etc.), still logout locally
           final errorStr = e.toString().toLowerCase();
-          if (errorStr.contains('403') || 
-              errorStr.contains('forbidden') || 
+          if (errorStr.contains('403') ||
+              errorStr.contains('forbidden') ||
               errorStr.contains('another user') ||
               errorStr.contains('token')) {
             forceLogout(message: 'Logged out successfully.');
             return true;
           }
           // For other errors, still logout locally but show message
-          forceLogout(message: 'Logged out locally. Please check your connection.');
+          forceLogout(
+            message: 'Logged out locally. Please check your connection.',
+          );
           return true;
         }
       }
@@ -108,13 +113,14 @@ class AuthService with ApiHelperMixin {
   }
 
   void forceLogout({String? message}) {
+    // Unlink user from OneSignal notifications
+    if (Get.isRegistered<NotificationService>()) {
+      NotificationService.instance.removeExternalUserId();
+    }
+
     if (message != null && message.isNotEmpty) {
-      showInfoMessage(
-        title: 'Session ended',
-        message: message,
-      );
+      showInfoMessage(title: 'Session ended', message: message);
     }
     UserData().removeUserData();
   }
 }
-

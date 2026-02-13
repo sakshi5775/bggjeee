@@ -20,6 +20,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:upgrader/upgrader.dart';
+import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import './apihelper/dependencies/dependencies.dart' as dep;
 
@@ -78,7 +79,8 @@ void main() async {
       // Cache supported locales
       _cachedSupportedLocales = await _getSupportedLocales();
 
-      dep.init();
+      // Initialize dependencies (includes NotificationService)
+      await dep.init();
 
       // Initialize language controller (single source of truth)
       LanguageBinding().dependencies();
@@ -88,6 +90,20 @@ void main() async {
       if (!Get.isRegistered<CustomTranslationService>()) {
         Get.put(CustomTranslationService(), permanent: true);
       }
+
+      // Request notification permission after the first frame renders
+      // and a short delay (ensures splash screen has passed so the
+      // permission dialog is visible to the user).
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(const Duration(seconds: 3), () {
+          if (Get.isRegistered<NotificationService>()) {
+            NotificationService.instance.requestPermission();
+            // If user is already logged in, link their identity
+            NotificationService.instance.linkCurrentUser();
+          }
+        });
+      });
+
       // ✅ SET PORTRAIT MODE HERE (Global Default)
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,

@@ -1,6 +1,7 @@
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/core/services/notification_service.dart';
 import 'package:astrobharataiuser/screens/login/login/service/login_service.dart';
 import 'package:astrobharataiuser/screens/otp/service/otp_service.dart';
 import 'package:country_code_picker/country_code_picker.dart';
@@ -136,6 +137,13 @@ class LoginController extends BaseController {
           final loginModel = await _loginService.login(identifier, password);
           if (loginModel != null) {
             UserData().addLoginData(loginModel.toJson());
+
+            // Link user to OneSignal for targeted notifications
+            final userId = loginModel.user?.userId;
+            if (userId != null && userId.isNotEmpty) {
+              NotificationService.instance.setExternalUserId(userId);
+            }
+
             await Future.delayed(const Duration(milliseconds: 500));
             Get.offAllNamed(AppRoutes.userDashboard);
           }
