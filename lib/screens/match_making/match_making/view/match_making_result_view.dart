@@ -8,8 +8,9 @@ import 'package:astrobharataiuser/screens/match_making/match_making/widgets/kund
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 
-import 'package:astrobharataiuser/screens/navtara/widgets/navtara_compatibility_widget.dart';
 import 'package:astrobharataiuser/screens/navtara/controller/navtara_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
+import 'package:astrobharataiuser/screens/match_making/match_making/view/match_making_navtara_view.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -39,6 +40,10 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
     // Register NavtaraController if not already registered
     if (!Get.isRegistered<NavtaraController>()) {
       Get.put(NavtaraController());
+    }
+    // Register AiPricingController for pricing checks
+    if (!Get.isRegistered<AiPricingController>()) {
+      Get.put(AiPricingController());
     }
     // Show matching animation for 3 seconds, then show report
     Future.delayed(const Duration(seconds: 5), () {
@@ -171,12 +176,33 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
                                             as Map<String, dynamic>?,
                                   )
                                 : null,
-                            showNavtaraOnly:
-                                _activeTab == 'Navtara Compatibility',
-                            showNavtaraSection: _activeTab == 'North Match',
-                            navtaraWidget: _activeTab == 'Navtara Compatibility'
-                                ? NavtaraCompatibilityWidget(
-                                    controller: Get.find<NavtaraController>(),
+                            navtaraWidget: _activeTab == 'Navtara'
+                                ? Center(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Get.to(
+                                          () => const MatchMakingNavtaraView(),
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: "#6F221E".toColor(),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 32.w,
+                                          vertical: 12.h,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            25.r,
+                                          ),
+                                        ),
+                                      ),
+                                      child: AutoTranslateText(
+                                        'Open Navtara Analysis',
+                                        style: MyTextTheme.mediumBCB.copyWith(
+                                          color: const Color(0xFFDFB343),
+                                        ),
+                                      ),
+                                    ),
                                   )
                                 : null,
                           ),
@@ -205,7 +231,9 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
       'Papasamaya Match',
       'Nakshatra Match',
       'Western Match',
-      'Navtara Compatibility',
+      'Nakshatra Match',
+      'Western Match',
+      'Navtara',
     ];
 
     return SingleChildScrollView(
@@ -213,27 +241,63 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
       child: Row(
         children: tabs.map((t) {
           final isActive = _activeTab == t;
+          final isNavtara = t == 'Navtara';
+
           return Padding(
             padding: EdgeInsets.only(right: 8.w),
-            child: ChoiceChip(
-              label: AutoTranslateText(
-                t,
-                style: MyTextTheme.smallBCB
-                    .copyWith(
-                      color: isActive ? Colors.white : "#6F221E".toColor(),
-                    )
-                    .merge(AppTypography.body2),
-              ),
-              selected: isActive,
-              onSelected: (_) => _onTabSelected(t),
-              selectedColor: "#6F221E".toColor(),
-              backgroundColor: const Color(0xFFFDF3E6),
-              shape: StadiumBorder(
-                side: BorderSide(
-                  color: "#6F221E".toColor().withOpacity(0.3),
-                  width: 0.8,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                ChoiceChip(
+                  label: AutoTranslateText(
+                    t,
+                    style: MyTextTheme.smallBCB
+                        .copyWith(
+                          color: isActive ? Colors.white : "#6F221E".toColor(),
+                        )
+                        .merge(AppTypography.body2),
+                  ),
+                  selected: isActive,
+                  onSelected: (_) => _onTabSelected(t),
+                  selectedColor: "#6F221E".toColor(),
+                  backgroundColor: const Color(0xFFFDF3E6),
+                  shape: StadiumBorder(
+                    side: BorderSide(
+                      color: "#6F221E".toColor().withOpacity(0.3),
+                      width: 0.8,
+                    ),
+                  ),
                 ),
-              ),
+                if (isNavtara && Get.isRegistered<AiPricingController>())
+                  Obx(() {
+                    final pricingCtrl = Get.find<AiPricingController>();
+                    final price = pricingCtrl.getDisplayPrice('navtara');
+                    if (price.isEmpty) return const SizedBox.shrink();
+
+                    return Positioned(
+                      top: -8.h,
+                      right: 0,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 4.w,
+                          vertical: 2.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFF6B35),
+                          borderRadius: BorderRadius.circular(4.r),
+                        ),
+                        child: Text(
+                          price,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+              ],
             ),
           );
         }).toList(),
@@ -355,20 +419,29 @@ class _MatchMakingResultViewState extends State<MatchMakingResultView> {
             lang: form['lang'] ?? 'en',
           );
           break;
-        case 'Navtara Compatibility':
+        case 'Navtara':
           final boyAstro =
               _currentResponse?['boy_astro_details'] as Map<String, dynamic>?;
           final girlAstro =
               _currentResponse?['girl_astro_details'] as Map<String, dynamic>?;
           if (boyAstro != null && girlAstro != null) {
+            String boyNak = boyAstro['nakshatra'] ?? '';
+            String girlNak = girlAstro['nakshatra'] ?? '';
+
+            // Normalize Nakshatra names to fix API 400 error
+            if (boyNak.toLowerCase().contains('ashvini')) boyNak = 'Ashwini';
+            if (girlNak.toLowerCase().contains('ashvini')) girlNak = 'Ashwini';
+
             final navtaraCtl = Get.find<NavtaraController>();
             navtaraCtl.initFromMatching(
               boyName: form['boyName'] ?? 'Boy',
-              boyNakshatra: boyAstro['nakshatra'] ?? '',
+              boyNakshatra: boyNak,
               girlName: form['girlName'] ?? 'Girl',
-              girlNakshatra: girlAstro['nakshatra'] ?? '',
+              girlNakshatra: girlNak,
             );
           }
+          // Do not set res = _currentResponse here, or it duplicates.
+          // Just break, as we don't need to fetch anything for this view (NavtaraController handles it)
           res = _currentResponse;
           break;
       }

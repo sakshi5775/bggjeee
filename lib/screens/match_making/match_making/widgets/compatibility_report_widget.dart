@@ -1198,11 +1198,15 @@ class CompatibilityReportWidget extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
               Spacing.w(4),
-              AutoTranslateText(
-                'Conclusion',
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: "#6F221E".toColor(),
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: AutoTranslateText(
+                  'Conclusion',
+                  style: MyTextTheme.largeBCB.copyWith(
+                    color: "#6F221E".toColor(),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

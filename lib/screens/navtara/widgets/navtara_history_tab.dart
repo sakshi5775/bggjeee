@@ -63,13 +63,6 @@ class NavtaraHistoryTab extends StatelessWidget {
                 _buildFilterChip('Transit', 'TRANSIT', maroon, isType: true),
                 Spacing.w(8),
                 _buildFilterChip('Timing', 'TIMING', maroon, isType: true),
-                Spacing.w(8),
-                _buildFilterChip(
-                  'Compatibility',
-                  'COMPATIBILITY',
-                  maroon,
-                  isType: true,
-                ),
               ],
             ),
           ),
@@ -87,7 +80,12 @@ class NavtaraHistoryTab extends StatelessWidget {
                   isType: false,
                 ),
                 Spacing.w(8),
-                _buildFilterChip('Pending', 'PENDING', maroon, isType: false),
+                _buildFilterChip(
+                  'Processing',
+                  'PROCESSING',
+                  maroon,
+                  isType: false,
+                ),
                 Spacing.w(8),
                 _buildFilterChip('Failed', 'FAILED', maroon, isType: false),
               ],
@@ -255,7 +253,7 @@ class NavtaraHistoryTab extends StatelessWidget {
     Color color = Colors.grey;
     if (status == 'COMPLETED') color = Colors.green;
     if (status == 'FAILED') color = Colors.red;
-    if (status == 'PENDING') color = Colors.orange;
+    if (status == 'PENDING' || status == 'PROCESSING') color = Colors.orange;
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),

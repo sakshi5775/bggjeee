@@ -25,9 +25,8 @@ class NavtaraTimingTab extends StatelessWidget {
           _buildTimingForm(context, maroon, activities),
           Spacing.h(20),
           Obx(() {
-            if (controller.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
-            }
+            // Loader is handled by Dialog
+
             final timing = controller.timing.value;
             if (timing == null) {
               return Center(
@@ -99,26 +98,32 @@ class NavtaraTimingTab extends StatelessWidget {
           ),
           Spacing.h(16),
 
-          // Display Date Range (Read-only info)
-          Container(
-            padding: EdgeInsets.all(12.w),
-            decoration: BoxDecoration(
-              color: maroon.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.calendar_today, color: maroon, size: 16.w),
-                Spacing.w(8),
-                Expanded(
-                  child: Obx(
-                    () => AutoTranslateText(
-                      'Analyzing for: ${DateFormat('dd MMM').format(controller.startDate.value)} - ${DateFormat('dd MMM yyyy').format(controller.endDate.value)}',
-                      style: MyTextTheme.smallBCN.copyWith(color: maroon),
+          // Display Date Range (Tap to change)
+          InkWell(
+            onTap: () => controller.selectDateRange(context),
+            borderRadius: BorderRadius.circular(12.r),
+            child: Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: maroon.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: maroon.withOpacity(0.1)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.calendar_today, color: maroon, size: 16.w),
+                  Spacing.w(8),
+                  Expanded(
+                    child: Obx(
+                      () => AutoTranslateText(
+                        'Analyzing for: ${DateFormat('dd MMM').format(controller.startDate.value)} - ${DateFormat('dd MMM yyyy').format(controller.endDate.value)}',
+                        style: MyTextTheme.smallBCN.copyWith(color: maroon),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  Icon(Icons.edit, color: maroon.withOpacity(0.5), size: 16.w),
+                ],
+              ),
             ),
           ),
         ],

@@ -8,52 +8,61 @@ import '../../../app_manager/my_text_theme.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/services/login_guard.dart';
 import '../../../widgets/auto_translate_text.dart';
+import '../controller/ai_pricing_controller.dart';
 
 class AstrologyToolWidget extends StatelessWidget {
   const AstrologyToolWidget({super.key});
 
+  // Added 'pricingKey' to map each tool to the backend pricing key.
   final List<Map<String, String>> _astrologyTools = const [
     {
       'label': 'Face\nReading',
       'route': AppRoutes.faceReading,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/face2.jpeg',
+      'pricingKey': 'face_reading',
     },
     {
       'label': 'Palm\nReading',
       'route': AppRoutes.palmReading,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/hand.jpeg',
+      'pricingKey': 'palmistry',
     },
     {
       'label': 'Vastu\nReading',
       'route': AppRoutes.vastuDashboard,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/vastu.jpeg',
+      'pricingKey': '',
     },
     {
       'label': 'Ramal\nShastra',
       'route': AppRoutes.ramalShastra,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/ramal.jpeg',
+      'pricingKey': 'ramal_shastra',
     },
     {
       'label': 'Writing\nAstrology',
       'route': AppRoutes.handwritingAstrology,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/writing.jpeg',
+      'pricingKey': 'handwriting_analysis',
     },
     {
       'label': 'Prashna\nKundli',
       'route': AppRoutes.prashnaKundali,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/PrashanKundli.jpg',
+      'pricingKey': 'prashna_kundali',
     },
     {
       'label': 'Tarot\nReading',
       'route': AppRoutes.tarotReading,
       'image':
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/TarotReading.png',
+      'pricingKey': '',
     },
   ];
 
@@ -71,13 +80,19 @@ class AstrologyToolWidget extends StatelessWidget {
           final label = tool['label']!;
           final route = tool['route']!;
           final imageUrl = tool['image']!;
-          return _buildAstrologyToolCard(label, route, imageUrl);
+          final pricingKey = tool['pricingKey'] ?? '';
+          return _buildAstrologyToolCard(label, route, imageUrl, pricingKey);
         },
       ),
     );
   }
 
-  Widget _buildAstrologyToolCard(String label, String route, String imageUrl) {
+  Widget _buildAstrologyToolCard(
+    String label,
+    String route,
+    String imageUrl,
+    String pricingKey,
+  ) {
     const maroon = Color(0xFF6F221E);
 
     Future<void> _requireLogin(
@@ -176,6 +191,8 @@ class AstrologyToolWidget extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // "Paid" badge overlay
+                    if (pricingKey.isNotEmpty) _buildPaidBadge(pricingKey),
                   ],
                 ),
               ),
@@ -206,5 +223,49 @@ class AstrologyToolWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildPaidBadge(String pricingKey) {
+    if (!Get.isRegistered<AiPricingController>()) {
+      return const SizedBox.shrink();
+    }
+    return Obx(() {
+      final controller = Get.find<AiPricingController>();
+      final pricing = controller.getPricingFor(pricingKey);
+      if (pricing == null) return const SizedBox.shrink();
+
+      final price = controller.getDisplayPrice(pricingKey);
+      final badgeText = price.isNotEmpty ? price : 'Paid';
+
+      return Positioned(
+        top: 4.h,
+        right: 4.w,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: ['#FF6B35'.toColor(), '#F38B3B'.toColor()],
+            ),
+            borderRadius: BorderRadius.circular(8.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 4,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Text(
+            badgeText,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 7.sp,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Poppins',
+            ),
+          ),
+        ),
+      );
+    });
   }
 }

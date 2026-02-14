@@ -4,6 +4,12 @@ import 'package:astrobharataiuser/screens/navtara/service/navtara_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/screens/navtara/widgets/navtara_loading_widget.dart';
 
 class NavtaraController extends BaseController
     with GetSingleTickerProviderStateMixin {
@@ -20,7 +26,7 @@ class NavtaraController extends BaseController
   // Input states
   final primaryNakshatra = Rxn<String>();
   final secondaryNakshatra = Rxn<String>();
-  final selectedAnalysisType = 'GENERAL'.obs;
+  final selectedAnalysisType = 'TRANSIT'.obs;
   final selectedActivity = 'MARRIAGE'.obs;
   final selectedLanguage = 'en'.obs;
   final fullName = "".obs;
@@ -161,77 +167,140 @@ class NavtaraController extends BaseController
     }
   }
 
-  Future<void> analyzeGeneral({String analysisType = 'GENERAL'}) async {
+  Future<void> analyzeGeneral({String analysisType = 'TRANSIT'}) async {
+    debugPrint('analyzeGeneral called with type: $analysisType');
+    debugPrint('Primary Nakshatra: ${primaryNakshatra.value}');
+
     if (primaryNakshatra.value == null || primaryNakshatra.value!.isEmpty) {
+      debugPrint('Error: Primary Nakshatra is missing!');
+      Get.snackbar(
+        'Error',
+        'Primary Nakshatra is missing. Please re-open from Kundli.',
+      );
       return;
     }
     try {
-      isLoading.value = true;
+      _showLoader('Analyzing Navtara...');
+      debugPrint('Calling analyzeNavtara API...');
       analysis.value = await _service.analyzeNavtara(
         janmaNakshatra: primaryNakshatra.value!,
         analysisType: analysisType,
         question: questionController.text.isNotEmpty
             ? questionController.text
             : null,
-        name: fullName.value.isNotEmpty ? fullName.value : null,
-        dateOfBirth: dateOfBirth.value.isNotEmpty ? dateOfBirth.value : null,
+        name: fullName.value.isNotEmpty ? fullName.value : 'User',
+        dateOfBirth: dateOfBirth.value.isNotEmpty
+            ? _formatDobToIso(dateOfBirth.value)
+            : null,
         currentDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
         language: _getLanguageName(selectedLanguage.value),
       );
+      debugPrint(
+        'analyzeNavtara API response received. Success: ${analysis.value != null}',
+      );
+
+      _hideLoader(); // Close loader before processing result UI
+
       if (analysis.value != null) {
         questionController.clear();
+      } else {
+        _showErrorDialog('Failed to generate analysis. Server might be busy.');
       }
     } catch (e) {
       debugPrint('Error in analyzeGeneral: $e');
-    } finally {
-      isLoading.value = false;
+      _hideLoader(); // Ensure loader is closed
+      _showErrorDialog('An unexpected error occurred. Please try again.');
     }
   }
 
   Future<void> analyzeSpecific(String type) async {
-    if (type == 'TIMING') {
-      onTabSelected(1);
-    } else {
-      await analyzeGeneral(analysisType: type);
-    }
+    debugPrint('analyzeSpecific called with type: $type');
+    // The user requested that the TIMING button in Analyze tab hits the ANALYZE API with type TIMING
+    // It should NOT redirect to the Timing Tab (which uses a different API)
+    await analyzeGeneral(analysisType: type);
   }
 
   Future<void> checkCompatibility() async {
+    debugPrint(
+      'checkCompatibility called with: ${primaryNakshatra.value} & ${secondaryNakshatra.value}',
+    );
     if (primaryNakshatra.value == null || secondaryNakshatra.value == null) {
+      debugPrint(
+        'Error: One or both Nakshatras are missing for compatibility.',
+      );
       return;
     }
     try {
-      isLoading.value = true;
+      _showLoader('Checking Compatibility...');
+      debugPrint('Calling checkCompatibility API...');
       compatibility.value = await _service.checkCompatibility(
         nakshatra1: primaryNakshatra.value!,
         nakshatra2: secondaryNakshatra.value!,
         relationshipType: 'ROMANTIC',
         language: _getLanguageName(selectedLanguage.value),
       );
+      debugPrint(
+        'checkCompatibility API response received. Success: ${compatibility.value != null}',
+      );
+
+      _hideLoader();
+
+      if (compatibility.value == null) {
+        _showErrorDialog('Failed to check compatibility.');
+      }
     } catch (e) {
       debugPrint('Error in checkCompatibility: $e');
-    } finally {
-      isLoading.value = false;
+      _hideLoader();
+      _showErrorDialog('An unexpected error occurred.');
     }
   }
 
   Future<void> findAuspiciousTiming() async {
+    debugPrint('findAuspiciousTiming called (Timing Tab Logic)');
+    debugPrint('Primary Nakshatra: ${primaryNakshatra.value}');
+    debugPrint('Activity: ${selectedActivity.value}');
+
     if (primaryNakshatra.value == null || primaryNakshatra.value!.isEmpty) {
+      debugPrint('Error: Primary Nakshatra is missing for Timing.');
+      Get.snackbar(
+        'Error',
+        'Primary Nakshatra is missing for Timing analysis.',
+      );
       return;
     }
     try {
-      isLoading.value = true;
+      _showLoader('Finding Auspicious Timing...');
+      debugPrint('Calling findTiming API...');
+
+      // Ensure startDate is not in the past as the API prevents this
+      DateTime sDate = startDate.value;
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      if (sDate.isBefore(today)) {
+        sDate = today;
+        startDate.value = today; // Sync UI
+      }
+
       timing.value = await _service.findTiming(
         janmaNakshatra: primaryNakshatra.value!,
         activityType: selectedActivity.value,
-        startDate: DateFormat('yyyy-MM-dd').format(startDate.value),
+        startDate: DateFormat('yyyy-MM-dd').format(sDate),
         endDate: DateFormat('yyyy-MM-dd').format(endDate.value),
         language: _getLanguageName(selectedLanguage.value),
       );
+      debugPrint(
+        'findTiming API response received. Success: ${timing.value != null}',
+      );
+
+      _hideLoader();
+
+      if (timing.value == null) {
+        _showErrorDialog('Failed to find timing dates. Server might be busy.');
+      }
     } catch (e) {
       debugPrint('Error in findAuspiciousTiming: $e');
-    } finally {
-      isLoading.value = false;
+      _hideLoader();
+      _showErrorDialog('An unexpected error occurred.');
     }
   }
 
@@ -334,21 +403,38 @@ class NavtaraController extends BaseController
     }
   }
 
-  Future<void> selectDate(BuildContext context, bool isStart) async {
-    final initialDate = isStart ? startDate.value : endDate.value;
-    final DateTime? picked = await showDatePicker(
+  Future<void> selectDateRange(BuildContext context) async {
+    final picked = await showDateRangePicker(
       context: context,
-      initialDate: initialDate,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
+      initialDateRange: DateTimeRange(
+        start: startDate.value,
+        end: endDate.value,
+      ),
     );
+
     if (picked != null) {
-      if (isStart) {
-        startDate.value = picked;
-      } else {
-        endDate.value = picked;
-      }
+      startDate.value = picked.start;
+      endDate.value = picked.end;
       findAuspiciousTiming();
+    }
+  }
+
+  String _formatDobToIso(String dob) {
+    if (dob.isEmpty) return dob;
+    try {
+      // Logic to handle dd/MM/yyyy to yyyy-MM-dd
+      if (dob.contains('/')) {
+        final parts = dob.split('/');
+        if (parts.length == 3) {
+          // Assume dd/MM/yyyy
+          return "${parts[2]}-${parts[1].padLeft(2, '0')}-${parts[0].padLeft(2, '0')}";
+        }
+      }
+      return dob;
+    } catch (e) {
+      return dob;
     }
   }
 
@@ -385,8 +471,74 @@ class NavtaraController extends BaseController
 
   final List<String> activityTypes = [
     'MARRIAGE',
-    'BUSINESS START',
+    'BUSINESS_START',
     'TRAVEL',
-    'PROPERTY PURCHASE',
+    'PROPERTY_PURCHASE',
   ];
+  /* Helper Methods */
+
+  void _showLoader(String message) {
+    if (Get.isDialogOpen == false) {
+      Get.dialog(
+        NavtaraLoadingWidget(message: message),
+        barrierDismissible: false,
+      );
+    }
+  }
+
+  void _hideLoader() {
+    // Only close if dialog is open (and it might be ours)
+    // To be safe, we check isDialogOpen.
+    // Ideally we would track if WE opened it, but for now this is standard GetX pattern.
+    if (Get.isDialogOpen == true) {
+      Get.back();
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    if (Get.isDialogOpen == true) {
+      Get.back(); // Close loader if open
+    }
+
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(24.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.error_outline, color: Colors.red, size: 48.w),
+              Spacing.h(16),
+              AutoTranslateText(
+                message,
+                style: MyTextTheme.mediumBCB.copyWith(
+                  color: '#3E2723'.toColor(),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Spacing.h(24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Get.back(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: "#F38B3B".toColor(),
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                  ),
+                  child: const AutoTranslateText('Close'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

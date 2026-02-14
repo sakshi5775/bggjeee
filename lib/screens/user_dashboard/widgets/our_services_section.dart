@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/screens/astrology_services/view/astrology_services_view.dart';
 import 'package:astrobharataiuser/screens/palm_reading/view/palm_reading_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/ComingSoonPage.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -20,26 +21,31 @@ class OurServicesSection extends BasePage<UserDashboardController> {
   // final String title;
   //const OurServicesSection({super.key, required this.title});
 
-  final List<(String, String)> _items = const [
-    ('Consult\nAstrologer', AppConstant.serviceConsult),
-    ('Generate\nKundli', AppConstant.serviceGenerateKundali),
-    ('Match\nMaking', AppConstant.serviceMatchMaking),
-    ('Numerology', AppConstant.serviceNumerology),
-    ('Panchang', AppConstant.servicePanchang),
-    ('Check\nHoroscope', AppConstant.horoscope),
-    ('Tarot\nReading', AppConstant.tarot),
-    ('Carrot\nAstrology', AppConstant.carrotAstrology),
-    ('Writing\nAstrology', AppConstant.writingAstrology),
-    ('Prashna\nKundli', AppConstant.prashnaKundali),
-    ('Face\nreading', AppConstant.serviceFaceReading),
-    ('Palm\nReading', AppConstant.servicePalmReading),
-    ('Ramal\nShastra', AppConstant.ramalShastra),
-    ('Vastu\nReading', AppConstant.vastu),
-    ('Life\nPredictions', AppConstant.lifePredictions),
-    ('Dosh', AppConstant.dosh),
-    ('Dasha', AppConstant.dasha),
-    ('KP\nAstrology', AppConstant.kpN),
-    ('Lal\nKitab', AppConstant.lalKitab),
+  // (label, iconPath, pricingKey)
+  final List<(String, String, String)> _items = const [
+    ('Consult\nAstrologer', AppConstant.serviceConsult, ''),
+    ('Generate\nKundli', AppConstant.serviceGenerateKundali, ''),
+    ('Match\nMaking', AppConstant.serviceMatchMaking, ''),
+    ('Numerology', AppConstant.serviceNumerology, ''),
+    ('Panchang', AppConstant.servicePanchang, ''),
+    ('Check\nHoroscope', AppConstant.horoscope, ''),
+    ('Tarot\nReading', AppConstant.tarot, ''),
+    ('Carrot\nAstrology', AppConstant.carrotAstrology, 'carrot_astrology'),
+    (
+      'Writing\nAstrology',
+      AppConstant.writingAstrology,
+      'handwriting_analysis',
+    ),
+    ('Prashna\nKundli', AppConstant.prashnaKundali, 'prashna_kundali'),
+    ('Face\nreading', AppConstant.serviceFaceReading, 'face_reading'),
+    ('Palm\nReading', AppConstant.servicePalmReading, 'palmistry'),
+    ('Ramal\nShastra', AppConstant.ramalShastra, 'ramal_shastra'),
+    ('Vastu\nReading', AppConstant.vastu, ''),
+    ('Life\nPredictions', AppConstant.lifePredictions, ''),
+    ('Dosh', AppConstant.dosh, ''),
+    ('Dasha', AppConstant.dasha, ''),
+    ('KP\nAstrology', AppConstant.kpN, ''),
+    ('Lal\nKitab', AppConstant.lalKitab, ''),
   ];
 
   @override
@@ -71,7 +77,8 @@ class OurServicesSection extends BasePage<UserDashboardController> {
               final item = _items[index];
               final label = item.$1;
               final iconPath = item.$2;
-              return _serviceButton(label, iconPath, maroon);
+              final pricingKey = item.$3;
+              return _serviceButton(label, iconPath, maroon, pricingKey);
             },
           ),
         ),
@@ -79,7 +86,12 @@ class OurServicesSection extends BasePage<UserDashboardController> {
     );
   }
 
-  Widget _serviceButton(String label, String iconPath, Color maroon) {
+  Widget _serviceButton(
+    String label,
+    String iconPath,
+    Color maroon,
+    String pricingKey,
+  ) {
     Future<void> _requireLogin(
       Future<void> Function() action, {
       String? message,
@@ -247,61 +259,115 @@ class OurServicesSection extends BasePage<UserDashboardController> {
         }
       },
       behavior: HitTestBehavior.opaque,
-      child: Container(
-        width: 70.w,
-        height: 80.h,
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(
-            color: "#DBCCA8".toColor().withOpacity(0.6),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: maroon.withOpacity(0.08),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 36.w,
-              height: 36.h,
-              child: iconPath.endsWith('.svg')
-                  ? SvgAssets(path: iconPath, width: 36.w, height: 36.h)
-                  : Image.asset(
-                      iconPath,
-                      width: 36.w,
-                      height: 36.h,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) =>
-                          Icon(Icons.star_outline, size: 28.w, color: maroon),
-                    ),
-            ),
-            SizedBox(height: 3.h),
-            Flexible(
-              child: AutoTranslateText(
-                label,
-                style: MyTextTheme.mediumBCB.copyWith(
-                  color: maroon,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 9.sp,
-                  height: 1.1,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: 70.w,
+            height: 80.h,
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.r),
+              border: Border.all(
+                color: "#DBCCA8".toColor().withOpacity(0.6),
+                width: 1,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: maroon.withOpacity(0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-          ],
-        ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 36.w,
+                  height: 36.h,
+                  child: iconPath.endsWith('.svg')
+                      ? SvgAssets(path: iconPath, width: 36.w, height: 36.h)
+                      : Image.asset(
+                          iconPath,
+                          width: 36.w,
+                          height: 36.h,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) => Icon(
+                            Icons.star_outline,
+                            size: 28.w,
+                            color: maroon,
+                          ),
+                        ),
+                ),
+                SizedBox(height: 3.h),
+                Flexible(
+                  child: AutoTranslateText(
+                    label,
+                    style: MyTextTheme.mediumBCB.copyWith(
+                      color: maroon,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 9.sp,
+                      height: 1.1,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Paid badge
+          if (pricingKey.isNotEmpty) _buildPaidBadge(pricingKey),
+        ],
       ),
     );
+  }
+
+  Widget _buildPaidBadge(String pricingKey) {
+    if (!Get.isRegistered<AiPricingController>()) {
+      return const SizedBox.shrink();
+    }
+    return Obx(() {
+      final pricingCtrl = Get.find<AiPricingController>();
+      final pricing = pricingCtrl.getPricingFor(pricingKey);
+      if (pricing == null) return const SizedBox.shrink();
+
+      final price = pricingCtrl.getDisplayPrice(pricingKey);
+      final badgeText = price.isNotEmpty ? price : 'Paid';
+
+      return Positioned(
+        top: -4.h,
+        right: -4.w,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: ['#FF6B35'.toColor(), '#F38B3B'.toColor()],
+            ),
+            borderRadius: BorderRadius.circular(6.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 3,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Text(
+            badgeText,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 7.sp,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Poppins',
+            ),
+          ),
+        ),
+      );
+    });
   }
 }
