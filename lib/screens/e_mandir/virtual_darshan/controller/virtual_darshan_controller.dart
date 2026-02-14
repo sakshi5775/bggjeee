@@ -119,6 +119,16 @@ class VirtualDarshanController extends GetxController
     return '';
   }
 
+  /// Check if a URL points to a video file.
+  static bool isVideoUrl(String url) {
+    final lower = url.toLowerCase();
+    return lower.endsWith('.mp4') ||
+        lower.endsWith('.mov') ||
+        lower.endsWith('.webm') ||
+        lower.endsWith('.avi') ||
+        lower.endsWith('.mkv');
+  }
+
   // Get total count of gods
   int get godsCount {
     if (godCategories.isEmpty) {

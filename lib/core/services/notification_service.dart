@@ -154,7 +154,7 @@ class NotificationService extends GetxService {
       debugPrint('[NotificationService] Notification clicked');
 
       final data = event.notification.additionalData ?? {};
-      NotificationHelper.handleNotificationNavigation(data);
+      // NotificationHelper.handleNotificationNavigation(data);
     });
   }
 

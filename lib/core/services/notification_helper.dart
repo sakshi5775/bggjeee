@@ -151,7 +151,7 @@ class NotificationHelper {
       onTap: (_) {
         // When user taps the in-app banner, navigate
         if (data != null && data.isNotEmpty) {
-          handleNotificationNavigation(data);
+          // handleNotificationNavigation(data);
         }
       },
     );
