@@ -120,6 +120,8 @@ class AppRoutes {
   // Carrot Astrology Routes
   static const String carrotAstrology = '/carrot-astrology';
   static const String carrotAstrologyForm = '/carrot-astrology-form';
+  static const String carrotAstrologySignSelection =
+      '/carrot-astrology-sign-selection';
   static const String carrotAstrologyResults = '/carrot-astrology-results';
   static const String carrotAstrologyHistory = '/carrot-astrology-history';
 

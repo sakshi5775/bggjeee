@@ -16,6 +16,7 @@ class ApiRepository {
     String? contentType,
     T Function(dynamic)? decoder,
     bool useAuthHeader = true,
+    Duration? timeout,
   }) async {
     return await apiClient.getApi<T>(
       endPoint,
@@ -23,6 +24,7 @@ class ApiRepository {
       contentType: contentType,
       decoder: decoder,
       useAuthHeader: useAuthHeader,
+      timeout: timeout,
     );
   }
 
@@ -31,11 +33,13 @@ class ApiRepository {
     String endPoint,
     dynamic body, {
     bool useAuthHeader = true,
+    Duration? timeout,
   }) async {
     return await apiClient.postApi(
       endPoint,
       body,
       useAuthHeader: useAuthHeader,
+      timeout: timeout,
     );
   }
 
@@ -96,18 +100,19 @@ class ApiRepository {
   //   );
   // }
 
-  /// Post data by form-data
   Future<http.Response> postDataByFormData({
     required String uri,
     required Map<String, String> fields,
     required Map<String, File?> files,
     Map<String, dynamic>? query,
+    Duration? timeout,
   }) async {
     return await apiClient.postDataByFormData(
       uri: uri,
       fields: fields,
       files: files,
       query: query,
+      timeout: timeout,
     );
   }
 

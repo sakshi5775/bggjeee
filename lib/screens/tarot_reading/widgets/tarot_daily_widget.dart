@@ -33,15 +33,13 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
       if (controller.selectedReadingType.value != 'daily') {
         return const SizedBox.shrink();
       }
-      
+
       final response = controller.dailyResponse.value;
       if (response == null) {
         // Show loading state
         return Container(
           color: Colors.black.withOpacity(0.7),
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: const Center(child: CircularProgressIndicator()),
         );
       }
 
@@ -64,7 +62,9 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
                       opacity: clampedValue,
                       child: Container(
                         margin: EdgeInsets.symmetric(horizontal: 16.w),
-                        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * 0.8,
+                        ),
                         decoration: BoxDecoration(
                           color: '#ede7c8'.toColor(),
                           borderRadius: BorderRadius.circular(20.r),
@@ -84,7 +84,8 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     AutoTranslateText(
                                       'Daily Guidance',
@@ -92,18 +93,32 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
                                         color: '#820B17'.toColor(),
                                       ),
                                     ),
-                                    IconButton(
-                                      onPressed: () => controller.closeReading(),
-                                      icon: Icon(
-                                        Icons.close,
-                                        color: '#820B17'.toColor(),
-                                        size: 24.w,
-                                      ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          onPressed: () =>
+                                              controller.exportToPdf(),
+                                          icon: Icon(
+                                            Icons.picture_as_pdf_rounded,
+                                            color: '#820B17'.toColor(),
+                                            size: 24.w,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          onPressed: () =>
+                                              controller.closeReading(),
+                                          icon: Icon(
+                                            Icons.close,
+                                            color: '#820B17'.toColor(),
+                                            size: 24.w,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
                                 Spacing.h(16),
-                                
+
                                 // Card front image (theme selectable)
                                 Center(
                                   child: TarotCardDisplayWidget(
@@ -112,19 +127,21 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
                                     height: 180.h,
                                   ),
                                 ),
-                                
+
                                 Spacing.h(16),
-                                
+
                                 Spacing.h(16),
-                                
+
                                 // Card name
                                 AutoTranslateText(
-                                  response.name ?? controller.selectedCard?.name ?? 'Unknown Card',
+                                  response.name ??
+                                      controller.selectedCard?.name ??
+                                      'Unknown Card',
                                   style: MyTextTheme.mediumBCN.copyWith(
                                     color: "#F38B3B".toColor(),
                                   ),
                                 ),
-                                
+
                                 Spacing.h(24),
                                 _buildCollapsibleSection(
                                   'health',
@@ -172,7 +189,9 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
                                         vertical: 12.h,
                                       ),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12.r),
+                                        borderRadius: BorderRadius.circular(
+                                          12.r,
+                                        ),
                                       ),
                                       elevation: 0,
                                       shadowColor: Colors.transparent,
@@ -214,9 +233,7 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-        ),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: ExpansionTile(
         key: ValueKey(key),
@@ -229,15 +246,15 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
         leading: Icon(icon, color: color, size: 24.w),
         title: AutoTranslateText(
           title,
-          style: MyTextTheme.mediumBCN.copyWith(
-            color: '#820B17'.toColor(),
-          ),
+          style: MyTextTheme.mediumBCN.copyWith(color: '#820B17'.toColor()),
         ),
         children: [
           Padding(
             padding: EdgeInsets.all(16.w),
             child: AutoTranslateText(
-              content.isNotEmpty ? content : 'No guidance available for this area.',
+              content.isNotEmpty
+                  ? content
+                  : 'No guidance available for this area.',
               style: MyTextTheme.smallBCN.copyWith(
                 color: '#820B17'.toColor(),
                 height: 1.5,
@@ -249,4 +266,3 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
     );
   }
 }
-

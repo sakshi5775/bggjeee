@@ -7,6 +7,10 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/core/services/pdf_generator_service.dart';
+import 'package:astrobharataiuser/data_model/pdf_metadata.dart';
+import 'package:astrobharataiuser/data_model/pdf_section.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -47,6 +51,14 @@ class PrashnaKundaliResultsView extends StatelessWidget {
               title: 'Your Reading',
               customActions: [
                 IconButton(
+                  onPressed: () => _exportToPdf(result),
+                  icon: Icon(
+                    Icons.picture_as_pdf_rounded,
+                    color: "#F38B3B".toColor(),
+                    size: 24.w,
+                  ),
+                ),
+                IconButton(
                   onPressed: () {
                     // Share functionality
                   },
@@ -82,6 +94,157 @@ class PrashnaKundaliResultsView extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _exportToPdf(PrashnaReading result) async {
+    final List<PdfSection> sections = [];
+
+    // 1. Header Info (Question & Context)
+    sections.add(
+      PdfSection(
+        title: 'Prashna Kundali Reading',
+        content: 'Question Asked: ${result.questionAsked}',
+        bulletPoints: [
+          'Location: ${result.city}',
+          'Time of Question: ${result.askTime != null ? DateFormat('dd MMM yyyy, hh:mm a').format(result.askTime!) : 'N/A'}',
+        ],
+        type: PdfSectionType.bullet,
+      ),
+    );
+
+    // 2. Divine Answer & Summary
+    sections.add(
+      PdfSection(
+        title: 'Divine Answer: ${result.answerToQuestion}',
+        content: result.summary,
+      ),
+    );
+
+    if (result.timingAdvice.isNotEmpty) {
+      sections.add(
+        PdfSection(title: 'Timing Advice', content: result.timingAdvice),
+      );
+    }
+
+    // 3. Astrological Insights
+    final insights = result.prashnaInsights;
+    if (insights != null) {
+      final List<String> insightPoints = [];
+      if (insights.lagnaAnalysis.isNotEmpty)
+        insightPoints.add('Lagna Analysis: ${insights.lagnaAnalysis}');
+      if (insights.moonPosition.isNotEmpty)
+        insightPoints.add('Moon Position: ${insights.moonPosition}');
+      if (insights.planetaryInfluence.isNotEmpty)
+        insightPoints.add(
+          'Planetary Influence: ${insights.planetaryInfluence}',
+        );
+      if (insights.horaLord.isNotEmpty)
+        insightPoints.add('Hora Lord: ${insights.horaLord}');
+      if (insights.currentDasha.isNotEmpty)
+        insightPoints.add('Current Dasha: ${insights.currentDasha}');
+
+      if (insightPoints.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Astrological Insights',
+            content:
+                'Detailed planetary influences at the time of your question:',
+            bulletPoints: insightPoints,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+    }
+
+    // 4. Detailed Interpretations
+    if (result.readings.isNotEmpty) {
+      for (var reading in result.readings) {
+        sections.add(
+          PdfSection(title: reading.category, content: reading.interpretation),
+        );
+      }
+    }
+
+    // 5. Remedies
+    final remedies = result.remedies;
+    if (remedies != null) {
+      if (remedies.mantras.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Recommended Mantras',
+            content: 'Sacred chants for your situation:',
+            bulletPoints: remedies.mantras,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+      if (remedies.gemstones.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Gemstone Suggestions',
+            content: 'Harmonious stones for your energy:',
+            bulletPoints: remedies.gemstones,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+      if (remedies.charities.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Charity & Donations',
+            content: 'Acts of giving to balance karmic influences:',
+            bulletPoints: remedies.charities,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+      if (remedies.behaviors.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Behavioral Advice',
+            content: 'Mindful actions and attitudes:',
+            bulletPoints: remedies.behaviors,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+      if (remedies.practicalAdvice.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Practical Recommendations',
+            content: 'Tangible steps to take:',
+            bulletPoints: remedies.practicalAdvice,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+      if (remedies.colors.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Colors to Wear',
+            content: 'Favorable colors for your current phase:',
+            bulletPoints: remedies.colors,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+    }
+
+    // User metadata
+    String? userName;
+    if (Get.isRegistered<UserDashboardController>()) {
+      userName = Get.find<UserDashboardController>().userName.value;
+    }
+
+    await PdfGeneratorService.generateAstrologyReport(
+      title: 'Prashna Kundali Report',
+      sections: sections,
+      metadata: PdfMetadata(
+        userName: userName,
+        generatedAt: DateTime.now(),
+        reportType: PdfReportType.prashna,
       ),
     );
   }

@@ -10,52 +10,113 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/zodiac_sign_selection_grid.dart';
 
 class PredictionsController extends BaseController {
   // Predictions table data (removed Cloud)
   // Coming Soon features hidden in UI: Lal Kitab Teva Type, Mahadasha Phala, Baby Names, Yantra, Jadi, Ask a question
   final predictionsTableData = [
-    {'left': 'Mangal Dosh', 'right': 'Daily Predictions', 'hasApi': true, 'hasApiRight': true},
-    {'left': 'Kaal Sarp Dosha', 'right': 'Sade Sati Life Report', 'hasApi': true, 'hasApiRight': true},
-    {'left': 'Lal Kitab Teva Type', 'right': 'Lal Kitab Debt', 'hasApi': false, 'hasApiRight': true},
-    {'left': 'Ascendant Prediction', 'right': 'Lal Kitab Remedies', 'hasApi': true, 'hasApiRight': true},
-    {'left': 'Gemstones Report', 'right': 'Planet Consideration', 'hasApi': true, 'hasApiRight': true},
-    {'left': 'Mahadasha Phala', 'right': 'Transit Today', 'hasApi': false, 'hasApiRight': true},
-    {'left': 'Prediction', 'right': 'Nakshatra Report', 'hasApi': true, 'hasApiRight': true},
-    {'left': 'Moon Sign', 'right': 'Baby Names', 'hasApi': true, 'hasApiRight': false},
-    {'left': 'Rudraksha', 'right': 'Moon Sign (Classical)', 'hasApi': true, 'hasApiRight': false}, // Moon Sign (Classical) commented out
+    {
+      'left': 'Mangal Dosh',
+      'right': 'Daily Predictions',
+      'hasApi': true,
+      'hasApiRight': true,
+    },
+    {
+      'left': 'Kaal Sarp Dosha',
+      'right': 'Sade Sati Life Report',
+      'hasApi': true,
+      'hasApiRight': true,
+    },
+    {
+      'left': 'Lal Kitab Teva Type',
+      'right': 'Lal Kitab Debt',
+      'hasApi': false,
+      'hasApiRight': true,
+    },
+    {
+      'left': 'Ascendant Prediction',
+      'right': 'Lal Kitab Remedies',
+      'hasApi': true,
+      'hasApiRight': true,
+    },
+    {
+      'left': 'Gemstones Report',
+      'right': 'Planet Consideration',
+      'hasApi': true,
+      'hasApiRight': true,
+    },
+    {
+      'left': 'Mahadasha Phala',
+      'right': 'Transit Today',
+      'hasApi': false,
+      'hasApiRight': true,
+    },
+    {
+      'left': 'Prediction',
+      'right': 'Nakshatra Report',
+      'hasApi': true,
+      'hasApiRight': true,
+    },
+    {
+      'left': 'Moon Sign',
+      'right': 'Baby Names',
+      'hasApi': true,
+      'hasApiRight': false,
+    },
+    {
+      'left': 'Rudraksha',
+      'right': 'Moon Sign (Classical)',
+      'hasApi': true,
+      'hasApiRight': false,
+    }, // Moon Sign (Classical) commented out
     {'left': 'Yantra', 'right': 'Jadi', 'hasApi': false, 'hasApiRight': false},
-    {'left': 'Numerology', 'right': 'Panchang', 'hasApi': true, 'hasApiRight': true},
-    {'left': 'Weekly Predictions', 'right': 'Monthly Predictions', 'hasApi': true, 'hasApiRight': true},
-    {'left': 'Yearly Predictions', 'right': 'Ask a question', 'hasApi': true, 'hasApiRight': false},
+    {
+      'left': 'Numerology',
+      'right': 'Panchang',
+      'hasApi': true,
+      'hasApiRight': true,
+    },
+    {
+      'left': 'Weekly Predictions',
+      'right': 'Monthly Predictions',
+      'hasApi': true,
+      'hasApiRight': true,
+    },
+    {
+      'left': 'Yearly Predictions',
+      'right': 'Ask a question',
+      'hasApi': true,
+      'hasApiRight': false,
+    },
   ];
 
   // Form data
   final formData = Rxn<Map<String, dynamic>>();
-  
+
   // Current tab index: 0 = TABLE VIEW, 1+ = specific tabs
   final selectedTabIndex = 0.obs;
-  
+
   // PageController for swipeable tabs
   late PageController pageController;
-  
+
   // ScrollController for tab bar (matches kundli_result_view)
   final ScrollController tabsScrollController = ScrollController();
   final Map<int, GlobalKey> tabKeys = {};
-  
+
   // Selected zodiac (1-12)
   final selectedZodiac = 1.obs;
   // Moon sign fetched from API when formData exists (no user selection needed)
   final moonSignFetchedFromApi = false.obs;
   Future<void>? _moonSignFetchFuture;
-  
+
   // Daily prediction day selection (today, tomorrow, yesterday)
   final selectedDay = 'today'.obs;
   final List<String> dayOptions = ['yesterday', 'today', 'tomorrow'];
-  
+
   // Selected year for yearly prediction (always use current year)
   final selectedYear = DateTime.now().year.obs;
-  
+
   // API data
   final numerologyData = Rxn<Map<String, dynamic>>();
   final dailyPredictionData = Rxn<Map<String, dynamic>>();
@@ -102,14 +163,14 @@ class PredictionsController extends BaseController {
     pageController = PageController(initialPage: 0);
     _loadData();
   }
-  
+
   @override
   void onClose() {
     pageController.dispose();
     tabsScrollController.dispose();
     super.onClose();
   }
-  
+
   // Handle page change from swipe
   void onPageChanged(int index) {
     selectedTabIndex.value = index;
@@ -118,25 +179,38 @@ class PredictionsController extends BaseController {
     // Daily (2), Weekly (3), Monthly (4), Yearly (5) - use Moon sign from API when formData exists
     if (index == 1 && numerologyData.value == null && _canFetchNumerology()) {
       fetchNumerologyPrediction(getNameFromFormData()!.trim());
-    } else if (index == 2 && dailyPredictionData.value == null && formData.value != null) {
+    } else if (index == 2 &&
+        dailyPredictionData.value == null &&
+        formData.value != null) {
       ensureMoonSignFromApi().then((_) => fetchDailyPrediction());
-    } else if (index == 3 && weeklyPredictionData.value == null && formData.value != null) {
+    } else if (index == 3 &&
+        weeklyPredictionData.value == null &&
+        formData.value != null) {
       ensureMoonSignFromApi().then((_) => fetchWeeklyPrediction());
-    } else if (index == 4 && monthlyPredictionData.value == null && formData.value != null) {
+    } else if (index == 4 &&
+        monthlyPredictionData.value == null &&
+        formData.value != null) {
       ensureMoonSignFromApi().then((_) => fetchMonthlyPrediction());
-    } else if (index == 5 && yearlyPredictionData.value == null && formData.value != null) {
+    } else if (index == 5 &&
+        yearlyPredictionData.value == null &&
+        formData.value != null) {
       ensureMoonSignFromApi().then((_) => fetchYearlyPrediction());
-    } else if (index == 6 && ascendantPredictionData.value == null) fetchAscendantPrediction();
-    else if (index == 7 && moonSignPredictionData.value == null) fetchMoonSignPrediction();
-    else if (index == 8 && nakshatraPredictionData.value == null) fetchNakshatraPrediction();
-    else if (index == 9 && panchangPredictionData.value == null) fetchPanchangPrediction();
-    else if (index == 10 && rudrakshaPredictionData.value == null) fetchRudrakshaPrediction();
+    } else if (index == 6 && ascendantPredictionData.value == null)
+      fetchAscendantPrediction();
+    else if (index == 7 && moonSignPredictionData.value == null)
+      fetchMoonSignPrediction();
+    else if (index == 8 && nakshatraPredictionData.value == null)
+      fetchNakshatraPrediction();
+    else if (index == 9 && panchangPredictionData.value == null)
+      fetchPanchangPrediction();
+    else if (index == 10 && rudrakshaPredictionData.value == null)
+      fetchRudrakshaPrediction();
     else if (index == 11 && formData.value != null) {
       if (lalKitabDebtsData.value == null) fetchLalKitabDebts();
       if (lalKitabRemediesData.value == null) fetchLalKitabRemedies();
     }
   }
-  
+
   // Navigate to specific tab (called from tab tap)
   void onTabSelected(int index) {
     if (pageController.hasClients) {
@@ -180,12 +254,22 @@ class PredictionsController extends BaseController {
       final latRaw = form['latitude'];
       final lonRaw = form['longitude'];
       final tzRaw = form['timezone'];
-      final latitude = latRaw is num ? latRaw.toDouble() : double.tryParse(latRaw?.toString() ?? '');
-      final longitude = lonRaw is num ? lonRaw.toDouble() : double.tryParse(lonRaw?.toString() ?? '');
-      final tz = tzRaw is num ? tzRaw.toDouble() : double.tryParse(tzRaw?.toString() ?? '');
+      final latitude = latRaw is num
+          ? latRaw.toDouble()
+          : double.tryParse(latRaw?.toString() ?? '');
+      final longitude = lonRaw is num
+          ? lonRaw.toDouble()
+          : double.tryParse(lonRaw?.toString() ?? '');
+      final tz = tzRaw is num
+          ? tzRaw.toDouble()
+          : double.tryParse(tzRaw?.toString() ?? '');
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         return;
       }
 
@@ -205,7 +289,8 @@ class PredictionsController extends BaseController {
           final zodiacNum = _zodiacNameToNumber(zodiacName);
           if (zodiacNum >= 1 && zodiacNum <= 12) {
             selectedZodiac.value = zodiacNum;
-            selectedLoveSignOne.value = zodiacNum; // Default love compatibility to Moon sign
+            selectedLoveSignOne.value =
+                zodiacNum; // Default love compatibility to Moon sign
             moonSignFetchedFromApi.value = true;
             debugPrint('Moon sign from API: $zodiacName (zodiac #$zodiacNum)');
           }
@@ -218,13 +303,22 @@ class PredictionsController extends BaseController {
 
   int _zodiacNameToNumber(String name) {
     const map = {
-      'aries': 1, 'taurus': 2, 'gemini': 3, 'cancer': 4,
-      'leo': 5, 'virgo': 6, 'libra': 7, 'scorpio': 8,
-      'sagittarius': 9, 'capricorn': 10, 'aquarius': 11, 'pisces': 12,
+      'aries': 1,
+      'taurus': 2,
+      'gemini': 3,
+      'cancer': 4,
+      'leo': 5,
+      'virgo': 6,
+      'libra': 7,
+      'scorpio': 8,
+      'sagittarius': 9,
+      'capricorn': 10,
+      'aquarius': 11,
+      'pisces': 12,
     };
     return map[name.toLowerCase().trim()] ?? 1;
   }
-  
+
   // Get name from form data
   String? getNameFromFormData() {
     if (formData.value == null) return null;
@@ -243,7 +337,11 @@ class PredictionsController extends BaseController {
   void navigateToTableView() {
     selectedTabIndex.value = 0;
     if (pageController.hasClients) {
-      pageController.animateToPage(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      pageController.animateToPage(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
@@ -253,7 +351,11 @@ class PredictionsController extends BaseController {
       case 'Numerology':
         selectedTabIndex.value = 1;
         if (pageController.hasClients) {
-          pageController.animateToPage(1, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          pageController.animateToPage(
+            1,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         }
         if (_canFetchNumerology()) {
           fetchNumerologyPrediction(getNameFromFormData()!.trim());
@@ -264,7 +366,11 @@ class PredictionsController extends BaseController {
       case 'Daily Predictions':
         selectedTabIndex.value = 2;
         if (pageController.hasClients) {
-          pageController.animateToPage(2, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          pageController.animateToPage(
+            2,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         }
         if (formData.value != null) {
           ensureMoonSignFromApi().then((_) => fetchDailyPrediction());
@@ -275,7 +381,11 @@ class PredictionsController extends BaseController {
       case 'Weekly Predictions':
         selectedTabIndex.value = 3;
         if (pageController.hasClients) {
-          pageController.animateToPage(3, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          pageController.animateToPage(
+            3,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         }
         if (formData.value != null) {
           ensureMoonSignFromApi().then((_) => fetchWeeklyPrediction());
@@ -286,7 +396,11 @@ class PredictionsController extends BaseController {
       case 'Monthly Predictions':
         selectedTabIndex.value = 4;
         if (pageController.hasClients) {
-          pageController.animateToPage(4, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          pageController.animateToPage(
+            4,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         }
         if (formData.value != null) {
           ensureMoonSignFromApi().then((_) => fetchMonthlyPrediction());
@@ -297,7 +411,11 @@ class PredictionsController extends BaseController {
       case 'Yearly Predictions':
         selectedTabIndex.value = 5;
         if (pageController.hasClients) {
-          pageController.animateToPage(5, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          pageController.animateToPage(
+            5,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         }
         if (formData.value != null) {
           ensureMoonSignFromApi().then((_) => fetchYearlyPrediction());
@@ -308,40 +426,66 @@ class PredictionsController extends BaseController {
       case 'Ascendant Prediction':
         selectedTabIndex.value = 6;
         if (pageController.hasClients) {
-          pageController.animateToPage(6, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          pageController.animateToPage(
+            6,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         }
         if (ascendantPredictionData.value == null) fetchAscendantPrediction();
         break;
       case 'Moon Sign':
         selectedTabIndex.value = 7;
         if (pageController.hasClients) {
-          pageController.animateToPage(7, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          pageController.animateToPage(
+            7,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         }
         if (moonSignPredictionData.value == null) fetchMoonSignPrediction();
         break;
       case 'Nakshatra Report':
         selectedTabIndex.value = 8;
         if (pageController.hasClients) {
-          pageController.animateToPage(8, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          pageController.animateToPage(
+            8,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         }
         if (nakshatraPredictionData.value == null) fetchNakshatraPrediction();
         break;
       case 'Panchang':
         selectedTabIndex.value = 9;
         if (pageController.hasClients) {
-          pageController.animateToPage(9, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          pageController.animateToPage(
+            9,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         }
         if (panchangPredictionData.value == null) fetchPanchangPrediction();
         break;
       case 'Rudraksha':
         if (formData.value == null) {
-          showInfoMessage(message: 'Please generate Kundli first to view Rudraksha suggestion.');
-          Get.toNamed(AppRoutes.kundliForm, arguments: {'targetRoute': AppRoutes.predictions});
+          showInfoMessage(
+            message:
+                'Please generate Kundli first to view Rudraksha suggestion.',
+          );
+          Get.toNamed(
+            AppRoutes.kundliForm,
+            arguments: {'targetRoute': AppRoutes.predictions},
+          );
           return;
         }
         selectedTabIndex.value = 10;
         if (pageController.hasClients) {
-          pageController.animateToPage(10, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          pageController.animateToPage(
+            10,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         }
         if (rudrakshaPredictionData.value == null) fetchRudrakshaPrediction();
         break;
@@ -355,13 +499,22 @@ class PredictionsController extends BaseController {
       case 'Lal Kitab Debt':
       case 'Lal Kitab Remedies':
         if (formData.value == null) {
-          showInfoMessage(message: 'Please generate Kundli first to view Lal Kitab report.');
-          Get.toNamed(AppRoutes.kundliForm, arguments: {'targetRoute': AppRoutes.predictions});
+          showInfoMessage(
+            message: 'Please generate Kundli first to view Lal Kitab report.',
+          );
+          Get.toNamed(
+            AppRoutes.kundliForm,
+            arguments: {'targetRoute': AppRoutes.predictions},
+          );
           return;
         }
         selectedTabIndex.value = 11;
         if (pageController.hasClients) {
-          pageController.animateToPage(11, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          pageController.animateToPage(
+            11,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         }
         if (lalKitabDebtsData.value == null) fetchLalKitabDebts();
         if (lalKitabRemediesData.value == null) fetchLalKitabRemedies();
@@ -378,7 +531,11 @@ class PredictionsController extends BaseController {
       case 'Prediction':
         selectedTabIndex.value = 2;
         if (pageController.hasClients) {
-          pageController.animateToPage(2, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          pageController.animateToPage(
+            2,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         }
         if (formData.value != null) {
           ensureMoonSignFromApi().then((_) => fetchDailyPrediction());
@@ -389,7 +546,11 @@ class PredictionsController extends BaseController {
       case 'Moon Sign (Classical)':
         selectedTabIndex.value = 7;
         if (pageController.hasClients) {
-          pageController.animateToPage(7, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          pageController.animateToPage(
+            7,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         }
         if (moonSignPredictionData.value == null) fetchMoonSignPrediction();
         break;
@@ -401,8 +562,13 @@ class PredictionsController extends BaseController {
 
   void _navigateToDosh() {
     if (formData.value == null) {
-      showInfoMessage(message: 'Please generate Kundli first to view Dosh report.');
-      Get.toNamed(AppRoutes.kundliForm, arguments: {'targetRoute': AppRoutes.dosh});
+      showInfoMessage(
+        message: 'Please generate Kundli first to view Dosh report.',
+      );
+      Get.toNamed(
+        AppRoutes.kundliForm,
+        arguments: {'targetRoute': AppRoutes.dosh},
+      );
       return;
     }
     Get.toNamed(AppRoutes.dosh, arguments: {'formData': formData.value});
@@ -410,8 +576,13 @@ class PredictionsController extends BaseController {
 
   void _navigateToSadeSati() {
     if (formData.value == null) {
-      showInfoMessage(message: 'Please generate Kundli first to view Sade Sati report.');
-      Get.toNamed(AppRoutes.kundliForm, arguments: {'targetRoute': AppRoutes.sadeSati});
+      showInfoMessage(
+        message: 'Please generate Kundli first to view Sade Sati report.',
+      );
+      Get.toNamed(
+        AppRoutes.kundliForm,
+        arguments: {'targetRoute': AppRoutes.sadeSati},
+      );
       return;
     }
     Get.toNamed(AppRoutes.sadeSati, arguments: {'formData': formData.value});
@@ -419,17 +590,30 @@ class PredictionsController extends BaseController {
 
   void _navigateToGemstonesReport() {
     if (formData.value == null) {
-      showInfoMessage(message: 'Please generate Kundli first to view Gemstones report.');
-      Get.toNamed(AppRoutes.kundliForm, arguments: {'targetRoute': AppRoutes.gemstonesReport});
+      showInfoMessage(
+        message: 'Please generate Kundli first to view Gemstones report.',
+      );
+      Get.toNamed(
+        AppRoutes.kundliForm,
+        arguments: {'targetRoute': AppRoutes.gemstonesReport},
+      );
       return;
     }
-    Get.toNamed(AppRoutes.gemstonesReport, arguments: {'formData': formData.value});
+    Get.toNamed(
+      AppRoutes.gemstonesReport,
+      arguments: {'formData': formData.value},
+    );
   }
 
   void _navigateToPlanetConsideration() {
     if (formData.value == null) {
-      showInfoMessage(message: 'Please generate Kundli first to view Planet Consideration.');
-      Get.toNamed(AppRoutes.kundliForm, arguments: {'targetRoute': AppRoutes.planets});
+      showInfoMessage(
+        message: 'Please generate Kundli first to view Planet Consideration.',
+      );
+      Get.toNamed(
+        AppRoutes.kundliForm,
+        arguments: {'targetRoute': AppRoutes.planets},
+      );
       return;
     }
     Get.toNamed(AppRoutes.planets, arguments: {'formData': formData.value});
@@ -437,11 +621,19 @@ class PredictionsController extends BaseController {
 
   void _navigateToTransitToday() {
     if (formData.value == null) {
-      showInfoMessage(message: 'Please generate Kundli first to view Transit Today.');
-      Get.toNamed(AppRoutes.kundliForm, arguments: {'targetRoute': AppRoutes.transitToday});
+      showInfoMessage(
+        message: 'Please generate Kundli first to view Transit Today.',
+      );
+      Get.toNamed(
+        AppRoutes.kundliForm,
+        arguments: {'targetRoute': AppRoutes.transitToday},
+      );
       return;
     }
-    Get.toNamed(AppRoutes.transitToday, arguments: {'formData': formData.value});
+    Get.toNamed(
+      AppRoutes.transitToday,
+      arguments: {'formData': formData.value},
+    );
   }
 
   // Tab names for display (index 0 = Table, 1-11 = prediction types)
@@ -481,7 +673,7 @@ class PredictionsController extends BaseController {
     // Prefill name from formData if available
     final nameFromForm = getNameFromFormData();
     final nameController = TextEditingController(text: nameFromForm ?? '');
-    
+
     Get.dialog(
       barrierDismissible: true,
       Dialog(
@@ -536,7 +728,11 @@ class PredictionsController extends BaseController {
                       }
                       Get.back();
                       if (pageController.hasClients) {
-                        pageController.animateToPage(1, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                        pageController.animateToPage(
+                          1,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
                       }
                       fetchNumerologyPrediction(nameController.text.trim());
                     },
@@ -565,7 +761,7 @@ class PredictionsController extends BaseController {
         ),
         child: Container(
           padding: EdgeInsets.all(24.w),
-          constraints: BoxConstraints(maxWidth: 400.w),
+          constraints: BoxConstraints(maxWidth: 400.w, maxHeight: 500.h),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -575,10 +771,12 @@ class PredictionsController extends BaseController {
                 children: [
                   AutoTranslateText(
                     'Select Zodiac Sign',
-                    style: MyTextTheme.largeBCB.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: "#6F221E".toColor(),
-                    ).merge(AppTypography.h2),
+                    style: MyTextTheme.largeBCB
+                        .copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: "#6F221E".toColor(),
+                        )
+                        .merge(AppTypography.h2),
                   ),
                   IconButton(
                     icon: Icon(Icons.close),
@@ -587,79 +785,41 @@ class PredictionsController extends BaseController {
                 ],
               ),
               Spacing.h(16),
-              Obx(() => DropdownButtonFormField<int>(
-                value: selectedZodiac.value,
-                decoration: InputDecoration(
-                  labelText: 'Zodiac Sign (1-12)',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                    borderSide: BorderSide(
-                      color: "#ed6f30".toColor(),
-                      width: 2,
-                    ),
-                  ),
-                ),
-                items: List.generate(12, (index) {
-                  return DropdownMenuItem<int>(
-                    value: index + 1,
-                    child: AutoTranslateText('${index + 1}. ${zodiacNames[index]}'),
-                  );
-                }),
-                onChanged: (value) {
-                  if (value != null) {
-                    selectedZodiac.value = value;
-                  }
-                },
-              )),
-              Spacing.h(24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Get.back(),
-                    child: AutoTranslateText(
-                      'Cancel',
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: "#6F221E".toColor(),
-                      ),
-                    ),
-                  ),
-                  Spacing.w(12),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.back();
-                      final pageIndex = type == 'daily' ? 2 : type == 'weekly' ? 3 : 4;
-                      if (pageController.hasClients) {
-                        pageController.animateToPage(pageIndex, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                      }
-                      switch (type) {
-                        case 'daily':
-                          fetchDailyPrediction();
-                          break;
-                        case 'weekly':
-                          fetchWeeklyPrediction();
-                          break;
-                        case 'monthly':
-                          fetchMonthlyPrediction();
-                          break;
+              Expanded(
+                child: SingleChildScrollView(
+                  child: ZodiacSignSelectionGrid(
+                    onSignSelected: (name) {
+                      final index = zodiacNames.indexOf(name);
+                      if (index != -1) {
+                        selectedZodiac.value = index + 1;
+                        Get.back();
+                        final pageIndex = type == 'daily'
+                            ? 2
+                            : type == 'weekly'
+                            ? 3
+                            : 4;
+                        if (pageController.hasClients) {
+                          pageController.animateToPage(
+                            pageIndex,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
+                        switch (type) {
+                          case 'daily':
+                            fetchDailyPrediction();
+                            break;
+                          case 'weekly':
+                            fetchWeeklyPrediction();
+                            break;
+                          case 'monthly':
+                            fetchMonthlyPrediction();
+                            break;
+                        }
                       }
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: "#ed6f30".toColor(),
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-                    ),
-                    child: AutoTranslateText(
-                      'Submit',
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
                   ),
-                ],
+                ),
               ),
             ],
           ),
@@ -678,7 +838,7 @@ class PredictionsController extends BaseController {
         ),
         child: Container(
           padding: EdgeInsets.all(24.w),
-          constraints: BoxConstraints(maxWidth: 400.w),
+          constraints: BoxConstraints(maxWidth: 400.w, maxHeight: 550.h),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -688,10 +848,12 @@ class PredictionsController extends BaseController {
                 children: [
                   AutoTranslateText(
                     'Yearly Prediction',
-                    style: MyTextTheme.largeBCB.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: "#6F221E".toColor(),
-                    ).merge(AppTypography.h2),
+                    style: MyTextTheme.largeBCB
+                        .copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: "#6F221E".toColor(),
+                        )
+                        .merge(AppTypography.h2),
                   ),
                   IconButton(
                     icon: Icon(Icons.close),
@@ -699,34 +861,6 @@ class PredictionsController extends BaseController {
                   ),
                 ],
               ),
-              Spacing.h(16),
-              Obx(() => DropdownButtonFormField<int>(
-                value: selectedZodiac.value,
-                decoration: InputDecoration(
-                  labelText: 'Zodiac Sign (1-12)',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                    borderSide: BorderSide(
-                      color: "#ed6f30".toColor(),
-                      width: 2,
-                    ),
-                  ),
-                ),
-                items: List.generate(12, (index) {
-                  return DropdownMenuItem<int>(
-                    value: index + 1,
-                    child: AutoTranslateText('${index + 1}. ${zodiacNames[index]}'),
-                  );
-                }),
-                onChanged: (value) {
-                  if (value != null) {
-                    selectedZodiac.value = value;
-                  }
-                },
-              )),
               Spacing.h(16),
               Container(
                 padding: EdgeInsets.all(12.w),
@@ -746,58 +880,48 @@ class PredictionsController extends BaseController {
                       size: 18.w,
                     ),
                     Spacing.w(8),
-                    Obx(() => AutoTranslateText(
-                      'Year: ${selectedYear.value}',
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: "#6F221E".toColor(),
-                      ).merge(AppTypography.h3),
-                    )),
+                    Obx(
+                      () => AutoTranslateText(
+                        'Year: ${selectedYear.value}',
+                        style: MyTextTheme.mediumBCB
+                            .copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: "#6F221E".toColor(),
+                            )
+                            .merge(AppTypography.h3),
+                      ),
+                    ),
                   ],
+                ),
+              ),
+              Spacing.h(16),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: ZodiacSignSelectionGrid(
+                    onSignSelected: (name) {
+                      final index = zodiacNames.indexOf(name);
+                      if (index != -1) {
+                        selectedZodiac.value = index + 1;
+                        Get.back();
+                        if (pageController.hasClients) {
+                          pageController.animateToPage(
+                            5,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
+                        fetchYearlyPrediction();
+                      }
+                    },
+                  ),
                 ),
               ),
               Spacing.h(8),
               AutoTranslateText(
                 'Note: Year is set to current year automatically.',
-                style: MyTextTheme.smallBCN.copyWith(
-                  color: Colors.grey,
-                ).merge(AppTypography.body2),
-              ),
-              Spacing.h(24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Get.back(),
-                    child: AutoTranslateText(
-                      'Cancel',
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: "#6F221E".toColor(),
-                      ),
-                    ),
-                  ),
-                  Spacing.w(12),
-                  ElevatedButton(
-                    onPressed: () {
-                      Get.back();
-                      if (pageController.hasClients) {
-                        pageController.animateToPage(5, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                      }
-                      fetchYearlyPrediction();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: "#ed6f30".toColor(),
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-                    ),
-                    child: AutoTranslateText(
-                      'Submit',
-                      style: MyTextTheme.mediumBCB.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
+                style: MyTextTheme.smallBCN
+                    .copyWith(color: Colors.grey)
+                    .merge(AppTypography.body2),
               ),
             ],
           ),
@@ -817,34 +941,130 @@ class PredictionsController extends BaseController {
     Get.dialog(
       barrierDismissible: true,
       Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
         child: GetX<PredictionsController>(
           builder: (c) => Container(
-          padding: EdgeInsets.all(24.w),
-          constraints: BoxConstraints(maxWidth: 400.w, maxHeight: 500.h),
-          child: Obx(() {
-            if (c.isLoadingLoveCompatibility.value) {
-              return Center(
-                child: Column(
+            padding: EdgeInsets.all(24.w),
+            constraints: BoxConstraints(maxWidth: 400.w, maxHeight: 500.h),
+            child: Obx(() {
+              if (c.isLoadingLoveCompatibility.value) {
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 32.w,
+                        height: 32.w,
+                        child: CircularProgressIndicator(
+                          color: "#ed6f30".toColor(),
+                          strokeWidth: 2,
+                        ),
+                      ),
+                      Spacing.h(16),
+                      AutoTranslateText(
+                        'Loading...',
+                        style: MyTextTheme.mediumBCN.copyWith(
+                          color: "#6F221E".toColor(),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              final data = c.loveCompatibilityData.value;
+              if (data != null) {
+                final predictions =
+                    data['data']?['daily_love_predictions'] as List<dynamic>? ??
+                    [];
+                final first = predictions.isNotEmpty
+                    ? predictions[0] as Map<String, dynamic>?
+                    : null;
+                final prediction = first?['prediction']?.toString() ?? '';
+                final combo = first?['sign_combination']?.toString() ?? '';
+                return Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      width: 32.w,
-                      height: 32.w,
-                      child: CircularProgressIndicator(color: "#ed6f30".toColor(), strokeWidth: 2),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        AutoTranslateText(
+                          'Love Compatibility',
+                          style: MyTextTheme.largeBCB
+                              .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: "#6F221E".toColor(),
+                              )
+                              .merge(AppTypography.h2),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.close),
+                          onPressed: () => Get.back(),
+                        ),
+                      ],
+                    ),
+                    if (combo.isNotEmpty) ...[
+                      Spacing.h(8),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 8.h,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: ['#FF8A3D'.toColor(), '#ed6f30'.toColor()],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        child: AutoTranslateText(
+                          combo,
+                          style: MyTextTheme.mediumBCB.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                    Spacing.h(12),
+                    Flexible(
+                      child: SingleChildScrollView(
+                        child: AutoTranslateText(
+                          prediction.isNotEmpty
+                              ? prediction
+                              : 'No compatibility data.',
+                          style: MyTextTheme.smallBCN.copyWith(
+                            color: "#6F221E".toColor(),
+                            height: 1.6,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                      ),
                     ),
                     Spacing.h(16),
-                    AutoTranslateText('Loading...', style: MyTextTheme.mediumBCN.copyWith(color: "#6F221E".toColor())),
+                    TextButton.icon(
+                      onPressed: () {
+                        c.loveCompatibilityData.value = null;
+                        _showLoveCompatibilityDialog();
+                      },
+                      icon: Icon(
+                        Icons.refresh,
+                        size: 18.w,
+                        color: "#ed6f30".toColor(),
+                      ),
+                      label: AutoTranslateText(
+                        'Check Another Pair',
+                        style: MyTextTheme.mediumBCB.copyWith(
+                          color: "#ed6f30".toColor(),
+                        ),
+                      ),
+                    ),
                   ],
-                ),
-              );
-            }
-            final data = c.loveCompatibilityData.value;
-            if (data != null) {
-              final predictions = data['data']?['daily_love_predictions'] as List<dynamic>? ?? [];
-              final first = predictions.isNotEmpty ? predictions[0] as Map<String, dynamic>? : null;
-              final prediction = first?['prediction']?.toString() ?? '';
-              final combo = first?['sign_combination']?.toString() ?? '';
+                );
+              }
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -852,89 +1072,121 @@ class PredictionsController extends BaseController {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      AutoTranslateText('Love Compatibility', style: MyTextTheme.largeBCB.copyWith(fontWeight: FontWeight.bold, color: "#6F221E".toColor()).merge(AppTypography.h2)),
-                      IconButton(icon: Icon(Icons.close), onPressed: () => Get.back()),
+                      AutoTranslateText(
+                        'Love Compatibility',
+                        style: MyTextTheme.largeBCB
+                            .copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: "#6F221E".toColor(),
+                            )
+                            .merge(AppTypography.h2),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () => Get.back(),
+                      ),
                     ],
                   ),
-                  if (combo.isNotEmpty) ...[
-                    Spacing.h(8),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: ['#FF8A3D'.toColor(), '#ed6f30'.toColor()], begin: Alignment.topLeft, end: Alignment.bottomRight),
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      child: AutoTranslateText(combo, style: MyTextTheme.mediumBCB.copyWith(color: Colors.white, fontWeight: FontWeight.w600)),
-                    ),
-                  ],
-                  Spacing.h(12),
-                  Flexible(
-                    child: SingleChildScrollView(
-                      child: AutoTranslateText(
-                        prediction.isNotEmpty ? prediction : 'No compatibility data.',
-                        style: MyTextTheme.smallBCN.copyWith(color: "#6F221E".toColor(), height: 1.6, fontSize: 12.sp),
-                      ),
+                  Spacing.h(8),
+                  AutoTranslateText(
+                    'Select two zodiac signs to check daily love compatibility.',
+                    style: MyTextTheme.smallBCN.copyWith(
+                      color: "#6F221E".toColor().withOpacity(0.8),
                     ),
                   ),
                   Spacing.h(16),
-                  TextButton.icon(
-                    onPressed: () {
-                      c.loveCompatibilityData.value = null;
-                      _showLoveCompatibilityDialog();
-                    },
-                    icon: Icon(Icons.refresh, size: 18.w, color: "#ed6f30".toColor()),
-                    label: AutoTranslateText('Check Another Pair', style: MyTextTheme.mediumBCB.copyWith(color: "#ed6f30".toColor())),
+                  Obx(
+                    () => DropdownButtonFormField<int>(
+                      value: c.selectedLoveSignOne.value,
+                      decoration: InputDecoration(
+                        labelText: 'Sign 1',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                          borderSide: BorderSide(
+                            color: "#ed6f30".toColor(),
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      items: List.generate(
+                        12,
+                        (i) => DropdownMenuItem<int>(
+                          value: i + 1,
+                          child: AutoTranslateText(zodiacNames[i]),
+                        ),
+                      ),
+                      onChanged: (v) {
+                        if (v != null) c.selectedLoveSignOne.value = v;
+                      },
+                    ),
+                  ),
+                  Spacing.h(12),
+                  Obx(
+                    () => DropdownButtonFormField<int>(
+                      value: c.selectedLoveSignTwo.value,
+                      decoration: InputDecoration(
+                        labelText: 'Sign 2',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                          borderSide: BorderSide(
+                            color: "#ed6f30".toColor(),
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      items: List.generate(
+                        12,
+                        (i) => DropdownMenuItem<int>(
+                          value: i + 1,
+                          child: AutoTranslateText(zodiacNames[i]),
+                        ),
+                      ),
+                      onChanged: (v) {
+                        if (v != null) c.selectedLoveSignTwo.value = v;
+                      },
+                    ),
+                  ),
+                  Spacing.h(24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Get.back(),
+                        child: AutoTranslateText(
+                          'Cancel',
+                          style: MyTextTheme.mediumBCN.copyWith(
+                            color: "#6F221E".toColor(),
+                          ),
+                        ),
+                      ),
+                      Spacing.w(12),
+                      ElevatedButton(
+                        onPressed: () => c.fetchLoveCompatibility(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: "#ed6f30".toColor(),
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24.w,
+                            vertical: 12.h,
+                          ),
+                        ),
+                        child: AutoTranslateText('Check Compatibility'),
+                      ),
+                    ],
                   ),
                 ],
               );
-            }
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AutoTranslateText('Love Compatibility', style: MyTextTheme.largeBCB.copyWith(fontWeight: FontWeight.bold, color: "#6F221E".toColor()).merge(AppTypography.h2)),
-                    IconButton(icon: Icon(Icons.close), onPressed: () => Get.back()),
-                  ],
-                ),
-                Spacing.h(8),
-                AutoTranslateText('Select two zodiac signs to check daily love compatibility.', style: MyTextTheme.smallBCN.copyWith(color: "#6F221E".toColor().withOpacity(0.8))),
-                Spacing.h(16),
-                Obx(() => DropdownButtonFormField<int>(
-                  value: c.selectedLoveSignOne.value,
-                  decoration: InputDecoration(labelText: 'Sign 1', border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r), borderSide: BorderSide(color: "#ed6f30".toColor(), width: 2))),
-                  items: List.generate(12, (i) => DropdownMenuItem<int>(value: i + 1, child: AutoTranslateText(zodiacNames[i]))),
-                  onChanged: (v) { if (v != null) c.selectedLoveSignOne.value = v; },
-                )),
-                Spacing.h(12),
-                Obx(() => DropdownButtonFormField<int>(
-                  value: c.selectedLoveSignTwo.value,
-                  decoration: InputDecoration(labelText: 'Sign 2', border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)), focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r), borderSide: BorderSide(color: "#ed6f30".toColor(), width: 2))),
-                  items: List.generate(12, (i) => DropdownMenuItem<int>(value: i + 1, child: AutoTranslateText(zodiacNames[i]))),
-                  onChanged: (v) { if (v != null) c.selectedLoveSignTwo.value = v; },
-                )),
-                Spacing.h(24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(onPressed: () => Get.back(), child: AutoTranslateText('Cancel', style: MyTextTheme.mediumBCN.copyWith(color: "#6F221E".toColor()))),
-                    Spacing.w(12),
-                    ElevatedButton(
-                      onPressed: () => c.fetchLoveCompatibility(),
-                      style: ElevatedButton.styleFrom(backgroundColor: "#ed6f30".toColor(), foregroundColor: Colors.white, padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h)),
-                      child: AutoTranslateText('Check Compatibility'),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          }),
+            }),
+          ),
         ),
       ),
-    ),
-  );
+    );
   }
 
   Future<void> fetchLoveCompatibility() async {
@@ -954,12 +1206,24 @@ class PredictionsController extends BaseController {
       if (data != null) {
         loveCompatibilityData.value = data;
       } else {
-        Get.snackbar('Error', 'Failed to fetch Love Compatibility. Please try again.', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red.withOpacity(0.8), colorText: Colors.white);
+        Get.snackbar(
+          'Error',
+          'Failed to fetch Love Compatibility. Please try again.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.withOpacity(0.8),
+          colorText: Colors.white,
+        );
       }
     } catch (e) {
       isLoadingLoveCompatibility.value = false;
       debugPrint('Error fetching Love Compatibility: $e');
-      Get.snackbar('Error', 'Failed to fetch Love Compatibility. Please try again.', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red.withOpacity(0.8), colorText: Colors.white);
+      Get.snackbar(
+        'Error',
+        'Failed to fetch Love Compatibility. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withOpacity(0.8),
+        colorText: Colors.white,
+      );
     }
   }
 
@@ -972,7 +1236,7 @@ class PredictionsController extends BaseController {
 
     try {
       isLoadingNumerology.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final lang = form['language'] as String? ?? 'en';
@@ -1027,7 +1291,20 @@ class PredictionsController extends BaseController {
   // Zodiac index (1-12) to Prokerala sign name
   String _zodiacToSign(int zodiac) {
     if (zodiac < 1 || zodiac > 12) return 'aries';
-    const signs = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
+    const signs = [
+      'aries',
+      'taurus',
+      'gemini',
+      'cancer',
+      'leo',
+      'virgo',
+      'libra',
+      'scorpio',
+      'sagittarius',
+      'capricorn',
+      'aquarius',
+      'pisces',
+    ];
     return signs[zodiac - 1];
   }
 
@@ -1109,7 +1386,7 @@ class PredictionsController extends BaseController {
   Future<void> fetchWeeklyPrediction() async {
     try {
       isLoadingWeekly.value = true;
-      
+
       final lang = formData.value?['language'] as String? ?? 'en';
 
       final data = await _kundliService.getWeeklyPrediction(
@@ -1149,7 +1426,7 @@ class PredictionsController extends BaseController {
   Future<void> fetchMonthlyPrediction() async {
     try {
       isLoadingMonthly.value = true;
-      
+
       final lang = formData.value?['language'] as String? ?? 'en';
 
       final data = await _kundliService.getMonthlyPrediction(
@@ -1189,7 +1466,7 @@ class PredictionsController extends BaseController {
   Future<void> fetchYearlyPrediction() async {
     try {
       isLoadingYearly.value = true;
-      
+
       final lang = formData.value?['language'] as String? ?? 'en';
 
       final data = await _kundliService.getYearlyPrediction(
@@ -1235,19 +1512,29 @@ class PredictionsController extends BaseController {
 
     try {
       isLoadingAscendant.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
       final latRaw = form['latitude'];
       final lonRaw = form['longitude'];
       final tzRaw = form['timezone'];
-      final latitude = latRaw is num ? latRaw.toDouble() : double.tryParse(latRaw?.toString() ?? '');
-      final longitude = lonRaw is num ? lonRaw.toDouble() : double.tryParse(lonRaw?.toString() ?? '');
-      final tz = tzRaw is num ? tzRaw.toDouble() : double.tryParse(tzRaw?.toString() ?? '');
+      final latitude = latRaw is num
+          ? latRaw.toDouble()
+          : double.tryParse(latRaw?.toString() ?? '');
+      final longitude = lonRaw is num
+          ? lonRaw.toDouble()
+          : double.tryParse(lonRaw?.toString() ?? '');
+      final tz = tzRaw is num
+          ? tzRaw.toDouble()
+          : double.tryParse(tzRaw?.toString() ?? '');
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Ascendant Prediction');
         isLoadingAscendant.value = false;
         Get.snackbar(
@@ -1306,19 +1593,29 @@ class PredictionsController extends BaseController {
 
     try {
       isLoadingMoonSign.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
       final latRaw = form['latitude'];
       final lonRaw = form['longitude'];
       final tzRaw = form['timezone'];
-      final latitude = latRaw is num ? latRaw.toDouble() : double.tryParse(latRaw?.toString() ?? '');
-      final longitude = lonRaw is num ? lonRaw.toDouble() : double.tryParse(lonRaw?.toString() ?? '');
-      final tz = tzRaw is num ? tzRaw.toDouble() : double.tryParse(tzRaw?.toString() ?? '');
+      final latitude = latRaw is num
+          ? latRaw.toDouble()
+          : double.tryParse(latRaw?.toString() ?? '');
+      final longitude = lonRaw is num
+          ? lonRaw.toDouble()
+          : double.tryParse(lonRaw?.toString() ?? '');
+      final tz = tzRaw is num
+          ? tzRaw.toDouble()
+          : double.tryParse(tzRaw?.toString() ?? '');
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Moon Sign Prediction');
         isLoadingMoonSign.value = false;
         Get.snackbar(
@@ -1377,19 +1674,29 @@ class PredictionsController extends BaseController {
 
     try {
       isLoadingNakshatra.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
       final latRaw = form['latitude'];
       final lonRaw = form['longitude'];
       final tzRaw = form['timezone'];
-      final latitude = latRaw is num ? latRaw.toDouble() : double.tryParse(latRaw?.toString() ?? '');
-      final longitude = lonRaw is num ? lonRaw.toDouble() : double.tryParse(lonRaw?.toString() ?? '');
-      final tz = tzRaw is num ? tzRaw.toDouble() : double.tryParse(tzRaw?.toString() ?? '');
+      final latitude = latRaw is num
+          ? latRaw.toDouble()
+          : double.tryParse(latRaw?.toString() ?? '');
+      final longitude = lonRaw is num
+          ? lonRaw.toDouble()
+          : double.tryParse(lonRaw?.toString() ?? '');
+      final tz = tzRaw is num
+          ? tzRaw.toDouble()
+          : double.tryParse(tzRaw?.toString() ?? '');
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Nakshatra Prediction');
         isLoadingNakshatra.value = false;
         Get.snackbar(
@@ -1448,19 +1755,29 @@ class PredictionsController extends BaseController {
 
     try {
       isLoadingPanchang.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
       final latRaw = form['latitude'];
       final lonRaw = form['longitude'];
       final tzRaw = form['timezone'];
-      final latitude = latRaw is num ? latRaw.toDouble() : double.tryParse(latRaw?.toString() ?? '');
-      final longitude = lonRaw is num ? lonRaw.toDouble() : double.tryParse(lonRaw?.toString() ?? '');
-      final tz = tzRaw is num ? tzRaw.toDouble() : double.tryParse(tzRaw?.toString() ?? '');
+      final latitude = latRaw is num
+          ? latRaw.toDouble()
+          : double.tryParse(latRaw?.toString() ?? '');
+      final longitude = lonRaw is num
+          ? lonRaw.toDouble()
+          : double.tryParse(lonRaw?.toString() ?? '');
+      final tz = tzRaw is num
+          ? tzRaw.toDouble()
+          : double.tryParse(tzRaw?.toString() ?? '');
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for Panchang Prediction');
         isLoadingPanchang.value = false;
         Get.snackbar(
@@ -1523,12 +1840,22 @@ class PredictionsController extends BaseController {
       final latRaw = form['latitude'];
       final lonRaw = form['longitude'];
       final tzRaw = form['timezone'];
-      final latitude = latRaw is num ? latRaw.toDouble() : double.tryParse(latRaw?.toString() ?? '');
-      final longitude = lonRaw is num ? lonRaw.toDouble() : double.tryParse(lonRaw?.toString() ?? '');
-      final tz = tzRaw is num ? tzRaw.toDouble() : double.tryParse(tzRaw?.toString() ?? '');
+      final latitude = latRaw is num
+          ? latRaw.toDouble()
+          : double.tryParse(latRaw?.toString() ?? '');
+      final longitude = lonRaw is num
+          ? lonRaw.toDouble()
+          : double.tryParse(lonRaw?.toString() ?? '');
+      final tz = tzRaw is num
+          ? tzRaw.toDouble()
+          : double.tryParse(tzRaw?.toString() ?? '');
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         isLoadingRudraksha.value = false;
         Get.snackbar(
           'Error',
@@ -1589,12 +1916,22 @@ class PredictionsController extends BaseController {
       final latRaw = form['latitude'];
       final lonRaw = form['longitude'];
       final tzRaw = form['timezone'];
-      final latitude = latRaw is num ? latRaw.toDouble() : double.tryParse(latRaw?.toString() ?? '');
-      final longitude = lonRaw is num ? lonRaw.toDouble() : double.tryParse(lonRaw?.toString() ?? '');
-      final tz = tzRaw is num ? tzRaw.toDouble() : double.tryParse(tzRaw?.toString() ?? '');
+      final latitude = latRaw is num
+          ? latRaw.toDouble()
+          : double.tryParse(latRaw?.toString() ?? '');
+      final longitude = lonRaw is num
+          ? lonRaw.toDouble()
+          : double.tryParse(lonRaw?.toString() ?? '');
+      final tz = tzRaw is num
+          ? tzRaw.toDouble()
+          : double.tryParse(tzRaw?.toString() ?? '');
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         isLoadingLalKitabDebts.value = false;
         return;
       }
@@ -1630,12 +1967,22 @@ class PredictionsController extends BaseController {
       final latRaw = form['latitude'];
       final lonRaw = form['longitude'];
       final tzRaw = form['timezone'];
-      final latitude = latRaw is num ? latRaw.toDouble() : double.tryParse(latRaw?.toString() ?? '');
-      final longitude = lonRaw is num ? lonRaw.toDouble() : double.tryParse(lonRaw?.toString() ?? '');
-      final tz = tzRaw is num ? tzRaw.toDouble() : double.tryParse(tzRaw?.toString() ?? '');
+      final latitude = latRaw is num
+          ? latRaw.toDouble()
+          : double.tryParse(latRaw?.toString() ?? '');
+      final longitude = lonRaw is num
+          ? lonRaw.toDouble()
+          : double.tryParse(lonRaw?.toString() ?? '');
+      final tz = tzRaw is num
+          ? tzRaw.toDouble()
+          : double.tryParse(tzRaw?.toString() ?? '');
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         isLoadingLalKitabRemedies.value = false;
         return;
       }
@@ -1659,4 +2006,3 @@ class PredictionsController extends BaseController {
     }
   }
 }
-

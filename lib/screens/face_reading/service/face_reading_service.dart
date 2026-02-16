@@ -62,7 +62,9 @@ class FaceReadingService {
       }
     }
 
-    final streamedResponse = await request.send();
+    final streamedResponse = await request.send().timeout(
+      const Duration(minutes: 5),
+    );
     return http.Response.fromStream(streamedResponse);
   }
 

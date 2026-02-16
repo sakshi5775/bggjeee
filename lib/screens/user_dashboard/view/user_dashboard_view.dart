@@ -15,7 +15,6 @@ import 'package:astrobharataiuser/screens/user_dashboard/widgets/astrology_tool_
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/media_hub_preview_widget.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/orders_controller.dart';
-import 'package:astrobharataiuser/screens/e_mandir/my_bookings/controller/my_bookings_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
@@ -37,9 +36,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import '../../../utils/app_colors.dart';
-import '../widgets/astrology_report_widget.dart';
 import '../widgets/chat_video_live_astrologer_widget.dart';
-import '../widgets/our_services_section.dart';
 import '../widgets/book_pooja_carousel_widget.dart';
 import '../widgets/courses_section_widget.dart';
 import '../widgets/kids_specialist_astrologers_widget.dart';
@@ -52,7 +49,6 @@ import '../widgets/our_services_carousel_widget.dart';
 import '../widgets/floating_astrologer_button.dart';
 import '../widgets/reports_tab_widget.dart';
 import '../widgets/horoscope_tab_widget.dart';
-import '../widgets/daily_astrologers_widget.dart';
 // import '../widgets/quote_of_the_day_widget.dart';
 import '../widgets/history_section_widget.dart';
 import '../../e_mandir/e_mandir_home/view/namaste_home_view.dart';
@@ -67,8 +63,6 @@ import 'package:astrobharataiuser/screens/ecommerce/view/ecommerce_home_view.dar
 import 'package:astrobharataiuser/screens/ecommerce/controller/ecommerce_home_controller.dart';
 import 'package:astrobharataiuser/screens/ai_chat/views/ai_chat_view.dart';
 import 'package:astrobharataiuser/screens/ai_chat/controllers/ai_chat_controller.dart';
-import '../widgets/reports_section_widget.dart';
-import '../widgets/digital_services_animated_widget.dart';
 import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
 
 class UserDashboardView extends BasePage<UserDashboardController> {

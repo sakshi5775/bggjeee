@@ -7,6 +7,10 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/core/services/pdf_generator_service.dart';
+import 'package:astrobharataiuser/data_model/pdf_metadata.dart';
+import 'package:astrobharataiuser/data_model/pdf_section.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -65,6 +69,14 @@ class FaceReadingResultsView extends StatelessWidget {
                   ),
                 ),
                 customActions: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.picture_as_pdf_rounded,
+                      color: '#6F221E'.toColor(),
+                      size: 22.w,
+                    ),
+                    onPressed: () => _exportToPdf(result),
+                  ),
                   IconButton(
                     icon: Icon(
                       Icons.history,
@@ -686,6 +698,225 @@ class FaceReadingResultsView extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _exportToPdf(FaceReadingData result) async {
+    final overview = result.detailedAnalysis?.overview;
+    final categories = result.detailedAnalysis?.categories;
+    final features = result.detailedAnalysis?.features;
+    final lists = result.detailedAnalysis?.lists;
+
+    final List<PdfSection> sections = [];
+
+    // 1. Summary Section
+    if (result.summary != null && result.summary!.isNotEmpty) {
+      sections.add(PdfSection(title: 'Summary', content: result.summary!));
+    }
+
+    // 2. Overall Analysis Section
+    if (overview != null) {
+      sections.add(
+        PdfSection(
+          title: 'Overall Analysis Score',
+          content: 'Your overall face analysis score is ${overview.score}/100.',
+          score: overview.score?.toDouble(),
+          bulletPoints: overview.tags,
+          type: PdfSectionType.bullet,
+        ),
+      );
+    }
+
+    if (result.overallReading != null && result.overallReading!.isNotEmpty) {
+      sections.add(
+        PdfSection(title: 'Direct Reading', content: result.overallReading!),
+      );
+    }
+
+    // 3-7. Categories (Personality, Career, Love, Wealth, Health)
+    final categoryItems = [
+      {
+        'title': 'Personality Traits',
+        'type': 'Personality',
+        'detail': categories?.personality,
+      },
+      {
+        'title': 'Career & Success',
+        'type': 'Career',
+        'detail': categories?.career,
+      },
+      {
+        'title': 'Love & Relationships',
+        'type': 'Love',
+        'detail': categories?.love,
+      },
+      {
+        'title': 'Wealth Indicators',
+        'type': 'Wealth',
+        'detail': categories?.wealth,
+      },
+      {
+        'title': 'Health & Vitality',
+        'type': 'Health',
+        'detail': categories?.health,
+      },
+    ];
+
+    for (var item in categoryItems) {
+      final detail = item['detail'] as FaceReadingCategoryDetail?;
+      if (detail == null) continue;
+
+      final title = item['title'] as String;
+      sections.add(
+        PdfSection(
+          title: title,
+          content:
+              'Score: ${detail.score}/100\n\nKey Insight:\n${detail.description ?? ''}',
+          score: detail.score?.toDouble(),
+        ),
+      );
+
+      if (detail.keywords != null && detail.keywords!.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: '${item['type']} Characteristics',
+            content: 'Core traits identified in this category:',
+            bulletPoints: detail.keywords,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+
+      // Include global lists in each category to match UI Detail Parity
+      if (lists != null) {
+        if (lists.strengths != null && lists.strengths!.isNotEmpty) {
+          sections.add(
+            PdfSection(
+              title: 'Strengths',
+              content: 'Positive qualities revealed:',
+              bulletPoints: lists.strengths,
+              type: PdfSectionType.bullet,
+            ),
+          );
+        }
+        if (lists.areasForGrowth != null && lists.areasForGrowth!.isNotEmpty) {
+          sections.add(
+            PdfSection(
+              title: 'Areas For Growth',
+              content: 'Potential for development:',
+              bulletPoints: lists.areasForGrowth,
+              type: PdfSectionType.bullet,
+            ),
+          );
+        }
+        if (lists.socialTraits != null && lists.socialTraits!.isNotEmpty) {
+          sections.add(
+            PdfSection(
+              title: 'Social Traits',
+              content: 'Interactions and relationships:',
+              bulletPoints: lists.socialTraits,
+              type: PdfSectionType.bullet,
+            ),
+          );
+        }
+        if (lists.recommendations != null &&
+            lists.recommendations!.isNotEmpty) {
+          sections.add(
+            PdfSection(
+              title: 'Recommendations',
+              content: 'Actionable advice:',
+              bulletPoints: lists.recommendations,
+              type: PdfSectionType.bullet,
+            ),
+          );
+        }
+      }
+    }
+
+    // 8. Facial Features Detailed Analysis
+    if (features != null) {
+      sections.add(
+        PdfSection(
+          title: 'Facial Features Analysis',
+          content:
+              'A deep-dive into each individual facial feature and its psychological correspondence.',
+          type: PdfSectionType.text,
+        ),
+      );
+
+      final featureList = [
+        {'title': 'Forehead', 'key': 'FOREHEAD', 'feature': features.forehead},
+        {'title': 'Eyes', 'key': 'EYES', 'feature': features.eyes},
+        {'title': 'Nose', 'key': 'NOSE', 'feature': features.nose},
+        {'title': 'Mouth', 'key': 'MOUTH_LIPS', 'feature': features.mouth},
+        {'title': 'Chin', 'key': 'CHIN_JAW', 'feature': features.chin},
+        {
+          'title': 'Face Shape',
+          'key': 'FACE_SHAPE',
+          'feature': features.faceShape,
+        },
+      ];
+
+      for (var item in featureList) {
+        final feature = item['feature'] as FaceReadingFeature?;
+        if (feature == null) continue;
+
+        final String title = item['title'] as String;
+        final String key = item['key'] as String;
+
+        final reading = result.readings.firstWhereOrNull(
+          (r) => r.category == key,
+        );
+
+        String detailContent =
+            'Rating: ${feature.rating}\nFinding: ${feature.text}';
+
+        final rInterpretation = reading?.interpretation;
+        if (rInterpretation != null) {
+          detailContent +=
+              '\n\nDetailed Interpretation:\n${rInterpretation.replaceAll('**', '')}';
+        }
+
+        final rIssue = reading?.issueDescription;
+        if (reading?.hasIssue == true && rIssue != null) {
+          detailContent += '\n\nAreas of Concern:\n$rIssue';
+        }
+
+        final rRemedy = reading?.remedy;
+        if (rRemedy != null && rRemedy.isNotEmpty) {
+          detailContent += '\n\nRemedy & Suggestions:\n$rRemedy';
+        }
+
+        sections.add(PdfSection(title: title, content: detailContent));
+      }
+    }
+
+    // 9. Key Remedies (Global Summary)
+    if (result.keyRemedies != null && result.keyRemedies!.isNotEmpty) {
+      sections.add(
+        PdfSection(
+          title: 'Summary of Remedies',
+          content: 'Key remedial actions for overall balance:',
+          bulletPoints: result.keyRemedies,
+          type: PdfSectionType.bullet,
+        ),
+      );
+    }
+
+    // Get user metadata
+    String? userName;
+    if (Get.isRegistered<UserDashboardController>()) {
+      userName = Get.find<UserDashboardController>().userName.value;
+    }
+
+    await PdfGeneratorService.generateAstrologyReport(
+      title: 'Face Reading Analysis',
+      sections: sections,
+      metadata: PdfMetadata(
+        userName: userName,
+        generatedAt: DateTime.now(),
+        reportType: PdfReportType.faceReading,
       ),
     );
   }

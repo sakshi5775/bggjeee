@@ -2,8 +2,8 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_main_controller.dart';
-import 'package:astrobharataiuser/screens/horoscope/view/horoscope_sign_selection_view.dart';
 import 'package:astrobharataiuser/screens/horoscope/widgets/daily_prediction_widget.dart';
+import 'package:astrobharataiuser/widgets/zodiac_sign_selection_grid.dart';
 import 'package:astrobharataiuser/screens/horoscope/widgets/weekly_prediction_widget.dart';
 import 'package:astrobharataiuser/screens/horoscope/widgets/monthly_prediction_widget.dart';
 import 'package:astrobharataiuser/screens/horoscope/widgets/yearly_prediction_widget.dart';
@@ -240,123 +240,14 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
             ],
           ),
           SizedBox(height: 8.h),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 12.w,
-              mainAxisSpacing: 12.h,
-              childAspectRatio: 0.85,
-            ),
-            itemCount: HoroscopeSignSelectionView.zodiacSigns.length,
-            itemBuilder: (context, index) {
-              final sign = HoroscopeSignSelectionView.zodiacSigns[index];
-              return _buildZodiacCard(
-                controller,
-                sign['name']!,
-                sign['image']!,
-              );
+          ZodiacSignSelectionGrid(
+            onSignSelected: (name) {
+              controller.selectedZodiac.value = name;
+              controller.selectedSign.value = name;
+              _fetchDataForCategory(controller);
             },
           ),
           SizedBox(height: 54.h),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildZodiacCard(
-    HoroscopeMainController controller,
-    String name,
-    String imagePath,
-  ) {
-    return GestureDetector(
-      onTap: () {
-        controller.selectedZodiac.value = name;
-        controller.selectedSign.value = name;
-        _fetchDataForCategory(controller);
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Flexible(
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(12.r),
-                  color: Colors.white,
-                  border: Border.all(
-                    color: AppColors.deepOrange.withOpacity(0.2),
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.deepOrange.withOpacity(0.15),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                      spreadRadius: 0,
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(12.w),
-                  child:
-                      (imagePath.startsWith('http://') ||
-                          imagePath.startsWith('https://'))
-                      ? Image.network(
-                          imagePath,
-                          fit: BoxFit.contain,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppColors.deepOrange,
-                                ),
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.star,
-                              size: 40.w,
-                              color: AppColors.deepOrange,
-                            );
-                          },
-                        )
-                      : Image.asset(
-                          imagePath,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.star,
-                              size: 40.w,
-                              color: AppColors.deepOrange,
-                            );
-                          },
-                        ),
-                ),
-              ),
-            ),
-          ),
-          Spacing.h(4),
-          AutoTranslateText(
-            name,
-            textAlign: TextAlign.center,
-            style: MyTextTheme.smallBCB
-                .copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 11.sp,
-                )
-                .merge(AppTypography.body2),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
         ],
       ),
     );

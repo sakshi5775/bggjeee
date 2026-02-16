@@ -1,77 +1,49 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/controller/carrot_astrology_controller.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/utils/carrot_astrology_colors.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
+import 'package:astrobharataiuser/screens/panchang/widgets/location_bottom_sheet_widget.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
+import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class CarrotAstrologyFormView extends StatelessWidget {
-  const CarrotAstrologyFormView({Key? key}) : super(key: key);
+class CarrotAstrologyFormView extends StatefulWidget {
+  const CarrotAstrologyFormView({super.key});
+
+  @override
+  State<CarrotAstrologyFormView> createState() =>
+      _CarrotAstrologyFormViewState();
+}
+
+class _CarrotAstrologyFormViewState extends State<CarrotAstrologyFormView> {
+  late final CarrotAstrologyController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(CarrotAstrologyController());
+  }
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(CarrotAstrologyController());
-    final isMobile = MediaQuery.of(context).size.width < 768;
-    final maxWidth = isMobile ? double.infinity : 600.w;
-
     return Container(
       decoration: BoxDecoration(gradient: AppColors.gradientBackground),
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        drawer: UserDashboardView.buildDrawer(context),
         body: Column(
           children: [
             const CommonHeader(title: 'Carrot Astrology'),
             Expanded(
               child: SingleChildScrollView(
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: maxWidth),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Spacing.h(12),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: AutoTranslateText(
-                            'Select Your Zodiac Sign',
-                            style: MyTextTheme.veryLargeBCB
-                                .copyWith(
-                                  color: '#3E2723'.toColor(),
-                                  fontWeight: FontWeight.bold,
-                                )
-                                .merge(AppTypography.h1),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: AutoTranslateText(
-                            'Choose your zodiac sign to discover your vegetable match',
-                            style: MyTextTheme.mediumBCN
-                                .copyWith(color: '#3E2723'.toColor())
-                                .merge(AppTypography.body1),
-                          ),
-                        ),
-                        Spacing.h(20),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: _buildZodiacSignGrid(controller),
-                        ),
-                        Spacing.h(24),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: _buildAnalyzeButton(controller),
-                        ),
-                        Spacing.h(24),
-                      ],
-                    ),
-                  ),
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 0.h),
+                child: _buildFormSection(),
               ),
             ),
           ],
@@ -80,173 +52,478 @@ class CarrotAstrologyFormView extends StatelessWidget {
     );
   }
 
-  Widget _buildZodiacSignGrid(CarrotAstrologyController controller) {
-    return Obx(() {
-      // Access observable directly in Obx scope
-      final selectedSign = controller.selectedZodiacSign.value;
-      return GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 12.w,
-          mainAxisSpacing: 12.h,
-          childAspectRatio: 0.85,
+  BoxDecoration _formCardDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16.r),
+      border: Border.all(
+        color: CarrotAstrologyColors.orangeColor.withOpacity(0.2),
+        width: 1.5,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: CarrotAstrologyColors.orangeColor.withOpacity(0.08),
+          blurRadius: 16,
+          offset: const Offset(0, 4),
         ),
-        itemCount: controller.zodiacSigns.length,
-        itemBuilder: (context, index) {
-          final sign = controller.zodiacSigns[index];
-          final isSelected = selectedSign == sign;
+        BoxShadow(
+          color: Colors.black.withOpacity(0.04),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    );
+  }
 
-          return GestureDetector(
-            onTap: () => controller.setSelectedZodiacSign(sign),
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: isSelected
-                    ? CarrotAstrologyColors.orangeGradient
-                    : null,
-                color: isSelected ? null : '#ffffff'.toColor(),
-                borderRadius: BorderRadius.circular(14.r),
-                border: Border.all(
-                  color: isSelected
-                      ? CarrotAstrologyColors.orangeColorDark
-                      : '#F5D7B8'.toColor(),
-                  width: isSelected ? 2 : 1.2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(isSelected ? 0.15 : 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(8.w),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AutoTranslateText(
-                      controller.getZodiacSymbol(sign),
-                      style: AppTypography.h1.copyWith(
-                        fontSize: 28.sp,
-                        color: isSelected
-                            ? '#ffffff'.toColor()
-                            : '#3E2723'.toColor(),
-                      ),
-                    ),
-                    Spacing.h(6),
-                    Flexible(
-                      child: AutoTranslateText(
-                        sign,
-                        style: MyTextTheme.smallBCB.copyWith(
-                          color: isSelected
-                              ? '#ffffff'.toColor()
-                              : '#3E2723'.toColor(),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12.sp,
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    if (isSelected) ...[
-                      Spacing.h(2),
-                      Icon(
-                        Icons.check_circle,
-                        color: '#ffffff'.toColor(),
-                        size: 16.w,
-                      ),
-                    ],
-                  ],
+  InputDecoration _inputDecoration({
+    required String hint,
+    required IconData icon,
+    Widget? suffix,
+  }) {
+    return InputDecoration(
+      isDense: true,
+      contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.w),
+      hintText: hint,
+      hintStyle: MyTextTheme.smallBCN.copyWith(
+        color: AppColors.textSecondary.withOpacity(0.6),
+        fontSize: 13.sp,
+      ),
+      prefixIcon: Padding(
+        padding: EdgeInsets.only(left: 12.w, right: 8.w),
+        child: Icon(icon, color: CarrotAstrologyColors.orangeColor, size: 20.w),
+      ),
+      suffixIcon: suffix,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(
+          color: CarrotAstrologyColors.orangeColor.withOpacity(0.2),
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(
+          color: CarrotAstrologyColors.orangeColor.withOpacity(0.2),
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        borderSide: BorderSide(
+          color: CarrotAstrologyColors.orangeColor,
+          width: 1.5,
+        ),
+      ),
+      filled: true,
+      fillColor: Colors.white,
+    );
+  }
+
+  Widget _buildFormSection() {
+    return Container(
+      decoration: _formCardDecoration(),
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: ShaderMask(
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (bounds) =>
+                  CarrotAstrologyColors.orangeGradient.createShader(bounds),
+              child: AutoTranslateText(
+                'Get your vegetable match prediction',
+                style: MyTextTheme.mediumBCB.copyWith(
+                  fontSize: 14.sp,
+                  color: Colors.white,
                 ),
               ),
             ),
-          );
-        },
+          ),
+          Spacing.h(16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildCompactField(
+                  controller: controller.dateController,
+                  hint: 'DOB (dd/mm/yyyy)',
+                  icon: Icons.calendar_today,
+                  readOnly: true,
+                  onTap: () => _showDatePicker(),
+                ),
+              ),
+              SizedBox(width: 10.w),
+              Expanded(child: _buildTimeField()),
+            ],
+          ),
+          Spacing.h(6),
+          Padding(
+            padding: EdgeInsets.only(left: 4.w),
+            child: AutoTranslateText(
+              'Accurate birth time improves prediction accuracy.',
+              style: MyTextTheme.smallBCN.copyWith(
+                color: AppColors.textSecondary.withOpacity(0.7),
+                fontSize: 11.sp,
+              ),
+            ),
+          ),
+          Spacing.h(12),
+          _buildCompactLocation(),
+          Spacing.h(12),
+          _buildLanguageDropdown(),
+          Spacing.h(20),
+          _buildSubmitButton(),
+          Spacing.h(24),
+          _buildOrDivider(),
+          Spacing.h(24),
+          _buildSelectSignSection(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOrDivider() {
+    return Row(
+      children: [
+        Expanded(
+          child: Divider(
+            color: CarrotAstrologyColors.orangeColor.withOpacity(0.3),
+            thickness: 1,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: AutoTranslateText(
+            'OR',
+            style: MyTextTheme.smallBCB.copyWith(
+              color: CarrotAstrologyColors.orangeColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Divider(
+            color: CarrotAstrologyColors.orangeColor.withOpacity(0.3),
+            thickness: 1,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSelectSignSection() {
+    return Column(
+      children: [
+        AutoTranslateText(
+          'If you already know your sign then proceed here',
+          textAlign: TextAlign.center,
+          style: MyTextTheme.smallBCN.copyWith(
+            color: AppColors.textSecondary,
+            fontSize: 13.sp,
+          ),
+        ),
+        Spacing.h(12),
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: CarrotAstrologyColors.orangeColor,
+              width: 1.5,
+            ),
+          ),
+          child: TextButton(
+            onPressed: () {
+              Get.toNamed(AppRoutes.carrotAstrologySignSelection);
+            },
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 16.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
+            child: AutoTranslateText(
+              'Select Zodiac Sign Directly',
+              style: MyTextTheme.mediumBCB.copyWith(
+                color: CarrotAstrologyColors.orangeColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTimeField() {
+    return Obx(() {
+      final t = controller.selectedTime.value;
+      String display = controller.timeController.text.isEmpty
+          ? ''
+          : TimePickerHelper.formatTime24To12Display(t.hour, t.minute);
+
+      return GestureDetector(
+        onTap: () => _showTimePicker(),
+        child: AbsorbPointer(
+          child: TextFormField(
+            controller: TextEditingController(text: display),
+            decoration: _inputDecoration(
+              hint: 'Time of Birth',
+              icon: Icons.access_time,
+              suffix: Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: CarrotAstrologyColors.orangeColor,
+                size: 22.w,
+              ),
+            ),
+            style: MyTextTheme.smallBCN.copyWith(
+              color: AppColors.textPrimary,
+              fontSize: 13.sp,
+            ),
+          ),
+        ),
       );
     });
   }
 
-  Widget _buildAnalyzeButton(CarrotAstrologyController controller) {
-    return Obx(
-      () => SizedBox(
-        width: double.infinity,
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: controller.isAnalyzing.value
-                ? null
-                : CarrotAstrologyColors.orangeGradient,
-            color: controller.isAnalyzing.value
-                ? CarrotAstrologyColors.orangeColor.withOpacity(0.6)
-                : null,
-            borderRadius: BorderRadius.circular(12.r),
-            boxShadow: [
-              BoxShadow(
-                color: CarrotAstrologyColors.orangeColorDark.withOpacity(0.35),
-                blurRadius: 6,
-                offset: const Offset(0, 3),
-              ),
-            ],
+  Widget _buildCompactField({
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+    bool readOnly = false,
+    VoidCallback? onTap,
+  }) {
+    return TextFormField(
+      controller: controller,
+      readOnly: readOnly,
+      onTap: onTap,
+      style: MyTextTheme.smallBCN.copyWith(
+        color: AppColors.textPrimary,
+        fontSize: 13.sp,
+      ),
+      decoration: _inputDecoration(hint: hint, icon: icon),
+    );
+  }
+
+  Widget _buildCompactLocation() {
+    return GestureDetector(
+      onTap: () => _showLocationBottomSheet(),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: CarrotAstrologyColors.orangeColor.withOpacity(0.2),
           ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: controller.isAnalyzing.value
-                  ? null
-                  : () => controller.analyzeCarrotAstrology(),
-              borderRadius: BorderRadius.circular(12.r),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
-                child: controller.isAnalyzing.value
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 20.w,
-                            height: 20.w,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                '#ffffff'.toColor(),
-                              ),
-                            ),
-                          ),
-                          Spacing.w(12),
-                          AutoTranslateText(
-                            'Analyzing...',
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: '#ffffff'.toColor(),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.auto_awesome,
-                            size: 20.w,
-                            color: '#ffffff'.toColor(),
-                          ),
-                          Spacing.w(8),
-                          AutoTranslateText(
-                            'Analyze Carrot Astrology',
-                            style: MyTextTheme.mediumBCB.copyWith(
-                              color: '#ffffff'.toColor(),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.location_on,
+              color: CarrotAstrologyColors.orangeColor,
+              size: 20.w,
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Obx(
+                () => AutoTranslateText(
+                  controller.selectedLocation.value.isEmpty
+                      ? 'Select Birth Place'
+                      : controller.selectedLocation.value,
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: controller.selectedLocation.value.isEmpty
+                        ? AppColors.textSecondary.withOpacity(0.6)
+                        : AppColors.textPrimary,
+                    fontSize: 13.sp,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
+            Obx(
+              () => controller.isFetchingLocation.value
+                  ? SizedBox(
+                      width: 16.w,
+                      height: 16.w,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          CarrotAstrologyColors.orangeColor,
+                        ),
+                      ),
+                    )
+                  : Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: CarrotAstrologyColors.orangeColor,
+                      size: 22.w,
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageDropdown() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 14.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: CarrotAstrologyColors.orangeColor.withOpacity(0.2),
+        ),
+      ),
+      child: Obx(
+        () => DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: controller.selectedLanguage.value,
+            isExpanded: true,
+            icon: Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: CarrotAstrologyColors.orangeColor,
+              size: 22.w,
+            ),
+            style: MyTextTheme.smallBCN.copyWith(
+              color: AppColors.textPrimary,
+              fontSize: 13.sp,
+            ),
+            hint: Row(
+              children: [
+                Icon(
+                  Icons.language,
+                  color: CarrotAstrologyColors.orangeColor,
+                  size: 20.w,
+                ),
+                SizedBox(width: 12.w),
+                AutoTranslateText(
+                  'Select Language',
+                  style: MyTextTheme.smallBCN.copyWith(
+                    color: AppColors.textSecondary.withOpacity(0.6),
+                    fontSize: 13.sp,
+                  ),
+                ),
+              ],
+            ),
+            items: controller.languages.entries.map((entry) {
+              return DropdownMenuItem<String>(
+                value: entry.key,
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.language,
+                      color: CarrotAstrologyColors.orangeColor,
+                      size: 20.w,
+                    ),
+                    SizedBox(width: 12.w),
+                    AutoTranslateText(
+                      entry.value,
+                      style: MyTextTheme.smallBCN.copyWith(
+                        color: AppColors.textPrimary,
+                        fontSize: 13.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                controller.selectedLanguage.value = value;
+              }
+            },
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return Obx(
+      () => Container(
+        decoration: BoxDecoration(
+          gradient: CarrotAstrologyColors.orangeGradient,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: CarrotAstrologyColors.orangeColor.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ElevatedButton(
+          onPressed: controller.isAnalyzing.value
+              ? null
+              : controller.submitForm,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            padding: EdgeInsets.symmetric(vertical: 16.h),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            elevation: 0,
+          ),
+          child: controller.isAnalyzing.value
+              ? SizedBox(
+                  height: 20.h,
+                  width: 20.w,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+              : AutoTranslateText(
+                  'Continue to get your zodiac sign',
+                  style: MyTextTheme.mediumBCB.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+        ),
+      ),
+    );
+  }
+
+  void _showDatePicker() {
+    controller.selectDate(context);
+  }
+
+  void _showTimePicker() {
+    controller.selectTime(context);
+  }
+
+  void _showLocationBottomSheet() {
+    Get.bottomSheet(
+      Container(
+        height: Get.height * 0.8,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24.r),
+            topRight: Radius.circular(24.r),
+          ),
+        ),
+        child: LocationBottomSheetWidget(
+          onCitySelected:
+              (city, state, country, [latitude, longitude, timezone]) {
+                controller.fetchLocationFromCity(
+                  city,
+                  state: state,
+                  country: country,
+                  latitude: latitude,
+                  longitude: longitude,
+                );
+                Get.back();
+              },
+          selectedCity: controller.selectedLocation.value,
+          onUseCurrentLocation: () => controller.useCurrentLocation(),
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
     );
   }
 }

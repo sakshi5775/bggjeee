@@ -28,6 +28,7 @@ class NavtaraService with ApiHelperMixin {
     String? language,
     String? name,
     String? dateOfBirth,
+    Duration? timeout,
   }) async {
     try {
       final Map<String, dynamic> body = {
@@ -43,9 +44,11 @@ class NavtaraService with ApiHelperMixin {
       debugPrint('Navtara Analyze Request: $body');
       debugPrint('Navtara Analyze URL: ${EndPoints.navtaraAnalyze}');
 
-      final response = await _apiClient
-          .postApi(EndPoints.navtaraAnalyze, body)
-          .timeout(const Duration(seconds: 60));
+      final response = await _apiClient.postApi(
+        EndPoints.navtaraAnalyze,
+        body,
+        timeout: timeout ?? const Duration(minutes: 5),
+      );
       debugPrint('Navtara Analyze Response Code: ${response.statusCode}');
       debugPrint('Navtara Analyze Response Body: ${response.body}');
 
@@ -68,6 +71,7 @@ class NavtaraService with ApiHelperMixin {
     String? name2,
     String relationshipType = 'ROMANTIC',
     String? language,
+    Duration? timeout,
   }) async {
     try {
       final Map<String, dynamic> body = {
@@ -82,9 +86,11 @@ class NavtaraService with ApiHelperMixin {
         'Navtara Compatibility URL: ${EndPoints.navtaraCompatibility}',
       );
 
-      final response = await _apiClient
-          .postApi(EndPoints.navtaraCompatibility, body)
-          .timeout(const Duration(seconds: 60));
+      final response = await _apiClient.postApi(
+        EndPoints.navtaraCompatibility,
+        body,
+        timeout: timeout ?? const Duration(minutes: 5),
+      );
       debugPrint('Navtara Compatibility Response Code: ${response.statusCode}');
       debugPrint('Navtara Compatibility Response Body: ${response.body}');
 
@@ -106,6 +112,7 @@ class NavtaraService with ApiHelperMixin {
     required String startDate, // Expected as YYYY-MM-DD
     required String endDate, // Expected as YYYY-MM-DD
     String? language,
+    Duration? timeout,
   }) async {
     try {
       final Map<String, dynamic> body = {
@@ -118,9 +125,11 @@ class NavtaraService with ApiHelperMixin {
       debugPrint('Navtara Timing Request: $body');
       debugPrint('Navtara Timing URL: ${EndPoints.navtaraTiming}');
 
-      final response = await _apiClient
-          .postApi(EndPoints.navtaraTiming, body)
-          .timeout(const Duration(seconds: 60));
+      final response = await _apiClient.postApi(
+        EndPoints.navtaraTiming,
+        body,
+        timeout: timeout ?? const Duration(minutes: 5),
+      );
       debugPrint('Navtara Timing Response Code: ${response.statusCode}');
       debugPrint('Navtara Timing Response Body: ${response.body}');
 

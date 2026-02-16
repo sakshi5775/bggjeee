@@ -11,6 +11,8 @@ import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/navtara/widgets/navtara_loading_widget.dart';
 
+import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
+
 class NavtaraController extends BaseController
     with GetSingleTickerProviderStateMixin {
   final NavtaraService _service = NavtaraService();
@@ -180,6 +182,14 @@ class NavtaraController extends BaseController
       return;
     }
     try {
+      // Check balance
+      if (Get.isRegistered<AiPricingController>()) {
+        final pricingCtrl = Get.find<AiPricingController>();
+        if (!pricingCtrl.hasSufficientBalance('navtara')) {
+          pricingCtrl.showInsufficientBalancePopup('navtara');
+          return;
+        }
+      }
       _showLoader('Analyzing Navtara...');
       debugPrint('Calling analyzeNavtara API...');
       analysis.value = await _service.analyzeNavtara(
@@ -194,6 +204,7 @@ class NavtaraController extends BaseController
             : null,
         currentDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
         language: _getLanguageName(selectedLanguage.value),
+        timeout: const Duration(minutes: 5),
       );
       debugPrint(
         'analyzeNavtara API response received. Success: ${analysis.value != null}',
@@ -231,6 +242,14 @@ class NavtaraController extends BaseController
       return;
     }
     try {
+      // Check balance
+      if (Get.isRegistered<AiPricingController>()) {
+        final pricingCtrl = Get.find<AiPricingController>();
+        if (!pricingCtrl.hasSufficientBalance('navtara')) {
+          pricingCtrl.showInsufficientBalancePopup('navtara');
+          return;
+        }
+      }
       _showLoader('Checking Compatibility...');
       debugPrint('Calling checkCompatibility API...');
       compatibility.value = await _service.checkCompatibility(
@@ -238,6 +257,7 @@ class NavtaraController extends BaseController
         nakshatra2: secondaryNakshatra.value!,
         relationshipType: 'ROMANTIC',
         language: _getLanguageName(selectedLanguage.value),
+        timeout: const Duration(minutes: 5),
       );
       debugPrint(
         'checkCompatibility API response received. Success: ${compatibility.value != null}',
@@ -269,6 +289,14 @@ class NavtaraController extends BaseController
       return;
     }
     try {
+      // Check balance
+      if (Get.isRegistered<AiPricingController>()) {
+        final pricingCtrl = Get.find<AiPricingController>();
+        if (!pricingCtrl.hasSufficientBalance('navtara')) {
+          pricingCtrl.showInsufficientBalancePopup('navtara');
+          return;
+        }
+      }
       _showLoader('Finding Auspicious Timing...');
       debugPrint('Calling findTiming API...');
 
@@ -287,6 +315,7 @@ class NavtaraController extends BaseController
         startDate: DateFormat('yyyy-MM-dd').format(sDate),
         endDate: DateFormat('yyyy-MM-dd').format(endDate.value),
         language: _getLanguageName(selectedLanguage.value),
+        timeout: const Duration(minutes: 5),
       );
       debugPrint(
         'findTiming API response received. Success: ${timing.value != null}',

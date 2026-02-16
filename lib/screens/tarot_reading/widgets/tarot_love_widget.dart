@@ -24,17 +24,17 @@ class TarotLoveWidget extends StatelessWidget {
       final loveType = controller.selectedLoveType.value;
       final hasTriangleResponse = controller.loveTriangleResponse.value != null;
       final triangleStep = controller.triangleSelectionStep.value;
-      
+
       // Hide if reading type is explicitly set to 'none' (close button clicked)
       if (readingType == 'none') {
         return const SizedBox.shrink();
       }
-      
+
       // Only show if reading type is 'love'
       if (readingType != 'love') {
         return const SizedBox.shrink();
       }
-      
+
       // For triangle: only show popup when all 3 cards are selected and response is ready
       if (loveType == 'triangle') {
         if (triangleStep != 'complete' || !hasTriangleResponse) {
@@ -43,7 +43,8 @@ class TarotLoveWidget extends StatelessWidget {
       }
 
       // Show confetti for made-for-each-other (positive match)
-      final showConfetti = controller.selectedLoveType.value == 'made-for-each-other' &&
+      final showConfetti =
+          controller.selectedLoveType.value == 'made-for-each-other' &&
           controller.madeForEachOtherResponse.value != null;
 
       return Stack(
@@ -55,9 +56,7 @@ class TarotLoveWidget extends StatelessWidget {
               controller.closeReading();
             },
             behavior: HitTestBehavior.opaque,
-            child: Container(
-              color: Colors.black.withOpacity(0.7),
-            ),
+            child: Container(color: Colors.black.withOpacity(0.7)),
           ),
           // Content - not tappable to close
           Center(
@@ -72,33 +71,47 @@ class TarotLoveWidget extends StatelessWidget {
                   child: Opacity(
                     opacity: clampedValue,
                     child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 16.w),
-                          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
-                          decoration: BoxDecoration(
-                            color: '#ede7c8'.toColor(),
-                            borderRadius: BorderRadius.circular(20.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
+                      margin: EdgeInsets.symmetric(horizontal: 16.w),
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * 0.8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: '#ede7c8'.toColor(),
+                        borderRadius: BorderRadius.circular(20.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
                           ),
-                          child: SingleChildScrollView(
-                            child: Padding(
-                              padding: EdgeInsets.all(24.w),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                        ],
+                      ),
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.all(24.w),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
+                                  AutoTranslateText(
+                                    'Love Reading',
+                                    style: MyTextTheme.largeBCB.copyWith(
+                                      color: '#820B17'.toColor(),
+                                    ),
+                                  ),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      AutoTranslateText(
-                                        'Love Reading',
-                                        style: MyTextTheme.largeBCB.copyWith(
+                                      IconButton(
+                                        onPressed: () =>
+                                            controller.exportToPdf(),
+                                        icon: Icon(
+                                          Icons.picture_as_pdf_rounded,
                                           color: '#820B17'.toColor(),
+                                          size: 24.w,
                                         ),
                                       ),
                                       GestureDetector(
@@ -117,98 +130,108 @@ class TarotLoveWidget extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                Spacing.h(16),
-                                // Love type selector
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: Row(
-                                    children: [
-                                      'in-depth',
-                                      'erotic',
-                                      'made-for-each-other',
-                                      'flirt',
-                                      'triangle',
-                                    ].map((type) {
-                                      final isSelected = controller.selectedLoveType.value == type;
-                                      return GestureDetector(
-                                        onTap: () {
-                                          controller.setLoveType(type);
-                                          controller.getLoveReading();
-                                        },
-                                        child: Container(
-                                          margin: EdgeInsets.only(right: 8.w),
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 12.w,
-                                            vertical: 8.h,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: isSelected
-                                                ? Colors.pink
-                                                : Colors.white,
-                                            borderRadius: BorderRadius.circular(8.r),
-                                            border: Border.all(
+                                ],
+                              ),
+                              Spacing.h(16),
+                              // Love type selector
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children:
+                                      [
+                                        'in-depth',
+                                        'erotic',
+                                        'made-for-each-other',
+                                        'flirt',
+                                        'triangle',
+                                      ].map((type) {
+                                        final isSelected =
+                                            controller.selectedLoveType.value ==
+                                            type;
+                                        return GestureDetector(
+                                          onTap: () {
+                                            controller.setLoveType(type);
+                                            controller.getLoveReading();
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.only(right: 8.w),
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 12.w,
+                                              vertical: 8.h,
+                                            ),
+                                            decoration: BoxDecoration(
                                               color: isSelected
                                                   ? Colors.pink
-                                                  : Colors.pink.withOpacity(0.5),
-                                              width: 2,
+                                                  : Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8.r),
+                                              border: Border.all(
+                                                color: isSelected
+                                                    ? Colors.pink
+                                                    : Colors.pink.withOpacity(
+                                                        0.5,
+                                                      ),
+                                                width: 2,
+                                              ),
+                                            ),
+                                            child: AutoTranslateText(
+                                              type
+                                                  .replaceAll('-', ' ')
+                                                  .toUpperCase(),
+                                              style: MyTextTheme.smallBCN
+                                                  .copyWith(
+                                                    color: isSelected
+                                                        ? Colors.white
+                                                        : Colors.pink,
+                                                    fontWeight: isSelected
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal,
+                                                    fontFamily: 'Poppins',
+                                                  ),
                                             ),
                                           ),
-                                          child: AutoTranslateText(
-                                            type.replaceAll('-', ' ').toUpperCase(),
-                                            style: MyTextTheme.smallBCN.copyWith(
-                                              color: isSelected
-                                                  ? Colors.white
-                                                  : Colors.pink,
-                                              fontWeight: isSelected
-                                                  ? FontWeight.bold
-                                                  : FontWeight.normal,
-                                              fontFamily: 'Poppins',
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
+                                        );
+                                      }).toList(),
                                 ),
-                                Spacing.h(24),
-                                _buildLoveContent(controller),
-                                Spacing.h(16),
-                                GestureDetector(
-                                  onTap: () {
-                                    debugPrint('🔴 Close button tapped');
-                                    controller.closeReading();
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 32.w,
-                                      vertical: 12.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.pink,
-                                      borderRadius: BorderRadius.circular(12.r),
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: AutoTranslateText(
-                                      'Close',
-                                      style: MyTextTheme.smallBCN.copyWith(
-                                        color: Colors.white,
-                                      ),
+                              ),
+                              Spacing.h(24),
+                              _buildLoveContent(controller),
+                              Spacing.h(16),
+                              GestureDetector(
+                                onTap: () {
+                                  debugPrint('🔴 Close button tapped');
+                                  controller.closeReading();
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 32.w,
+                                    vertical: 12.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.pink,
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: AutoTranslateText(
+                                    'Close',
+                                    style: MyTextTheme.smallBCN.copyWith(
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
+          ),
           // Confetti animation for positive matches
-          if (showConfetti)
-            const TarotConfettiWidget(),
+          if (showConfetti) const TarotConfettiWidget(),
         ],
       );
     });
@@ -222,9 +245,13 @@ class TarotLoveWidget extends StatelessWidget {
       if (loveType == 'triangle') {
         // Explicitly watch the response to ensure reactivity
         final response = controller.loveTriangleResponse.value;
-        debugPrint('🔍 Triangle Widget - isLoading: $isLoading, response: ${response != null ? "exists" : "null"}');
+        debugPrint(
+          '🔍 Triangle Widget - isLoading: $isLoading, response: ${response != null ? "exists" : "null"}',
+        );
         if (response != null) {
-          debugPrint('🔍 Triangle Response - self: ${response.self.name}, lover1: ${response.lover1.name}, lover2: ${response.lover2.name}');
+          debugPrint(
+            '🔍 Triangle Response - self: ${response.self.name}, lover1: ${response.lover1.name}, lover2: ${response.lover2.name}',
+          );
         }
         // Show loading if currently loading API
         if (isLoading) {
@@ -237,7 +264,9 @@ class TarotLoveWidget extends StatelessWidget {
         }
         // Response is available, show the content
         // Check if response has valid data
-        if (response.self.name.isEmpty && response.lover1.name.isEmpty && response.lover2.name.isEmpty) {
+        if (response.self.name.isEmpty &&
+            response.lover1.name.isEmpty &&
+            response.lover2.name.isEmpty) {
           debugPrint('⚠️ Triangle Response has empty data');
           return const SizedBox.shrink(); // Don't show empty response
         }
@@ -247,25 +276,37 @@ class TarotLoveWidget extends StatelessWidget {
         if (response == null) {
           return const Center(child: CircularProgressIndicator());
         }
-        return _buildSimpleLoveContent(response.name ?? controller.selectedCard?.name ?? 'Unknown Card', response.description);
+        return _buildSimpleLoveContent(
+          response.name ?? controller.selectedCard?.name ?? 'Unknown Card',
+          response.description,
+        );
       } else if (loveType == 'erotic') {
         final response = controller.eroticLoveResponse.value;
         if (response == null) {
           return const Center(child: CircularProgressIndicator());
         }
-        return _buildSimpleLoveContent(response.name ?? controller.selectedCard?.name ?? 'Unknown Card', response.description);
+        return _buildSimpleLoveContent(
+          response.name ?? controller.selectedCard?.name ?? 'Unknown Card',
+          response.description,
+        );
       } else if (loveType == 'made-for-each-other') {
         final response = controller.madeForEachOtherResponse.value;
         if (response == null) {
           return const Center(child: CircularProgressIndicator());
         }
-        return _buildSimpleLoveContent(response.name ?? controller.selectedCard?.name ?? 'Unknown Card', response.description);
+        return _buildSimpleLoveContent(
+          response.name ?? controller.selectedCard?.name ?? 'Unknown Card',
+          response.description,
+        );
       } else if (loveType == 'flirt') {
         final response = controller.flirtReadingResponse.value;
         if (response == null) {
           return const Center(child: CircularProgressIndicator());
         }
-        return _buildSimpleLoveContent(response.name ?? controller.selectedCard?.name ?? 'Unknown Card', response.description);
+        return _buildSimpleLoveContent(
+          response.name ?? controller.selectedCard?.name ?? 'Unknown Card',
+          response.description,
+        );
       }
 
       return const SizedBox.shrink();
@@ -274,18 +315,18 @@ class TarotLoveWidget extends StatelessWidget {
 
   Widget _buildSimpleLoveContent(String cardName, String description) {
     final controller = Get.find<TarotController>();
-    
+
     return Obx(() {
       final response = controller.selectedLoveType.value == 'in-depth'
           ? controller.inDepthLoveResponse.value
           : controller.selectedLoveType.value == 'erotic'
-              ? controller.eroticLoveResponse.value
-              : controller.selectedLoveType.value == 'made-for-each-other'
-                  ? controller.madeForEachOtherResponse.value
-                  : controller.flirtReadingResponse.value;
-      
+          ? controller.eroticLoveResponse.value
+          : controller.selectedLoveType.value == 'made-for-each-other'
+          ? controller.madeForEachOtherResponse.value
+          : controller.flirtReadingResponse.value;
+
       if (response == null) return const SizedBox.shrink();
-      
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -297,9 +338,9 @@ class TarotLoveWidget extends StatelessWidget {
               height: 180.h,
             ),
           ),
-          
+
           Spacing.h(16),
-          
+
           // Card back image (theme selectable - global theme applies)
           Center(
             child: TarotCardBackDisplayWidget(
@@ -308,19 +349,17 @@ class TarotLoveWidget extends StatelessWidget {
               height: 180.h,
             ),
           ),
-          
+
           Spacing.h(16),
-          
+
           // Card name
           AutoTranslateText(
             cardName,
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: "#F38B3B".toColor(),
-            ),
+            style: MyTextTheme.mediumBCN.copyWith(color: "#F38B3B".toColor()),
           ),
-          
+
           Spacing.h(16),
-          
+
           // Description
           Container(
             padding: EdgeInsets.all(16.w),
@@ -329,9 +368,7 @@ class TarotLoveWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: AutoTranslateText(
-              description.isNotEmpty 
-                  ? description 
-                  : 'No description available',
+              description.isNotEmpty ? description : 'No description available',
               style: MyTextTheme.smallBCN.copyWith(
                 color: '#820B17'.toColor(),
                 height: 1.5,
@@ -367,28 +404,24 @@ class TarotLoveWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: Colors.pink.withOpacity(0.3),
-        ),
+        border: Border.all(color: Colors.pink.withOpacity(0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AutoTranslateText(
             '$title: $cardName',
-            style: MyTextTheme.mediumBCN.copyWith(
-              color: Colors.pink,
-            ),
+            style: MyTextTheme.mediumBCN.copyWith(color: Colors.pink),
           ),
           Spacing.h(8),
-          
+
           // Card image (theme selectable)
           TarotCardDisplayWidget(
             cardImage: card?.cardImage,
             width: 100.w,
             height: 150.h,
           ),
-          
+
           Spacing.h(8),
           if (traits.isNotEmpty) ...[
             Wrap(
@@ -403,9 +436,7 @@ class TarotLoveWidget extends StatelessWidget {
                   ),
                   child: AutoTranslateText(
                     trait.toString(),
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: Colors.pink,
-                    ),
+                    style: MyTextTheme.smallBCN.copyWith(color: Colors.pink),
                   ),
                 );
               }).toList(),
@@ -424,4 +455,3 @@ class TarotLoveWidget extends StatelessWidget {
     );
   }
 }
-

@@ -64,6 +64,13 @@ class AstrologyToolWidget extends StatelessWidget {
           'https://astrobharatai.s3.ap-south-1.amazonaws.com/Scanner+Slider/TarotReading.png',
       'pricingKey': '',
     },
+    {
+      'label': 'Carrot\nAstrology',
+      'route': AppRoutes.carrotAstrology,
+      'image':
+          'https://astrobharatai.s3.ap-south-1.amazonaws.com/Astro+Service/carrotAstro.png',
+      'pricingKey': 'carrot_astrology',
+    },
   ];
 
   @override

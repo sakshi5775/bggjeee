@@ -9,6 +9,10 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/core/services/pdf_generator_service.dart';
+import 'package:astrobharataiuser/data_model/pdf_metadata.dart';
+import 'package:astrobharataiuser/data_model/pdf_section.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -67,6 +71,14 @@ class CarrotAstrologyResultsView extends StatelessWidget {
               showCart: false,
               showSearch: false,
               customActions: [
+                IconButton(
+                  onPressed: () => _exportToPdf(result),
+                  icon: Icon(
+                    Icons.picture_as_pdf_rounded,
+                    color: '#6F221E'.toColor(),
+                    size: 24.w,
+                  ),
+                ),
                 IconButton(
                   icon: Icon(
                     Icons.history,
@@ -1051,6 +1063,124 @@ class CarrotAstrologyResultsView extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _exportToPdf(CarrotAstrologyData result) async {
+    final List<PdfSection> sections = [];
+
+    // 1. Zodiac Info
+    if (result.zodiacInfo != null) {
+      final info = result.zodiacInfo!;
+      String content = 'Zodiac Sign: ${info.sign ?? 'N/A'}\n';
+      if (info.rulingPlanet != null)
+        content += 'Ruling Planet: ${info.rulingPlanet}\n';
+      if (info.element != null) content += 'Element: ${info.element}\n';
+
+      sections.add(
+        PdfSection(
+          title: 'Your Zodiac Profile',
+          content: content,
+          bulletPoints: info.traits,
+          type: info.traits != null && info.traits!.isNotEmpty
+              ? PdfSectionType.bullet
+              : PdfSectionType.text,
+        ),
+      );
+
+      if (info.vegetableEssence != null) {
+        sections.add(
+          PdfSection(
+            title: 'Your Vegetable Essence',
+            content: info.vegetableEssence!,
+          ),
+        );
+      }
+    }
+
+    // 2. Vegetable Match
+    if (result.vegetableMatch != null) {
+      sections.add(
+        PdfSection(
+          title:
+              'Your Vegetable Match: ${result.vegetableMatch!.name ?? 'N/A'}',
+          content:
+              '${result.vegetableMatch!.essenceDescription ?? ''}\n\nSymbolism: ${result.vegetableMatch!.symbolism ?? ''}',
+        ),
+      );
+    }
+
+    // 3. Remedies & Recommendations
+    final remedies = result.remedies;
+    if (remedies != null) {
+      if (remedies.food != null && remedies.food!.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Food Remedies',
+            content: 'Recommended dietary adjustments:',
+            bulletPoints: remedies.food,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+      if (remedies.lifestyle != null && remedies.lifestyle!.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Lifestyle Advice',
+            content: 'Habits for better wellness:',
+            bulletPoints: remedies.lifestyle,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+      if (remedies.meditation != null && remedies.meditation!.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Meditation & Mindfulness',
+            content: 'Techniques for mental clarity:',
+            bulletPoints: remedies.meditation,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+      if (remedies.colorStone != null && remedies.colorStone!.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Colors & Stones',
+            content: 'Harmonizing elements:',
+            bulletPoints: remedies.colorStone,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+    }
+
+    // 4. Overall Reading
+    if (result.overallReading != null && result.overallReading!.isNotEmpty) {
+      sections.add(
+        PdfSection(title: 'Overall Reading', content: result.overallReading!),
+      );
+    }
+
+    // 5. Summary
+    if (result.summary != null && result.summary!.isNotEmpty) {
+      sections.add(PdfSection(title: 'Summary', content: result.summary!));
+    }
+
+    // Get user metadata
+    String? userName;
+    if (Get.isRegistered<UserDashboardController>()) {
+      userName = Get.find<UserDashboardController>().userName.value;
+    }
+
+    await PdfGeneratorService.generateAstrologyReport(
+      title: 'Carrot Astrology Report',
+      sections: sections,
+      metadata: PdfMetadata(
+        userName: userName,
+        generatedAt: DateTime.now(),
+        reportType: PdfReportType.carrot,
       ),
     );
   }

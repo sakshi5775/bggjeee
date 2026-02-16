@@ -16,9 +16,11 @@ class HandwritingAstrologyService {
   Future<http.Response> _makeHandwritingRequest({
     required Map<String, String> fields,
     required List<File> files,
+    Duration? timeout,
   }) async {
     // Get base URL from ApiClient (baseUrl already includes trailing slash)
-    final baseUrl = _apiRepository.apiClient.baseUrl ?? 'http://3.109.91.254:8000/api/';
+    final baseUrl =
+        _apiRepository.apiClient.baseUrl ?? 'http://3.109.91.254:8000/api/';
     final endpoint = EndPoints.handwritingAnalyze;
     final url = Uri.parse('$baseUrl$endpoint');
     final request = http.MultipartRequest('POST', url);
@@ -36,7 +38,7 @@ class HandwritingAstrologyService {
     for (var file in files) {
       final fileName = file.path.split('/').last.toLowerCase();
       String? contentType;
-      
+
       if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
         contentType = 'image/jpeg';
       } else if (fileName.endsWith('.png')) {
@@ -46,20 +48,22 @@ class HandwritingAstrologyService {
       } else if (fileName.endsWith('.webp')) {
         contentType = 'image/webp';
       }
-      
+
       request.files.add(
         await http.MultipartFile.fromPath(
           'handwritingImages',
           file.path,
           filename: file.path.split('/').last,
-          contentType: contentType != null 
+          contentType: contentType != null
               ? MediaType.parse(contentType)
               : null,
         ),
       );
     }
 
-    final streamedResponse = await request.send();
+    final streamedResponse = await request.send().timeout(
+      timeout ?? const Duration(minutes: 5),
+    );
     return http.Response.fromStream(streamedResponse);
   }
 
@@ -71,6 +75,7 @@ class HandwritingAstrologyService {
     String? gender,
     String? language,
     String? additionalNotes,
+    Duration? timeout,
   }) async {
     try {
       // Prepare form fields
@@ -95,41 +100,59 @@ class HandwritingAstrologyService {
       final response = await _makeHandwritingRequest(
         fields: fields,
         files: handwritingImages,
+        timeout: timeout,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseBody = response.body;
         final jsonData = json.decode(responseBody);
-        
+
         final handwritingResponse = HandwritingResponse.fromJson(jsonData);
-        
+
         if (handwritingResponse.success && handwritingResponse.data != null) {
           return handwritingResponse.data!;
         } else {
-          throw Exception(handwritingResponse.message.isNotEmpty
-              ? handwritingResponse.message
-              : 'Handwriting analysis failed');
+          throw Exception(
+            handwritingResponse.message.isNotEmpty
+                ? handwritingResponse.message
+                : 'Handwriting analysis failed',
+          );
         }
       } else {
-        throw Exception('Failed to analyze handwriting: ${response.statusCode}');
+        throw Exception(
+          'Failed to analyze handwriting: ${response.statusCode}',
+        );
       }
     } on SocketException {
-      throw Exception('No internet connection. Please check your network and try again.');
+      throw Exception(
+        'No internet connection. Please check your network and try again.',
+      );
     } on TimeoutException {
-      throw Exception('Request timeout. The server took too long to respond. Please try again.');
+      throw Exception(
+        'Request timeout. The server took too long to respond. Please try again.',
+      );
     } on http.ClientException catch (e) {
-      if (e.message.contains('Connection closed') || e.toString().contains('Connection closed')) {
-        throw Exception('Connection error. The server closed the connection. Please try again with a smaller image or check your internet connection.');
+      if (e.message.contains('Connection closed') ||
+          e.toString().contains('Connection closed')) {
+        throw Exception(
+          'Connection error. The server closed the connection. Please try again with a smaller image or check your internet connection.',
+        );
       }
       throw Exception('Network error: ${e.message}. Please try again.');
     } catch (e) {
       final errorMessage = e.toString();
       if (errorMessage.contains('Connection closed')) {
-        throw Exception('Connection error. Please try again with a smaller image or check your internet connection.');
-      } else if (errorMessage.contains('timeout') || errorMessage.contains('Timeout')) {
+        throw Exception(
+          'Connection error. Please try again with a smaller image or check your internet connection.',
+        );
+      } else if (errorMessage.contains('timeout') ||
+          errorMessage.contains('Timeout')) {
         throw Exception('Request timeout. Please try again.');
-      } else if (errorMessage.contains('SocketException') || errorMessage.contains('network')) {
-        throw Exception('Network error. Please check your internet connection and try again.');
+      } else if (errorMessage.contains('SocketException') ||
+          errorMessage.contains('network')) {
+        throw Exception(
+          'Network error. Please check your internet connection and try again.',
+        );
       }
       throw Exception('Error analyzing handwriting: ${e.toString()}');
     }
@@ -143,17 +166,16 @@ class HandwritingAstrologyService {
     try {
       final response = await _apiRepository.getApi(
         EndPoints.handwritingHistory,
-        query: {
-          'page': page.toString(),
-          'limit': limit.toString(),
-        },
+        query: {'page': page.toString(), 'limit': limit.toString()},
       );
 
       if (response.statusCode == 200) {
         final jsonData = response.body;
         return HandwritingHistoryResponse.fromJson(jsonData);
       } else {
-        throw Exception('Failed to get handwriting history: ${response.statusCode}');
+        throw Exception(
+          'Failed to get handwriting history: ${response.statusCode}',
+        );
       }
     } catch (e) {
       throw Exception('Error getting handwriting history: ${e.toString()}');
@@ -170,16 +192,20 @@ class HandwritingAstrologyService {
       if (response.statusCode == 200) {
         final jsonData = response.body;
         final handwritingResponse = HandwritingResponse.fromJson(jsonData);
-        
+
         if (handwritingResponse.success && handwritingResponse.data != null) {
           return handwritingResponse.data!;
         } else {
-          throw Exception(handwritingResponse.message.isNotEmpty
-              ? handwritingResponse.message
-              : 'Handwriting reading not found');
+          throw Exception(
+            handwritingResponse.message.isNotEmpty
+                ? handwritingResponse.message
+                : 'Handwriting reading not found',
+          );
         }
       } else {
-        throw Exception('Failed to get handwriting reading: ${response.statusCode}');
+        throw Exception(
+          'Failed to get handwriting reading: ${response.statusCode}',
+        );
       }
     } catch (e) {
       throw Exception('Error getting handwriting reading: ${e.toString()}');
@@ -212,7 +238,7 @@ class HandwritingAstrologyService {
     } catch (e) {
       // Check if it's a NOT_FOUND error (item already deleted)
       final errorString = e.toString().toLowerCase();
-      if (errorString.contains('not_found') || 
+      if (errorString.contains('not_found') ||
           errorString.contains('not found') ||
           errorString.contains('404')) {
         return true; // Consider it successful if already deleted
@@ -221,4 +247,3 @@ class HandwritingAstrologyService {
     }
   }
 }
-
