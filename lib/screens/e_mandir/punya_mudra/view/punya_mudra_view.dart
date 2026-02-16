@@ -71,8 +71,10 @@ class PunyaMudraView extends GetView<PunyaMudraController> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: const Text(
-              "66",
+            child: Text(
+              controller.punyaWallet.value?.wallet?.totalCoinsEarned
+                      .toString() ??
+                  '',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,

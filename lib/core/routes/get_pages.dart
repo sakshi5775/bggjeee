@@ -208,6 +208,10 @@ import 'package:astrobharataiuser/binding/panchang_binding/other_calendars_bindi
 import 'package:astrobharataiuser/binding/panchang_binding/jain_calendar_binding.dart';
 import 'package:astrobharataiuser/binding/panchang_binding/hindu_calendar_monthly_panchang_binding.dart';
 import 'package:astrobharataiuser/binding/panchang_binding/moon_calendar_binding.dart';
+import 'package:astrobharataiuser/binding/e_mandir_binding/e_mandir_festival_detail_binding.dart';
+import 'package:astrobharataiuser/binding/e_mandir_binding/all_festival_binding.dart';
+import 'package:astrobharataiuser/screens/e_mandir/festivals/festival_details/view/e_mandir_festival_detail_view.dart';
+import 'package:astrobharataiuser/screens/e_mandir/festivals/all_festival/view/all_festival_view.dart';
 import 'package:astrobharataiuser/screens/numerology/view/numerology_view.dart';
 import 'package:astrobharataiuser/screens/numerology/view/numerology_form_view.dart';
 import 'package:astrobharataiuser/screens/numerology/view/numerology_features_view.dart';
@@ -1633,6 +1637,20 @@ class PageRoutes {
       name: AppRoutes.reportPdfView,
       page: () => const ReportPdfView(),
       transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: AppRoutes.eMandirFestivalDetail,
+      page: () => const EMandirFestivalDetailView(),
+      binding: EMandirFestivalDetailBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.allFestivals,
+      page: () => const AllFestivalView(),
+      binding: AllFestivalBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
     ),
   ];
 }

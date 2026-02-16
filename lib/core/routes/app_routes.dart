@@ -236,6 +236,10 @@ class AppRoutes {
   static const String myBookings = '/my-bookings';
   static const String myBookingDetail = '/my-booking-detail';
 
+  // E-Mandir Festival Routes
+  static const String eMandirFestivalDetail = '/e-mandir-festival-detail';
+  static const String allFestivals = '/all-festivals';
+
   // Astrologer Registration Routes
   static const String astrologerRegistrationIntro =
       '/astrologer-registration-intro';

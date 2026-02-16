@@ -1,13 +1,9 @@
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/controller/namaste_home_controller.dart';
-import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/widgets/live_darshan_widget.dart';
+import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/widgets/festival_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/widgets/main_banner_widget.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/widgets/quick_actions_widget.dart';
-import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/widgets/temple_highlights_widget.dart';
-import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/widgets/todays_special_widget.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -75,6 +71,8 @@ class _NamasteHomeViewState extends State<NamasteHomeView>
                   SizedBox(height: 15.h),
                   const QuickActionsWidget(),
                   SizedBox(height: 15.h),
+                  const FestivalWidget(),
+                  SizedBox(height: 20.h),
                   // const LiveDarshanWidget(),
                   // SizedBox(height: 15.h),
                   // AutoTranslateText(

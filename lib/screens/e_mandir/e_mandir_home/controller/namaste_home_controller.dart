@@ -1,11 +1,15 @@
+import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/data_model/festival_model.dart';
+import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/service/e_mandir_home_service.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import '../../../../core/routes/app_routes.dart';
+import '../../../../data_model/e_mandir_dataModels/e_mandir_home_model.dart';
 
-class NamasteHomeController extends GetxController
+class NamasteHomeController extends BaseController
     with GetTickerProviderStateMixin {
   final selectedIndex = 0.obs;
   final PageController darshanController = PageController();
@@ -27,11 +31,19 @@ class NamasteHomeController extends GetxController
     AppConstant.eMandirLiveDarshan,
   ];
 
+  final EMandirHomeService _eMandirHomeService = EMandirHomeService();
+
+  // Festivals
+  final RxList<FestivalModel> festivals = <FestivalModel>[].obs;
+  final RxBool isLoadingFestivals = true.obs;
+
   @override
   void onInit() {
     super.onInit();
     // _playShankhOnInit();
     _initializeFullscreenAnimation();
+    getAllPunyaWallet();
+    _loadFestivals();
   }
 
   void _initializeFullscreenAnimation() {
@@ -71,9 +83,37 @@ class NamasteHomeController extends GetxController
     fullscreenAnimationController.repeat();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  final Rxn<EMandirHomeDataModel> punyaWallet = Rxn<EMandirHomeDataModel>();
+
+  Future<void> getAllPunyaWallet() async {
+    try {
+      setLoadingState(true);
+
+      final response = await _eMandirHomeService.punyaWallet();
+
+      if (response != null) {
+        punyaWallet.value = response;
+        print("Punya wallet: ${punyaWallet.value}");
+      }
+    } catch (e) {
+      print("Error fetching punya wallet: $e");
+    } finally {
+      setLoadingState(false);
+    }
+  }
+
+  Future<void> _loadFestivals() async {
+    isLoadingFestivals.value = true;
+    try {
+      final response = await _eMandirHomeService.getFestivals();
+      if (response != null && response.success && response.items.isNotEmpty) {
+        festivals.value = response.items;
+      }
+    } catch (e) {
+      print('Error loading festivals: $e');
+    } finally {
+      isLoadingFestivals.value = false;
+    }
   }
 
   @override
@@ -182,7 +222,10 @@ class NamasteHomeController extends GetxController
 
   void navigateToPunyaMudra() {
     stopShankh();
-    Get.toNamed(AppRoutes.punyaMudra);
+    Get.toNamed(
+      AppRoutes.punyaMudra,
+      arguments: {'punyaWallet': punyaWallet.value},
+    );
   }
 
   void navigateQuickAction(int index) {
