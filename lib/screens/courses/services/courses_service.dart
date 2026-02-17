@@ -183,8 +183,14 @@ class CoursesService {
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      if (response.body['success'] == true) {
-        return response.body['data'] as Map<String, dynamic>?;
+      if (response.body is Map<String, dynamic>) {
+        if (response.body['success'] == true) {
+          return response.body['data'] as Map<String, dynamic>? ??
+              response.body as Map<String, dynamic>;
+        }
+        return response.body as Map<String, dynamic>;
+      } else if (response.body is List) {
+        return {'courses': response.body};
       }
     }
 
@@ -212,8 +218,14 @@ class CoursesService {
     final response = await _apiRepository.getApi(EndPoints.progressOverview);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      if (response.body['success'] == true) {
-        return response.body['data'] as Map<String, dynamic>?;
+      if (response.body is Map<String, dynamic>) {
+        if (response.body['success'] == true) {
+          return response.body['data'] as Map<String, dynamic>? ??
+              response.body as Map<String, dynamic>;
+        }
+        return response.body as Map<String, dynamic>;
+      } else if (response.body is List) {
+        return {'courses': response.body};
       }
     }
 

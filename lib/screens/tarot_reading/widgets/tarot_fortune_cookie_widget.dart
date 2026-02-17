@@ -19,15 +19,13 @@ class TarotFortuneCookieWidget extends StatelessWidget {
       if (controller.selectedReadingType.value != 'fortune-cookie') {
         return const SizedBox.shrink();
       }
-      
+
       final response = controller.fortuneCookieResponse.value;
       if (response == null) {
         // Show loading state
         return Container(
           color: Colors.black.withOpacity(0.7),
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: const Center(child: CircularProgressIndicator()),
         );
       }
 
@@ -54,10 +52,7 @@ class TarotFortuneCookieWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: '#ede7c8'.toColor(),
                           borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(
-                            color: Colors.amber,
-                            width: 3,
-                          ),
+                          border: Border.all(color: Colors.amber, width: 3),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.3),
@@ -70,11 +65,7 @@ class TarotFortuneCookieWidget extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             // Cookie icon
-                            Icon(
-                              Icons.cookie,
-                              color: Colors.amber,
-                              size: 60.w,
-                            ),
+                            Icon(Icons.cookie, color: Colors.amber, size: 60.w),
                             Spacing.h(24),
                             AutoTranslateText(
                               'Your Fortune',
@@ -106,6 +97,14 @@ class TarotFortuneCookieWidget extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
+                                IconButton(
+                                  onPressed: () => controller.exportToPdf(),
+                                  icon: Icon(
+                                    Icons.picture_as_pdf_rounded,
+                                    color: '#820B17'.toColor(),
+                                    size: 24.w,
+                                  ),
+                                ),
                                 IconButton(
                                   onPressed: () => controller.closeReading(),
                                   icon: Icon(
@@ -149,4 +148,3 @@ class TarotFortuneCookieWidget extends StatelessWidget {
     });
   }
 }
-

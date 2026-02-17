@@ -13,6 +13,7 @@ import 'package:astrobharataiuser/utils/time_picker_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/app_manager/common/image_picker.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 import 'package:intl/intl.dart';
 
 class PalmReadingController extends GetxController {
@@ -298,6 +299,15 @@ class PalmReadingController extends GetxController {
       return;
     }
 
+    // Check balance
+    if (Get.isRegistered<AiPricingController>()) {
+      final pricingCtrl = Get.find<AiPricingController>();
+      if (!pricingCtrl.hasSufficientBalance('palmistry')) {
+        pricingCtrl.showInsufficientBalancePopup('palmistry');
+        return;
+      }
+    }
+
     isScanning.value = true;
     scanError.value = '';
 
@@ -369,6 +379,7 @@ class PalmReadingController extends GetxController {
         uri: EndPoints.palmistryAnalyze,
         fields: fields,
         files: {'palmImage': palmImage},
+        timeout: const Duration(minutes: 5),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

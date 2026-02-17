@@ -9,6 +9,10 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/controller/ramal_shastra_controller.dart';
 import 'package:astrobharataiuser/screens/ramal_shastra/service/ramal_shastra_service.dart';
+import 'package:astrobharataiuser/core/services/pdf_generator_service.dart';
+import 'package:astrobharataiuser/data_model/pdf_metadata.dart';
+import 'package:astrobharataiuser/data_model/pdf_section.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -82,6 +86,14 @@ class RamalShastraResultsView extends StatelessWidget {
                       ),
                     ],
                   ),
+                IconButton(
+                  onPressed: () => _exportToPdf(result),
+                  icon: Icon(
+                    Icons.picture_as_pdf_rounded,
+                    color: '#6F221E'.toColor(),
+                    size: 24.w,
+                  ),
+                ),
               ],
             ),
             if (result.readingId != null)
@@ -2045,6 +2057,286 @@ class RamalShastraResultsView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _exportToPdf(RamalShastraData result) async {
+    final List<PdfSection> sections = [];
+
+    // 1. Question Section
+    if (result.question != null) {
+      sections.add(
+        PdfSection(
+          title: 'Question Asked',
+          content: result.question!,
+          bulletPoints: result.category != null ? [result.category!] : null,
+          type: result.category != null
+              ? PdfSectionType.bullet
+              : PdfSectionType.text,
+        ),
+      );
+    }
+
+    // 2. Final Judgment
+    final displayOutcome =
+        result.judgment?.outcome ??
+        result.interpretation?.judgmentSummary?.outcome;
+    final displayConfidence =
+        result.judgment?.confidence ??
+        result.interpretation?.judgmentSummary?.confidence;
+    final displayExplanation =
+        result.judgment?.explanation ??
+        result.interpretation?.judgmentSummary?.explanation;
+
+    if (displayOutcome != null) {
+      String content =
+          'Outcome: $displayOutcome\n\nExplanation: ${displayExplanation ?? 'N/A'}';
+
+      // Add Judge/Reconciler strengths if available
+      if (result.judgment?.judgeStrength != null ||
+          result.judgment?.reconcilerStrength != null) {
+        content += '\n\nAnalytical Strengths:';
+        if (result.judgment?.judgeStrength != null) {
+          content += '\n• Judge Strength: ${result.judgment!.judgeStrength}/4';
+        }
+        if (result.judgment?.reconcilerStrength != null) {
+          content +=
+              '\n• Reconciler Strength: ${result.judgment!.reconcilerStrength}/4';
+        }
+      }
+
+      sections.add(
+        PdfSection(
+          title: 'Final Judgment',
+          content: content,
+          score: displayConfidence != null ? displayConfidence * 100 : null,
+        ),
+      );
+    }
+
+    // 3. Answer
+    if (result.interpretation?.answerToQuestion != null) {
+      sections.add(
+        PdfSection(
+          title: 'Answer to Question',
+          content: result.interpretation!.answerToQuestion!,
+        ),
+      );
+    }
+
+    // 4. Key Houses Interpretation
+    if (result.interpretation?.keyHouses != null &&
+        result.interpretation!.keyHouses!.isNotEmpty) {
+      final List<String> houseList = [];
+      for (var house in result.interpretation!.keyHouses!) {
+        String houseDetail = 'House ${house.houseNumber}: ${house.name ?? ''}';
+        if (house.element != null)
+          houseDetail += ' | Element: ${house.element}';
+        if (house.strength != null)
+          houseDetail += ' | Strength: ${house.strength}/4';
+        if (house.interpretation != null)
+          houseDetail += '\nInterpretation: ${house.interpretation}';
+        houseList.add(houseDetail);
+      }
+
+      sections.add(
+        PdfSection(
+          title: 'Key Houses Analysis',
+          content:
+              'Focus analysis on the most significant houses for your question:',
+          bulletPoints: houseList,
+          type: PdfSectionType.bullet,
+        ),
+      );
+    }
+
+    // 4b. Full House Analysis (Extreme Detail)
+    if (result.chartData?.houses != null &&
+        result.chartData!.houses!.isNotEmpty) {
+      sections.add(
+        PdfSection(
+          title: 'Detailed House-by-House Analysis',
+          content:
+              'A comprehensive breakdown of all 16 houses in your Ramal chart, including their domains, meanings, and elemental influences.',
+          type: PdfSectionType.text,
+        ),
+      );
+
+      for (var house in result.chartData!.houses!) {
+        String houseDetail =
+            'Type: ${house.type ?? 'N/A'}\n'
+            'Domain: ${house.domain ?? 'N/A'}\n'
+            'Element: ${house.element ?? 'N/A'}\n'
+            'Gender: ${house.gender ?? 'N/A'}\n'
+            'Strength: ${house.strength ?? 0}/4\n'
+            'Meaning: ${house.meaning ?? 'N/A'}';
+
+        if (house.keywords != null && house.keywords!.isNotEmpty) {
+          houseDetail += '\nKeywords: ${house.keywords!.join(', ')}';
+        }
+
+        sections.add(
+          PdfSection(
+            title: 'House ${house.houseNumber}: ${house.name ?? 'Unknown'}',
+            content: houseDetail,
+          ),
+        );
+      }
+    }
+
+    // 5. Summary
+    if (result.interpretation?.summary != null) {
+      sections.add(
+        PdfSection(title: 'Summary', content: result.interpretation!.summary!),
+      );
+    }
+
+    // 6. Detailed Analysis
+    if (result.interpretation?.detailedAnalysis != null) {
+      sections.add(
+        PdfSection(
+          title: 'Detailed Analysis',
+          content: result.interpretation!.detailedAnalysis!,
+        ),
+      );
+    }
+
+    // 7. Timing
+    if (result.interpretation?.timing != null) {
+      sections.add(
+        PdfSection(title: 'Timing', content: result.interpretation!.timing!),
+      );
+    }
+
+    // 8. Strengths & Challenges
+    if (result.interpretation?.strengths != null &&
+        result.interpretation!.strengths!.isNotEmpty) {
+      sections.add(
+        PdfSection(
+          title: 'Strengths',
+          content: 'Key strengths identified in your reading:',
+          bulletPoints: result.interpretation!.strengths,
+          type: PdfSectionType.bullet,
+        ),
+      );
+    }
+    if (result.interpretation?.challenges != null &&
+        result.interpretation!.challenges!.isNotEmpty) {
+      sections.add(
+        PdfSection(
+          title: 'Challenges',
+          content: 'Potential challenges to be aware of:',
+          bulletPoints: result.interpretation!.challenges,
+          type: PdfSectionType.bullet,
+        ),
+      );
+    }
+
+    // 9. Advice
+    if (result.interpretation?.advice != null &&
+        result.interpretation!.advice!.isNotEmpty) {
+      sections.add(
+        PdfSection(
+          title: 'Actionable Advice',
+          content: 'Specific guidance based on your Ramal chart:',
+          bulletPoints: result.interpretation!.advice,
+          type: PdfSectionType.bullet,
+        ),
+      );
+    }
+
+    // 10. Remedies
+    final remedies = result.interpretation?.remedies;
+    if (remedies != null) {
+      if (remedies.mantras != null && remedies.mantras!.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Mantras',
+            content: 'Sacred vibrations for balance:',
+            bulletPoints: remedies.mantras,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+      if (remedies.charities != null && remedies.charities!.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Charity & Donation',
+            content: 'Karmic balancing through giving:',
+            bulletPoints: remedies.charities,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+      if (remedies.behaviors != null && remedies.behaviors!.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Behavioral Adjustments',
+            content: 'Mindful changes in daily life:',
+            bulletPoints: remedies.behaviors,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+      if (remedies.practicalAdvice != null &&
+          remedies.practicalAdvice!.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Practical Remedies',
+            content: 'Step-by-step guidance:',
+            bulletPoints: remedies.practicalAdvice,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+      if (remedies.colors != null && remedies.colors!.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Favorable Colors',
+            content: 'Colors to harmonize your aura:',
+            bulletPoints: remedies.colors,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+    }
+
+    // Get user metadata
+    String? userName;
+    if (Get.isRegistered<UserDashboardController>()) {
+      userName = Get.find<UserDashboardController>().userName.value;
+    }
+
+    /*
+    showDialog(
+      context: Get.context!,
+      builder: (context) => PdfLanguageSelectionDialog(
+        onLanguageSelected: (language) async {
+          await PdfGeneratorService.generateAstrologyReport(
+            title: 'Ramal Shastra Analysis',
+            sections: sections,
+            metadata: PdfMetadata(
+              userName: userName,
+              generatedAt: DateTime.now(),
+              reportType: PdfReportType.ramal,
+            ),
+            languageCode: language.code,
+          );
+        },
+      ),
+    );
+    */
+
+    // English-only for now (Direct Generation)
+    await PdfGeneratorService.generateAstrologyReport(
+      title: 'Ramal Shastra Analysis',
+      sections: sections,
+      metadata: PdfMetadata(
+        userName: userName,
+        generatedAt: DateTime.now(),
+        reportType: PdfReportType.ramal,
+      ),
+      languageCode: 'en',
     );
   }
 }

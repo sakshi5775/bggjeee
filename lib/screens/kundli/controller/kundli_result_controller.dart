@@ -44,7 +44,6 @@ class KundliResultController extends BaseController {
     'Panchang',
     'Binnashtakvarga',
     'Transit',
-    'Navtara',
     'Ashtakvarga Chart',
     'Bhav Madhya',
     'Person Details',
@@ -111,7 +110,12 @@ class KundliResultController extends BaseController {
       'icon': Icons.calendar_today,
       'imageUrl': AppConstant.varshpal3d,
     },
-    {'title': 'Navtara\nAnalysis', 'icon': Icons.star_half, 'imageUrl': null},
+    {
+      'title': 'Navtara\nAnalysis',
+      'icon': Icons.star_half,
+      'imageUrl': null,
+      'pricingKey': 'navtara',
+    },
   ];
 
   // Feature list items (left column)
@@ -785,13 +789,17 @@ class KundliResultController extends BaseController {
     final form = formData.value;
     if (form == null) return;
 
-    // Ensure Nakshatra is available
+    // 1. Ensure Nakshatra is available
     if (detectedNakshatra.value == null || detectedNakshatra.value!.isEmpty) {
-      await fetchPlanetDetails();
+      debugPrint('_initNavtaraController: Nakshatra missing, fetching APIs...');
+      await fetchAllNakshatraApis();
     }
 
-    // Get nakshatra from planet details if not already in detectedNakshatra
+    // Get nakshatra from detectedNakshatra
     final nakshatra = detectedNakshatra.value ?? "";
+    debugPrint(
+      '_initNavtaraController: Initializing with Nakshatra: $nakshatra',
+    );
 
     if (!Get.isRegistered<NavtaraController>()) {
       Get.put(NavtaraController());
@@ -1642,32 +1650,10 @@ class KundliResultController extends BaseController {
     return planetDetailsData.value!['rasi']?.toString() ?? '-';
   }
 
-  // // Get Nakshatra from planet details or panchang data
-  // String getNakshatra() {
-  //   if (detectedNakshatra.value != null && detectedNakshatra.value != '-') {
-  //     return detectedNakshatra.value!;
-  //   }
-
-  //   if (planetDetailsData.value != null) {
-  //     final nk = planetDetailsData.value!['nakshatra']?.toString();
-  //     if (nk != null && nk != '-') {
-  //       detectedNakshatra.value = nk;
-  //       return nk;
-  //     }
-  //   }
-
-  //   if (panchangData.value != null) {
-  //     final nakshatraMap =
-  //         panchangData.value!['nakshatra'] as Map<String, dynamic>?;
-  //     final nk = nakshatraMap?['name']?.toString();
-  //     if (nk != null && nk != '-') {
-  //       detectedNakshatra.value = nk;
-  //       return nk;
-  //     }
-  //   }
-
-  //   return '-';
-  // }
+  // Get Nakshatra from detected value
+  String getNakshatra() {
+    return detectedNakshatra.value ?? '-';
+  }
 
   // Calculate Age from date
   String getAge() {
@@ -1806,11 +1792,14 @@ class KundliResultController extends BaseController {
 
       if (data != null && data['response'] != null) {
         planetDetailsData.value = data['response'] as Map<String, dynamic>;
+        debugPrint(
+          'Planet Details RAW Response Keys: ${planetDetailsData.value!.keys}',
+        );
         // Extract Nakshatra using deep scan
         _extractFromResponse(planetDetailsData.value);
         debugPrint('Planet Details data loaded successfully');
       } else {
-        debugPrint('Failed to fetch Planet Details data');
+        debugPrint('Failed to fetch Planet Details data. Data: $data');
       }
     } catch (e) {
       isLoadingPlanetDetails.value = false;
@@ -1818,7 +1807,7 @@ class KundliResultController extends BaseController {
     }
   }
 
-  void onFeatureTap(String feature) {
+  Future<void> onFeatureTap(String feature) async {
     // Find matching tab by name (case-insensitive)
     final featureLower = feature.replaceAll('\n', ' ').toLowerCase();
 
@@ -1928,20 +1917,6 @@ class KundliResultController extends BaseController {
       return;
     }
 
-    // Handle Navtara Analyze - switch to Navtara dashboard
-    if (featureLower.contains('navtara')) {
-      Get.toNamed(
-        AppRoutes.navtaraDashboard,
-        arguments: {
-          'nakshatra': detectedNakshatra.value,
-          'name': formData.value?['name'] ?? '',
-          'dob': formData.value?['date'] ?? '',
-          'initialTab': featureLower.contains('timing') ? 1 : 0,
-        },
-      );
-      return;
-    }
-
     // Handle Mangal Dosh - switch to Mangal Dosh tab
     if (featureLower == 'mangal dosh') {
       final shadBalaIndex = tabs.indexWhere(
@@ -2036,18 +2011,6 @@ class KundliResultController extends BaseController {
       return;
     }
 
-    // Handle Navtara Analysis - switch to Navtara tab
-    if (featureLower == 'navtara analysis' ||
-        featureLower == 'navtara timing') {
-      final navtaraIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'navtara',
-      );
-      if (navtaraIndex != -1) {
-        onTabSelected(navtaraIndex);
-      }
-      return;
-    }
-
     // Coming-soon tabs: no navigation (hidden from UI)
     if (_isComingSoonTab(featureLower) ||
         featureLower == 'personal details' ||
@@ -2080,8 +2043,6 @@ class KundliResultController extends BaseController {
       'friendship': 'Friendship',
       'avkahada chakra': 'Avkahada Chakra',
       'download pdf': 'Download PDF',
-      'navtara analysis': 'Navtara',
-      'navtara timing': 'Navtara',
     };
 
     // Get the tab name from the map
@@ -2161,12 +2122,93 @@ class KundliResultController extends BaseController {
     }
 
     // Handle Navtara navigation - switch to Navtara tab
-    if (feature.toLowerCase().contains('navtara')) {
-      final navtaraIndex = tabs.indexWhere(
-        (tab) => tab.toLowerCase() == 'navtara',
-      );
-      if (navtaraIndex != -1) {
-        onTabSelected(navtaraIndex);
+    if (featureLower.contains('navtara')) {
+      debugPrint('Navtara feature tapped. Initiating transition...');
+
+      // 1. Ensure Nakshatra is available via standard planet details (Moon Sign logic)
+      if (detectedNakshatra.value == null ||
+          detectedNakshatra.value!.isEmpty ||
+          detectedNakshatra.value == '-') {
+        debugPrint('Nakshatra not found, fetching planet details...');
+        Get.dialog(
+          const Center(child: CircularProgressIndicator()),
+          barrierDismissible: false,
+        );
+
+        await fetchPlanetDetails();
+
+        if (Get.isDialogOpen ?? false) Get.back();
+      }
+
+      final nakshatra = getNakshatra();
+      debugPrint('Detected Nakshatra: $nakshatra');
+
+      if (nakshatra.isNotEmpty) {
+        // 2. Show Animation/Dialog for 2 seconds
+        Get.dialog(
+          Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.orange, width: 2),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.star, color: Colors.orange, size: 48),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Your Janma Nakshatra is',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[700],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    nakshatra,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      color: Colors.orange,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          barrierDismissible: false,
+        );
+
+        // 3. Wait for 2 seconds then navigate
+        Future.delayed(const Duration(seconds: 2), () {
+          if (Get.isDialogOpen ?? false) Get.back(); // Close dialog
+
+          debugPrint(
+            'Navigating to Navtara Dashboard with Nakshatra: $nakshatra',
+          );
+          Get.toNamed(
+            AppRoutes.navtaraDashboard,
+            arguments: {
+              'nakshatra': nakshatra,
+              'name': formData.value?['name'] ?? '',
+              'dob': formData.value?['date'] ?? '',
+              'initialTab': featureLower.contains('timing') ? 1 : 0,
+            },
+          );
+        });
+      } else {
+        debugPrint('Failed to detect Nakshatra even after fetching.');
+        Get.snackbar(
+          'Error',
+          'Could not detect your Nakshatra. Please check your birth details.',
+        );
       }
       return;
     }
@@ -2177,68 +2219,196 @@ class KundliResultController extends BaseController {
   }
 
   /// Returns the detected Nakshatra or '-' if none found.
-  String getNakshatra() {
+
+  /// Fetch all APIs that might contain Nakshatra information
+  Future<void> fetchAllNakshatraApis() async {
     if (detectedNakshatra.value != null &&
         detectedNakshatra.value!.isNotEmpty &&
         detectedNakshatra.value != '-') {
-      return detectedNakshatra.value!;
+      return;
     }
-    return '-';
+
+    if (formData.value == null) return;
+
+    try {
+      debugPrint('Fetching Nakshatra via Planet Details (Moon Sign logic)...');
+      await fetchPlanetDetails();
+      debugPrint(
+        'Finished fetching Nakshatra. Result: ${detectedNakshatra.value}',
+      );
+    } catch (e) {
+      debugPrint('Error fetching nakshatra: $e');
+    }
+  }
+
+  /// Fetch Nakshatra Prediction for detection
+  Future<void> fetchNakshatraPrediction() async {
+    if (formData.value == null) return;
+    try {
+      debugPrint('Fetching Nakshatra Prediction for detection...');
+      final form = formData.value!;
+      final date = form['date'] as String?;
+      final time = form['time'] as String?;
+      final latitude = form['latitude'] as double?;
+      final longitude = form['longitude'] as double?;
+      final tz = form['timezone'] as double?;
+      final lang = form['language'] as String? ?? 'en';
+
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null)
+        return;
+
+      final data = await _kundliService.getNakshatraPrediction(
+        date: date,
+        time: time,
+        latitude: latitude,
+        longitude: longitude,
+        tz: tz,
+        lang: lang,
+      );
+
+      if (data != null) {
+        debugPrint('Nakshatra Prediction RAW Data: $data');
+        _extractFromResponse(data);
+      }
+    } catch (e) {
+      debugPrint('Error fetching Nakshatra Prediction: $e');
+    }
   }
 
   /// Deep scan a response (Map or List) to find and extract Nakshatra names.
   /// This eliminates the need for manual user input.
+  /// Deep scan a response (Map or List) to find and extract Nakshatra names.
+  /// This eliminates the need for manual user input.
   void _extractFromResponse(dynamic data) {
     if (data == null) return;
+    // Don't overwrite if already found a valid one
+    if (detectedNakshatra.value != null &&
+        detectedNakshatra.value!.isNotEmpty &&
+        detectedNakshatra.value != '-')
+      return;
 
-    void scan(dynamic obj) {
+    debugPrint('Scanning response for Nakshatra...');
+
+    void scan(dynamic obj, {int depth = 0}) {
+      if (depth > 20) return; // Prevent infinite recursion
+      if (detectedNakshatra.value != null &&
+          detectedNakshatra.value!.isNotEmpty &&
+          detectedNakshatra.value != '-')
+        return;
+
       if (obj is Map) {
-        // Common keys for Nakshatra names in various APIs
-        final potentialKeys = [
+        // debugPrint('Scanning Map Keys: ${obj.keys}');
+        // 1. Check for specific Nakshatra fields first
+        final nakshatraKeys = [
           'nakshatra',
           'nakshatra_name',
           'nakshtra',
           'nakshtra_name',
           'birth_nakshatra',
+          'Nakshatra',
+          'NakshatraName',
+          'janma_nakshatra',
+          'star',
+          'Nakshatra_Name',
         ];
 
-        for (final key in potentialKeys) {
+        for (final key in nakshatraKeys) {
           if (obj.containsKey(key)) {
             final val = obj[key];
-            if (val is String && val.isNotEmpty && val != '-') {
+            if (val is String &&
+                val.isNotEmpty &&
+                val != '-' &&
+                val.length > 2) {
               detectedNakshatra.value = val;
-              debugPrint('Auto-detected Nakshatra: $val');
+              debugPrint('✅ Auto-detected Nakshatra: $val (Key: $key)');
               return;
-            } else if (val is Map && val.containsKey('name')) {
-              final name = val['name'].toString();
-              if (name.isNotEmpty && name != '-') {
-                detectedNakshatra.value = name;
-                debugPrint('Auto-detected Nakshatra from map: $name');
+            } else if (val is Map) {
+              // If it's a map e.g. "nakshatra": {"name": "Rohini", ...}
+              final innerVal =
+                  val['name'] ??
+                  val['Name'] ??
+                  val['nakshatra'] ??
+                  val['value'];
+              if (innerVal is String &&
+                  innerVal.isNotEmpty &&
+                  innerVal != '-') {
+                detectedNakshatra.value = innerVal;
+                debugPrint(
+                  '✅ Auto-detected Nakshatra from map: $innerVal (Key: $key)',
+                );
                 return;
               }
             }
           }
         }
 
-        // Depth-first search through the map
-        for (final value in obj.values) {
-          scan(value);
+        // 2. Scan deeply if not found at this level
+        for (final entry in obj.entries) {
+          scan(entry.value, depth: depth + 1);
           if (detectedNakshatra.value != null &&
-              detectedNakshatra.value != '-') {
+              detectedNakshatra.value!.isNotEmpty &&
+              detectedNakshatra.value != '-')
             return;
-          }
         }
       } else if (obj is List) {
         for (final item in obj) {
-          scan(item);
+          scan(item, depth: depth + 1);
           if (detectedNakshatra.value != null &&
-              detectedNakshatra.value != '-') {
+              detectedNakshatra.value!.isNotEmpty &&
+              detectedNakshatra.value != '-')
             return;
-          }
         }
       }
     }
 
     scan(data);
+    if (detectedNakshatra.value == null || detectedNakshatra.value == '-') {
+      debugPrint('❌ Nakshatra NOT found in this response branch.');
+    }
+  }
+
+  /// Fetch Avkahada Chakra data (often contains Nakshatra)
+  Future<void> fetchAvkahadaChakra() async {
+    if (formData.value == null) return;
+    try {
+      debugPrint('Fetching Avkahada Chakra for Nakshatra detection...');
+      final form = formData.value!;
+      // Re-use logic for required fields check as in other methods...
+      final date = form['date'] as String?;
+      final time = form['time'] as String?;
+      final latitude = form['latitude'] as double?;
+      final longitude = form['longitude'] as double?;
+      final tz = form['timezone'] as double?;
+      final lang = form['language'] as String? ?? 'en';
+
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
+        return;
+      }
+
+      final data = await _kundliService.getAvkahadaChakra(
+        date: date,
+        time: time,
+        latitude: latitude,
+        longitude: longitude,
+        tz: tz,
+        lang: lang,
+      );
+
+      if (data != null) {
+        debugPrint('Avkahada Chakra RAW Data: $data');
+        _extractFromResponse(data);
+        debugPrint('Avkahada Chakra data scan complete.');
+      }
+    } catch (e) {
+      debugPrint('Error fetching Avkahada Chakra: $e');
+    }
   }
 }

@@ -788,7 +788,13 @@ class UserDashboardController extends BaseController
   Future<void> checkForLiveWebinarFromEnrolledCourses() async {
     try {
       // Get enrolled courses - try progress overview first, then enrollments API
-      final progressOverview = await _coursesService.getProgressOverview();
+      Map<String, dynamic>? progressOverview;
+      try {
+        progressOverview = await _coursesService.getProgressOverview();
+      } catch (e) {
+        debugPrint('Error fetching progress overview: $e');
+      }
+
       List<dynamic>? coursesList;
 
       if (progressOverview != null && progressOverview['courses'] != null) {
@@ -796,12 +802,17 @@ class UserDashboardController extends BaseController
         coursesList = progressOverview['courses'] as List<dynamic>?;
       } else {
         // Fallback: Get enrollments directly
-        final enrollmentsData = await _coursesService.getEnrollments(page: 1);
-        if (enrollmentsData != null) {
-          // Check both possible response formats
-          coursesList =
-              enrollmentsData['courses'] as List<dynamic>? ??
-              enrollmentsData['data'] as List<dynamic>?;
+        try {
+          final enrollmentsData = await _coursesService.getEnrollments(page: 1);
+          if (enrollmentsData != null) {
+            // Check both possible response formats
+            coursesList =
+                enrollmentsData['courses'] as List<dynamic>? ??
+                enrollmentsData['items'] as List<dynamic>? ??
+                enrollmentsData['data'] as List<dynamic>?;
+          }
+        } catch (e) {
+          debugPrint('Error fetching enrollments: $e');
         }
       }
 
@@ -815,6 +826,7 @@ class UserDashboardController extends BaseController
       // Extract enrolled course IDs - handle both response formats
       final enrolledCourseIds = <String>{};
       for (var courseJson in coursesList) {
+        if (courseJson == null) continue;
         final courseMap = courseJson as Map<String, dynamic>;
 
         // Try different possible field names for course ID

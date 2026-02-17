@@ -6,6 +6,10 @@ import 'package:astrobharataiuser/data_model/handwriting_astrology_model.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/core/services/pdf_generator_service.dart';
+import 'package:astrobharataiuser/data_model/pdf_metadata.dart';
+import 'package:astrobharataiuser/data_model/pdf_section.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -68,6 +72,14 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
               showLanguage: false,
               showWallet: false,
               customActions: [
+                IconButton(
+                  onPressed: () => _exportToPdf(result),
+                  icon: Icon(
+                    Icons.picture_as_pdf_rounded,
+                    color: '#6F221E'.toColor(),
+                    size: 22.w,
+                  ),
+                ),
                 IconButton(
                   icon: Icon(
                     Icons.history,
@@ -1243,6 +1255,197 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _exportToPdf(HandwritingData result) async {
+    final overview = result.overview;
+    final categories = result.categories;
+    final List<PdfSection> sections = [];
+
+    // 1. Overall Score & Reading
+    if (overview != null) {
+      sections.add(
+        PdfSection(
+          title: 'Overall Analysis',
+          content: 'Your handwriting analysis score is ${overview.score}/100.',
+          score: overview.score?.toDouble(),
+          bulletPoints: overview.tags,
+          type: PdfSectionType.bullet,
+        ),
+      );
+    }
+
+    // 2. Summary
+    if (result.summary != null) {
+      sections.add(PdfSection(title: 'Summary', content: result.summary!));
+    }
+
+    // 3. Detailed Categories
+    if (categories != null) {
+      final Map<String, HandwritingCategoryDetail?> allCats = {
+        'Emotional Intelligence': categories.emotionalIntelligence,
+        'Ambition': categories.ambition,
+        'Communication': categories.communication,
+        'Creativity': categories.creativity,
+        'Stability': categories.stability,
+      };
+
+      for (var entry in allCats.entries) {
+        final cat = entry.value;
+        if (cat != null) {
+          sections.add(
+            PdfSection(
+              title: entry.key,
+              content: cat.description ?? '',
+              score: cat.score?.toDouble(),
+              bulletPoints: cat.keywords,
+              type: PdfSectionType.bullet,
+            ),
+          );
+        }
+      }
+    }
+
+    // 4. Handwriting Features
+    final features = result.features;
+    if (features != null) {
+      final Map<String, HandwritingFeature?> allFeatures = {
+        'Letter Size': features.letterSize,
+        'Slant': features.slant,
+        'Pressure': features.pressure,
+        'Spacing': features.spacing,
+        'Baseline': features.baseline,
+        'Zones': features.zones,
+        'Loops': features.loops,
+        'Connections': features.connections,
+      };
+
+      for (var entry in allFeatures.entries) {
+        final feature = entry.value;
+        if (feature != null) {
+          sections.add(
+            PdfSection(
+              title: entry.key,
+              content: feature.text ?? '',
+              bulletPoints: feature.rating != null
+                  ? ['Rating: ${feature.rating}']
+                  : null,
+              type: PdfSectionType.bullet,
+            ),
+          );
+        }
+      }
+    }
+
+    // 5. Strengths & Areas for Growth
+    if (result.lists?.strengths != null &&
+        result.lists!.strengths!.isNotEmpty) {
+      sections.add(
+        PdfSection(
+          title: 'Key Strengths',
+          content: 'Positive traits identified from your handwriting:',
+          bulletPoints: result.lists!.strengths,
+          type: PdfSectionType.bullet,
+        ),
+      );
+    }
+    if (result.lists?.areasForGrowth != null &&
+        result.lists!.areasForGrowth!.isNotEmpty) {
+      sections.add(
+        PdfSection(
+          title: 'Areas for Growth',
+          content: 'Potential areas for personal development:',
+          bulletPoints: result.lists!.areasForGrowth,
+          type: PdfSectionType.bullet,
+        ),
+      );
+    }
+
+    // 6. Career & Recommendations
+    if (result.lists?.careerAptitudes != null &&
+        result.lists!.careerAptitudes!.isNotEmpty) {
+      sections.add(
+        PdfSection(
+          title: 'Career Aptitudes',
+          content: 'Professional fields that align with your personality:',
+          bulletPoints: result.lists!.careerAptitudes,
+          type: PdfSectionType.bullet,
+        ),
+      );
+    }
+    if (result.lists?.recommendations != null &&
+        result.lists!.recommendations!.isNotEmpty) {
+      sections.add(
+        PdfSection(
+          title: 'Recommendations',
+          content: 'Suggested next steps based on your profile:',
+          bulletPoints: result.lists!.recommendations,
+          type: PdfSectionType.bullet,
+        ),
+      );
+    }
+
+    // 7. Analysis Context
+    if (result.userInput != null) {
+      final input = result.userInput!;
+      final List<String> inputDetails = [];
+      if (input.gender != null) inputDetails.add('Gender: ${input.gender}');
+      if (input.language != null)
+        inputDetails.add('Language: ${input.language}');
+      if (input.additionalNotes != null && input.additionalNotes!.isNotEmpty) {
+        inputDetails.add('Additional Notes: ${input.additionalNotes}');
+      }
+
+      if (inputDetails.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Analysis Context',
+            content:
+                'The analysis was performed with the following user context:',
+            bulletPoints: inputDetails,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+    }
+
+    // Get user metadata
+    String? userName;
+    if (Get.isRegistered<UserDashboardController>()) {
+      userName = Get.find<UserDashboardController>().userName.value;
+    }
+
+    /*
+    showDialog(
+      context: Get.context!,
+      builder: (context) => PdfLanguageSelectionDialog(
+        onLanguageSelected: (language) async {
+          await PdfGeneratorService.generateAstrologyReport(
+            title: 'Handwriting Analysis Report',
+            sections: sections,
+            metadata: PdfMetadata(
+              userName: userName,
+              generatedAt: DateTime.now(),
+              reportType: PdfReportType.handwriting,
+            ),
+            languageCode: language.code,
+          );
+        },
+      ),
+    );
+    */
+
+    // English-only for now (Direct Generation)
+    await PdfGeneratorService.generateAstrologyReport(
+      title: 'Handwriting Analysis Report',
+      sections: sections,
+      metadata: PdfMetadata(
+        userName: userName,
+        generatedAt: DateTime.now(),
+        reportType: PdfReportType.handwriting,
+      ),
+      languageCode: 'en',
     );
   }
 }

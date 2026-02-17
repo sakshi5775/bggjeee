@@ -21,21 +21,19 @@ class TarotCareerWidget extends StatelessWidget {
       if (controller.selectedReadingType.value != 'career') {
         return const SizedBox.shrink();
       }
-      
+
       final response = controller.careerResponse.value;
       final isLoading = controller.isLoadingReading.value;
-      
+
       // Only show loader if actually loading API, not when waiting for direction selection
       if (response == null && isLoading) {
         // Show loading state only during API call
         return Container(
           color: Colors.black.withOpacity(0.7),
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: const Center(child: CircularProgressIndicator()),
         );
       }
-      
+
       // If response is null but not loading, we're waiting for direction selection
       // Don't show anything - let the direction selector show
       if (response == null) {
@@ -61,7 +59,9 @@ class TarotCareerWidget extends StatelessWidget {
                       opacity: clampedValue,
                       child: Container(
                         margin: EdgeInsets.symmetric(horizontal: 16.w),
-                        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * 0.8,
+                        ),
                         decoration: BoxDecoration(
                           color: '#ede7c8'.toColor(),
                           borderRadius: BorderRadius.circular(20.r),
@@ -81,7 +81,8 @@ class TarotCareerWidget extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     AutoTranslateText(
                                       'Career Guidance',
@@ -89,18 +90,32 @@ class TarotCareerWidget extends StatelessWidget {
                                         color: '#820B17'.toColor(),
                                       ),
                                     ),
-                                    IconButton(
-                                      onPressed: () => controller.closeReading(),
-                                      icon: Icon(
-                                        Icons.close,
-                                        color: '#820B17'.toColor(),
-                                        size: 24.w,
-                                      ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          onPressed: () =>
+                                              controller.exportToPdf(),
+                                          icon: Icon(
+                                            Icons.picture_as_pdf_rounded,
+                                            color: '#820B17'.toColor(),
+                                            size: 24.w,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          onPressed: () =>
+                                              controller.closeReading(),
+                                          icon: Icon(
+                                            Icons.close,
+                                            color: '#820B17'.toColor(),
+                                            size: 24.w,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
                                 Spacing.h(16),
-                                
+
                                 // Card front image (theme selectable)
                                 Center(
                                   child: TarotCardDisplayWidget(
@@ -109,16 +124,18 @@ class TarotCareerWidget extends StatelessWidget {
                                     height: 180.h,
                                   ),
                                 ),
-                                
+
                                 Spacing.h(16),
-                                
+
                                 Spacing.h(16),
                                 // Card name and direction
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     AutoTranslateText(
-                                      response.name ?? controller.selectedCard?.name ?? 'Unknown Card',
+                                      response.name ??
+                                          controller.selectedCard?.name ??
+                                          'Unknown Card',
                                       style: MyTextTheme.mediumBCN.copyWith(
                                         color: "#F38B3B".toColor(),
                                       ),
@@ -131,15 +148,25 @@ class TarotCareerWidget extends StatelessWidget {
                                           vertical: 4.h,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: response.direction!.toLowerCase() == 'upright'
+                                          color:
+                                              response.direction!
+                                                      .toLowerCase() ==
+                                                  'upright'
                                               ? Colors.green.withOpacity(0.2)
-                                              : "#F38B3B".toColor().withOpacity(0.2),
-                                          borderRadius: BorderRadius.circular(4.r),
+                                              : "#F38B3B".toColor().withOpacity(
+                                                  0.2,
+                                                ),
+                                          borderRadius: BorderRadius.circular(
+                                            4.r,
+                                          ),
                                         ),
                                         child: AutoTranslateText(
                                           response.direction!.toUpperCase(),
                                           style: MyTextTheme.smallBCN.copyWith(
-                                            color: response.direction!.toLowerCase() == 'upright'
+                                            color:
+                                                response.direction!
+                                                        .toLowerCase() ==
+                                                    'upright'
                                                 ? Colors.green
                                                 : "#F38B3B".toColor(),
                                           ),
@@ -156,8 +183,8 @@ class TarotCareerWidget extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(12.r),
                                   ),
                                   child: AutoTranslateText(
-                                    response.description.isNotEmpty 
-                                        ? response.description 
+                                    response.description.isNotEmpty
+                                        ? response.description
                                         : 'No description available',
                                     style: MyTextTheme.smallBCN.copyWith(
                                       color: '#820B17'.toColor(),
@@ -177,42 +204,51 @@ class TarotCareerWidget extends StatelessWidget {
                                   AutoTranslateText(
                                     'No career paths available',
                                     style: MyTextTheme.smallBCN.copyWith(
-                                      color: '#820B17'.toColor().withOpacity(0.6),
+                                      color: '#820B17'.toColor().withOpacity(
+                                        0.6,
+                                      ),
                                       fontStyle: FontStyle.italic,
                                     ),
                                   )
                                 else
                                   ...response.careerPaths.map((path) {
-                                  return Container(
-                                    margin: EdgeInsets.only(bottom: 8.h),
-                                    padding: EdgeInsets.all(12.w),
-                                    decoration: BoxDecoration(
-                                      color: "#F38B3B".toColor().withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(8.r),
-                                      border: Border.all(
-                                        color: "#F38B3B".toColor().withOpacity(0.3),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.arrow_forward,
-                                          color: "#F38B3B".toColor(),
-                                          size: 20.w,
+                                    return Container(
+                                      margin: EdgeInsets.only(bottom: 8.h),
+                                      padding: EdgeInsets.all(12.w),
+                                      decoration: BoxDecoration(
+                                        color: "#F38B3B".toColor().withOpacity(
+                                          0.1,
                                         ),
-                                        Spacing.w(8),
-                                        Expanded(
-                                          child: AutoTranslateText(
-                                            path,
-                                            style: MyTextTheme.smallBCN.copyWith(
-                                              color: '#820B17'.toColor(),
+                                        borderRadius: BorderRadius.circular(
+                                          8.r,
+                                        ),
+                                        border: Border.all(
+                                          color: "#F38B3B"
+                                              .toColor()
+                                              .withOpacity(0.3),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.arrow_forward,
+                                            color: "#F38B3B".toColor(),
+                                            size: 20.w,
+                                          ),
+                                          Spacing.w(8),
+                                          Expanded(
+                                            child: AutoTranslateText(
+                                              path,
+                                              style: MyTextTheme.smallBCN
+                                                  .copyWith(
+                                                    color: '#820B17'.toColor(),
+                                                  ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
                                 Spacing.h(24),
                                 Container(
                                   decoration: BoxDecoration(
@@ -228,7 +264,9 @@ class TarotCareerWidget extends StatelessWidget {
                                         vertical: 12.h,
                                       ),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12.r),
+                                        borderRadius: BorderRadius.circular(
+                                          12.r,
+                                        ),
                                       ),
                                       elevation: 0,
                                       shadowColor: Colors.transparent,
@@ -257,4 +295,3 @@ class TarotCareerWidget extends StatelessWidget {
     });
   }
 }
-

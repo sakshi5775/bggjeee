@@ -8,6 +8,7 @@ import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_vie
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/ascendant_report_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/shad_bala_widget.dart';
@@ -24,8 +25,7 @@ import 'package:astrobharataiuser/screens/kundli/widgets/moon_chart_widget.dart'
 import 'package:astrobharataiuser/screens/kundli/widgets/navamsha_chart_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/sun_chart_widget.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/transit_chart_widget.dart';
-import 'package:astrobharataiuser/screens/navtara/widgets/navtara_tab_widget.dart';
-import 'package:astrobharataiuser/screens/navtara/controller/navtara_controller.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -184,6 +184,7 @@ class KundliResultView extends BasePage<KundliResultController> {
                     title: item['title'] as String,
                     icon: item['icon'] as IconData,
                     imageUrl: item['imageUrl'] as String?,
+                    pricingKey: item['pricingKey'] as String? ?? '',
                     onTap: () =>
                         controller.onFeatureTap(item['title'] as String),
                   );
@@ -200,81 +201,136 @@ class KundliResultView extends BasePage<KundliResultController> {
     required String title,
     required IconData icon,
     String? imageUrl,
+    String pricingKey = '',
     required VoidCallback onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.cardLight,
-          borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(
-            color: AppColors.deepOrange.withOpacity(0.5),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadowLight,
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (imageUrl != null && imageUrl.isNotEmpty)
-              SizedBox(
-                width: 40.w,
-                height: 40.w,
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  fit: BoxFit.contain,
-                  placeholder: (_, __) => Center(
-                    child: SizedBox(
-                      width: 18.w,
-                      height: 18.w,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppColors.deepOrange,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // Use SizedBox.expand so Container fills the grid cell
+          SizedBox.expand(
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.cardLight,
+                borderRadius: BorderRadius.circular(10.r),
+                border: Border.all(
+                  color: AppColors.deepOrange.withOpacity(0.5),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.shadowLight,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (imageUrl != null && imageUrl.isNotEmpty)
+                    SizedBox(
+                      width: 40.w,
+                      height: 40.w,
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        fit: BoxFit.contain,
+                        placeholder: (_, __) => Center(
+                          child: SizedBox(
+                            width: 18.w,
+                            height: 18.w,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.deepOrange,
+                            ),
+                          ),
+                        ),
+                        errorWidget: (_, __, ___) => Icon(
+                          Icons.image_not_supported,
+                          color: AppColors.textLight,
+                          size: 22.w,
+                        ),
                       ),
+                    )
+                  else
+                    Container(
+                      padding: EdgeInsets.all(6.r),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.orangeGradient,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(icon, color: AppColors.textLight, size: 18.w),
+                    ),
+                  Spacing.h(4),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.w),
+                    child: AutoTranslateText(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: MyTextTheme.smallBCB.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11.sp,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  errorWidget: (_, __, ___) => Icon(
-                    Icons.image_not_supported,
-                    color: AppColors.textLight,
-                    size: 22.w,
-                  ),
-                ),
-              )
-            else
-              Container(
-                padding: EdgeInsets.all(6.r),
-                decoration: BoxDecoration(
-                  gradient: AppColors.orangeGradient,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: AppColors.textLight, size: 18.w),
-              ),
-            Spacing.h(4),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
-              child: AutoTranslateText(
-                title,
-                textAlign: TextAlign.center,
-                style: MyTextTheme.smallBCB.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 11.sp,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+          // Paid badge
+          if (pricingKey.isNotEmpty) _buildPaidBadge(pricingKey),
+        ],
       ),
     );
+  }
+
+  Widget _buildPaidBadge(String pricingKey) {
+    if (!Get.isRegistered<AiPricingController>()) {
+      return const SizedBox.shrink();
+    }
+    return Obx(() {
+      final pricingCtrl = Get.find<AiPricingController>();
+      final pricing = pricingCtrl.getPricingFor(pricingKey);
+      if (pricing == null) return const SizedBox.shrink();
+
+      final price = pricingCtrl.getDisplayPrice(pricingKey);
+      final badgeText = price.isNotEmpty ? price : 'Paid';
+
+      return Positioned(
+        top: -4.h,
+        right: -4.w,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [const Color(0xFFFF6B35), const Color(0xFFF38B3B)],
+            ),
+            borderRadius: BorderRadius.circular(8.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 3,
+                offset: const Offset(0, 1),
+              ),
+            ],
+          ),
+          child: Text(
+            badgeText,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 8.sp,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Poppins',
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildFeatureList() {
@@ -611,28 +667,6 @@ class KundliResultView extends BasePage<KundliResultController> {
     // Show Transit chart when TRANSIT tab is selected
     if (tabName == 'transit') {
       return const TransitChartWidget();
-    }
-
-    // Show Navtara Analysis when Navtara tab is selected
-    if (tabName == 'navtara') {
-      if (!Get.isRegistered<NavtaraController>()) {
-        Get.put(NavtaraController());
-      }
-      final navtaraController = Get.find<NavtaraController>();
-      // Auto-initialize if not set
-      if (navtaraController.primaryNakshatra.value == null) {
-        final nakshatra =
-            controller.detectedNakshatra.value ??
-            controller.kundliData.value?['nakshatra'];
-        if (nakshatra != null) {
-          navtaraController.initFromFullKundli(
-            nakshatraName: nakshatra,
-            name: controller.formData.value?['name'] ?? 'User',
-            dob: controller.formData.value?['dob'] ?? '',
-          );
-        }
-      }
-      return NavtaraTabWidget(controller: navtaraController);
     }
 
     // Show Ashtakvarga Chart when ASHTAKVARGA CHART tab is selected

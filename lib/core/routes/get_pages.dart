@@ -267,6 +267,7 @@ import 'package:astrobharataiuser/screens/tarot_reading/view/tarot_reading_view.
 import 'package:astrobharataiuser/screens/tarot_reading/binding/tarot_binding.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/view/carrot_astrology_view.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/view/carrot_astrology_form_view.dart';
+import 'package:astrobharataiuser/screens/carrot_astrology/view/carrot_astrology_sign_selection_view.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/view/carrot_astrology_results_view.dart';
 import 'package:astrobharataiuser/screens/carrot_astrology/view/carrot_astrology_history_view.dart';
 import 'package:astrobharataiuser/screens/live_stream/widgets/stream_reports_view.dart';
@@ -1263,6 +1264,12 @@ class PageRoutes {
     GetPage(
       name: AppRoutes.carrotAstrologyForm,
       page: () => const CarrotAstrologyFormView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.carrotAstrologySignSelection,
+      page: () => const CarrotAstrologySignSelectionView(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),

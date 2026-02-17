@@ -98,6 +98,14 @@ class _VastuReadingViewState extends State<VastuReadingView>
                     title: 'Vastu Reading',
                     customActions: [
                       IconButton(
+                        onPressed: () => controller.exportToPdf(),
+                        icon: Icon(
+                          Icons.picture_as_pdf_rounded,
+                          color: '#6F221E'.toColor(),
+                          size: 24.w,
+                        ),
+                      ),
+                      IconButton(
                         onPressed: () => controller.toggleCameraMode(),
                         icon: Icon(
                           Icons.camera_alt,

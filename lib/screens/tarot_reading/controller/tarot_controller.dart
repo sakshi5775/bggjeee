@@ -7,6 +7,10 @@ import 'package:astrobharataiuser/data_model/tarot_reading_models.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/service/tarot_service.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/utils/tarot_audio_haptic.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/utils/tarot_card_validation_handler.dart';
+import 'package:astrobharataiuser/core/services/pdf_generator_service.dart';
+import 'package:astrobharataiuser/data_model/pdf_metadata.dart';
+import 'package:astrobharataiuser/data_model/pdf_section.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -1858,5 +1862,254 @@ class TarotController extends BaseController {
     }
     // Don't clear responses here - keep them so user can reopen
     // Only clear when starting a new shuffle
+  }
+
+  Future<void> exportToPdf() async {
+    final List<PdfSection> sections = [];
+    String reportTitle = 'Tarot Reading';
+    PdfReportType reportType = PdfReportType.tarot;
+
+    // Determine reading type and add sections
+    if (selectedReadingType.value == 'yesno' && yesNoResponse.value != null) {
+      final res = yesNoResponse.value!;
+      reportTitle = 'Tarot Yes/No Reading';
+      sections.add(
+        PdfSection(
+          title: 'Direct Answer',
+          content: 'Result: ${res.meaning.toUpperCase()}',
+          type: PdfSectionType.text,
+        ),
+      );
+      sections.add(
+        PdfSection(
+          title: 'Card Analysis: ${res.name}',
+          content:
+              'Position: ${res.direction ?? 'Upright'}\n\nInterpretation: ${res.description}',
+        ),
+      );
+    } else if (selectedReadingType.value == 'career' &&
+        careerResponse.value != null) {
+      final res = careerResponse.value!;
+      reportTitle = 'Tarot Career & Professional Reading';
+      sections.add(
+        PdfSection(
+          title: 'Core Card: ${res.name}',
+          content:
+              'Position: ${res.direction ?? 'Upright'}\n\nInterpretation: ${res.description}',
+        ),
+      );
+      if (res.careerPaths.isNotEmpty) {
+        sections.add(
+          PdfSection(
+            title: 'Professional Guidance',
+            content:
+                'Recommended career directions and industries based on the card\'s energy:',
+            bulletPoints: res.careerPaths,
+            type: PdfSectionType.bullet,
+          ),
+        );
+      }
+    } else if (selectedReadingType.value == 'love') {
+      if (selectedLoveType.value == 'in-depth' &&
+          inDepthLoveResponse.value != null) {
+        final res = inDepthLoveResponse.value!;
+        reportTitle = 'Deep Love & Relationship Tarot';
+        sections.add(
+          PdfSection(
+            title: 'Primary Card: ${res.name}',
+            content: res.description,
+          ),
+        );
+      } else if (selectedLoveType.value == 'erotic' &&
+          eroticLoveResponse.value != null) {
+        final res = eroticLoveResponse.value!;
+        reportTitle = 'Erotic & Passion Tarot Reading';
+        sections.add(
+          PdfSection(
+            title: 'Intensity Card: ${res.name}',
+            content: res.description,
+          ),
+        );
+      } else if (selectedLoveType.value == 'made-for-each-other' &&
+          madeForEachOtherResponse.value != null) {
+        final res = madeForEachOtherResponse.value!;
+        reportTitle = 'Relationship Soulmate Compatibility';
+        sections.add(
+          PdfSection(
+            title: 'Compatibility Card: ${res.name}',
+            content: res.description,
+          ),
+        );
+      } else if (selectedLoveType.value == 'flirt' &&
+          flirtReadingResponse.value != null) {
+        final res = flirtReadingResponse.value!;
+        reportTitle = 'Flirt & New Connections Reading';
+        sections.add(
+          PdfSection(
+            title: 'Attraction Card: ${res.name}',
+            content: res.description,
+          ),
+        );
+      } else if (selectedLoveType.value == 'triangle' &&
+          loveTriangleResponse.value != null) {
+        final res = loveTriangleResponse.value!;
+        reportTitle = 'Love Triangle & Complex Dynamics';
+
+        sections.add(
+          PdfSection(
+            title: 'Your Inner Energy',
+            content: 'Card: ${res.self.name}\n\n${res.self.description}',
+            bulletPoints: res.self.traits.isNotEmpty ? res.self.traits : null,
+            type: res.self.traits.isNotEmpty
+                ? PdfSectionType.bullet
+                : PdfSectionType.text,
+          ),
+        );
+
+        sections.add(
+          PdfSection(
+            title: 'Prospect 1 Energy',
+            content: 'Card: ${res.lover1.name}\n\n${res.lover1.description}',
+            bulletPoints: res.lover1.traits.isNotEmpty
+                ? res.lover1.traits
+                : null,
+            type: res.lover1.traits.isNotEmpty
+                ? PdfSectionType.bullet
+                : PdfSectionType.text,
+          ),
+        );
+
+        sections.add(
+          PdfSection(
+            title: 'Prospect 2 Energy',
+            content: 'Card: ${res.lover2.name}\n\n${res.lover2.description}',
+            bulletPoints: res.lover2.traits.isNotEmpty
+                ? res.lover2.traits
+                : null,
+            type: res.lover2.traits.isNotEmpty
+                ? PdfSectionType.bullet
+                : PdfSectionType.text,
+          ),
+        );
+      }
+    } else if (selectedReadingType.value == 'daily' &&
+        dailyResponse.value != null) {
+      final res = dailyResponse.value!;
+      reportTitle = 'Daily Guidance Tarot';
+      sections.add(
+        PdfSection(
+          title: 'Daily Influence: ${res.name}',
+          content:
+              'Comprehensive energetic outlook for your day across different life areas:',
+        ),
+      );
+      sections.add(
+        PdfSection(title: 'Physical Well-being & Health', content: res.health),
+      );
+      sections.add(
+        PdfSection(
+          title: 'Emotional & Relationship Dynamics',
+          content: res.relationship,
+        ),
+      );
+      sections.add(
+        PdfSection(
+          title: 'Professional & Creative Energy',
+          content: res.career,
+        ),
+      );
+      sections.add(
+        PdfSection(
+          title: 'Material Prosperity & Finance',
+          content: res.finance,
+        ),
+      );
+    } else if (selectedReadingType.value == 'romantic-breakup' &&
+        romanticBreakupResponse.value != null) {
+      final res = romanticBreakupResponse.value!;
+      reportTitle = 'Healing After Breakup Reading';
+      sections.add(
+        PdfSection(
+          title: 'The Core Challenge (${res.cause.name})',
+          content:
+              'Deep-rooted cause of the separation:\n\n${res.cause.description}',
+        ),
+      );
+      sections.add(
+        PdfSection(
+          title: 'The Path to Healing (${res.advise.name})',
+          content:
+              'Spiritual and practical guidance for your journey forward:\n\n${res.advise.description}',
+        ),
+      );
+    } else if (selectedReadingType.value == 'business-breakup' &&
+        businessBreakupResponse.value != null) {
+      final res = businessBreakupResponse.value!;
+      reportTitle = 'Business Partnership Dissolution Reading';
+      sections.add(
+        PdfSection(
+          title: 'Reasons for Separation (${res.cause.name})',
+          content:
+              'Underlying professional conflicts:\n\n${res.cause.description}',
+        ),
+      );
+      sections.add(
+        PdfSection(
+          title: 'Strategic Guidance (${res.advise.name})',
+          content:
+              'Professional advice for handling the transition:\n\n${res.advise.description}',
+        ),
+      );
+    } else if (selectedReadingType.value == 'fortune-cookie' &&
+        fortuneCookieResponse.value != null) {
+      final res = fortuneCookieResponse.value!;
+      reportTitle = 'Mystic Fortune Cookie Guidance';
+      sections.add(
+        PdfSection(title: 'Your Oracle Message', content: res.message),
+      );
+    }
+
+    if (sections.isEmpty) {
+      Get.snackbar('Nothing to Export', 'Please complete a reading first.');
+      return;
+    }
+
+    // User metadata
+    String? userName;
+    if (Get.isRegistered<UserDashboardController>()) {
+      userName = Get.find<UserDashboardController>().userName.value;
+    }
+
+    /*
+    showDialog(
+      context: Get.context!,
+      builder: (context) => PdfLanguageSelectionDialog(
+        onLanguageSelected: (language) async {
+          await PdfGeneratorService.generateAstrologyReport(
+            title: reportTitle,
+            sections: sections,
+            metadata: PdfMetadata(
+              userName: userName,
+              generatedAt: DateTime.now(),
+              reportType: reportType,
+            ),
+            languageCode: language.code,
+          );
+        },
+      ),
+    );
+    */
+
+    // English-only for now (Direct Generation)
+    await PdfGeneratorService.generateAstrologyReport(
+      title: reportTitle,
+      sections: sections,
+      metadata: PdfMetadata(
+        userName: userName,
+        generatedAt: DateTime.now(),
+        reportType: reportType,
+      ),
+      languageCode: 'en',
+    );
   }
 }

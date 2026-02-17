@@ -4,6 +4,8 @@ import 'package:astrobharataiuser/screens/ramal_shastra/service/ramal_shastra_se
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
+
 class RamalShastraController extends GetxController {
   final RamalShastraService _service = RamalShastraService();
 
@@ -118,6 +120,15 @@ class RamalShastraController extends GetxController {
       return;
     }
 
+    // Check balance
+    if (Get.isRegistered<AiPricingController>()) {
+      final pricingCtrl = Get.find<AiPricingController>();
+      if (!pricingCtrl.hasSufficientBalance('ramal_shastra')) {
+        pricingCtrl.showInsufficientBalancePopup('ramal_shastra');
+        return;
+      }
+    }
+
     try {
       isAnalyzing.value = true;
       errorMessage.value = '';
@@ -129,6 +140,7 @@ class RamalShastraController extends GetxController {
         language: selectedLanguage.value,
         name: name.value.isNotEmpty ? name.value : null,
         dateOfBirth: dateOfBirth.value.isNotEmpty ? dateOfBirth.value : null,
+        timeout: const Duration(minutes: 5),
       );
 
       analysisResult.value = result;
@@ -147,18 +159,18 @@ class RamalShastraController extends GetxController {
     } catch (e) {
       isAnalyzing.value = false;
       errorMessage.value = e.toString();
-      
+
       // Close loading dialog if open
       if (Get.isDialogOpen ?? false) {
         Get.back();
       }
-      
+
       // Show error message
       String errorMsg = e.toString();
       if (errorMsg.contains('Exception:')) {
         errorMsg = errorMsg.replaceFirst('Exception: ', '');
       }
-      
+
       Get.snackbar(
         'Analysis Failed',
         errorMsg,
@@ -167,7 +179,7 @@ class RamalShastraController extends GetxController {
         colorText: Colors.white,
         duration: Duration(seconds: 5),
       );
-      
+
       // Re-throw to allow caller to handle if needed
       rethrow;
     }
@@ -189,10 +201,11 @@ class RamalShastraController extends GetxController {
 
       // Handle both cases: data.readings or data as list directly
       List<RamalShastraData>? readings;
-      if (response.data?.readings != null && response.data!.readings!.isNotEmpty) {
+      if (response.data?.readings != null &&
+          response.data!.readings!.isNotEmpty) {
         readings = response.data!.readings;
       }
-      
+
       if (readings != null && readings.isNotEmpty) {
         if (refresh || currentPage.value == 1) {
           historyReadings.assignAll(readings);
@@ -202,7 +215,7 @@ class RamalShastraController extends GetxController {
       } else if (refresh || currentPage.value == 1) {
         historyReadings.clear();
       }
-      
+
       pagination.value = response.pagination;
       isLoadingHistory.value = false;
     } catch (e) {
@@ -219,8 +232,8 @@ class RamalShastraController extends GetxController {
 
   /// Load more history
   Future<void> loadMoreHistory() async {
-    if (!isLoadingHistory.value && 
-        pagination.value != null && 
+    if (!isLoadingHistory.value &&
+        pagination.value != null &&
         pagination.value!.hasNextPage == true) {
       currentPage.value++;
       await loadHistory();
@@ -302,4 +315,3 @@ class RamalShastraController extends GetxController {
     dotResults.clear();
   }
 }
-

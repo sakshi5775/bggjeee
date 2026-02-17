@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/prashna_kundali_model.dart';
 import 'package:astrobharataiuser/screens/prashna_kundali/service/prashna_kundali_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
@@ -101,6 +102,15 @@ class PrashnaKundaliController extends BaseController {
       return;
     }
 
+    // Check balance
+    if (Get.isRegistered<AiPricingController>()) {
+      final pricingCtrl = Get.find<AiPricingController>();
+      if (!pricingCtrl.hasSufficientBalance('prashna_kundli')) {
+        pricingCtrl.showInsufficientBalancePopup('prashna_kundli');
+        return;
+      }
+    }
+
     try {
       isAnalyzing.value = true;
       final request = PrashnaAnalysisRequest(
@@ -113,7 +123,10 @@ class PrashnaKundaliController extends BaseController {
         ),
       );
 
-      final result = await _service.analyzePrashna(request);
+      final result = await _service.analyzePrashna(
+        request,
+        timeout: const Duration(minutes: 5),
+      );
       analysisResult.value = result;
       Get.toNamed(
         AppRoutes.prashnaKundaliResults,

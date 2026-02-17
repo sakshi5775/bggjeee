@@ -21,11 +21,15 @@ class PrashnaKundaliService {
     }
   }
 
-  Future<PrashnaReading> analyzePrashna(PrashnaAnalysisRequest request) async {
+  Future<PrashnaReading> analyzePrashna(
+    PrashnaAnalysisRequest request, {
+    Duration? timeout,
+  }) async {
     try {
       final response = await _apiRepository.postApi(
         EndPoints.prashnaKundaliAnalyze,
         request.toJson(),
+        timeout: timeout ?? const Duration(minutes: 5),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

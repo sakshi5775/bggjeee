@@ -7,6 +7,7 @@ import 'package:astrobharataiuser/screens/e_mandir/puja_booking_form/controller/
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/widgets/zodiac_sign_selection_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -775,51 +776,64 @@ class PujaBookingFormView extends BasePage<PujaBookingFormController> {
             ),
             SizedBox(height: 16.h),
             Expanded(
-              child: ListView.builder(
-                itemCount: options.length,
-                itemBuilder: (context, index) {
-                  final option = options[index];
-                  final isSelected = textController.text == option;
-                  return ListTile(
-                    onTap: () {
-                      textController.text = option;
-                      Get.back();
-                    },
-                    leading: isSelected
-                        ? Container(
-                            padding: EdgeInsets.all(6.w),
-                            decoration: BoxDecoration(
-                              gradient: AppColors.orangeGradient,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.check,
-                              color: Colors.white,
-                              size: 14.sp,
-                            ),
-                          )
-                        : null,
-                    title: AutoTranslateText(
-                      option,
-                      style: MyTextTheme.mediumBCN.copyWith(
-                        color: isSelected
-                            ? AppColors.orangeGradient.colors.first
-                            : const Color(0xFF424242),
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.w400,
+              child: title == 'Rashi'
+                  ? SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 8.h,
                       ),
+                      child: ZodiacSignSelectionGrid(
+                        onSignSelected: (name) {
+                          textController.text = name;
+                          Get.back();
+                        },
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: options.length,
+                      itemBuilder: (context, index) {
+                        final option = options[index];
+                        final isSelected = textController.text == option;
+                        return ListTile(
+                          onTap: () {
+                            textController.text = option;
+                            Get.back();
+                          },
+                          leading: isSelected
+                              ? Container(
+                                  padding: EdgeInsets.all(6.w),
+                                  decoration: BoxDecoration(
+                                    gradient: AppColors.orangeGradient,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 14.sp,
+                                  ),
+                                )
+                              : null,
+                          title: AutoTranslateText(
+                            option,
+                            style: MyTextTheme.mediumBCN.copyWith(
+                              color: isSelected
+                                  ? AppColors.orangeGradient.colors.first
+                                  : const Color(0xFF424242),
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                            ),
+                          ),
+                          trailing: isSelected
+                              ? Icon(
+                                  Icons.check_circle,
+                                  color: AppColors.orangeGradient.colors.first,
+                                  size: 22.sp,
+                                )
+                              : null,
+                        );
+                      },
                     ),
-                    trailing: isSelected
-                        ? Icon(
-                            Icons.check_circle,
-                            color: AppColors.orangeGradient.colors.first,
-                            size: 22.sp,
-                          )
-                        : null,
-                  );
-                },
-              ),
             ),
           ],
         ),

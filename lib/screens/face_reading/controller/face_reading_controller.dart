@@ -3,6 +3,7 @@ import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/face_reading_model.dart';
 import 'package:astrobharataiuser/screens/face_reading/service/face_reading_service.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 import 'package:astrobharataiuser/utils/error_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,7 +11,7 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 
 class FaceReadingController extends GetxController {
   final FaceReadingService _faceReadingService = FaceReadingService();
-  
+
   // State variables
   final Rx<File?> selectedImage = Rx<File?>(null);
   final RxBool isDetecting = false.obs;
@@ -62,7 +63,7 @@ class FaceReadingController extends GetxController {
 
       // Read image
       final inputImage = InputImage.fromFilePath(imageFile.path);
-      
+
       // Detect faces
       final List<Face> faces = await _faceDetector.processImage(inputImage);
 
@@ -143,6 +144,15 @@ class FaceReadingController extends GetxController {
     );
     if (!allowed) return;
 
+    // Check balance
+    if (Get.isRegistered<AiPricingController>()) {
+      final pricingCtrl = Get.find<AiPricingController>();
+      if (!pricingCtrl.hasSufficientBalance('face_reading')) {
+        pricingCtrl.showInsufficientBalancePopup('face_reading');
+        return;
+      }
+    }
+
     if (selectedImage.value == null) {
       // Close loader if open
       if (Get.isDialogOpen == true) {
@@ -176,7 +186,7 @@ class FaceReadingController extends GetxController {
       );
 
       analysisResult.value = result;
-      
+
       // Close loader before navigation
       if (Get.isDialogOpen == true) {
         try {
@@ -185,10 +195,9 @@ class FaceReadingController extends GetxController {
           // Ignore error
         }
       }
-      
+
       // Navigate to results screen
       Get.toNamed(AppRoutes.faceReadingResults, arguments: {'result': result});
-      
     } catch (e) {
       // Close loader on error
       if (Get.isDialogOpen == true) {
@@ -198,7 +207,7 @@ class FaceReadingController extends GetxController {
           // Ignore error
         }
       }
-      
+
       final userFriendlyError = ErrorFormatter.formatError(e);
       errorMessage.value = userFriendlyError;
       Get.snackbar(
@@ -220,4 +229,3 @@ class FaceReadingController extends GetxController {
     super.onClose();
   }
 }
-

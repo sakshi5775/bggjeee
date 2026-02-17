@@ -28,14 +28,14 @@ class HandwritingAstrologyView extends StatelessWidget {
               subtitle: AutoTranslateText(
                 'Ancient Graphology • AI Analysis',
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: AppColors.templeGold.withValues(alpha: 0.9),
+                  color: AppColors.saffron.withValues(alpha: 0.9),
                 ),
               ),
               customActions: [
                 IconButton(
                   icon: Icon(
                     Icons.history,
-                    color: AppColors.templeGold,
+                    color: AppColors.saffron,
                     size: 24.w,
                   ),
                   onPressed: () async {

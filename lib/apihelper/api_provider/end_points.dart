@@ -476,6 +476,7 @@ class EndPoints {
   static const String generateSun = 'chart/sun';
   static const String generateChalit = 'chart/bhav-chalit';
   static const String generateTransit = 'chart/transit-chart';
+  static const String avkahadaChakra = 'basic_panchang/avkahada-chakra';
 
   // Shodashvarga Chart APIs (D2 removed)
   static const String chartD3 = 'chart/d3';
@@ -633,7 +634,9 @@ class EndPoints {
   static const String aiQuery = 'ai/query';
 
   static const String freeServicesStatus =
-      'users/api/users/free-services/status';
+      'users/api/users/free-service/status';
+
+  static const String aiPricing = 'users/api/users/ai/pricing';
 
   /// Prashna Kundali APIs
   static const String prashnaKundaliQuestions =

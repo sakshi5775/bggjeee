@@ -3,13 +3,15 @@ import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/handwriting_astrology_model.dart';
 import 'package:astrobharataiuser/screens/handwriting_astrology/service/handwriting_astrology_service.dart';
 import 'package:astrobharataiuser/screens/handwriting_astrology/widgets/handwriting_loading_widget.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/ai_pricing_controller.dart';
 import 'package:astrobharataiuser/utils/error_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HandwritingAstrologyController extends GetxController {
-  final HandwritingAstrologyService _handwritingService = HandwritingAstrologyService();
-  
+  final HandwritingAstrologyService _handwritingService =
+      HandwritingAstrologyService();
+
   // State variables
   final RxList<File> selectedImages = <File>[].obs;
   final RxString selectedLanguage = 'english'.obs;
@@ -84,6 +86,15 @@ class HandwritingAstrologyController extends GetxController {
       return;
     }
 
+    // Check balance
+    if (Get.isRegistered<AiPricingController>()) {
+      final pricingCtrl = Get.find<AiPricingController>();
+      if (!pricingCtrl.hasSufficientBalance('handwriting')) {
+        pricingCtrl.showInsufficientBalancePopup('handwriting');
+        return;
+      }
+    }
+
     try {
       isAnalyzing.value = true;
       errorMessage.value = '';
@@ -91,9 +102,7 @@ class HandwritingAstrologyController extends GetxController {
       // Show loading dialog with attractive animation
       if (Get.isDialogOpen == false) {
         Get.dialog(
-          const HandwritingLoadingWidget(
-            message: 'Analyzing Handwriting...',
-          ),
+          const HandwritingLoadingWidget(message: 'Analyzing Handwriting...'),
           barrierDismissible: false,
         );
       }
@@ -104,7 +113,10 @@ class HandwritingAstrologyController extends GetxController {
         dateOfBirth: dateOfBirth.value.isNotEmpty ? dateOfBirth.value : null,
         gender: selectedGender.value,
         language: selectedLanguage.value,
-        additionalNotes: additionalNotes.value.isNotEmpty ? additionalNotes.value : null,
+        additionalNotes: additionalNotes.value.isNotEmpty
+            ? additionalNotes.value
+            : null,
+        timeout: const Duration(minutes: 5),
       );
 
       // Close loading dialog before navigation
@@ -117,10 +129,12 @@ class HandwritingAstrologyController extends GetxController {
       }
 
       analysisResult.value = result;
-      
+
       // Navigate to results screen
-      Get.toNamed(AppRoutes.handwritingAstrologyResults, arguments: {'result': result});
-      
+      Get.toNamed(
+        AppRoutes.handwritingAstrologyResults,
+        arguments: {'result': result},
+      );
     } catch (e) {
       // Close loading dialog if still open
       if (Get.isDialogOpen == true) {
@@ -130,7 +144,7 @@ class HandwritingAstrologyController extends GetxController {
           // Ignore error
         }
       }
-      
+
       final userFriendlyError = ErrorFormatter.formatError(e);
       errorMessage.value = userFriendlyError;
       Get.snackbar(
@@ -158,4 +172,3 @@ class HandwritingAstrologyController extends GetxController {
     analysisResult.value = null;
   }
 }
-

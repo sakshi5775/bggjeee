@@ -24,7 +24,7 @@ class KundliService {
       // Build query parameters
       // Note: Uri.replace will automatically encode # to %23, but we ensure color starts with #
       final encodedColor = color.startsWith('#') ? color : '#$color';
-      
+
       final queryParams = <String, String>{
         'date': date,
         'time': time,
@@ -39,28 +39,30 @@ class KundliService {
 
       // Build URI with query parameters
       // Uri.replace will automatically URL-encode # to %23
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.generateKundli}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.generateKundli}',
+      ).replace(queryParameters: queryParams);
 
       // Get authorization token
       final currentToken = UserData().accessToken?.trim();
-      
+
       // Make HTTP GET request
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Kundli API URL: ${uri.toString()}');
@@ -73,7 +75,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Kundli API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Kundli API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -101,7 +105,7 @@ class KundliService {
       // Build query parameters
       // Note: Uri.replace will automatically encode # to %23, but we ensure color starts with #
       final encodedColor = color.startsWith('#') ? color : '#$color';
-      
+
       final queryParams = <String, String>{
         'date': date,
         'time': time,
@@ -116,28 +120,30 @@ class KundliService {
 
       // Build URI with query parameters
       // Uri.replace will automatically URL-encode # to %23
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.generateNavamsha}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.generateNavamsha}',
+      ).replace(queryParameters: queryParams);
 
       // Get authorization token
       final currentToken = UserData().accessToken?.trim();
-      
+
       // Make HTTP GET request
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Navamsha API URL: ${uri.toString()}');
@@ -150,7 +156,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Navamsha API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Navamsha API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -177,7 +185,7 @@ class KundliService {
     try {
       // Build query parameters
       final encodedColor = color.startsWith('#') ? color : '#$color';
-      
+
       final queryParams = <String, String>{
         'date': date,
         'time': time,
@@ -191,28 +199,30 @@ class KundliService {
       };
 
       // Build URI with query parameters
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.generateSun}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.generateSun}',
+      ).replace(queryParameters: queryParams);
 
       // Get authorization token
       final currentToken = UserData().accessToken?.trim();
-      
+
       // Make HTTP GET request
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Sun API URL: ${uri.toString()}');
@@ -224,7 +234,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Sun API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Sun API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -252,7 +264,7 @@ class KundliService {
       // Build query parameters
       // Note: Uri.replace will automatically encode # to %23, but we ensure color starts with #
       final encodedColor = color.startsWith('#') ? color : '#$color';
-      
+
       final queryParams = <String, String>{
         'date': date,
         'time': time,
@@ -267,28 +279,30 @@ class KundliService {
 
       // Build URI with query parameters
       // Uri.replace will automatically URL-encode # to %23
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.generateMoon}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.generateMoon}',
+      ).replace(queryParameters: queryParams);
 
       // Get authorization token
       final currentToken = UserData().accessToken?.trim();
-      
+
       // Make HTTP GET request
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Moon API URL: ${uri.toString()}');
@@ -301,7 +315,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Moon API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Moon API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -329,7 +345,7 @@ class KundliService {
       // Build query parameters
       // Note: Uri.replace will automatically encode # to %23, but we ensure color starts with #
       final encodedColor = color.startsWith('#') ? color : '#$color';
-      
+
       final queryParams = <String, String>{
         'date': date,
         'time': time,
@@ -344,28 +360,30 @@ class KundliService {
 
       // Build URI with query parameters
       // Uri.replace will automatically URL-encode # to %23
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.generateChalit}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.generateChalit}',
+      ).replace(queryParameters: queryParams);
 
       // Get authorization token
       final currentToken = UserData().accessToken?.trim();
-      
+
       // Make HTTP GET request
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Chalit API URL: ${uri.toString()}');
@@ -378,7 +396,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Chalit API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Chalit API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -407,7 +427,7 @@ class KundliService {
     try {
       // Build query parameters
       final encodedColor = color.startsWith('#') ? color : '#$color';
-      
+
       final queryParams = <String, String>{
         'date': date,
         'time': time,
@@ -423,28 +443,30 @@ class KundliService {
       };
 
       // Build URI with query parameters
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.generateTransit}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.generateTransit}',
+      ).replace(queryParameters: queryParams);
 
       // Get authorization token
       final currentToken = UserData().accessToken?.trim();
-      
+
       // Make HTTP GET request
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Transit Chart API URL: ${uri.toString()}');
@@ -456,7 +478,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Transit Chart API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Transit Chart API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -484,7 +508,7 @@ class KundliService {
     try {
       // Build query parameters
       final encodedColor = color.startsWith('#') ? color : '#$color';
-      
+
       final queryParams = <String, String>{
         'date': date,
         'time': time,
@@ -553,28 +577,30 @@ class KundliService {
       }
 
       // Build URI with query parameters
-      final uri = Uri.parse('$_kundliBaseUrl/$endpoint').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/$endpoint',
+      ).replace(queryParameters: queryParams);
 
       // Get authorization token
       final currentToken = UserData().accessToken?.trim();
-      
+
       // Make HTTP GET request
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('$division Chart API URL: ${uri.toString()}');
@@ -586,7 +612,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('$division Chart API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            '$division Chart API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -618,28 +646,30 @@ class KundliService {
       };
 
       // Build URI with query parameters
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.currentMahadashaFull}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.currentMahadashaFull}',
+      ).replace(queryParameters: queryParams);
 
       // Get authorization token
       final currentToken = UserData().accessToken?.trim();
-      
+
       // Make HTTP GET request
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Current Mahadasha Full API URL: ${uri.toString()}');
@@ -651,7 +681,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Current Mahadasha Full API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Current Mahadasha Full API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -682,26 +714,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.currentMahadasha}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.currentMahadasha}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Current Mahadasha API URL: ${uri.toString()}');
@@ -713,7 +747,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Current Mahadasha API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Current Mahadasha API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -744,26 +780,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.mahadasha}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.mahadasha}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Mahadasha API URL: ${uri.toString()}');
@@ -775,7 +813,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Mahadasha API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Mahadasha API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -806,26 +846,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.yoginiDashaMain}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.yoginiDashaMain}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Yogini Dasha Main API URL: ${uri.toString()}');
@@ -837,7 +879,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Yogini Dasha Main API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Yogini Dasha Main API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -868,26 +912,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.yoginiDashaSub}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.yoginiDashaSub}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Yogini Dasha Sub API URL: ${uri.toString()}');
@@ -899,7 +945,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Yogini Dasha Sub API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Yogini Dasha Sub API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -930,26 +978,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.mangalDosh}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.mangalDosh}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Mangal Dosh API URL: ${uri.toString()}');
@@ -961,7 +1011,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Mangal Dosh API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Mangal Dosh API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -992,26 +1044,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.manglikDosh}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.manglikDosh}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Manglik Dosh API URL: ${uri.toString()}');
@@ -1023,7 +1077,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Manglik Dosh API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Manglik Dosh API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -1054,26 +1110,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.kaalsarpDosh}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.kaalsarpDosh}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Kaalsarp Dosh API URL: ${uri.toString()}');
@@ -1085,7 +1143,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Kaalsarp Dosh API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Kaalsarp Dosh API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -1116,26 +1176,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.pitraDosh}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.pitraDosh}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Pitra Dosh API URL: ${uri.toString()}');
@@ -1147,7 +1209,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Pitra Dosh API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Pitra Dosh API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -1184,26 +1248,28 @@ class KundliService {
         'color': color,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.kpChart}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.kpChart}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('KP Chart API URL: ${uri.toString()}');
@@ -1215,7 +1281,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('KP Chart API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'KP Chart API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -1252,26 +1320,28 @@ class KundliService {
         'color': color,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.kpRasiChart}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.kpRasiChart}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('KP Rasi Chart API URL: ${uri.toString()}');
@@ -1283,7 +1353,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('KP Rasi Chart API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'KP Rasi Chart API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -1314,26 +1386,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.kpPlanetDetails}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.kpPlanetDetails}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('KP Planet Details API URL: ${uri.toString()}');
@@ -1345,7 +1419,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('KP Planet Details API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'KP Planet Details API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -1376,30 +1452,34 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.kpPlanetSignifications}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.kpPlanetSignifications}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('KP Planet Significations API URL: ${uri.toString()}');
-        debugPrint('KP Planet Significations API Status: ${response.statusCode}');
+        debugPrint(
+          'KP Planet Significations API Status: ${response.statusCode}',
+        );
       }
 
       if (response.statusCode == 200) {
@@ -1407,7 +1487,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('KP Planet Significations API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'KP Planet Significations API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -1438,26 +1520,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.kpHouseSignificators}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.kpHouseSignificators}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('KP House Significators API URL: ${uri.toString()}');
@@ -1469,7 +1553,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('KP House Significators API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'KP House Significators API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -1500,30 +1586,36 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.kpPlanetSignificatorsLevelWise}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.kpPlanetSignificatorsLevelWise}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
-        debugPrint('KP Planet Significators Level Wise API URL: ${uri.toString()}');
-        debugPrint('KP Planet Significators Level Wise API Status: ${response.statusCode}');
+        debugPrint(
+          'KP Planet Significators Level Wise API URL: ${uri.toString()}',
+        );
+        debugPrint(
+          'KP Planet Significators Level Wise API Status: ${response.statusCode}',
+        );
       }
 
       if (response.statusCode == 200) {
@@ -1531,7 +1623,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('KP Planet Significators Level Wise API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'KP Planet Significators Level Wise API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -1562,26 +1656,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.kpCuspsDetails}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.kpCuspsDetails}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('KP Cusps Details API URL: ${uri.toString()}');
@@ -1593,7 +1689,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('KP Cusps Details API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'KP Cusps Details API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -1624,26 +1722,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.lalKitabHoroscope}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.lalKitabHoroscope}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Lal Kitab Horoscope API URL: ${uri.toString()}');
@@ -1655,7 +1755,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Lal Kitab Horoscope API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Lal Kitab Horoscope API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -1686,26 +1788,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.lalKitabDebts}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.lalKitabDebts}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Lal Kitab Debts API URL: ${uri.toString()}');
@@ -1717,7 +1821,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Lal Kitab Debts API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Lal Kitab Debts API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -1748,26 +1854,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.lalKitabRemedies}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.lalKitabRemedies}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Lal Kitab Remedies API URL: ${uri.toString()}');
@@ -1779,7 +1887,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Lal Kitab Remedies API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Lal Kitab Remedies API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -1809,19 +1919,24 @@ class KundliService {
         'tz': tz.toString(),
         'lang': lang,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.currentSadeSati}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.currentSadeSati}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
       if (response.statusCode == 200) {
         return json.decode(response.body) as Map<String, dynamic>;
       }
@@ -1850,19 +1965,24 @@ class KundliService {
         'tz': tz.toString(),
         'lang': lang,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.sadeSatiTableVedic}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.sadeSatiTableVedic}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
       if (response.statusCode == 200) {
         return json.decode(response.body) as Map<String, dynamic>;
       }
@@ -1891,19 +2011,24 @@ class KundliService {
         'tz': tz.toString(),
         'lang': lang,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.gemSuggestion}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.gemSuggestion}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
       if (response.statusCode == 200) {
         return json.decode(response.body) as Map<String, dynamic>;
       }
@@ -1932,19 +2057,24 @@ class KundliService {
         'tz': tz.toString(),
         'lang': lang,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.rudrakshSuggestion}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.rudrakshSuggestion}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
       if (response.statusCode == 200) {
         return json.decode(response.body) as Map<String, dynamic>;
       }
@@ -1962,19 +2092,24 @@ class KundliService {
   }) async {
     try {
       final queryParams = <String, String>{'gem': gem, 'lang': lang};
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.gemDetails}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.gemDetails}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
       if (response.statusCode == 200) {
         return json.decode(response.body) as Map<String, dynamic>;
       }
@@ -2004,26 +2139,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.lalKitabHouses}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.lalKitabHouses}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Lal Kitab Houses API URL: ${uri.toString()}');
@@ -2035,7 +2172,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Lal Kitab Houses API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Lal Kitab Houses API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -2066,26 +2205,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.lalKitabPlanets}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.lalKitabPlanets}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Lal Kitab Planets API URL: ${uri.toString()}');
@@ -2097,7 +2238,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Lal Kitab Planets API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Lal Kitab Planets API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -2134,26 +2277,28 @@ class KundliService {
         'color': color,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.lalKitabChart}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.lalKitabChart}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Lal Kitab Chart API URL: ${uri.toString()}');
@@ -2165,7 +2310,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Lal Kitab Chart API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Lal Kitab Chart API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -2204,30 +2351,34 @@ class KundliService {
         'color': color,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.lalKitabVarshphalChart}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.lalKitabVarshphalChart}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Lal Kitab Varshphal Chart API URL: ${uri.toString()}');
-        debugPrint('Lal Kitab Varshphal Chart API Status: ${response.statusCode}');
+        debugPrint(
+          'Lal Kitab Varshphal Chart API Status: ${response.statusCode}',
+        );
       }
 
       if (response.statusCode == 200) {
@@ -2235,7 +2386,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Lal Kitab Varshphal Chart API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Lal Kitab Varshphal Chart API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         // Throw exception with error details for better error handling
         final errorBody = response.body;
@@ -2256,33 +2409,37 @@ class KundliService {
     String lang = 'en',
   }) async {
     try {
-      final dateFormatted = date.contains('/') ? date.replaceAll('/', '-') : date;
+      final dateFormatted = date.contains('/')
+          ? date.replaceAll('/', '-')
+          : date;
       final queryParams = <String, String>{
         'date': dateFormatted,
         'name': name,
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.predictionNumerology}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.predictionNumerology}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Numerology Prediction API URL: ${uri.toString()}');
@@ -2294,7 +2451,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Numerology Prediction API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Numerology Prediction API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         throw Exception('API Error ${response.statusCode}: ${response.body}');
       }
@@ -2319,26 +2478,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.predictionDaily}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.predictionDaily}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Daily Prediction API URL: ${uri.toString()}');
@@ -2350,7 +2511,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Daily Prediction API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Daily Prediction API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         throw Exception('API Error ${response.statusCode}: ${response.body}');
       }
@@ -2373,26 +2536,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.predictionWeekly}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.predictionWeekly}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Weekly Prediction API URL: ${uri.toString()}');
@@ -2404,7 +2569,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Weekly Prediction API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Weekly Prediction API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         throw Exception('API Error ${response.statusCode}: ${response.body}');
       }
@@ -2427,26 +2594,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.predictionMonthly}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.predictionMonthly}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Monthly Prediction API URL: ${uri.toString()}');
@@ -2458,7 +2627,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Monthly Prediction API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Monthly Prediction API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         throw Exception('API Error ${response.statusCode}: ${response.body}');
       }
@@ -2483,26 +2654,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.predictionYearly}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.predictionYearly}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Yearly Prediction API URL: ${uri.toString()}');
@@ -2514,7 +2687,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Yearly Prediction API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Yearly Prediction API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         throw Exception('API Error ${response.statusCode}: ${response.body}');
       }
@@ -2545,26 +2720,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.predictionAscendant}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.predictionAscendant}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Ascendant Prediction API URL: ${uri.toString()}');
@@ -2576,7 +2753,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Ascendant Prediction API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Ascendant Prediction API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         throw Exception('API Error ${response.statusCode}: ${response.body}');
       }
@@ -2607,26 +2786,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.predictionMoon}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.predictionMoon}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Moon Sign Prediction API URL: ${uri.toString()}');
@@ -2638,7 +2819,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Moon Sign Prediction API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Moon Sign Prediction API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         throw Exception('API Error ${response.statusCode}: ${response.body}');
       }
@@ -2669,26 +2852,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.predictionNakshatra}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.predictionNakshatra}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Nakshatra Prediction API URL: ${uri.toString()}');
@@ -2700,7 +2885,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Nakshatra Prediction API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Nakshatra Prediction API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         throw Exception('API Error ${response.statusCode}: ${response.body}');
       }
@@ -2731,26 +2918,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.predictionPanchang}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.predictionPanchang}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Panchang Prediction API URL: ${uri.toString()}');
@@ -2762,7 +2951,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Panchang Prediction API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Panchang Prediction API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         throw Exception('API Error ${response.statusCode}: ${response.body}');
       }
@@ -2786,14 +2977,26 @@ class KundliService {
         'sign': sign,
         'lang': lang,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.prokeralaDaily}').replace(queryParameters: queryParams);
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.prokeralaDaily}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(uri, headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
-      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
-      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
+      if (response.statusCode == 200)
+        return json.decode(response.body) as Map<String, dynamic>;
       return null;
     } catch (e) {
       if (kDebugMode) debugPrint('Error Prokerala daily: $e');
@@ -2815,14 +3018,26 @@ class KundliService {
         'type': type,
         'lang': lang,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.prokeralaDailyAdvanced}').replace(queryParameters: queryParams);
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.prokeralaDailyAdvanced}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(uri, headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
-      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
-      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
+      if (response.statusCode == 200)
+        return json.decode(response.body) as Map<String, dynamic>;
       return null;
     } catch (e) {
       if (kDebugMode) debugPrint('Error Prokerala daily advanced: $e');
@@ -2844,14 +3059,26 @@ class KundliService {
         'sign_two': signTwo,
         'lang': lang,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.prokeralaLoveCompatibility}').replace(queryParameters: queryParams);
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.prokeralaLoveCompatibility}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(uri, headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
-      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
-      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
+      if (response.statusCode == 200)
+        return json.decode(response.body) as Map<String, dynamic>;
       return null;
     } catch (e) {
       if (kDebugMode) debugPrint('Error Prokerala love compatibility: $e');
@@ -2878,26 +3105,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.planetDetails}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.planetDetails}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Planet Details API URL: ${uri.toString()}');
@@ -2910,7 +3139,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Planet Details API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Planet Details API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -2934,14 +3165,26 @@ class KundliService {
         'year': year.toString(),
         'lang': lang,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.planetTransitDates}').replace(queryParameters: queryParams);
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.planetTransitDates}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(uri, headers: {
-        'Content-Type': 'application/json',
-        'Accept': '*/*',
-        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
-      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
-      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
+      if (response.statusCode == 200)
+        return json.decode(response.body) as Map<String, dynamic>;
       return null;
     } catch (e) {
       if (kDebugMode) debugPrint('Error fetching planet transit dates: $e');
@@ -2973,14 +3216,26 @@ class KundliService {
         'zodiac_type': zodiacType,
         'lang': lang,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.detailedPlanetReport}').replace(queryParameters: queryParams);
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.detailedPlanetReport}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(uri, headers: {
-        'Content-Type': 'application/json',
-        'Accept': '*/*',
-        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
-      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
-      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
+      if (response.statusCode == 200)
+        return json.decode(response.body) as Map<String, dynamic>;
       return null;
     } catch (e) {
       if (kDebugMode) debugPrint('Error fetching detailed planet report: $e');
@@ -3010,14 +3265,26 @@ class KundliService {
         'zodiac_type': zodiacType,
         'lang': lang,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.westernPlanetDetails}').replace(queryParameters: queryParams);
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.westernPlanetDetails}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(uri, headers: {
-        'Content-Type': 'application/json',
-        'Accept': '*/*',
-        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
-      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
-      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
+      if (response.statusCode == 200)
+        return json.decode(response.body) as Map<String, dynamic>;
       return null;
     } catch (e) {
       if (kDebugMode) debugPrint('Error fetching western planet details: $e');
@@ -3047,14 +3314,26 @@ class KundliService {
         'zodiac_type': zodiacType,
         'lang': lang,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.aspects}').replace(queryParameters: queryParams);
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.aspects}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(uri, headers: {
-        'Content-Type': 'application/json',
-        'Accept': '*/*',
-        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
-      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
-      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
+      if (response.statusCode == 200)
+        return json.decode(response.body) as Map<String, dynamic>;
       return null;
     } catch (e) {
       if (kDebugMode) debugPrint('Error fetching aspects: $e');
@@ -3083,26 +3362,50 @@ class KundliService {
   }) async {
     try {
       final queryParams = <String, String>{
-        'dob': dob, 'tob': tob, 'lat': lat.toString(), 'lon': lon.toString(), 'tz': tz.toString(),
-        'transit_date': transitDate, 'transit_time': transitTime,
-        'transit_lat': transitLat.toString(), 'transit_lon': transitLon.toString(), 'transit_tz': transitTz.toString(),
-        'house_type': houseType, 'zodiac_type': zodiacType, 'lang': lang,
-        'size': size.toString(), 'format': format, 'natal_color': natalColor,
+        'dob': dob,
+        'tob': tob,
+        'lat': lat.toString(),
+        'lon': lon.toString(),
+        'tz': tz.toString(),
+        'transit_date': transitDate,
+        'transit_time': transitTime,
+        'transit_lat': transitLat.toString(),
+        'transit_lon': transitLon.toString(),
+        'transit_tz': transitTz.toString(),
+        'house_type': houseType,
+        'zodiac_type': zodiacType,
+        'lang': lang,
+        'size': size.toString(),
+        'format': format,
+        'natal_color': natalColor,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.westernTransitChart}').replace(queryParameters: queryParams);
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.westernTransitChart}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(uri, headers: {
-        'Content-Type': 'application/json',
-        'Accept': '*/*',
-        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
-      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
       if (response.statusCode == 200) {
         final body = response.body.trim();
         try {
           final decoded = json.decode(body);
           if (decoded is String) return decoded;
-          if (decoded is Map && decoded['response'] != null) return decoded['response'] as String?;
-          if (decoded is Map && decoded['data'] != null) return decoded['data'] as String?;
+          if (decoded is Map && decoded['response'] != null)
+            return decoded['response'] as String?;
+          if (decoded is Map && decoded['data'] != null)
+            return decoded['data'] as String?;
         } catch (_) {}
         if (body.startsWith('<svg')) return body;
         return body;
@@ -3129,18 +3432,37 @@ class KundliService {
   }) async {
     try {
       final queryParams = <String, String>{
-        'dob': dob, 'tob': tob, 'lat': lat.toString(), 'lon': lon.toString(), 'tz': tz.toString(),
-        'start_date': startDate, 'planet': planet,
-        'house_type': houseType, 'zodiac_type': zodiacType, 'lang': lang,
+        'dob': dob,
+        'tob': tob,
+        'lat': lat.toString(),
+        'lon': lon.toString(),
+        'tz': tz.toString(),
+        'start_date': startDate,
+        'planet': planet,
+        'house_type': houseType,
+        'zodiac_type': zodiacType,
+        'lang': lang,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.dailyTransits}').replace(queryParameters: queryParams);
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.dailyTransits}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(uri, headers: {
-        'Content-Type': 'application/json',
-        'Accept': '*/*',
-        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
-      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
-      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
+      if (response.statusCode == 200)
+        return json.decode(response.body) as Map<String, dynamic>;
       return null;
     } catch (e) {
       if (kDebugMode) debugPrint('Error fetching daily transits: $e');
@@ -3166,19 +3488,40 @@ class KundliService {
   }) async {
     try {
       final queryParams = <String, String>{
-        'dob': dob, 'tob': tob, 'lat': lat.toString(), 'lon': lon.toString(), 'tz': tz.toString(),
-        'transit_date': transitDate, 'transit_time': transitTime,
-        'transit_lat': transitLat.toString(), 'transit_lon': transitLon.toString(), 'transit_tz': transitTz.toString(),
-        'house_type': houseType, 'zodiac_type': zodiacType, 'lang': lang,
+        'dob': dob,
+        'tob': tob,
+        'lat': lat.toString(),
+        'lon': lon.toString(),
+        'tz': tz.toString(),
+        'transit_date': transitDate,
+        'transit_time': transitTime,
+        'transit_lat': transitLat.toString(),
+        'transit_lon': transitLon.toString(),
+        'transit_tz': transitTz.toString(),
+        'house_type': houseType,
+        'zodiac_type': zodiacType,
+        'lang': lang,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.dailyTransitPrediction}').replace(queryParameters: queryParams);
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.dailyTransitPrediction}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(uri, headers: {
-        'Content-Type': 'application/json',
-        'Accept': '*/*',
-        if (currentToken != null && currentToken.isNotEmpty) 'Authorization': 'Bearer $currentToken',
-      }).timeout(const Duration(seconds: 30), onTimeout: () => throw Exception('Request timeout'));
-      if (response.statusCode == 200) return json.decode(response.body) as Map<String, dynamic>;
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
+      if (response.statusCode == 200)
+        return json.decode(response.body) as Map<String, dynamic>;
       return null;
     } catch (e) {
       if (kDebugMode) debugPrint('Error fetching daily transit prediction: $e');
@@ -3205,26 +3548,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.ashtakvarga}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.ashtakvarga}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
 
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Ashtakvarga API URL: ${uri.toString()}');
@@ -3237,7 +3582,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Ashtakvarga API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Ashtakvarga API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -3256,7 +3603,8 @@ class KundliService {
     required double latitude,
     required double longitude,
     required double tz, // Timezone offset
-    required String planet, // Planet name (e.g., "Jupiter", "Sun", "Moon", etc.)
+    required String
+    planet, // Planet name (e.g., "Jupiter", "Sun", "Moon", etc.)
     String lang = 'en',
   }) async {
     try {
@@ -3270,26 +3618,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.binnashtakvarga}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.binnashtakvarga}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
 
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Binnashtakvarga API URL: ${uri.toString()}');
@@ -3302,7 +3652,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Binnashtakvarga API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Binnashtakvarga API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -3328,7 +3680,7 @@ class KundliService {
     try {
       // Ensure color starts with #
       final encodedColor = color.startsWith('#') ? color : '#$color';
-      
+
       final queryParams = <String, String>{
         'date': date,
         'time': time,
@@ -3340,26 +3692,28 @@ class KundliService {
         'color': encodedColor,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.ashtakvargaChart}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.ashtakvargaChart}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
 
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Ashtakvarga Chart API URL: ${uri.toString()}');
@@ -3373,7 +3727,7 @@ class KundliService {
         try {
           // Try to decode as JSON - it might be a string or an object
           final decoded = json.decode(responseBody);
-          
+
           if (decoded is String) {
             // Direct SVG string
             return {'data': decoded};
@@ -3393,7 +3747,9 @@ class KundliService {
         }
       } else {
         if (kDebugMode) {
-          debugPrint('Ashtakvarga Chart API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Ashtakvarga Chart API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -3426,26 +3782,28 @@ class KundliService {
         'division': division, // e.g., "D9"
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.divisionalChart}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.divisionalChart}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
 
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Divisional Chart API URL: ${uri.toString()}');
@@ -3458,7 +3816,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Divisional Chart API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Divisional Chart API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -3489,26 +3849,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.ascendantReport}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.ascendantReport}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
 
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Ascendant Report API URL: ${uri.toString()}');
@@ -3521,7 +3883,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Ascendant Report API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Ascendant Report API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -3552,26 +3916,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.varshaphalDetails}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.varshaphalDetails}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
 
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Varshphal Details API URL: ${uri.toString()}');
@@ -3584,7 +3950,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Varshphal Details API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Varshphal Details API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -3615,26 +3983,28 @@ class KundliService {
         'lang': lang,
       };
 
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.varshaphalYearlyChart}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.varshaphalYearlyChart}',
+      ).replace(queryParameters: queryParams);
 
       final currentToken = UserData().accessToken?.trim();
 
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () {
-          throw Exception('Request timeout');
-        },
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
 
       if (kDebugMode) {
         debugPrint('Varshphal Yearly Chart API URL: ${uri.toString()}');
@@ -3647,7 +4017,9 @@ class KundliService {
         return data;
       } else {
         if (kDebugMode) {
-          debugPrint('Varshphal Yearly Chart API Error: ${response.statusCode} - ${response.body}');
+          debugPrint(
+            'Varshphal Yearly Chart API Error: ${response.statusCode} - ${response.body}',
+          );
         }
         return null;
       }
@@ -3677,27 +4049,31 @@ class KundliService {
         'tz': tz.toString(),
         'lang': lang,
       };
-      final uri = Uri.parse('$_kundliBaseUrl/${EndPoints.shadBalaVedic}').replace(
-        queryParameters: queryParams,
-      );
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.shadBalaVedic}',
+      ).replace(queryParameters: queryParams);
       final currentToken = UserData().accessToken?.trim();
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          if (currentToken != null && currentToken.isNotEmpty)
-            'Authorization': 'Bearer $currentToken',
-        },
-      ).timeout(
-        const Duration(seconds: 30),
-        onTimeout: () => throw Exception('Request timeout'),
-      );
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () => throw Exception('Request timeout'),
+          );
       if (response.statusCode == 200) {
         return json.decode(response.body) as Map<String, dynamic>;
       }
       if (kDebugMode) {
-        debugPrint('Shad Bala API Error: ${response.statusCode} - ${response.body}');
+        debugPrint(
+          'Shad Bala API Error: ${response.statusCode} - ${response.body}',
+        );
       }
       return null;
     } catch (e) {
@@ -3705,5 +4081,70 @@ class KundliService {
       return null;
     }
   }
-}
 
+  /// Get Avkahada Chakra (for Nakshatra)
+  Future<Map<String, dynamic>?> getAvkahadaChakra({
+    required String date,
+    required String time,
+    required double latitude,
+    required double longitude,
+    required double tz,
+    String lang = 'en',
+  }) async {
+    try {
+      final queryParams = <String, String>{
+        'date': date,
+        'time': time,
+        'latitude': latitude.toString(),
+        'longitude': longitude.toString(),
+        'tz': tz.toString(),
+        'lang': lang,
+      };
+
+      final uri = Uri.parse(
+        '$_kundliBaseUrl/${EndPoints.avkahadaChakra}',
+      ).replace(queryParameters: queryParams);
+
+      final currentToken = UserData().accessToken?.trim();
+
+      final response = await http
+          .get(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': '*/*',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+          )
+          .timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw Exception('Request timeout');
+            },
+          );
+
+      if (kDebugMode) {
+        debugPrint('Avkahada Chakra API URL: ${uri.toString()}');
+        debugPrint('Avkahada Chakra API Status: ${response.statusCode}');
+      }
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        return data;
+      } else {
+        if (kDebugMode) {
+          debugPrint(
+            'Avkahada API Error: ${response.statusCode} - ${response.body}',
+          );
+        }
+        return null;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error fetching Avkahada Chakra: $e');
+      }
+      return null;
+    }
+  }
+}

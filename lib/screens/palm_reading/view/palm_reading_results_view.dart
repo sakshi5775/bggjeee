@@ -7,6 +7,11 @@ import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
+import 'package:astrobharataiuser/core/services/pdf_generator_service.dart';
+import 'package:astrobharataiuser/data_model/pdf_metadata.dart';
+import 'package:astrobharataiuser/data_model/pdf_section.dart';
+import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
+import 'package:astrobharataiuser/data_model/palm_reading_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -31,7 +36,23 @@ class PalmReadingResultsView extends StatelessWidget {
 
             Column(
               children: [
-                CommonHeader(title: 'Palm Reading Result', customActions: []),
+                CommonHeader(
+                  title: 'Palm Reading Result',
+                  customActions: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.picture_as_pdf_rounded,
+                        color: '#6F221E'.toColor(),
+                        size: 22.w,
+                      ),
+                      onPressed: () {
+                        if (controller.palmReadingData.value != null) {
+                          _exportToPdf(controller.palmReadingData.value!);
+                        }
+                      },
+                    ),
+                  ],
+                ),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Center(
@@ -471,6 +492,87 @@ class PalmReadingResultsView extends StatelessWidget {
               .merge(AppTypography.h2),
         ),
       ),
+    );
+  }
+
+  Future<void> _exportToPdf(PalmReadingData result) async {
+    final List<PdfSection> sections = [];
+
+    // 1. Overall Reading
+    if (result.overallReading.isNotEmpty) {
+      sections.add(
+        PdfSection(
+          title: 'Hand Type',
+          content: 'Analysis performed on: ${result.handType}',
+        ),
+      );
+      sections.add(
+        PdfSection(title: 'Overall Reading', content: result.overallReading),
+      );
+    }
+
+    // 2. Summary
+    if (result.summary.isNotEmpty) {
+      sections.add(PdfSection(title: 'Summary', content: result.summary));
+    }
+
+    // 3. Detailed Line Readings
+    for (var reading in result.readings) {
+      if (reading.category.toUpperCase() == 'OVERALL') continue;
+
+      String title = reading.category
+          .replaceAll('_', ' ')
+          .split(' ')
+          .map(
+            (word) => word[0].toUpperCase() + word.substring(1).toLowerCase(),
+          )
+          .join(' ');
+
+      sections.add(
+        PdfSection(
+          title: title,
+          content: reading.interpretation,
+          score: reading.confidence != null ? reading.confidence! * 100 : null,
+        ),
+      );
+    }
+
+    // Get user metadata
+    String? userName;
+    if (Get.isRegistered<UserDashboardController>()) {
+      userName = Get.find<UserDashboardController>().userName.value;
+    }
+
+    /*
+    showDialog(
+      context: Get.context!,
+      builder: (context) => PdfLanguageSelectionDialog(
+        onLanguageSelected: (language) async {
+          await PdfGeneratorService.generateAstrologyReport(
+            title: 'Palm Reading Analysis',
+            sections: sections,
+            metadata: PdfMetadata(
+              userName: userName,
+              generatedAt: DateTime.now(),
+              reportType: PdfReportType.palmReading,
+            ),
+            languageCode: language.code,
+          );
+        },
+      ),
+    );
+    */
+
+    // English-only for now (Direct Generation)
+    await PdfGeneratorService.generateAstrologyReport(
+      title: 'Palm Reading Analysis',
+      sections: sections,
+      metadata: PdfMetadata(
+        userName: userName,
+        generatedAt: DateTime.now(),
+        reportType: PdfReportType.palmReading,
+      ),
+      languageCode: 'en',
     );
   }
 }

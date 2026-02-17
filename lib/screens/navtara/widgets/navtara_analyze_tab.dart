@@ -24,9 +24,8 @@ class NavtaraAnalyzeTab extends StatelessWidget {
           _buildAnalyzeForm(maroon),
           Spacing.h(20),
           Obx(() {
-            if (controller.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
-            }
+            // Loader is handled by Dialog
+
             final analysis = controller.analysis.value;
             if (analysis == null) {
               return Center(

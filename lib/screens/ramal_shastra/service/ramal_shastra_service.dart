@@ -14,38 +14,42 @@ class RamalShastraService {
     String? language,
     String? name,
     String? dateOfBirth,
+    Duration? timeout,
   }) async {
     try {
       // Backend expects: /api/users/api/users/ramal/analyze
       final url = Uri.parse('$baseUrl/api/users/api/users/ramal/analyze');
-      
+
       final requestBody = {
         'question': question,
         'points': points,
         'category': category,
         if (language != null && language.isNotEmpty) 'language': language,
         if (name != null && name.isNotEmpty) 'name': name,
-        if (dateOfBirth != null && dateOfBirth.isNotEmpty) 'dateOfBirth': dateOfBirth,
+        if (dateOfBirth != null && dateOfBirth.isNotEmpty)
+          'dateOfBirth': dateOfBirth,
       };
 
       final currentToken = UserData().accessToken?.trim();
-      
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'accept': 'application/json',
-          if (currentToken != null && currentToken.isNotEmpty) 
-            'Authorization': 'Bearer $currentToken',
-        },
-        body: json.encode(requestBody),
-      );
+
+      final response = await http
+          .post(
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+              'accept': 'application/json',
+              if (currentToken != null && currentToken.isNotEmpty)
+                'Authorization': 'Bearer $currentToken',
+            },
+            body: json.encode(requestBody),
+          )
+          .timeout(timeout ?? const Duration(minutes: 5));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         try {
           final jsonData = json.decode(response.body);
           final ramalResponse = RamalShastraResponse.fromJson(jsonData);
-          
+
           if (ramalResponse.success && ramalResponse.data != null) {
             return ramalResponse.data!;
           } else {
@@ -56,11 +60,14 @@ class RamalShastraService {
           }
         } catch (parseError) {
           // If parsing fails, show response body for debugging
-          throw Exception('Failed to parse response: ${parseError.toString()}\nResponse: ${response.body.substring(0, response.body.length > 200 ? 200 : response.body.length)}');
+          throw Exception(
+            'Failed to parse response: ${parseError.toString()}\nResponse: ${response.body.substring(0, response.body.length > 200 ? 200 : response.body.length)}',
+          );
         }
       } else {
         // Try to parse error message from response
-        String errorMsg = 'Failed to analyze Ramal Shastra: ${response.statusCode}';
+        String errorMsg =
+            'Failed to analyze Ramal Shastra: ${response.statusCode}';
         try {
           final errorJson = json.decode(response.body);
           if (errorJson['message'] != null) {
@@ -89,19 +96,20 @@ class RamalShastraService {
     int limit = 10,
   }) async {
     try {
-      final url = Uri.parse('$baseUrl/api/users/api/users/ramal/history').replace(
-        queryParameters: {
-          'page': page.toString(),
-          'limit': limit.toString(),
-        },
-      );
+      final url = Uri.parse('$baseUrl/api/users/api/users/ramal/history')
+          .replace(
+            queryParameters: {
+              'page': page.toString(),
+              'limit': limit.toString(),
+            },
+          );
       final currentToken = UserData().accessToken?.trim();
-      
+
       final response = await http.get(
         url,
         headers: {
           'accept': 'application/json',
-          if (currentToken != null && currentToken.isNotEmpty) 
+          if (currentToken != null && currentToken.isNotEmpty)
             'Authorization': 'Bearer $currentToken',
         },
       );
@@ -116,14 +124,17 @@ class RamalShastraService {
             jsonData['data'] = {'readings': jsonData['data']};
           }
         }
-        
+
         try {
-          return RamalHistoryResponse.fromJson(jsonData as Map<String, dynamic>);
+          return RamalHistoryResponse.fromJson(
+            jsonData as Map<String, dynamic>,
+          );
         } catch (e) {
           throw Exception('Failed to parse history response: $e');
         }
       } else {
-        String errorMsg = 'Failed to get Ramal Shastra history: ${response.statusCode}';
+        String errorMsg =
+            'Failed to get Ramal Shastra history: ${response.statusCode}';
         try {
           final errorJson = json.decode(response.body);
           if (errorJson['message'] != null) {
@@ -142,12 +153,12 @@ class RamalShastraService {
     try {
       final url = Uri.parse('$baseUrl/api/users/api/users/ramal/$readingId');
       final currentToken = UserData().accessToken?.trim();
-      
+
       final response = await http.get(
         url,
         headers: {
           'accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty) 
+          if (currentToken != null && currentToken.isNotEmpty)
             'Authorization': 'Bearer $currentToken',
         },
       );
@@ -155,13 +166,15 @@ class RamalShastraService {
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         final ramalResponse = RamalShastraResponse.fromJson(jsonData);
-        
+
         if (ramalResponse.success && ramalResponse.data != null) {
           return ramalResponse.data!;
         } else {
-          throw Exception(ramalResponse.message.isNotEmpty
-              ? ramalResponse.message
-              : 'Ramal Shastra reading not found');
+          throw Exception(
+            ramalResponse.message.isNotEmpty
+                ? ramalResponse.message
+                : 'Ramal Shastra reading not found',
+          );
         }
       } else {
         throw Exception('Failed to get Ramal Shastra: ${response.statusCode}');
@@ -176,12 +189,12 @@ class RamalShastraService {
     try {
       final url = Uri.parse('$baseUrl/api/users/api/users/ramal/$readingId');
       final currentToken = UserData().accessToken?.trim();
-      
+
       final response = await http.delete(
         url,
         headers: {
           'accept': '*/*',
-          if (currentToken != null && currentToken.isNotEmpty) 
+          if (currentToken != null && currentToken.isNotEmpty)
             'Authorization': 'Bearer $currentToken',
         },
       );
@@ -190,7 +203,9 @@ class RamalShastraService {
         final jsonData = json.decode(response.body);
         return jsonData['success'] == true;
       } else {
-        throw Exception('Failed to delete Ramal Shastra: ${response.statusCode}');
+        throw Exception(
+          'Failed to delete Ramal Shastra: ${response.statusCode}',
+        );
       }
     } catch (e) {
       throw Exception('Error deleting Ramal Shastra: ${e.toString()}');
@@ -202,12 +217,12 @@ class RamalShastraService {
     try {
       final url = Uri.parse('$baseUrl/api/users/api/users/ramal/stats');
       final currentToken = UserData().accessToken?.trim();
-      
+
       final response = await http.get(
         url,
         headers: {
           'accept': 'application/json',
-          if (currentToken != null && currentToken.isNotEmpty) 
+          if (currentToken != null && currentToken.isNotEmpty)
             'Authorization': 'Bearer $currentToken',
         },
       );
@@ -215,20 +230,23 @@ class RamalShastraService {
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         final statsResponse = RamalStatsResponse.fromJson(jsonData);
-        
+
         if (statsResponse.success && statsResponse.data != null) {
           return statsResponse.data!;
         } else {
-          throw Exception(statsResponse.message.isNotEmpty
-              ? statsResponse.message
-              : 'Failed to get statistics');
+          throw Exception(
+            statsResponse.message.isNotEmpty
+                ? statsResponse.message
+                : 'Failed to get statistics',
+          );
         }
       } else {
-        throw Exception('Failed to get Ramal Shastra stats: ${response.statusCode}');
+        throw Exception(
+          'Failed to get Ramal Shastra stats: ${response.statusCode}',
+        );
       }
     } catch (e) {
       throw Exception('Error getting Ramal Shastra stats: ${e.toString()}');
     }
   }
 }
-

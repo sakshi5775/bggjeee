@@ -130,6 +130,7 @@ class ApiClient extends GetConnect
     String? contentType,
     T Function(dynamic)? decoder,
     bool useAuthHeader = true,
+    Duration? timeout,
   }) async {
     return _withRetry(() async {
       Future<Response<T>> _sendRequest() => get<T>(
@@ -138,7 +139,7 @@ class ApiClient extends GetConnect
         headers: _buildHeaders(useAuthHeader: useAuthHeader),
         contentType: contentType ?? 'application/json',
         decoder: decoder,
-      );
+      ).timeout(timeout ?? const Duration(seconds: 30));
 
       Response<T> response = await _sendRequest();
 
@@ -216,6 +217,7 @@ class ApiClient extends GetConnect
     required Map<String, String> fields,
     required Map<String, File?> files,
     Map<String, dynamic>? query,
+    Duration? timeout,
   }) async {
     await _ensureAuthForWrite(true);
 
@@ -272,7 +274,9 @@ class ApiClient extends GetConnect
         }
       }
 
-      final streamedResponse = await request.send();
+      final streamedResponse = await request.send().timeout(
+        timeout ?? const Duration(seconds: 60),
+      );
       return http.Response.fromStream(streamedResponse);
     }
 
@@ -313,6 +317,7 @@ class ApiClient extends GetConnect
     required Map<String, String> fields,
     required Map<String, File?> files,
     Map<String, dynamic>? query,
+    Duration? timeout,
   }) async {
     await _ensureAuthForWrite(true);
 
@@ -369,7 +374,9 @@ class ApiClient extends GetConnect
         }
       }
 
-      final streamedResponse = await request.send();
+      final streamedResponse = await request.send().timeout(
+        timeout ?? const Duration(seconds: 60),
+      );
       return http.Response.fromStream(streamedResponse);
     }
 
@@ -512,6 +519,7 @@ class ApiClient extends GetConnect
     String uri,
     dynamic body, {
     bool useAuthHeader = true,
+    Duration? timeout,
   }) async {
     await _ensureAuthForWrite(useAuthHeader);
 
@@ -525,12 +533,9 @@ class ApiClient extends GetConnect
       // Use raw http package to send JSON correctly
       Future<http.Response> _sendRawRequest() async {
         final url = Uri.parse(baseUrl! + uri);
-        return await http.post(
-          url,
-          headers: headers,
-          body: jsonBodyString,
-          encoding: utf8,
-        );
+        return await http
+            .post(url, headers: headers, body: jsonBodyString, encoding: utf8)
+            .timeout(timeout ?? const Duration(seconds: 30));
       }
 
       final httpResponse = await _sendRawRequest();
@@ -601,6 +606,7 @@ class ApiClient extends GetConnect
     String uri,
     dynamic query, {
     bool useAuthHeader = true,
+    Duration? timeout,
   }) async {
     await _ensureAuthForWrite(useAuthHeader);
 
@@ -610,7 +616,7 @@ class ApiClient extends GetConnect
         query: query,
         headers: _buildHeaders(useAuthHeader: useAuthHeader),
         contentType: "application/json",
-      );
+      ).timeout(timeout ?? const Duration(seconds: 30));
 
       Response response = await _sendRequest();
 
@@ -644,6 +650,7 @@ class ApiClient extends GetConnect
     dynamic body, {
     Map<String, dynamic>? query,
     bool useAuthHeader = true,
+    Duration? timeout,
   }) async {
     await _ensureAuthForWrite(useAuthHeader);
 
@@ -653,7 +660,7 @@ class ApiClient extends GetConnect
         body,
         headers: _buildHeaders(useAuthHeader: useAuthHeader),
         query: query,
-      );
+      ).timeout(timeout ?? const Duration(seconds: 30));
 
       Response response = await _sendRequest();
 
@@ -716,6 +723,7 @@ class ApiClient extends GetConnect
     required String url,
     required Map<String, String> fields,
     required Map<String, dynamic> files, // dynamic: can be File or List<File>
+    Duration? timeout,
   }) async {
     return _withRetry(() async {
       final uri = Uri.parse(baseUrl! + url);
@@ -755,7 +763,9 @@ class ApiClient extends GetConnect
         }
       }
 
-      final streamedResponse = await request.send();
+      final streamedResponse = await request.send().timeout(
+        timeout ?? const Duration(seconds: 60),
+      );
       final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {

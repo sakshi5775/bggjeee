@@ -1,19 +1,15 @@
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
+import 'package:astrobharataiuser/screens/carrot_astrology/utils/carrot_astrology_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
 import 'package:astrobharataiuser/widgets/zodiac_sign_selection_grid.dart';
 
-class HoroscopeSignSelectionView extends StatelessWidget {
-  const HoroscopeSignSelectionView({super.key});
-
-  // Zodiac signs with their image paths (kept for compatibility with HoroscopeTabWidget)
-  static const List<Map<String, String>> zodiacSigns =
-      ZodiacSignSelectionGrid.zodiacSigns;
+class CarrotAstrologySignSelectionView extends StatelessWidget {
+  const CarrotAstrologySignSelectionView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,25 +20,18 @@ class HoroscopeSignSelectionView extends StatelessWidget {
         drawer: UserDashboardView.buildDrawer(context),
         body: Column(
           children: [
-            const CommonHeader(title: 'Daily Horoscope'),
+            const CommonHeader(title: 'Carrot Astrology'),
             // Zodiac signs grid
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(16.w, 0.h, 16.w, 16.h),
                 child: ZodiacSignSelectionGrid(
+                  cardBorderColor: CarrotAstrologyColors.orangeColor,
                   onSignSelected: (name) {
-                    // Get form data from arguments if available
-                    final arguments = Get.arguments as Map<String, dynamic>?;
-                    final formData =
-                        arguments?['formData'] as Map<String, dynamic>?;
-
-                    // Navigate to main horoscope page with selected sign and form data
+                    // Navigate to carrot astrology results with selected sign
                     Get.toNamed(
-                      AppRoutes.horoscopeMain,
-                      arguments: {
-                        'selectedSign': name,
-                        if (formData != null) 'formData': formData,
-                      },
+                      AppRoutes.carrotAstrologyResults,
+                      arguments: {'selectedSign': name},
                     );
                   },
                 ),
