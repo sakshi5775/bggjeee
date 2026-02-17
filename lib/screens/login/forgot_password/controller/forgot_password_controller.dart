@@ -148,6 +148,8 @@ class ForgotPasswordController extends BaseController {
     isLoading.value = true;
     try {
       final success = await _service.resetPassword(
+        emailController.text.trim(),
+        otpController.text.trim(),
         passwordController.text.trim(),
         confirmPasswordController.text.trim(),
       );

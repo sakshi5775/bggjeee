@@ -10,7 +10,7 @@ class EndPoints {
   static const String resendOtp = 'auth/resend-otp';
   static const String checkExists = 'auth/check-exists';
   static const String sendForgotPasswordOtp = 'auth/forgot-password';
-  static String resetPassword(String token) => 'auth/reset-password/$token';
+  static String resetPassword = 'auth/reset-password';
 
   //static const String profile = 'auth/profile';
 

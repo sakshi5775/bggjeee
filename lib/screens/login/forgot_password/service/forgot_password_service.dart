@@ -45,13 +45,19 @@ class ForgotPasswordService {
     }
   }
 
-  Future<bool> resetPassword(String password, String confirmPassword) async {
+  Future<bool> resetPassword(
+    String identifier,
+    String otp,
+    String password,
+    String confirmPassword,
+  ) async {
     try {
-      final response = await _apiRepository.postApi(
-        EndPoints.resetPassword(UserData().getLoginData.accessToken ?? ''),
-        {"password": password, "confirmPassword": confirmPassword},
-        useAuthHeader: false,
-      );
+      final response = await _apiRepository.postApi(EndPoints.resetPassword, {
+        "otp": otp,
+        "identifier": identifier,
+        "password": password,
+        "confirmPassword": confirmPassword,
+      }, useAuthHeader: false);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
