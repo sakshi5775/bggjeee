@@ -1,29 +1,80 @@
+import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
+import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:get/get.dart';
 
-class ForgotPasswordService extends GetxService {
+import '../../../../apihelper/api_provider/end_points.dart';
+
+class ForgotPasswordService {
+  final ApiRepository _apiRepository = ApiRepository(apiClient: Get.find());
+
   Future<bool> sendOtp(String email) async {
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
-    // Return true for success
-    return true;
+    try {
+      var body = {"identifier": email};
+      final response = await _apiRepository.postApi(
+        EndPoints.sendForgotPasswordOtp,
+        useAuthHeader: false,
+        body,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 
-  Future<bool> verifyOtp(String email, String otp) async {
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
-    // Mock OTP verification - treat '123456' as valid for testing
-    return otp == '123456';
+  /// Verify OTP and complete registration/login
+  Future<bool> verifyOtp({
+    required String identifier,
+    required String otp,
+  }) async {
+    try {
+      final response = await _apiRepository.postApi(EndPoints.verifyOtp, {
+        'identifier': identifier,
+        'otp': otp,
+        'userType': "User",
+      }, useAuthHeader: false);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 
-  Future<bool> resetPassword(String email, String newPassword) async {
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
-    return true;
+  Future<bool> resetPassword(String password, String confirmPassword) async {
+    try {
+      final response = await _apiRepository.postApi(
+        EndPoints.resetPassword(UserData().getLoginData.accessToken ?? ''),
+        {"password": password, "confirmPassword": confirmPassword},
+        useAuthHeader: false,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 
-  Future<bool> resendOtp(String email) async {
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
-    return true;
+  /// Resend OTP
+  Future<bool> resendOtp({required String identifier}) async {
+    try {
+      final response = await _apiRepository.postApi(EndPoints.resendOtp, {
+        'identifier': identifier,
+      }, useAuthHeader: false);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
   }
 }

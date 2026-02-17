@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/controller/virtual_darshan_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/puja_item_category_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -6,6 +7,8 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import '../../../../utils/app_constant.dart';
 
 class OfferingBottomSheetWidget extends GetView<VirtualDarshanController> {
   final Function(PujaItem) onSelect;
@@ -89,7 +92,7 @@ class OfferingBottomSheetWidget extends GetView<VirtualDarshanController> {
           crossAxisCount: 5,
           mainAxisSpacing: 12.h,
           crossAxisSpacing: 12.w,
-          childAspectRatio: 0.75,
+          childAspectRatio: 0.60,
         ),
         itemCount: categoryDetail.items.length,
         itemBuilder: (_, index) {
@@ -152,18 +155,36 @@ class OfferingBottomSheetWidget extends GetView<VirtualDarshanController> {
             ),
           ),
           SizedBox(height: 4.h),
-          SizedBox(
-            height: 14.h,
-            child: AutoTranslateText(
-              item.name,
-              textAlign: TextAlign.center,
-              style: AppTypography.label.copyWith(
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF5D4037),
+          Column(
+            children: [
+              SizedBox(
+                height: 14.h,
+                child: AutoTranslateText(
+                  item.name,
+                  textAlign: TextAlign.center,
+                  style: AppTypography.label.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF5D4037),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+              Spacing.h(3),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(AppConstant.coin, height: 12.h, width: 12.w),
+                  AutoTranslateText(
+                    (item.coin ?? 0).toString(),
+                    style: AppTypography.label.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF5D4037),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),

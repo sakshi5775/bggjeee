@@ -116,6 +116,22 @@ class NamasteHomeController extends BaseController
     }
   }
 
+  // Future<void> dailyCheckIn() async {
+  //   try {
+  //     setLoadingState(true);
+
+  //     final success = await _eMandirHomeService.dailyCheckIn();
+
+  //     if (success) {
+  //       getAllPunyaWallet();
+  //     }
+  //   } catch (e) {
+  //     print("Error fetching punya wallet: $e");
+  //   } finally {
+  //     setLoadingState(false);
+  //   }
+  // }
+
   @override
   void onClose() {
     // Stop and dispose animation controller

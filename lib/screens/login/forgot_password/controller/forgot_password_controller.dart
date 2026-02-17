@@ -1,9 +1,10 @@
+import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/login/forgot_password/service/forgot_password_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ForgotPasswordController extends GetxController {
+class ForgotPasswordController extends BaseController {
   final ForgotPasswordService _service = Get.put(ForgotPasswordService());
 
   final TextEditingController emailController = TextEditingController();
@@ -98,15 +99,15 @@ class ForgotPasswordController extends GetxController {
     isLoading.value = true;
     try {
       final success = await _service.verifyOtp(
-        emailController.text.trim(),
-        otpController.text.trim(),
+        identifier: emailController.text.trim(),
+        otp: otpController.text.trim(),
       );
       if (success) {
         Get.toNamed(AppRoutes.resetPassword);
       } else {
         Get.snackbar(
           'Invalid OTP',
-          'Please enter correct OTP (Try 123456)',
+          'Please enter correct OTP',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -122,7 +123,9 @@ class ForgotPasswordController extends GetxController {
   Future<void> resendOtp() async {
     isLoading.value = true;
     try {
-      final success = await _service.resendOtp(emailController.text.trim());
+      final success = await _service.resendOtp(
+        identifier: emailController.text.trim(),
+      );
       if (success) {
         Get.snackbar(
           'OTP Resent',
@@ -145,13 +148,13 @@ class ForgotPasswordController extends GetxController {
     isLoading.value = true;
     try {
       final success = await _service.resetPassword(
-        emailController.text.trim(),
         passwordController.text.trim(),
+        confirmPasswordController.text.trim(),
       );
       if (success) {
         Get.snackbar(
-          'Success',
-          'Password changed successfully. Please login with new password.',
+          'Success 🎉',
+          'Password changed successfully. Please login with new password. ',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -161,10 +164,10 @@ class ForgotPasswordController extends GetxController {
         await Future.delayed(const Duration(seconds: 2));
         Get.offAllNamed(AppRoutes.login);
       } else {
-        Get.snackbar('Error', 'Failed to reset password');
+        showErrorMessage(message: 'Failed to reset password');
       }
     } catch (e) {
-      Get.snackbar('Error', 'Something went wrong');
+      showErrorMessage(message: 'Something went wrong');
     } finally {
       isLoading.value = false;
     }

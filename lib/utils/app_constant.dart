@@ -374,6 +374,7 @@ class AppConstant {
   static const String eMandirButton2 = 'assets/images/Button (2).png';
   static const String eMandirButton3 = 'assets/images/Button (3).png';
   static const String eMandirButton4 = 'assets/images/Button (4).png';
+  static const String coin = 'assets/icons/coin.png';
 
   /// Digital Education images
   /// digital education Spiritual Pillars images

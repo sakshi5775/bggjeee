@@ -54,53 +54,49 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
                   ),
 
             // // Overlay content
-            Positioned(
-              top: 20.h,
-              left: 10.w,
-              child: InkWell(
-                onTap: controller.navigateToPunyaMudra,
-                child: Container(
-                  height: 50.h,
-                  padding: EdgeInsets.all(2.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30.r),
-                    color: Colors.white,
-                    border: Border.all(color: Colors.orange),
-                  ),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(8.0.w),
-                        child: Obx(
-                          () => AutoTranslateText(
-                            controller
-                                    .punyaWallet
-                                    .value
-                                    ?.wallet
-                                    ?.totalCoinsEarned
-                                    .toString() ??
-                                '0',
-                            style: AppTypography.h3.copyWith(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(4.0.w),
-                        child: CircleAvatar(
-                          radius: 20.r,
-                          backgroundImage: const AssetImage(
-                            AppConstant.eMandirOmmIcon,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            // Positioned(
+            //   top: 20.h,
+            //   left: 10.w,
+            //   child: InkWell(
+            //     onTap: controller.navigateToPunyaMudra,
+            //     child: Container(
+            //       height: 50.h,
+            //       padding: EdgeInsets.all(2.w),
+            //       decoration: BoxDecoration(
+            //         borderRadius: BorderRadius.circular(30.r),
+            //         color: Colors.white,
+            //         border: Border.all(color: Colors.orange),
+            //       ),
+            //       child: Row(
+            //         children: [
+            //           Padding(
+            //             padding: EdgeInsets.all(8.0.w),
+            //             child: Obx(
+            //               () => AutoTranslateText(
+            //                 controller.punyaWallet.value?.wallet?.coins
+            //                         .toString() ??
+            //                     '0',
+            //                 style: AppTypography.h3.copyWith(
+            //                   color: Colors.black,
+            //                   fontWeight: FontWeight.w500,
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //           Padding(
+            //             padding: EdgeInsets.all(4.0.w),
+            //             child: CircleAvatar(
+            //               radius: 20.r,
+            //               backgroundImage: const AssetImage(
+            //                 AppConstant.eMandirOmmIcon,
+            //               ),
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
             Positioned(
               top: 10.h,
               right: 10.w,

@@ -516,7 +516,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                             fit: BoxFit.contain,
                             errorBuilder: (_, __, ___) => Icon(
                               Icons.star_outline,
-                              size: 40.w,
+                              size: 40.h,
                               color: maroon,
                             ),
                           )
@@ -5671,7 +5671,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                           color: Colors.grey[300],
                           child: Icon(
                             Icons.person,
-                            size: 35.w,
+                            size: 35.h,
                             color: Colors.grey[600],
                           ),
                         );
@@ -5681,7 +5681,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                       color: Colors.grey[300],
                       child: Icon(
                         Icons.person,
-                        size: 35.w,
+                        size: 35.h,
                         color: Colors.grey[600],
                       ),
                     ),
@@ -5727,7 +5727,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
               style: AppTypography.h3.copyWith(
                 color: '#68171E'.toColor(),
                 fontWeight: FontWeight.w500,
-                fontSize: 12.sp,
+                fontSize: 12,
               ),
               textAlign: TextAlign.center,
               maxLines: 1,

@@ -10,9 +10,9 @@ import '../../../core/services/login_guard.dart';
 import '../../../widgets/auto_translate_text.dart';
 
 class AstrologyToolWidget extends StatelessWidget {
-  const AstrologyToolWidget({super.key});
+  AstrologyToolWidget({super.key});
 
-  final List<Map<String, String>> _astrologyTools = const [
+  final List<Map<String, String>> _astrologyTools = [
     {
       'label': 'Face\nReading',
       'route': AppRoutes.faceReading,
@@ -192,8 +192,6 @@ class AstrologyToolWidget extends StatelessWidget {
                       color: maroon,
                       fontWeight: FontWeight.w700,
                       fontSize: 9.5.sp,
-                      height: 1.1,
-                      letterSpacing: -0.2,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 2,

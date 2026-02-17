@@ -73,6 +73,7 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
               top: 10.h,
               left: 10.w,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
                     onTap: () => Get.back(),
@@ -88,6 +89,51 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
                 ],
               ),
             ),
+
+            Positioned(
+              top: 10.h,
+              right: 10.w,
+              child: InkWell(
+                onTap: () {},
+                child: Container(
+                  height: 50.h,
+                  padding: EdgeInsets.all(2.w),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30.r),
+                    color: Colors.white,
+                    border: Border.all(color: Colors.orange),
+                  ),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(8.0.w),
+                        child: Obx(
+                          () => AutoTranslateText(
+                            controller.punyaWallet.value?.wallet?.coins
+                                    .toString() ??
+                                '0',
+                            style: AppTypography.h3.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(4.0.w),
+                        child: CircleAvatar(
+                          radius: 20.r,
+                          backgroundImage: const AssetImage(
+                            AppConstant.eMandirOmmIcon,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
             Obx(
               () => controller.godsCount == 0
                   ? const SizedBox.shrink()
@@ -354,13 +400,8 @@ class VirtualDarshanView extends GetView<VirtualDarshanController> {
       ),
       builder: (sheetContext) => OfferingBottomSheetWidget(
         onSelect: (item) {
-          controller.handleOfferingSelection(item);
-          // If flower/garland was selected, start a brief flower rain animation
-          final slug = controller.currentCategorySlug;
-          if (slug == 'flowers' || slug == 'garland') {
-            // Start flower rain burst (1 second animation)
-            controller.startFlowerRainBurst(context);
-          }
+          Get.back();
+          controller.useCoinItem(item, context);
         },
       ),
     );

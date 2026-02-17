@@ -15,42 +15,40 @@ class UserBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = Get.find<UserMainController>();
-    return Obx(
-      () {
-        final items = c.navItems;
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
-              ),
-            ],
-          ),
-          child: SafeArea(
-            child: Container(
-              height: 70.h,
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: List.generate(
-                  items.length,
-                  (index) => _buildNavItem(
-                    icon: items[index].icon,
-                    label: items[index].label,
-                    index: index,
-                    selectedIndex: c.selectedIndex.value,
-                    onTap: () => onTap(index),
-                  ),
+    return Obx(() {
+      final items = c.navItems;
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Container(
+            height: 70.h,
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(
+                items.length,
+                (index) => _buildNavItem(
+                  icon: items[index].icon,
+                  label: items[index].label,
+                  index: index,
+                  selectedIndex: c.selectedIndex.value,
+                  onTap: () => onTap(index),
                 ),
               ),
             ),
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
   }
 
   Widget _buildNavItem({
@@ -78,12 +76,12 @@ class UserBottomNav extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               isSelected
-                  ? Icon(icon, color: Colors.white, size: 20.w)
+                  ? Icon(icon, color: Colors.white, size: 20.h)
                   : ShaderMask(
                       shaderCallback: (bounds) =>
                           _inactiveGradient.createShader(bounds),
                       blendMode: BlendMode.srcIn,
-                      child: Icon(icon, color: Colors.white, size: 20.w),
+                      child: Icon(icon, color: Colors.white, size: 20.h),
                     ),
               SizedBox(height: 2.h),
               Flexible(
@@ -118,5 +116,4 @@ class UserBottomNav extends StatelessWidget {
       ),
     );
   }
-
 }

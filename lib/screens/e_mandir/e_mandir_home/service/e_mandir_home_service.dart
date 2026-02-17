@@ -35,4 +35,20 @@ class EMandirHomeService with ApiHelperMixin {
       return null;
     }
   }
+
+  // /// daily checkin api .
+  // Future<bool> dailyCheckIn() async {
+  //   try {
+  //     final response = await _apiRepository.postApi(
+  //       EndPoints.sriMandirDailyCheckIn,
+  //       {},
+  //     );
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       return true;
+  //     }
+  //     return false;
+  //   } catch (e) {
+  //     return false;
+  //   }
+  // }
 }

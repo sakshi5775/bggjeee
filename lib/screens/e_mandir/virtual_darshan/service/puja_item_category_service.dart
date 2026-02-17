@@ -3,6 +3,8 @@ import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/puja_item_category_model.dart';
 import 'package:get/get.dart';
 
+import '../../../../data_model/e_mandir_dataModels/e_mandir_home_model.dart';
+
 class PujaItemCategoryService {
   final ApiRepository _apiRepository = Get.find();
 
@@ -42,6 +44,49 @@ class PujaItemCategoryService {
     } catch (e) {
       print('Error fetching category detail: $e');
       return null;
+    }
+  }
+
+  /// daily checkin api .
+  Future<bool> dailyCheckIn() async {
+    try {
+      final response = await _apiRepository.postApi(
+        EndPoints.sriMandirDailyCheckIn,
+        {},
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<EMandirHomeDataModel?> punyaWallet() async {
+    try {
+      final response = await _apiRepository.getApi(EndPoints.sriMandirPunya);
+
+      final data = response.body['data'];
+
+      return EMandirHomeDataModel.fromJson(data);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<bool> useItem(String itemId) async {
+    try {
+      final response = await _apiRepository.postApi(EndPoints.useCoinItem, {
+        "itemId": itemId,
+        "quantity": 1,
+      });
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
     }
   }
 }

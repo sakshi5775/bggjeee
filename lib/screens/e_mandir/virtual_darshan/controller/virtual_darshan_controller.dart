@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:astrobharataiuser/core/base/baseController.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_category_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_data.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/puja_item_category_model.dart';
@@ -10,6 +11,8 @@ import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../../data_model/e_mandir_dataModels/e_mandir_home_model.dart';
 
 // Falling Flower State class to hold animation data
 class FallingFlowerState {
@@ -44,7 +47,7 @@ class FallingFlowerState {
   }
 }
 
-class VirtualDarshanController extends GetxController
+class VirtualDarshanController extends BaseController
     with GetTickerProviderStateMixin {
   final GodCategoryService _godCategoryService = GodCategoryService();
 
@@ -183,7 +186,7 @@ class VirtualDarshanController extends GetxController
     );
     audioPlayer.setReleaseMode(ReleaseMode.loop);
     shankhPlayer.setReleaseMode(ReleaseMode.stop);
-
+    dailyCheckIn();
     // Fetch god categories from API
     _loadGodCategories();
     // Fetch puja item categories from API
@@ -260,6 +263,64 @@ class VirtualDarshanController extends GetxController
       errorMessage.value = 'Error loading god categories: $e';
     } finally {
       isLoadingCategories.value = false;
+    }
+  }
+
+  Future<void> dailyCheckIn() async {
+    try {
+      setLoadingState(true);
+
+      final success = await _pujaItemCategoryService.dailyCheckIn();
+
+      if (success) {
+        getAllPunyaWallet();
+      }
+    } catch (e) {
+      print("Error fetching punya wallet: $e");
+    } finally {
+      setLoadingState(false);
+    }
+  }
+
+  Future<void> useCoinItem(PujaItem item, context) async {
+    try {
+      setLoadingState(true);
+      final success = await _pujaItemCategoryService.useItem(item.id);
+      if (success) {
+        getAllPunyaWallet();
+        handleOfferingSelection(item);
+
+        // If flower/garland was selected, start a brief flower rain animation
+        final slug = currentCategorySlug;
+        if (slug == 'flowers' || slug == 'garland') {
+          // Start flower rain burst (1 second animation)
+          startFlowerRainBurst(context);
+        }
+      } else {
+        showErrorMessage(
+          message: "Insufficient coins to perform this offering",
+        );
+      }
+    } catch (e) {
+      showErrorMessage(message: e.toString());
+      print("Error fetching punya wallet: $e");
+    } finally {
+      setLoadingState(false);
+    }
+  }
+
+  final Rxn<EMandirHomeDataModel> punyaWallet = Rxn<EMandirHomeDataModel>();
+  Future<void> getAllPunyaWallet() async {
+    try {
+      setLoadingState(true);
+      final response = await _pujaItemCategoryService.punyaWallet();
+      if (response != null) {
+        punyaWallet.value = response;
+      }
+    } catch (e) {
+      print("Error fetching punya wallet: $e");
+    } finally {
+      setLoadingState(false);
     }
   }
 
@@ -501,8 +562,6 @@ class VirtualDarshanController extends GetxController
   }
 
   void handleOfferingSelection(PujaItem item) {
-    Get.back(); // Close bottom sheet
-
     // Use item image if available, otherwise keep current icon
     if (item.image != null && item.image!.isNotEmpty) {
       selectedOfferingIcon.value = item.image!;

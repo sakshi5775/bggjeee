@@ -70,6 +70,7 @@ class PujaItem {
   final int displayOrder;
   final bool isPopular;
   final bool isFeatured;
+  final int? coin;
 
   PujaItem({
     required this.id,
@@ -80,6 +81,7 @@ class PujaItem {
     this.displayOrder = 0,
     this.isPopular = false,
     this.isFeatured = false,
+    this.coin,
   });
 
   factory PujaItem.fromJson(Map<String, dynamic> json) {
@@ -92,6 +94,7 @@ class PujaItem {
       displayOrder: json['displayOrder'] as int? ?? 0,
       isPopular: json['isPopular'] as bool? ?? false,
       isFeatured: json['isFeatured'] as bool? ?? false,
+      coin: json['coin'] as int? ?? 0,
     );
   }
 }

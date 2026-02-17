@@ -34,12 +34,14 @@ void main() async {
       WidgetsFlutterBinding.ensureInitialized();
 
       // Initialize FlutterDownloader for report downloads
-      await FlutterDownloader.initialize(
-        debug:
-            kDebugMode, // optional: set to false to disable printing logs to console (default: true)
-        ignoreSsl:
-            true, // option: set to false to disable HTTP with certificate which can't be verified
-      );
+      if (!kIsWeb) {
+        await FlutterDownloader.initialize(
+          debug:
+              kDebugMode, // optional: set to false to disable printing logs to console (default: true)
+          ignoreSsl:
+              true, // option: set to false to disable HTTP with certificate which can't be verified
+        );
+      }
 
       // Initialize Firebase with error handling
       // Check if platform supports Firebase before initializing

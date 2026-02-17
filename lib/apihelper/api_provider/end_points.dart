@@ -9,6 +9,9 @@ class EndPoints {
   static const String verifyOtp = 'auth/verify-otp';
   static const String resendOtp = 'auth/resend-otp';
   static const String checkExists = 'auth/check-exists';
+  static const String sendForgotPasswordOtp = 'auth/forgot-password';
+  static String resetPassword(String token) => 'auth/reset-password/$token';
+
   //static const String profile = 'auth/profile';
 
   /// blogs
@@ -58,6 +61,13 @@ class EndPoints {
 
   /// sri mandir festivals api
   static const String sriMandirFestivals = 'sri-mandir/api/festivals';
+
+  /// daily checkin api
+  static const String sriMandirDailyCheckIn =
+      'sri-mandir/api/wallet/daily-checkin';
+
+  /// coin use api
+  static const String useCoinItem = 'sri-mandir/api/wallet/use-item';
 
   /// ecommerce
   // Category endpoints
