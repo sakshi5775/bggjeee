@@ -1321,23 +1321,20 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
         'Connections': features.connections,
       };
 
-      final List<String> featurePoints = [];
-      allFeatures.forEach((key, feature) {
+      for (var entry in allFeatures.entries) {
+        final feature = entry.value;
         if (feature != null) {
-          featurePoints.add('$key: ${feature.rating} - ${feature.text}');
+          sections.add(
+            PdfSection(
+              title: entry.key,
+              content: feature.text ?? '',
+              bulletPoints: feature.rating != null
+                  ? ['Rating: ${feature.rating}']
+                  : null,
+              type: PdfSectionType.bullet,
+            ),
+          );
         }
-      });
-
-      if (featurePoints.isNotEmpty) {
-        sections.add(
-          PdfSection(
-            title: 'Handwriting Features',
-            content:
-                'Detailed breakdown of specific handwriting characteristics.',
-            bulletPoints: featurePoints,
-            type: PdfSectionType.bullet,
-          ),
-        );
       }
     }
 
@@ -1419,6 +1416,27 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
       userName = Get.find<UserDashboardController>().userName.value;
     }
 
+    /*
+    showDialog(
+      context: Get.context!,
+      builder: (context) => PdfLanguageSelectionDialog(
+        onLanguageSelected: (language) async {
+          await PdfGeneratorService.generateAstrologyReport(
+            title: 'Handwriting Analysis Report',
+            sections: sections,
+            metadata: PdfMetadata(
+              userName: userName,
+              generatedAt: DateTime.now(),
+              reportType: PdfReportType.handwriting,
+            ),
+            languageCode: language.code,
+          );
+        },
+      ),
+    );
+    */
+
+    // English-only for now (Direct Generation)
     await PdfGeneratorService.generateAstrologyReport(
       title: 'Handwriting Analysis Report',
       sections: sections,
@@ -1427,6 +1445,7 @@ class HandwritingAstrologyResultsView extends StatelessWidget {
         generatedAt: DateTime.now(),
         reportType: PdfReportType.handwriting,
       ),
+      languageCode: 'en',
     );
   }
 }

@@ -910,6 +910,27 @@ class FaceReadingResultsView extends StatelessWidget {
       userName = Get.find<UserDashboardController>().userName.value;
     }
 
+    /*
+    showDialog(
+      context: Get.context!,
+      builder: (context) => PdfLanguageSelectionDialog(
+        onLanguageSelected: (language) async {
+          await PdfGeneratorService.generateAstrologyReport(
+            title: 'Face Reading Analysis',
+            sections: sections,
+            metadata: PdfMetadata(
+              userName: userName,
+              generatedAt: DateTime.now(),
+              reportType: PdfReportType.faceReading,
+            ),
+            languageCode: language.code,
+          );
+        },
+      ),
+    );
+    */
+
+    // English-only for now (Direct Generation)
     await PdfGeneratorService.generateAstrologyReport(
       title: 'Face Reading Analysis',
       sections: sections,
@@ -918,6 +939,7 @@ class FaceReadingResultsView extends StatelessWidget {
         generatedAt: DateTime.now(),
         reportType: PdfReportType.faceReading,
       ),
+      languageCode: 'en',
     );
   }
 }

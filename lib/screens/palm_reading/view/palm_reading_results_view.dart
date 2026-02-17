@@ -543,6 +543,27 @@ class PalmReadingResultsView extends StatelessWidget {
       userName = Get.find<UserDashboardController>().userName.value;
     }
 
+    /*
+    showDialog(
+      context: Get.context!,
+      builder: (context) => PdfLanguageSelectionDialog(
+        onLanguageSelected: (language) async {
+          await PdfGeneratorService.generateAstrologyReport(
+            title: 'Palm Reading Analysis',
+            sections: sections,
+            metadata: PdfMetadata(
+              userName: userName,
+              generatedAt: DateTime.now(),
+              reportType: PdfReportType.palmReading,
+            ),
+            languageCode: language.code,
+          );
+        },
+      ),
+    );
+    */
+
+    // English-only for now (Direct Generation)
     await PdfGeneratorService.generateAstrologyReport(
       title: 'Palm Reading Analysis',
       sections: sections,
@@ -551,6 +572,7 @@ class PalmReadingResultsView extends StatelessWidget {
         generatedAt: DateTime.now(),
         reportType: PdfReportType.palmReading,
       ),
+      languageCode: 'en',
     );
   }
 }

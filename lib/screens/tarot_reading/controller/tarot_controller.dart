@@ -2080,6 +2080,27 @@ class TarotController extends BaseController {
       userName = Get.find<UserDashboardController>().userName.value;
     }
 
+    /*
+    showDialog(
+      context: Get.context!,
+      builder: (context) => PdfLanguageSelectionDialog(
+        onLanguageSelected: (language) async {
+          await PdfGeneratorService.generateAstrologyReport(
+            title: reportTitle,
+            sections: sections,
+            metadata: PdfMetadata(
+              userName: userName,
+              generatedAt: DateTime.now(),
+              reportType: reportType,
+            ),
+            languageCode: language.code,
+          );
+        },
+      ),
+    );
+    */
+
+    // English-only for now (Direct Generation)
     await PdfGeneratorService.generateAstrologyReport(
       title: reportTitle,
       sections: sections,
@@ -2088,6 +2109,7 @@ class TarotController extends BaseController {
         generatedAt: DateTime.now(),
         reportType: reportType,
       ),
+      languageCode: 'en',
     );
   }
 }

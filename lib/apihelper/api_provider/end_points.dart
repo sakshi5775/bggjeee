@@ -618,7 +618,7 @@ class EndPoints {
   static const String aiQuery = 'ai/query';
 
   static const String freeServicesStatus =
-      'users/api/users/free-services/status';
+      'users/api/users/free-service/status';
 
   static const String aiPricing = 'users/api/users/ai/pricing';
 

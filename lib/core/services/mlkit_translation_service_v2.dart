@@ -2,7 +2,7 @@ import 'package:google_mlkit_translation/google_mlkit_translation.dart';
 import 'package:astrobharataiuser/core/localization/translation_overrides.dart';
 
 /// High-performance ML Kit Translation Service with aggressive caching
-/// 
+///
 /// Features:
 /// - Translator reuse (not recreated per request)
 /// - Aggressive translation caching
@@ -10,19 +10,20 @@ import 'package:astrobharataiuser/core/localization/translation_overrides.dart';
 /// - Thread-safe operations
 /// - Memory-efficient design
 class MLKitTranslationServiceV2 {
-  static final MLKitTranslationServiceV2 _instance = MLKitTranslationServiceV2._internal();
+  static final MLKitTranslationServiceV2 _instance =
+      MLKitTranslationServiceV2._internal();
   factory MLKitTranslationServiceV2() => _instance;
   MLKitTranslationServiceV2._internal();
 
   /// Cache for translations: "sourceLang_targetLang_text" -> translated text
   final Map<String, String> _translationCache = {};
-  
+
   /// Active translators: "sourceLang_targetLang" -> OnDeviceTranslator
   final Map<String, OnDeviceTranslator> _activeTranslators = {};
-  
+
   /// Maximum cache size (prevent memory bloat)
   static const int _maxCacheSize = 5000;
-  
+
   /// Supported language mapping (ML Kit supported languages only)
   /// This is the SINGLE SOURCE OF TRUTH for language mapping
   /// Note: Languages not supported by ML Kit will fallback to English (no translation)
@@ -36,10 +37,20 @@ class MLKitTranslationServiceV2 {
     'gu': TranslateLanguage.gujarati,
     'ur': TranslateLanguage.urdu,
     'kn': TranslateLanguage.kannada,
-    // ML Kit doesn't support Malayalam directly - fallback to English
-    'ml': null, // Malayalam not directly supported
-    // Note: Other languages from languages.json may not be supported by ML Kit
-    // They will fallback to English (no translation)
+    'ml': null, // Malayalam - Fallback to English
+    'or': null, // Oriya - Fallback to English
+    'pa': null, // Punjabi - Fallback to English
+    'as': null, // Assamese - Fallback to English
+    'mai': null, // Maithili - Fallback to English
+    'bh': null, // Bodo - Fallback to English
+    'ks': null, // Kashmiri - Fallback to English
+    'kok': null, // Konkani - Fallback to English
+    'ne': null, // Nepali - Fallback to English
+    'sd': null, // Sindhi - Fallback to English
+    'sa': null, // Sanskrit - Fallback to English
+    'mni': null, // Manipuri - Fallback to English
+    'sat': null, // Santali - Fallback to English
+    'doi': null, // Dogri - Fallback to English
   };
 
   /// Get supported language codes
@@ -59,7 +70,7 @@ class MLKitTranslationServiceV2 {
   }
 
   /// Translate text with aggressive caching
-  /// 
+  ///
   /// Returns original text if:
   /// - Source and target languages are the same
   /// - Language is not supported
@@ -75,11 +86,20 @@ class MLKitTranslationServiceV2 {
     if (targetLanguageCode == 'en' && sourceLanguageCode == 'en') return text;
 
     // Check translation overrides first (for accurate UI term translations)
-    final override = TranslationOverrides.getOverride(text.trim(), targetLanguageCode);
+    final override = TranslationOverrides.getOverride(
+      text.trim(),
+      targetLanguageCode,
+    );
     if (override != null && override.isNotEmpty) {
-      print('MLKitTranslationServiceV2: Using override for "$text" -> "$override"');
+      print(
+        'MLKitTranslationServiceV2: Using override for "$text" -> "$override"',
+      );
       // Cache the override result
-      final cacheKey = _getCacheKey(text, sourceLanguageCode, targetLanguageCode);
+      final cacheKey = _getCacheKey(
+        text,
+        sourceLanguageCode,
+        targetLanguageCode,
+      );
       _cacheTranslation(cacheKey, override);
       return override;
     }
@@ -99,14 +119,16 @@ class MLKitTranslationServiceV2 {
     // Check if source language is supported
     final sourceLang = getTranslateLanguage(sourceLanguageCode);
     final targetLang = getTranslateLanguage(targetLanguageCode);
-    
+
     if (sourceLang == null || targetLang == null) {
       return text;
     }
 
     try {
-      print('MLKitTranslationServiceV2: Translating "$text" from $sourceLanguageCode to $targetLanguageCode');
-      
+      print(
+        'MLKitTranslationServiceV2: Translating "$text" from $sourceLanguageCode to $targetLanguageCode',
+      );
+
       // Get or create translator (reuse for performance)
       final translator = await _getOrCreateTranslator(
         sourceLanguageCode,
@@ -117,8 +139,10 @@ class MLKitTranslationServiceV2 {
 
       // Translate text
       final translatedText = await translator.translateText(text);
-      
-      print('MLKitTranslationServiceV2: Translation result: "$text" -> "$translatedText"');
+
+      print(
+        'MLKitTranslationServiceV2: Translation result: "$text" -> "$translatedText"',
+      );
 
       // Cache the result
       _cacheTranslation(cacheKey, translatedText);
@@ -140,7 +164,7 @@ class MLKitTranslationServiceV2 {
     TranslateLanguage targetLang,
   ) async {
     final translatorKey = '${sourceCode}_$targetCode';
-    
+
     if (_activeTranslators.containsKey(translatorKey)) {
       return _activeTranslators[translatorKey]!;
     }
@@ -172,7 +196,7 @@ class MLKitTranslationServiceV2 {
         _translationCache.remove(k);
       }
     }
-    
+
     _translationCache[key] = translatedText;
   }
 
@@ -191,14 +215,14 @@ class MLKitTranslationServiceV2 {
         print('Error closing translator: $e');
       }
     }
-    
+
     _activeTranslators.clear();
     _translationCache.clear();
   }
 
   /// Pre-download language models for better performance
   /// Call this during app initialization for target languages
-  /// 
+  ///
   /// Note: ML Kit automatically downloads models on first translator creation.
   /// This method is a placeholder for future optimization if needed.
   /// Models are downloaded lazily when translators are first created, which
@@ -209,10 +233,9 @@ class MLKitTranslationServiceV2 {
     // 1. Only languages actually used are downloaded
     // 2. Models are downloaded in background
     // 3. No blocking during app startup
-    // 
+    //
     // If pre-downloading is needed in future, implement using:
     // final modelManager = OnDeviceTranslatorModelManager();
     // await modelManager.downloadModel(languageCode); // Uses BCP code string
   }
 }
-

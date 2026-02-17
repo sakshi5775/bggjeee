@@ -601,6 +601,27 @@ class VastuReadingController extends GetxController {
       userName = Get.find<UserDashboardController>().userName.value;
     }
 
+    /*
+    showDialog(
+      context: Get.context!,
+      builder: (context) => PdfLanguageSelectionDialog(
+        onLanguageSelected: (language) async {
+          await PdfGeneratorService.generateAstrologyReport(
+            title: 'Vastu Reading Report',
+            sections: sections,
+            metadata: PdfMetadata(
+              userName: userName,
+              generatedAt: DateTime.now(),
+              reportType: PdfReportType.vastu,
+            ),
+            languageCode: language.code,
+          );
+        },
+      ),
+    );
+    */
+
+    // English-only for now (Direct Generation)
     await PdfGeneratorService.generateAstrologyReport(
       title: 'Vastu Reading Report',
       sections: sections,
@@ -609,6 +630,7 @@ class VastuReadingController extends GetxController {
         generatedAt: DateTime.now(),
         reportType: PdfReportType.vastu,
       ),
+      languageCode: 'en',
     );
   }
 

@@ -1174,6 +1174,27 @@ class CarrotAstrologyResultsView extends StatelessWidget {
       userName = Get.find<UserDashboardController>().userName.value;
     }
 
+    /*
+    showDialog(
+      context: Get.context!,
+      builder: (context) => PdfLanguageSelectionDialog(
+        onLanguageSelected: (language) async {
+          await PdfGeneratorService.generateAstrologyReport(
+            title: 'Carrot Astrology Report',
+            sections: sections,
+            metadata: PdfMetadata(
+              userName: userName,
+              generatedAt: DateTime.now(),
+              reportType: PdfReportType.carrot,
+            ),
+            languageCode: language.code,
+          );
+        },
+      ),
+    );
+    */
+
+    // English-only for now (Direct Generation)
     await PdfGeneratorService.generateAstrologyReport(
       title: 'Carrot Astrology Report',
       sections: sections,
@@ -1182,6 +1203,7 @@ class CarrotAstrologyResultsView extends StatelessWidget {
         generatedAt: DateTime.now(),
         reportType: PdfReportType.carrot,
       ),
+      languageCode: 'en',
     );
   }
 }

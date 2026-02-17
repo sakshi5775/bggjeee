@@ -106,7 +106,7 @@ class WhatElseWidget extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.zero,
             physics: const BouncingScrollPhysics(),
-            separatorBuilder: (_, __) => SizedBox(width: 10.w),
+            separatorBuilder: (_, __) => SizedBox(width: 17.w),
             itemCount: perRow,
             itemBuilder: (context, index) {
               final item = _items[index];
@@ -125,7 +125,7 @@ class WhatElseWidget extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.zero,
             physics: const BouncingScrollPhysics(),
-            separatorBuilder: (_, __) => SizedBox(width: 10.w),
+            separatorBuilder: (_, __) => SizedBox(width: 17.w),
             itemCount: itemCount - perRow,
             itemBuilder: (context, index) {
               final item = _items[perRow + index];

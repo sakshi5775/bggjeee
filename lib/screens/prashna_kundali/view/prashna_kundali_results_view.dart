@@ -238,6 +238,27 @@ class PrashnaKundaliResultsView extends StatelessWidget {
       userName = Get.find<UserDashboardController>().userName.value;
     }
 
+    /*
+    showDialog(
+      context: Get.context!,
+      builder: (context) => PdfLanguageSelectionDialog(
+        onLanguageSelected: (language) async {
+          await PdfGeneratorService.generateAstrologyReport(
+            title: 'Prashna Kundali Report',
+            sections: sections,
+            metadata: PdfMetadata(
+              userName: userName,
+              generatedAt: DateTime.now(),
+              reportType: PdfReportType.prashna,
+            ),
+            languageCode: language.code,
+          );
+        },
+      ),
+    );
+    */
+
+    // English-only for now (Direct Generation)
     await PdfGeneratorService.generateAstrologyReport(
       title: 'Prashna Kundali Report',
       sections: sections,
@@ -246,6 +267,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
         generatedAt: DateTime.now(),
         reportType: PdfReportType.prashna,
       ),
+      languageCode: 'en',
     );
   }
 
