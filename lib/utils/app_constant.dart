@@ -447,6 +447,11 @@ class AppConstant {
       '$s3BaseUrl/Astro+Service/3D+Logos/consultation+3d.png';
 
   ///
+
+  ///  about US image
+  static const String aboutUsImage =
+      '$s3BaseUrl/staticImages/GurpreetSingh.jpeg';
+  static const String aboutUsImage2 = '$s3BaseUrl/staticImages/harshitjii.jpeg';
 }
 
 class InstagramConstant {

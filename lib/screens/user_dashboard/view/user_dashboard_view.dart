@@ -5286,6 +5286,15 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 children: [
                   _buildDrawerItemStatic(
                     context: context,
+                    icon: Icons.info_outline_rounded,
+                    label: 'About Us',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.aboutUs);
+                    },
+                  ),
+                  _buildDrawerItemStatic(
+                    context: context,
                     icon: Icons.work_outline,
                     label: 'Become Astrologer',
                     isSelected: true,

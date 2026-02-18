@@ -156,7 +156,7 @@ class ForgotPasswordController extends BaseController {
       if (success) {
         Get.snackbar(
           'Success 🎉',
-          'Password changed successfully. Please login with new password. ',
+          'Password changed successfully. Please login with new password.',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,

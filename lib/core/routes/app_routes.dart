@@ -241,6 +241,7 @@ class AppRoutes {
   // E-Mandir Festival Routes
   static const String eMandirFestivalDetail = '/e-mandir-festival-detail';
   static const String allFestivals = '/all-festivals';
+  static const String aboutUs = '/about-us';
 
   // Astrologer Registration Routes
   static const String astrologerRegistrationIntro =

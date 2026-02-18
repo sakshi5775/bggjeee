@@ -212,6 +212,7 @@ import 'package:astrobharataiuser/binding/e_mandir_binding/e_mandir_festival_det
 import 'package:astrobharataiuser/binding/e_mandir_binding/all_festival_binding.dart';
 import 'package:astrobharataiuser/screens/e_mandir/festivals/festival_details/view/e_mandir_festival_detail_view.dart';
 import 'package:astrobharataiuser/screens/e_mandir/festivals/all_festival/view/all_festival_view.dart';
+import 'package:astrobharataiuser/screens/about_us/view/about_us_view.dart';
 import 'package:astrobharataiuser/screens/numerology/view/numerology_view.dart';
 import 'package:astrobharataiuser/screens/numerology/view/numerology_form_view.dart';
 import 'package:astrobharataiuser/screens/numerology/view/numerology_features_view.dart';
@@ -1656,6 +1657,12 @@ class PageRoutes {
       name: AppRoutes.allFestivals,
       page: () => const AllFestivalView(),
       binding: AllFestivalBinding(),
+      transition: Transition.rightToLeft,
+      transitionDuration: Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: AppRoutes.aboutUs,
+      page: () => const AboutUsView(),
       transition: Transition.rightToLeft,
       transitionDuration: Duration(milliseconds: 300),
     ),
