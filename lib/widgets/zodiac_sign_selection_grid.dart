@@ -57,10 +57,10 @@ class ZodiacSignSelectionGrid extends StatelessWidget {
 
   Widget _buildZodiacCard(BuildContext context, String name, String imagePath) {
     final borderColor =
-        cardBorderColor ?? AppColors.deepOrange.withOpacity(0.2);
+        cardBorderColor ?? AppColors.deepOrange.withValues(alpha: 0.2);
     final shadowColor =
-        cardBorderColor?.withOpacity(0.15) ??
-        AppColors.deepOrange.withOpacity(0.15);
+        cardBorderColor?.withValues(alpha: 0.15) ??
+        AppColors.deepOrange.withValues(alpha: 0.15);
     final labelColor = textColor ?? AppColors.textPrimary;
 
     return GestureDetector(
@@ -149,3 +149,4 @@ class ZodiacSignSelectionGrid extends StatelessWidget {
     );
   }
 }
+

@@ -54,12 +54,12 @@ class DivisionalChartWidget extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
-                  color: "#ed6f30".toColor().withOpacity(0.2),
+                  color: "#ed6f30".toColor().withValues(alpha: 0.2),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -112,10 +112,10 @@ class DivisionalChartWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
       decoration: BoxDecoration(
-        color: "#ed6f30".toColor().withOpacity(0.06),
+        color: "#ed6f30".toColor().withValues(alpha: 0.06),
         border: Border(
           bottom: BorderSide(
-            color: "#ed6f30".toColor().withOpacity(0.2),
+            color: "#ed6f30".toColor().withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -143,7 +143,7 @@ class DivisionalChartWidget extends StatelessWidget {
                   border: Border.all(
                     color: isSelected
                         ? Colors.transparent
-                        : "#ed6f30".toColor().withOpacity(0.35),
+                        : "#ed6f30".toColor().withValues(alpha: 0.35),
                     width: isSelected ? 1.5 : 1,
                   ),
                 ),
@@ -196,7 +196,7 @@ class DivisionalChartWidget extends StatelessWidget {
           AutoTranslateText(
             'Loading ${selectedDivision ?? 'chart'}...',
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: "#6F221E".toColor().withValues(alpha: 0.7),
               fontSize: 12.sp,
             ),
           ),
@@ -214,14 +214,14 @@ class DivisionalChartWidget extends StatelessWidget {
           Icon(
             Icons.table_chart_outlined,
             size: 36.w,
-            color: "#6F221E".toColor().withOpacity(0.35),
+            color: "#6F221E".toColor().withValues(alpha: 0.35),
           ),
           Spacing.h(8),
           AutoTranslateText(
-            'Select a division (D1–D60) to view chart data',
+            'Select a division (D1â€“D60) to view chart data',
             textAlign: TextAlign.center,
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
               fontSize: 12.sp,
             ),
           ),
@@ -262,9 +262,9 @@ class DivisionalChartWidget extends StatelessWidget {
             ),
             if (desc.isNotEmpty) ...[
               AutoTranslateText(
-                ' • ',
+                ' â€¢ ',
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.6),
+                  color: "#6F221E".toColor().withValues(alpha: 0.6),
                   fontSize: 12.sp,
                 ),
               ),
@@ -272,7 +272,7 @@ class DivisionalChartWidget extends StatelessWidget {
                 child: AutoTranslateText(
                   desc,
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#6F221E".toColor().withValues(alpha: 0.7),
                     fontSize: 12.sp,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -363,7 +363,7 @@ class DivisionalChartWidget extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(8.r),
             border: Border.all(
-              color: "#6F221E".toColor().withOpacity(0.12),
+              color: "#6F221E".toColor().withValues(alpha: 0.12),
               width: 1,
             ),
           ),
@@ -375,7 +375,7 @@ class DivisionalChartWidget extends StatelessWidget {
                 scrollDirection: Axis.vertical,
                 child: Table(
                   border: TableBorder.all(
-                    color: "#6F221E".toColor().withOpacity(0.12),
+                    color: "#6F221E".toColor().withValues(alpha: 0.12),
                     width: 1,
                   ),
                   columnWidths: {
@@ -385,7 +385,7 @@ class DivisionalChartWidget extends StatelessWidget {
                   children: [
                     TableRow(
                       decoration: BoxDecoration(
-                        color: "#ed6f30".toColor().withOpacity(0.1),
+                        color: "#ed6f30".toColor().withValues(alpha: 0.1),
                       ),
                       children: [
                         _buildTableHeaderCell(columnLabel),
@@ -398,7 +398,7 @@ class DivisionalChartWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: i % 2 == 0
                               ? Colors.white
-                              : "#ed6f30".toColor().withOpacity(0.04),
+                              : "#ed6f30".toColor().withValues(alpha: 0.04),
                         ),
                         children: [
                           _buildTableDataCell(cellLabel(k), isHeader: true),
@@ -452,9 +452,9 @@ class DivisionalChartWidget extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
         child: Center(
           child: AutoTranslateText(
-            '—',
+            'â€”',
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.35),
+              color: "#6F221E".toColor().withValues(alpha: 0.35),
               fontSize: 11.sp,
               fontStyle: FontStyle.italic,
             ),
@@ -485,13 +485,13 @@ class DivisionalChartWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
             decoration: BoxDecoration(
               color: retro
-                  ? "#ed6f30".toColor().withOpacity(0.1)
-                  : "#6F221E".toColor().withOpacity(0.05),
+                  ? "#ed6f30".toColor().withValues(alpha: 0.1)
+                  : "#6F221E".toColor().withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(6.r),
               border: Border.all(
                 color: retro
-                    ? "#ed6f30".toColor().withOpacity(0.3)
-                    : "#6F221E".toColor().withOpacity(0.12),
+                    ? "#ed6f30".toColor().withValues(alpha: 0.3)
+                    : "#6F221E".toColor().withValues(alpha: 0.12),
                 width: 1,
               ),
             ),
@@ -544,7 +544,7 @@ class DivisionalChartWidget extends StatelessWidget {
                   AutoTranslateText(
                     sub,
                     style: MyTextTheme.smallBCN.copyWith(
-                      color: "#6F221E".toColor().withOpacity(0.6),
+                      color: "#6F221E".toColor().withValues(alpha: 0.6),
                       fontSize: 9.sp,
                     ),
                     maxLines: 1,
@@ -559,3 +559,4 @@ class DivisionalChartWidget extends StatelessWidget {
     );
   }
 }
+

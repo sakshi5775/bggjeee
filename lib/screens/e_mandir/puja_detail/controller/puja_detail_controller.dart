@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/puja_model.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/puja_service.dart';
@@ -151,3 +151,4 @@ class PujaDetailController extends BaseController {
     );
   }
 }
+

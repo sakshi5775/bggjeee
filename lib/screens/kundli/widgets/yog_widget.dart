@@ -28,7 +28,7 @@ class YogWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No yog data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -40,7 +40,7 @@ class YogWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No yog data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -72,7 +72,7 @@ class YogWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -105,7 +105,7 @@ class YogWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Yoga',
                   style: MyTextTheme.mediumBCB.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#6F221E".toColor().withValues(alpha: 0.7),
                     fontWeight: FontWeight.w600,
                     fontSize: 12.sp,
                   ),
@@ -136,7 +136,7 @@ class YogWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -197,7 +197,7 @@ class YogWidget extends StatelessWidget {
           child: AutoTranslateText(
             label,
             style: MyTextTheme.smallBCB.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: "#6F221E".toColor().withValues(alpha: 0.7),
               fontWeight: FontWeight.w600,
               fontSize: 11.sp,
             ),
@@ -218,3 +218,4 @@ class YogWidget extends StatelessWidget {
     );
   }
 }
+

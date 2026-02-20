@@ -16,7 +16,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class AiGuiderView extends StatefulWidget {
-  /// When true, header (back, sound, language) is hidden — e.g. when embedded below dashboard slider.
+  /// When true, header (back, sound, language) is hidden â€” e.g. when embedded below dashboard slider.
   final bool hideHeader;
 
   const AiGuiderView({super.key, this.hideHeader = false});
@@ -158,7 +158,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
                 borderRadius: BorderRadius.circular(8.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 3,
                     offset: const Offset(0, 1),
                   ),
@@ -183,7 +183,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
                   borderRadius: BorderRadius.circular(8.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
+                      color: Colors.black.withValues(alpha: 0.08),
                       blurRadius: 3,
                       offset: const Offset(0, 1),
                     ),
@@ -212,7 +212,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
                 borderRadius: BorderRadius.circular(8.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 3,
                     offset: const Offset(0, 1),
                   ),
@@ -332,8 +332,8 @@ class _AiGuiderViewState extends State<AiGuiderView>
                     borderRadius: BorderRadius.circular(10.r),
                     border: Border.all(
                       color: isCurrentPage
-                          ? orangeStart.withOpacity(0.5)
-                          : Colors.black.withOpacity(0.05),
+                          ? orangeStart.withValues(alpha: 0.5)
+                          : Colors.black.withValues(alpha: 0.05),
                       width: 1,
                     ),
                     boxShadow: [
@@ -342,12 +342,12 @@ class _AiGuiderViewState extends State<AiGuiderView>
                             (AppColors.orangeGradient.colors.length > 1
                                     ? AppColors.orangeGradient.colors.last
                                     : orangeStart)
-                                .withOpacity(0.12),
+                                .withValues(alpha: 0.12),
                         blurRadius: 10,
                         offset: const Offset(0, 3),
                       ),
                       BoxShadow(
-                        color: orangeStart.withOpacity(0.18),
+                        color: orangeStart.withValues(alpha: 0.18),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -362,8 +362,8 @@ class _AiGuiderViewState extends State<AiGuiderView>
                         height: 36.w,
                         decoration: BoxDecoration(
                           color: isCurrentPage
-                              ? orangeStart.withOpacity(0.2)
-                              : orangeStart.withOpacity(0.12),
+                              ? orangeStart.withValues(alpha: 0.2)
+                              : orangeStart.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Icon(icon, color: orangeStart, size: 20.w),
@@ -422,20 +422,20 @@ class _AiGuiderViewState extends State<AiGuiderView>
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
               decoration: BoxDecoration(
-                color: orangeStart.withOpacity(0.12),
+                color: orangeStart.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(14.r),
                 border: Border.all(
-                  color: orangeStart.withOpacity(0.35),
+                  color: orangeStart.withValues(alpha: 0.35),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: orangeEnd.withOpacity(0.1),
+                    color: orangeEnd.withValues(alpha: 0.1),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
                   BoxShadow(
-                    color: orangeStart.withOpacity(0.12),
+                    color: orangeStart.withValues(alpha: 0.12),
                     blurRadius: 4,
                     offset: const Offset(0, 1),
                   ),
@@ -474,7 +474,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
               gradient: AppColors.orangeGradient,
               boxShadow: [
                 BoxShadow(
-                  color: orangeStart.withOpacity(0.4),
+                  color: orangeStart.withValues(alpha: 0.4),
                   blurRadius: 10,
                   spreadRadius: 1,
                 ),
@@ -541,16 +541,16 @@ class _AiGuiderViewState extends State<AiGuiderView>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: orangeStart.withOpacity(0.2), width: 1),
+        border: Border.all(color: orangeStart.withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: orangeEnd.withOpacity(0.15),
+            color: orangeEnd.withValues(alpha: 0.15),
             blurRadius: 12,
             spreadRadius: 0,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: orangeStart.withOpacity(0.2),
+            color: orangeStart.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -669,11 +669,11 @@ class _AiGuiderViewState extends State<AiGuiderView>
                           ),
                           decoration: BoxDecoration(
                             color: AppColors.orangeGradient.colors.first
-                                .withOpacity(0.12),
+                                .withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(
                               color: AppColors.orangeGradient.colors.first
-                                  .withOpacity(0.3),
+                                  .withValues(alpha: 0.3),
                               width: 1,
                             ),
                           ),
@@ -709,22 +709,22 @@ class _AiGuiderViewState extends State<AiGuiderView>
       margin: EdgeInsets.only(bottom: 4.h),
       padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
-        color: isUser ? orangeStart.withOpacity(0.08) : Colors.white,
+        color: isUser ? orangeStart.withValues(alpha: 0.08) : Colors.white,
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
           color: isUser
-              ? orangeStart.withOpacity(0.35)
-              : orangeStart.withOpacity(0.2),
+              ? orangeStart.withValues(alpha: 0.35)
+              : orangeStart.withValues(alpha: 0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: orangeEnd.withOpacity(0.1),
+            color: orangeEnd.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
           BoxShadow(
-            color: orangeStart.withOpacity(0.18),
+            color: orangeStart.withValues(alpha: 0.18),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -771,7 +771,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
         color: '#F1F8E9'.toColor(),
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
-          color: '#8BC34A'.toColor().withOpacity(0.3),
+          color: '#8BC34A'.toColor().withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -807,12 +807,12 @@ class _AiGuiderViewState extends State<AiGuiderView>
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: orangeEnd.withOpacity(0.15),
+            color: orangeEnd.withValues(alpha: 0.15),
             blurRadius: 12,
             offset: const Offset(0, -3),
           ),
           BoxShadow(
-            color: orangeStart.withOpacity(0.2),
+            color: orangeStart.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -833,7 +833,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
                       : null,
                   color: controller.isListening.value
                       ? null
-                      : AppColors.textSecondary.withOpacity(0.12),
+                      : AppColors.textSecondary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Icon(
@@ -896,7 +896,7 @@ class _AiGuiderViewState extends State<AiGuiderView>
                 borderRadius: BorderRadius.circular(8.r),
                 boxShadow: [
                   BoxShadow(
-                    color: orangeStart.withOpacity(0.4),
+                    color: orangeStart.withValues(alpha: 0.4),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -994,3 +994,4 @@ class _AiGuiderViewState extends State<AiGuiderView>
     }
   }
 }
+

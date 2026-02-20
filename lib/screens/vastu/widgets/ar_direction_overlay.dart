@@ -153,20 +153,20 @@ class _ARDirectionOverlayState extends State<ARDirectionOverlay>
     double borderWidth;
     
     if (isIdeal) {
-      backgroundColor = const Color(0xFF4CAF50).withOpacity(0.85);
+      backgroundColor = const Color(0xFF4CAF50).withValues(alpha: 0.85);
       borderColor = const Color(0xFF66BB6A);
       borderWidth = 2.0;
     } else if (isAvoid) {
-      backgroundColor = const Color(0xFFE53935).withOpacity(0.85);
+      backgroundColor = const Color(0xFFE53935).withValues(alpha: 0.85);
       borderColor = const Color(0xFFEF5350);
       borderWidth = 2.0;
     } else if (isNorth) {
-      backgroundColor = Colors.red.withOpacity(0.9);
-      borderColor = Colors.white.withOpacity(0.5);
+      backgroundColor = Colors.red.withValues(alpha: 0.9);
+      borderColor = Colors.white.withValues(alpha: 0.5);
       borderWidth = 1.5;
     } else {
-      backgroundColor = Colors.black.withOpacity(0.7);
-      borderColor = Colors.white.withOpacity(0.3);
+      backgroundColor = Colors.black.withValues(alpha: 0.7);
+      borderColor = Colors.white.withValues(alpha: 0.3);
       borderWidth = 1.0;
     }
     
@@ -182,7 +182,7 @@ class _ARDirectionOverlayState extends State<ARDirectionOverlay>
         boxShadow: [
           BoxShadow(
             color: (isIdeal ? const Color(0xFF4CAF50) : isAvoid ? const Color(0xFFE53935) : Colors.black)
-                .withOpacity(0.4),
+                .withValues(alpha: 0.4),
             blurRadius: isIdeal || isAvoid ? 12 : 6,
             spreadRadius: isIdeal || isAvoid ? 2 : 0,
           ),
@@ -212,3 +212,4 @@ class _ARDirectionOverlayState extends State<ARDirectionOverlay>
     );
   }
 }
+

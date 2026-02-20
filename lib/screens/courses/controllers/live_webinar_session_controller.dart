@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/screens/courses/services/courses_service.dart';
 import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
@@ -534,3 +534,4 @@ class LiveWebinarSessionController extends BaseController {
     }
   }
 }
+

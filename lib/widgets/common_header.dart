@@ -97,7 +97,7 @@ class CommonHeader extends StatelessWidget {
                   hintText: 'Search horoscope, kundli, tarot, numerology...',
                   hintStyle: MyTextTheme.mediumBCN
                       .copyWith(
-                        color: '#3D0C11'.toColor().withOpacity(0.5),
+                        color: '#3D0C11'.toColor().withValues(alpha: 0.5),
                         fontWeight: FontWeight.w500,
                       )
                       .merge(AppTypography.body1),
@@ -403,3 +403,4 @@ class CommonHeader extends StatelessWidget {
     );
   }
 }
+

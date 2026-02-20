@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/network_image.dart';
+﻿import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/data_model/cart_model.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.dart';
@@ -137,7 +137,7 @@ class _SavedItemTile extends StatelessWidget {
                   : Container(
                       height: 80.h,
                       width: 80.w,
-                      color: AppColors.textSecondary.withOpacity(0.08),
+                      color: AppColors.textSecondary.withValues(alpha: 0.08),
                       child: Icon(
                         Icons.image,
                         size: 28.sp,
@@ -281,3 +281,4 @@ class _EmptySavedItems extends StatelessWidget {
     );
   }
 }
+

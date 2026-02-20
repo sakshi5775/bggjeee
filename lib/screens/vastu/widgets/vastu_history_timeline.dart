@@ -31,7 +31,7 @@ class VastuHistoryTimeline extends StatelessWidget {
             Icon(
               Icons.history,
               size: 64.w,
-              color: Colors.grey.withOpacity(0.5),
+              color: Colors.grey.withValues(alpha: 0.5),
             ),
             Spacing.h(16),
             AutoTranslateText(
@@ -44,7 +44,7 @@ class VastuHistoryTimeline extends StatelessWidget {
             AutoTranslateText(
               'Save direction scans to view history',
               style: MyTextTheme.smallBCN.copyWith(
-                color: Colors.grey.withOpacity(0.7),
+                color: Colors.grey.withValues(alpha: 0.7),
               ).merge(AppTypography.body2),
             ),
           ],
@@ -105,7 +105,7 @@ class VastuHistoryTimeline extends StatelessWidget {
   Widget _buildHistoryItem(Map<String, dynamic> entry, bool isLast) {
     final timestamp = DateTime.tryParse(entry['timestamp'] ?? '');
     final dateStr = timestamp != null
-        ? DateFormat('MMM dd, yyyy • hh:mm a').format(timestamp)
+        ? DateFormat('MMM dd, yyyy â€¢ hh:mm a').format(timestamp)
         : 'Unknown date';
     
     final direction = entry['direction'] ?? 'N';
@@ -127,7 +127,7 @@ class VastuHistoryTimeline extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),
@@ -179,7 +179,7 @@ class VastuHistoryTimeline extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                         decoration: BoxDecoration(
-                          color: '#D4AF37'.toColor().withOpacity(0.1),
+                          color: '#D4AF37'.toColor().withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: AutoTranslateText(
@@ -202,7 +202,7 @@ class VastuHistoryTimeline extends StatelessWidget {
                       ),
                       Spacing.w(4),
                       AutoTranslateText(
-                        '$heading°',
+                        '$headingÂ°',
                         style: MyTextTheme.smallBCN.copyWith(
                           color: '#666666'.toColor(),
                         ).merge(AppTypography.body2),
@@ -245,6 +245,7 @@ class VastuHistoryTimeline extends StatelessWidget {
     );
   }
 }
+
 
 
 

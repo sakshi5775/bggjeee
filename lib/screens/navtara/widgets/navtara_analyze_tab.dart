@@ -48,7 +48,7 @@ class NavtaraAnalyzeTab extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: maroon.withOpacity(0.1)),
+        border: Border.all(color: maroon.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,18 +119,18 @@ class NavtaraAnalyzeTab extends StatelessWidget {
       hintStyle: MyTextTheme.smallBCN.copyWith(color: Colors.grey),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: maroon.withOpacity(0.2)),
+        borderSide: BorderSide(color: maroon.withValues(alpha: 0.2)),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: maroon.withOpacity(0.2)),
+        borderSide: BorderSide(color: maroon.withValues(alpha: 0.2)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide(color: maroon),
       ),
       filled: true,
-      fillColor: maroon.withOpacity(0.02),
+      fillColor: maroon.withValues(alpha: 0.02),
       isDense: true,
       contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
     );
@@ -151,7 +151,7 @@ class NavtaraAnalyzeTab extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.orange.withOpacity(0.2),
+              color: Colors.orange.withValues(alpha: 0.2),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -210,7 +210,7 @@ class NavtaraAnalyzeTab extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: maroon.withOpacity(0.1)),
+        border: Border.all(color: maroon.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,7 +241,7 @@ class NavtaraAnalyzeTab extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: maroon.withOpacity(0.1)),
+        border: Border.all(color: maroon.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,3 +300,4 @@ class NavtaraAnalyzeTab extends StatelessWidget {
     );
   }
 }
+

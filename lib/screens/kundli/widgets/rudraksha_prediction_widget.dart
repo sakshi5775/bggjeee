@@ -83,9 +83,9 @@ class RudrakshaPredictionWidget extends StatelessWidget {
               margin: EdgeInsets.only(bottom: i < rudraksh.length - 1 ? 10.h : 0),
               padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: AppColors.deepOrange.withOpacity(0.06),
+                color: AppColors.deepOrange.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(10.r),
-                border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+                border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.2)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,7 +97,7 @@ class RudrakshaPredictionWidget extends StatelessWidget {
                     Spacing.h(6),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
-                      decoration: BoxDecoration(color: AppColors.deepOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(8.r)),
+                      decoration: BoxDecoration(color: AppColors.deepOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8.r)),
                       child: AutoTranslateText(mantra[i], style: MyTextTheme.smallBCN.copyWith(color: AppColors.textPrimary, fontSize: 11.sp, fontStyle: FontStyle.italic)),
                     ),
                   ],
@@ -163,3 +163,4 @@ class RudrakshaPredictionWidget extends StatelessWidget {
     );
   }
 }
+

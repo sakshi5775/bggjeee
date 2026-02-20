@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+﻿import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -34,7 +34,7 @@ class PersonaListCard extends StatelessWidget {
           border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 4.r,
               offset: const Offset(0, 2),
             ),
@@ -208,15 +208,15 @@ class PersonaListCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF5F2221).withOpacity(0.1),
-            AppColors.saffron.withOpacity(0.1),
+            const Color(0xFF5F2221).withValues(alpha: 0.1),
+            AppColors.saffron.withValues(alpha: 0.1),
           ],
         ),
       ),
       child: Center(
         child: Icon(
           Icons.auto_awesome_rounded,
-          color: AppColors.saffron.withOpacity(0.5),
+          color: AppColors.saffron.withValues(alpha: 0.5),
           size: 40.w,
         ),
       ),
@@ -241,7 +241,7 @@ class PersonaListCard extends StatelessWidget {
           boxShadow: useGradient
               ? [
                   BoxShadow(
-                    color: '#F38B3B'.toColor().withOpacity(0.3),
+                    color: '#F38B3B'.toColor().withValues(alpha: 0.3),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -260,3 +260,4 @@ class PersonaListCard extends StatelessWidget {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/category_model.dart';
@@ -64,7 +64,7 @@ class _ProductListViewState extends State<ProductListView> {
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w400,
                     fontSize: 11.sp,
-                    color: '#6F221E'.toColor().withOpacity(0.6),
+                    color: '#6F221E'.toColor().withValues(alpha: 0.6),
                     height: 1.33,
                   ),
                 ),
@@ -151,7 +151,7 @@ class _ProductListViewState extends State<ProductListView> {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 16,
             offset: Offset(2, 4),
           ),
@@ -315,7 +315,7 @@ class _ProductListViewState extends State<ProductListView> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.25),
+              color: Colors.black.withValues(alpha: 0.25),
               blurRadius: 4,
               offset: Offset(0, 0),
             ),
@@ -332,7 +332,7 @@ class _ProductListViewState extends State<ProductListView> {
                 borderRadius: BorderRadius.circular(14.71.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
+                    color: Colors.black.withValues(alpha: 0.25),
                     blurRadius: 12,
                     offset: Offset(0, 4),
                   ),
@@ -505,7 +505,7 @@ class _ProductListViewState extends State<ProductListView> {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: 0.1),
                                 blurRadius: 4,
                                 offset: Offset(0, 2),
                               ),
@@ -753,3 +753,4 @@ class _ProductListViewState extends State<ProductListView> {
     });
   }
 }
+

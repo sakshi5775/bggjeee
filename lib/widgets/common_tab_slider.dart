@@ -126,13 +126,13 @@ class _CommonTabSliderState extends State<CommonTabSlider> {
                       border: isSelected
                           ? null
                           : Border.all(
-                              color: maroon.withOpacity(0.2),
+                              color: maroon.withValues(alpha: 0.2),
                               width: 1,
                             ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: orange.withOpacity(0.25),
+                                color: orange.withValues(alpha: 0.25),
                                 blurRadius: 4,
                                 offset: const Offset(0, 1),
                               ),
@@ -162,3 +162,4 @@ class _CommonTabSliderState extends State<CommonTabSlider> {
     );
   }
 }
+

@@ -162,7 +162,7 @@ class RamalShastraConfirmationView extends StatelessWidget {
         border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.07),
+            color: Colors.black.withValues(alpha: 0.07),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -189,7 +189,7 @@ class RamalShastraConfirmationView extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    value == 1 ? '●' : '○',
+                    value == 1 ? 'â—' : 'â—‹',
                     style: TextStyle(
                       fontSize: 32.sp,
                       color: value == 1 ? Colors.white : Colors.grey[700],
@@ -204,3 +204,4 @@ class RamalShastraConfirmationView extends StatelessWidget {
     );
   }
 }
+

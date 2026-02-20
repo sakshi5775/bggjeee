@@ -122,10 +122,10 @@ class _ChatViewState extends State<ChatView> {
                           vertical: 6.h,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.saffron.withOpacity(0.1),
+                          color: AppColors.saffron.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20.r),
                           border: Border.all(
-                            color: AppColors.saffron.withOpacity(0.3),
+                            color: AppColors.saffron.withValues(alpha: 0.3),
                           ),
                         ),
                         child: AutoTranslateText(
@@ -147,7 +147,7 @@ class _ChatViewState extends State<ChatView> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                           width: 1.5,
                         ),
                       ),
@@ -161,7 +161,7 @@ class _ChatViewState extends State<ChatView> {
                                 height: 36.w,
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: Colors.white.withValues(alpha: 0.2),
                                   child: Icon(
                                     Icons.person,
                                     color: AppColors.saffron,
@@ -169,7 +169,7 @@ class _ChatViewState extends State<ChatView> {
                                   ),
                                 ),
                                 errorWidget: (context, url, error) => Container(
-                                  color: AppColors.saffron.withOpacity(0.1),
+                                  color: AppColors.saffron.withValues(alpha: 0.1),
                                   child: Icon(
                                     Icons.person,
                                     color: AppColors.saffron,
@@ -178,7 +178,7 @@ class _ChatViewState extends State<ChatView> {
                                 ),
                               )
                             : Container(
-                                color: AppColors.saffron.withOpacity(0.1),
+                                color: AppColors.saffron.withValues(alpha: 0.1),
                                 child: Icon(
                                   Icons.person,
                                   color: AppColors.saffron,
@@ -347,7 +347,7 @@ class _ChatViewState extends State<ChatView> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -407,7 +407,7 @@ class _ChatViewState extends State<ChatView> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -424,8 +424,8 @@ class _ChatViewState extends State<ChatView> {
                   controller.formatTime(timestamp),
                   style: MyTextTheme.smallBCN.copyWith(
                     color: isUser
-                        ? Colors.white.withOpacity(0.8)
-                        : const Color(0xFF666666).withOpacity(0.6),
+                        ? Colors.white.withValues(alpha: 0.8)
+                        : const Color(0xFF666666).withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -504,7 +504,7 @@ class _ChatViewState extends State<ChatView> {
         color: Colors.white,
         border: Border(
           top: BorderSide(
-            color: const Color(0xFFE0E0E0).withOpacity(0.5),
+            color: const Color(0xFFE0E0E0).withValues(alpha: 0.5),
             width: 1,
           ),
         ),
@@ -606,7 +606,7 @@ class _ChatViewState extends State<ChatView> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -621,7 +621,7 @@ class _ChatViewState extends State<ChatView> {
                 color: const Color(0xFFFFF8F0),
                 borderRadius: BorderRadius.circular(24.r),
                 border: Border.all(
-                  color: AppColors.orangeGradient.colors.first.withOpacity(0.3),
+                  color: AppColors.orangeGradient.colors.first.withValues(alpha: 0.3),
                   width: 1.5,
                 ),
               ),
@@ -684,13 +684,13 @@ class _ChatViewState extends State<ChatView> {
                       : null,
                   color: (hasText && !isLoading && !isTyping)
                       ? null
-                      : AppColors.orangeGradient.colors.first.withOpacity(0.5),
+                      : AppColors.orangeGradient.colors.first.withValues(alpha: 0.5),
                   shape: BoxShape.circle,
                   boxShadow: (hasText && !isLoading && !isTyping)
                       ? [
                           BoxShadow(
                             color: AppColors.orangeGradient.colors.first
-                                .withOpacity(0.3),
+                                .withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -723,7 +723,7 @@ class _SpecklePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.saffron.withOpacity(0.15)
+      ..color = AppColors.saffron.withValues(alpha: 0.15)
       ..style = PaintingStyle.fill;
 
     final random = math.Random(42); // Fixed seed for consistent pattern
@@ -918,3 +918,4 @@ class _TypingDotState extends State<_TypingDot>
     );
   }
 }
+

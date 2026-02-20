@@ -235,7 +235,7 @@ class AllAstrologersView extends StatelessWidget {
                             border: isSelected
                                 ? null
                                 : Border.all(
-                                    color: AppColors.saffron.withOpacity(0.3),
+                                    color: AppColors.saffron.withValues(alpha: 0.3),
                                     width: 1,
                                   ),
                             boxShadow: isSelected
@@ -243,7 +243,7 @@ class AllAstrologersView extends StatelessWidget {
                                     BoxShadow(
                                       color: const Color(
                                         0xFFed6f30,
-                                      ).withOpacity(0.25),
+                                      ).withValues(alpha: 0.25),
                                       blurRadius: 4,
                                       offset: const Offset(0, 1),
                                     ),
@@ -302,7 +302,7 @@ class AllAstrologersView extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 8,
               offset: Offset(0, 2),
             ),
@@ -365,7 +365,7 @@ class AllAstrologersView extends StatelessWidget {
                     vertical: 4.h,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.templeGold.withOpacity(0.15),
+                    color: AppColors.templeGold.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8.r),
                     border: Border.all(color: AppColors.templeGold, width: 1),
                   ),
@@ -508,7 +508,7 @@ class AllAstrologersView extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w400,
-                          color: '#3D0C11'.toColor().withOpacity(0.5),
+                          color: '#3D0C11'.toColor().withValues(alpha: 0.5),
                           fontSize: 10.sp, // Smaller font
                         ),
                       ),
@@ -687,7 +687,7 @@ class AllAstrologersView extends StatelessWidget {
       return Container(
         width: size.w,
         height: size.h,
-        color: Colors.grey.withOpacity(0.3),
+        color: Colors.grey.withValues(alpha: 0.3),
         child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
       );
     }
@@ -702,7 +702,7 @@ class AllAstrologersView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
           );
         },
@@ -711,7 +711,7 @@ class AllAstrologersView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Center(
               child: CircularProgressIndicator(
                 value: loadingProgress.expectedTotalBytes != null
@@ -734,7 +734,7 @@ class AllAstrologersView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
           );
         },
@@ -742,3 +742,4 @@ class AllAstrologersView extends StatelessWidget {
     }
   }
 }
+

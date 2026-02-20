@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/screens/courses/widgets/learning_journey_dialog.dart';
+﻿import 'package:astrobharataiuser/screens/courses/widgets/learning_journey_dialog.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -87,10 +87,10 @@ class LearningJourneySection extends StatelessWidget {
       decoration: BoxDecoration(
         color: isPremium ? const Color(0xFF3E1212) : Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: const Color(0xFFD68D3C).withOpacity(0.3)),
+        border: Border.all(color: const Color(0xFFD68D3C).withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             offset: const Offset(0, 4),
             blurRadius: 10,
           ),
@@ -100,7 +100,7 @@ class LearningJourneySection extends StatelessWidget {
         children: [
           CircleAvatar(
             backgroundColor: isPremium
-                ? Colors.white.withOpacity(0.2)
+                ? Colors.white.withValues(alpha: 0.2)
                 : const Color(0xFFFFF6E5),
             radius: 24.r,
             child: Icon(
@@ -171,7 +171,7 @@ class LearningJourneySection extends StatelessWidget {
                         'Build clarity, remove superstition, and introduce logic-based understanding',
                     icon: Icons.school_outlined,
                     whatYouWillLearn: [
-                      'Fundamentals of Core subject mastery (Astrology / Numerology / Vastu / Healing – as selected)',
+                      'Fundamentals of Core subject mastery (Astrology / Numerology / Vastu / Healing â€“ as selected)',
                       'Basic concepts of planets, numbers, directions, and human energy systems',
                       'Logical explanation of remedies, gemstones, and spiritual practices',
                       'Ethical awareness: what to do and what to avoid',
@@ -193,7 +193,7 @@ class LearningJourneySection extends StatelessWidget {
                     objective: 'Enable structured practice with confidence',
                     icon: Icons.emoji_events_outlined,
                     whatYouWillLearn: [
-                      'Core subject mastery (Astrology / Numerology / Vastu / Healing – as selected)',
+                      'Core subject mastery (Astrology / Numerology / Vastu / Healing â€“ as selected)',
                       'Practical tools: charts, grids, layouts, symbols, and indicators',
                       'Introduction to KP logic, Lal Kitab actions, and validation methods',
                       'Case studies and beginner-level consultation report writing',
@@ -282,3 +282,4 @@ class LearningJourneySection extends StatelessWidget {
     );
   }
 }
+

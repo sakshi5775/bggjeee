@@ -41,7 +41,7 @@ class FilterChips extends StatelessWidget {
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: AppColors.saffron.withOpacity(0.3),
+                              color: AppColors.saffron.withValues(alpha: 0.3),
                               blurRadius: 8.r,
                               offset: const Offset(0, 2),
                             ),
@@ -89,3 +89,4 @@ class FilterChips extends StatelessWidget {
     }
   }
 }
+

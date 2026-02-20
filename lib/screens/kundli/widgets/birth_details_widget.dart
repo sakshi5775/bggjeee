@@ -64,7 +64,7 @@ class BirthDetailsWidget extends StatelessWidget {
               AutoTranslateText(
                 'Loading birth details...',
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#6F221E".toColor().withValues(alpha: 0.7),
                   fontSize: 12.sp,
                 ),
               ),
@@ -83,12 +83,12 @@ class BirthDetailsWidget extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
-                  color: "#ed6f30".toColor().withOpacity(0.2),
+                  color: "#ed6f30".toColor().withValues(alpha: 0.2),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -137,7 +137,7 @@ class BirthDetailsWidget extends StatelessWidget {
                             Divider(
                               height: 1,
                               thickness: 1,
-                              color: "#6F221E".toColor().withOpacity(0.1),
+                              color: "#6F221E".toColor().withValues(alpha: 0.1),
                             ),
                           _buildDetailRow(
                             _details[i].$1,
@@ -170,7 +170,7 @@ class BirthDetailsWidget extends StatelessWidget {
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCB.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#6F221E".toColor().withValues(alpha: 0.7),
                 fontWeight: FontWeight.w600,
                 fontSize: 11.sp,
               ),
@@ -194,3 +194,4 @@ class BirthDetailsWidget extends StatelessWidget {
     );
   }
 }
+

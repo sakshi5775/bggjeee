@@ -22,7 +22,7 @@ class GlassMenuButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withOpacity(0.7)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.7)),
         ),
         child: Row(
           children: [
@@ -70,7 +70,7 @@ class StaggeredSlideFade extends StatelessWidget {
         return Opacity(
           opacity: value,
           child: Transform.translate(
-            offset: Offset(0, (1 - value) * 30), // bottom → top
+            offset: Offset(0, (1 - value) * 30), // bottom â†’ top
             child: child,
           ),
         );
@@ -78,3 +78,4 @@ class StaggeredSlideFade extends StatelessWidget {
     );
   }
 }
+

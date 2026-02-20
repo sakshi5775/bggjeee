@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/youtube_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -52,3 +52,4 @@ class AllVideosController extends BaseController {
     isGridView.value = !isGridView.value;
   }
 }
+

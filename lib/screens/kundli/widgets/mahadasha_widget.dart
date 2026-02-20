@@ -30,7 +30,7 @@ class MahadashaWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -42,7 +42,7 @@ class MahadashaWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -66,7 +66,7 @@ class MahadashaWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+                border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.5), width: 1),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.shadowLight,
@@ -125,7 +125,7 @@ class MahadashaWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+                border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.5), width: 1),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.shadowLight,
@@ -139,7 +139,7 @@ class MahadashaWidget extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
                     decoration: BoxDecoration(
-                      color: AppColors.deepOrange.withOpacity(0.1),
+                      color: AppColors.deepOrange.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(12.r),
                         topRight: Radius.circular(12.r),
@@ -187,7 +187,7 @@ class MahadashaWidget extends StatelessWidget {
                           bottom: BorderSide(
                             color: isLast
                                 ? Colors.transparent
-                                : AppColors.deepOrange.withOpacity(0.2),
+                                : AppColors.deepOrange.withValues(alpha: 0.2),
                             width: 1,
                           ),
                         ),
@@ -234,9 +234,9 @@ class MahadashaWidget extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 8.h),
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: AppColors.deepOrange.withOpacity(0.05),
+        color: AppColors.deepOrange.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: AppColors.deepOrange.withOpacity(0.3), width: 1),
+        border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -290,3 +290,4 @@ class MahadashaWidget extends StatelessWidget {
     }
   }
 }
+

@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/login/login/controller/login_controller.dart';
 import 'package:astrobharataiuser/screens/login/login/widgets/login_form_widget.dart';
@@ -40,7 +40,7 @@ class LoginView extends BasePage<LoginController> {
                   padding: EdgeInsets.only(top: 0.h), // Added top spacing
                   child: Stack(
                     children: [
-                      /// 🔹 Main Image
+                      /// ðŸ”¹ Main Image
                       Positioned.fill(
                         child: Image.network(
                           AppConstant.cardConsultation,
@@ -63,7 +63,7 @@ class LoginView extends BasePage<LoginController> {
                         ),
                       ),
 
-                      /// 🔹 Welcome Text Overlay
+                      /// ðŸ”¹ Welcome Text Overlay
                       Positioned(
                         bottom: 0,
                         left: 0,
@@ -126,8 +126,8 @@ class LoginView extends BasePage<LoginController> {
                       //       begin: Alignment.topCenter,
                       //       end: Alignment.bottomCenter,
                       //       colors: [
-                      //         Color(0xFFFFFCF3).withOpacity(0.2),
-                      //         Colors.white.withOpacity(0.0),
+                      //         Color(0xFFFFFCF3).withValues(alpha: 0.2),
+                      //         Colors.white.withValues(alpha: 0.0),
                       //       ],
                       //     ),
                       //   ),
@@ -187,3 +187,5 @@ class LoginView extends BasePage<LoginController> {
     );
   }
 }
+
+

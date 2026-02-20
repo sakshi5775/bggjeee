@@ -28,12 +28,12 @@ class TarotReadingTypeSelector extends StatelessWidget {
           color: '#ede7c8'.toColor(),
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: "#F38B3B".toColor().withOpacity(0.3),
+            color: "#F38B3B".toColor().withValues(alpha: 0.3),
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -149,13 +149,13 @@ class TarotReadingTypeSelector extends StatelessWidget {
           color: isSelected ? color : Colors.white,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: isSelected ? color : color.withOpacity(0.5),
+            color: isSelected ? color : color.withValues(alpha: 0.5),
             width: 2,
           ),
           boxShadow: [
             if (isSelected)
               BoxShadow(
-                color: color.withOpacity(0.3),
+                color: color.withValues(alpha: 0.3),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -194,4 +194,5 @@ class TarotReadingTypeSelector extends StatelessWidget {
     );
   }
 }
+
 

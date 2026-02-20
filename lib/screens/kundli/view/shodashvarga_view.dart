@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/shodashvarga_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/consult_astrologer_card.dart';
@@ -137,7 +137,7 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
                               border: isSelected
                                   ? null
                                   : Border.all(
-                                      color: maroon.withOpacity(0.2),
+                                      color: maroon.withValues(alpha: 0.2),
                                       width: 1,
                                     ),
                             ),
@@ -175,13 +175,13 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
         border: Border.all(
-          color: '#ed6f30'.toColor().withOpacity(0.2),
+          color: '#ed6f30'.toColor().withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -194,10 +194,10 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: '#ed6f30'.toColor().withOpacity(0.08),
+        color: '#ed6f30'.toColor().withValues(alpha: 0.08),
         border: Border(
           bottom: BorderSide(
-            color: '#ed6f30'.toColor().withOpacity(0.25),
+            color: '#ed6f30'.toColor().withValues(alpha: 0.25),
             width: 1,
           ),
         ),
@@ -297,10 +297,10 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: isEven ? '#ed6f30'.toColor().withOpacity(0.04) : Colors.white,
+          color: isEven ? '#ed6f30'.toColor().withValues(alpha: 0.04) : Colors.white,
           border: Border(
             bottom: BorderSide(
-              color: '#ed6f30'.toColor().withOpacity(0.12),
+              color: '#ed6f30'.toColor().withValues(alpha: 0.12),
               width: 1,
             ),
           ),
@@ -349,3 +349,5 @@ class ShodashvargaView extends BasePage<ShodashvargaController> {
     );
   }
 }
+
+

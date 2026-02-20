@@ -38,7 +38,7 @@ class PanchangPredictionWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
               fontSize: 12.sp,
             ),
           ),
@@ -59,12 +59,12 @@ class PanchangPredictionWidget extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(10.r),
             border: Border.all(
-              color: "#ed6f30".toColor().withOpacity(0.2),
+              color: "#ed6f30".toColor().withValues(alpha: 0.2),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 4,
                 offset: const Offset(0, 1),
               ),
@@ -132,15 +132,15 @@ class PanchangPredictionWidget extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.orangeGradient.colors.first.withOpacity(0.08),
-            AppColors.orangeGradient.colors.last.withOpacity(0.04),
+            AppColors.orangeGradient.colors.first.withValues(alpha: 0.08),
+            AppColors.orangeGradient.colors.last.withValues(alpha: 0.04),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
-          color: AppColors.orangeGradient.colors.first.withOpacity(0.25),
+          color: AppColors.orangeGradient.colors.first.withValues(alpha: 0.25),
           width: 1,
         ),
       ),
@@ -186,10 +186,10 @@ class PanchangPredictionWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(8.w),
       decoration: BoxDecoration(
-        color: AppColors.orangeGradient.colors.first.withOpacity(0.04),
+        color: AppColors.orangeGradient.colors.first.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
-          color: AppColors.orangeGradient.colors.first.withOpacity(0.2),
+          color: AppColors.orangeGradient.colors.first.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -222,7 +222,7 @@ class PanchangPredictionWidget extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
               decoration: BoxDecoration(
-                color: AppColors.orangeGradient.colors.first.withOpacity(0.12),
+                color: AppColors.orangeGradient.colors.first.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(5.r),
               ),
               child: AutoTranslateText(
@@ -250,3 +250,4 @@ class PanchangPredictionWidget extends StatelessWidget {
     );
   }
 }
+

@@ -204,7 +204,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -262,7 +262,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -328,7 +328,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -339,7 +339,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
         children: [
           Row(
             children: [
-              AutoTranslateText('💪', style: TextStyle(fontSize: 20.w)),
+              AutoTranslateText('ðŸ’ª', style: TextStyle(fontSize: 20.w)),
               Spacing.w(8),
               AutoTranslateText(
                 'Strengths',
@@ -393,7 +393,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -458,7 +458,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -523,7 +523,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -599,7 +599,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: "#F38B3B".toColor().withOpacity(0.3),
+            color: "#F38B3B".toColor().withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -619,7 +619,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
           AutoTranslateText(
             'Chat with our expert face readers for personalized guidance and detailed analysis.',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
             ),
             textAlign: TextAlign.center,
           ),
@@ -650,3 +650,4 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
     );
   }
 }
+

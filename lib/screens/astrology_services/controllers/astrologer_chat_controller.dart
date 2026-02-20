@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:astrobharataiuser/controllers/global_chat_controller.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/astrologer_chat_model.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
@@ -15,6 +15,7 @@ import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_review_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/widgets/astrologer_review_dialog.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 
 class AstrologerChatController extends BaseController
     with WidgetsBindingObserver {
@@ -169,6 +170,11 @@ class AstrologerChatController extends BaseController
   Future<void> _initializeChat() async {
     try {
       isLoading.value = true;
+      CrashlyticsService.trackAction(
+        "CHAT",
+        "INIT",
+        data: "astrologer:${_astrologer?.astrologerId}, chatId:$initialChatId",
+      );
 
       AstrologerChatSession? session;
 
@@ -360,8 +366,9 @@ class AstrologerChatController extends BaseController
         if (kDebugMode) print('Session is already ACTIVE. Resuming...');
         _handleSessionActive();
       }
-    } catch (e) {
+    } catch (e, s) {
       if (kDebugMode) print('Init Chat Error: $e');
+      reportError(e, s, type: CrashErrorType.auth, reason: "CHAT_INIT_FAILED");
       showErrorMessage(message: 'Failed to initialize chat: ${e.toString()}');
       Get.back();
     } finally {
@@ -476,6 +483,11 @@ class AstrologerChatController extends BaseController
 
   Future<void> _connectSocket() async {
     try {
+      CrashlyticsService.trackAction(
+        "CHAT",
+        "SOCKET_CONNECT",
+        data: "url:$chatSocketUrl",
+      );
       final token = UserData().accessToken ?? '';
       if (token.isEmpty) throw Exception('No authentication token');
 
@@ -495,6 +507,11 @@ class AstrologerChatController extends BaseController
 
       _socket!.onConnect((_) {
         if (kDebugMode) print('Socket connected successfully');
+        CrashlyticsService.trackAction(
+          "CHAT",
+          "SOCKET_CONNECTED",
+          data: "socketId:${_socket!.id}",
+        );
         isConnected.value = true;
         if (chatId.value.isNotEmpty) {
           _joinChatRoom();
@@ -512,6 +529,11 @@ class AstrologerChatController extends BaseController
 
       _socket!.onError((error) {
         if (kDebugMode) print('Socket error: $error');
+        CrashlyticsService.trackAction(
+          "CHAT",
+          "SOCKET_ERROR",
+          data: error.toString(),
+        );
         isConnected.value = false;
       });
 
@@ -626,10 +648,12 @@ class AstrologerChatController extends BaseController
       });
 
       _socket!.on('error', (error) {
-        if (kDebugMode) {
-          print('=== SOCKET ERROR ===');
-          print('Error: $error');
-        }
+        reportError(
+          error,
+          StackTrace.current,
+          type: CrashErrorType.socket,
+          reason: "SOCKET_ON_ERROR",
+        );
       });
       _socket!.on(
         'message_status_updated',
@@ -645,6 +669,11 @@ class AstrologerChatController extends BaseController
 
       _socket!.on('session_started', (data) {
         if (kDebugMode) print('Session Started Event: $data');
+        CrashlyticsService.trackAction(
+          "CHAT",
+          "SESSION_STARTED",
+          data: data.toString(),
+        );
         sessionStatus.value = 'ACTIVE';
         _handleSessionActive();
         _refreshSessionAndSync();

@@ -233,7 +233,7 @@ class _HomeVastuCompassViewState extends State<HomeVastuCompassView>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -369,7 +369,7 @@ class _HomeVastuCompassViewState extends State<HomeVastuCompassView>
                     borderRadius: BorderRadius.circular(12.r),
                     boxShadow: [
                       BoxShadow(
-                        color: "#F38B3B".toColor().withOpacity(0.35),
+                        color: "#F38B3B".toColor().withValues(alpha: 0.35),
                         blurRadius: 6,
                         offset: const Offset(0, 3),
                       ),
@@ -455,7 +455,7 @@ class _HomeVastuCompassViewState extends State<HomeVastuCompassView>
           //         borderRadius: BorderRadius.circular(12.r),
           //       ),
           //       elevation: 6,
-          //       shadowColor: '#9C27B0'.toColor().withOpacity(0.35),
+          //       shadowColor: '#9C27B0'.toColor().withValues(alpha: 0.35),
           //     ),
           //     icon: Icon(
           //       Icons.view_in_ar,
@@ -476,3 +476,4 @@ class _HomeVastuCompassViewState extends State<HomeVastuCompassView>
     );
   }
 }
+

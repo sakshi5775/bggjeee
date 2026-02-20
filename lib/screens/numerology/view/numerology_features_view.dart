@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/numerology/controller/numerology_form_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -115,7 +115,7 @@ class NumerologyFeaturesView extends BasePage<NumerologyFormController> {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -243,3 +243,5 @@ class NumerologyFeaturesView extends BasePage<NumerologyFormController> {
     return descriptionMap[key] ?? 'Get detailed insights';
   }
 }
+
+

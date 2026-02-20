@@ -39,7 +39,7 @@ class PredictionsTableWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.2),
+            color: AppColors.deepOrange.withValues(alpha: 0.2),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -50,7 +50,7 @@ class PredictionsTableWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(6.r),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.25),
+              color: Colors.white.withValues(alpha: 0.25),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: Colors.white, size: 18.w),
@@ -99,7 +99,7 @@ class PredictionsTableWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.cardLight,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: AppColors.deepOrange.withOpacity(0.35), width: 1),
+          border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.35), width: 1),
           boxShadow: [
             BoxShadow(
               color: AppColors.shadowLight,
@@ -117,7 +117,7 @@ class PredictionsTableWidget extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.deepOrange.withOpacity(0.2),
+                    color: AppColors.deepOrange.withValues(alpha: 0.2),
                     blurRadius: 3,
                     offset: const Offset(0, 1),
                   ),
@@ -143,3 +143,4 @@ class PredictionsTableWidget extends StatelessWidget {
     );
   }
 }
+

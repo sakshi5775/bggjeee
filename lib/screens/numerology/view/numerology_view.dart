@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/numerology/controller/numerology_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -71,7 +71,7 @@ class NumerologyView extends BasePage<NumerologyController> {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -83,7 +83,7 @@ class NumerologyView extends BasePage<NumerologyController> {
             Container(
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
-                color: const Color(0xFFDFB343).withOpacity(0.1),
+                color: const Color(0xFFDFB343).withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -111,3 +111,5 @@ class NumerologyView extends BasePage<NumerologyController> {
     );
   }
 }
+
+

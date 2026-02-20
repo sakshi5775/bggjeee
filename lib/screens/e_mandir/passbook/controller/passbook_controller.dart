@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/passbook/data_model/passbook_item.dart';
 
 class PassbookController extends BaseController {
@@ -59,3 +59,4 @@ class PassbookController extends BaseController {
     ),
   ];
 }
+

@@ -25,7 +25,7 @@ class OfflinePlaceholderCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -37,7 +37,7 @@ class OfflinePlaceholderCard extends StatelessWidget {
           Icon(
             Icons.cloud_off_rounded,
             size: 48.w,
-            color: AppColors.saffron.withOpacity(0.6),
+            color: AppColors.saffron.withValues(alpha: 0.6),
           ),
           SizedBox(height: 16.h),
           AutoTranslateText(
@@ -70,3 +70,4 @@ class OfflinePlaceholderCard extends StatelessWidget {
     );
   }
 }
+

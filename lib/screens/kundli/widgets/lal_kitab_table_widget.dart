@@ -6,7 +6,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// Lal Kitab table – same design as predictions_table_widget / kundli_result_view.
+/// Lal Kitab table â€“ same design as predictions_table_widget / kundli_result_view.
 class LalKitabTableWidget extends StatelessWidget {
   final LalKitabController controller;
 
@@ -35,7 +35,7 @@ class LalKitabTableWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.2),
+            color: AppColors.deepOrange.withValues(alpha: 0.2),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -46,7 +46,7 @@ class LalKitabTableWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(6.r),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.25),
+              color: Colors.white.withValues(alpha: 0.25),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: Colors.white, size: 18.w),
@@ -104,7 +104,7 @@ class LalKitabTableWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.cardLight,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: AppColors.deepOrange.withOpacity(0.35), width: 1),
+          border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.35), width: 1),
           boxShadow: [
             BoxShadow(
               color: AppColors.shadowLight,
@@ -119,12 +119,12 @@ class LalKitabTableWidget extends StatelessWidget {
               padding: EdgeInsets.all(6.r),
               decoration: BoxDecoration(
                 gradient: hasApi ? AppColors.orangeGradient : null,
-                color: hasApi ? null : Colors.grey.withOpacity(0.3),
+                color: hasApi ? null : Colors.grey.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
                 boxShadow: hasApi
                     ? [
                         BoxShadow(
-                          color: AppColors.deepOrange.withOpacity(0.2),
+                          color: AppColors.deepOrange.withValues(alpha: 0.2),
                           blurRadius: 3,
                           offset: const Offset(0, 1),
                         ),
@@ -156,7 +156,7 @@ class LalKitabTableWidget extends StatelessWidget {
                     AutoTranslateText(
                       'Coming Soon',
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: AppColors.textPrimary.withOpacity(0.6),
+                        color: AppColors.textPrimary.withValues(alpha: 0.6),
                         fontSize: 10.sp,
                       ),
                     ),
@@ -171,3 +171,4 @@ class LalKitabTableWidget extends StatelessWidget {
     );
   }
 }
+

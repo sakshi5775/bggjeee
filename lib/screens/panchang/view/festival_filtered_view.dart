@@ -1,7 +1,7 @@
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/panchang/controller/festival_filtered_controller.dart';
@@ -45,7 +45,7 @@ class FestivalFilteredView extends BasePage<FestivalFilteredController> {
                     child: AutoTranslateText(
                       'No festivals found',
                       style: MyTextTheme.mediumBCN.copyWith(
-                        color: "#6F221E".toColor().withOpacity(0.6),
+                        color: "#6F221E".toColor().withValues(alpha: 0.6),
                       ),
                     ),
                   );
@@ -130,7 +130,7 @@ class FestivalFilteredView extends BasePage<FestivalFilteredController> {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -187,7 +187,7 @@ class FestivalFilteredView extends BasePage<FestivalFilteredController> {
                   AutoTranslateText(
                     dayName,
                     style: MyTextTheme.smallBCN.copyWith(
-                      color: "#6F221E".toColor().withOpacity(0.7),
+                      color: "#6F221E".toColor().withValues(alpha: 0.7),
                       fontSize: 12.sp,
                     ),
                   ),
@@ -206,7 +206,7 @@ class FestivalFilteredView extends BasePage<FestivalFilteredController> {
               ),
               child: Icon(
                 Icons.more_vert,
-                color: "#6F221E".toColor().withOpacity(0.5),
+                color: "#6F221E".toColor().withValues(alpha: 0.5),
                 size: 20.w,
               ),
             ),
@@ -330,7 +330,7 @@ class FestivalFilteredView extends BasePage<FestivalFilteredController> {
                                 Icon(
                                   Icons.calendar_today,
                                   size: 16.w,
-                                  color: "#6F221E".toColor().withOpacity(0.7),
+                                  color: "#6F221E".toColor().withValues(alpha: 0.7),
                                 ),
                                 Spacing.w(8),
                                 Flexible(
@@ -353,7 +353,7 @@ class FestivalFilteredView extends BasePage<FestivalFilteredController> {
                               AutoTranslateText(
                                 festival['description']?.toString() ?? '',
                                 style: MyTextTheme.smallBCN.copyWith(
-                                  color: "#6F221E".toColor().withOpacity(0.6),
+                                  color: "#6F221E".toColor().withValues(alpha: 0.6),
                                   fontSize: 12.sp,
                                 ),
                                 maxLines: 3,
@@ -486,3 +486,5 @@ class FestivalFilteredView extends BasePage<FestivalFilteredController> {
     }
   }
 }
+
+

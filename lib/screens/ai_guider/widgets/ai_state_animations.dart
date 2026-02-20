@@ -56,14 +56,14 @@ class _AiOrbAnimationState extends State<AiOrbAnimation>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    Colors.amber.withOpacity(0.8),
-                    Colors.orange.withOpacity(0.6),
-                    Colors.deepOrange.withOpacity(0.4),
+                    Colors.amber.withValues(alpha: 0.8),
+                    Colors.orange.withValues(alpha: 0.6),
+                    Colors.deepOrange.withValues(alpha: 0.4),
                   ],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.amber.withOpacity(0.5),
+                    color: Colors.amber.withValues(alpha: 0.5),
                     blurRadius: 30.r,
                     spreadRadius: 5.r,
                   ),
@@ -264,14 +264,14 @@ class _SpeakingGlowAnimationState extends State<SpeakingGlowAnimation>
             shape: BoxShape.circle,
             gradient: RadialGradient(
               colors: [
-                Colors.amber.withOpacity(_glowAnimation.value * 0.9),
-                Colors.orange.withOpacity(_glowAnimation.value * 0.7),
-                Colors.deepOrange.withOpacity(_glowAnimation.value * 0.5),
+                Colors.amber.withValues(alpha: _glowAnimation.value * 0.9),
+                Colors.orange.withValues(alpha: _glowAnimation.value * 0.7),
+                Colors.deepOrange.withValues(alpha: _glowAnimation.value * 0.5),
               ],
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.amber.withOpacity(_glowAnimation.value * 0.6),
+                color: Colors.amber.withValues(alpha: _glowAnimation.value * 0.6),
                 blurRadius: 40.r * _glowAnimation.value,
                 spreadRadius: 10.r * _glowAnimation.value,
               ),
@@ -335,7 +335,7 @@ class _InterruptedFadeAnimationState extends State<InterruptedFadeAnimation>
             height: 120.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey.withValues(alpha: 0.3),
             ),
             child: Center(
               child: Icon(
@@ -375,4 +375,5 @@ class AiStateAnimation extends StatelessWidget {
     });
   }
 }
+
 

@@ -186,7 +186,7 @@ class ShopByCategoryWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14.71.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
+                    color: Colors.black.withValues(alpha: 0.25),
                     blurRadius: 12,
                     offset: Offset(0, 4),
                   ),
@@ -201,7 +201,7 @@ class ShopByCategoryWidget extends StatelessWidget {
                         height: 90.h,
                       )
                     : Container(
-                        color: Colors.grey.withOpacity(0.2),
+                        color: Colors.grey.withValues(alpha: 0.2),
                         child: Icon(
                           Icons.category,
                           size: 40.w,
@@ -251,3 +251,4 @@ class ShopByCategoryWidget extends StatelessWidget {
     );
   }
 }
+

@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/lal_kitab_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-/// Lal Kitab view – same design as Kundli Result: CommonHeader, gradient, drawer, horizontal tabs.
+/// Lal Kitab view â€“ same design as Kundli Result: CommonHeader, gradient, drawer, horizontal tabs.
 class LalKitabView extends BasePage<LalKitabController> {
   const LalKitabView({super.key});
 
@@ -136,13 +136,13 @@ class LalKitabView extends BasePage<LalKitabController> {
                               border: isSelected
                                   ? null
                                   : Border.all(
-                                      color: maroon.withOpacity(0.2),
+                                      color: maroon.withValues(alpha: 0.2),
                                       width: 1,
                                     ),
                               boxShadow: isSelected
                                   ? [
                                       BoxShadow(
-                                        color: orange.withOpacity(0.25),
+                                        color: orange.withValues(alpha: 0.25),
                                         blurRadius: 4,
                                         offset: const Offset(0, 1),
                                       ),
@@ -211,3 +211,5 @@ class LalKitabView extends BasePage<LalKitabController> {
     }
   }
 }
+
+

@@ -92,7 +92,7 @@ class NumerologyWidget extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: AppColors.deepOrange.withOpacity(0.3),
+                    color: AppColors.deepOrange.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -120,7 +120,7 @@ class NumerologyWidget extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.2),
+                    color: Colors.orange.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(6.r),
                   ),
                   child: AutoTranslateText(
@@ -141,8 +141,8 @@ class NumerologyWidget extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: AppColors.deepOrange.withOpacity(0.06),
-                border: Border.all(color: AppColors.deepOrange.withOpacity(0.3), width: 1),
+                color: AppColors.deepOrange.withValues(alpha: 0.06),
+                border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.3), width: 1),
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: AutoTranslateText(
@@ -169,8 +169,8 @@ class NumerologyWidget extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: AppColors.deepOrange.withOpacity(0.08),
-                border: Border.all(color: AppColors.deepOrange.withOpacity(0.3), width: 1),
+                color: AppColors.deepOrange.withValues(alpha: 0.08),
+                border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.3), width: 1),
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: AutoTranslateText(
@@ -187,4 +187,5 @@ class NumerologyWidget extends StatelessWidget {
     );
   }
 }
+
 

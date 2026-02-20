@@ -65,7 +65,7 @@ class _PdfLanguageSelectionDialogState
                 child: ListView.separated(
                   itemCount: _languages.length,
                   separatorBuilder: (context, index) =>
-                      Divider(height: 1, color: Colors.grey.withOpacity(0.1)),
+                      Divider(height: 1, color: Colors.grey.withValues(alpha: 0.1)),
                   itemBuilder: (context, index) {
                     final lang = _languages[index];
                     return ListTile(
@@ -77,7 +77,7 @@ class _PdfLanguageSelectionDialogState
                         width: 36.w,
                         height: 36.w,
                         decoration: BoxDecoration(
-                          color: "#6F221E".toColor().withOpacity(0.1),
+                          color: "#6F221E".toColor().withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Center(
@@ -104,7 +104,7 @@ class _PdfLanguageSelectionDialogState
                       trailing: Icon(
                         Icons.translate,
                         size: 18.w,
-                        color: "#6F221E".toColor().withOpacity(0.5),
+                        color: "#6F221E".toColor().withValues(alpha: 0.5),
                       ),
                     );
                   },
@@ -116,3 +116,4 @@ class _PdfLanguageSelectionDialogState
     );
   }
 }
+

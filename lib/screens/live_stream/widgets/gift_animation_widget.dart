@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+﻿import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -159,28 +159,28 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        const Color(0xFFFFD700).withOpacity(0.95),
-                        const Color(0xFFFFA500).withOpacity(0.95),
-                        const Color(0xFFF38B3B).withOpacity(0.95),
+                        const Color(0xFFFFD700).withValues(alpha: 0.95),
+                        const Color(0xFFFFA500).withValues(alpha: 0.95),
+                        const Color(0xFFF38B3B).withValues(alpha: 0.95),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(24.r),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                       width: 3,
                     ),
                     boxShadow: [
                       BoxShadow(
                         color: const Color(
                           0xFFFFD700,
-                        ).withOpacity(0.8 * _glowAnimation.value),
+                        ).withValues(alpha: 0.8 * _glowAnimation.value),
                         blurRadius: 30 * _glowAnimation.value,
                         spreadRadius: 8 * _glowAnimation.value,
                       ),
                       BoxShadow(
                         color: const Color(
                           0xFFFFA500,
-                        ).withOpacity(0.6 * _glowAnimation.value),
+                        ).withValues(alpha: 0.6 * _glowAnimation.value),
                         blurRadius: 40 * _glowAnimation.value,
                         spreadRadius: 4 * _glowAnimation.value,
                       ),
@@ -225,7 +225,7 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                                 .copyWith(
                                   color: const Color(
                                     0xFF3E2723,
-                                  ).withOpacity(0.8),
+                                  ).withValues(alpha: 0.8),
                                 )
                                 .merge(AppTypography.body1),
                           ),
@@ -258,7 +258,7 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                               );
                             },
                             child: AutoTranslateText(
-                              '🎉',
+                              'ðŸŽ‰',
                               style: AppTypography.h1,
                             ),
                           ),
@@ -273,7 +273,7 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                               );
                             },
                             child: AutoTranslateText(
-                              '✨',
+                              'âœ¨',
                               style: AppTypography.h1,
                             ),
                           ),
@@ -288,7 +288,7 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                               );
                             },
                             child: AutoTranslateText(
-                              '🎊',
+                              'ðŸŽŠ',
                               style: AppTypography.h1,
                             ),
                           ),
@@ -326,3 +326,4 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
     );
   }
 }
+

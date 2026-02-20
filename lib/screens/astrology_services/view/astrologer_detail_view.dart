@@ -131,11 +131,11 @@ class AstrologerDetailView extends StatelessWidget {
             width: size.w,
             height: size.w,
             decoration: BoxDecoration(
-              color: AppColors.templeGold.withOpacity(opacity),
+              color: AppColors.templeGold.withValues(alpha: opacity),
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.templeGold.withOpacity(0.3),
+                  color: AppColors.templeGold.withValues(alpha: 0.3),
                   blurRadius: 2,
                   spreadRadius: 0.5,
                 ),
@@ -243,7 +243,7 @@ class AstrologerDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
@@ -509,7 +509,7 @@ class AstrologerDetailView extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -598,7 +598,7 @@ class AstrologerDetailView extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -931,7 +931,7 @@ class AstrologerDetailView extends StatelessWidget {
           width: 40.w,
           height: 40.w,
           decoration: BoxDecoration(
-            color: AppColors.saffron.withOpacity(0.2),
+            color: AppColors.saffron.withValues(alpha: 0.2),
             shape: BoxShape.circle,
           ),
           child: Center(
@@ -1024,7 +1024,7 @@ class AstrologerDetailView extends StatelessWidget {
         color: const Color(0xFFf8f0be), // Light cream background
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -1144,7 +1144,7 @@ class AstrologerDetailView extends StatelessWidget {
       return Container(
         width: size.w,
         height: size.h,
-        color: Colors.grey.withOpacity(0.3),
+        color: Colors.grey.withValues(alpha: 0.3),
         child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
       );
     }
@@ -1159,7 +1159,7 @@ class AstrologerDetailView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
           );
         },
@@ -1168,7 +1168,7 @@ class AstrologerDetailView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Center(
               child: CircularProgressIndicator(
                 value: loadingProgress.expectedTotalBytes != null
@@ -1191,7 +1191,7 @@ class AstrologerDetailView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
           );
         },
@@ -1199,3 +1199,4 @@ class AstrologerDetailView extends StatelessWidget {
     }
   }
 }
+

@@ -20,7 +20,7 @@ class CommentItem extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 16,
-              backgroundColor: AppColors.saffron.withOpacity(0.15),
+              backgroundColor: AppColors.saffron.withValues(alpha: 0.15),
               child: Icon(Icons.person, size: 16, color: AppColors.saffron),
             ),
             Spacing.w(10),
@@ -64,5 +64,6 @@ class CommentItem extends StatelessWidget {
     );
   }
 }
+
 
 

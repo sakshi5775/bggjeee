@@ -1,6 +1,6 @@
-import 'package:astrobharataiuser/widgets/common_header.dart';
+﻿import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/app_manager/myButton.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/remedy_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/remedies/remedy_category_listing/controller/remedy_category_listing_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -99,7 +99,7 @@ class RemedyCategoryListingView
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -222,3 +222,5 @@ class RemedyCategoryListingView
     );
   }
 }
+
+

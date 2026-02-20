@@ -35,9 +35,9 @@ class CarrotAstrologyView extends StatelessWidget {
                 child: CommonHeader(
                   title: 'Carrot Astrology',
                   subtitle: AutoTranslateText(
-                    'Playful Insights • AI Wisdom',
+                    'Playful Insights â€¢ AI Wisdom',
                     style: MyTextTheme.smallBCN.copyWith(
-                      color: const Color(0xFF6F221E).withOpacity(0.7),
+                      color: const Color(0xFF6F221E).withValues(alpha: 0.7),
                     ),
                   ),
                   customActions: [
@@ -114,7 +114,7 @@ class CarrotAstrologyView extends StatelessWidget {
       height: 140.w,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24.r),
-        color: CarrotAstrologyColors.orangeColor.withOpacity(0.1),
+        color: CarrotAstrologyColors.orangeColor.withValues(alpha: 0.1),
       ),
       child: Icon(
         Icons.eco,
@@ -138,7 +138,7 @@ class CarrotAstrologyView extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: AutoTranslateText(
-        'Discover Your Vegetable Essence • Zodiac-Based Wellness',
+        'Discover Your Vegetable Essence â€¢ Zodiac-Based Wellness',
         style: MyTextTheme.mediumBCN
             .copyWith(color: '#3E2723'.toColor())
             .merge(AppTypography.body1),
@@ -158,7 +158,7 @@ class CarrotAstrologyView extends StatelessWidget {
           border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.07),
+              color: Colors.black.withValues(alpha: 0.07),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -335,7 +335,7 @@ class CarrotAstrologyView extends StatelessWidget {
           border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),
@@ -391,7 +391,7 @@ class CarrotAstrologyView extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.12),
+              color: Colors.black.withValues(alpha: 0.12),
               blurRadius: 18,
               offset: const Offset(0, 8),
             ),
@@ -409,8 +409,8 @@ class CarrotAstrologyView extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      CarrotAstrologyColors.orangeColorDark.withOpacity(0.35),
-                      CarrotAstrologyColors.orangeColor.withOpacity(0.15),
+                      CarrotAstrologyColors.orangeColorDark.withValues(alpha: 0.35),
+                      CarrotAstrologyColors.orangeColor.withValues(alpha: 0.15),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -453,3 +453,4 @@ class CarrotAstrologyView extends StatelessWidget {
     );
   }
 }
+

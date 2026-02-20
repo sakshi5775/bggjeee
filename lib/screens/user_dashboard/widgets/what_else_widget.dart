@@ -232,7 +232,7 @@ class WhatElseWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepOrange.withOpacity(0.3),
+              color: AppColors.deepOrange.withValues(alpha: 0.3),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -262,7 +262,7 @@ class WhatElseWidget extends StatelessWidget {
       const message = '''
 Discover astrology, Kundli, and more with AstroBharatAI!
 
-📱 Download the app: https://astrobharatai.com
+ðŸ“± Download the app: https://astrobharatai.com
 
 Explore daily panchang, chat with astrologers, courses, and much more.
 ''';
@@ -281,3 +281,4 @@ Explore daily panchang, chat with astrologers, courses, and much more.
     }
   }
 }
+

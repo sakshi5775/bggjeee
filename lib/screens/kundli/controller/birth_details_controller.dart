@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/user_data.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
@@ -306,7 +306,7 @@ class BirthDetailsController extends BaseController {
         final degrees = ayanamsaValue.floor();
         final minutes = ((ayanamsaValue - degrees) * 60).floor();
         final seconds = (((ayanamsaValue - degrees) * 60 - minutes) * 60).floor();
-        formattedAyanamsa = '${degrees.toString().padLeft(3, '0')}°${minutes.toString().padLeft(2, '0')}\'${seconds.toString().padLeft(2, '0')}"';
+        formattedAyanamsa = '${degrees.toString().padLeft(3, '0')}Â°${minutes.toString().padLeft(2, '0')}\'${seconds.toString().padLeft(2, '0')}"';
       } catch (e) {
         formattedAyanamsa = ayanamsa;
       }
@@ -449,4 +449,5 @@ class BirthDetailsController extends BaseController {
     return birthDasa;
   }
 }
+
 

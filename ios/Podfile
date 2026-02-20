@@ -63,4 +63,20 @@ post_install do |installer|
       end
     end
   end
+
+  # Fix: Suppress missing dSYM warnings for Agora AI frameworks (pre-built binaries with no dSYMs)
+  agora_ai_pods = [
+    'AgoraAiEchoCancellation',
+    'AgoraAiEchoCancellationLLExtension',
+    'AgoraAiNoiseSuppression',
+    'AgoraAiNoiseSuppressionLLExtension',
+  ]
+  installer.pods_project.targets.each do |target|
+    if agora_ai_pods.any? { |pod| target.name.include?(pod) }
+      target.build_configurations.each do |config|
+        # Use 'dwarf' instead of 'dwarf-with-dsym' since these frameworks have no dSYMs
+        config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf'
+      end
+    end
+  end
 end

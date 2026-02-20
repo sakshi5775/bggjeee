@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/chat_model.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
@@ -301,10 +301,10 @@ class ChatController extends BaseController {
       final messageContent =
           'Hello! I am seeking your guidance.\n\n'
           'My Details:\n'
-          '• Name: $name\n'
-          '• Date of Birth: $dob\n'
-          '• Time of Birth: ${tob.isNotEmpty ? _formatTimeForMessage(tob) : 'Not provided'}\n'
-          '• Place of Birth: ${pob.isNotEmpty ? pob : 'Not provided'}';
+          'â€¢ Name: $name\n'
+          'â€¢ Date of Birth: $dob\n'
+          'â€¢ Time of Birth: ${tob.isNotEmpty ? _formatTimeForMessage(tob) : 'Not provided'}\n'
+          'â€¢ Place of Birth: ${pob.isNotEmpty ? pob : 'Not provided'}';
 
       // Send the profile message with profile context
       // The chat service will automatically prepend the profile context to the message
@@ -359,4 +359,5 @@ class ChatController extends BaseController {
     }
   }
 }
+
 

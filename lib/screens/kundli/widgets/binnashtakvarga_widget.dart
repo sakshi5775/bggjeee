@@ -33,12 +33,12 @@ class BinnashtakvargaWidget extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
-              color: "#ed6f30".toColor().withOpacity(0.2),
+              color: "#ed6f30".toColor().withValues(alpha: 0.2),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               ),
@@ -101,10 +101,10 @@ class BinnashtakvargaWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: "#ed6f30".toColor().withOpacity(0.06),
+        color: "#ed6f30".toColor().withValues(alpha: 0.06),
         border: Border(
           bottom: BorderSide(
-            color: "#ed6f30".toColor().withOpacity(0.2),
+            color: "#ed6f30".toColor().withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -190,7 +190,7 @@ class BinnashtakvargaWidget extends StatelessWidget {
                       border: Border.all(
                         color: isSelected
                             ? "#ed6f30".toColor()
-                            : "#ed6f30".toColor().withOpacity(0.35),
+                            : "#ed6f30".toColor().withValues(alpha: 0.35),
                         width: isSelected ? 1.5 : 1,
                       ),
                     ),
@@ -258,7 +258,7 @@ class BinnashtakvargaWidget extends StatelessWidget {
           AutoTranslateText(
             'Loading ${controller.selectedPlanetForBinnashtakvarga.value}...',
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: "#6F221E".toColor().withValues(alpha: 0.7),
               fontSize: 11.sp,
             ),
           ),
@@ -283,10 +283,10 @@ class BinnashtakvargaWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
-        color: "#ed6f30".toColor().withOpacity(0.03),
+        color: "#ed6f30".toColor().withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.15),
+          color: "#ed6f30".toColor().withValues(alpha: 0.15),
           width: 1,
         ),
       ),
@@ -324,7 +324,7 @@ class BinnashtakvargaWidget extends StatelessWidget {
   ) {
     return Table(
       border: TableBorder.all(
-        color: "#6F221E".toColor().withOpacity(0.15),
+        color: "#6F221E".toColor().withValues(alpha: 0.15),
         width: 1,
       ),
       columnWidths: {
@@ -336,7 +336,7 @@ class BinnashtakvargaWidget extends StatelessWidget {
       children: [
         TableRow(
           decoration: BoxDecoration(
-            color: "#ed6f30".toColor().withOpacity(0.12),
+            color: "#ed6f30".toColor().withValues(alpha: 0.12),
           ),
           children: [
             _cell('H', header: true),
@@ -352,7 +352,7 @@ class BinnashtakvargaWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: i % 2 == 0
                   ? Colors.white
-                  : "#ed6f30".toColor().withOpacity(0.04),
+                  : "#ed6f30".toColor().withValues(alpha: 0.04),
             ),
             children: [
               _cell('H${i + 1}'),
@@ -403,3 +403,4 @@ class BinnashtakvargaWidget extends StatelessWidget {
     );
   }
 }
+

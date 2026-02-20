@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:astrobharataiuser/app_manager/user_data.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/services/auth_service.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
@@ -720,7 +720,7 @@ class ProfileController extends BaseController {
     }
   }
 
-  /// Returns true if dateOfBirth (yyyy-MM-dd) is valid for birth chart API: not in future, age 13–120.
+  /// Returns true if dateOfBirth (yyyy-MM-dd) is valid for birth chart API: not in future, age 13â€“120.
   bool _isValidBirthDateForChart(String dateOfBirthStr) {
     final birth = DateTime.tryParse(dateOfBirthStr);
     if (birth == null) return false;
@@ -875,7 +875,7 @@ class ProfileController extends BaseController {
     if (isoString == null || isoString.isEmpty) return '';
     try {
       final date = DateTime.parse(isoString).toLocal();
-      return DateFormat('dd MMM yyyy · hh:mm a').format(date);
+      return DateFormat('dd MMM yyyy Â· hh:mm a').format(date);
     } catch (_) {
       return '';
     }
@@ -894,3 +894,4 @@ class ProfileController extends BaseController {
     return combined.isNotEmpty ? combined : name[0].toUpperCase();
   }
 }
+

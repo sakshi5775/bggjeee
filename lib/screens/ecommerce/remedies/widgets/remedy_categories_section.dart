@@ -85,7 +85,7 @@ class RemedyCategoriesSection extends GetView<RemediesController> {
           decoration: BoxDecoration(
             color: const Color(0xFFFFF8E7), // Light beige bg
             borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(color: const Color(0xFFD68D3C).withOpacity(0.2)),
+            border: Border.all(color: const Color(0xFFD68D3C).withValues(alpha: 0.2)),
           ),
           child: CachedNetworkImage(
             imageUrl: category.image ?? '',
@@ -115,3 +115,4 @@ class RemedyCategoriesSection extends GetView<RemediesController> {
     );
   }
 }
+

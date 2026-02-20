@@ -35,7 +35,7 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -47,7 +47,7 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -63,7 +63,7 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+                border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.5), width: 1),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.shadowLight,
@@ -116,7 +116,7 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.cardLight,
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+                  border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.5), width: 1),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.shadowLight,
@@ -131,7 +131,7 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(10.w),
                       decoration: BoxDecoration(
-                        color: AppColors.deepOrange.withOpacity(0.1),
+                        color: AppColors.deepOrange.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(12.r),
                           topRight: Radius.circular(12.r),
@@ -181,7 +181,7 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
-                              color: isLast ? Colors.transparent : AppColors.deepOrange.withOpacity(0.2),
+                              color: isLast ? Colors.transparent : AppColors.deepOrange.withValues(alpha: 0.2),
                               width: 1,
                             ),
                           ),
@@ -248,4 +248,5 @@ class YoginiMahadashaSubWidget extends StatelessWidget {
     }
   }
 }
+
 

@@ -92,8 +92,8 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
     if (widget.isLocked) return;
 
     // Compass dial rotates opposite to heading (physics-based)
-    // When heading is 0° (North), dial rotation is 0°
-    // When heading is 90° (East), dial rotates -90° so East appears at bottom
+    // When heading is 0Â° (North), dial rotation is 0Â°
+    // When heading is 90Â° (East), dial rotates -90Â° so East appears at bottom
     // Needle stays fixed pointing North
     _targetRotation = -widget.heading * math.pi / 180.0;
 
@@ -153,13 +153,13 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
         child: Stack(
           alignment: Alignment.center,
           children: [
-            // 1️⃣ Outer frame (fixed)
+            // 1ï¸âƒ£ Outer frame (fixed)
             _buildLayer(
               AppConstant.outerFrame,
               size: size * outerScale,
               fixed: true,
             ),
-            // 2️⃣ Rotating group
+            // 2ï¸âƒ£ Rotating group
             Transform.rotate(
               angle: _currentRotation,
               alignment: Alignment.center,
@@ -201,7 +201,7 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
                 ],
               ),
             ),
-            // 3️⃣ Needle (fixed on top)
+            // 3ï¸âƒ£ Needle (fixed on top)
             _buildLayer(
               AppConstant.needle,
               size: size * needleScale,
@@ -217,11 +217,11 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
                     vertical: 6.h,
                   ),
                   decoration: BoxDecoration(
-                    color: '#D4AF37'.toColor().withOpacity(0.9),
+                    color: '#D4AF37'.toColor().withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(20.r),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -288,14 +288,14 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.grey.withOpacity(0.1),
-              border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+              color: Colors.grey.withValues(alpha: 0.1),
+              border: Border.all(color: Colors.grey.withValues(alpha: 0.3), width: 1),
             ),
             child: Center(
               child: Icon(
                 Icons.compass_calibration,
                 size: size * 0.3,
-                color: Colors.grey.withOpacity(0.5),
+                color: Colors.grey.withValues(alpha: 0.5),
               ),
             ),
           );
@@ -316,14 +316,14 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.grey.withOpacity(0.1),
-              border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+              color: Colors.grey.withValues(alpha: 0.1),
+              border: Border.all(color: Colors.grey.withValues(alpha: 0.3), width: 1),
             ),
             child: Center(
               child: Icon(
                 Icons.compass_calibration,
                 size: size * 0.3,
-                color: Colors.grey.withOpacity(0.5),
+                color: Colors.grey.withValues(alpha: 0.5),
               ),
             ),
           );
@@ -332,3 +332,4 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
     }
   }
 }
+

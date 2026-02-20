@@ -12,7 +12,7 @@ class OfflineBanner extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 16.w),
-      decoration: BoxDecoration(color: AppColors.saffron.withOpacity(0.9)),
+      decoration: BoxDecoration(color: AppColors.saffron.withValues(alpha: 0.9)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -34,3 +34,4 @@ class OfflineBanner extends StatelessWidget {
     );
   }
 }
+

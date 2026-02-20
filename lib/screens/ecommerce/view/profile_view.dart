@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:astrobharataiuser/app_manager/common/image_picker.dart';
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
@@ -1053,7 +1053,7 @@ class ProfileView extends GetView<ProfileController> {
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w400,
                               fontSize: 13,
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withValues(alpha: 0.9),
                             ),
                           ),
                         ],
@@ -1077,7 +1077,7 @@ class ProfileView extends GetView<ProfileController> {
                         child: Container(
                           padding: EdgeInsets.all(8.w),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -1130,7 +1130,7 @@ class ProfileView extends GetView<ProfileController> {
                                   radius: 48.r,
                                   backgroundColor: '#68171E'
                                       .toColor()
-                                      .withOpacity(0.1),
+                                      .withValues(alpha: 0.1),
                                   backgroundImage:
                                       imageChanged && selectedImage != null
                                       ? FileImage(selectedImage!)
@@ -1243,12 +1243,14 @@ class ProfileView extends GetView<ProfileController> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(16.r),
                               border: Border.all(
-                                color: '#68171E'.toColor().withOpacity(0.1),
+                                color: '#68171E'.toColor().withValues(
+                                  alpha: 0.1,
+                                ),
                                 width: 1.5,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.03),
+                                  color: Colors.black.withValues(alpha: 0.03),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -1377,12 +1379,14 @@ class ProfileView extends GetView<ProfileController> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(16.r),
                               border: Border.all(
-                                color: '#68171E'.toColor().withOpacity(0.1),
+                                color: '#68171E'.toColor().withValues(
+                                  alpha: 0.1,
+                                ),
                                 width: 1.5,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.03),
+                                  color: Colors.black.withValues(alpha: 0.03),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -1446,7 +1450,9 @@ class ProfileView extends GetView<ProfileController> {
                             borderRadius: BorderRadius.circular(20.r),
                             boxShadow: [
                               BoxShadow(
-                                color: '#F38B3B'.toColor().withOpacity(0.4),
+                                color: '#F38B3B'.toColor().withValues(
+                                  alpha: 0.4,
+                                ),
                                 blurRadius: 16,
                                 offset: const Offset(0, 8),
                               ),
@@ -1571,12 +1577,12 @@ class ProfileView extends GetView<ProfileController> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: '#68171E'.toColor().withOpacity(0.1),
+          color: '#68171E'.toColor().withValues(alpha: 0.1),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -1638,12 +1644,12 @@ class ProfileView extends GetView<ProfileController> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: '#68171E'.toColor().withOpacity(0.1),
+          color: '#68171E'.toColor().withValues(alpha: 0.1),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -1878,7 +1884,7 @@ class _RecentOrderTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                   child: Container(
                     decoration: BoxDecoration(
-                      gradient: AppColors.orangeGradient.withOpacity(0.1),
+                      color: AppColors.deepOrange.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: imageUrl != null
@@ -1891,8 +1897,8 @@ class _RecentOrderTile extends StatelessWidget {
                             height: 50.h,
                             width: 50.w,
                             decoration: BoxDecoration(
-                              gradient: AppColors.orangeGradient.withOpacity(
-                                0.1,
+                              color: AppColors.deepOrange.withValues(
+                                alpha: 0.1,
                               ),
                               borderRadius: BorderRadius.circular(12.r),
                             ),

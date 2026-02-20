@@ -36,7 +36,7 @@ class LalKitabVarshphalWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -48,7 +48,7 @@ class LalKitabVarshphalWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No chart data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -71,7 +71,7 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -89,17 +89,17 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                   ),
                   Spacing.h(12),
                   Obx(() {
-                    // Generate list of years (current year ± 10 years)
+                    // Generate list of years (current year Â± 10 years)
                     final currentYear = DateTime.now().year;
                     final years = List.generate(21, (index) => currentYear - 10 + index);
                     
                     return Container(
                       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
                       decoration: BoxDecoration(
-                        color: "#ed6f30".toColor().withOpacity(0.1),
+                        color: "#ed6f30".toColor().withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                          color: "#ed6f30".toColor().withOpacity(0.3),
+                          color: "#ed6f30".toColor().withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -134,10 +134,10 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(12.w),
                     decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.1),
+                      color: Colors.grey.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8.r),
                       border: Border.all(
-                        color: Colors.grey.withOpacity(0.3),
+                        color: Colors.grey.withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
@@ -191,10 +191,10 @@ class LalKitabVarshphalWidget extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                color: "#ed6f30".toColor().withOpacity(0.1),
+                color: "#ed6f30".toColor().withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8.r),
                 border: Border.all(
-                  color: "#ed6f30".toColor().withOpacity(0.2),
+                  color: "#ed6f30".toColor().withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -231,10 +231,10 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                         return Container(
                           padding: EdgeInsets.all(8.w),
                           decoration: BoxDecoration(
-                            color: Colors.orange.withOpacity(0.1),
+                            color: Colors.orange.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6.r),
                             border: Border.all(
-                              color: Colors.orange.withOpacity(0.3),
+                              color: Colors.orange.withValues(alpha: 0.3),
                               width: 1,
                             ),
                           ),
@@ -275,7 +275,7 @@ class LalKitabVarshphalWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -304,4 +304,5 @@ class LalKitabVarshphalWidget extends StatelessWidget {
     });
   }
 }
+
 

@@ -69,7 +69,7 @@ class RudrakshSuggestionWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.3),
+            color: AppColors.deepOrange.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -80,7 +80,7 @@ class RudrakshSuggestionWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(Icons.spa_rounded, color: AppColors.golden, size: 28.w),
@@ -101,7 +101,7 @@ class RudrakshSuggestionWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Recommended Rudraksh',
                   style: MyTextTheme.mediumBCN.copyWith(
-                    color: AppColors.golden.withOpacity(0.9),
+                    color: AppColors.golden.withValues(alpha: 0.9),
                   ),
                 ),
               ],
@@ -119,12 +119,12 @@ class RudrakshSuggestionWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: AppColors.deepOrange.withOpacity(0.2),
+          color: AppColors.deepOrange.withValues(alpha: 0.2),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -180,7 +180,7 @@ class RudrakshSuggestionWidget extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: AppColors.deepOrange.withOpacity(0.1),
+            color: AppColors.deepOrange.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -204,7 +204,7 @@ class RudrakshSuggestionWidget extends StatelessWidget {
             child: AutoTranslateText(
               value,
               style: MyTextTheme.smallBCN.copyWith(
-                color: AppColors.textPrimary.withOpacity(0.8),
+                color: AppColors.textPrimary.withValues(alpha: 0.8),
               ),
               textAlign: TextAlign.end,
             ),
@@ -225,3 +225,4 @@ class RudrakshSuggestionWidget extends StatelessWidget {
         .join(' ');
   }
 }
+

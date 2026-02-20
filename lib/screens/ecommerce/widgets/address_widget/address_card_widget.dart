@@ -35,25 +35,25 @@ class AddressCardWidget extends StatelessWidget {
           colors: [
             Colors.white,
             Colors.white,
-            '#FEF6C3'.toColor().withOpacity(0.2),
+            '#FEF6C3'.toColor().withValues(alpha: 0.2),
           ],
         ),
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color: isDefault
-              ? '#E3B341'.toColor().withOpacity(0.4)
-              : '#68171E'.toColor().withOpacity(0.15),
+              ? '#E3B341'.toColor().withValues(alpha: 0.4)
+              : '#68171E'.toColor().withValues(alpha: 0.15),
           width: isDefault ? 2 : 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: '#68171E'.toColor().withOpacity(0.1),
+            color: '#68171E'.toColor().withValues(alpha: 0.1),
             blurRadius: 12,
             offset: const Offset(0, 4),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
             spreadRadius: 0,
@@ -79,7 +79,7 @@ class AddressCardWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12.r),
                         boxShadow: [
                           BoxShadow(
-                            color: '#68171E'.toColor().withOpacity(0.2),
+                            color: '#68171E'.toColor().withValues(alpha: 0.2),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -153,8 +153,8 @@ class AddressCardWidget extends StatelessWidget {
                       label: addressType,
                       gradient: LinearGradient(
                         colors: [
-                          AppColors.saffron.withOpacity(0.2),
-                          AppColors.saffron.withOpacity(0.1),
+                          AppColors.saffron.withValues(alpha: 0.2),
+                          AppColors.saffron.withValues(alpha: 0.1),
                         ],
                       ),
                       textColor: AppColors.saffron,
@@ -165,8 +165,8 @@ class AddressCardWidget extends StatelessWidget {
                         label: 'DEFAULT',
                         gradient: LinearGradient(
                           colors: [
-                            '#E3B341'.toColor().withOpacity(0.2),
-                            '#E3B341'.toColor().withOpacity(0.1),
+                            '#E3B341'.toColor().withValues(alpha: 0.2),
+                            '#E3B341'.toColor().withValues(alpha: 0.1),
                           ],
                         ),
                         textColor: '#E3B341'.toColor(),
@@ -182,7 +182,7 @@ class AddressCardWidget extends StatelessWidget {
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w400,
                     fontSize: 11.sp,
-                    color: AppColors.textSecondary.withOpacity(0.7),
+                    color: AppColors.textSecondary.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -196,10 +196,10 @@ class AddressCardWidget extends StatelessWidget {
               icon: Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: '#68171E'.toColor().withOpacity(0.2),
+                    color: '#68171E'.toColor().withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -358,7 +358,7 @@ class _AddressBadge extends StatelessWidget {
         gradient: gradient,
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
-          color: textColor.withOpacity(0.3),
+          color: textColor.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -386,3 +386,4 @@ class _AddressBadge extends StatelessWidget {
     );
   }
 }
+

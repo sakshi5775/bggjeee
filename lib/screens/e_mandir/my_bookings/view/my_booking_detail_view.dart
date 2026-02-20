@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+﻿import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/my_bookings/controller/my_booking_detail_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/my_bookings/widgets/booking_detail_widgets.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -30,7 +30,7 @@ class MyBookingDetailView extends BasePage<MyBookingDetailController> {
                   ? AutoTranslateText(
                       '#${controller.booking.value?.bookingId}',
                       style: AppTypography.body2.copyWith(
-                        color: '#6F221E'.toColor().withOpacity(0.7),
+                        color: '#6F221E'.toColor().withValues(alpha: 0.7),
                       ),
                     )
                   : null,
@@ -605,3 +605,5 @@ class MyBookingDetailView extends BasePage<MyBookingDetailController> {
     );
   }
 }
+
+

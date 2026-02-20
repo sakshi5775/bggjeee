@@ -1,7 +1,7 @@
 import 'package:astrobharataiuser/data_model/login_model.dart';
 import 'package:get_storage/get_storage.dart';
 
-import '../core/base/baseController.dart';
+import '../core/base/base_controller.dart';
 import '../core/routes/app_routes.dart';
 
 class UserData extends BaseController {
@@ -62,3 +62,4 @@ class UserData extends BaseController {
   //   update();
   // }
 }
+

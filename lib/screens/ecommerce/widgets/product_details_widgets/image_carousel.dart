@@ -40,7 +40,7 @@ class ImageCarousel extends StatelessWidget {
           color: Colors.transparent,
           child: Container(
             height: 300.h,
-            color: AppColors.textSecondary.withOpacity(0.1),
+            color: AppColors.textSecondary.withValues(alpha: 0.1),
             child: Center(
               child: Icon(
                 Icons.image,
@@ -87,7 +87,7 @@ class ImageCarousel extends StatelessWidget {
                                 width: double.infinity,
                               )
                             : Container(
-                                color: AppColors.textSecondary.withOpacity(0.1),
+                                color: AppColors.textSecondary.withValues(alpha: 0.1),
                                 child: const Center(
                                   child: Icon(Icons.image, size: 64),
                                 ),
@@ -188,7 +188,7 @@ class ImageCarousel extends StatelessWidget {
                         boxShadow: [
                           if (isSelected)
                             BoxShadow(
-                              color: AppColors.templeGold.withOpacity(0.3),
+                              color: AppColors.templeGold.withValues(alpha: 0.3),
                               blurRadius: 8,
                               spreadRadius: 1,
                             ),
@@ -215,3 +215,4 @@ class ImageCarousel extends StatelessWidget {
     );
   }
 }
+

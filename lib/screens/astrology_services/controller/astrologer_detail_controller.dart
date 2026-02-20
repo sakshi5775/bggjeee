@@ -1,4 +1,3 @@
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_review_controller.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
@@ -6,7 +5,6 @@ import 'package:astrobharataiuser/screens/astrology_services/widgets/astrologer_
 import 'package:astrobharataiuser/utils/call_initiation_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class AstrologerDetailController extends GetxController {

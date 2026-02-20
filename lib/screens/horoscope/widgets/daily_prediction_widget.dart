@@ -84,7 +84,7 @@ class DailyPredictionWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.3),
+            color: AppColors.deepOrange.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -95,7 +95,7 @@ class DailyPredictionWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
@@ -120,7 +120,7 @@ class DailyPredictionWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Your daily horoscope',
                   style: MyTextTheme.mediumBCN.copyWith(
-                    color: AppColors.golden.withOpacity(0.9),
+                    color: AppColors.golden.withValues(alpha: 0.9),
                   ),
                 ),
               ],
@@ -138,12 +138,12 @@ class DailyPredictionWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: AppColors.deepOrange.withOpacity(0.2),
+          color: AppColors.deepOrange.withValues(alpha: 0.2),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -180,7 +180,7 @@ class DailyPredictionWidget extends StatelessWidget {
           AutoTranslateText(
             prediction,
             style: MyTextTheme.smallBCN.copyWith(
-              color: AppColors.textPrimary.withOpacity(0.8),
+              color: AppColors.textPrimary.withValues(alpha: 0.8),
               height: 1.6,
             ),
           ),
@@ -196,12 +196,12 @@ class DailyPredictionWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: AppColors.deepOrange.withOpacity(0.2),
+          color: AppColors.deepOrange.withValues(alpha: 0.2),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -307,7 +307,7 @@ class DailyPredictionWidget extends StatelessWidget {
           child: AutoTranslateText(
             value,
             style: MyTextTheme.smallBCN.copyWith(
-              color: AppColors.textPrimary.withOpacity(0.8),
+              color: AppColors.textPrimary.withValues(alpha: 0.8),
             ),
           ),
         ),
@@ -323,12 +323,12 @@ class DailyPredictionWidget extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: AppColors.deepOrange.withOpacity(0.2),
+            color: AppColors.deepOrange.withValues(alpha: 0.2),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -360,18 +360,18 @@ class DailyPredictionWidget extends StatelessWidget {
                         gradient: isSelected ? AppColors.orangeGradient : null,
                         color: isSelected
                             ? null
-                            : AppColors.deepOrange.withOpacity(0.05),
+                            : AppColors.deepOrange.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
                           color: isSelected
                               ? Colors.transparent
-                              : AppColors.deepOrange.withOpacity(0.2),
+                              : AppColors.deepOrange.withValues(alpha: 0.2),
                           width: 1.5,
                         ),
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: AppColors.deepOrange.withOpacity(0.3),
+                                  color: AppColors.deepOrange.withValues(alpha: 0.3),
                                   blurRadius: 8,
                                   offset: const Offset(0, 2),
                                 ),
@@ -384,7 +384,7 @@ class DailyPredictionWidget extends StatelessWidget {
                           style: MyTextTheme.smallBCB.copyWith(
                             color: isSelected
                                 ? Colors.white
-                                : AppColors.textPrimary.withOpacity(0.7),
+                                : AppColors.textPrimary.withValues(alpha: 0.7),
                             fontWeight: isSelected
                                 ? FontWeight.bold
                                 : FontWeight.w600,
@@ -402,3 +402,4 @@ class DailyPredictionWidget extends StatelessWidget {
     );
   }
 }
+

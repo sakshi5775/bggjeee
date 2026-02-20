@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/ai_chat/controllers/ai_chat_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -73,7 +73,7 @@ class CategoryFilterChips extends BasePage<AiChatController> {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: '#F38B3B'.toColor().withOpacity(0.3),
+                    color: '#F38B3B'.toColor().withValues(alpha: 0.3),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -147,3 +147,5 @@ class CategoryFilterChips extends BasePage<AiChatController> {
     }
   }
 }
+
+

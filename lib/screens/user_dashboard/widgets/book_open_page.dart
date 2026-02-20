@@ -57,7 +57,7 @@ class _BookOpenPageState extends State<BookOpenPage>
           ),
 
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.25)),
+            child: Container(color: Colors.black.withValues(alpha: 0.25)),
           ),
 
           /// BOOK
@@ -226,7 +226,7 @@ class _BookOpenPageState extends State<BookOpenPage>
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(.25),
+                            color: Colors.black.withValues(alpha: .25),
                             blurRadius: 6,
                             offset: const Offset(0, 3),
                           ),
@@ -258,42 +258,42 @@ class _BookOpenPageState extends State<BookOpenPage>
       case 'rigveda':
         return {
           'shloka_title': 'Rigveda',
-          'shloka': 'अग्निमीळे पुरोहितं यज्ञस्य देवम् ऋत्विजम्।',
+          'shloka': 'à¤…à¤—à¥à¤¨à¤¿à¤®à¥€à¤³à¥‡ à¤ªà¥à¤°à¥‹à¤¹à¤¿à¤¤à¤‚ à¤¯à¤œà¥à¤žà¤¸à¥à¤¯ à¤¦à¥‡à¤µà¤®à¥ à¤‹à¤¤à¥à¤µà¤¿à¤œà¤®à¥à¥¤',
           'thought': 'Praise of fire.',
         };
 
       case 'samveda':
         return {
           'shloka_title': 'Samaveda',
-          'shloka': 'आ नो भद्राः क्रतवो यन्तु विश्वतः।',
+          'shloka': 'à¤† à¤¨à¥‹ à¤­à¤¦à¥à¤°à¤¾à¤ƒ à¤•à¥à¤°à¤¤à¤µà¥‹ à¤¯à¤¨à¥à¤¤à¥ à¤µà¤¿à¤¶à¥à¤µà¤¤à¤ƒà¥¤',
           'thought': 'Devotion in melody.',
         };
 
       case 'yajurveda':
         return {
           'shloka_title': 'Yajurveda',
-          'shloka': 'इदं विष्णुर्विचक्रमे त्रेधा नदधे पदम्।',
+          'shloka': 'à¤‡à¤¦à¤‚ à¤µà¤¿à¤·à¥à¤£à¥à¤°à¥à¤µà¤¿à¤šà¤•à¥à¤°à¤®à¥‡ à¤¤à¥à¤°à¥‡à¤§à¤¾ à¤¨à¤¦à¤§à¥‡ à¤ªà¤¦à¤®à¥à¥¤',
           'thought': 'Sacred ritual path.',
         };
 
       case 'atharvaveda':
         return {
           'shloka_title': 'Atharvaveda',
-          'shloka': 'सर्वं पराधाद्यदि यन्न किंचिद्।',
+          'shloka': 'à¤¸à¤°à¥à¤µà¤‚ à¤ªà¤°à¤¾à¤§à¤¾à¤¦à¥à¤¯à¤¦à¤¿ à¤¯à¤¨à¥à¤¨ à¤•à¤¿à¤‚à¤šà¤¿à¤¦à¥à¥¤',
           'thought': 'Life protection.',
         };
 
       case 'jyotish vedang':
         return {
           'shloka_title': 'Jyotish Vedang',
-          'shloka': 'कालः सृष्टेः प्रधान कारणम्।',
+          'shloka': 'à¤•à¤¾à¤²à¤ƒ à¤¸à¥ƒà¤·à¥à¤Ÿà¥‡à¤ƒ à¤ªà¥à¤°à¤§à¤¾à¤¨ à¤•à¤¾à¤°à¤£à¤®à¥à¥¤',
           'thought': 'Cosmic time.',
         };
 
       default:
         return {
           'shloka_title': 'Vedic Wisdom',
-          'shloka': 'सत्यं वद धर्मं चर।',
+          'shloka': 'à¤¸à¤¤à¥à¤¯à¤‚ à¤µà¤¦ à¤§à¤°à¥à¤®à¤‚ à¤šà¤°à¥¤',
           'thought': 'Truth and duty.',
         };
     }
@@ -305,3 +305,4 @@ class _BookOpenPageState extends State<BookOpenPage>
     super.dispose();
   }
 }
+

@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/wallet_model.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
@@ -11,6 +11,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 
 class WalletController extends BaseController {
   final WalletService _walletService = WalletService();
@@ -78,9 +79,19 @@ class WalletController extends BaseController {
     _razorpayService.initialize(
       onSuccess: _handlePaymentSuccess,
       onError: (message) {
+        CrashlyticsService.trackAction(
+          "PAYMENT",
+          "FAIL",
+          data: "reason: $message",
+        );
         showErrorMessage(title: 'Recharge Failed', message: message);
       },
       onFailure: (response) {
+        CrashlyticsService.trackAction(
+          "PAYMENT",
+          "FAIL_GATEWAY",
+          data: "code: ${response.code}, message: ${response.message}",
+        );
         showErrorMessage(
           title: 'Recharge Failed',
           message: '${response.code}: ${response.message}',
@@ -94,7 +105,14 @@ class WalletController extends BaseController {
     final orderId = data['orderId']?.toString() ?? ''; // Razorpay Order ID
     final signature = data['signature']?.toString() ?? '';
 
+    CrashlyticsService.trackAction(
+      "PAYMENT",
+      "CALLBACK",
+      data: "paymentId:$paymentId, orderId:$orderId",
+    );
+
     if (_pendingRechargeId == null) {
+      CrashlyticsService.trackAction("PAYMENT", "SESSION_LOST");
       showErrorMessage(
         title: "Error",
         message: "Recharge session lost. Please try again.",
@@ -115,6 +133,11 @@ class WalletController extends BaseController {
       if (Get.isDialogOpen == true) {
         Get.back(); // Close recharge dialog
       }
+      CrashlyticsService.trackAction(
+        "PAYMENT",
+        "SUCCESS",
+        data: "rechargeId:$_pendingRechargeId",
+      );
       // Show success modal
       _showPaymentSuccessModal();
       // Refresh wallet balance and history
@@ -140,7 +163,7 @@ class WalletController extends BaseController {
               borderRadius: BorderRadius.circular(30.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
+                  color: Colors.black.withValues(alpha: 0.15),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -187,7 +210,7 @@ class WalletController extends BaseController {
                         width: 80.w,
                         height: 80.w,
                         decoration: BoxDecoration(
-                          color: AppColors.success.withOpacity(0.1),
+                          color: AppColors.success.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -247,8 +270,18 @@ class WalletController extends BaseController {
 
     if (response != null && response.razorpay != null) {
       _pendingRechargeId = response.rechargeId;
+      CrashlyticsService.trackAction(
+        "PAYMENT",
+        "INIT",
+        data: "amount:$amount, rechargeId:${response.rechargeId}",
+      );
       _razorpayService.openCheckout(razorpayData: response.razorpay!);
     } else {
+      CrashlyticsService.trackAction(
+        "PAYMENT",
+        "INIT_FAIL",
+        data: "amount:$amount",
+      );
       showErrorMessage(title: "Error", message: "Failed to initiate recharge.");
     }
   }
@@ -485,6 +518,12 @@ class WalletController extends BaseController {
               razorpayOrderId: razorpayOrderId,
               razorpayPaymentId: razorpayPaymentId,
               razorpaySignature: razorpaySignature,
+            );
+
+            CrashlyticsService.trackAction(
+              "PAYMENT",
+              "VERIFY",
+              data: "rechargeId:$rechargeId, success:${response?.success}",
             );
 
             if (response?.success == true && response?.data != null) {

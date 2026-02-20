@@ -108,7 +108,7 @@
 //               child: Row(
 //                 children: [
 //                   AutoTranslateText(
-//                     '👑',
+//                     'ðŸ‘‘',
 //                     style: AppTypography.h2,
 //                   ),
 //                   Spacing.w(12),
@@ -182,7 +182,7 @@
 //                       style: MyTextTheme.mediumBCN.copyWith(
 //                         color: isSelected 
 //                             ? Colors.white // White text when selected
-//                             : const Color(0xFF5F2221).withOpacity(0.7), // Dark text when not selected
+//                             : const Color(0xFF5F2221).withValues(alpha: 0.7), // Dark text when not selected
 //                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
 //                       ),
 //                     ),
@@ -206,7 +206,7 @@
 //           borderRadius: BorderRadius.circular(16.r),
 //           boxShadow: [
 //             BoxShadow(
-//               color: Colors.black.withOpacity(0.05),
+//               color: Colors.black.withValues(alpha: 0.05),
 //               blurRadius: 10,
 //               offset: const Offset(0, 4),
 //             ),
@@ -294,7 +294,7 @@
 //         ),
 //         borderRadius: BorderRadius.circular(12.r),
 //         border: Border.all(
-//           color: const Color(0xFFE0E0E0).withOpacity(0.3),
+//           color: const Color(0xFFE0E0E0).withValues(alpha: 0.3),
 //           width: 1,
 //         ),
 //       ),
@@ -379,7 +379,7 @@
 //             )),
 //             Spacing.h(16),
 //             Divider(
-//               color: const Color(0xFFFEF6C3).withOpacity(0.3),
+//               color: const Color(0xFFFEF6C3).withValues(alpha: 0.3),
 //               thickness: 1,
 //             ),
 //             Spacing.h(12),
@@ -399,7 +399,7 @@
 //                   child: AutoTranslateText(
 //                     time,
 //                     style: MyTextTheme.mediumBCN.copyWith(
-//                       color: const Color(0xFFFEF6C3).withOpacity(0.9),
+//                       color: const Color(0xFFFEF6C3).withValues(alpha: 0.9),
 //                     ).merge(AppTypography.body1),
 //                   ),
 //                 );
@@ -418,7 +418,7 @@
 //         AutoTranslateText(
 //           label,
 //           style: MyTextTheme.smallBCN.copyWith(
-//             color: const Color(0xFFFEF6C3).withOpacity(0.7),
+//             color: const Color(0xFFFEF6C3).withValues(alpha: 0.7),
 //           ),
 //         ),
 //         Spacing.h(4),
@@ -514,4 +514,5 @@
 //     );
 //   }
 // }
+
 

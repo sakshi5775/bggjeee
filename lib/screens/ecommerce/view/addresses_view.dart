@@ -31,7 +31,7 @@ class AddressesView extends GetView<AddressController> {
               subtitle: AutoTranslateText(
                 'Manage your delivery addresses',
                 style: TextStyle(
-                  color: '#6F221E'.toColor().withOpacity(0.7),
+                  color: '#6F221E'.toColor().withValues(alpha: 0.7),
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                 ),
@@ -188,3 +188,4 @@ class AddressesView extends GetView<AddressController> {
     }
   }
 }
+

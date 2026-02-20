@@ -182,7 +182,7 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
         borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             spreadRadius: 2,
           ),
@@ -210,7 +210,7 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: AutoTranslateText(
-        'Ancient Vastu Shastra • Intelligent Guidance System',
+        'Ancient Vastu Shastra â€¢ Intelligent Guidance System',
         style: MyTextTheme.mediumBCN
             .copyWith(color: '#3E2723'.toColor())
             .merge(AppTypography.body1),
@@ -267,7 +267,7 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
             border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.07),
+                color: Colors.black.withValues(alpha: 0.07),
                 blurRadius: 16,
                 offset: const Offset(0, 6),
               ),
@@ -279,7 +279,7 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
                 width: 56.w,
                 height: 56.w,
                 decoration: BoxDecoration(
-                  color: color.toColor().withOpacity(0.1),
+                  color: color.toColor().withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(14.r),
                 ),
                 child: Icon(icon, color: color.toColor(), size: 28.w),
@@ -320,3 +320,4 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
     );
   }
 }
+

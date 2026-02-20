@@ -76,17 +76,17 @@ class MessageBubbleWidget extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: [
                     senderColor,
-                    senderColor.withOpacity(0.7),
+                    senderColor.withValues(alpha: 0.7),
                   ],
                 ),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: senderColor.withOpacity(0.4),
+                    color: senderColor.withValues(alpha: 0.4),
                     blurRadius: 8,
                     spreadRadius: 1,
                   ),
@@ -111,8 +111,8 @@ class MessageBubbleWidget extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Colors.black.withOpacity(0.85),
-                      Colors.black.withOpacity(0.75),
+                      Colors.black.withValues(alpha: 0.85),
+                      Colors.black.withValues(alpha: 0.75),
                     ],
                   ),
                   borderRadius: BorderRadius.only(
@@ -122,17 +122,17 @@ class MessageBubbleWidget extends StatelessWidget {
                     bottomRight: Radius.circular(18.r),
                   ),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.15),
+                    color: Colors.white.withValues(alpha: 0.15),
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.4),
+                      color: Colors.black.withValues(alpha: 0.4),
                       blurRadius: 12,
                       offset: const Offset(0, 3),
                     ),
                     BoxShadow(
-                      color: senderColor.withOpacity(0.2),
+                      color: senderColor.withValues(alpha: 0.2),
                       blurRadius: 8,
                       spreadRadius: -2,
                     ),
@@ -182,7 +182,7 @@ class MessageBubbleWidget extends StatelessWidget {
                     AutoTranslateText(
                       _formatTime(message.sentAt),
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                       ).merge(AppTypography.label),
                     ),
                   ],
@@ -202,25 +202,25 @@ class MessageBubbleWidget extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                const Color(0xFFF38B3B).withOpacity(0.95),
-                const Color(0xFFDD2914).withOpacity(0.95),
-                const Color(0xFFF38B3B).withOpacity(0.9),
+                const Color(0xFFF38B3B).withValues(alpha: 0.95),
+                const Color(0xFFDD2914).withValues(alpha: 0.95),
+                const Color(0xFFF38B3B).withValues(alpha: 0.9),
               ],
             ),
             borderRadius: BorderRadius.circular(20.r),
             border: Border.all(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFF38B3B).withOpacity(0.5),
+                color: const Color(0xFFF38B3B).withValues(alpha: 0.5),
                 blurRadius: 15,
                 spreadRadius: 2,
                 offset: const Offset(0, 4),
               ),
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -233,11 +233,11 @@ class MessageBubbleWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(6.w),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: AutoTranslateText(
-                  message.reactionType ?? '✨',
+                  message.reactionType ?? 'âœ¨',
                   style: AppTypography.h1,
                 ),
               ),
@@ -254,7 +254,7 @@ class MessageBubbleWidget extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       shadows: [
                         Shadow(
-                          color: Colors.black.withOpacity(0.3),
+                          color: Colors.black.withValues(alpha: 0.3),
                           blurRadius: 4,
                         ),
                       ],
@@ -264,7 +264,7 @@ class MessageBubbleWidget extends StatelessWidget {
                   AutoTranslateText(
                     _formatTime(message.sentAt),
                     style: MyTextTheme.smallBCN.copyWith(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                     ).merge(AppTypography.label),
                   ),
                 ],
@@ -283,25 +283,25 @@ class MessageBubbleWidget extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                const Color(0xFFFFD700).withOpacity(0.95),
-                const Color(0xFFFFA500).withOpacity(0.95),
-                const Color(0xFFFFD700).withOpacity(0.9),
+                const Color(0xFFFFD700).withValues(alpha: 0.95),
+                const Color(0xFFFFA500).withValues(alpha: 0.95),
+                const Color(0xFFFFD700).withValues(alpha: 0.9),
               ],
             ),
             borderRadius: BorderRadius.circular(20.r),
             border: Border.all(
-              color: const Color(0xFFFFD700).withOpacity(0.8),
+              color: const Color(0xFFFFD700).withValues(alpha: 0.8),
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFFFD700).withOpacity(0.6),
+                color: const Color(0xFFFFD700).withValues(alpha: 0.6),
                 blurRadius: 20,
                 spreadRadius: 3,
                 offset: const Offset(0, 4),
               ),
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -317,11 +317,11 @@ class MessageBubbleWidget extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(8.w),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.25),
+                      color: Colors.white.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(14.r),
                     ),
                     child: AutoTranslateText(
-                      message.reactionType ?? '🎁',
+                      message.reactionType ?? 'ðŸŽ',
                       style: AppTypography.h1,
                     ),
                   ),
@@ -334,7 +334,7 @@ class MessageBubbleWidget extends StatelessWidget {
                       child: Icon(
                         Icons.star,
                         size: 12.w,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                   ),
@@ -363,7 +363,7 @@ class MessageBubbleWidget extends StatelessWidget {
                           TextSpan(
                             text: ' sent ',
                             style: MyTextTheme.smallBCN.copyWith(
-                              color: const Color(0xFF3E2723).withOpacity(0.8),
+                              color: const Color(0xFF3E2723).withValues(alpha: 0.8),
                             ),
                           ),
                           TextSpan(
@@ -382,7 +382,7 @@ class MessageBubbleWidget extends StatelessWidget {
                     AutoTranslateText(
                       _formatTime(message.sentAt),
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: const Color(0xFF3E2723).withOpacity(0.6),
+                        color: const Color(0xFF3E2723).withValues(alpha: 0.6),
                       ).merge(AppTypography.label),
                     ),
                   ],
@@ -397,4 +397,5 @@ class MessageBubbleWidget extends StatelessWidget {
     return const SizedBox.shrink();
   }
 }
+
 

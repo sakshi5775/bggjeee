@@ -49,7 +49,7 @@ class PlanetsWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Loading...',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#6F221E".toColor().withValues(alpha: 0.7),
                     fontSize: 12.sp,
                   ),
                 ),
@@ -63,7 +63,7 @@ class PlanetsWidget extends StatelessWidget {
             child: AutoTranslateText(
               'No data available',
               style: MyTextTheme.mediumBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#6F221E".toColor().withValues(alpha: 0.7),
               ),
             ),
           ),
@@ -134,8 +134,8 @@ class PlanetsWidget extends StatelessWidget {
     'Nak Lord',
     'Pada',
     'Zod Lord',
-    'L°',
-    'G°',
+    'LÂ°',
+    'GÂ°',
     'Prog%',
     'Set',
     'Avastha',
@@ -188,7 +188,7 @@ class PlanetsWidget extends StatelessWidget {
           for (int i = 0; i < planets.length; i++) ...[
             TableRow(
               decoration: BoxDecoration(
-                color: i.isOdd ? oc.withOpacity(0.04) : Colors.transparent,
+                color: i.isOdd ? oc.withValues(alpha: 0.04) : Colors.transparent,
               ),
               children: _planetCells(planets[i], cellStyle),
             ),
@@ -200,34 +200,34 @@ class PlanetsWidget extends StatelessWidget {
 
   List<Widget> _planetCells(Map<String, dynamic> p, TextStyle cellStyle) {
     final av = (p['basic_avastha']?.toString() ?? '').trim().isEmpty
-        ? '–'
-        : (p['basic_avastha']?.toString() ?? '–');
+        ? 'â€“'
+        : (p['basic_avastha']?.toString() ?? 'â€“');
     final ls = (p['lord_status']?.toString() ?? '').trim().isEmpty
-        ? '–'
-        : (p['lord_status']?.toString() ?? '–');
+        ? 'â€“'
+        : (p['lord_status']?.toString() ?? 'â€“');
     final comb = (p['is_combust'] == null || p['is_combust'] == '-')
-        ? '–'
-        : (p['is_combust']?.toString() ?? '–');
+        ? 'â€“'
+        : (p['is_combust']?.toString() ?? 'â€“');
 
     return [
       _tableCell(
-        p['full_name']?.toString() ?? p['name']?.toString() ?? '–',
+        p['full_name']?.toString() ?? p['name']?.toString() ?? 'â€“',
         cellStyle,
         align: TextAlign.left,
       ),
-      _tableCell(p['zodiac']?.toString() ?? '–', cellStyle),
-      _tableCell(p['house']?.toString() ?? '–', cellStyle),
-      _tableCell(p['nakshatra']?.toString() ?? '–', cellStyle),
-      _tableCell(p['nakshatra_lord']?.toString() ?? '–', cellStyle),
-      _tableCell(p['nakshatra_pada']?.toString() ?? '–', cellStyle),
-      _tableCell(p['zodiac_lord']?.toString() ?? '–', cellStyle),
+      _tableCell(p['zodiac']?.toString() ?? 'â€“', cellStyle),
+      _tableCell(p['house']?.toString() ?? 'â€“', cellStyle),
+      _tableCell(p['nakshatra']?.toString() ?? 'â€“', cellStyle),
+      _tableCell(p['nakshatra_lord']?.toString() ?? 'â€“', cellStyle),
+      _tableCell(p['nakshatra_pada']?.toString() ?? 'â€“', cellStyle),
+      _tableCell(p['zodiac_lord']?.toString() ?? 'â€“', cellStyle),
       _tableCell(_formatDegree(p['local_degree']), cellStyle),
       _tableCell(_formatDegree(p['global_degree']), cellStyle),
       _tableCell(
         '${_formatPercentage(p['progress_in_percentage'])}%',
         cellStyle,
       ),
-      _tableCell(p['is_planet_set']?.toString() ?? '–', cellStyle),
+      _tableCell(p['is_planet_set']?.toString() ?? 'â€“', cellStyle),
       _tableCell(av, cellStyle),
       _tableCell(ls, cellStyle),
       _tableCell(comb, cellStyle),
@@ -252,7 +252,7 @@ class PlanetsWidget extends StatelessWidget {
   }
 
   String _formatPercentage(dynamic v) {
-    if (v == null) return '–';
+    if (v == null) return 'â€“';
     if (v is num) return v.toStringAsFixed(2);
     return v.toString();
   }
@@ -268,10 +268,10 @@ class PlanetsWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(color: "#ed6f30".toColor().withOpacity(0.2)),
+        border: Border.all(color: "#ed6f30".toColor().withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 4,
             offset: const Offset(0, 1),
           ),
@@ -346,7 +346,7 @@ class PlanetsWidget extends StatelessWidget {
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCB.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#6F221E".toColor().withValues(alpha: 0.7),
                 fontWeight: FontWeight.w500,
                 fontSize: 9.sp,
               ),
@@ -482,7 +482,7 @@ class PlanetsWidget extends StatelessWidget {
             ? (orb is num ? orb.toStringAsFixed(2) : orb.toString())
             : '-';
         rows.add(
-          _buildDetailRow('$planetOne ↔ $planetTwo', '$aspect (orb: $orbStr°)'),
+          _buildDetailRow('$planetOne â†” $planetTwo', '$aspect (orb: $orbStrÂ°)'),
         );
       }
     }
@@ -541,7 +541,7 @@ class PlanetsWidget extends StatelessWidget {
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCB.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#6F221E".toColor().withValues(alpha: 0.7),
                 fontWeight: FontWeight.w500,
                 fontSize: 9.sp,
               ),
@@ -569,3 +569,4 @@ class PlanetsWidget extends StatelessWidget {
     return degree.toString();
   }
 }
+

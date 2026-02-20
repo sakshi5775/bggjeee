@@ -33,7 +33,7 @@ class AshtakvargaWidget extends StatelessWidget {
               AutoTranslateText(
                 'Loading Ashtakvarga data...',
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#6F221E".toColor().withValues(alpha: 0.7),
                   fontSize: 12.sp,
                 ),
               ),
@@ -48,7 +48,7 @@ class AshtakvargaWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No Ashtakvarga data available',
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: "#6F221E".toColor().withValues(alpha: 0.7),
               fontSize: 12.sp,
             ),
           ),
@@ -66,12 +66,12 @@ class AshtakvargaWidget extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
-              color: "#ed6f30".toColor().withOpacity(0.2),
+              color: "#ed6f30".toColor().withValues(alpha: 0.2),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               ),
@@ -141,7 +141,7 @@ class AshtakvargaWidget extends StatelessWidget {
     final planetCount = order.length;
     return Table(
       border: TableBorder.all(
-        color: "#6F221E".toColor().withOpacity(0.15),
+        color: "#6F221E".toColor().withValues(alpha: 0.15),
         width: 1,
       ),
       columnWidths: {
@@ -152,7 +152,7 @@ class AshtakvargaWidget extends StatelessWidget {
       children: [
         TableRow(
           decoration: BoxDecoration(
-            color: "#ed6f30".toColor().withOpacity(0.12),
+            color: "#ed6f30".toColor().withValues(alpha: 0.12),
           ),
           children: [
             _buildHeaderCell('House'),
@@ -166,7 +166,7 @@ class AshtakvargaWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: houseIndex % 2 == 0
                   ? Colors.white
-                  : "#ed6f30".toColor().withOpacity(0.04),
+                  : "#ed6f30".toColor().withValues(alpha: 0.04),
             ),
             children: [
               _buildHouseCell('H${houseIndex + 1}'),
@@ -263,3 +263,4 @@ class AshtakvargaWidget extends StatelessWidget {
     );
   }
 }
+

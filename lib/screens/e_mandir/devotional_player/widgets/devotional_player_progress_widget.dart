@@ -24,7 +24,7 @@ class DevotionalPlayerProgressWidget
               min: 0,
               max: controller.maxPosition.value,
               activeColor: AppColors.deepOrange,
-              inactiveColor: AppColors.deepOrange.withOpacity(0.25),
+              inactiveColor: AppColors.deepOrange.withValues(alpha: 0.25),
               onChanged: (value) {
                 controller.onSliderChanged(value);
               },
@@ -57,3 +57,4 @@ class DevotionalPlayerProgressWidget
     );
   }
 }
+

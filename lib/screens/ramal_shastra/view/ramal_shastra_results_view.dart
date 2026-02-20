@@ -143,7 +143,7 @@ class RamalShastraResultsView extends StatelessWidget {
                       result.interpretation?.answerToQuestion,
                     ),
                     Spacing.h(24),
-                    // Section 3: Ramal Chart (4×4 Grid) - with chartData details if available
+                    // Section 3: Ramal Chart (4Ã—4 Grid) - with chartData details if available
                     if (result.chart != null || result.chartData != null) ...[
                       _buildRamalChart(result.chart, result.chartData),
                       Spacing.h(24),
@@ -314,7 +314,7 @@ class RamalShastraResultsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
+            color: Colors.black.withValues(alpha: 0.12),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -328,7 +328,7 @@ class RamalShastraResultsView extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Icon(
@@ -345,7 +345,7 @@ class RamalShastraResultsView extends StatelessWidget {
                     AutoTranslateText(
                       'Your Question',
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                       ),
                     ),
                     Spacing.h(4),
@@ -370,7 +370,7 @@ class RamalShastraResultsView extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(20.r),
               ),
               child: AutoTranslateText(
@@ -405,7 +405,7 @@ class RamalShastraResultsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -489,10 +489,10 @@ class RamalShastraResultsView extends StatelessWidget {
                       vertical: 10.h,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.deepOrange.withOpacity(0.1),
+                      color: AppColors.deepOrange.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12.r),
                       border: Border.all(
-                        color: AppColors.deepOrange.withOpacity(0.3),
+                        color: AppColors.deepOrange.withValues(alpha: 0.3),
                       ),
                     ),
                     child: AutoTranslateText(
@@ -512,7 +512,7 @@ class RamalShastraResultsView extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
-                color: '#FFF8E1'.toColor().withOpacity(0.5),
+                color: '#FFF8E1'.toColor().withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(color: '#F5D7B8'.toColor()),
               ),
@@ -590,7 +590,7 @@ class RamalShastraResultsView extends StatelessWidget {
                       AutoTranslateText(
                         '${judgment.reconcilerStrength}/4',
                         style: MyTextTheme.mediumBCB.copyWith(
-                          color: AppColors.deepOrange.withOpacity(0.7),
+                          color: AppColors.deepOrange.withValues(alpha: 0.7),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -615,7 +615,7 @@ class RamalShastraResultsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
+            color: Colors.black.withValues(alpha: 0.12),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -684,7 +684,7 @@ class RamalShastraResultsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -706,7 +706,7 @@ class RamalShastraResultsView extends StatelessWidget {
               Spacing.w(12),
               Expanded(
                 child: AutoTranslateText(
-                  'Ramal Chart (4×4 Grid)',
+                  'Ramal Chart (4Ã—4 Grid)',
                   style: MyTextTheme.largeBCB
                       .copyWith(
                         color: '#3E2723'.toColor(),
@@ -754,7 +754,7 @@ class RamalShastraResultsView extends StatelessWidget {
                             ),
                             child: Center(
                               child: Text(
-                                value == 1 ? '●' : '○',
+                                value == 1 ? 'â—' : 'â—‹',
                                 style: TextStyle(
                                   fontSize: 20.sp,
                                   color: value == 1
@@ -779,7 +779,7 @@ class RamalShastraResultsView extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: Colors.grey.withOpacity(0.2), width: 1),
+              border: Border.all(color: Colors.grey.withValues(alpha: 0.2), width: 1),
             ),
             child: Column(
               children: [
@@ -849,7 +849,7 @@ class RamalShastraResultsView extends StatelessWidget {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8.r),
                               border: Border.all(
-                                color: Colors.grey.withOpacity(0.2),
+                                color: Colors.grey.withValues(alpha: 0.2),
                               ),
                             ),
                             child: Column(
@@ -871,7 +871,7 @@ class RamalShastraResultsView extends StatelessWidget {
                                         horizontal: 2.w,
                                       ),
                                       child: Text(
-                                        val == 1 ? '●' : '○',
+                                        val == 1 ? 'â—' : 'â—‹',
                                         style: TextStyle(
                                           fontSize: 12.sp,
                                           color: val == 1
@@ -903,8 +903,8 @@ class RamalShastraResultsView extends StatelessWidget {
     bool isReconciler,
     RamalHouseDetailed? detailedHouse,
   ) {
-    Color borderColor = Colors.grey.withOpacity(0.2);
-    Color bgColor = _getElementColor(house.element).withOpacity(0.05);
+    Color borderColor = Colors.grey.withValues(alpha: 0.2);
+    Color bgColor = _getElementColor(house.element).withValues(alpha: 0.05);
     if (isJudge) {
       borderColor = AppColors.deepOrange;
       bgColor = AppColors.lightBackground;
@@ -934,7 +934,7 @@ class RamalShastraResultsView extends StatelessWidget {
           boxShadow: isJudge || isReconciler
               ? [
                   BoxShadow(
-                    color: borderColor.withOpacity(0.3),
+                    color: borderColor.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -973,7 +973,7 @@ class RamalShastraResultsView extends StatelessWidget {
                   return Padding(
                     padding: EdgeInsets.symmetric(horizontal: 1.w),
                     child: Text(
-                      val == 1 ? '●' : '○',
+                      val == 1 ? 'â—' : 'â—‹',
                       style: TextStyle(
                         fontSize: 8.sp,
                         color: val == 1
@@ -989,7 +989,7 @@ class RamalShastraResultsView extends StatelessWidget {
                 width: 32.w,
                 height: 20.h,
                 decoration: BoxDecoration(
-                  color: _getElementColor(house.element).withOpacity(0.2),
+                  color: _getElementColor(house.element).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(4.r),
                 ),
                 child: Center(
@@ -1013,7 +1013,7 @@ class RamalShastraResultsView extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: _getElementColor(house.element).withOpacity(0.3),
+                    color: _getElementColor(house.element).withValues(alpha: 0.3),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -1077,22 +1077,22 @@ class RamalShastraResultsView extends StatelessWidget {
 
   Color _getStrengthColor(int strength) {
     if (strength >= 3) return AppColors.deepOrange;
-    if (strength == 2) return AppColors.deepOrange.withOpacity(0.8);
-    return AppColors.deepOrange.withOpacity(0.6);
+    if (strength == 2) return AppColors.deepOrange.withValues(alpha: 0.8);
+    return AppColors.deepOrange.withValues(alpha: 0.6);
   }
 
   String _getElementIcon(String? element) {
     switch (element?.toLowerCase()) {
       case 'fire':
-        return '🔥';
+        return 'ðŸ”¥';
       case 'air':
-        return '💨';
+        return 'ðŸ’¨';
       case 'water':
-        return '💧';
+        return 'ðŸ’§';
       case 'earth':
-        return '🌍';
+        return 'ðŸŒ';
       default:
-        return '○';
+        return 'â—‹';
     }
   }
 
@@ -1171,7 +1171,7 @@ class RamalShastraResultsView extends StatelessWidget {
                             ),
                             child: Center(
                               child: Text(
-                                val == 1 ? '●' : '○',
+                                val == 1 ? 'â—' : 'â—‹',
                                 style: TextStyle(
                                   fontSize: 24.sp,
                                   color: val == 1
@@ -1282,7 +1282,7 @@ class RamalShastraResultsView extends StatelessWidget {
 
   String _getDotPattern(int strength) {
     final dots = strength.clamp(0, 4);
-    return '●' * dots + '○' * (4 - dots);
+    return 'â—' * dots + 'â—‹' * (4 - dots);
   }
 
   Widget _buildKeyHouses(List<RamalKeyHouse> keyHouses) {
@@ -1317,7 +1317,7 @@ class RamalShastraResultsView extends StatelessWidget {
         border: Border.all(color: '#F5D7B8'.toColor(), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -1355,7 +1355,7 @@ class RamalShastraResultsView extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: _getElementColor(house.element).withOpacity(0.2),
+                  color: _getElementColor(house.element).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: AutoTranslateText(
@@ -1391,7 +1391,7 @@ class RamalShastraResultsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -1429,7 +1429,7 @@ class RamalShastraResultsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -1537,10 +1537,10 @@ class RamalShastraResultsView extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: "#F38B3B".toColor().withOpacity(0.1),
+        color: "#F38B3B".toColor().withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: "#F38B3B".toColor().withOpacity(0.3),
+          color: "#F38B3B".toColor().withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -1589,7 +1589,7 @@ class RamalShastraResultsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -1650,7 +1650,7 @@ class RamalShastraResultsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -1758,7 +1758,7 @@ class RamalShastraResultsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -1790,7 +1790,7 @@ class RamalShastraResultsView extends StatelessWidget {
               margin: EdgeInsets.only(bottom: 12.h),
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
-                color: _getElementColor(element).withOpacity(0.1),
+                color: _getElementColor(element).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
                   color: _getElementColor(element),
@@ -1865,7 +1865,7 @@ class RamalShastraResultsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -1947,7 +1947,7 @@ class RamalShastraResultsView extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: color, width: 1),
       ),
@@ -2015,15 +2015,15 @@ class RamalShastraResultsView extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            "#F38B3B".toColor().withOpacity(0.1),
-            "#DD2914".toColor().withOpacity(0.05),
+            "#F38B3B".toColor().withValues(alpha: 0.1),
+            "#DD2914".toColor().withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -2097,11 +2097,11 @@ class RamalShastraResultsView extends StatelessWidget {
           result.judgment?.reconcilerStrength != null) {
         content += '\n\nAnalytical Strengths:';
         if (result.judgment?.judgeStrength != null) {
-          content += '\n• Judge Strength: ${result.judgment!.judgeStrength}/4';
+          content += '\nâ€¢ Judge Strength: ${result.judgment!.judgeStrength}/4';
         }
         if (result.judgment?.reconcilerStrength != null) {
           content +=
-              '\n• Reconciler Strength: ${result.judgment!.reconcilerStrength}/4';
+              '\nâ€¢ Reconciler Strength: ${result.judgment!.reconcilerStrength}/4';
         }
       }
 
@@ -2340,3 +2340,4 @@ class RamalShastraResultsView extends StatelessWidget {
     );
   }
 }
+

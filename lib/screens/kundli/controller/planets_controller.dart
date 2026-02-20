@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -283,7 +283,7 @@ class PlanetsController extends BaseController {
             'Error',
             'Please provide all required fields',
             snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red.withOpacity(0.8),
+            backgroundColor: Colors.red.withValues(alpha: 0.8),
             colorText: Colors.white,
           );
           return;
@@ -309,7 +309,7 @@ class PlanetsController extends BaseController {
           'Error',
           'Missing required fields. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
         return;
@@ -337,7 +337,7 @@ class PlanetsController extends BaseController {
           'Error',
           'Failed to fetch planet details. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -348,7 +348,7 @@ class PlanetsController extends BaseController {
         'Error',
         'An error occurred: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -427,4 +427,6 @@ class PlanetsController extends BaseController {
     }
   }
 }
+
+
 

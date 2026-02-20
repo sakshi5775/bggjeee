@@ -167,12 +167,12 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: AppColors.deepOrange.withOpacity(0.2),
+            color: AppColors.deepOrange.withValues(alpha: 0.2),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepOrange.withOpacity(0.08),
+              color: AppColors.deepOrange.withValues(alpha: 0.08),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -341,3 +341,4 @@ class _HoroscopeTabWidgetState extends State<HoroscopeTabWidget> {
     }
   }
 }
+

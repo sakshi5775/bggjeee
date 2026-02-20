@@ -8,7 +8,7 @@ import 'package:astrobharataiuser/screens/vastu/model/vastu_room_config.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/screens/vastu/controller/ar_controller.dart';
 
-/// VR-like 360° Mode Widget
+/// VR-like 360Â° Mode Widget
 /// Immersive fullscreen experience with direction ring around edges
 class VR360Mode extends StatelessWidget {
   final double heading;
@@ -116,17 +116,17 @@ class VR360Mode extends StatelessWidget {
     Color borderColor;
     
     if (isIdeal) {
-      backgroundColor = const Color(0xFF4CAF50).withOpacity(0.8);
+      backgroundColor = const Color(0xFF4CAF50).withValues(alpha: 0.8);
       borderColor = const Color(0xFF66BB6A);
     } else if (isAvoid) {
-      backgroundColor = const Color(0xFFE53935).withOpacity(0.8);
+      backgroundColor = const Color(0xFFE53935).withValues(alpha: 0.8);
       borderColor = const Color(0xFFEF5350);
     } else if (direction == 'N') {
-      backgroundColor = Colors.red.withOpacity(0.7);
-      borderColor = Colors.white.withOpacity(0.4);
+      backgroundColor = Colors.red.withValues(alpha: 0.7);
+      borderColor = Colors.white.withValues(alpha: 0.4);
     } else {
-      backgroundColor = Colors.black.withOpacity(0.6);
-      borderColor = Colors.white.withOpacity(0.3);
+      backgroundColor = Colors.black.withValues(alpha: 0.6);
+      borderColor = Colors.white.withValues(alpha: 0.3);
     }
     
     return Container(
@@ -156,15 +156,15 @@ class VR360Mode extends StatelessWidget {
         height: 60.w,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.black.withOpacity(0.5),
+          color: Colors.black.withValues(alpha: 0.5),
           border: Border.all(
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             width: 2,
           ),
         ),
         child: Center(
           child: AutoTranslateText(
-            '${heading.toStringAsFixed(0)}°',
+            '${heading.toStringAsFixed(0)}Â°',
             style: MyTextTheme.smallBCB.copyWith(
               color: Colors.white,
             ).merge(AppTypography.body2),
@@ -181,10 +181,10 @@ class VR360Mode extends StatelessWidget {
         width: 44.w,
         height: 44.w,
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.5),
+          color: Colors.black.withValues(alpha: 0.5),
           shape: BoxShape.circle,
           border: Border.all(
-            color: Colors.white.withOpacity(0.3),
+            color: Colors.white.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -227,11 +227,11 @@ class VR360Mode extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 40.w),
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: statusColor.withOpacity(0.9),
+        color: statusColor.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -262,4 +262,5 @@ class VR360Mode extends StatelessWidget {
     return directions[index];
   }
 }
+
 

@@ -129,7 +129,7 @@ class AdvancedElementPainter extends CustomPainter {
       final opacity = (0.2 - (phase * 0.15)).clamp(0.0, 0.2);
       
       final paint = Paint()
-        ..color = elementData['color'].withOpacity(opacity)
+        ..color = elementData['color'].withValues(alpha: opacity)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.0;
       
@@ -150,31 +150,31 @@ class AdvancedElementPainter extends CustomPainter {
       case VastuElement.fire:
         return {
           'color': const Color(0xFFF38B3B),
-          'symbol': '🔥',
+          'symbol': 'ðŸ”¥',
           'gradient': [const Color(0xFFF38B3B), const Color(0xFFDD2914)],
         };
       case VastuElement.water:
         return {
           'color': const Color(0xFF2196F3),
-          'symbol': '💧',
+          'symbol': 'ðŸ’§',
           'gradient': [const Color(0xFF2196F3), const Color(0xFF64B5F6)],
         };
       case VastuElement.air:
         return {
           'color': const Color(0xFF9E9E9E),
-          'symbol': '💨',
+          'symbol': 'ðŸ’¨',
           'gradient': [const Color(0xFF9E9E9E), const Color(0xFFBDBDBD)],
         };
       case VastuElement.earth:
         return {
           'color': const Color(0xFF8D6E63),
-          'symbol': '🌍',
+          'symbol': 'ðŸŒ',
           'gradient': [const Color(0xFF8D6E63), const Color(0xFFA1887F)],
         };
       case VastuElement.space:
         return {
           'color': const Color(0xFF9C27B0),
-          'symbol': '✨',
+          'symbol': 'âœ¨',
           'gradient': [const Color(0xFF9C27B0), const Color(0xFFBA68C8)],
         };
     }
@@ -189,7 +189,7 @@ class AdvancedElementPainter extends CustomPainter {
       final y = center.dy + distance * math.sin(angle);
       
       final paint = Paint()
-        ..color = data['color'].withOpacity(0.4)
+        ..color = data['color'].withValues(alpha: 0.4)
         ..style = PaintingStyle.fill;
       
       canvas.drawCircle(Offset(x, y), 3.0, paint);
@@ -213,7 +213,7 @@ class AdvancedElementPainter extends CustomPainter {
     
     // Draw outer ring
     final ringPaint = Paint()
-      ..color = data['color'].withOpacity(0.5)
+      ..color = data['color'].withValues(alpha: 0.5)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
     
@@ -223,3 +223,4 @@ class AdvancedElementPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
+

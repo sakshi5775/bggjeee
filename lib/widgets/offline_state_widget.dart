@@ -28,7 +28,7 @@ class OfflineStateWidget extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(24.w),
               decoration: BoxDecoration(
-                color: AppColors.saffron.withOpacity(0.05),
+                color: AppColors.saffron.withValues(alpha: 0.05),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -80,3 +80,4 @@ class OfflineStateWidget extends StatelessWidget {
     );
   }
 }
+

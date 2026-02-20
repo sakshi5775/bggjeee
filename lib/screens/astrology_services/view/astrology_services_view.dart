@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
@@ -241,11 +241,11 @@ class AstrologyServicesView extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(
             0xFFFFFFFF,
-          ).withOpacity(0.95), // White with slight opacity
+          ).withValues(alpha: 0.95), // White with slight opacity
           borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -272,7 +272,7 @@ class AstrologyServicesView extends StatelessWidget {
                 decoration: InputDecoration(
                   hintText: 'Search by Zodiac, Category...',
                   hintStyle: MyTextTheme.mediumBCN.copyWith(
-                    color: const Color(0xFF3D0C11).withOpacity(0.6),
+                    color: const Color(0xFF3D0C11).withValues(alpha: 0.6),
                   ),
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
@@ -440,7 +440,7 @@ class AstrologyServicesView extends StatelessWidget {
           errorWidget: (context, url, error) => Container(
             height: 60.h,
             width: 60.w,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Icon(
               Icons.image_not_supported,
               size: 30.w,
@@ -460,7 +460,7 @@ class AstrologyServicesView extends StatelessWidget {
           errorBuilder: (context, error, stackTrace) => Container(
             height: 60.h,
             width: 60.w,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Icon(
               Icons.image_not_supported,
               size: 30.w,
@@ -586,7 +586,7 @@ class AstrologyServicesView extends StatelessWidget {
                 GestureDetector(
                   onTap: () => Get.toNamed('/all-astrologers'),
                   child: AutoTranslateText(
-                    'View All →',
+                    'View All â†’',
                     style: MyTextTheme.mediumBCN.copyWith(
                       color: const Color(0xFFFF6B35),
                     ),
@@ -674,7 +674,7 @@ class AstrologyServicesView extends StatelessWidget {
                 GestureDetector(
                   onTap: () => Get.toNamed('/all-astrologers', arguments: null),
                   child: AutoTranslateText(
-                    'View All →',
+                    'View All â†’',
                     style: MyTextTheme.mediumBCN.copyWith(
                       color: const Color(0xFFFF6B35),
                     ),
@@ -786,7 +786,7 @@ class AstrologyServicesView extends StatelessWidget {
                 GestureDetector(
                   onTap: () => Get.toNamed(AppRoutes.liveAstrologers),
                   child: AutoTranslateText(
-                    'View All →',
+                    'View All â†’',
                     style: MyTextTheme.mediumBCN.copyWith(
                       color: const Color(0xFFFF6B35),
                     ),
@@ -864,7 +864,7 @@ class AstrologyServicesView extends StatelessWidget {
                   onTap: () =>
                       Get.toNamed('/all-astrologers', arguments: 'Vedic'),
                   child: AutoTranslateText(
-                    'View All →',
+                    'View All â†’',
                     style: MyTextTheme.mediumBCN.copyWith(
                       color: const Color(0xFFFF6B35),
                     ),
@@ -1161,7 +1161,7 @@ class AstrologyServicesView extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: Offset(0, 2),
             ),
@@ -1261,7 +1261,7 @@ class AstrologyServicesView extends StatelessWidget {
                       vertical: 3.h,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFDFB343).withOpacity(0.2),
+                      color: const Color(0xFFDFB343).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(6.r),
                       border: Border.all(
                         color: const Color(0xFFDFB343),
@@ -1318,7 +1318,7 @@ class AstrologyServicesView extends StatelessWidget {
       return Container(
         width: size.w,
         height: size.h,
-        color: Colors.grey.withOpacity(0.3),
+        color: Colors.grey.withValues(alpha: 0.3),
         child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
       );
     }
@@ -1334,7 +1334,7 @@ class AstrologyServicesView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
           );
         },
@@ -1343,7 +1343,7 @@ class AstrologyServicesView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Center(
               child: CircularProgressIndicator(
                 value: loadingProgress.expectedTotalBytes != null
@@ -1367,7 +1367,7 @@ class AstrologyServicesView extends StatelessWidget {
           return Container(
             width: size.w,
             height: size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Icon(Icons.person, size: (size / 2).w, color: Colors.grey),
           );
         },
@@ -1481,7 +1481,7 @@ class AstrologyServicesView extends StatelessWidget {
                                   },
                                   selectedColor: const Color(
                                     0xFFDFB343,
-                                  ).withOpacity(0.3),
+                                  ).withValues(alpha: 0.3),
                                   checkmarkColor: const Color(0xFF5F2221),
                                   labelStyle: TextStyle(
                                     color: isSelected
@@ -1525,7 +1525,7 @@ class AstrologyServicesView extends StatelessWidget {
                                   },
                                   selectedColor: const Color(
                                     0xFFDFB343,
-                                  ).withOpacity(0.3),
+                                  ).withValues(alpha: 0.3),
                                   checkmarkColor: const Color(0xFF5F2221),
                                   labelStyle: TextStyle(
                                     color: isSelected
@@ -1565,7 +1565,7 @@ class AstrologyServicesView extends StatelessWidget {
                                   },
                                   selectedColor: const Color(
                                     0xFFDFB343,
-                                  ).withOpacity(0.3),
+                                  ).withValues(alpha: 0.3),
                                   checkmarkColor: const Color(0xFF5F2221),
                                   labelStyle: TextStyle(
                                     color: isSelected
@@ -1612,7 +1612,7 @@ class AstrologyServicesView extends StatelessWidget {
                                   },
                                   selectedColor: const Color(
                                     0xFFDFB343,
-                                  ).withOpacity(0.3),
+                                  ).withValues(alpha: 0.3),
                                   checkmarkColor: const Color(0xFF5F2221),
                                   labelStyle: TextStyle(
                                     color: isSelected
@@ -1859,3 +1859,4 @@ class AstrologyServicesView extends StatelessWidget {
     );
   }
 }
+

@@ -202,7 +202,7 @@ class VastuReadingController extends GetxController {
     // Simple calibration check based on accelerometer stability
     final double magnitude =
         (event.x * event.x + event.y * event.y + event.z * event.z);
-    final double stability = (magnitude - 9.81).abs(); // Gravity is ~9.81 m/s²
+    final double stability = (magnitude - 9.81).abs(); // Gravity is ~9.81 m/sÂ²
 
     _isCalibrated = stability < 2.0; // Calibrated if stable
     update();
@@ -315,7 +315,7 @@ class VastuReadingController extends GetxController {
                           vertical: 6.h,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
+                          color: Colors.green.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8.r),
                           border: Border.all(color: Colors.green),
                         ),
@@ -350,7 +350,7 @@ class VastuReadingController extends GetxController {
                           vertical: 6.h,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.1),
+                          color: Colors.red.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8.r),
                           border: Border.all(color: Colors.red),
                         ),
@@ -380,7 +380,7 @@ class VastuReadingController extends GetxController {
                     (remedy) => Padding(
                       padding: EdgeInsets.only(left: 16.w, bottom: 4.h),
                       child: AutoTranslateText(
-                        '• $remedy',
+                        'â€¢ $remedy',
                         style: MyTextTheme.smallBCN
                             .copyWith(fontSize: 14.sp)
                             .merge(AppTypography.body1),
@@ -445,7 +445,7 @@ class VastuReadingController extends GetxController {
                     (benefit) => Padding(
                       padding: EdgeInsets.only(left: 16.w, bottom: 4.h),
                       child: AutoTranslateText(
-                        '• $benefit',
+                        'â€¢ $benefit',
                         style: MyTextTheme.smallBCN
                             .copyWith(fontSize: 14.sp)
                             .merge(AppTypography.body1),
@@ -466,7 +466,7 @@ class VastuReadingController extends GetxController {
                     (remedy) => Padding(
                       padding: EdgeInsets.only(left: 16.w, bottom: 4.h),
                       child: AutoTranslateText(
-                        '• $remedy',
+                        'â€¢ $remedy',
                         style: MyTextTheme.smallBCN
                             .copyWith(fontSize: 14.sp)
                             .merge(AppTypography.body1),
@@ -487,7 +487,7 @@ class VastuReadingController extends GetxController {
                     (doItem) => Padding(
                       padding: EdgeInsets.only(left: 16.w, bottom: 4.h),
                       child: AutoTranslateText(
-                        '• $doItem',
+                        'â€¢ $doItem',
                         style: MyTextTheme.smallBCN
                             .copyWith(fontSize: 14.sp)
                             .merge(AppTypography.body1),
@@ -508,7 +508,7 @@ class VastuReadingController extends GetxController {
                     (dont) => Padding(
                       padding: EdgeInsets.only(left: 16.w, bottom: 4.h),
                       child: AutoTranslateText(
-                        '• $dont',
+                        'â€¢ $dont',
                         style: MyTextTheme.smallBCN
                             .copyWith(fontSize: 14.sp)
                             .merge(AppTypography.body1),
@@ -646,3 +646,4 @@ class VastuReadingController extends GetxController {
     super.onClose();
   }
 }
+

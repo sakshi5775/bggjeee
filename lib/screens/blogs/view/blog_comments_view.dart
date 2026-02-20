@@ -33,7 +33,7 @@ class BlogCommentsView extends StatelessWidget {
                     child: LocalizedText(
                       text: AppTranslations.Translations.noCommentsFound,
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: '#3E2723'.toColor().withOpacity(0.7),
+                        color: '#3E2723'.toColor().withValues(alpha: 0.7),
                       ),
                     ),
                   );
@@ -52,3 +52,4 @@ class BlogCommentsView extends StatelessWidget {
     );
   }
 }
+

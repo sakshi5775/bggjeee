@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
@@ -1603,7 +1603,7 @@ class KundliResultController extends BaseController {
         final seconds = (((ayanamsaValue - degrees) * 60 - minutes) * 60)
             .floor();
         formattedAyanamsa =
-            '${degrees.toString().padLeft(3, '0')}°${minutes.toString().padLeft(2, '0')}\'${seconds.toString().padLeft(2, '0')}"';
+            '${degrees.toString().padLeft(3, '0')}Â°${minutes.toString().padLeft(2, '0')}\'${seconds.toString().padLeft(2, '0')}"';
       } catch (e) {
         formattedAyanamsa = ayanamsa;
       }
@@ -2324,7 +2324,7 @@ class KundliResultController extends BaseController {
                 val != '-' &&
                 val.length > 2) {
               detectedNakshatra.value = val;
-              debugPrint('✅ Auto-detected Nakshatra: $val (Key: $key)');
+              debugPrint('âœ… Auto-detected Nakshatra: $val (Key: $key)');
               return;
             } else if (val is Map) {
               // If it's a map e.g. "nakshatra": {"name": "Rohini", ...}
@@ -2338,7 +2338,7 @@ class KundliResultController extends BaseController {
                   innerVal != '-') {
                 detectedNakshatra.value = innerVal;
                 debugPrint(
-                  '✅ Auto-detected Nakshatra from map: $innerVal (Key: $key)',
+                  'âœ… Auto-detected Nakshatra from map: $innerVal (Key: $key)',
                 );
                 return;
               }
@@ -2367,7 +2367,7 @@ class KundliResultController extends BaseController {
 
     scan(data);
     if (detectedNakshatra.value == null || detectedNakshatra.value == '-') {
-      debugPrint('❌ Nakshatra NOT found in this response branch.');
+      debugPrint('âŒ Nakshatra NOT found in this response branch.');
     }
   }
 
@@ -2412,3 +2412,4 @@ class KundliResultController extends BaseController {
     }
   }
 }
+

@@ -61,7 +61,7 @@ class LanguageSelectorWidget extends StatelessWidget {
             padding: AppPaddings.all(16),
             decoration: BoxDecoration(
               color: isSelected
-                  ? AppColors.saffron.withOpacity(0.1)
+                  ? AppColors.saffron.withValues(alpha: 0.1)
                   : AppColors.cardLight,
               borderRadius: AppRadius.all(12),
               border: Border.all(
@@ -84,7 +84,7 @@ class LanguageSelectorWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.saffron
-                        : AppColors.textSecondary.withOpacity(0.1),
+                        : AppColors.textSecondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Center(
@@ -187,4 +187,5 @@ class LanguageSelectorDialog extends StatelessWidget {
     Get.dialog(const LanguageSelectorDialog());
   }
 }
+
 

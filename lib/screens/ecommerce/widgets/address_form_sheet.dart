@@ -55,7 +55,7 @@ Future<AddressFormResult?> showAddressFormSheet({
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.white, '#FEF6C3'.toColor().withOpacity(0.3)],
+                colors: [Colors.white, '#FEF6C3'.toColor().withValues(alpha: 0.3)],
               ),
               borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
             ),
@@ -95,7 +95,7 @@ Future<AddressFormResult?> showAddressFormSheet({
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w400,
                                 fontSize: 13.sp,
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white.withValues(alpha: 0.9),
                               ),
                             ),
                           ],
@@ -109,7 +109,7 @@ Future<AddressFormResult?> showAddressFormSheet({
                           child: Container(
                             padding: EdgeInsets.all(8.w),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -289,13 +289,13 @@ Future<AddressFormResult?> showAddressFormSheet({
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    AppColors.saffron.withOpacity(0.1),
-                                    AppColors.saffron.withOpacity(0.05),
+                                    AppColors.saffron.withValues(alpha: 0.1),
+                                    AppColors.saffron.withValues(alpha: 0.05),
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(16.r),
                                 border: Border.all(
-                                  color: AppColors.saffron.withOpacity(0.2),
+                                  color: AppColors.saffron.withValues(alpha: 0.2),
                                   width: 1,
                                 ),
                               ),
@@ -304,7 +304,7 @@ Future<AddressFormResult?> showAddressFormSheet({
                                   Container(
                                     padding: EdgeInsets.all(8.w),
                                     decoration: BoxDecoration(
-                                      color: AppColors.saffron.withOpacity(0.2),
+                                      color: AppColors.saffron.withValues(alpha: 0.2),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
@@ -343,7 +343,7 @@ Future<AddressFormResult?> showAddressFormSheet({
                               borderRadius: BorderRadius.circular(20.r),
                               boxShadow: [
                                 BoxShadow(
-                                  color: '#F38B3B'.toColor().withOpacity(0.4),
+                                  color: '#F38B3B'.toColor().withValues(alpha: 0.4),
                                   blurRadius: 16,
                                   offset: const Offset(0, 8),
                                 ),
@@ -496,12 +496,12 @@ class _AddressField extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: '#68171E'.toColor().withOpacity(0.1),
+          color: '#68171E'.toColor().withValues(alpha: 0.1),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -588,13 +588,13 @@ class _AddressTypeButton extends StatelessWidget {
             border: Border.all(
               color: isSelected
                   ? Colors.transparent
-                  : '#68171E'.toColor().withOpacity(0.2),
+                  : '#68171E'.toColor().withValues(alpha: 0.2),
               width: 1.5,
             ),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: '#68171E'.toColor().withOpacity(0.2),
+                      color: '#68171E'.toColor().withValues(alpha: 0.2),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -647,3 +647,4 @@ String? _requiredValidator(String? value) {
   }
   return null;
 }
+

@@ -52,11 +52,11 @@ class TarotLoveWidget extends StatelessWidget {
           // Background overlay - tappable to close
           GestureDetector(
             onTap: () {
-              debugPrint('🔴 Background tapped - closing');
+              debugPrint('ðŸ”´ Background tapped - closing');
               controller.closeReading();
             },
             behavior: HitTestBehavior.opaque,
-            child: Container(color: Colors.black.withOpacity(0.7)),
+            child: Container(color: Colors.black.withValues(alpha: 0.7)),
           ),
           // Content - not tappable to close
           Center(
@@ -80,7 +80,7 @@ class TarotLoveWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20.r),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
+                            color: Colors.black.withValues(alpha: 0.3),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
                           ),
@@ -116,7 +116,7 @@ class TarotLoveWidget extends StatelessWidget {
                                       ),
                                       GestureDetector(
                                         onTap: () {
-                                          debugPrint('🔴 Close icon tapped');
+                                          debugPrint('ðŸ”´ Close icon tapped');
                                           controller.closeReading();
                                         },
                                         child: Container(
@@ -199,7 +199,7 @@ class TarotLoveWidget extends StatelessWidget {
                               Spacing.h(16),
                               GestureDetector(
                                 onTap: () {
-                                  debugPrint('🔴 Close button tapped');
+                                  debugPrint('ðŸ”´ Close button tapped');
                                   controller.closeReading();
                                 },
                                 child: Container(
@@ -246,11 +246,11 @@ class TarotLoveWidget extends StatelessWidget {
         // Explicitly watch the response to ensure reactivity
         final response = controller.loveTriangleResponse.value;
         debugPrint(
-          '🔍 Triangle Widget - isLoading: $isLoading, response: ${response != null ? "exists" : "null"}',
+          'ðŸ” Triangle Widget - isLoading: $isLoading, response: ${response != null ? "exists" : "null"}',
         );
         if (response != null) {
           debugPrint(
-            '🔍 Triangle Response - self: ${response.self.name}, lover1: ${response.lover1.name}, lover2: ${response.lover2.name}',
+            'ðŸ” Triangle Response - self: ${response.self.name}, lover1: ${response.lover1.name}, lover2: ${response.lover2.name}',
           );
         }
         // Show loading if currently loading API
@@ -267,7 +267,7 @@ class TarotLoveWidget extends StatelessWidget {
         if (response.self.name.isEmpty &&
             response.lover1.name.isEmpty &&
             response.lover2.name.isEmpty) {
-          debugPrint('⚠️ Triangle Response has empty data');
+          debugPrint('âš ï¸ Triangle Response has empty data');
           return const SizedBox.shrink(); // Don't show empty response
         }
         return _buildTriangleContent(response);
@@ -404,7 +404,7 @@ class TarotLoveWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.pink.withOpacity(0.3)),
+        border: Border.all(color: Colors.pink.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -431,7 +431,7 @@ class TarotLoveWidget extends StatelessWidget {
                 return Container(
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                   decoration: BoxDecoration(
-                    color: Colors.pink.withOpacity(0.1),
+                    color: Colors.pink.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: AutoTranslateText(
@@ -455,3 +455,4 @@ class TarotLoveWidget extends StatelessWidget {
     );
   }
 }
+

@@ -53,7 +53,7 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
         'Error',
         'Please select a report category',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
       return;
@@ -75,7 +75,7 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
           'Success',
           'Report submitted successfully',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.withOpacity(0.8),
+          backgroundColor: Colors.green.withValues(alpha: 0.8),
           colorText: Colors.white,
           duration: const Duration(seconds: 2),
         );
@@ -84,7 +84,7 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
           'Error',
           'Failed to submit report. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -96,7 +96,7 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
         'Info',
         message.isEmpty ? 'You have already reported this stream' : message,
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange.withOpacity(0.8),
+        backgroundColor: Colors.orange.withValues(alpha: 0.8),
         colorText: Colors.white,
         duration: const Duration(seconds: 3),
       );
@@ -105,7 +105,7 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
         'Error',
         'An error occurred. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     } finally {
@@ -184,7 +184,7 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
                               border: Border.all(
                                 color: _selectedCategory == category['value']
                                     ? const Color(0xFFF38B3B)
-                                    : const Color(0xFFF38B3B).withOpacity(0.6),
+                                    : const Color(0xFFF38B3B).withValues(alpha: 0.6),
                                 width: 2,
                               ),
                               color: _selectedCategory == category['value']
@@ -276,3 +276,4 @@ class _ReportAbusePopupState extends State<ReportAbusePopup> {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/product_details_widgets/product_main_details.dart';
 import 'package:astrobharataiuser/screens/ecommerce/widgets/product_details_widgets/product_description_widget.dart';
@@ -146,7 +146,7 @@ class ProductDetailView extends StatelessWidget {
         color: '#820B17'.toColor(),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
+            color: Colors.black.withValues(alpha: 0.25),
             blurRadius: 25,
             offset: Offset(0, -12),
           ),
@@ -249,7 +249,7 @@ class ProductDetailView extends StatelessWidget {
                       ? null
                       : () => controller.addToCart(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white.withOpacity(0.3),
+                    backgroundColor: Colors.white.withValues(alpha: 0.3),
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(vertical: 12.h),
                     shape: RoundedRectangleBorder(
@@ -367,15 +367,15 @@ class ProductDetailView extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.all(24.w),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
+          color: Colors.white.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(24.r),
           border: Border.all(
-            color: AppColors.saffron.withOpacity(0.2),
+            color: AppColors.saffron.withValues(alpha: 0.2),
             width: 0.68,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: Offset(0, 4),
             ),
@@ -482,10 +482,10 @@ class ProductDetailView extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.5),
+          color: Colors.white.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: AppColors.saffron.withOpacity(0.2),
+            color: AppColors.saffron.withValues(alpha: 0.2),
             width: 0.5,
           ),
         ),
@@ -567,3 +567,4 @@ class ProductDetailView extends StatelessWidget {
     );
   }
 }
+

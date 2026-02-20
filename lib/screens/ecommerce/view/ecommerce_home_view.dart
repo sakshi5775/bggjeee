@@ -1,7 +1,7 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/category_model.dart';
@@ -296,7 +296,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                         border: isSelected
                             ? null
                             : Border.all(
-                                color: AppColors.textSecondary.withOpacity(0.3),
+                                color: AppColors.textSecondary.withValues(alpha: 0.3),
                               ),
                       ),
                       alignment: Alignment.center,
@@ -385,7 +385,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                     border: isSelected
                         ? null
                         : Border.all(
-                            color: AppColors.textSecondary.withOpacity(0.3),
+                            color: AppColors.textSecondary.withValues(alpha: 0.3),
                           ),
                   ),
                   alignment: Alignment.center,
@@ -614,7 +614,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 4,
               offset: Offset(0, 2),
             ),
@@ -648,7 +648,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                           : Container(
                               height: isHorizontal ? 100.h : 120.h,
                               width: double.infinity,
-                              color: AppColors.textSecondary.withOpacity(0.1),
+                              color: AppColors.textSecondary.withValues(alpha: 0.1),
                               child: Center(
                                 child: Icon(
                                   Icons.image,
@@ -696,7 +696,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
 
                       return Container(
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
@@ -883,7 +883,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(6.r),
                               border: Border.all(color: AppColors.saffron),
-                              color: Colors.white.withOpacity(0.7),
+                              color: Colors.white.withValues(alpha: 0.7),
                             ),
                             child: SizedBox(
                               width: 16.w,
@@ -957,7 +957,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 4,
               offset: Offset(0, 2),
             ),
@@ -978,7 +978,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                         ),
                       )
                     : Container(
-                        color: AppColors.saffron.withOpacity(0.2),
+                        color: AppColors.saffron.withValues(alpha: 0.2),
                         child: Center(
                           child: Icon(
                             Icons.category,
@@ -996,7 +996,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+                  colors: [Colors.transparent, Colors.black.withValues(alpha: 0.6)],
                 ),
               ),
             ),
@@ -1100,7 +1100,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 4,
               offset: Offset(0, 2),
             ),
@@ -1129,7 +1129,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                             : Container(
                                 height: 90.h,
                                 width: 90.w,
-                                color: AppColors.textSecondary.withOpacity(0.1),
+                                color: AppColors.textSecondary.withValues(alpha: 0.1),
                                 child: Center(
                                   child: Icon(
                                     Icons.image,
@@ -1168,7 +1168,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
+                                    color: Colors.black.withValues(alpha: 0.1),
                                     blurRadius: 4,
                                     offset: const Offset(0, 2),
                                   ),
@@ -1285,7 +1285,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(color: AppColors.saffron),
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                   ),
                   child: SizedBox(
                     width: 18.w,
@@ -1305,7 +1305,7 @@ class EcommerceHomeView extends BasePage<EcommerceHomeController> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20.r),
                   border: Border.all(color: AppColors.saffron),
-                  color: AppColors.saffron.withOpacity(0.08),
+                  color: AppColors.saffron.withValues(alpha: 0.08),
                 ),
                 child: Row(
                   children: [
@@ -1372,9 +1372,11 @@ class _QuantityIconButton extends StatelessWidget {
           size: iconSize,
           color: enabled
               ? AppColors.saffron
-              : AppColors.textSecondary.withOpacity(0.4),
+              : AppColors.textSecondary.withValues(alpha: 0.4),
         ),
       ),
     );
   }
 }
+
+

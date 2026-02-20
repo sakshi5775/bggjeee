@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/data_model/wallet_model.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
@@ -106,12 +106,12 @@ class _RechargeDialogState extends State<RechargeDialog> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Colors.white, AppColors.cream.withOpacity(0.3)],
+              colors: [Colors.white, AppColors.cream.withValues(alpha: 0.3)],
             ),
             borderRadius: BorderRadius.circular(30.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: Colors.black.withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -151,7 +151,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                         child: Container(
                           padding: EdgeInsets.all(8.w),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -174,10 +174,10 @@ class _RechargeDialogState extends State<RechargeDialog> {
                     Container(
                       padding: EdgeInsets.all(16.w),
                       decoration: BoxDecoration(
-                        color: AppColors.templeGold.withOpacity(0.1),
+                        color: AppColors.templeGold.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
-                          color: AppColors.templeGold.withOpacity(0.3),
+                          color: AppColors.templeGold.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -196,7 +196,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                     Container(
                       padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(
-                        color: '#68171E'.toColor().withOpacity(0.05),
+                        color: '#68171E'.toColor().withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: Row(
@@ -229,7 +229,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.orangeGradient.colors.first
-                                .withOpacity(0.4),
+                                .withValues(alpha: 0.4),
                             blurRadius: 12,
                             offset: const Offset(0, 6),
                           ),
@@ -287,7 +287,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
           borderRadius: BorderRadius.circular(30.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.15),
+              color: Colors.black.withValues(alpha: 0.15),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -325,7 +325,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 13,
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                           ),
                         ),
                       ],
@@ -339,7 +339,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                       child: Container(
                         padding: EdgeInsets.all(8.w),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -378,12 +378,12 @@ class _RechargeDialogState extends State<RechargeDialog> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(16.r),
                           border: Border.all(
-                            color: AppColors.templeGold.withOpacity(0.3),
+                            color: AppColors.templeGold.withValues(alpha: 0.3),
                             width: 2,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.templeGold.withOpacity(0.1),
+                              color: AppColors.templeGold.withValues(alpha: 0.1),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -462,7 +462,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                                 border: Border.all(
                                   color: isSelected
                                       ? AppColors.orangeGradient.colors.first
-                                      : AppColors.templeGold.withOpacity(0.3),
+                                      : AppColors.templeGold.withValues(alpha: 0.3),
                                   width: isSelected ? 2 : 1.5,
                                 ),
                                 boxShadow: isSelected
@@ -472,7 +472,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                                               .orangeGradient
                                               .colors
                                               .first
-                                              .withOpacity(0.3),
+                                              .withValues(alpha: 0.3),
                                           blurRadius: 8,
                                           offset: const Offset(0, 4),
                                         ),
@@ -523,7 +523,7 @@ class _RechargeDialogState extends State<RechargeDialog> {
                                           .orangeGradient
                                           .colors
                                           .first
-                                          .withOpacity(0.4),
+                                          .withValues(alpha: 0.4),
                                       blurRadius: 16,
                                       offset: const Offset(0, 8),
                                     ),
@@ -594,3 +594,4 @@ class _RechargeDialogState extends State<RechargeDialog> {
     );
   }
 }
+

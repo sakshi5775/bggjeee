@@ -31,7 +31,7 @@ class KaalsarpDoshWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: _maroon.withOpacity(0.6),
+              color: _maroon.withValues(alpha: 0.6),
             ),
           ),
         );
@@ -43,7 +43,7 @@ class KaalsarpDoshWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: _maroon.withOpacity(0.6),
+              color: _maroon.withValues(alpha: 0.6),
             ),
           ),
         );
@@ -77,10 +77,10 @@ class KaalsarpDoshWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
+        border: Border.all(color: _maroon.withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -111,10 +111,10 @@ class KaalsarpDoshWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
+        border: Border.all(color: _maroon.withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -135,8 +135,8 @@ class KaalsarpDoshWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
             decoration: BoxDecoration(
               color: isDoshaPresent
-                  ? Colors.red.withOpacity(0.1)
-                  : Colors.green.withOpacity(0.1),
+                  ? Colors.red.withValues(alpha: 0.1)
+                  : Colors.green.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10.r),
             ),
             child: AutoTranslateText(
@@ -159,10 +159,10 @@ class KaalsarpDoshWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
+        border: Border.all(color: _maroon.withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -204,9 +204,9 @@ class KaalsarpDoshWidget extends StatelessWidget {
               margin: EdgeInsets.only(bottom: 8.h),
               padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: _maroon.withOpacity(0.04),
+                color: _maroon.withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(10.r),
-                border: Border.all(color: _orange.withOpacity(0.2)),
+                border: Border.all(color: _orange.withValues(alpha: 0.2)),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,3 +253,4 @@ class KaalsarpDoshWidget extends StatelessWidget {
     );
   }
 }
+

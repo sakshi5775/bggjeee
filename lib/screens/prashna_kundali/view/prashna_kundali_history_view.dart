@@ -83,7 +83,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
               child: Icon(
                 Icons.history_edu,
                 size: 60.w,
-                color: "#F38B3B".toColor().withOpacity(0.6),
+                color: "#F38B3B".toColor().withValues(alpha: 0.6),
               ),
             ),
             Spacing.h(24),
@@ -113,7 +113,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: "#F38B3B".toColor().withOpacity(0.35),
+                    color: "#F38B3B".toColor().withValues(alpha: 0.35),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -165,7 +165,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
         border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 12,
             offset: Offset(0, 4),
           ),
@@ -198,7 +198,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: "#F38B3B".toColor().withOpacity(0.3),
+                            color: "#F38B3B".toColor().withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: Offset(0, 2),
                           ),
@@ -247,7 +247,7 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
                         color: '#FFF2E8'.toColor(),
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                          color: "#F38B3B".toColor().withOpacity(0.3),
+                          color: "#F38B3B".toColor().withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -400,3 +400,4 @@ class PrashnaKundaliHistoryView extends GetView<PrashnaKundaliController> {
     );
   }
 }
+

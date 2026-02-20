@@ -132,9 +132,9 @@ class AdvancedHeatmapPainter extends CustomPainter {
       startAngle: startAngle,
       endAngle: startAngle + sweepAngle,
       colors: [
-        baseColor.withOpacity(opacity * 0.3),
-        baseColor.withOpacity(opacity),
-        baseColor.withOpacity(opacity * 0.3),
+        baseColor.withValues(alpha: opacity * 0.3),
+        baseColor.withValues(alpha: opacity),
+        baseColor.withValues(alpha: opacity * 0.3),
       ],
     );
     
@@ -156,7 +156,7 @@ class AdvancedHeatmapPainter extends CustomPainter {
     // Draw border for important zones
     if (energyLevel >= 0.8 || energyLevel <= 0.3) {
       final borderPaint = Paint()
-        ..color = baseColor.withOpacity(opacity * 0.6)
+        ..color = baseColor.withValues(alpha: opacity * 0.6)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.0;
       
@@ -181,7 +181,7 @@ class AdvancedHeatmapPainter extends CustomPainter {
     
     // Draw pulsing highlight for current direction
     final highlightPaint = Paint()
-      ..color = Colors.white.withOpacity(0.3 * transitionValue)
+      ..color = Colors.white.withValues(alpha: 0.3 * transitionValue)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0;
     
@@ -227,3 +227,4 @@ class AdvancedHeatmapPainter extends CustomPainter {
     return true;
   }
 }
+

@@ -46,7 +46,7 @@ class OfferingBottomSheetWidget extends GetView<VirtualDarshanController> {
               height: 4.h,
               width: 40.w,
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.5),
+                color: Colors.orange.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(10.r),
               ),
             ),
@@ -63,7 +63,7 @@ class OfferingBottomSheetWidget extends GetView<VirtualDarshanController> {
                   .map((name) => Tab(text: name))
                   .toList(),
             ),
-            Container(height: 1.h, color: Colors.orange.withOpacity(0.2)),
+            Container(height: 1.h, color: Colors.orange.withValues(alpha: 0.2)),
             SizedBox(height: 15.h),
             Expanded(child: _buildCategoryItems()),
           ],
@@ -125,7 +125,7 @@ class OfferingBottomSheetWidget extends GetView<VirtualDarshanController> {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.orange.withOpacity(0.2),
+                        color: Colors.orange.withValues(alpha: 0.2),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -191,3 +191,4 @@ class OfferingBottomSheetWidget extends GetView<VirtualDarshanController> {
     );
   }
 }
+

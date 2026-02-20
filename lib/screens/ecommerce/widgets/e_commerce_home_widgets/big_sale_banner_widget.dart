@@ -119,7 +119,7 @@ class BigSaleBannerWidget extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+                colors: [Colors.transparent, Colors.black.withValues(alpha: 0.6)],
               ),
             ),
           ),
@@ -214,10 +214,11 @@ class BigSaleBannerWidget extends StatelessWidget {
 
   Widget _buildPlaceholderImage() {
     return Container(
-      color: Colors.grey.withOpacity(0.3),
+      color: Colors.grey.withValues(alpha: 0.3),
       child: Center(
         child: Icon(Icons.image, size: 50.w, color: Colors.grey),
       ),
     );
   }
 }
+

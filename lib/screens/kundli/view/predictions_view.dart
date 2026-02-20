@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/controller/predictions_controller.dart';
 import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/screens/kundli/widgets/numerology_widget.dart';
@@ -85,7 +85,7 @@ class PredictionsView extends BasePage<PredictionsController> {
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.deepOrange.withOpacity(0.2),
+                      color: AppColors.deepOrange.withValues(alpha: 0.2),
                       blurRadius: 4,
                       offset: const Offset(0, 1),
                     ),
@@ -145,7 +145,7 @@ class PredictionsView extends BasePage<PredictionsController> {
                               border: isSelected
                                   ? null
                                   : Border.all(
-                                      color: maroon.withOpacity(0.2),
+                                      color: maroon.withValues(alpha: 0.2),
                                       width: 1,
                                     ),
                               boxShadow: isSelected
@@ -199,3 +199,5 @@ class PredictionsView extends BasePage<PredictionsController> {
     }
   }
 }
+
+

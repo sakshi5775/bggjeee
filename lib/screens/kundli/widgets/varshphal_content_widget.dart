@@ -9,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-/// Content widget for standalone Varshphal page – uses VarshphalController.
+/// Content widget for standalone Varshphal page â€“ uses VarshphalController.
 /// Same design as VarshphalWidget (#6F221E / #ed6f30).
 class VarshphalContentWidget extends StatelessWidget {
   final VarshphalController controller;
@@ -39,12 +39,12 @@ class VarshphalContentWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: '#ed6f30'.toColor().withOpacity(0.2),
+          color: '#ed6f30'.toColor().withValues(alpha: 0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -62,7 +62,7 @@ class VarshphalContentWidget extends StatelessWidget {
           Container(
             width: 1,
             height: 40.h,
-            color: '#ed6f30'.toColor().withOpacity(0.2),
+            color: '#ed6f30'.toColor().withValues(alpha: 0.2),
           ),
           Expanded(
             child: _buildTabButton(
@@ -101,7 +101,7 @@ class VarshphalContentWidget extends StatelessWidget {
                 icon,
                 color: isSelected
                     ? Colors.white
-                    : '#6F221E'.toColor().withOpacity(0.6),
+                    : '#6F221E'.toColor().withValues(alpha: 0.6),
                 size: 18.w,
               ),
               Spacing.w(8),
@@ -113,7 +113,7 @@ class VarshphalContentWidget extends StatelessWidget {
                   style: MyTextTheme.smallBCB.copyWith(
                     color: isSelected
                         ? Colors.white
-                        : '#6F221E'.toColor().withOpacity(0.7),
+                        : '#6F221E'.toColor().withValues(alpha: 0.7),
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                     fontSize: 12.sp,
                   ),
@@ -134,13 +134,13 @@ class VarshphalContentWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
         border: Border.all(
-          color: '#ed6f30'.toColor().withOpacity(0.2),
+          color: '#ed6f30'.toColor().withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -153,10 +153,10 @@ class VarshphalContentWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: '#ed6f30'.toColor().withOpacity(0.08),
+        color: '#ed6f30'.toColor().withValues(alpha: 0.08),
         border: Border(
           bottom: BorderSide(
-            color: '#ed6f30'.toColor().withOpacity(0.25),
+            color: '#ed6f30'.toColor().withValues(alpha: 0.25),
             width: 1,
           ),
         ),
@@ -192,7 +192,7 @@ class VarshphalContentWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No Varshphal Details data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: '#6F221E'.toColor().withOpacity(0.6),
+              color: '#6F221E'.toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -206,7 +206,7 @@ class VarshphalContentWidget extends StatelessWidget {
               Icon(
                 Icons.info_outline_rounded,
                 size: 48.w,
-                color: '#ed6f30'.toColor().withOpacity(0.5),
+                color: '#ed6f30'.toColor().withValues(alpha: 0.5),
               ),
               Spacing.h(12),
               Padding(
@@ -306,10 +306,10 @@ class VarshphalContentWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: isEven ? '#ed6f30'.toColor().withOpacity(0.04) : Colors.white,
+        color: isEven ? '#ed6f30'.toColor().withValues(alpha: 0.04) : Colors.white,
         border: Border(
           bottom: BorderSide(
-            color: '#ed6f30'.toColor().withOpacity(0.12),
+            color: '#ed6f30'.toColor().withValues(alpha: 0.12),
             width: 1,
           ),
         ),
@@ -337,7 +337,7 @@ class VarshphalContentWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No Varshphal Yearly Chart data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: '#6F221E'.toColor().withOpacity(0.6),
+              color: '#6F221E'.toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -351,7 +351,7 @@ class VarshphalContentWidget extends StatelessWidget {
               Icon(
                 Icons.info_outline_rounded,
                 size: 48.w,
-                color: '#ed6f30'.toColor().withOpacity(0.5),
+                color: '#ed6f30'.toColor().withValues(alpha: 0.5),
               ),
               Spacing.h(12),
               Padding(
@@ -402,7 +402,7 @@ class VarshphalContentWidget extends StatelessWidget {
                             AutoTranslateText(
                               'Varshphal Date',
                               style: MyTextTheme.smallBCB.copyWith(
-                                color: '#6F221E'.toColor().withOpacity(0.7),
+                                color: '#6F221E'.toColor().withValues(alpha: 0.7),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -533,10 +533,10 @@ class VarshphalContentWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: isEven ? '#ed6f30'.toColor().withOpacity(0.04) : Colors.white,
+        color: isEven ? '#ed6f30'.toColor().withValues(alpha: 0.04) : Colors.white,
         border: Border(
           bottom: BorderSide(
-            color: '#ed6f30'.toColor().withOpacity(0.12),
+            color: '#ed6f30'.toColor().withValues(alpha: 0.12),
             width: 1,
           ),
         ),
@@ -574,3 +574,4 @@ class VarshphalContentWidget extends StatelessWidget {
     }
   }
 }
+

@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/my_bookings/controller/my_bookings_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/my_bookings/widgets/booking_empty_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/my_bookings/widgets/booking_list_card.dart';
@@ -28,7 +28,7 @@ class MyBookingsView extends BasePage<MyBookingsController> {
               subtitle: AutoTranslateText(
                 'Your puja booking history',
                 style: AppTypography.body2.copyWith(
-                  color: '#6F221E'.toColor().withOpacity(0.7),
+                  color: '#6F221E'.toColor().withValues(alpha: 0.7),
                 ),
               ),
             ),
@@ -183,3 +183,5 @@ class MyBookingsView extends BasePage<MyBookingsController> {
     });
   }
 }
+
+

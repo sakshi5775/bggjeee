@@ -110,7 +110,7 @@ class StreamReportsView extends StatelessWidget {
           Icon(
             Icons.report_problem_outlined,
             size: 64.sp,
-            color: const Color(0xFFF38B3B).withOpacity(0.5),
+            color: const Color(0xFFF38B3B).withValues(alpha: 0.5),
           ),
           SizedBox(height: 16.h),
           AutoTranslateText(
@@ -124,7 +124,7 @@ class StreamReportsView extends StatelessWidget {
           AutoTranslateText(
             'You haven\'t reported any streams yet',
             style: TextStyle(
-              color: const Color(0xFF5D2B1F).withOpacity(0.7),
+              color: const Color(0xFF5D2B1F).withValues(alpha: 0.7),
             ),
           ),
         ],
@@ -151,16 +151,16 @@ class StreamReportsView extends StatelessWidget {
   }
 
   Widget _buildReportItem(report, StreamReportsController controller) {
-    final dateFormat = DateFormat('MMM dd, yyyy • hh:mm a');
+    final dateFormat = DateFormat('MMM dd, yyyy â€¢ hh:mm a');
     
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -187,7 +187,7 @@ class StreamReportsView extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                   decoration: BoxDecoration(
-                    color: _getStatusColor(report.status).withOpacity(0.2),
+                    color: _getStatusColor(report.status).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: AutoTranslateText(
@@ -208,13 +208,13 @@ class StreamReportsView extends StatelessWidget {
                 Icon(
                   Icons.category_outlined,
                   size: 16.sp,
-                  color: const Color(0xFF5D2B1F).withOpacity(0.7),
+                  color: const Color(0xFF5D2B1F).withValues(alpha: 0.7),
                 ),
                 SizedBox(width: 8.w),
                 AutoTranslateText(
                   controller.getCategoryLabel(report.category),
                   style: TextStyle(
-                    color: const Color(0xFF5D2B1F).withOpacity(0.8),
+                    color: const Color(0xFF5D2B1F).withValues(alpha: 0.8),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -229,15 +229,15 @@ class StreamReportsView extends StatelessWidget {
                   Icon(
                     report.streamSnapshot!.wasLive ? Icons.live_tv : Icons.video_library,
                     size: 16.sp,
-                    color: const Color(0xFF5D2B1F).withOpacity(0.7),
+                    color: const Color(0xFF5D2B1F).withValues(alpha: 0.7),
                   ),
                   SizedBox(width: 8.w),
                   AutoTranslateText(
                     report.streamSnapshot!.wasLive
-                        ? 'Live Stream • ${report.streamSnapshot!.viewerCount} viewers'
+                        ? 'Live Stream â€¢ ${report.streamSnapshot!.viewerCount} viewers'
                         : 'Recorded Stream',
                     style: TextStyle(
-                      color: const Color(0xFF5D2B1F).withOpacity(0.6),
+                      color: const Color(0xFF5D2B1F).withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -251,13 +251,13 @@ class StreamReportsView extends StatelessWidget {
                 Icon(
                   Icons.calendar_today_outlined,
                   size: 16.sp,
-                  color: const Color(0xFF5D2B1F).withOpacity(0.7),
+                  color: const Color(0xFF5D2B1F).withValues(alpha: 0.7),
                 ),
                 SizedBox(width: 8.w),
                 AutoTranslateText(
                   dateFormat.format(report.reportedAt),
                   style: TextStyle(
-                    color: const Color(0xFF5D2B1F).withOpacity(0.6),
+                    color: const Color(0xFF5D2B1F).withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -268,7 +268,7 @@ class StreamReportsView extends StatelessWidget {
             AutoTranslateText(
               'Report ID: ${report.reportId}',
               style: TextStyle(
-                color: const Color(0xFF5D2B1F).withOpacity(0.5),
+                color: const Color(0xFF5D2B1F).withValues(alpha: 0.5),
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -293,3 +293,4 @@ class StreamReportsView extends StatelessWidget {
     }
   }
 }
+

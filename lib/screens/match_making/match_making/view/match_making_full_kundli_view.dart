@@ -90,7 +90,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: "#DFB343".toColor().withOpacity(0.3),
+          color: "#DFB343".toColor().withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -172,7 +172,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: "#DFB343".toColor().withOpacity(0.3),
+          color: "#DFB343".toColor().withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -210,7 +210,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
         color: const Color(0xFFFDF3E6),
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
-          color: "#DFB343".toColor().withOpacity(0.2),
+          color: "#DFB343".toColor().withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -414,7 +414,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
                             return Container(
                               width: chartSize,
                               height: chartSize,
-                              color: Colors.grey.withOpacity(0.1),
+                              color: Colors.grey.withValues(alpha: 0.1),
                               child: Center(
                                 child: AutoTranslateText(
                                   'Kundli Image',
@@ -453,7 +453,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
                                 height: 50.w,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: "#DFB343".toColor().withOpacity(0.2),
+                                  color: "#DFB343".toColor().withValues(alpha: 0.2),
                                 ),
                                 child: Icon(
                                   Icons.person,
@@ -601,7 +601,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           AutoTranslateText(
-            '$degreeText°',
+            '$degreeTextÂ°',
             style: TextStyle(
               color: "#6F221E".toColor(),
               fontWeight: FontWeight.w500,
@@ -665,3 +665,4 @@ class _PlanetData {
     required this.isAscendant,
   });
 }
+

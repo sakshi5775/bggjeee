@@ -1,4 +1,4 @@
-import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+﻿import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
@@ -40,7 +40,7 @@ class LiveStreamView extends StatelessWidget {
     ever(controller.isStreamEnded, (bool ended) {
       if (ended) {
         debugPrint(
-          '📺 View: Stream ended detected, waiting 2 seconds then navigating...',
+          'ðŸ“º View: Stream ended detected, waiting 2 seconds then navigating...',
         );
         // Wait 2 seconds to show the message, then navigate
         Future.delayed(const Duration(seconds: 2), () {
@@ -48,23 +48,23 @@ class LiveStreamView extends StatelessWidget {
             return; // Stream was resumed
           }
 
-          debugPrint('📺 View: Attempting navigation after 2 second delay');
-          debugPrint('📺 View: Current route: ${Get.currentRoute}');
-          debugPrint('📺 View: Previous route: ${Get.previousRoute}');
+          debugPrint('ðŸ“º View: Attempting navigation after 2 second delay');
+          debugPrint('ðŸ“º View: Current route: ${Get.currentRoute}');
+          debugPrint('ðŸ“º View: Previous route: ${Get.previousRoute}');
 
           // Try Navigator.pop() first (most reliable with BuildContext)
           if (Navigator.of(context).canPop()) {
-            debugPrint('📺 View: Using Navigator.pop() to go back');
+            debugPrint('ðŸ“º View: Using Navigator.pop() to go back');
             Navigator.of(context).pop();
           } else {
             // Fallback: Use Get.until() to navigate to previous route
-            debugPrint('📺 View: Cannot pop - using Get.until()');
+            debugPrint('ðŸ“º View: Cannot pop - using Get.until()');
             final previousRoute = Get.previousRoute;
             if (previousRoute.isNotEmpty &&
                 previousRoute != '/' &&
                 previousRoute != '/LiveStreamView') {
               debugPrint(
-                '📺 View: Navigating to previous route: $previousRoute',
+                'ðŸ“º View: Navigating to previous route: $previousRoute',
               );
               Get.until((route) {
                 final routeName = route.settings.name ?? '';
@@ -72,7 +72,7 @@ class LiveStreamView extends StatelessWidget {
               });
             } else {
               debugPrint(
-                '📺 View: No valid previous route - navigating to dashboard',
+                'ðŸ“º View: No valid previous route - navigating to dashboard',
               );
               Get.offAllNamed('/user-dashboard');
             }
@@ -263,7 +263,7 @@ class LiveStreamView extends StatelessWidget {
         // Show video if camera is on (even if mic is off)
         if (shouldShowVideo && controller.engine != null) {
           debugPrint(
-            '✓ Showing Agora video for remoteUid: ${controller.remoteUid}',
+            'âœ“ Showing Agora video for remoteUid: ${controller.remoteUid}',
           );
           return Stack(
             fit: StackFit.expand,
@@ -360,15 +360,15 @@ class LiveStreamView extends StatelessWidget {
                       vertical: 8.h,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.75),
+                      color: Colors.black.withValues(alpha: 0.75),
                       borderRadius: BorderRadius.circular(20.r),
                       border: Border.all(
-                        color: Colors.red.withOpacity(0.6),
+                        color: Colors.red.withValues(alpha: 0.6),
                         width: 1.5,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
+                          color: Colors.black.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -556,7 +556,7 @@ class LiveStreamView extends StatelessWidget {
 
           return ReactionAnimationWidget(
             key: ValueKey(reaction.messageId),
-            reactionIcon: reaction.reactionType ?? '✨',
+            reactionIcon: reaction.reactionType ?? 'âœ¨',
             senderName: reaction.senderName,
           );
         }),
@@ -575,7 +575,7 @@ class LiveStreamView extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+            colors: [Colors.black.withValues(alpha: 0.7), Colors.transparent],
           ),
         ),
         child: Wrap(
@@ -815,8 +815,8 @@ class LiveStreamView extends StatelessWidget {
               end: Alignment.bottomCenter,
               colors: [
                 Colors.transparent,
-                Colors.black.withOpacity(0.1),
-                Colors.black.withOpacity(0.2),
+                Colors.black.withValues(alpha: 0.1),
+                Colors.black.withValues(alpha: 0.2),
               ],
               stops: const [0.0, 0.5, 1.0],
             ),
@@ -928,7 +928,7 @@ class LiveStreamView extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+            colors: [Colors.black.withValues(alpha: 0.7), Colors.transparent],
           ),
         ),
         child: Row(
@@ -941,7 +941,7 @@ class LiveStreamView extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25.r),
                   border: Border.all(
-                    color: const Color(0xFFF38B3B).withOpacity(0.5),
+                    color: const Color(0xFFF38B3B).withValues(alpha: 0.5),
                     width: 1,
                   ),
                 ),
@@ -1165,7 +1165,7 @@ class LiveStreamView extends StatelessWidget {
                     }
 
                     debugPrint(
-                      '🎁 Displaying ${controller.availableGifts.length} gifts in gift panel',
+                      'ðŸŽ Displaying ${controller.availableGifts.length} gifts in gift panel',
                     );
 
                     return GridView.builder(
@@ -1180,7 +1180,7 @@ class LiveStreamView extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final gift = controller.availableGifts[index];
                         debugPrint(
-                          '🎁 Rendering gift ${index + 1}/${controller.availableGifts.length}: ${gift.name}',
+                          'ðŸŽ Rendering gift ${index + 1}/${controller.availableGifts.length}: ${gift.name}',
                         );
                         return GestureDetector(
                           onTap: () => controller.sendGift(gift.type),
@@ -1256,7 +1256,7 @@ class LiveStreamView extends StatelessWidget {
                     }
 
                     debugPrint(
-                      '✨ Displaying ${controller.availableReactions.length} reactions in gift panel',
+                      'âœ¨ Displaying ${controller.availableReactions.length} reactions in gift panel',
                     );
 
                     return GridView.builder(
@@ -1272,7 +1272,7 @@ class LiveStreamView extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final reaction = controller.availableReactions[index];
                         debugPrint(
-                          '✨ Rendering reaction ${index + 1}/${controller.availableReactions.length}: ${reaction.name}',
+                          'âœ¨ Rendering reaction ${index + 1}/${controller.availableReactions.length}: ${reaction.name}',
                         );
                         return GestureDetector(
                           onTap: () => controller.sendReaction(reaction.type),
@@ -1347,7 +1347,7 @@ class LiveStreamView extends StatelessWidget {
         child: GestureDetector(
           onTap: () => controller.hideLeaveModal(),
           child: Container(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withValues(alpha: 0.5),
             child: GestureDetector(
               onTap: () {}, // Prevent dismiss when tapping inside
               child: Align(
@@ -1668,3 +1668,4 @@ class LiveStreamView extends StatelessWidget {
     });
   }
 }
+

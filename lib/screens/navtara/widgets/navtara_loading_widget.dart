@@ -73,7 +73,7 @@ class _NavtaraLoadingWidgetState extends State<NavtaraLoadingWidget>
           borderRadius: BorderRadius.circular(24.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 20,
               spreadRadius: 5,
             ),
@@ -112,7 +112,7 @@ class _NavtaraLoadingWidgetState extends State<NavtaraLoadingWidget>
                           width: 50.w,
                           height: 50.w,
                           decoration: BoxDecoration(
-                            color: "#F38B3B".toColor().withOpacity(0.1),
+                            color: "#F38B3B".toColor().withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -137,7 +137,7 @@ class _NavtaraLoadingWidgetState extends State<NavtaraLoadingWidget>
                     return LinearGradient(
                       colors: [
                         "#F38B3B".toColor(),
-                        "#F38B3B".toColor().withOpacity(0.5),
+                        "#F38B3B".toColor().withValues(alpha: 0.5),
                         "#F38B3B".toColor(),
                       ],
                       stops: [
@@ -235,3 +235,4 @@ class _NavtaraLoaderPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
+

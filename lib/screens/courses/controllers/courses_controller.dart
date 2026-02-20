@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/data_model/webinar_model.dart'; // Added
 import 'package:astrobharataiuser/screens/courses/services/courses_service.dart';
@@ -213,3 +213,4 @@ class CoursesController extends BaseController {
     }
   }
 }
+

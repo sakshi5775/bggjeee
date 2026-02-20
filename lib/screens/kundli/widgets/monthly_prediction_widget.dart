@@ -112,7 +112,7 @@ class MonthlyPredictionWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -123,7 +123,7 @@ class MonthlyPredictionWidget extends StatelessWidget {
                   AutoTranslateText(
                     'Overall Score',
                     style: MyTextTheme.mediumBCN.copyWith(
-                      color: "#6F221E".toColor().withOpacity(0.7),
+                      color: "#6F221E".toColor().withValues(alpha: 0.7),
                     ),
                   ),
                   Spacing.h(8),
@@ -148,10 +148,10 @@ class MonthlyPredictionWidget extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
+                          color: Colors.green.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12.r),
                           border: Border.all(
-                            color: Colors.deepOrange.withOpacity(0.3),
+                            color: Colors.deepOrange.withValues(alpha: 0.3),
                             width: 1,
                           ),
                         ),
@@ -193,10 +193,10 @@ class MonthlyPredictionWidget extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
                         decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.1),
+                          color: Colors.red.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12.r),
                           border: Border.all(
-                            color: Colors.red.withOpacity(0.3),
+                            color: Colors.red.withValues(alpha: 0.3),
                             width: 1,
                           ),
                         ),
@@ -264,7 +264,7 @@ class MonthlyPredictionWidget extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(16.r),
                   border: Border.all(
-                    color: "#ed6f30".toColor().withOpacity(0.2),
+                    color: "#ed6f30".toColor().withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -343,7 +343,7 @@ class MonthlyPredictionWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -364,7 +364,7 @@ class MonthlyPredictionWidget extends StatelessWidget {
                 label,
                 textAlign: TextAlign.center,
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#6F221E".toColor().withValues(alpha: 0.7),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -382,3 +382,4 @@ class MonthlyPredictionWidget extends StatelessWidget {
     return Colors.red;
   }
 }
+

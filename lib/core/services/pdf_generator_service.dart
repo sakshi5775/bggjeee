@@ -74,7 +74,7 @@ class PdfGeneratorService {
       Get.snackbar(
         "Notice",
         message,
-        backgroundColor: "#6F221E".toColor().withOpacity(0.8),
+        backgroundColor: "#6F221E".toColor().withValues(alpha: 0.8),
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 5),
@@ -730,3 +730,4 @@ class _PdfThemeConfig {
     required this.lineHeight,
   });
 }
+

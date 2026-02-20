@@ -134,7 +134,7 @@ class _TarotCardUnsuitableWidgetState extends State<TarotCardUnsuitableWidget>
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
-                  color: "#F38B3B".toColor().withOpacity(0.4),
+                  color: "#F38B3B".toColor().withValues(alpha: 0.4),
                   blurRadius: 15,
                   spreadRadius: 2,
                   offset: const Offset(0, 6),
@@ -200,3 +200,4 @@ class _TarotCardUnsuitableWidgetState extends State<TarotCardUnsuitableWidget>
     );
   }
 }
+

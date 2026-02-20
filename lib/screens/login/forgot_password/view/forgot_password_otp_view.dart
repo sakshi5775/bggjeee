@@ -33,7 +33,7 @@ class ForgotPasswordOtpView extends GetView<ForgotPasswordController> {
       border: Border.all(color: AppColors.saffron),
       boxShadow: [
         BoxShadow(
-          color: AppColors.saffron.withOpacity(0.2),
+          color: AppColors.saffron.withValues(alpha: 0.2),
           blurRadius: 8,
           offset: const Offset(0, 2),
         ),
@@ -172,3 +172,4 @@ class ForgotPasswordOtpView extends GetView<ForgotPasswordController> {
     );
   }
 }
+

@@ -119,19 +119,19 @@ class _RoomAwareARGuidanceState extends State<RoomAwareARGuidance>
             gradient: RadialGradient(
               colors: isIdeal
                   ? [
-                      const Color(0xFF4CAF50).withOpacity(0.3 * glowIntensity),
-                      const Color(0xFF4CAF50).withOpacity(0.0),
+                      const Color(0xFF4CAF50).withValues(alpha: 0.3 * glowIntensity),
+                      const Color(0xFF4CAF50).withValues(alpha: 0.0),
                     ]
                   : [
-                      const Color(0xFFE53935).withOpacity(0.3 * glowIntensity),
-                      const Color(0xFFE53935).withOpacity(0.0),
+                      const Color(0xFFE53935).withValues(alpha: 0.3 * glowIntensity),
+                      const Color(0xFFE53935).withValues(alpha: 0.0),
                     ],
             ),
             boxShadow: [
               BoxShadow(
                 color: isIdeal
-                    ? const Color(0xFF4CAF50).withOpacity(0.5 * glowIntensity)
-                    : const Color(0xFFE53935).withOpacity(0.5 * glowIntensity),
+                    ? const Color(0xFF4CAF50).withValues(alpha: 0.5 * glowIntensity)
+                    : const Color(0xFFE53935).withValues(alpha: 0.5 * glowIntensity),
                 blurRadius: 20,
                 spreadRadius: 5,
               ),
@@ -174,11 +174,11 @@ class _RoomAwareARGuidanceState extends State<RoomAwareARGuidance>
                   : isAvoid
                       ? const Color(0xFFE53935)
                       : Colors.blueGrey)
-              .withOpacity(0.95),
+              .withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -199,7 +199,7 @@ class _RoomAwareARGuidanceState extends State<RoomAwareARGuidance>
             AutoTranslateText(
               guidance,
               style: MyTextTheme.smallBCN.copyWith(
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white.withValues(alpha: 0.9),
               ).merge(AppTypography.body2),
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
@@ -237,4 +237,5 @@ class _RoomAwareARGuidanceState extends State<RoomAwareARGuidance>
     return Offset(x, y);
   }
 }
+
 

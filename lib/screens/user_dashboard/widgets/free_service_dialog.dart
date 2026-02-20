@@ -65,7 +65,7 @@ class FreeServiceDialog extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Colors.transparent, Colors.black.withOpacity(0.3)],
+              colors: [Colors.transparent, Colors.black.withValues(alpha: 0.3)],
             ),
           ),
         ),
@@ -80,7 +80,7 @@ class FreeServiceDialog extends StatelessWidget {
               width: 32.w,
               height: 32.h,
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.close, color: Colors.white, size: 20.w),
@@ -96,7 +96,7 @@ class FreeServiceDialog extends StatelessWidget {
             width: 80.w,
             height: 80.h,
             decoration: BoxDecoration(
-              color: Color(0xFFFFD700).withOpacity(0.3),
+              color: Color(0xFFFFD700).withValues(alpha: 0.3),
               shape: BoxShape.circle,
             ),
             child: CustomPaint(painter: AstrologicalChartPainter()),
@@ -156,7 +156,7 @@ class FreeServiceDialog extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.r),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.deepOrange.withOpacity(0.3),
+                  color: AppColors.deepOrange.withValues(alpha: 0.3),
                   blurRadius: 12,
                   offset: Offset(0, 4),
                 ),
@@ -212,7 +212,7 @@ class FreeServiceDialog extends StatelessWidget {
               // AutoTranslateText - Flexible to prevent overflow
               Flexible(
                 child: AutoTranslateText(
-                  '• 10,000+ Consultations',
+                  'â€¢ 10,000+ Consultations',
                   style: MyTextTheme.mediumBCN.copyWith(
                     fontSize: AppTypography.body2.fontSize?.sp,
                     color: Color(0xFF666666), // Grey color
@@ -234,7 +234,7 @@ class AstrologicalChartPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Color(0xFFFFD700).withOpacity(0.6)
+      ..color = Color(0xFFFFD700).withValues(alpha: 0.6)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
@@ -276,3 +276,4 @@ class AstrologicalChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+

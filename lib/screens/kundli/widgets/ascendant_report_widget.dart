@@ -32,7 +32,7 @@ class AscendantReportWidget extends StatelessWidget {
               AutoTranslateText(
                 'Loading...',
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#6F221E".toColor().withValues(alpha: 0.7),
                   fontSize: 12.sp,
                 ),
               ),
@@ -47,7 +47,7 @@ class AscendantReportWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No Ascendant Report data available',
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: "#6F221E".toColor().withValues(alpha: 0.7),
               fontSize: 12.sp,
             ),
           ),
@@ -61,12 +61,12 @@ class AscendantReportWidget extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
-              color: "#ed6f30".toColor().withOpacity(0.2),
+              color: "#ed6f30".toColor().withValues(alpha: 0.2),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               ),
@@ -130,7 +130,7 @@ class AscendantReportWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Ascendant: $ascendant',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: Colors.white.withOpacity(0.95),
+                    color: Colors.white.withValues(alpha: 0.95),
                     fontSize: 11.sp,
                   ),
                 ),
@@ -261,10 +261,10 @@ class AscendantReportWidget extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
-                color: "#ed6f30".toColor().withOpacity(0.06),
+                color: "#ed6f30".toColor().withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(8.r),
                 border: Border.all(
-                  color: "#ed6f30".toColor().withOpacity(0.2),
+                  color: "#ed6f30".toColor().withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -293,10 +293,10 @@ class AscendantReportWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
-        color: "#ed6f30".toColor().withOpacity(0.04),
+        color: "#ed6f30".toColor().withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.15),
+          color: "#ed6f30".toColor().withValues(alpha: 0.15),
           width: 1,
         ),
       ),
@@ -335,7 +335,7 @@ class AscendantReportWidget extends StatelessWidget {
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCB.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#6F221E".toColor().withValues(alpha: 0.7),
                 fontWeight: FontWeight.w500,
                 fontSize: 11.sp,
               ),
@@ -356,7 +356,7 @@ class AscendantReportWidget extends StatelessWidget {
     );
   }
 
-  Widget _div() => Divider(height: 1, thickness: 1, color: "#6F221E".toColor().withOpacity(0.1));
+  Widget _div() => Divider(height: 1, thickness: 1, color: "#6F221E".toColor().withValues(alpha: 0.1));
 
   Widget _label(String t) => AutoTranslateText(
         t,
@@ -379,9 +379,10 @@ class AscendantReportWidget extends StatelessWidget {
   Widget _body(String t) => AutoTranslateText(
         t,
         style: MyTextTheme.smallBCN.copyWith(
-          color: "#6F221E".toColor().withOpacity(0.85),
+          color: "#6F221E".toColor().withValues(alpha: 0.85),
           height: 1.45,
           fontSize: 11.sp,
         ),
       );
 }
+

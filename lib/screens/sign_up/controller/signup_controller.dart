@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/otp/service/otp_service.dart';
 import 'package:astrobharataiuser/screens/sign_up/service/signup_service.dart';
@@ -187,3 +187,4 @@ class SignUpController extends BaseController {
     onBack();
   }
 }
+

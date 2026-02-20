@@ -139,7 +139,7 @@ class _DigitalLearningBannerSliderState
               decoration: BoxDecoration(
                 color: _currentIndex == index
                     ? const Color(0xFFFFCC80) // Light orange
-                    : Colors.grey.withOpacity(0.3),
+                    : Colors.grey.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(4.r),
               ),
             ),
@@ -173,7 +173,7 @@ class _DigitalLearningBannerSliderState
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+                  colors: [Colors.transparent, Colors.black.withValues(alpha: 0.6)],
                   stops: const [0.6, 1.0],
                 ),
               ),
@@ -270,11 +270,12 @@ class _DigitalLearningBannerSliderState
         padding: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.black.withOpacity(0.3),
-          border: Border.all(color: Colors.white.withOpacity(0.5)),
+          color: Colors.black.withValues(alpha: 0.3),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
         ),
         child: Icon(icon, color: Colors.white, size: 16.w),
       ),
     );
   }
 }
+

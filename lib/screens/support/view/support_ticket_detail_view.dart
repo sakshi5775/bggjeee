@@ -354,11 +354,11 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: isReporter ? AppColors.saffron.withOpacity(0.1) : Colors.white,
+        color: isReporter ? AppColors.saffron.withValues(alpha: 0.1) : Colors.white,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
           color: isReporter
-              ? AppColors.saffron.withOpacity(0.3)
+              ? AppColors.saffron.withValues(alpha: 0.3)
               : AppColors.dividerLight,
         ),
       ),
@@ -404,7 +404,7 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -525,7 +525,7 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
                         ? null
                         : [
                             BoxShadow(
-                              color: AppColors.deepOrange.withOpacity(0.3),
+                              color: AppColors.deepOrange.withValues(alpha: 0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -597,9 +597,9 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6.r),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: AutoTranslateText(
         label,
@@ -661,3 +661,4 @@ class _SupportTicketDetailViewState extends State<SupportTicketDetailView> {
     }
   }
 }
+

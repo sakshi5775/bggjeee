@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 
 import '../../../../data_model/e_mandir_dataModels/e_mandir_home_model.dart';
@@ -28,3 +28,4 @@ class PunyaMudraController extends BaseController {
     punyaWallet.value = Get.arguments['punyaWallet'];
   }
 }
+

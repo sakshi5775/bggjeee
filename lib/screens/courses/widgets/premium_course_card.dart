@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/data_model/course_model.dart';
+﻿import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -24,10 +24,10 @@ class PremiumCourseCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFFFFF8E7), // Beige background
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: const Color(0xFFD68D3C).withOpacity(0.3)),
+          border: Border.all(color: const Color(0xFFD68D3C).withValues(alpha: 0.3)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -125,7 +125,7 @@ class PremiumCourseCard extends StatelessWidget {
                   SizedBox(height: 16.h),
                   Container(
                     height: 1,
-                    color: const Color(0xFFD68D3C).withOpacity(0.3),
+                    color: const Color(0xFFD68D3C).withValues(alpha: 0.3),
                   ),
                   SizedBox(height: 12.h),
 
@@ -182,3 +182,4 @@ class PremiumCourseCard extends StatelessWidget {
     );
   }
 }
+

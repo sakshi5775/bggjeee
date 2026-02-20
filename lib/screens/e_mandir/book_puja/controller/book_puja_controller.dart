@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/puja_model.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/puja_service.dart';
 import 'package:flutter/material.dart';
@@ -161,15 +161,15 @@ class BookPujaController extends BaseController {
   String getPujaIcon(PujaModel puja) {
     final title = puja.title?.toLowerCase() ?? '';
     if (title.contains('ganesh') || title.contains('ganesha')) {
-      return 'ॐ';
+      return 'à¥';
     } else if (title.contains('rudra') || title.contains('shiva')) {
-      return '🔱';
+      return 'ðŸ”±';
     } else if (title.contains('lakshmi')) {
-      return '🪔';
+      return 'ðŸª”';
     } else if (title.contains('navgrah') || title.contains('navgraha')) {
-      return '⭐';
+      return 'â­';
     }
-    return 'ॐ';
+    return 'à¥';
   }
 
   // Get minimum price from packages
@@ -193,3 +193,4 @@ class BookPujaController extends BaseController {
     return '30 mins'; // Default
   }
 }
+

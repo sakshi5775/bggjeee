@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+﻿import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_video_call_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -257,7 +257,7 @@ class AstrologerVideoCallView extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.8),
+        color: Colors.grey.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Column(
@@ -356,7 +356,7 @@ class AstrologerVideoCallView extends StatelessWidget {
                 }
                 // Placeholder when video is off
                 return Container(
-                  color: Colors.grey.withOpacity(0.5),
+                  color: Colors.grey.withValues(alpha: 0.5),
                   child: Center(
                     child: Icon(Icons.person, size: 60.w, color: Colors.white),
                   ),
@@ -370,7 +370,7 @@ class AstrologerVideoCallView extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.all(4.w),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -479,12 +479,12 @@ class AstrologerVideoCallView extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(
           color: controller.showLowBalanceWarning.value
               ? Colors.orange
-              : Colors.white.withOpacity(0.2),
+              : Colors.white.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -500,7 +500,7 @@ class AstrologerVideoCallView extends StatelessWidget {
                   AutoTranslateText(
                     'Rate/Min:',
                     style: MyTextTheme.smallBCN.copyWith(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                   Obx(
@@ -520,7 +520,7 @@ class AstrologerVideoCallView extends StatelessWidget {
                   AutoTranslateText(
                     'Wallet:',
                     style: MyTextTheme.smallBCN.copyWith(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                   Obx(
@@ -549,7 +549,7 @@ class AstrologerVideoCallView extends StatelessWidget {
                   AutoTranslateText(
                     'Charges So Far:',
                     style: MyTextTheme.smallBCN.copyWith(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                   Obx(
@@ -570,7 +570,7 @@ class AstrologerVideoCallView extends StatelessWidget {
                     AutoTranslateText(
                       'Available:',
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                     Obx(
@@ -607,7 +607,7 @@ class AstrologerVideoCallView extends StatelessWidget {
           // Active (On state) -> Red, Inactive (Off state) -> Black
           color: isActive ? Colors.red : Colors.black,
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1),
         ),
         child: Icon(icon, color: Colors.white, size: 24.w),
       ),
@@ -625,7 +625,7 @@ class AstrologerVideoCallView extends StatelessWidget {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.red.withOpacity(0.3),
+              color: Colors.red.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -641,7 +641,7 @@ class AstrologerVideoCallView extends StatelessWidget {
       return Container(
         width: size == double.infinity ? null : size.w,
         height: size == double.infinity ? null : size.h,
-        color: Colors.grey.withOpacity(0.3),
+        color: Colors.grey.withValues(alpha: 0.3),
         child: Center(
           child: Icon(
             Icons.person,
@@ -662,7 +662,7 @@ class AstrologerVideoCallView extends StatelessWidget {
           return Container(
             width: size == double.infinity ? null : size.w,
             height: size == double.infinity ? null : size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Center(
               child: Icon(
                 Icons.person,
@@ -700,7 +700,7 @@ class AstrologerVideoCallView extends StatelessWidget {
           return Container(
             width: size == double.infinity ? null : size.w,
             height: size == double.infinity ? null : size.h,
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Center(
               child: Icon(
                 Icons.person,
@@ -714,3 +714,4 @@ class AstrologerVideoCallView extends StatelessWidget {
     }
   }
 }
+

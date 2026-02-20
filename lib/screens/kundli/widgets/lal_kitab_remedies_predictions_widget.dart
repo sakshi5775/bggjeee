@@ -35,7 +35,7 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 24.h),
             child: AutoTranslateText(
               'No data available',
-              style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+              style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withValues(alpha: 0.6)),
             ),
           ),
         );
@@ -48,7 +48,7 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 16.h),
             child: AutoTranslateText(
               'No data available',
-              style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+              style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withValues(alpha: 0.6)),
             ),
           ),
         );
@@ -93,9 +93,9 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
+        border: Border.all(color: '#ed6f30'.toColor().withValues(alpha: 0.2), width: 1),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 8, offset: const Offset(0, 2)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 8, offset: const Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -125,7 +125,7 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.3), width: 1),
+                    border: Border.all(color: '#ed6f30'.toColor().withValues(alpha: 0.3), width: 1),
                   ),
                   child: AutoTranslateText(
                     'House: $house',
@@ -191,7 +191,7 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(14.r),
-                  border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.18)),
+                  border: Border.all(color: '#ed6f30'.toColor().withValues(alpha: 0.18)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,7 +201,7 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
                       height: 26.w,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: ['#ed6f30'.toColor().withOpacity(0.9), '#ff9f68'.toColor()],
+                          colors: ['#ed6f30'.toColor().withValues(alpha: 0.9), '#ff9f68'.toColor()],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -234,3 +234,4 @@ class LalKitabRemediesPredictionsWidget extends StatelessWidget {
     );
   }
 }
+

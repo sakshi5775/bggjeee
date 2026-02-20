@@ -284,7 +284,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(18.r),
         boxShadow: [
           BoxShadow(
-            color: "#F38B3B".toColor().withOpacity(0.35),
+            color: "#F38B3B".toColor().withValues(alpha: 0.35),
             blurRadius: 16,
             offset: Offset(0, 6),
           ),
@@ -302,8 +302,8 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: [
-                    "#DD2914".toColor().withOpacity(0.35),
-                    "#F38B3B".toColor().withOpacity(0.15),
+                    "#DD2914".toColor().withValues(alpha: 0.35),
+                    "#F38B3B".toColor().withValues(alpha: 0.15),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -319,7 +319,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(10.w),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -336,7 +336,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                         AutoTranslateText(
                           "Your Question",
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: Colors.white.withOpacity(0.85),
+                            color: Colors.white.withValues(alpha: 0.85),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -360,10 +360,10 @@ class PrashnaKundaliResultsView extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
+                  color: Colors.white.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -379,7 +379,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                     Container(
                       width: 1,
                       height: 32.h,
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
                     ),
                     Spacing.w(12),
                     Expanded(
@@ -415,7 +415,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
               AutoTranslateText(
                 label,
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: Colors.white.withOpacity(0.75),
+                  color: Colors.white.withValues(alpha: 0.75),
                   fontSize: 10.sp,
                 ),
               ),
@@ -444,7 +444,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
         border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.07),
+            color: Colors.black.withValues(alpha: 0.07),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -479,7 +479,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
-                color: "#F38B3B".toColor().withOpacity(0.3),
+                color: "#F38B3B".toColor().withValues(alpha: 0.3),
                 width: 1.5,
               ),
             ),
@@ -515,7 +515,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                 color: '#FFF2E8'.toColor(),
                 borderRadius: BorderRadius.circular(10.r),
                 border: Border.all(
-                  color: "#F38B3B".toColor().withOpacity(0.3),
+                  color: "#F38B3B".toColor().withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -524,7 +524,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(8.w),
                     decoration: BoxDecoration(
-                      color: "#F38B3B".toColor().withOpacity(0.1),
+                      color: "#F38B3B".toColor().withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -617,7 +617,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
         border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: Offset(0, 2),
           ),
@@ -637,7 +637,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
               ),
               shape: BoxShape.circle,
               border: Border.all(
-                color: "#F38B3B".toColor().withOpacity(0.2),
+                color: "#F38B3B".toColor().withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -709,7 +709,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
         border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: Offset(0, 2),
           ),
@@ -726,7 +726,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                   color: colorPair.$2.toColor(),
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: colorPair.$1.toColor().withOpacity(0.3),
+                    color: colorPair.$1.toColor().withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -787,7 +787,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
             borderRadius: BorderRadius.circular(18.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.25),
+                color: Colors.black.withValues(alpha: 0.25),
                 blurRadius: 16,
                 offset: Offset(0, 6),
               ),
@@ -855,7 +855,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
                   child: AutoTranslateText(
                     text,
                     style: MyTextTheme.mediumBCN.copyWith(
-                      color: Colors.black.withOpacity(0.95),
+                      color: Colors.black.withValues(alpha: 0.95),
                       height: 1.5,
                     ),
                   ),
@@ -930,7 +930,7 @@ class PrashnaKundaliResultsView extends StatelessWidget {
               borderRadius: BorderRadius.circular(12.r),
               boxShadow: [
                 BoxShadow(
-                  color: "#F38B3B".toColor().withOpacity(0.35),
+                  color: "#F38B3B".toColor().withValues(alpha: 0.35),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
                 ),
@@ -998,3 +998,4 @@ class PrashnaKundaliResultsView extends StatelessWidget {
     );
   }
 }
+

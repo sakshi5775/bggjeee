@@ -39,7 +39,7 @@ class LagnaChartWidget extends StatelessWidget {
               AutoTranslateText(
                 'Loading chart...',
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#6F221E".toColor().withValues(alpha: 0.7),
                   fontSize: 14.sp,
                 ),
               ),
@@ -75,13 +75,13 @@ class LagnaChartWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
         border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.2),
+          color: "#ed6f30".toColor().withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -105,7 +105,7 @@ class LagnaChartWidget extends StatelessWidget {
                       fit: BoxFit.contain,
                       alignment: Alignment.center,
                       placeholderBuilder: (context) => Container(
-                        color: Colors.grey.withOpacity(0.08),
+                        color: Colors.grey.withValues(alpha: 0.08),
                         child: Center(
                           child: SizedBox(
                             width: 24.w,
@@ -131,9 +131,9 @@ class LagnaChartWidget extends StatelessWidget {
             children: [
               _buildLegendChip('*', 'Retro'),
               _buildLegendChip('^', 'Combust'),
-              _buildLegendChip('□', 'Vargottama'),
-              _buildLegendChip('↑', 'Exalt'),
-              _buildLegendChip('↓', 'Debil'),
+              _buildLegendChip('â–¡', 'Vargottama'),
+              _buildLegendChip('â†‘', 'Exalt'),
+              _buildLegendChip('â†“', 'Debil'),
             ],
           ),
         ],
@@ -145,10 +145,10 @@ class LagnaChartWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
       decoration: BoxDecoration(
-        color: "#ed6f30".toColor().withOpacity(0.08),
+        color: "#ed6f30".toColor().withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(6.r),
         border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.25),
+          color: "#ed6f30".toColor().withValues(alpha: 0.25),
           width: 1,
         ),
       ),
@@ -167,7 +167,7 @@ class LagnaChartWidget extends StatelessWidget {
           AutoTranslateText(
             label,
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.75),
+              color: "#6F221E".toColor().withValues(alpha: 0.75),
               fontSize: 10.sp,
             ),
           ),
@@ -216,13 +216,13 @@ class LagnaChartWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
           ],
           border: Border.all(
-            color: "#ed6f30".toColor().withOpacity(0.2),
+            color: "#ed6f30".toColor().withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -367,7 +367,7 @@ class LagnaChartWidget extends StatelessWidget {
           border: Border.all(
             color: isPlanetSelected
                 ? "#ed6f30".toColor()
-                : "#ed6f30".toColor().withOpacity(0.35),
+                : "#ed6f30".toColor().withValues(alpha: 0.35),
             width: isPlanetSelected ? 1.5 : 1,
           ),
         ),
@@ -409,7 +409,7 @@ class LagnaChartWidget extends StatelessWidget {
                 AutoTranslateText(
                   'Loading planetary positions...',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#6F221E".toColor().withValues(alpha: 0.7),
                     fontSize: 12.sp,
                   ),
                 ),
@@ -427,7 +427,7 @@ class LagnaChartWidget extends StatelessWidget {
             child: AutoTranslateText(
               'Planetary positions will be displayed here',
               style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#6F221E".toColor().withValues(alpha: 0.7),
                 fontSize: 12.sp,
               ),
               textAlign: TextAlign.center,
@@ -451,10 +451,10 @@ class LagnaChartWidget extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
               decoration: BoxDecoration(
-                color: "#ed6f30".toColor().withOpacity(0.08),
+                color: "#ed6f30".toColor().withValues(alpha: 0.08),
                 border: Border(
                   bottom: BorderSide(
-                    color: "#ed6f30".toColor().withOpacity(0.25),
+                    color: "#ed6f30".toColor().withValues(alpha: 0.25),
                     width: 1,
                   ),
                 ),
@@ -503,13 +503,13 @@ class LagnaChartWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
         border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.2),
+          color: "#ed6f30".toColor().withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -563,10 +563,10 @@ class LagnaChartWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: isEven ? "#ed6f30".toColor().withOpacity(0.04) : Colors.white,
+        color: isEven ? "#ed6f30".toColor().withValues(alpha: 0.04) : Colors.white,
         border: Border(
           bottom: BorderSide(
-            color: "#ed6f30".toColor().withOpacity(0.12),
+            color: "#ed6f30".toColor().withValues(alpha: 0.12),
             width: 1,
           ),
         ),
@@ -603,8 +603,9 @@ class LagnaChartWidget extends StatelessWidget {
   String _formatDegree(dynamic degree) {
     if (degree == null) return '-';
     if (degree is num) {
-      return '${degree.toStringAsFixed(2)}°';
+      return '${degree.toStringAsFixed(2)}Â°';
     }
-    return '$degree°';
+    return '$degreeÂ°';
   }
 }
+

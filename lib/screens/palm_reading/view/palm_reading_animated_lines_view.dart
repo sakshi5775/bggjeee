@@ -303,7 +303,7 @@ class AnimatedPalmLinesPainter extends CustomPainter {
 
     // Draw Life Line (light blue) - curved around thumb area
     if (lifeLineProgress > 0) {
-      linePaint.color = Colors.lightBlue.withOpacity(0.9);
+      linePaint.color = Colors.lightBlue.withValues(alpha: 0.9);
       linePaint.maskFilter = MaskFilter.blur(BlurStyle.normal, 2);
       
       final lifeLine = Path();
@@ -332,7 +332,7 @@ class AnimatedPalmLinesPainter extends CustomPainter {
 
     // Draw Head Line (orange) - middle horizontal, across the palm
     if (headLineProgress > 0) {
-      linePaint.color = "#F38B3B".toColor().withOpacity(0.9);
+      linePaint.color = "#F38B3B".toColor().withValues(alpha: 0.9);
       linePaint.maskFilter = MaskFilter.blur(BlurStyle.normal, 2);
       
       final headStartX = handLeft + handWidth * 0.2;
@@ -351,7 +351,7 @@ class AnimatedPalmLinesPainter extends CustomPainter {
 
     // Draw Fate Line (purple) - vertical center of palm
     if (fateLineProgress > 0) {
-      linePaint.color = Colors.purple.withOpacity(0.9);
+      linePaint.color = Colors.purple.withValues(alpha: 0.9);
       linePaint.maskFilter = MaskFilter.blur(BlurStyle.normal, 2);
       
       final fateX = handLeft + handWidth * 0.5;
@@ -370,7 +370,7 @@ class AnimatedPalmLinesPainter extends CustomPainter {
 
     // Draw Heart Line (red) - top horizontal, across the palm below fingers
     if (heartLineProgress > 0) {
-      linePaint.color = Colors.red.withOpacity(0.9);
+      linePaint.color = Colors.red.withValues(alpha: 0.9);
       linePaint.maskFilter = MaskFilter.blur(BlurStyle.normal, 2);
       
       final heartStartX = handLeft + handWidth * 0.15;
@@ -389,7 +389,7 @@ class AnimatedPalmLinesPainter extends CustomPainter {
 
     // Draw Sun Line (yellow/gold) - diagonal from base toward ring finger
     if (sunLineProgress > 0) {
-      linePaint.color = Colors.amber.withOpacity(0.9);
+      linePaint.color = Colors.amber.withValues(alpha: 0.9);
       linePaint.maskFilter = MaskFilter.blur(BlurStyle.normal, 2);
       
       final sunStartX = handLeft + handWidth * 0.4;
@@ -417,4 +417,5 @@ class AnimatedPalmLinesPainter extends CustomPainter {
         oldDelegate.sunLineProgress != sunLineProgress;
   }
 }
+
 

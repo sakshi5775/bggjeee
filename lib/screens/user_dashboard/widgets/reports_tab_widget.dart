@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:astrobharataiuser/data_model/report_model.dart';
@@ -181,10 +181,10 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: '#DBCCA8'.toColor().withOpacity(0.4)),
+          border: Border.all(color: '#DBCCA8'.toColor().withValues(alpha: 0.4)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -196,7 +196,7 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
               width: 48.w,
               height: 48.w,
               decoration: BoxDecoration(
-                color: '#FCE5AA'.toColor().withOpacity(0.3),
+                color: '#FCE5AA'.toColor().withValues(alpha: 0.3),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -304,3 +304,4 @@ class _ReportsTabWidgetState extends State<ReportsTabWidget> {
     }
   }
 }
+

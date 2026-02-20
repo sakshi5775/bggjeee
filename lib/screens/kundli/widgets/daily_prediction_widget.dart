@@ -164,7 +164,7 @@ class DailyPredictionWidget extends StatelessWidget {
                         gradient: colorCode.isEmpty ? AppColors.orangeGradient : null,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.grey.withOpacity(0.3),
+                          color: Colors.grey.withValues(alpha: 0.3),
                           width: 2,
                         ),
                       ),
@@ -232,7 +232,7 @@ class DailyPredictionWidget extends StatelessWidget {
                           width: 40.w,
                           height: 40.w,
                           decoration: BoxDecoration(
-                            color: AppColors.deepOrange.withOpacity(0.1),
+                            color: AppColors.deepOrange.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(
                               color: AppColors.deepOrange,
@@ -332,7 +332,7 @@ class DailyPredictionWidget extends StatelessWidget {
                       if (signName.isNotEmpty || date.isNotEmpty) ...[
                         Spacing.h(4),
                         AutoTranslateText(
-                          [if (signName.isNotEmpty) signName, if (date.isNotEmpty) date].join(' • '),
+                          [if (signName.isNotEmpty) signName, if (date.isNotEmpty) date].join(' â€¢ '),
                           style: MyTextTheme.smallBCN.copyWith(color: AppColors.textSecondary, fontSize: 11.sp),
                         ),
                       ],
@@ -471,7 +471,7 @@ class DailyPredictionWidget extends StatelessWidget {
           if (modality.isNotEmpty || triplicity.isNotEmpty || quadruplicity.isNotEmpty) ...[
             Spacing.h(8),
             AutoTranslateText(
-              [if (modality.isNotEmpty) 'Modality: $modality', if (triplicity.isNotEmpty) 'Triplicity: $triplicity', if (quadruplicity.isNotEmpty) 'Quadruplicity: $quadruplicity'].join(' • '),
+              [if (modality.isNotEmpty) 'Modality: $modality', if (triplicity.isNotEmpty) 'Triplicity: $triplicity', if (quadruplicity.isNotEmpty) 'Quadruplicity: $quadruplicity'].join(' â€¢ '),
               style: MyTextTheme.smallBCN.copyWith(color: AppColors.textSecondary, fontSize: 11.sp),
             ),
           ],
@@ -505,7 +505,7 @@ class DailyPredictionWidget extends StatelessWidget {
             return Padding(
               padding: EdgeInsets.only(bottom: 4.h),
               child: AutoTranslateText(
-                '$p1 – $p2: $aspect${effect.isNotEmpty ? ' – $effect' : ''}',
+                '$p1 â€“ $p2: $aspect${effect.isNotEmpty ? ' â€“ $effect' : ''}',
                 style: MyTextTheme.smallBCN.copyWith(color: AppColors.textSecondary, fontSize: 11.sp),
               ),
             );
@@ -644,12 +644,12 @@ class DailyPredictionWidget extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         gradient: isSelected ? AppColors.orangeGradient : null,
-                        color: isSelected ? null : AppColors.dividerLight.withOpacity(0.5),
+                        color: isSelected ? null : AppColors.dividerLight.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
                           color: isSelected
                               ? AppColors.deepOrange
-                              : AppColors.deepOrange.withOpacity(0.3),
+                              : AppColors.deepOrange.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -677,3 +677,4 @@ class DailyPredictionWidget extends StatelessWidget {
     );
   }
 }
+

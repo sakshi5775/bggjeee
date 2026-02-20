@@ -38,7 +38,7 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
       if (response == null) {
         // Show loading state
         return Container(
-          color: Colors.black.withOpacity(0.7),
+          color: Colors.black.withValues(alpha: 0.7),
           child: const Center(child: CircularProgressIndicator()),
         );
       }
@@ -46,7 +46,7 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
       return GestureDetector(
         onTap: () => controller.closeReading(),
         child: Container(
-          color: Colors.black.withOpacity(0.7),
+          color: Colors.black.withValues(alpha: 0.7),
           child: Center(
             child: GestureDetector(
               onTap: () {},
@@ -70,7 +70,7 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
                           borderRadius: BorderRadius.circular(20.r),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
+                              color: Colors.black.withValues(alpha: 0.3),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
@@ -233,7 +233,7 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: ExpansionTile(
         key: ValueKey(key),
@@ -266,3 +266,4 @@ class _TarotDailyWidgetState extends State<TarotDailyWidget> {
     );
   }
 }
+

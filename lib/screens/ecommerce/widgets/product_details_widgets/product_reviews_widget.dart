@@ -21,10 +21,10 @@ class ProductReviewsWidget extends StatelessWidget {
       return Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
+          color: Colors.white.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: AppColors.saffron.withOpacity(0.2),
+            color: AppColors.saffron.withValues(alpha: 0.2),
             width: 0.68,
           ),
         ),
@@ -76,7 +76,7 @@ class ProductReviewsWidget extends StatelessWidget {
                   Divider(
                     height: 1,
                     thickness: 0.68,
-                    color: AppColors.saffron.withOpacity(0.2),
+                    color: AppColors.saffron.withValues(alpha: 0.2),
                   ),
                   Padding(
                     padding: EdgeInsets.all(24.w),
@@ -91,10 +91,10 @@ class ProductReviewsWidget extends StatelessWidget {
                             width: double.infinity,
                             padding: EdgeInsets.symmetric(vertical: 12.h),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12.r),
                               border: Border.all(
-                                color: AppColors.saffron.withOpacity(0.2),
+                                color: AppColors.saffron.withValues(alpha: 0.2),
                               ),
                             ),
                             child: Center(
@@ -127,9 +127,9 @@ class ProductReviewsWidget extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 16.h),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.5),
+        color: Colors.white.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.saffron.withOpacity(0.1)),
+        border: Border.all(color: AppColors.saffron.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,7 +142,7 @@ class ProductReviewsWidget extends StatelessWidget {
                 width: 40.w,
                 height: 40.w,
                 decoration: BoxDecoration(
-                  color: AppColors.saffron.withOpacity(0.2),
+                  color: AppColors.saffron.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(Icons.person, color: AppColors.saffron, size: 24.w),
@@ -216,7 +216,7 @@ class ProductReviewsWidget extends StatelessWidget {
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w400,
                   fontSize: 12,
-                  color: '#3D0C11'.toColor().withOpacity(0.5),
+                  color: '#3D0C11'.toColor().withValues(alpha: 0.5),
                 ),
               ),
             ],
@@ -238,3 +238,4 @@ class ProductReviewsWidget extends StatelessWidget {
     );
   }
 }
+

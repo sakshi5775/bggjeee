@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/waiting_screen/waiting_screen/controller/waiting_screen_controller.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -35,3 +35,4 @@ class WaitingScreenView extends BasePage<WaitingScreenController> {
     );
   }
 }
+

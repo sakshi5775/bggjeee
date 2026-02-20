@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/all_videos_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/instagram_webview.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/widgets/media_cards.dart';
@@ -90,7 +90,7 @@ class AllVideosView extends BasePage<AllVideosController> {
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       height: 40.h,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.5),
+        color: Colors.white.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(color: Colors.white, width: 1),
       ),
@@ -101,7 +101,7 @@ class AllVideosView extends BasePage<AllVideosController> {
           gradient: AppColors.primaryGradient,
           boxShadow: [
             BoxShadow(
-              color: '#68171E'.toColor().withOpacity(0.2),
+              color: '#68171E'.toColor().withValues(alpha: 0.2),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -220,3 +220,5 @@ class AllVideosView extends BasePage<AllVideosController> {
     }
   }
 }
+
+

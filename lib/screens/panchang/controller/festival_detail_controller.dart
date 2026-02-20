@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/panchang/service/panchang_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -169,4 +169,5 @@ class FestivalDetailController extends BaseController {
     }
   }
 }
+
 

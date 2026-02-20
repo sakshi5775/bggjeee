@@ -59,10 +59,10 @@ class RamalShastraMethodView extends StatelessWidget {
                         children: [
                           _buildMethodCard(
                             icon: Icons.casino,
-                            emoji: '🎲',
+                            emoji: 'ðŸŽ²',
                             title: 'Dice',
                             description:
-                                'Roll 4 dice × 4 rounds to generate 16 values',
+                                'Roll 4 dice Ã— 4 rounds to generate 16 values',
                             onTap: () {
                               controller.setCastingMethod('dice');
                               Get.toNamed(AppRoutes.ramalShastraCastingDice);
@@ -71,7 +71,7 @@ class RamalShastraMethodView extends StatelessWidget {
                           Spacing.h(16),
                           _buildMethodCard(
                             icon: Icons.style,
-                            emoji: '🃏',
+                            emoji: 'ðŸƒ',
                             title: 'Cards',
                             description: 'Draw 16 cards - Red = 1, Black = 0',
                             onTap: () {
@@ -82,7 +82,7 @@ class RamalShastraMethodView extends StatelessWidget {
                           Spacing.h(16),
                           _buildMethodCard(
                             icon: Icons.brightness_1,
-                            emoji: '●●',
+                            emoji: 'â—â—',
                             title: 'Dots',
                             description:
                                 'Tap randomly on screen 16 times - Odd taps = 1, Even taps = 0',
@@ -122,7 +122,7 @@ class RamalShastraMethodView extends StatelessWidget {
           border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.07),
+              color: Colors.black.withValues(alpha: 0.07),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -177,3 +177,4 @@ class RamalShastraMethodView extends StatelessWidget {
     );
   }
 }
+

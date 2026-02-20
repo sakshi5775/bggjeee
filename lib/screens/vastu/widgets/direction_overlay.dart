@@ -28,11 +28,11 @@ class _DirectionOverlayState extends State<DirectionOverlay> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: "#F38B3B".toColor().withOpacity(0.9),
+        color: "#F38B3B".toColor().withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -66,4 +66,5 @@ class _DirectionOverlayState extends State<DirectionOverlay> {
     );
   }
 }
+
 

@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/value/dimension.dart';
+﻿import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/courses/widgets/learning_journey_dialog.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -85,7 +85,7 @@ class MasteryBundlesSection extends StatelessWidget {
                             'Comprehensive Knowledge Coverage & Advanced Master-Level Training',
                         icon: Icons.stars,
                         whatYouWillLearn: [
-                          'HEADER: 📚 Comprehensive Knowledge Coverage',
+                          'HEADER: ðŸ“š Comprehensive Knowledge Coverage',
                           'Vedic Astrology',
                           'KP Astrology',
                           'Lal Kitab',
@@ -98,8 +98,8 @@ class MasteryBundlesSection extends StatelessWidget {
                           'Reiki Healing',
                           'Nakshatra Analysis',
                           'Remedies, Yantra, Mantra & Chakra Balancing',
-                          'Past Life Regression Theory (PLRT – Conceptual Framework)',
-                          'HEADER: 🎓 Advanced Master-Level Training',
+                          'Past Life Regression Theory (PLRT â€“ Conceptual Framework)',
+                          'HEADER: ðŸŽ“ Advanced Master-Level Training',
                           'Rule-based prediction systems',
                           'Cross-validation (Astrology + Face + Palm + Numbers)',
                           'Complex case audits (career, marriage, health, karma)',
@@ -108,7 +108,7 @@ class MasteryBundlesSection extends StatelessWidget {
                         ],
                         learningOutcomes: [
                           'Expert-level authority & Faculty eligibility',
-                          'Priority Live Q&A (“First-Row Access”)',
+                          'Priority Live Q&A (â€œFirst-Row Accessâ€)',
                           'Lifetime alumni & professional network',
                           'Recognition as a Modern Occult Scientist',
                         ],
@@ -141,7 +141,7 @@ class MasteryBundlesSection extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFFFFF8E7), // Beige background
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: const Color(0xFFD68D3C).withOpacity(0.5)),
+          border: Border.all(color: const Color(0xFFD68D3C).withValues(alpha: 0.5)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,3 +291,4 @@ class MasteryBundlesSection extends StatelessWidget {
     );
   }
 }
+

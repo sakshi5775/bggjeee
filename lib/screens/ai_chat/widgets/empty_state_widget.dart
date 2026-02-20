@@ -29,7 +29,7 @@ class EmptyStateWidget extends StatelessWidget {
             Container(
               padding: AppPaddings.all(24),
               decoration: BoxDecoration(
-                color: AppColors.saffron.withOpacity(0.1),
+                color: AppColors.saffron.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -83,4 +83,5 @@ class EmptyStateWidget extends StatelessWidget {
     );
   }
 }
+
 

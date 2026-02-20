@@ -29,7 +29,7 @@ class TarotShuffleButtonWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -50,7 +50,7 @@ class TarotShuffleButtonWidget extends StatelessWidget {
             // Divider
             Container(
               width: 1.w,
-              color: '#ede7c8'.toColor().withOpacity(0.3),
+              color: '#ede7c8'.toColor().withValues(alpha: 0.3),
             ),
             // Part 2: Both Shuffle
             Expanded(
@@ -65,7 +65,7 @@ class TarotShuffleButtonWidget extends StatelessWidget {
             // Divider
             Container(
               width: 1.w,
-              color: '#ede7c8'.toColor().withOpacity(0.3),
+              color: '#ede7c8'.toColor().withValues(alpha: 0.3),
             ),
             // Part 3: Major Shuffle
             Expanded(
@@ -155,6 +155,7 @@ class TarotShuffleButtonWidget extends StatelessWidget {
     }
   }
 }
+
 
 
 

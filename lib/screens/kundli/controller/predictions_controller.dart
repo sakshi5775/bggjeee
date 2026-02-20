@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
@@ -721,7 +721,7 @@ class PredictionsController extends BaseController {
                           'Error',
                           'Please enter your name',
                           snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.red.withOpacity(0.8),
+                          backgroundColor: Colors.red.withValues(alpha: 0.8),
                           colorText: Colors.white,
                         );
                         return;
@@ -865,10 +865,10 @@ class PredictionsController extends BaseController {
               Container(
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
-                  color: "#ed6f30".toColor().withOpacity(0.1),
+                  color: "#ed6f30".toColor().withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: "#ed6f30".toColor().withOpacity(0.3),
+                    color: "#ed6f30".toColor().withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -1091,7 +1091,7 @@ class PredictionsController extends BaseController {
                   AutoTranslateText(
                     'Select two zodiac signs to check daily love compatibility.',
                     style: MyTextTheme.smallBCN.copyWith(
-                      color: "#6F221E".toColor().withOpacity(0.8),
+                      color: "#6F221E".toColor().withValues(alpha: 0.8),
                     ),
                   ),
                   Spacing.h(16),
@@ -1210,7 +1210,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Failed to fetch Love Compatibility. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -1221,7 +1221,7 @@ class PredictionsController extends BaseController {
         'Error',
         'Failed to fetch Love Compatibility. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -1248,7 +1248,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Missing birth date. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
         return;
@@ -1271,7 +1271,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Failed to fetch Numerology Prediction. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -1282,7 +1282,7 @@ class PredictionsController extends BaseController {
         'Error',
         'Failed to fetch Numerology Prediction. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -1365,7 +1365,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Failed to fetch Daily Prediction. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -1376,7 +1376,7 @@ class PredictionsController extends BaseController {
         'Error',
         'Failed to fetch Daily Prediction. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -1405,7 +1405,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Failed to fetch Weekly Prediction. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -1416,7 +1416,7 @@ class PredictionsController extends BaseController {
         'Error',
         'Failed to fetch Weekly Prediction. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -1445,7 +1445,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Failed to fetch Monthly Prediction. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -1456,7 +1456,7 @@ class PredictionsController extends BaseController {
         'Error',
         'Failed to fetch Monthly Prediction. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -1486,7 +1486,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Failed to fetch Yearly Prediction. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -1497,7 +1497,7 @@ class PredictionsController extends BaseController {
         'Error',
         'Failed to fetch Yearly Prediction. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -1541,7 +1541,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Missing required birth details. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
         return;
@@ -1567,7 +1567,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Failed to fetch Ascendant Prediction. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -1578,7 +1578,7 @@ class PredictionsController extends BaseController {
         'Error',
         'Failed to fetch Ascendant Prediction. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -1622,7 +1622,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Missing required birth details. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
         return;
@@ -1648,7 +1648,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Failed to fetch Moon Sign Prediction. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -1659,7 +1659,7 @@ class PredictionsController extends BaseController {
         'Error',
         'Failed to fetch Moon Sign Prediction. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -1703,7 +1703,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Missing required birth details. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
         return;
@@ -1729,7 +1729,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Failed to fetch Nakshatra Prediction. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -1740,7 +1740,7 @@ class PredictionsController extends BaseController {
         'Error',
         'Failed to fetch Nakshatra Prediction. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -1784,7 +1784,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Missing required birth details. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
         return;
@@ -1810,7 +1810,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Failed to fetch Panchang Prediction. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -1821,7 +1821,7 @@ class PredictionsController extends BaseController {
         'Error',
         'Failed to fetch Panchang Prediction. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -1861,7 +1861,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Missing required birth details. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
         return;
@@ -1887,7 +1887,7 @@ class PredictionsController extends BaseController {
           'Error',
           'Failed to fetch Rudraksha suggestion. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -1898,7 +1898,7 @@ class PredictionsController extends BaseController {
         'Error',
         'Failed to fetch Rudraksha suggestion. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.withOpacity(0.8),
+        backgroundColor: Colors.red.withValues(alpha: 0.8),
         colorText: Colors.white,
       );
     }
@@ -2006,3 +2006,5 @@ class PredictionsController extends BaseController {
     }
   }
 }
+
+

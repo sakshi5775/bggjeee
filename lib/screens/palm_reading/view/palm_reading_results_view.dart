@@ -179,7 +179,7 @@ class PalmReadingResultsView extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -296,7 +296,7 @@ class PalmReadingResultsView extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: Colors.red.withOpacity(0.3), width: 2),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.3), width: 2),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -441,7 +441,7 @@ class PalmReadingResultsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -465,7 +465,7 @@ class PalmReadingResultsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: "#F38B3B".toColor().withOpacity(0.4),
+            color: "#F38B3B".toColor().withValues(alpha: 0.4),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -581,7 +581,7 @@ class StarryBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.6)
+      ..color = Colors.white.withValues(alpha: 0.6)
       ..style = PaintingStyle.fill;
 
     // Draw random stars
@@ -593,7 +593,7 @@ class StarryBackgroundPainter extends CustomPainter {
 
     // Draw some larger stars
     final largeStarPaint = Paint()
-      ..color = Colors.white.withOpacity(0.8)
+      ..color = Colors.white.withValues(alpha: 0.8)
       ..style = PaintingStyle.fill;
     for (int i = 0; i < 10; i++) {
       final x = (i * 87.2) % size.width;
@@ -605,3 +605,4 @@ class StarryBackgroundPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+

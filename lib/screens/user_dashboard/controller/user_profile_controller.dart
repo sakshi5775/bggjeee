@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:astrobharataiuser/app_manager/user_data.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/user_profile_model.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/service/user_profile_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
@@ -465,3 +465,4 @@ class UserProfileController extends BaseController {
     }
   }
 }
+

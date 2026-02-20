@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/navtara/model/navtara_models.dart';
 import 'package:astrobharataiuser/screens/navtara/service/navtara_service.dart';
 import 'package:flutter/material.dart';
@@ -571,3 +571,4 @@ class NavtaraController extends BaseController
     );
   }
 }
+

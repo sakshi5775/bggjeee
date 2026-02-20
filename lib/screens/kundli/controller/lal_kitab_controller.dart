@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -503,7 +503,7 @@ class LalKitabController extends BaseController {
           'Error',
           'Failed to fetch Varshphal Chart. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -530,7 +530,7 @@ class LalKitabController extends BaseController {
           'Info',
           'Varshphal date adjusted to next year (birthday to birthday calculation).',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orange.withOpacity(0.8),
+          backgroundColor: Colors.orange.withValues(alpha: 0.8),
           colorText: Colors.white,
           duration: Duration(seconds: 3),
         );
@@ -540,7 +540,7 @@ class LalKitabController extends BaseController {
           'Error',
           'Failed to fetch Varshphal Chart. Please try again.',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           colorText: Colors.white,
         );
       }
@@ -603,4 +603,6 @@ class LalKitabController extends BaseController {
     return varshphalDate;
   }
 }
+
+
 

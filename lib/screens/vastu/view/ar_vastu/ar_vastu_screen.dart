@@ -109,7 +109,7 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
               // Use provided roomConfig or selected roomConfig
               final activeRoomConfig = roomConfigFromArgs ?? _selectedRoomConfig;
               
-              // VR 360° Mode - Full immersive experience
+              // VR 360Â° Mode - Full immersive experience
               if (arController.isSemiVRMode) {
                 return VR360Mode(
                   heading: compassController.heading,
@@ -288,7 +288,7 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
                     onTap: () {
                       arController.toggleSemiVRMode();
                     },
-                    tooltip: 'VR 360° Mode',
+                    tooltip: 'VR 360Â° Mode',
                   ),
                 ],
               ),
@@ -313,18 +313,18 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
         decoration: BoxDecoration(
           color: isActive
               ? "#F38B3B".toColor()
-              : Colors.black.withOpacity(0.6),
+              : Colors.black.withValues(alpha: 0.6),
           shape: BoxShape.circle,
           border: Border.all(
             color: isActive
-                ? Colors.white.withOpacity(0.3)
+                ? Colors.white.withValues(alpha: 0.3)
                 : Colors.transparent,
             width: 1.5,
           ),
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: "#F38B3B".toColor().withOpacity(0.4),
+                    color: "#F38B3B".toColor().withValues(alpha: 0.4),
                     blurRadius: 8,
                     spreadRadius: 1,
                   ),
@@ -371,7 +371,7 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
               end: Alignment.bottomCenter,
               colors: [
                 Colors.transparent,
-                Colors.black.withOpacity(0.8),
+                Colors.black.withValues(alpha: 0.8),
               ],
             ),
           ),
@@ -382,7 +382,7 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 decoration: BoxDecoration(
-                  color: _getEnergyStatusColor(energyModel.energyStatus).withOpacity(0.9),
+                  color: _getEnergyStatusColor(energyModel.energyStatus).withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Row(
@@ -407,9 +407,9 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
               SizedBox(height: 8.h),
               // Direction info
               AutoTranslateText(
-                'Facing ${compassController.currentDirection} (${compassController.heading.toStringAsFixed(1)}°)',
+                'Facing ${compassController.currentDirection} (${compassController.heading.toStringAsFixed(1)}Â°)',
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                 ).merge(AppTypography.body2),
               ),
             ],
@@ -463,7 +463,7 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
     ];
 
     return Scaffold(
-      backgroundColor: Colors.black.withOpacity(0.95),
+      backgroundColor: Colors.black.withValues(alpha: 0.95),
       body: SafeArea(
         child: Column(
           children: [
@@ -482,7 +482,7 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
                       width: 40.w,
                       height: 40.w,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -540,10 +540,10 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
       child: Container(
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
             width: 1.5,
           ),
         ),
@@ -605,11 +605,11 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
             decoration: BoxDecoration(
-              color: '#9C27B0'.toColor().withOpacity(0.9),
+              color: '#9C27B0'.toColor().withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(24.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -639,4 +639,5 @@ class _ARVastuScreenState extends State<ARVastuScreen> with WidgetsBindingObserv
     );
   }
 }
+
 

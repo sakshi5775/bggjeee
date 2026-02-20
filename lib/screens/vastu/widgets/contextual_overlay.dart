@@ -41,7 +41,7 @@ class ContextualOverlayPainter extends CustomPainter {
         center,
         radius,
         direction,
-        const Color(0xFF4CAF50).withOpacity(0.25), // Softer green
+        const Color(0xFF4CAF50).withValues(alpha: 0.25), // Softer green
         const Color(0xFF4CAF50),
       );
     }
@@ -53,7 +53,7 @@ class ContextualOverlayPainter extends CustomPainter {
         center,
         radius,
         direction,
-        const Color(0xFFE53935).withOpacity(0.15), // Softer red
+        const Color(0xFFE53935).withValues(alpha: 0.15), // Softer red
         const Color(0xFFE53935),
       );
     }
@@ -126,7 +126,7 @@ class ContextualOverlayPainter extends CustomPainter {
 
     // Draw pulsing circle
     final paint = Paint()
-      ..color = color.withOpacity(0.6)
+      ..color = color.withValues(alpha: 0.6)
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(Offset(x, y), 12, paint);
@@ -171,4 +171,5 @@ class ContextualOverlayPainter extends CustomPainter {
     return true;
   }
 }
+
 

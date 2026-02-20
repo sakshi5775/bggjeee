@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/persona_model.dart';
 import 'package:astrobharataiuser/screens/ai_chat/controllers/ai_chat_controller.dart';
@@ -17,7 +17,7 @@ import 'package:get/get.dart';
 class AiChatView extends BasePage<AiChatController> {
   final bool showBackButton;
 
-  /// When true, header (logo, back, wallet, search) is hidden — e.g. when embedded below dashboard slider.
+  /// When true, header (logo, back, wallet, search) is hidden â€” e.g. when embedded below dashboard slider.
   final bool hideHeader;
 
   const AiChatView({
@@ -297,3 +297,4 @@ class AiChatView extends BasePage<AiChatController> {
     );
   }
 }
+

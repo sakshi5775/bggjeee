@@ -140,7 +140,7 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
                     borderRadius: BorderRadius.circular(12.r),
                     boxShadow: [
                       BoxShadow(
-                        color: "#F38B3B".toColor().withOpacity(0.35),
+                        color: "#F38B3B".toColor().withValues(alpha: 0.35),
                         blurRadius: 6,
                         offset: const Offset(0, 3),
                       ),
@@ -201,7 +201,7 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
             width: 120.w,
             height: 120.w,
             decoration: BoxDecoration(
-              color: page['color'].toString().toColor().withOpacity(0.1),
+              color: page['color'].toString().toColor().withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -234,3 +234,4 @@ class _AROnboardingScreenState extends State<AROnboardingScreen> {
     );
   }
 }
+

@@ -34,7 +34,7 @@ class DailyPanchangWidget extends StatelessWidget {
               AutoTranslateText(
                 'Loading...',
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#6F221E".toColor().withValues(alpha: 0.7),
                   fontSize: 12.sp,
                 ),
               ),
@@ -49,7 +49,7 @@ class DailyPanchangWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No panchang data available',
             style: MyTextTheme.smallBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.7),
+              color: "#6F221E".toColor().withValues(alpha: 0.7),
               fontSize: 12.sp,
             ),
           ),
@@ -79,17 +79,17 @@ class DailyPanchangWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: AppColors.deepOrange.withOpacity(0.2),
+          color: AppColors.deepOrange.withValues(alpha: 0.2),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.08),
+            color: AppColors.deepOrange.withValues(alpha: 0.08),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -180,7 +180,7 @@ class DailyPanchangWidget extends StatelessWidget {
                 child: AutoTranslateText(
                   place,
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#6F221E".toColor().withValues(alpha: 0.7),
                     fontSize: 11.sp,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -277,9 +277,9 @@ class DailyPanchangWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.08),
+        color: accent.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: accent.withOpacity(0.2)),
+        border: Border.all(color: accent.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -292,7 +292,7 @@ class DailyPanchangWidget extends StatelessWidget {
                 AutoTranslateText(
                   label,
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#6F221E".toColor().withValues(alpha: 0.7),
                     fontSize: 10.sp,
                   ),
                 ),
@@ -331,7 +331,7 @@ class DailyPanchangWidget extends StatelessWidget {
             Icons.access_time,
             'Tithi',
             tithi['name']?.toString() ?? '--',
-            '${_formatDateTime(tithi['start'])} → ${_formatDateTime(tithi['end'])}',
+            '${_formatDateTime(tithi['start'])} â†’ ${_formatDateTime(tithi['end'])}',
             oc,
             details: {
               'Type': tithi['type']?.toString(),
@@ -349,7 +349,7 @@ class DailyPanchangWidget extends StatelessWidget {
             Icons.star,
             'Nakshatra',
             nakshatra['name']?.toString() ?? '--',
-            '${_formatDateTime(nakshatra['start'])} → ${_formatDateTime(nakshatra['end'])}',
+            '${_formatDateTime(nakshatra['start'])} â†’ ${_formatDateTime(nakshatra['end'])}',
             oc,
             details: {
               'Lord': nakshatra['lord']?.toString(),
@@ -370,7 +370,7 @@ class DailyPanchangWidget extends StatelessWidget {
             Icons.my_location,
             'Yoga',
             yoga['name']?.toString() ?? '--',
-            '${_formatDateTime(yoga['start'])} → ${_formatDateTime(yoga['end'])}',
+            '${_formatDateTime(yoga['start'])} â†’ ${_formatDateTime(yoga['end'])}',
             oc,
             details: {
               'Number': yoga['number']?.toString(),
@@ -386,7 +386,7 @@ class DailyPanchangWidget extends StatelessWidget {
             Icons.grid_view,
             'Karana',
             karana['name']?.toString() ?? '--',
-            '${_formatDateTime(karana['start'])} → ${_formatDateTime(karana['end'])}',
+            '${_formatDateTime(karana['start'])} â†’ ${_formatDateTime(karana['end'])}',
             oc,
             details: {
               'Type': karana['type']?.toString(),
@@ -416,9 +416,9 @@ class DailyPanchangWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.06),
+        color: accent.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: accent.withOpacity(0.2)),
+        border: Border.all(color: accent.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -434,7 +434,7 @@ class DailyPanchangWidget extends StatelessWidget {
                     AutoTranslateText(
                       label,
                       style: MyTextTheme.smallBCB.copyWith(
-                        color: "#6F221E".toColor().withOpacity(0.7),
+                        color: "#6F221E".toColor().withValues(alpha: 0.7),
                         fontSize: 10.sp,
                       ),
                     ),
@@ -451,7 +451,7 @@ class DailyPanchangWidget extends StatelessWidget {
                     AutoTranslateText(
                       timeRange,
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: "#6F221E".toColor().withOpacity(0.6),
+                        color: "#6F221E".toColor().withValues(alpha: 0.6),
                         fontSize: 10.sp,
                       ),
                     ),
@@ -474,7 +474,7 @@ class DailyPanchangWidget extends StatelessWidget {
                         AutoTranslateText(
                           entry.key,
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: "#6F221E".toColor().withOpacity(0.6),
+                            color: "#6F221E".toColor().withValues(alpha: 0.6),
                             fontSize: 10.sp,
                           ),
                         ),
@@ -523,7 +523,7 @@ class DailyPanchangWidget extends StatelessWidget {
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#6F221E".toColor().withValues(alpha: 0.7),
                 fontSize: 10.sp,
               ),
             ),
@@ -622,9 +622,9 @@ class DailyPanchangWidget extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(10.w),
           decoration: BoxDecoration(
-            color: oc.withOpacity(0.08),
+            color: oc.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(8.r),
-            border: Border.all(color: oc.withOpacity(0.2)),
+            border: Border.all(color: oc.withValues(alpha: 0.2)),
           ),
           child: Column(children: rows),
         ),
@@ -644,7 +644,7 @@ class DailyPanchangWidget extends StatelessWidget {
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#6F221E".toColor().withValues(alpha: 0.7),
                 fontSize: 10.sp,
               ),
               maxLines: 2,
@@ -702,9 +702,9 @@ class DailyPanchangWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
-              color: Colors.red.withOpacity(0.08),
+              color: Colors.red.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(8.r),
-              border: Border.all(color: Colors.red.withOpacity(0.25)),
+              border: Border.all(color: Colors.red.withValues(alpha: 0.25)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -779,9 +779,9 @@ class DailyPanchangWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.1),
+        color: accent.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: accent.withOpacity(0.25)),
+        border: Border.all(color: accent.withValues(alpha: 0.25)),
       ),
       child: Row(
         children: [
@@ -803,7 +803,7 @@ class DailyPanchangWidget extends StatelessWidget {
                 AutoTranslateText(
                   subtitle,
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: "#6F221E".toColor().withOpacity(0.7),
+                    color: "#6F221E".toColor().withValues(alpha: 0.7),
                     fontSize: 10.sp,
                   ),
                 ),
@@ -827,7 +827,7 @@ class DailyPanchangWidget extends StatelessWidget {
             child: AutoTranslateText(
               label,
               style: MyTextTheme.smallBCN.copyWith(
-                color: "#6F221E".toColor().withOpacity(0.7),
+                color: "#6F221E".toColor().withValues(alpha: 0.7),
                 fontSize: 10.sp,
               ),
               maxLines: 2,
@@ -903,9 +903,9 @@ class DailyPanchangWidget extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(10.w),
           decoration: BoxDecoration(
-            color: oc.withOpacity(0.06),
+            color: oc.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(8.r),
-            border: Border.all(color: oc.withOpacity(0.2)),
+            border: Border.all(color: oc.withValues(alpha: 0.2)),
           ),
           child: Column(children: rows),
         ),
@@ -917,7 +917,7 @@ class DailyPanchangWidget extends StatelessWidget {
     return Divider(
       height: 1,
       thickness: 1,
-      color: "#6F221E".toColor().withOpacity(0.1),
+      color: "#6F221E".toColor().withValues(alpha: 0.1),
     );
   }
 
@@ -939,3 +939,4 @@ class DailyPanchangWidget extends StatelessWidget {
     return dateStr;
   }
 }
+

@@ -167,7 +167,7 @@ class VastuShastraView extends StatelessWidget {
         border: Border.all(color: '#F3E5F5'.toColor(), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -233,3 +233,4 @@ class VastuShastraView extends StatelessWidget {
     );
   }
 }
+

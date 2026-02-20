@@ -23,7 +23,7 @@ class KpComingSoonWidget extends StatelessWidget {
           Icon(
             Icons.construction,
             size: 80.w,
-            color: "#ed6f30".toColor().withOpacity(0.5),
+            color: "#ed6f30".toColor().withValues(alpha: 0.5),
           ),
           Spacing.h(24),
           AutoTranslateText(
@@ -37,7 +37,7 @@ class KpComingSoonWidget extends StatelessWidget {
           AutoTranslateText(
             'Coming Soon',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ).merge(AppTypography.h3),
           ),
         ],
@@ -45,4 +45,5 @@ class KpComingSoonWidget extends StatelessWidget {
     );
   }
 }
+
 

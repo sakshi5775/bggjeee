@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/data_model/festival_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/e_mandir_home/service/e_mandir_home_service.dart';
 import 'package:get/get.dart';
@@ -266,3 +266,4 @@ class NamasteHomeController extends BaseController
     }
   }
 }
+

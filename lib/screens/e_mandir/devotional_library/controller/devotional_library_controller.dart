@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 
 class DevotionalLibraryController extends BaseController {
@@ -34,3 +34,4 @@ class DevotionalLibraryController extends BaseController {
     Get.toNamed(AppRoutes.devotionalPlayer);
   }
 }
+

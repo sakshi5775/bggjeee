@@ -34,7 +34,7 @@ class KpChartWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -46,7 +46,7 @@ class KpChartWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No chart data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -57,17 +57,17 @@ class KpChartWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Chart Container – same theme as KundliHeader (#6F221E / #ed6f30)
+            // Chart Container â€“ same theme as KundliHeader (#6F221E / #ed6f30)
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
-                    color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
+                    color: '#ed6f30'.toColor().withValues(alpha: 0.2), width: 1),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -99,4 +99,5 @@ class KpChartWidget extends StatelessWidget {
     });
   }
 }
+
 

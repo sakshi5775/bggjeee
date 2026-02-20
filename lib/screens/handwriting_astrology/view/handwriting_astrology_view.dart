@@ -26,7 +26,7 @@ class HandwritingAstrologyView extends StatelessWidget {
             CommonHeader(
               title: 'Handwriting Astrology',
               subtitle: AutoTranslateText(
-                'Ancient Graphology • AI Analysis',
+                'Ancient Graphology â€¢ AI Analysis',
                 style: MyTextTheme.smallBCN.copyWith(
                   color: AppColors.saffron.withValues(alpha: 0.9),
                 ),
@@ -121,7 +121,7 @@ class HandwritingAstrologyView extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: AutoTranslateText(
-        'Ancient Graphology • AI-Powered Analysis',
+        'Ancient Graphology â€¢ AI-Powered Analysis',
         style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
         textAlign: TextAlign.center,
       ),
@@ -139,7 +139,7 @@ class HandwritingAstrologyView extends StatelessWidget {
           border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.07),
+              color: Colors.black.withValues(alpha: 0.07),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -196,7 +196,7 @@ class HandwritingAstrologyView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: "#F38B3B".toColor().withOpacity(0.35),
+                      color: "#F38B3B".toColor().withValues(alpha: 0.35),
                       blurRadius: 6,
                       offset: const Offset(0, 3),
                     ),
@@ -336,7 +336,7 @@ class HandwritingAstrologyView extends StatelessWidget {
         border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -471,7 +471,7 @@ class HandwritingAstrologyView extends StatelessWidget {
           border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -529,7 +529,7 @@ class HandwritingAstrologyView extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.12),
+              color: Colors.black.withValues(alpha: 0.12),
               blurRadius: 18,
               offset: const Offset(0, 8),
             ),
@@ -547,8 +547,8 @@ class HandwritingAstrologyView extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      "#DD2914".toColor().withOpacity(0.35),
-                      "#F38B3B".toColor().withOpacity(0.15),
+                      "#DD2914".toColor().withValues(alpha: 0.35),
+                      "#F38B3B".toColor().withValues(alpha: 0.15),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -592,3 +592,4 @@ class HandwritingAstrologyView extends StatelessWidget {
     );
   }
 }
+

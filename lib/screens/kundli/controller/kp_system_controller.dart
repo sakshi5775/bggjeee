@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -68,13 +68,13 @@ class KpSystemController extends BaseController {
     super.onClose();
   }
   
-  // Handle page change from swipe – update selection and fetch data for this page
+  // Handle page change from swipe â€“ update selection and fetch data for this page
   void onPageChanged(int index) {
     selectedTabIndex.value = index;
     _fetchForPageIndex(index);
   }
 
-  // Called when user taps a tab – update selection, fetch data, animate to page
+  // Called when user taps a tab â€“ update selection, fetch data, animate to page
   void onTabSelected(int index) {
     selectedTabIndex.value = index;
     _fetchForPageIndex(index);
@@ -142,7 +142,7 @@ class KpSystemController extends BaseController {
     }
   }
 
-  // Tab names for display – first is Table (like Predictions), then content tabs. Nakshatra Nadi commented out.
+  // Tab names for display â€“ first is Table (like Predictions), then content tabs. Nakshatra Nadi commented out.
   final List<String> tabNames = [
     'Table',
     'KP Chart',
@@ -493,4 +493,5 @@ class KpSystemController extends BaseController {
     }
   }
 }
+
 

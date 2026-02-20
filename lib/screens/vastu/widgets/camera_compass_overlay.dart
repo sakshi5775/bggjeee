@@ -61,7 +61,7 @@ class _CameraCompassOverlayState extends State<CameraCompassOverlay>
       curve: Curves.easeIn,
     ));
     
-    // Compass scale: 0.95 → 1.0 (200ms per spec)
+    // Compass scale: 0.95 â†’ 1.0 (200ms per spec)
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
@@ -189,7 +189,7 @@ class _CameraCompassOverlayState extends State<CameraCompassOverlay>
                 width: 40.w,
                 height: 40.w,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -205,4 +205,5 @@ class _CameraCompassOverlayState extends State<CameraCompassOverlay>
     );
   }
 }
+
 

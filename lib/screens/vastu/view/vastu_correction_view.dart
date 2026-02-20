@@ -97,7 +97,7 @@ class VastuCorrectionView extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: statusColor.withOpacity(0.1),
+        color: statusColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: statusColor, width: 2),
       ),
@@ -234,3 +234,4 @@ class VastuCorrectionView extends StatelessWidget {
     return icons[index % icons.length];
   }
 }
+

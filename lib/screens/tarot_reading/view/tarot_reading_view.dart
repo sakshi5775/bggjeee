@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/screens/tarot_reading/controller/tarot_controller.dart';
@@ -120,7 +120,7 @@ class TarotReadingView extends BasePage<TarotController> {
                       ? 'Tap a card to reveal your reading'
                       : 'Tap the deck to begin your reading',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: '#68171E'.toColor().withOpacity(0.7),
+                    color: '#68171E'.toColor().withValues(alpha: 0.7),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -146,13 +146,13 @@ class TarotReadingView extends BasePage<TarotController> {
             borderRadius: BorderRadius.circular(20.r),
             boxShadow: [
               BoxShadow(
-                color: '#68171E'.toColor().withOpacity(0.3),
+                color: '#68171E'.toColor().withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
                 spreadRadius: 0,
               ),
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
                 spreadRadius: 0,
@@ -166,15 +166,15 @@ class TarotReadingView extends BasePage<TarotController> {
                 width: 60.w,
                 height: 60.w,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.25),
+                  color: Colors.white.withValues(alpha: 0.25),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: AppColors.templeGold.withOpacity(0.3),
+                    color: AppColors.templeGold.withValues(alpha: 0.3),
                     width: 2,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -204,7 +204,7 @@ class TarotReadingView extends BasePage<TarotController> {
                     AutoTranslateText(
                       'Connect with our experienced astrologers for personalized guidance',
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 12.sp,
                         height: 1.3,
                       ),
@@ -222,7 +222,7 @@ class TarotReadingView extends BasePage<TarotController> {
                         borderRadius: BorderRadius.circular(8.r),
                         boxShadow: [
                           BoxShadow(
-                            color: "#F38B3B".toColor().withOpacity(0.4),
+                            color: "#F38B3B".toColor().withValues(alpha: 0.4),
                             blurRadius: 6,
                             offset: const Offset(0, 3),
                           ),
@@ -268,7 +268,7 @@ class TarotReadingView extends BasePage<TarotController> {
           final hasCards = controller.cards.isNotEmpty;
 
           debugPrint(
-            '🎴 UI State: isShuffling=$isShuffling, showCards=$showCards, isLoading=$isLoading, hasCards=$hasCards',
+            'ðŸŽ´ UI State: isShuffling=$isShuffling, showCards=$showCards, isLoading=$isLoading, hasCards=$hasCards',
           );
 
           return Container(
@@ -385,13 +385,13 @@ class TarotReadingView extends BasePage<TarotController> {
           gradient: AppColors.orangeGradient,
           boxShadow: [
             BoxShadow(
-              color: "#F38B3B".toColor().withOpacity(0.4),
+              color: "#F38B3B".toColor().withValues(alpha: 0.4),
               blurRadius: 20,
               spreadRadius: 2,
               offset: const Offset(0, 8),
             ),
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 12,
               offset: const Offset(0, 6),
             ),
@@ -406,7 +406,7 @@ class TarotReadingView extends BasePage<TarotController> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: AutoTranslateText(
@@ -463,13 +463,13 @@ class TarotReadingView extends BasePage<TarotController> {
                         border: Border.all(
                           color: isSelected
                               ? Colors.transparent
-                              : '#68171E'.toColor().withOpacity(0.3),
+                              : '#68171E'.toColor().withValues(alpha: 0.3),
                           width: 1.5,
                         ),
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: "#F38B3B".toColor().withOpacity(0.3),
+                                  color: "#F38B3B".toColor().withValues(alpha: 0.3),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -542,13 +542,13 @@ class TarotReadingView extends BasePage<TarotController> {
                         border: Border.all(
                           color: isSelected
                               ? Colors.transparent
-                              : '#68171E'.toColor().withOpacity(0.3),
+                              : '#68171E'.toColor().withValues(alpha: 0.3),
                           width: 1.5,
                         ),
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: "#F38B3B".toColor().withOpacity(0.3),
+                                  color: "#F38B3B".toColor().withValues(alpha: 0.3),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -586,7 +586,7 @@ class TarotReadingView extends BasePage<TarotController> {
       final categoryName = controller.unsuitableCategoryName.value;
 
       debugPrint(
-        '🔍 Unsuitable Card Widget - showMessage: $showMessage, cardName: $cardName, categoryName: $categoryName',
+        'ðŸ” Unsuitable Card Widget - showMessage: $showMessage, cardName: $cardName, categoryName: $categoryName',
       );
 
       if (!showMessage || cardName.isEmpty || categoryName.isEmpty) {
@@ -605,7 +605,7 @@ class TarotReadingView extends BasePage<TarotController> {
             categoryName: categoryName,
             onAnimationComplete: () {
               debugPrint(
-                '✅ Unsuitable card animation complete, calling auto-retry',
+                'âœ… Unsuitable card animation complete, calling auto-retry',
               );
               controller.handleUnsuitableCardAutoRetry();
             },
@@ -615,3 +615,5 @@ class TarotReadingView extends BasePage<TarotController> {
     });
   }
 }
+
+

@@ -1,5 +1,5 @@
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/horoscope/controller/horoscope_form_controller.dart';
@@ -43,17 +43,17 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
       color: Colors.white,
       borderRadius: BorderRadius.circular(16.r),
       border: Border.all(
-        color: AppColors.deepOrange.withOpacity(0.2),
+        color: AppColors.deepOrange.withValues(alpha: 0.2),
         width: 1.5,
       ),
       boxShadow: [
         BoxShadow(
-          color: AppColors.deepOrange.withOpacity(0.08),
+          color: AppColors.deepOrange.withValues(alpha: 0.08),
           blurRadius: 16,
           offset: const Offset(0, 4),
         ),
         BoxShadow(
-          color: Colors.black.withOpacity(0.04),
+          color: Colors.black.withValues(alpha: 0.04),
           blurRadius: 8,
           offset: const Offset(0, 2),
         ),
@@ -71,7 +71,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
       contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.w),
       hintText: hint,
       hintStyle: MyTextTheme.smallBCN.copyWith(
-        color: AppColors.textSecondary.withOpacity(0.6),
+        color: AppColors.textSecondary.withValues(alpha: 0.6),
         fontSize: 13.sp,
       ),
       prefixIcon: Padding(
@@ -81,11 +81,11 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
       suffixIcon: suffix,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: AppColors.deepOrange.withOpacity(0.2)),
+        borderSide: BorderSide(color: AppColors.deepOrange.withValues(alpha: 0.2)),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: AppColors.deepOrange.withOpacity(0.2)),
+        borderSide: BorderSide(color: AppColors.deepOrange.withValues(alpha: 0.2)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
@@ -139,7 +139,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
             child: AutoTranslateText(
               'Accurate birth time improves horoscope accuracy.',
               style: MyTextTheme.smallBCN.copyWith(
-                color: AppColors.textSecondary.withOpacity(0.7),
+                color: AppColors.textSecondary.withValues(alpha: 0.7),
                 fontSize: 11.sp,
               ),
             ),
@@ -164,7 +164,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
       children: [
         Expanded(
           child: Divider(
-            color: AppColors.deepOrange.withOpacity(0.3),
+            color: AppColors.deepOrange.withValues(alpha: 0.3),
             thickness: 1,
           ),
         ),
@@ -180,7 +180,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
         ),
         Expanded(
           child: Divider(
-            color: AppColors.deepOrange.withOpacity(0.3),
+            color: AppColors.deepOrange.withValues(alpha: 0.3),
             thickness: 1,
           ),
         ),
@@ -312,7 +312,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+          border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.2)),
         ),
         child: Row(
           children: [
@@ -326,7 +326,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
                       : controller.selectedLocation.value,
                   style: MyTextTheme.smallBCN.copyWith(
                     color: controller.selectedLocation.value.isEmpty
-                        ? AppColors.textSecondary.withOpacity(0.6)
+                        ? AppColors.textSecondary.withValues(alpha: 0.6)
                         : AppColors.textPrimary,
                     fontSize: 13.sp,
                   ),
@@ -365,7 +365,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.deepOrange.withOpacity(0.2)),
+        border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.2)),
       ),
       child: Obx(
         () => DropdownButtonHideUnderline(
@@ -388,7 +388,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
                 AutoTranslateText(
                   'Select Language',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: AppColors.textSecondary.withOpacity(0.6),
+                    color: AppColors.textSecondary.withValues(alpha: 0.6),
                     fontSize: 13.sp,
                   ),
                 ),
@@ -435,7 +435,7 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepOrange.withOpacity(0.3),
+              color: AppColors.deepOrange.withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -514,3 +514,5 @@ class HoroscopeFormView extends BasePage<HoroscopeFormController> {
     );
   }
 }
+
+

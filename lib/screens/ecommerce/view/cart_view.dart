@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/address_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.dart';
@@ -64,7 +64,7 @@ class CartView extends GetView<CartController> {
                     AutoTranslateText(
                       firstItemName,
                       style: AppTypography.body2.copyWith(
-                        color: '#6F221E'.toColor().withOpacity(0.7),
+                        color: '#6F221E'.toColor().withValues(alpha: 0.7),
                       ),
                     ),
                     SizedBox(height: 12.h),
@@ -72,10 +72,10 @@ class CartView extends GetView<CartController> {
                       width: double.infinity,
                       padding: EdgeInsets.all(16.w),
                       decoration: BoxDecoration(
-                        color: '#6F221E'.toColor().withOpacity(0.05),
+                        color: '#6F221E'.toColor().withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
-                          color: '#6F221E'.toColor().withOpacity(0.1),
+                          color: '#6F221E'.toColor().withValues(alpha: 0.1),
                         ),
                       ),
                       child: Column(
@@ -84,7 +84,7 @@ class CartView extends GetView<CartController> {
                           AutoTranslateText(
                             'Total Amount',
                             style: AppTypography.label.copyWith(
-                              color: '#6F221E'.toColor().withOpacity(0.6),
+                              color: '#6F221E'.toColor().withValues(alpha: 0.6),
                             ),
                           ),
                           SizedBox(height: 4.h),
@@ -270,12 +270,12 @@ class CartView extends GetView<CartController> {
                           border: Border.all(
                             color: isSelected
                                 ? AppColors.saffron
-                                : AppColors.textSecondary.withOpacity(0.3),
+                                : AppColors.textSecondary.withValues(alpha: 0.3),
                             width: isSelected ? 2 : 1,
                           ),
                           borderRadius: BorderRadius.circular(12.r),
                           color: isSelected
-                              ? AppColors.saffron.withOpacity(0.05)
+                              ? AppColors.saffron.withValues(alpha: 0.05)
                               : Colors.white,
                         ),
                         child: Column(
@@ -442,13 +442,13 @@ class _CouponSection extends StatelessWidget {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.r),
                         borderSide: BorderSide(
-                          color: Colors.black.withOpacity(0.08),
+                          color: Colors.black.withValues(alpha: 0.08),
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.r),
                         borderSide: BorderSide(
-                          color: Colors.black.withOpacity(0.08),
+                          color: Colors.black.withValues(alpha: 0.08),
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
@@ -503,7 +503,7 @@ class _CouponSection extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  color: AppColors.saffron.withOpacity(0.08),
+                  color: AppColors.saffron.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Row(
@@ -516,7 +516,7 @@ class _CouponSection extends StatelessWidget {
                     SizedBox(width: 8.w),
                     Expanded(
                       child: AutoTranslateText(
-                        'Coupon $couponCode applied • Saved ₹${(coupon.discount ?? 0).toStringAsFixed(0)}',
+                        'Coupon $couponCode applied â€¢ Saved ₹${(coupon.discount ?? 0).toStringAsFixed(0)}',
                         style: TextStyle(
                           color: AppColors.saffron,
                           fontWeight: FontWeight.w600,
@@ -644,7 +644,7 @@ class _AddressSection extends StatelessWidget {
                           vertical: 4.h,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.saffron.withOpacity(0.12),
+                          color: AppColors.saffron.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(20.r),
                         ),
                         child: AutoTranslateText(
@@ -695,7 +695,7 @@ class _AddressSection extends StatelessWidget {
                     width: 40.w,
                     height: 4.h,
                     decoration: BoxDecoration(
-                      color: AppColors.textSecondary.withOpacity(0.3),
+                      color: AppColors.textSecondary.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(2.r),
                     ),
                   ),
@@ -733,11 +733,11 @@ class _AddressSection extends StatelessWidget {
                               border: Border.all(
                                 color: isSelected
                                     ? AppColors.saffron
-                                    : AppColors.textSecondary.withOpacity(0.12),
+                                    : AppColors.textSecondary.withValues(alpha: 0.12),
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.04),
+                                  color: Colors.black.withValues(alpha: 0.04),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
@@ -899,7 +899,7 @@ class _AddressSection extends StatelessWidget {
                                             ),
                                             decoration: BoxDecoration(
                                               color: AppColors.saffron
-                                                  .withOpacity(0.12),
+                                                  .withValues(alpha: 0.12),
                                               borderRadius:
                                                   BorderRadius.circular(20.r),
                                             ),
@@ -993,7 +993,7 @@ class _EmptyCartWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(70.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 6),
                 ),
@@ -1015,7 +1015,7 @@ class _EmptyCartWidget extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           AutoTranslateText(
-            'Looks like you haven’t added anything yet.\nStart exploring our products.',
+            'Looks like you havenâ€™t added anything yet.\nStart exploring our products.',
             textAlign: TextAlign.center,
             style: AppTypography.body1.copyWith(color: AppColors.textSecondary),
           ),
@@ -1040,3 +1040,4 @@ class _EmptyCartWidget extends StatelessWidget {
     );
   }
 }
+

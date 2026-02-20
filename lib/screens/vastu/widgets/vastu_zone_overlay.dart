@@ -126,9 +126,9 @@ class VastuZonePainter extends CustomPainter {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            zoneColor.withOpacity(0.65), // More transparent to show zone_ring.png texture
-            zoneColor.withOpacity(0.50),
-            zoneColor.withOpacity(0.60),
+            zoneColor.withValues(alpha: 0.65), // More transparent to show zone_ring.png texture
+            zoneColor.withValues(alpha: 0.50),
+            zoneColor.withValues(alpha: 0.60),
           ],
           stops: const [0.0, 0.5, 1.0],
         ).createShader(
@@ -140,7 +140,7 @@ class VastuZonePainter extends CustomPainter {
       // Add subtle gold border between segments (premium detail)
       final borderPaint = Paint()
         ..style = PaintingStyle.stroke
-        ..color = '#D4AF37'.toColor().withOpacity(0.4)
+        ..color = '#D4AF37'.toColor().withValues(alpha: 0.4)
         ..strokeWidth = 1.0;
       
       canvas.drawPath(path, borderPaint);
@@ -153,4 +153,5 @@ class VastuZonePainter extends CustomPainter {
         oldDelegate.currentDirection != currentDirection;
   }
 }
+
 

@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+﻿import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_voice_call_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -140,7 +140,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
                   Obx(
                     () => controller.isLoading.value
                         ? Container(
-                            color: Colors.black.withOpacity(0.7),
+                            color: Colors.black.withValues(alpha: 0.7),
                             child: Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -209,9 +209,9 @@ class AstrologerVoiceCallView extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.3),
-                  Colors.black.withOpacity(0.5),
-                  Colors.black.withOpacity(0.7),
+                  Colors.black.withValues(alpha: 0.3),
+                  Colors.black.withValues(alpha: 0.5),
+                  Colors.black.withValues(alpha: 0.7),
                 ],
                 stops: const [0.0, 0.5, 1.0],
               ),
@@ -225,7 +225,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
   Widget _buildImage(String? imageUrl) {
     if (imageUrl == null || imageUrl.isEmpty || imageUrl == 'placeholder_url') {
       return Container(
-        color: Colors.grey.withOpacity(0.3),
+        color: Colors.grey.withValues(alpha: 0.3),
         child: Center(
           child: Icon(Icons.person, size: 200.w, color: Colors.grey),
         ),
@@ -238,7 +238,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return Container(
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Center(
               child: Icon(Icons.person, size: 200.w, color: Colors.grey),
             ),
@@ -266,7 +266,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
           return Container(
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             child: Center(
               child: Icon(Icons.person, size: 200.w, color: Colors.grey),
             ),
@@ -280,7 +280,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.95),
+        color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(30.r),
           topRight: Radius.circular(30.r),
@@ -421,7 +421,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: bgColor.withOpacity(0.3),
+              color: bgColor.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -442,7 +442,7 @@ class AstrologerVoiceCallView extends StatelessWidget {
         border: Border.all(
           color: controller.showLowBalanceWarning.value
               ? Colors.orange
-              : const Color(0xFFDFB343).withOpacity(0.3),
+              : const Color(0xFFDFB343).withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -549,3 +549,4 @@ class AstrologerVoiceCallView extends StatelessWidget {
     );
   }
 }
+

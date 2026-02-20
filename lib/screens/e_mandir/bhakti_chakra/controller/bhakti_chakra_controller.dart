@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/bhakti_chakra/data_model/chakra_item.dart';
 
 class BhaktiChakraController extends BaseController {
@@ -65,3 +65,4 @@ class BhaktiChakraController extends BaseController {
     ),
   ];
 }
+

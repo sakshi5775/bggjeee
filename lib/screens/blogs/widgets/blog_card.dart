@@ -101,7 +101,7 @@ class BlogCard extends StatelessWidget {
                                       url: blog.featuredImage!,
                                     )
                                   : Container(
-                                      color: Colors.grey.withOpacity(0.3),
+                                      color: Colors.grey.withValues(alpha: 0.3),
                                       child: const Icon(Icons.image),
                                     ),
                         ),
@@ -153,7 +153,7 @@ class BlogCard extends StatelessWidget {
                                 return Container(
                                   padding: AppPaddings.symmetric(h: 8, v: 4),
                                   decoration: BoxDecoration(
-                                    color: AppColors.saffron.withOpacity(0.1),
+                                    color: AppColors.saffron.withValues(alpha: 0.1),
                                     borderRadius: AppRadius.all(12),
                                   ),
                                   child: LocalizedText(
@@ -236,7 +236,7 @@ class BlogCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: _getStatusColor(
                           blog.status ?? '',
-                        ).withOpacity(0.1),
+                        ).withValues(alpha: 0.1),
                         borderRadius: AppRadius.all(12),
                       ),
                       child: Row(
@@ -359,3 +359,4 @@ class BlogCard extends StatelessWidget {
     }
   }
 }
+

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_category_model.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/god_data.dart';
 import 'package:astrobharataiuser/screens/e_mandir/virtual_darshan/data_model/puja_item_category_model.dart';
@@ -623,3 +623,4 @@ class VirtualDarshanController extends BaseController
     Get.toNamed('/devotional-library');
   }
 }
+

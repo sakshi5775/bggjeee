@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/address_model.dart';
 import 'package:astrobharataiuser/data_model/payment_model.dart';
@@ -346,7 +346,7 @@ class PujaBookingFormController extends BaseController {
           (route) => route.settings.name == AppRoutes.bookPuja,
         );
         Get.snackbar(
-          'Payment Successful! 🎉',
+          'Payment Successful! ðŸŽ‰',
           'Your puja has been booked and payment completed successfully',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green.withValues(alpha: 0.9),
@@ -441,3 +441,4 @@ class PujaBookingFormController extends BaseController {
     super.onClose();
   }
 }
+

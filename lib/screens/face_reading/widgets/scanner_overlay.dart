@@ -86,12 +86,12 @@ class _ScannerOverlayState extends State<ScannerOverlay>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: widget.scannerColor.withOpacity(0.8),
+                  color: widget.scannerColor.withValues(alpha: 0.8),
                   blurRadius: 15,
                   spreadRadius: 2,
                 ),
                 BoxShadow(
-                  color: widget.scannerColor.withOpacity(0.4),
+                  color: widget.scannerColor.withValues(alpha: 0.4),
                   blurRadius: 30,
                   spreadRadius: 5,
                 ),
@@ -103,4 +103,5 @@ class _ScannerOverlayState extends State<ScannerOverlay>
     );
   }
 }
+
 

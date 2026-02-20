@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/widgets/common_header.dart';
+﻿import 'package:astrobharataiuser/widgets/common_header.dart';
 import 'package:astrobharataiuser/data_model/payment_model.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/payment_detail_controller.dart';
@@ -69,7 +69,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
         borderRadius: BorderRadius.circular(18.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -110,7 +110,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
               ),
               SizedBox(width: 6.w),
               AutoTranslateText(
-                payment.paymentMethod?.toUpperCase() ?? '—',
+                payment.paymentMethod?.toUpperCase() ?? 'â€”',
                 style: TextStyle(color: AppColors.textSecondary),
               ),
             ],
@@ -118,15 +118,15 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
           SizedBox(height: 12.h),
           _InfoRow(
             label: 'Payment provider',
-            value: payment.paymentProvider ?? '—',
+            value: payment.paymentProvider ?? 'â€”',
           ),
           _InfoRow(
             label: 'Transaction ID',
-            value: payment.transactionId ?? '—',
+            value: payment.transactionId ?? 'â€”',
           ),
           _InfoRow(
             label: 'Gateway order ID',
-            value: payment.gatewayOrderId ?? '—',
+            value: payment.gatewayOrderId ?? 'â€”',
           ),
           _InfoRow(
             label: 'Completed at',
@@ -142,7 +142,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                 width: double.infinity,
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
-                  color: AppColors.error.withOpacity(0.08),
+                  color: AppColors.error.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: AutoTranslateText(
@@ -167,7 +167,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
         borderRadius: BorderRadius.circular(18.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -217,14 +217,14 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _InfoRow(label: 'Refund status', value: refund.status ?? '—'),
+                _InfoRow(label: 'Refund status', value: refund.status ?? 'â€”'),
                 _InfoRow(
                   label: 'Refund amount',
                   value: refund.amount > 0
                       ? '₹${refund.amount.toStringAsFixed(0)}'
-                      : '—',
+                      : 'â€”',
                 ),
-                _InfoRow(label: 'Refund ID', value: refund.refundId ?? '—'),
+                _InfoRow(label: 'Refund ID', value: refund.refundId ?? 'â€”'),
                 _InfoRow(
                   label: 'Initiated at',
                   value: _formatDate(refund.initiatedAt),
@@ -233,7 +233,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                   label: 'Completed at',
                   value: _formatDate(refund.completedAt),
                 ),
-                _InfoRow(label: 'Reason', value: refund.reason ?? '—'),
+                _InfoRow(label: 'Reason', value: refund.reason ?? 'â€”'),
               ],
             )
           else
@@ -257,7 +257,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
         borderRadius: BorderRadius.circular(18.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -274,8 +274,8 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
             ),
           ),
           SizedBox(height: 12.h),
-          _InfoRow(label: 'Order ID', value: order.orderId ?? '—'),
-          _InfoRow(label: 'Status', value: order.status ?? '—'),
+          _InfoRow(label: 'Order ID', value: order.orderId ?? 'â€”'),
+          _InfoRow(label: 'Status', value: order.status ?? 'â€”'),
           _InfoRow(
             label: 'Order total',
             value: '₹${order.totalAmount.toStringAsFixed(0)}',
@@ -320,7 +320,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
   }
 
   String _formatDate(String? value) {
-    if (value == null || value.isEmpty) return '—';
+    if (value == null || value.isEmpty) return 'â€”';
     try {
       final date = DateTime.parse(value).toLocal();
       return DateFormat('dd MMM yyyy, hh:mm a').format(date);
@@ -340,7 +340,7 @@ class _StatusChip extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: AppColors.saffron.withOpacity(0.12),
+        color: AppColors.saffron.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: AutoTranslateText(
@@ -385,3 +385,4 @@ class _InfoRow extends StatelessWidget {
     );
   }
 }
+

@@ -1,6 +1,6 @@
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/numerology/controller/numerology_form_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
@@ -59,7 +59,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -120,18 +120,18 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
             hintText: 'Enter your name',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
-              borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+              borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
-              borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+              borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
               borderSide: BorderSide(color: "#6F221E".toColor(), width: 2),
             ),
             filled: true,
-            fillColor: Colors.grey.withOpacity(0.05),
+            fillColor: Colors.grey.withValues(alpha: 0.05),
           ),
         ),
       ],
@@ -164,18 +164,18 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
             hintText: 'Enter your phone number',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
-              borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+              borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
-              borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+              borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.r),
               borderSide: BorderSide(color: "#6F221E".toColor(), width: 2),
             ),
             filled: true,
-            fillColor: Colors.grey.withOpacity(0.05),
+            fillColor: Colors.grey.withValues(alpha: 0.05),
           ),
         ),
       ],
@@ -206,12 +206,12 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
               decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.05),
+                color: Colors.grey.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8.r),
                 border: Border.all(
                   color: controller.selectedDate.value != null
                       ? "#6F221E".toColor()
-                      : Colors.grey.withOpacity(0.3),
+                      : Colors.grey.withValues(alpha: 0.3),
                   width: controller.selectedDate.value != null ? 2 : 1,
                 ),
               ),
@@ -277,13 +277,13 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
                     padding: EdgeInsets.symmetric(vertical: 12.h),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? "#6F221E".toColor().withOpacity(0.2)
-                          : Colors.grey.withOpacity(0.05),
+                          ? "#6F221E".toColor().withValues(alpha: 0.2)
+                          : Colors.grey.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(8.r),
                       border: Border.all(
                         color: isSelected
                             ? "#6F221E".toColor()
-                            : Colors.grey.withOpacity(0.3),
+                            : Colors.grey.withValues(alpha: 0.3),
                         width: isSelected ? 2 : 1,
                       ),
                     ),
@@ -338,18 +338,18 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
               hintText: 'Select language',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.r),
-                borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.r),
-                borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.r),
                 borderSide: BorderSide(color: "#6F221E".toColor(), width: 2),
               ),
               filled: true,
-              fillColor: Colors.grey.withOpacity(0.05),
+              fillColor: Colors.grey.withValues(alpha: 0.05),
             ),
             items: controller.languages.entries.map((entry) {
               return DropdownMenuItem(
@@ -379,7 +379,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
             gradient: LinearGradient(
               colors: [
                 "#F38B3B".toColor(),
-                "#DD2914".toColor().withOpacity(0.8),
+                "#DD2914".toColor().withValues(alpha: 0.8),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -387,7 +387,7 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
             borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
-                color: "#DFB343".toColor().withOpacity(0.3),
+                color: "#DFB343".toColor().withValues(alpha: 0.3),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -444,3 +444,5 @@ class NumerologyFormView extends BasePage<NumerologyFormController> {
     }
   }
 }
+
+

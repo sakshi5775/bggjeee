@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/horoscope/service/horoscope_service.dart';
 import 'package:astrobharataiuser/screens/kundli/service/kundli_service.dart';
 import 'package:astrobharataiuser/utils/address_helper.dart';
@@ -722,3 +722,4 @@ class HoroscopeMainController extends BaseController {
     scan(data);
   }
 }
+

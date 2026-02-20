@@ -36,7 +36,7 @@ class MangalDoshWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -48,7 +48,7 @@ class MangalDoshWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -95,10 +95,10 @@ class MangalDoshWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
+        border: Border.all(color: _maroon.withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -136,10 +136,10 @@ class MangalDoshWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
+        border: Border.all(color: _maroon.withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -197,8 +197,8 @@ class MangalDoshWidget extends StatelessWidget {
     //         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
     //         decoration: BoxDecoration(
     //           color: value
-    //               ? Colors.red.withOpacity(0.1)
-    //               : Colors.green.withOpacity(0.1),
+    //               ? Colors.red.withValues(alpha: 0.1)
+    //               : Colors.green.withValues(alpha: 0.1),
     //           borderRadius: BorderRadius.circular(12.r),
     //         ),
     //         child: AutoTranslateText(
@@ -216,12 +216,12 @@ class MangalDoshWidget extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 8.h),
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: _maroon.withOpacity(0.04),
+        color: _maroon.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(
           color: value
-              ? Colors.green.withOpacity(0.25)
-              : Colors.red.withOpacity(0.25),
+              ? Colors.green.withValues(alpha: 0.25)
+              : Colors.red.withValues(alpha: 0.25),
         ),
       ),
       child: Row(
@@ -240,8 +240,8 @@ class MangalDoshWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
             decoration: BoxDecoration(
               color: value
-                  ? Colors.green.withOpacity(0.12)
-                  : Colors.red.withOpacity(0.12),
+                  ? Colors.green.withValues(alpha: 0.12)
+                  : Colors.red.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(16.r),
             ),
             child: Row(
@@ -282,10 +282,10 @@ class MangalDoshWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
+        border: Border.all(color: _maroon.withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -305,7 +305,7 @@ class MangalDoshWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
             decoration: BoxDecoration(
-              color: _orange.withOpacity(0.12),
+              color: _orange.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10.r),
             ),
             child: AutoTranslateText(
@@ -331,10 +331,10 @@ class MangalDoshWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
+        border: Border.all(color: _maroon.withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -371,7 +371,7 @@ class MangalDoshWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  color: _orange.withOpacity(0.12),
+                  color: _orange.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: AutoTranslateText(
@@ -418,9 +418,9 @@ class MangalDoshWidget extends StatelessWidget {
                 margin: EdgeInsets.only(bottom: 8.h),
                 padding: EdgeInsets.all(10.w),
                 decoration: BoxDecoration(
-                  color: _maroon.withOpacity(0.04),
+                  color: _maroon.withValues(alpha: 0.04),
                   borderRadius: BorderRadius.circular(10.r),
-                  border: Border.all(color: _orange.withOpacity(0.2)),
+                  border: Border.all(color: _orange.withValues(alpha: 0.2)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -455,10 +455,10 @@ class MangalDoshWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
+        border: Border.all(color: _maroon.withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -500,9 +500,9 @@ class MangalDoshWidget extends StatelessWidget {
               margin: EdgeInsets.only(bottom: 8.h),
               padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: _maroon.withOpacity(0.04),
+                color: _maroon.withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(10.r),
-                border: Border.all(color: _orange.withOpacity(0.2)),
+                border: Border.all(color: _orange.withValues(alpha: 0.2)),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -557,10 +557,10 @@ class MangalDoshWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: _maroon.withOpacity(0.2), width: 1),
+        border: Border.all(color: _maroon.withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -612,3 +612,4 @@ class MangalDoshWidget extends StatelessWidget {
     );
   }
 }
+

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-/// KP Planet Details – compact table (planet-details API: planets + ascendant, all fields).
+/// KP Planet Details â€“ compact table (planet-details API: planets + ascendant, all fields).
 class KpPlanetsWidget extends StatelessWidget {
   final KpSystemController controller;
 
@@ -28,7 +28,7 @@ class KpPlanetsWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN
-                .copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+                .copyWith(color: '#6F221E'.toColor().withValues(alpha: 0.6)),
           ),
         );
       }
@@ -39,7 +39,7 @@ class KpPlanetsWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN
-                .copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+                .copyWith(color: '#6F221E'.toColor().withValues(alpha: 0.6)),
           ),
         );
       }
@@ -59,7 +59,7 @@ class KpPlanetsWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN
-                .copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+                .copyWith(color: '#6F221E'.toColor().withValues(alpha: 0.6)),
           ),
         );
       }
@@ -108,11 +108,11 @@ class KpPlanetsWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 6,
               offset: const Offset(0, 2)),
         ],
-        border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
+        border: Border.all(color: '#ed6f30'.toColor().withValues(alpha: 0.2), width: 1),
       ),
       clipBehavior: Clip.antiAlias,
       child: child,
@@ -123,10 +123,10 @@ class KpPlanetsWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: '#ed6f30'.toColor().withOpacity(0.08),
+        color: '#ed6f30'.toColor().withValues(alpha: 0.08),
         border: Border(
           bottom:
-              BorderSide(color: '#ed6f30'.toColor().withOpacity(0.25), width: 1),
+              BorderSide(color: '#ed6f30'.toColor().withValues(alpha: 0.25), width: 1),
         ),
       ),
       child: Row(
@@ -224,10 +224,10 @@ class KpPlanetsWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: isEven ? '#ed6f30'.toColor().withOpacity(0.04) : Colors.white,
+        color: isEven ? '#ed6f30'.toColor().withValues(alpha: 0.04) : Colors.white,
         border: Border(
           bottom: BorderSide(
-              color: '#ed6f30'.toColor().withOpacity(0.12), width: 1),
+              color: '#ed6f30'.toColor().withValues(alpha: 0.12), width: 1),
         ),
       ),
       child: Row(
@@ -256,3 +256,4 @@ class KpPlanetsWidget extends StatelessWidget {
     );
   }
 }
+

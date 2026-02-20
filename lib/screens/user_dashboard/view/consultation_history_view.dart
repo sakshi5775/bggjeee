@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+﻿import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
@@ -139,13 +139,13 @@ class _ConsultationHistoryViewState extends State<ConsultationHistoryView>
               indicatorColor: AppColors.deepOrange,
               indicatorWeight: 3,
               labelColor: '#3D0C11'.toColor(),
-              unselectedLabelColor: '#6F221E'.toColor().withOpacity(0.6),
+              unselectedLabelColor: '#6F221E'.toColor().withValues(alpha: 0.6),
               labelStyle: MyTextTheme.mediumBCB.copyWith(
                 fontWeight: FontWeight.w600,
                 color: '#3D0C11'.toColor(),
               ),
               unselectedLabelStyle: MyTextTheme.mediumBCN.copyWith(
-                color: '#6F221E'.toColor().withOpacity(0.6),
+                color: '#6F221E'.toColor().withValues(alpha: 0.6),
               ),
               tabs: const [
                 Tab(text: 'Chat History'),
@@ -236,10 +236,10 @@ class _ChatHistoryTab extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: '#DBCCA8'.toColor().withOpacity(0.5)),
+        border: Border.all(color: '#DBCCA8'.toColor().withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -254,7 +254,7 @@ class _ChatHistoryTab extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.12),
+                  color: statusColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(color: statusColor, width: 1),
                 ),
@@ -268,7 +268,7 @@ class _ChatHistoryTab extends StatelessWidget {
               AutoTranslateText(
                 controller.formatDate(date),
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: '#6F221E'.toColor().withOpacity(0.7),
+                  color: '#6F221E'.toColor().withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -277,7 +277,7 @@ class _ChatHistoryTab extends StatelessWidget {
           AutoTranslateText(
             'Chat ID: ${session.chatId}',
             style: MyTextTheme.smallBCN.copyWith(
-              color: '#6F221E'.toColor().withOpacity(0.8),
+              color: '#6F221E'.toColor().withValues(alpha: 0.8),
             ),
           ),
           Spacing.h(12),
@@ -346,7 +346,7 @@ class _EmptyHistoryTab extends StatelessWidget {
               width: 120.w,
               height: 120.w,
               decoration: BoxDecoration(
-                color: AppColors.deepOrange.withOpacity(0.15),
+                color: AppColors.deepOrange.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
                 border: Border.all(color: AppColors.deepOrange, width: 2),
               ),
@@ -476,10 +476,10 @@ class _CallHistoryTab extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: '#DBCCA8'.toColor().withOpacity(0.5)),
+        border: Border.all(color: '#DBCCA8'.toColor().withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -494,7 +494,7 @@ class _CallHistoryTab extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.12),
+                  color: statusColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(color: statusColor, width: 1),
                 ),
@@ -508,7 +508,7 @@ class _CallHistoryTab extends StatelessWidget {
               AutoTranslateText(
                 controller.formatDate(date),
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: '#6F221E'.toColor().withOpacity(0.7),
+                  color: '#6F221E'.toColor().withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -538,9 +538,9 @@ class _CallHistoryTab extends StatelessWidget {
                       ),
                     ),
                     AutoTranslateText(
-                      '${callType == 'VOICE' ? 'Voice' : 'Video'} Call • ${controller.formatDuration(session.durationSeconds)}',
+                      '${callType == 'VOICE' ? 'Voice' : 'Video'} Call â€¢ ${controller.formatDuration(session.durationSeconds)}',
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: '#6F221E'.toColor().withOpacity(0.8),
+                        color: '#6F221E'.toColor().withValues(alpha: 0.8),
                       ),
                     ),
                   ],
@@ -565,3 +565,4 @@ class _CallHistoryTab extends StatelessWidget {
     );
   }
 }
+

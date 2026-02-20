@@ -26,7 +26,7 @@ class CelestialTimeCardWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(15.33.w),
       decoration: BoxDecoration(
-        color: "#F38B3B".toColor().withOpacity(0.1),
+        color: "#F38B3B".toColor().withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(13.41.r),
         border: Border.all(
           color: "#F38B3B".toColor(), // Orange border
@@ -62,3 +62,4 @@ class CelestialTimeCardWidget extends StatelessWidget {
     );
   }
 }
+

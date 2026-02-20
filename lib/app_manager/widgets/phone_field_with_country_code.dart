@@ -144,7 +144,7 @@ class _PhoneFieldWithCountryCodeState extends State<PhoneFieldWithCountryCode> {
                 height: 48.h, // Fixed height to prevent displacement
                 child: Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.gray.withOpacity(0.3)),
+                    border: Border.all(color: AppColors.gray.withValues(alpha: 0.3)),
                     borderRadius: BorderRadius.circular(8.r),
                     color: AppColors.white,
                   ),
@@ -181,7 +181,7 @@ class _PhoneFieldWithCountryCodeState extends State<PhoneFieldWithCountryCode> {
                       color: AppColors.textPrimary,
                     ),
                     dialogBackgroundColor: AppColors.cardLight,
-                    barrierColor: AppColors.gray.withOpacity(0.54),
+                    barrierColor: AppColors.gray.withValues(alpha: 0.54),
                   ),
                 ),
               ),
@@ -226,13 +226,13 @@ class _PhoneFieldWithCountryCodeState extends State<PhoneFieldWithCountryCode> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.r),
                         borderSide: BorderSide(
-                          color: AppColors.gray.withOpacity(0.3),
+                          color: AppColors.gray.withValues(alpha: 0.3),
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.r),
                         borderSide: BorderSide(
-                          color: AppColors.gray.withOpacity(0.3),
+                          color: AppColors.gray.withValues(alpha: 0.3),
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
@@ -259,7 +259,7 @@ class _PhoneFieldWithCountryCodeState extends State<PhoneFieldWithCountryCode> {
                       filled: true,
                       fillColor: widget.enabled
                           ? AppColors.white
-                          : AppColors.gray.withOpacity(0.1),
+                          : AppColors.gray.withValues(alpha: 0.1),
                     ),
                     onTapOutside: (val) {
                       FocusScope.of(context).unfocus();
@@ -290,3 +290,4 @@ class _PhoneFieldWithCountryCodeState extends State<PhoneFieldWithCountryCode> {
     );
   }
 }
+

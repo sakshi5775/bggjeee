@@ -164,7 +164,7 @@ class ConfettiPainter extends CustomPainter {
 
       // Draw particle
       final paint = Paint()
-        ..color = particle.color.withOpacity(1.0 - progress * 0.5)
+        ..color = particle.color.withValues(alpha: 1.0 - progress * 0.5)
         ..style = PaintingStyle.fill;
 
       canvas.save();
@@ -200,4 +200,5 @@ class ConfettiPainter extends CustomPainter {
     return true;
   }
 }
+
 

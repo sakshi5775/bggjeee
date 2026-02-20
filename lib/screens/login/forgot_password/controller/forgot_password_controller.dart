@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/login/forgot_password/service/forgot_password_service.dart';
 import 'package:flutter/material.dart';
@@ -153,7 +153,7 @@ class ForgotPasswordController extends BaseController {
       );
       if (success) {
         Get.snackbar(
-          'Success 🎉',
+          'Success ðŸŽ‰',
           'Password changed successfully. Please login with new password. ',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
@@ -173,3 +173,4 @@ class ForgotPasswordController extends BaseController {
     }
   }
 }
+

@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/category_model.dart';
 import 'package:astrobharataiuser/data_model/remedy_category_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/services/remedies_service.dart';
@@ -158,3 +158,4 @@ class RemediesController extends BaseController {
     }
   }
 }
+

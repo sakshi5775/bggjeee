@@ -30,7 +30,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -42,7 +42,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -58,7 +58,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+                border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.5), width: 1),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.shadowLight,
@@ -112,7 +112,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
                 color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
-                  color: AppColors.deepOrange.withOpacity(0.5),
+                  color: AppColors.deepOrange.withValues(alpha: 0.5),
                   width: 1,
                 ),
                 boxShadow: [
@@ -159,7 +159,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.cardLight,
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: AppColors.deepOrange.withOpacity(0.5), width: 1),
+                border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.5), width: 1),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.shadowLight,
@@ -174,7 +174,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
                     decoration: BoxDecoration(
-                      color: AppColors.deepOrange.withOpacity(0.1),
+                      color: AppColors.deepOrange.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(12.r),
                         topRight: Radius.circular(12.r),
@@ -314,7 +314,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
         color: AppColors.cardLight,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: AppColors.deepOrange.withOpacity(0.5),
+          color: AppColors.deepOrange.withValues(alpha: 0.5),
           width: 1,
         ),
         boxShadow: [
@@ -331,7 +331,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: AppColors.deepOrange.withOpacity(0.1),
+              color: AppColors.deepOrange.withValues(alpha: 0.1),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12.r),
                 topRight: Radius.circular(12.r),
@@ -369,10 +369,10 @@ class CurrentMahadashaWidget extends StatelessWidget {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
             decoration: BoxDecoration(
-              color: AppColors.deepOrange.withOpacity(0.05),
+              color: AppColors.deepOrange.withValues(alpha: 0.05),
               border: Border(
                 bottom: BorderSide(
-                  color: AppColors.deepOrange.withOpacity(0.2),
+                  color: AppColors.deepOrange.withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -447,7 +447,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
                   bottom: BorderSide(
                     color: isLast
                         ? Colors.transparent
-                        : AppColors.deepOrange.withOpacity(0.2),
+                        : AppColors.deepOrange.withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -459,7 +459,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
                       decoration: BoxDecoration(
-                        color: AppColors.deepOrange.withOpacity(0.15),
+                        color: AppColors.deepOrange.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6.r),
                       ),
                       child: AutoTranslateText(
@@ -531,7 +531,7 @@ class CurrentMahadashaWidget extends StatelessWidget {
           bottom: BorderSide(
             color: isLast
                 ? Colors.transparent
-                : AppColors.deepOrange.withOpacity(0.2),
+                : AppColors.deepOrange.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -612,3 +612,4 @@ class CurrentMahadashaWidget extends StatelessWidget {
     }
   }
 }
+

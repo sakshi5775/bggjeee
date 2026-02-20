@@ -316,7 +316,7 @@ class _HandwritingAstrologyHistoryViewState
     if (dateString == null) return '';
     try {
       final date = DateTime.parse(dateString);
-      return DateFormat('MMM dd, yyyy • hh:mm a').format(date);
+      return DateFormat('MMM dd, yyyy â€¢ hh:mm a').format(date);
     } catch (e) {
       return dateString;
     }
@@ -441,7 +441,7 @@ class _HandwritingAstrologyHistoryViewState
         border: Border.all(color: '#F5D7B8'.toColor(), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -590,7 +590,7 @@ class _HandwritingAstrologyHistoryViewState
                           vertical: 4.h,
                         ),
                         decoration: BoxDecoration(
-                          color: "#F38B3B".toColor().withOpacity(0.1),
+                          color: "#F38B3B".toColor().withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: AutoTranslateText(
@@ -613,3 +613,4 @@ class _HandwritingAstrologyHistoryViewState
     );
   }
 }
+

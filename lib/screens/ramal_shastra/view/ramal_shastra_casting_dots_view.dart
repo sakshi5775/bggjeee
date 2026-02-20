@@ -179,9 +179,9 @@ class _RamalShastraCastingDotsViewState
         return Container(
           decoration: BoxDecoration(
             color: isCurrent
-                ? "#F38B3B".toColor().withOpacity(0.2)
+                ? "#F38B3B".toColor().withValues(alpha: 0.2)
                 : isCompleted
-                ? '#4CAF50'.toColor().withOpacity(0.2)
+                ? '#4CAF50'.toColor().withValues(alpha: 0.2)
                 : Colors.grey[200],
             borderRadius: BorderRadius.circular(4.r),
             border: Border.all(
@@ -209,3 +209,4 @@ class _RamalShastraCastingDotsViewState
     );
   }
 }
+

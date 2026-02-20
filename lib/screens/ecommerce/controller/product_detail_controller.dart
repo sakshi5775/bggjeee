@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+﻿import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/product_model.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/cart_controller.dart';
@@ -619,13 +619,13 @@ class ProductDetailController extends BaseController {
       // Build share text
       final shareText =
           '''
-🌟 $productName
+ðŸŒŸ $productName
 
 $productDescription
 
-💰 Price: $priceText
+ðŸ’° Price: $priceText
 
-🔗 View Product: $productLink
+ðŸ”— View Product: $productLink
 
 Download AstroBharatAI App to explore more products!
 ''';
@@ -656,3 +656,4 @@ Download AstroBharatAI App to explore more products!
     return wishlistController.isInWishlist(currentProduct);
   }
 }
+

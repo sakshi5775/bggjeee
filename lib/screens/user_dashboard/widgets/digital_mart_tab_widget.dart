@@ -81,13 +81,13 @@ class DigitalMartTabWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
         border: Border.all(
-          color: AppColors.orangeGradient.colors.first.withOpacity(0.3),
+          color: AppColors.orangeGradient.colors.first.withValues(alpha: 0.3),
           width: 0.8,
         ),
       ),
@@ -135,3 +135,4 @@ class DigitalMartTabWidget extends StatelessWidget {
   );
   }
 }
+

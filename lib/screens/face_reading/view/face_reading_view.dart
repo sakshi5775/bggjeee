@@ -36,9 +36,9 @@ class FaceReadingView extends StatelessWidget {
               CommonHeader(
                 title: 'Face Reading',
                 subtitle: AutoTranslateText(
-                  'Ancient Chinese Physiognomy • AI-Powered',
+                  'Ancient Chinese Physiognomy â€¢ AI-Powered',
                   style: MyTextTheme.smallBCN.copyWith(
-                    color: const Color(0xFF5F2221).withOpacity(0.7),
+                    color: const Color(0xFF5F2221).withValues(alpha: 0.7),
                   ),
                 ),
                 customActions: [
@@ -143,7 +143,7 @@ class FaceReadingView extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: AutoTranslateText(
-        'Ancient Chinese Physiognomy • AI-Powered Analysis',
+        'Ancient Chinese Physiognomy â€¢ AI-Powered Analysis',
         style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
         textAlign: TextAlign.center,
       ),
@@ -161,7 +161,7 @@ class FaceReadingView extends StatelessWidget {
           border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.07),
+              color: Colors.black.withValues(alpha: 0.07),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -218,7 +218,7 @@ class FaceReadingView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: "#F38B3B".toColor().withOpacity(0.35),
+                      color: "#F38B3B".toColor().withValues(alpha: 0.35),
                       blurRadius: 6,
                       offset: const Offset(0, 3),
                     ),
@@ -362,7 +362,7 @@ class FaceReadingView extends StatelessWidget {
           border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),
@@ -469,7 +469,7 @@ class FaceReadingView extends StatelessWidget {
         border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -511,7 +511,7 @@ class FaceReadingView extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.12),
+              color: Colors.black.withValues(alpha: 0.12),
               blurRadius: 18,
               offset: const Offset(0, 8),
             ),
@@ -529,8 +529,8 @@ class FaceReadingView extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      "#DD2914".toColor().withOpacity(0.35),
-                      "#F38B3B".toColor().withOpacity(0.15),
+                      "#DD2914".toColor().withValues(alpha: 0.35),
+                      "#F38B3B".toColor().withValues(alpha: 0.15),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -611,3 +611,4 @@ class FaceReadingView extends StatelessWidget {
     );
   }
 }
+

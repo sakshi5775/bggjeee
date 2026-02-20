@@ -168,9 +168,9 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                         borderRadius: BorderRadius.circular(14.r),
                         gradient: RadialGradient(
                           colors: [
-                            "#F38B3B".toColor().withOpacity(0.0),
-                            "#F38B3B".toColor().withOpacity(0.2), // Reduced from 0.4
-                            '#820B17'.toColor().withOpacity(0.0),
+                            "#F38B3B".toColor().withValues(alpha: 0.0),
+                            "#F38B3B".toColor().withValues(alpha: 0.2), // Reduced from 0.4
+                            '#820B17'.toColor().withValues(alpha: 0.0),
                           ],
                         ),
                       ),
@@ -208,17 +208,17 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                           boxShadow: [
                             // Reduced glow effect
                             BoxShadow(
-                              color: "#F38B3B".toColor().withOpacity(0.3 * _glowAnimation.value), // Reduced from 0.8
+                              color: "#F38B3B".toColor().withValues(alpha: 0.3 * _glowAnimation.value), // Reduced from 0.8
                               blurRadius: 20 * _glowAnimation.value, // Reduced from 30
                               spreadRadius: 5 * _glowAnimation.value, // Reduced from 10
                             ),
                             BoxShadow(
-                              color: '#820B17'.toColor().withOpacity(0.25 * _glowAnimation.value), // Reduced from 0.6
+                              color: '#820B17'.toColor().withValues(alpha: 0.25 * _glowAnimation.value), // Reduced from 0.6
                               blurRadius: 25 * _glowAnimation.value, // Reduced from 40
                               spreadRadius: 8 * _glowAnimation.value, // Reduced from 15
                             ),
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3), // Reduced from 0.5
+                              color: Colors.black.withValues(alpha: 0.3), // Reduced from 0.5
                               blurRadius: 15, // Reduced from 20
                               offset: const Offset(0, 8), // Reduced from 10
                             ),
@@ -370,4 +370,5 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
           );
   }
 }
+
 

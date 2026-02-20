@@ -22,9 +22,9 @@ class GradientDemo extends StatelessWidget {
           center: Alignment.topCenter,
           radius: graidentRadius / bounds.height,
           colors: [
-            Colors.black.withOpacity(0.18),
-            Colors.black.withOpacity(0.10),
-            Colors.black.withOpacity(0.04),
+            Colors.black.withValues(alpha: 0.18),
+            Colors.black.withValues(alpha: 0.10),
+            Colors.black.withValues(alpha: 0.04),
             Colors.transparent,
           ],
           stops: const [0.0, 0.35, 0.65, 1.0],
@@ -32,13 +32,13 @@ class GradientDemo extends StatelessWidget {
       },
       blendMode: BlendMode.dstIn,
       child: Container(
-        color: Colors.black.withOpacity(0.12),
+        color: Colors.black.withValues(alpha: 0.12),
         child: showDebugElements
             ? Center(
                 child: Text(
                   "FOG GRADIENT",
                   style: TextStyle(
-                    color: Colors.red.withOpacity(0.6),
+                    color: Colors.red.withValues(alpha: 0.6),
                     fontSize: 10,
                   ),
                 ),
@@ -48,3 +48,4 @@ class GradientDemo extends StatelessWidget {
     );
   }
 }
+

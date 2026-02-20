@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/data_model/course_model.dart';
+﻿import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
@@ -26,7 +26,7 @@ class CourseCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 12,
               offset: const Offset(0, 4),
               spreadRadius: 0,
@@ -80,7 +80,7 @@ class CourseCard extends StatelessWidget {
                                     end: Alignment.bottomCenter,
                                     colors: [
                                       Colors.transparent,
-                                        Colors.black.withOpacity(0.2),
+                                        Colors.black.withValues(alpha: 0.2),
                                     ],
                                   ),
                                 ),
@@ -117,11 +117,11 @@ class CourseCard extends StatelessWidget {
                         width: 56.w,
                         height: 56.w,
                     decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -171,7 +171,7 @@ class CourseCard extends StatelessWidget {
                           width: 20.w,
                           height: 20.w,
                           decoration: BoxDecoration(
-                            color: AppColors.primaryGradient.colors.first.withOpacity(0.2),
+                            color: AppColors.primaryGradient.colors.first.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -224,8 +224,8 @@ class CourseCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primaryGradient.colors.first.withOpacity(0.15),
-            AppColors.primaryGradient.colors.last.withOpacity(0.15),
+            AppColors.primaryGradient.colors.first.withValues(alpha: 0.15),
+            AppColors.primaryGradient.colors.last.withValues(alpha: 0.15),
           ],
         ),
       ),
@@ -234,7 +234,7 @@ class CourseCard extends StatelessWidget {
           Center(
             child: Icon(
               Icons.school_rounded,
-              color: AppColors.primaryGradient.colors.first.withOpacity(0.4),
+              color: AppColors.primaryGradient.colors.first.withValues(alpha: 0.4),
               size: 38.w,
             ),
           ),
@@ -246,7 +246,7 @@ class CourseCard extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withOpacity(0.1),
+                  Colors.black.withValues(alpha: 0.1),
                 ],
               ),
             ),
@@ -256,3 +256,4 @@ class CourseCard extends StatelessWidget {
     );
   }
 }
+

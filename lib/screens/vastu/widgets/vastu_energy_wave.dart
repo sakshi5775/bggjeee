@@ -77,7 +77,7 @@ class EnergyWavePainter extends CustomPainter {
       final opacity = (1.0 - phase) * 0.2 * intensity;
       
       final paint = Paint()
-        ..color = color.withOpacity(opacity)
+        ..color = color.withValues(alpha: opacity)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2;
       
@@ -88,4 +88,5 @@ class EnergyWavePainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
+
 

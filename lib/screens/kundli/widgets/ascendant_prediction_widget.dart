@@ -54,7 +54,7 @@ class AscendantPredictionWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.deepOrange.withOpacity(0.2),
+                    color: AppColors.deepOrange.withValues(alpha: 0.2),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -164,3 +164,4 @@ class AscendantPredictionWidget extends StatelessWidget {
     );
   }
 }
+

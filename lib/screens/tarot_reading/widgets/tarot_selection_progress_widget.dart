@@ -60,12 +60,12 @@ class TarotSelectionProgressWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: Colors.pink.withOpacity(0.3),
+          color: Colors.pink.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.pink.withOpacity(0.2),
+            color: Colors.pink.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -124,7 +124,7 @@ class TarotSelectionProgressWidget extends StatelessWidget {
             child: AutoTranslateText(
               _getTriangleInstruction(step),
               style: MyTextTheme.smallBCN.copyWith(
-                color: '#820B17'.toColor().withOpacity(0.7),
+                color: '#820B17'.toColor().withValues(alpha: 0.7),
                 fontFamily: 'Poppins',
               ),
               textAlign: TextAlign.center,
@@ -135,7 +135,7 @@ class TarotSelectionProgressWidget extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () => controller.skipTriangleCard(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink.withOpacity(0.1),
+                backgroundColor: Colors.pink.withValues(alpha: 0.1),
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.r),
@@ -170,12 +170,12 @@ class TarotSelectionProgressWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: (isRomantic ? Colors.red : "#F38B3B".toColor()).withOpacity(0.3),
+          color: (isRomantic ? Colors.red : "#F38B3B".toColor()).withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: (isRomantic ? Colors.red : "#F38B3B".toColor()).withOpacity(0.2),
+            color: (isRomantic ? Colors.red : "#F38B3B".toColor()).withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -227,7 +227,7 @@ class TarotSelectionProgressWidget extends StatelessWidget {
             child: AutoTranslateText(
               _getBreakupInstruction(step),
               style: MyTextTheme.smallBCN.copyWith(
-                color: '#820B17'.toColor().withOpacity(0.7),
+                color: '#820B17'.toColor().withValues(alpha: 0.7),
                 fontFamily: 'Poppins',
               ),
               textAlign: TextAlign.center,
@@ -238,7 +238,7 @@ class TarotSelectionProgressWidget extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () => controller.skipBreakupCard(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: (isRomantic ? Colors.red : AppColors.orangeGradient.colors.first).withOpacity(0.1),
+                backgroundColor: (isRomantic ? Colors.red : AppColors.orangeGradient.colors.first).withValues(alpha: 0.1),
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.r),
@@ -272,12 +272,12 @@ class TarotSelectionProgressWidget extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: "#F38B3B".toColor().withOpacity(0.3),
+          color: "#F38B3B".toColor().withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: "#F38B3B".toColor().withOpacity(0.2),
+            color: "#F38B3B".toColor().withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -337,7 +337,7 @@ class TarotSelectionProgressWidget extends StatelessWidget {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.orangeGradient.colors.first.withOpacity(0.1),
+                backgroundColor: AppColors.orangeGradient.colors.first.withValues(alpha: 0.1),
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.r),
@@ -379,13 +379,13 @@ class TarotSelectionProgressWidget extends StatelessWidget {
                   ? Colors.pink
                   : isCompleted
                       ? Colors.green
-                      : Colors.grey.withOpacity(0.3),
+                      : Colors.grey.withValues(alpha: 0.3),
               width: isActive ? 3 : 2,
             ),
             boxShadow: isActive
                 ? [
                     BoxShadow(
-                      color: Colors.pink.withOpacity(0.3),
+                      color: Colors.pink.withValues(alpha: 0.3),
                       blurRadius: 8,
                       spreadRadius: 2,
                     ),
@@ -424,7 +424,7 @@ class TarotSelectionProgressWidget extends StatelessWidget {
                       isActive ? Icons.touch_app : Icons.help_outline,
                       color: isActive
                           ? Colors.pink
-                          : Colors.grey.withOpacity(0.5),
+                          : Colors.grey.withValues(alpha: 0.5),
                       size: 30.w,
                     ),
                   ),
@@ -438,7 +438,7 @@ class TarotSelectionProgressWidget extends StatelessWidget {
                 ? Colors.pink
                 : isCompleted
                     ? Colors.green
-                    : '#820B17'.toColor().withOpacity(0.5),
+                    : '#820B17'.toColor().withValues(alpha: 0.5),
             fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
             fontFamily: 'Poppins',
           ),
@@ -485,13 +485,13 @@ class TarotSelectionProgressWidget extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? "#F38B3B".toColor()
-                : "#F38B3B".toColor().withOpacity(0.5),
+                : "#F38B3B".toColor().withValues(alpha: 0.5),
             width: 2,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: "#F38B3B".toColor().withOpacity(0.3),
+                    color: "#F38B3B".toColor().withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -544,4 +544,5 @@ class TarotSelectionProgressWidget extends StatelessWidget {
     }
   }
 }
+
 

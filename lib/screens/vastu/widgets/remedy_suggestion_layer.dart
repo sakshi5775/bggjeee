@@ -73,7 +73,7 @@ class _RemedySuggestionLayerState extends State<RemedySuggestionLayer>
         _slideController.reverse().then((_) => widget.onClose());
       },
       child: Container(
-        color: Colors.black.withOpacity(0.5),
+        color: Colors.black.withValues(alpha: 0.5),
         child: SlideTransition(
           position: _slideAnimation,
           child: FadeTransition(
@@ -88,7 +88,7 @@ class _RemedySuggestionLayerState extends State<RemedySuggestionLayer>
                   borderRadius: BorderRadius.circular(24.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -118,10 +118,10 @@ class _RemedySuggestionLayerState extends State<RemedySuggestionLayer>
                                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                                 decoration: BoxDecoration(
                                   color: isAvoidDirection
-                                      ? '#C62828'.toColor().withOpacity(0.1)
+                                      ? '#C62828'.toColor().withValues(alpha: 0.1)
                                       : isIdealDirection
-                                          ? '#2E7D32'.toColor().withOpacity(0.1)
-                                          : '#E6CBA8'.toColor().withOpacity(0.1),
+                                          ? '#2E7D32'.toColor().withValues(alpha: 0.1)
+                                          : '#E6CBA8'.toColor().withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(12.r),
                                   border: Border.all(
                                     color: isAvoidDirection
@@ -261,6 +261,7 @@ class _RemedySuggestionLayerState extends State<RemedySuggestionLayer>
     );
   }
 }
+
 
 
 

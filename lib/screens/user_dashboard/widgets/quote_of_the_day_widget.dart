@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
 import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/controller/user_dashboard_controller.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_constant.dart';
@@ -214,3 +214,4 @@ class _QuoteMarqueeContentState extends State<_QuoteMarqueeContent> {
     );
   }
 }
+

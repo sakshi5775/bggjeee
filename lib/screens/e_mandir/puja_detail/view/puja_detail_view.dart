@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/puja_detail/controller/puja_detail_controller.dart';
 import 'package:astrobharataiuser/screens/e_mandir/puja_detail/widgets/puja_media_card_widget.dart';
 import 'package:astrobharataiuser/screens/e_mandir/puja_detail/widgets/puja_info_cards_widget.dart';
@@ -114,3 +114,4 @@ class PujaDetailView extends BasePage<PujaDetailController> {
     );
   }
 }
+

@@ -23,7 +23,7 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
         borderRadius: BorderRadius.circular(22.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
+            color: Colors.black.withValues(alpha: 0.25),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -251,7 +251,7 @@ class MainBannerWidget extends GetView<NamasteHomeController> {
             //     padding: EdgeInsets.only(right: 6.w),
             //     child: Container(
             //       decoration: BoxDecoration(
-            //         color: Colors.black.withOpacity(0.4),
+            //         color: Colors.black.withValues(alpha: 0.4),
             //         borderRadius: BorderRadius.circular(20.r),
             //       ),
             //       padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
@@ -293,7 +293,7 @@ class _CircleIcon extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.4),
+        color: Colors.black.withValues(alpha: 0.4),
         shape: BoxShape.circle,
       ),
       child: Icon(icon, color: Colors.white, size: 26.sp),
@@ -310,11 +310,11 @@ class _VolumeSliderWidget extends GetView<NamasteHomeController> {
       width: 200.w,
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.8),
+        color: Colors.black.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -431,15 +431,15 @@ class _AnimatedFullscreenButton extends GetView<NamasteHomeController> {
                     height: 46.h,
                     padding: EdgeInsets.all(10.w),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.4),
+                      color: Colors.black.withValues(alpha: 0.4),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.orange.withOpacity(0.6),
+                        color: Colors.orange.withValues(alpha: 0.6),
                         width: 2,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.orange.withOpacity(0.3),
+                          color: Colors.orange.withValues(alpha: 0.3),
                           blurRadius: 8,
                           spreadRadius: 2,
                         ),
@@ -514,3 +514,4 @@ class _AnimatedFullscreenButton extends GetView<NamasteHomeController> {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/my_booking_model.dart';
 import 'package:astrobharataiuser/data_model/payment_model.dart';
@@ -192,7 +192,7 @@ class MyBookingsController extends BaseController {
 
       if (verifyResponse != null && verifyResponse.success) {
         Get.snackbar(
-          'Payment Successful! 🎉',
+          'Payment Successful! ðŸŽ‰',
           'Your payment has been completed successfully',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green.withValues(alpha: 0.9),
@@ -274,3 +274,4 @@ class MyBookingsController extends BaseController {
     super.onClose();
   }
 }
+

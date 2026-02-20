@@ -43,7 +43,7 @@ class PalmReadingAnalysisView extends StatelessWidget {
                             child: Container(
                               padding: EdgeInsets.all(8.w),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.1),
+                                color: Colors.white.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
@@ -115,7 +115,7 @@ class PalmReadingAnalysisView extends StatelessWidget {
         width: double.infinity,
         height: 400.h,
         decoration: BoxDecoration(
-          color: const Color(0xFF2D2D44).withOpacity(0.3),
+          color: const Color(0xFF2D2D44).withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(20.r),
         ),
         child: Stack(
@@ -143,37 +143,37 @@ class PalmReadingAnalysisView extends StatelessWidget {
           Positioned(
             top: 40.h,
             left: isLeftHand ? 80.w : 120.w,
-            child: _buildPlanetLabel('Jupiter', '♃'),
+            child: _buildPlanetLabel('Jupiter', 'â™ƒ'),
           ),
           // Saturn (Middle finger)
           Positioned(
             top: 40.h,
             left: isLeftHand ? 140.w : 160.w,
-            child: _buildPlanetLabel('Saturn', '♄'),
+            child: _buildPlanetLabel('Saturn', 'â™„'),
           ),
           // Sun (Ring finger)
           Positioned(
             top: 40.h,
             left: isLeftHand ? 200.w : 200.w,
-            child: _buildPlanetLabel('Sun', '☉'),
+            child: _buildPlanetLabel('Sun', 'â˜‰'),
           ),
           // Mercury (Pinky)
           Positioned(
             top: 40.h,
             left: isLeftHand ? 260.w : 240.w,
-            child: _buildPlanetLabel('Mercury', '☿'),
+            child: _buildPlanetLabel('Mercury', 'â˜¿'),
           ),
           // Venus (Thumb base)
           Positioned(
             top: 200.h,
             left: isLeftHand ? 20.w : 280.w,
-            child: _buildPlanetLabel('Venus', '♀'),
+            child: _buildPlanetLabel('Venus', 'â™€'),
           ),
           // Moon (Lower palm)
           Positioned(
             top: 320.h,
             left: isLeftHand ? 140.w : 160.w,
-            child: _buildPlanetLabel('Moon', '☾'),
+            child: _buildPlanetLabel('Moon', 'â˜¾'),
           ),
         ],
       ),
@@ -194,7 +194,7 @@ class PalmReadingAnalysisView extends StatelessWidget {
         AutoTranslateText(
           name,
           style: MyTextTheme.smallBCN.copyWith(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
           ).merge(AppTypography.label),
         ),
       ],
@@ -258,7 +258,7 @@ class PalmReadingAnalysisView extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: "#F38B3B".toColor().withOpacity(0.35),
+              color: "#F38B3B".toColor().withValues(alpha: 0.35),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -308,7 +308,7 @@ class PalmReadingAnalysisView extends StatelessWidget {
       child: AutoTranslateText(
         'Skip',
         style: MyTextTheme.mediumBCN.copyWith(
-          color: Colors.white.withOpacity(0.7),
+          color: Colors.white.withValues(alpha: 0.7),
           decoration: TextDecoration.underline,
         ).merge(AppTypography.body1),
       ),
@@ -321,7 +321,7 @@ class StarryBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.6)
+      ..color = Colors.white.withValues(alpha: 0.6)
       ..style = PaintingStyle.fill;
 
     // Draw random stars
@@ -333,7 +333,7 @@ class StarryBackgroundPainter extends CustomPainter {
     
     // Draw some larger stars
     final largeStarPaint = Paint()
-      ..color = Colors.white.withOpacity(0.8)
+      ..color = Colors.white.withValues(alpha: 0.8)
       ..style = PaintingStyle.fill;
     for (int i = 0; i < 10; i++) {
       final x = (i * 87.2) % size.width;
@@ -435,6 +435,7 @@ class HandDiagramPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
 
 
 

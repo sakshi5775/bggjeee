@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/numerology/service/numerology_service.dart';
 import 'package:get/get.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -74,7 +74,7 @@ class NumerologyReportsController extends BaseController {
         'Error',
         'Failed to load reports: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Get.theme.colorScheme.error.withOpacity(0.8),
+        backgroundColor: Get.theme.colorScheme.error.withValues(alpha: 0.8),
         colorText: Get.theme.colorScheme.onError,
       );
     } finally {
@@ -129,7 +129,7 @@ class NumerologyReportsController extends BaseController {
         'Error',
         'Failed to load more reports: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Get.theme.colorScheme.error.withOpacity(0.8),
+        backgroundColor: Get.theme.colorScheme.error.withValues(alpha: 0.8),
         colorText: Get.theme.colorScheme.onError,
       );
     } finally {
@@ -230,7 +230,7 @@ class NumerologyReportsController extends BaseController {
             'Error',
             'No data found in report',
             snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Get.theme.colorScheme.error.withOpacity(0.8),
+            backgroundColor: Get.theme.colorScheme.error.withValues(alpha: 0.8),
             colorText: Get.theme.colorScheme.onError,
           );
         }
@@ -239,7 +239,7 @@ class NumerologyReportsController extends BaseController {
           'Error',
           'Failed to load report details',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Get.theme.colorScheme.error.withOpacity(0.8),
+          backgroundColor: Get.theme.colorScheme.error.withValues(alpha: 0.8),
           colorText: Get.theme.colorScheme.onError,
         );
       }
@@ -248,7 +248,7 @@ class NumerologyReportsController extends BaseController {
         'Error',
         'An error occurred: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Get.theme.colorScheme.error.withOpacity(0.8),
+        backgroundColor: Get.theme.colorScheme.error.withValues(alpha: 0.8),
         colorText: Get.theme.colorScheme.onError,
       );
     }
@@ -272,4 +272,6 @@ class NumerologyReportsController extends BaseController {
     return names[reportType] ?? reportType;
   }
 }
+
+
 

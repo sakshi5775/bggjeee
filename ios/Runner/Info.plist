@@ -86,6 +86,14 @@
     </array>
 
     <!-- ========================= -->
+    <!-- Background Task Identifiers (required when UIBackgroundModes includes 'processing') -->
+    <!-- ========================= -->
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>com.astrobharatal.app.backgroundrefresh</string>
+    </array>
+
+    <!-- ========================= -->
     <!-- Camera / Microphone (Agora, Camera, Record) -->
     <!-- ========================= -->
     <key>NSCameraUsageDescription</key>

@@ -1,4 +1,4 @@
-// import 'package:astrobharataiuser/core/base/baseController.dart';
+// import 'package:astrobharataiuser/core/base/base_controller.dart';
 // import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
 // import 'package:astrobharataiuser/data_model/webinar_model.dart';
 // import 'package:get/get.dart';
@@ -195,7 +195,7 @@
 //   }
 // }
 
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
 import 'package:astrobharataiuser/data_model/webinar_model.dart';
 import 'package:get/get.dart';
@@ -579,3 +579,4 @@ class LiveWebinarsController extends BaseController {
     super.onClose();
   }
 }
+

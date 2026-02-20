@@ -53,7 +53,7 @@ class TarotCardDisplayWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -140,7 +140,7 @@ class TarotCardBackDisplayWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -208,7 +208,7 @@ class TarotCardThemeSelector extends StatelessWidget {
                   border: Border.all(
                     color: isSelected 
                         ? "#F38B3B".toColor() 
-                        : '#ede7c8'.toColor().withOpacity(0.5),
+                        : '#ede7c8'.toColor().withValues(alpha: 0.5),
                     width: 1.5,
                   ),
                 ),
@@ -266,7 +266,7 @@ class TarotCardBackSelector extends StatelessWidget {
                   border: Border.all(
                     color: isSelected 
                         ? "#F38B3B".toColor() 
-                        : '#ede7c8'.toColor().withOpacity(0.5),
+                        : '#ede7c8'.toColor().withValues(alpha: 0.5),
                     width: 1.5,
                   ),
                 ),
@@ -286,4 +286,5 @@ class TarotCardBackSelector extends StatelessWidget {
     });
   }
 }
+
 

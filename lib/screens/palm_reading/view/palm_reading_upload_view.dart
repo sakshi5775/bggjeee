@@ -113,7 +113,7 @@ class PalmReadingUploadView extends StatelessWidget {
           border: Border.all(color: '#F5D7B8'.toColor(), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -248,7 +248,7 @@ class PalmReadingUploadView extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
             side: isPrimary
                 ? BorderSide.none
-                : BorderSide(color: Colors.grey.withOpacity(0.3), width: 1),
+                : BorderSide(color: Colors.grey.withValues(alpha: 0.3), width: 1),
           ),
           elevation: isPrimary ? 4 : 0,
         ),
@@ -300,7 +300,7 @@ class PalmReadingUploadView extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -334,7 +334,7 @@ class PalmReadingUploadView extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: controller.selectedPalmImage.value != null
               ? "#F38B3B".toColor()
-              : "#F38B3B".toColor().withOpacity(0.5),
+              : "#F38B3B".toColor().withValues(alpha: 0.5),
           foregroundColor: Colors.white,
           padding: AppPaddings.symmetric(v: 16, h: 24),
           shape: RoundedRectangleBorder(
@@ -371,7 +371,7 @@ class PalmReadingUploadView extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -420,7 +420,7 @@ class PalmReadingUploadView extends StatelessWidget {
                   if (controller.selectedPalmImage.value != null)
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                     ),
@@ -455,37 +455,37 @@ class PalmReadingUploadView extends StatelessWidget {
           Positioned(
             top: 30.h,
             left: isLeftHand ? 60.w : 100.w,
-            child: _buildPlanetLabel('Jupiter', '♃'),
+            child: _buildPlanetLabel('Jupiter', 'â™ƒ'),
           ),
           // Saturn (Middle finger)
           Positioned(
             top: 30.h,
             left: isLeftHand ? 110.w : 130.w,
-            child: _buildPlanetLabel('Saturn', '♄'),
+            child: _buildPlanetLabel('Saturn', 'â™„'),
           ),
           // Sun (Ring finger)
           Positioned(
             top: 30.h,
             left: isLeftHand ? 160.w : 160.w,
-            child: _buildPlanetLabel('Sun', '☉'),
+            child: _buildPlanetLabel('Sun', 'â˜‰'),
           ),
           // Mercury (Pinky)
           Positioned(
             top: 30.h,
             left: isLeftHand ? 210.w : 190.w,
-            child: _buildPlanetLabel('Mercury', '☿'),
+            child: _buildPlanetLabel('Mercury', 'â˜¿'),
           ),
           // Venus (Thumb base)
           Positioned(
             top: 150.h,
             left: isLeftHand ? 10.w : 240.w,
-            child: _buildPlanetLabel('Venus', '♀'),
+            child: _buildPlanetLabel('Venus', 'â™€'),
           ),
           // Moon (Lower palm)
           Positioned(
             top: 240.h,
             left: isLeftHand ? 110.w : 130.w,
-            child: _buildPlanetLabel('Moon', '☾'),
+            child: _buildPlanetLabel('Moon', 'â˜¾'),
           ),
         ],
       ),
@@ -638,3 +638,4 @@ class HandDiagramPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+

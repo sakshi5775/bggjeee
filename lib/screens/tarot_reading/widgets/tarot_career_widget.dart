@@ -29,7 +29,7 @@ class TarotCareerWidget extends StatelessWidget {
       if (response == null && isLoading) {
         // Show loading state only during API call
         return Container(
-          color: Colors.black.withOpacity(0.7),
+          color: Colors.black.withValues(alpha: 0.7),
           child: const Center(child: CircularProgressIndicator()),
         );
       }
@@ -43,7 +43,7 @@ class TarotCareerWidget extends StatelessWidget {
       return GestureDetector(
         onTap: () => controller.closeReading(),
         child: Container(
-          color: Colors.black.withOpacity(0.7),
+          color: Colors.black.withValues(alpha: 0.7),
           child: Center(
             child: GestureDetector(
               onTap: () {},
@@ -67,7 +67,7 @@ class TarotCareerWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20.r),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
+                              color: Colors.black.withValues(alpha: 0.3),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
@@ -152,7 +152,7 @@ class TarotCareerWidget extends StatelessWidget {
                                               response.direction!
                                                       .toLowerCase() ==
                                                   'upright'
-                                              ? Colors.green.withOpacity(0.2)
+                                              ? Colors.green.withValues(alpha: 0.2)
                                               : "#F38B3B".toColor().withOpacity(
                                                   0.2,
                                                 ),
@@ -225,7 +225,7 @@ class TarotCareerWidget extends StatelessWidget {
                                         border: Border.all(
                                           color: "#F38B3B"
                                               .toColor()
-                                              .withOpacity(0.3),
+                                              .withValues(alpha: 0.3),
                                         ),
                                       ),
                                       child: Row(
@@ -295,3 +295,4 @@ class TarotCareerWidget extends StatelessWidget {
     });
   }
 }
+

@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 
 import '../../../utils/app_colors.dart';
 
-/// Consult an Astrologer card — same style as palm reading / carrot astrology.
+/// Consult an Astrologer card â€” same style as palm reading / carrot astrology.
 /// Place below chart or results.
 class ConsultAstrologerCard extends StatelessWidget {
   const ConsultAstrologerCard({super.key});
@@ -32,15 +32,15 @@ class ConsultAstrologerCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(10.w),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.25),
+                  color: Colors.white.withValues(alpha: 0.25),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                     width: 2,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
@@ -71,7 +71,7 @@ class ConsultAstrologerCard extends StatelessWidget {
                     AutoTranslateText(
                       'Consult with our expert astrologers',
                       style: MyTextTheme.smallBCN.copyWith(
-                        color: Colors.white.withOpacity(0.95),
+                        color: Colors.white.withValues(alpha: 0.95),
                         fontSize: 12.sp,
                       ),
                     ),
@@ -94,7 +94,7 @@ class ConsultAstrologerCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.12),
+                      color: Colors.black.withValues(alpha: 0.12),
                       blurRadius: 8,
                       offset: const Offset(0, 3),
                     ),
@@ -106,7 +106,7 @@ class ConsultAstrologerCard extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(6.w),
                       decoration: BoxDecoration(
-                        color: "#ed6f30".toColor().withOpacity(0.1),
+                        color: "#ed6f30".toColor().withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -134,3 +134,4 @@ class ConsultAstrologerCard extends StatelessWidget {
     );
   }
 }
+

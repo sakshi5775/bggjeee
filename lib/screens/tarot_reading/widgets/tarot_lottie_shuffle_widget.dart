@@ -140,7 +140,7 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: "#F38B3B".toColor().withOpacity(0.3 * progress),
+                      color: "#F38B3B".toColor().withValues(alpha: 0.3 * progress),
                       width: 3,
                     ),
                   ),
@@ -156,13 +156,13 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        "#F38B3B".toColor().withOpacity(0.9 * progress),
-                        '#820B17'.toColor().withOpacity(0.7 * progress),
+                        "#F38B3B".toColor().withValues(alpha: 0.9 * progress),
+                        '#820B17'.toColor().withValues(alpha: 0.7 * progress),
                       ],
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: "#F38B3B".toColor().withOpacity(0.6 * progress),
+                        color: "#F38B3B".toColor().withValues(alpha: 0.6 * progress),
                         blurRadius: 25,
                         spreadRadius: 8,
                       ),
@@ -170,7 +170,7 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
                   ),
                   child: Icon(
                     Icons.shuffle,
-                    color: Colors.white.withOpacity(progress),
+                    color: Colors.white.withValues(alpha: progress),
                     size: 50.w,
                   ),
                 ),
@@ -182,7 +182,7 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
                   child: AutoTranslateText(
                     'Shuffling...',
                     style: TextStyle(
-                      color: '#820B17'.toColor().withOpacity(0.7),
+                      color: '#820B17'.toColor().withValues(alpha: 0.7),
                     ),
                   ),
                 ),
@@ -193,4 +193,5 @@ class _TarotLottieShuffleWidgetState extends State<TarotLottieShuffleWidget>
     );
   }
 }
+
 

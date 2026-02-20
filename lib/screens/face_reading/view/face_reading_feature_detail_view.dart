@@ -161,7 +161,7 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -221,12 +221,12 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: "#F38B3B".toColor().withOpacity(0.3),
+          color: "#F38B3B".toColor().withValues(alpha: 0.3),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -271,10 +271,10 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.green.withOpacity(0.3), width: 1),
+        border: Border.all(color: Colors.green.withValues(alpha: 0.3), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -317,7 +317,7 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: "#F38B3B".toColor().withOpacity(0.3),
+            color: "#F38B3B".toColor().withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -337,7 +337,7 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
           AutoTranslateText(
             'Chat with our expert face readers for personalized guidance and detailed analysis.',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
             ),
             textAlign: TextAlign.center,
           ),
@@ -368,3 +368,4 @@ class FaceReadingFeatureDetailView extends StatelessWidget {
     );
   }
 }
+

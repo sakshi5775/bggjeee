@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/course_model.dart';
 import 'package:astrobharataiuser/screens/courses/services/courses_service.dart';
 import 'package:astrobharataiuser/screens/courses/services/webinar_service.dart';
@@ -330,12 +330,12 @@ class CoursePlayerController extends BaseController {
     // Check if content has URL - if not, try to find it in all lectures
     if (finalContent.url == null || finalContent.url!.isEmpty) {
       debugPrint(
-        '⚠️ Content ${finalContent.id} has no URL, searching in all lectures...',
+        'âš ï¸ Content ${finalContent.id} has no URL, searching in all lectures...',
       );
       for (var l in lectures) {
         for (var c in l.content) {
           if (c.id == finalContent.id && c.url != null && c.url!.isNotEmpty) {
-            debugPrint('✅ Found content with URL in lecture: ${l.title}');
+            debugPrint('âœ… Found content with URL in lecture: ${l.title}');
             currentLecture.value = l;
             currentContent.value = c;
 
@@ -350,7 +350,7 @@ class CoursePlayerController extends BaseController {
           }
         }
       }
-      debugPrint('❌ Content ${finalContent.id} has no URL in any lecture');
+      debugPrint('âŒ Content ${finalContent.id} has no URL in any lecture');
       showErrorMessage(
         title: "Content Unavailable",
         message: "Content URL not available. Please try again later.",
@@ -643,7 +643,7 @@ class CoursePlayerController extends BaseController {
       if (nextContent.url != null && nextContent.url!.isNotEmpty) {
         selectContent(nextLecture, nextContent);
       } else {
-        debugPrint('⚠️ Next content has no URL, cannot autoplay');
+        debugPrint('âš ï¸ Next content has no URL, cannot autoplay');
       }
     } else {
       // Just store next content info without auto-playing
@@ -662,7 +662,7 @@ class CoursePlayerController extends BaseController {
         _pendingNextContent = null;
         _pendingNextLecture = null;
       } else {
-        debugPrint('⚠️ Next content has no URL, cannot play');
+        debugPrint('âš ï¸ Next content has no URL, cannot play');
         _pendingNextContent = null;
         _pendingNextLecture = null;
       }
@@ -737,3 +737,4 @@ class CoursePlayerController extends BaseController {
     await loadCoursePlayerData();
   }
 }
+

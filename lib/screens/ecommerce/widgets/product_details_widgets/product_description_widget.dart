@@ -25,10 +25,10 @@ class ProductDescriptionWidget extends StatelessWidget {
       return Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
+          color: Colors.white.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: AppColors.saffron.withOpacity(0.2),
+            color: AppColors.saffron.withValues(alpha: 0.2),
             width: 0.68,
           ),
         ),
@@ -80,7 +80,7 @@ class ProductDescriptionWidget extends StatelessWidget {
                   Divider(
                     height: 1,
                     thickness: 0.68,
-                    color: AppColors.saffron.withOpacity(0.2),
+                    color: AppColors.saffron.withValues(alpha: 0.2),
                   ),
                   Padding(
                     padding: EdgeInsets.all(24.w),
@@ -153,3 +153,4 @@ class ProductDescriptionWidget extends StatelessWidget {
     });
   }
 }
+

@@ -1,8 +1,8 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'dart:convert';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/data_model/live_stream_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/live_stream_service.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/astrologer_service.dart';
@@ -14,6 +14,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:uuid/uuid.dart';
 import 'package:astrobharataiuser/screens/wallet/service/wallet_service.dart';
 import 'package:astrobharataiuser/widgets/wallet_recharge_dialog.dart';
+import 'package:astrobharataiuser/core/services/crashlytics_service.dart';
 
 class LiveStreamController extends BaseController {
   final LiveStreamService _liveStreamService = LiveStreamService();
@@ -132,7 +133,7 @@ class LiveStreamController extends BaseController {
             .take(20)
             .toList();
         otherLiveStreams.value = filtered;
-        debugPrint('✓ Loaded ${otherLiveStreams.length} other live streams');
+        debugPrint('âœ“ Loaded ${otherLiveStreams.length} other live streams');
 
         // Load astrologer details for other streams
         await _loadOtherAstrologerDetails(filtered);
@@ -417,9 +418,9 @@ class LiveStreamController extends BaseController {
       if (result['success'] == true) {
         // Update follow state
         isFollowing.value = true;
-        debugPrint('✓ Followed astrologer before leaving');
+        debugPrint('âœ“ Followed astrologer before leaving');
       } else {
-        debugPrint('⚠ Failed to follow astrologer, but proceeding to leave');
+        debugPrint('âš  Failed to follow astrologer, but proceeding to leave');
       }
     } catch (e) {
       debugPrint('Error following astrologer: $e');
@@ -439,9 +440,12 @@ class LiveStreamController extends BaseController {
       isLoading.value = true;
       errorMessage.value = '';
 
-      debugPrint('=== Initializing Live Stream ===');
-      debugPrint('Stream ID: ${stream.streamId}');
-      debugPrint('Astrologer ID: ${stream.astrologerId}');
+      CrashlyticsService.trackAction(
+        "STREAM",
+        "INIT",
+        data:
+            "streamId:${stream.streamId}, astrologerId:${stream.astrologerId}",
+      );
       rxAstrologerName.value = astrologerName ?? stream.astrologerName;
       rxAstrologerProfile.value = astrologerProfilePicture ?? '';
 
@@ -453,13 +457,13 @@ class LiveStreamController extends BaseController {
       final response = await _liveStreamService.joinStream(stream.streamId);
 
       if (response == null) {
-        debugPrint('✗ Join API returned null - failed to join stream');
+        debugPrint('âœ— Join API returned null - failed to join stream');
         errorMessage.value = 'Failed to join stream';
         isLoading.value = false;
         return;
       }
 
-      debugPrint('✓ Join API successful!');
+      debugPrint('âœ“ Join API successful!');
       joinResponse = response;
       currentViewers.value = response.streamInfo.currentViewers;
 
@@ -478,11 +482,17 @@ class LiveStreamController extends BaseController {
       _connectSocket();
 
       isLoading.value = false;
-    } catch (e) {
-      debugPrint('✗ Error initializing stream: $e');
+    } catch (e, stack) {
+      debugPrint('âœ— Error initializing stream: $e');
       debugPrint('Stack trace: ${StackTrace.current}');
       errorMessage.value = 'Error: ${e.toString()}';
       isLoading.value = false;
+      reportError(
+        e,
+        stack,
+        type: CrashErrorType.network,
+        reason: "STREAM_INIT_FAILED",
+      );
     }
   }
 
@@ -496,7 +506,7 @@ class LiveStreamController extends BaseController {
         availableGifts.value = List<Gift>.from(catalog.gifts);
         availableReactions.value = List<Reaction>.from(catalog.reactions);
         debugPrint(
-          '✓ Loaded ${catalog.gifts.length} gifts and ${catalog.reactions.length} reactions from API',
+          'âœ“ Loaded ${catalog.gifts.length} gifts and ${catalog.reactions.length} reactions from API',
         );
         for (var i = 0; i < catalog.gifts.length; i++) {
           final gift = catalog.gifts[i];
@@ -515,7 +525,7 @@ class LiveStreamController extends BaseController {
           'Total reactions in availableReactions: ${availableReactions.length}',
         );
       } else {
-        debugPrint('⚠ Gifts catalog returned null from API');
+        debugPrint('âš  Gifts catalog returned null from API');
       }
     } catch (e) {
       debugPrint('Error loading gifts catalog: $e');
@@ -526,7 +536,7 @@ class LiveStreamController extends BaseController {
   Future<void> _connectSocket() async {
     if (_socketDisabled) {
       debugPrint(
-        '⚠ Socket disabled due to previous incompatibility. Skipping socket connect.',
+        'âš  Socket disabled due to previous incompatibility. Skipping socket connect.',
       );
       return;
     }
@@ -537,10 +547,14 @@ class LiveStreamController extends BaseController {
         return; // Don't throw, just return - video can still work
       }
 
-      debugPrint('=== Live Stream Socket Connection ===');
-      debugPrint('Socket URL: $streamSocketUrl');
       debugPrint('Token present: ${token.isNotEmpty}');
       debugPrint('Stream ID: ${stream.streamId}');
+
+      CrashlyticsService.trackAction(
+        "STREAM",
+        "SOCKET_CONNECT",
+        data: "url:$streamSocketUrl",
+      );
 
       // Dispose existing socket if any
       if (_socket != null) {
@@ -608,7 +622,7 @@ class LiveStreamController extends BaseController {
       // Final check - if still not connected, log but don't block
       if (_socket == null || !_socket!.connected) {
         debugPrint(
-          '⚠ Socket.io connection unavailable - chat/gifts will not work, but video streaming is active',
+          'âš  Socket.io connection unavailable - chat/gifts will not work, but video streaming is active',
         );
         debugPrint(
           'This is normal if the Socket.io server is not configured for live streams',
@@ -636,7 +650,7 @@ class LiveStreamController extends BaseController {
       _socket?.dispose();
     } catch (_) {}
     _socket = null;
-    debugPrint('⚠ Socket permanently disabled: $reason');
+    debugPrint('âš  Socket permanently disabled: $reason');
   }
 
   Future<void> _tryConnectSocket(
@@ -667,13 +681,18 @@ class LiveStreamController extends BaseController {
 
       _socket!.onConnect((_) {
         isConnected.value = true;
-        debugPrint('✓ Socket connected successfully');
+        debugPrint('âœ“ Socket connected successfully');
+        CrashlyticsService.trackAction(
+          "STREAM",
+          "SOCKET_CONNECTED",
+          data: "socketId:${_socket?.id}",
+        );
         // Wait a bit longer to ensure socket is fully ready
         Future.delayed(const Duration(milliseconds: 2000), () {
           if (_socket != null && _socket!.connected) {
             _joinStreamSocket();
           } else {
-            debugPrint('⚠ Socket not connected when trying to join stream');
+            debugPrint('âš  Socket not connected when trying to join stream');
             debugPrint('  Socket state: ${_socket?.connected}');
           }
         });
@@ -681,7 +700,7 @@ class LiveStreamController extends BaseController {
 
       _socket!.onConnectError((error) {
         isConnected.value = false;
-        debugPrint('✗ Socket connection error: $error');
+        debugPrint('âœ— Socket connection error: $error');
         if (_isSocketVersionMismatch(error)) {
           _disableSocketWithReason('Socket.io version mismatch');
         }
@@ -700,6 +719,12 @@ class LiveStreamController extends BaseController {
 
       _socket!.onError((error) {
         debugPrint('Socket error: $error');
+        reportError(
+          error,
+          StackTrace.current,
+          type: CrashErrorType.socket,
+          reason: "STREAM_SOCKET_ERROR",
+        );
         if (_isSocketVersionMismatch(error)) {
           _disableSocketWithReason('Socket.io version mismatch');
         }
@@ -707,7 +732,7 @@ class LiveStreamController extends BaseController {
       });
 
       _socket!.onReconnect((attempt) {
-        debugPrint('✓ Socket reconnected after $attempt attempts');
+        debugPrint('âœ“ Socket reconnected after $attempt attempts');
         // Don't set isConnected here - wait for onConnect event
         // The onConnect handler will handle joining the stream
       });
@@ -803,7 +828,7 @@ class LiveStreamController extends BaseController {
               senderName: null,
               giftType: giftType,
               giftValue: meta?.value ?? 0,
-              giftIcon: meta?.icon ?? '🎁',
+              giftIcon: meta?.icon ?? 'ðŸŽ',
               giftName: meta?.name ?? giftType,
               animation: null,
             );
@@ -853,7 +878,7 @@ class LiveStreamController extends BaseController {
 
       _socket!.on('stream_reaction', (data) {
         try {
-          debugPrint('✨ Reaction received: $data');
+          debugPrint('âœ¨ Reaction received: $data');
           final parsed = _safeToMap(data);
           if (parsed == null) {
             debugPrint(
@@ -863,7 +888,7 @@ class LiveStreamController extends BaseController {
           }
           // Map reactionType to icon from availableReactions
           final reactionType = parsed['reactionType'] as String?;
-          String? reactionIcon = '✨'; // Default icon
+          String? reactionIcon = 'âœ¨'; // Default icon
           if (reactionType != null) {
             final reactionData = availableReactions.firstWhereOrNull(
               (r) => r.type == reactionType,
@@ -897,7 +922,7 @@ class LiveStreamController extends BaseController {
       });
 
       _socket!.on('stream_crashed', (data) {
-        debugPrint('⚠ Stream crashed: $data');
+        debugPrint('âš  Stream crashed: $data');
         _handleStreamEnded();
       });
     } catch (e) {
@@ -910,7 +935,7 @@ class LiveStreamController extends BaseController {
 
   void _joinStreamSocket() {
     if (_socket == null) {
-      debugPrint('⚠ Cannot join stream: socket is null');
+      debugPrint('âš  Cannot join stream: socket is null');
       // Retry after a delay
       Future.delayed(const Duration(seconds: 2), () {
         if (_socket != null && _socket!.connected) {
@@ -921,7 +946,7 @@ class LiveStreamController extends BaseController {
     }
 
     if (!_socket!.connected) {
-      debugPrint('⚠ Cannot join stream: socket not connected');
+      debugPrint('âš  Cannot join stream: socket not connected');
       debugPrint('  Socket connected state: ${_socket!.connected}');
       // Retry after a delay
       Future.delayed(const Duration(seconds: 2), () {
@@ -933,12 +958,12 @@ class LiveStreamController extends BaseController {
     }
 
     try {
-      debugPrint('📡 Emitting join_stream event for: ${stream.streamId}');
+      debugPrint('ðŸ“¡ Emitting join_stream event for: ${stream.streamId}');
       _socket!.emit('join_stream', {'streamId': stream.streamId});
       isStreamJoined.value = true;
-      debugPrint('✓ Joined stream via socket: ${stream.streamId}');
+      debugPrint('âœ“ Joined stream via socket: ${stream.streamId}');
     } catch (e) {
-      debugPrint('✗ Error joining stream via socket: $e');
+      debugPrint('âœ— Error joining stream via socket: $e');
       debugPrint('Stack trace: ${StackTrace.current}');
       // Retry after a delay
       Future.delayed(const Duration(seconds: 2), () {
@@ -978,32 +1003,32 @@ class LiveStreamController extends BaseController {
             channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
           ),
         );
-        debugPrint('✓ Agora engine initialized');
+        debugPrint('âœ“ Agora engine initialized');
       } else {
         debugPrint('Reusing existing Agora engine');
       }
 
       // Set client role as audience (viewer)
       await engine!.setClientRole(role: ClientRoleType.clientRoleAudience);
-      debugPrint('✓ Client role set to audience');
+      debugPrint('âœ“ Client role set to audience');
 
       // Enable video
       await engine!.enableVideo();
-      debugPrint('✓ Video enabled');
+      debugPrint('âœ“ Video enabled');
 
       // Register event handlers once
       if (!_agoraHandlersSet) {
         engine!.registerEventHandler(
           RtcEngineEventHandler(
             onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-              debugPrint('✓✓✓ Agora: Joined channel successfully!');
+              debugPrint('âœ“âœ“âœ“ Agora: Joined channel successfully!');
               debugPrint('  - Channel: ${connection.channelId}');
               debugPrint('  - Elapsed time: ${elapsed}ms');
               isAgoraInitialized.value = true;
               isLoading.value = false;
             },
             onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-              debugPrint('✓✓✓ Agora: Remote user joined: $remoteUid');
+              debugPrint('âœ“âœ“âœ“ Agora: Remote user joined: $remoteUid');
               debugPrint('  - Channel: ${connection.channelId}');
               debugPrint('  - Elapsed time: ${elapsed}ms');
               this.remoteUid.value = remoteUid;
@@ -1021,13 +1046,13 @@ class LiveStreamController extends BaseController {
                   UserOfflineReasonType reason,
                 ) {
                   debugPrint(
-                    '⚠ Agora: Remote user offline: $remoteUid (reason: $reason)',
+                    'âš  Agora: Remote user offline: $remoteUid (reason: $reason)',
                   );
 
                   // If this is the broadcaster going offline, the stream has ended
                   if (this.remoteUid.value == remoteUid &&
                       !isStreamEnded.value) {
-                    debugPrint('📺 Stream ended - broadcaster went offline');
+                    debugPrint('ðŸ“º Stream ended - broadcaster went offline');
                     _handleStreamEnded();
                   }
 
@@ -1038,7 +1063,7 @@ class LiveStreamController extends BaseController {
                 },
             onUserMuteVideo: (RtcConnection connection, int remoteUid, bool muted) {
               debugPrint(
-                '📹 Agora: Remote user video ${muted ? "muted" : "unmuted"}: $remoteUid',
+                'ðŸ“¹ Agora: Remote user video ${muted ? "muted" : "unmuted"}: $remoteUid',
               );
               if (this.remoteUid.value == remoteUid) {
                 isRemoteVideoMuted.value = muted;
@@ -1046,7 +1071,7 @@ class LiveStreamController extends BaseController {
             },
             onUserMuteAudio: (RtcConnection connection, int remoteUid, bool muted) {
               debugPrint(
-                '🔊 Agora: Remote user audio ${muted ? "muted" : "unmuted"}: $remoteUid',
+                'ðŸ”Š Agora: Remote user audio ${muted ? "muted" : "unmuted"}: $remoteUid',
               );
               if (this.remoteUid.value == remoteUid) {
                 isRemoteAudioMuted.value = muted;
@@ -1061,7 +1086,7 @@ class LiveStreamController extends BaseController {
                   int elapsed,
                 ) {
                   debugPrint(
-                    '📹 Agora: Remote video state changed: $remoteUid, state: $state, reason: $reason',
+                    'ðŸ“¹ Agora: Remote video state changed: $remoteUid, state: $state, reason: $reason',
                   );
                   if (this.remoteUid.value == remoteUid) {
                     // Check if stream has ended (user offline or failed)
@@ -1071,7 +1096,7 @@ class LiveStreamController extends BaseController {
                       // Stream ended - broadcaster went offline
                       if (!isStreamEnded.value) {
                         debugPrint(
-                          '📺 Stream ended - detected via video state (remote offline)',
+                          'ðŸ“º Stream ended - detected via video state (remote offline)',
                         );
                         _handleStreamEnded();
                       }
@@ -1086,40 +1111,40 @@ class LiveStreamController extends BaseController {
                       if (reason ==
                           RemoteVideoStateReason
                               .remoteVideoStateReasonRemoteMuted) {
-                        debugPrint('📹 Video explicitly muted by remote user');
+                        debugPrint('ðŸ“¹ Video explicitly muted by remote user');
                         isRemoteVideoMuted.value = true;
                       } else {
                         // Video stopped for other reasons (might be temporary) - don't assume muted
                         debugPrint(
-                          '📹 Video stopped but reason is not muted, keeping video visible',
+                          'ðŸ“¹ Video stopped but reason is not muted, keeping video visible',
                         );
                         // Keep current state, don't change it
                       }
                     } else if (state ==
                         RemoteVideoState.remoteVideoStateFailed) {
                       // Video failed - hide video but don't assume stream ended (could be network issue)
-                      debugPrint('📹 Video failed');
+                      debugPrint('ðŸ“¹ Video failed');
                       isRemoteVideoMuted.value = true;
                     } else if (state ==
                             RemoteVideoState.remoteVideoStateStarting ||
                         state == RemoteVideoState.remoteVideoStateDecoding) {
                       // Video is starting or decoding - show video
-                      debugPrint('📹 Video starting/decoding - showing video');
+                      debugPrint('ðŸ“¹ Video starting/decoding - showing video');
                       isRemoteVideoMuted.value = false;
                     }
                   }
                 },
             onError: (ErrorCodeType err, String msg) {
-              debugPrint('✗✗✗ Agora error: $err - $msg');
+              debugPrint('âœ—âœ—âœ— Agora error: $err - $msg');
               errorMessage.value = 'Agora error: $msg';
             },
           ),
         );
         _agoraHandlersSet = true;
-        debugPrint('✓ Event handlers registered');
+        debugPrint('âœ“ Event handlers registered');
       }
     } catch (e) {
-      debugPrint('✗✗✗ Error initializing Agora: $e');
+      debugPrint('âœ—âœ—âœ— Error initializing Agora: $e');
       debugPrint('Stack trace: ${StackTrace.current}');
       errorMessage.value = 'Failed to initialize video: ${e.toString()}';
       isLoading.value = false;
@@ -1157,7 +1182,7 @@ class LiveStreamController extends BaseController {
         publishMicrophoneTrack: false,
       ),
     );
-    debugPrint('✓ Join channel request sent (as viewer/audience)');
+    debugPrint('âœ“ Join channel request sent (as viewer/audience)');
   }
 
   // Send chat message
@@ -1188,7 +1213,7 @@ class LiveStreamController extends BaseController {
         'content': text,
       });
       messageController.clear();
-      debugPrint('💬 Message sent: $text');
+      debugPrint('ðŸ’¬ Message sent: $text');
     } catch (e) {
       debugPrint('Error sending message: $e');
       Get.snackbar(
@@ -1217,7 +1242,7 @@ class LiveStreamController extends BaseController {
         'streamId': stream.streamId,
         'reactionType': reactionType,
       });
-      debugPrint('✨ Reaction sent: $reactionType');
+      debugPrint('âœ¨ Reaction sent: $reactionType');
     } catch (e) {
       debugPrint('Error sending reaction: $e');
       Get.snackbar(
@@ -1249,7 +1274,7 @@ class LiveStreamController extends BaseController {
       // 1. Find the gift to get its value
       final gift = availableGifts.firstWhereOrNull((g) => g.type == giftType);
       if (gift == null) {
-        debugPrint('⚠ Gift type not found: $giftType');
+        debugPrint('âš  Gift type not found: $giftType');
         return;
       }
 
@@ -1257,7 +1282,7 @@ class LiveStreamController extends BaseController {
       // Use UserData to get the correct user ID (source of truth)
       final userId = _userData.getLoginData.user?.userId;
       if (userId == null) {
-        debugPrint('⚠ Cannot fetch balance: User ID not found in session');
+        debugPrint('âš  Cannot fetch balance: User ID not found in session');
         Get.snackbar(
           'Error',
           'User session invalid',
@@ -1266,7 +1291,7 @@ class LiveStreamController extends BaseController {
         return;
       }
 
-      debugPrint('💰 Checking balance for User ID: $userId');
+      debugPrint('ðŸ’° Checking balance for User ID: $userId');
 
       final balanceResponse = await _walletService.getWalletBalance(userId);
 
@@ -1305,7 +1330,7 @@ class LiveStreamController extends BaseController {
       });
 
       showGiftPanel.value = false;
-      debugPrint('🎁 Gift sent: $giftType');
+      debugPrint('ðŸŽ Gift sent: $giftType');
 
       // Optimistically show animation for sender
       _showGiftOverlay(
@@ -1364,7 +1389,7 @@ class LiveStreamController extends BaseController {
       );
       if (status != null) {
         isFollowing.value = status['isFollowing'] as bool? ?? false;
-        debugPrint('📺 Follow status loaded: ${isFollowing.value}');
+        debugPrint('ðŸ“º Follow status loaded: ${isFollowing.value}');
       }
     } catch (e) {
       debugPrint('Error loading follow status: $e');
@@ -1519,16 +1544,16 @@ class LiveStreamController extends BaseController {
     }
 
     isStreamEnded.value = true;
-    debugPrint('📺 Handling stream end - showing message and navigating back');
-    debugPrint('📺 Current route: ${Get.currentRoute}');
-    debugPrint('📺 Previous route: ${Get.previousRoute}');
+    debugPrint('ðŸ“º Handling stream end - showing message and navigating back');
+    debugPrint('ðŸ“º Current route: ${Get.currentRoute}');
+    debugPrint('ðŸ“º Previous route: ${Get.previousRoute}');
 
     // Show "LIVE IS ENDED" message
     Get.snackbar(
       'LIVE IS ENDED',
       'The astrologer has ended the live stream',
       snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.red.withOpacity(0.9),
+      backgroundColor: Colors.red.withValues(alpha: 0.9),
       colorText: Colors.white,
       duration: const Duration(seconds: 2),
       margin: EdgeInsets.all(16.w),
@@ -1546,9 +1571,9 @@ class LiveStreamController extends BaseController {
         return; // Stream was resumed or something changed
       }
 
-      debugPrint('📺 Navigating back after stream end');
-      debugPrint('📺 Current route: ${Get.currentRoute}');
-      debugPrint('📺 Previous route: ${Get.previousRoute}');
+      debugPrint('ðŸ“º Navigating back after stream end');
+      debugPrint('ðŸ“º Current route: ${Get.currentRoute}');
+      debugPrint('ðŸ“º Previous route: ${Get.previousRoute}');
 
       // Clean up Agora connection first
       await _leaveStream();
@@ -1560,7 +1585,7 @@ class LiveStreamController extends BaseController {
 
       // Note: Navigation is now handled in the view using ever() listener
       // This ensures we have BuildContext for reliable navigation
-      debugPrint('📺 Stream ended flag set - view will handle navigation');
+      debugPrint('ðŸ“º Stream ended flag set - view will handle navigation');
     });
   }
 
@@ -1575,7 +1600,7 @@ class LiveStreamController extends BaseController {
       if (_socket?.connected == true && isStreamJoined.value) {
         try {
           _socket!.emit('leave_stream', {'streamId': stream.streamId});
-          debugPrint('📡 Emitted leave_stream for ${stream.streamId}');
+          debugPrint('ðŸ“¡ Emitted leave_stream for ${stream.streamId}');
         } catch (e) {
           debugPrint('Error emitting leave_stream: $e');
         }
@@ -1648,3 +1673,4 @@ class LiveStreamController extends BaseController {
     super.onClose();
   }
 }
+

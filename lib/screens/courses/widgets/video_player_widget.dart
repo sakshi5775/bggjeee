@@ -186,8 +186,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         materialProgressColors: ChewieProgressColors(
           playedColor: AppColors.saffron,
           handleColor: AppColors.saffron,
-          backgroundColor: Colors.grey.withOpacity(0.3),
-          bufferedColor: Colors.grey.withOpacity(0.5),
+          backgroundColor: Colors.grey.withValues(alpha: 0.3),
+          bufferedColor: Colors.grey.withValues(alpha: 0.5),
         ),
         placeholder: _buildLoadingPlaceholder(),
         errorBuilder: (context, errorMessage) {
@@ -883,7 +883,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                         child: Container(
                           padding: EdgeInsets.all(8.w),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
+                            color: Colors.black.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Icon(
@@ -1452,7 +1452,7 @@ class _FullScreenVideoPlayerState extends State<_FullScreenVideoPlayer> {
                     child: Container(
                       padding: EdgeInsets.all(8.w),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
+                        color: Colors.black.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Icon(
@@ -1484,3 +1484,4 @@ class _FullScreenVideoPlayerState extends State<_FullScreenVideoPlayer> {
     );
   }
 }
+

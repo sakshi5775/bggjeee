@@ -68,11 +68,11 @@ class _CalibrationHintState extends State<CalibrationHint>
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
             decoration: BoxDecoration(
-              color: "#F38B3B".toColor().withOpacity(0.9),
+              color: "#F38B3B".toColor().withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -109,4 +109,5 @@ class _CalibrationHintState extends State<CalibrationHint>
     );
   }
 }
+
 

@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
 import 'package:astrobharataiuser/app_manager/user_data.dart';
-import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/astrologer_model.dart';
 import 'package:astrobharataiuser/data_model/call_model.dart';
 import 'package:astrobharataiuser/screens/astrology_services/services/agora_call_manager.dart';
@@ -11,17 +9,14 @@ import 'package:astrobharataiuser/screens/astrology_services/services/call_servi
 import 'package:astrobharataiuser/screens/astrology_services/widgets/astrologer_review_dialog.dart';
 import 'package:astrobharataiuser/screens/astrology_services/controller/astrologer_review_controller.dart';
 import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
-import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/profile_check_helper.dart';
-import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
-import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 
-class AstrologerVideoCallController extends GetxController {
+class AstrologerVideoCallController extends BaseController {
   late AstrologerModel astrologer;
   final CallService _callService = CallService();
   final AgoraCallManager _agoraManager = AgoraCallManager();
@@ -1043,32 +1038,6 @@ class AstrologerVideoCallController extends GetxController {
   }
 
   /// Sync wallet balance with backend
-  Future<void> _syncWalletBalanceWithBackend() async {
-    try {
-      final backendBalance = await _profileHelper.getWalletBalance();
-      // Always update with backend value (backend is authoritative)
-      if (backendBalance >= 0) {
-        if (backendBalance != walletBalance.value) {
-          if (kDebugMode) {
-            print(
-              '💰 Syncing wallet balance (Video): Local ₹${walletBalance.value} → Backend ₹$backendBalance',
-            );
-          }
-        }
-        walletBalance.value = backendBalance;
-        _walletBalance = backendBalance;
-
-        // Sync the Money Anchor for visual smoothness
-        _syncMoneyAnchor(backendBalance, pricePerMinute.value);
-
-        // Update global WalletController
-        _updateGlobalWalletBalance(backendBalance);
-      }
-    } catch (e) {
-      if (kDebugMode) print('⚠️ Error syncing wallet balance: $e');
-    }
-  }
-
   Future<void> toggleMute() async {
     await _agoraManager.toggleMute();
     isMuted.value = _agoraManager.isMuted;

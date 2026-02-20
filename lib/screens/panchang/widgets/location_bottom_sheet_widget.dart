@@ -173,14 +173,14 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
             controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search city, state, or country...',
-              prefixIcon: Icon(Icons.search, color: "#6F221E".toColor().withOpacity(0.5)),
+              prefixIcon: Icon(Icons.search, color: "#6F221E".toColor().withValues(alpha: 0.5)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: "#DFB343".toColor().withOpacity(0.5)),
+                borderSide: BorderSide(color: "#DFB343".toColor().withValues(alpha: 0.5)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide(color: "#DFB343".toColor().withOpacity(0.5)),
+                borderSide: BorderSide(color: "#DFB343".toColor().withValues(alpha: 0.5)),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12.r),
@@ -271,7 +271,7 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
               AutoTranslateText(
                 'Searching locations...',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.6),
+                  color: "#6F221E".toColor().withValues(alpha: 0.6),
                   fontSize: 14.sp,
                 ),
               ),
@@ -317,14 +317,14 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
             children: [
               Icon(
                 Icons.search,
-                color: "#6F221E".toColor().withOpacity(0.3),
+                color: "#6F221E".toColor().withValues(alpha: 0.3),
                 size: 64.w,
               ),
               Spacing.h(16),
               AutoTranslateText(
                 'Search for any city, state, or country worldwide',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.6),
+                  color: "#6F221E".toColor().withValues(alpha: 0.6),
                   fontSize: 14.sp,
                 ),
                 textAlign: TextAlign.center,
@@ -344,14 +344,14 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
             children: [
               Icon(
                 Icons.location_off,
-                color: "#6F221E".toColor().withOpacity(0.3),
+                color: "#6F221E".toColor().withValues(alpha: 0.3),
                 size: 64.w,
               ),
               Spacing.h(16),
               AutoTranslateText(
                 'No locations found',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.6),
+                  color: "#6F221E".toColor().withValues(alpha: 0.6),
                   fontSize: 14.sp,
                 ),
                 textAlign: TextAlign.center,
@@ -360,7 +360,7 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
               AutoTranslateText(
                 'Try searching with a different term',
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.5),
+                  color: "#6F221E".toColor().withValues(alpha: 0.5),
                   fontSize: 12.sp,
                 ),
                 textAlign: TextAlign.center,
@@ -386,13 +386,13 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
             color: isSelected
-                ? "#DFB343".toColor().withOpacity(0.1)
+                ? "#DFB343".toColor().withValues(alpha: 0.1)
                 : Colors.white,
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
               color: isSelected
                   ? "#DFB343".toColor()
-                  : "#DFB343".toColor().withOpacity(0.3),
+                  : "#DFB343".toColor().withValues(alpha: 0.3),
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -403,7 +403,7 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
                 Container(
                   padding: EdgeInsets.all(10.w),
                   decoration: BoxDecoration(
-                    color: "#DFB343".toColor().withOpacity(0.1),
+                    color: "#DFB343".toColor().withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -430,7 +430,7 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
                         AutoTranslateText(
                           secondaryText,
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: "#6F221E".toColor().withOpacity(0.6),
+                            color: "#6F221E".toColor().withValues(alpha: 0.6),
                             fontSize: 12.sp,
                           ),
                         ),
@@ -439,7 +439,7 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
                         AutoTranslateText(
                           description,
                           style: MyTextTheme.smallBCN.copyWith(
-                            color: "#6F221E".toColor().withOpacity(0.6),
+                            color: "#6F221E".toColor().withValues(alpha: 0.6),
                             fontSize: 12.sp,
                           ),
                           maxLines: 2,
@@ -464,6 +464,7 @@ class _LocationBottomSheetWidgetState extends State<LocationBottomSheetWidget> {
   }
 
 }
+
 
 
 

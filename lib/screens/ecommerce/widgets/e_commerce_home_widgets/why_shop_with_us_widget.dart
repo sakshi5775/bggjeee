@@ -17,7 +17,7 @@ class WhyShopWithUsWidget extends StatelessWidget {
       },
       {
         'icon': Icons.temple_hindu,
-        'emoji': '🕉️',
+        'emoji': 'ðŸ•‰ï¸',
         'title': 'Temple\nBlessed',
         'subtitle': 'Vedic Rituals',
       },
@@ -45,7 +45,7 @@ class WhyShopWithUsWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(22.04.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.25),
+              color: Colors.black.withValues(alpha: 0.25),
               blurRadius: 45.91,
               offset: Offset(0, -11.02),
             ),
@@ -94,7 +94,7 @@ class WhyShopWithUsWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(14.69.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 5.51,
                   offset: Offset(0, -2.75),
                 ),
@@ -132,7 +132,7 @@ class WhyShopWithUsWidget extends StatelessWidget {
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w400,
               fontSize: 11.02.sp,
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
               height: 1.33,
             ),
             textAlign: TextAlign.center,
@@ -142,3 +142,4 @@ class WhyShopWithUsWidget extends StatelessWidget {
     );
   }
 }
+

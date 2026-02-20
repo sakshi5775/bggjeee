@@ -35,7 +35,7 @@ class LalKitabDebtPredictionsWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 24.h),
             child: AutoTranslateText(
               'No data available',
-              style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+              style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withValues(alpha: 0.6)),
             ),
           ),
         );
@@ -48,7 +48,7 @@ class LalKitabDebtPredictionsWidget extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 16.h),
             child: AutoTranslateText(
               'No data available',
-              style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+              style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withValues(alpha: 0.6)),
             ),
           ),
         );
@@ -94,9 +94,9 @@ class LalKitabDebtPredictionsWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
+        border: Border.all(color: '#ed6f30'.toColor().withValues(alpha: 0.2), width: 1),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 8, offset: const Offset(0, 2)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 8, offset: const Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -227,7 +227,7 @@ class LalKitabDebtPredictionsWidget extends StatelessWidget {
                       width: 24.w,
                       height: 24.w,
                       decoration: BoxDecoration(
-                        color: '#ed6f30'.toColor().withOpacity(0.1),
+                        color: '#ed6f30'.toColor().withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
@@ -273,3 +273,4 @@ class LalKitabDebtPredictionsWidget extends StatelessWidget {
     );
   }
 }
+

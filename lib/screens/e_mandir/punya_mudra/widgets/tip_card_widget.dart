@@ -24,7 +24,7 @@ class TipCardWidget extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6),
           ],
         ),
         child: Row(
@@ -77,3 +77,4 @@ class TipCardWidget extends StatelessWidget {
     );
   }
 }
+

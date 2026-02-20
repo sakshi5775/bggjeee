@@ -88,7 +88,7 @@ class _NavtaraCompatibilityWidgetState
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: maroon.withOpacity(0.1)),
+        border: Border.all(color: maroon.withValues(alpha: 0.1)),
       ),
       child: Column(
         children: [
@@ -130,7 +130,7 @@ class _NavtaraCompatibilityWidgetState
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: maroon.withOpacity(0.1)),
+        border: Border.all(color: maroon.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,7 +159,7 @@ class _NavtaraCompatibilityWidgetState
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: _getFavorColor(category.favorability).withOpacity(0.1),
+                  color: _getFavorColor(category.favorability).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: AutoTranslateText(
@@ -336,3 +336,4 @@ class _NavtaraCompatibilityWidgetState
     return Colors.red;
   }
 }
+

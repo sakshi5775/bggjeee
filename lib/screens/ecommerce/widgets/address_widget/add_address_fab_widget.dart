@@ -20,7 +20,7 @@ class AddAddressFabWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(30.r),
         boxShadow: [
           BoxShadow(
-            color: '#F38B3B'.toColor().withOpacity(0.4),
+            color: '#F38B3B'.toColor().withValues(alpha: 0.4),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -60,3 +60,4 @@ class AddAddressFabWidget extends StatelessWidget {
     );
   }
 }
+

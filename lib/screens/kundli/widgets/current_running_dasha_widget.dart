@@ -23,7 +23,7 @@ class CurrentRunningDashaWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(22.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -32,7 +32,7 @@ class CurrentRunningDashaWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// 🔶 Header
+          /// ðŸ”¶ Header
           Row(
             children: [
               Container(
@@ -68,7 +68,7 @@ class CurrentRunningDashaWidget extends StatelessWidget {
 
           SizedBox(height: 20.h),
 
-          /// 🔶 Dasha Cards
+          /// ðŸ”¶ Dasha Cards
           Row(
             children: [
               _dashaCard(title: "Mahadasha", value: mahadasha),
@@ -123,3 +123,4 @@ class CurrentRunningDashaWidget extends StatelessWidget {
     );
   }
 }
+

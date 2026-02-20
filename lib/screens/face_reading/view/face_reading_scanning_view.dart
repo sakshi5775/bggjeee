@@ -411,7 +411,7 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),
@@ -457,7 +457,7 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
                         borderRadius: BorderRadius.circular(12.r),
                         boxShadow: [
                           BoxShadow(
-                            color: "#F38B3B".toColor().withOpacity(0.35),
+                            color: "#F38B3B".toColor().withValues(alpha: 0.35),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -567,3 +567,4 @@ class _FaceReadingScanningViewState extends State<FaceReadingScanningView>
     });
   }
 }
+

@@ -30,7 +30,7 @@ class TransitChartWidget extends StatelessWidget {
               AutoTranslateText(
                 'Loading chart...',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.7),
+                  color: "#6F221E".toColor().withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -54,10 +54,10 @@ class TransitChartWidget extends StatelessWidget {
               padding: EdgeInsets.all(12.w),
               margin: EdgeInsets.only(bottom: 10.h),
               decoration: BoxDecoration(
-                color: "#ed6f30".toColor().withOpacity(0.1),
+                color: "#ed6f30".toColor().withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
-                  color: "#ed6f30".toColor().withOpacity(0.3),
+                  color: "#ed6f30".toColor().withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -66,7 +66,7 @@ class TransitChartWidget extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(8.w),
                     decoration: BoxDecoration(
-                      color: "#ed6f30".toColor().withOpacity(0.1),
+                      color: "#ed6f30".toColor().withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Icon(
@@ -91,7 +91,7 @@ class TransitChartWidget extends StatelessWidget {
                         AutoTranslateText(
                           'Date: $transitDate | Time: $transitTime',
                           style: AppTypography.body2.copyWith(
-                            color: "#6F221E".toColor().withOpacity(0.7),
+                            color: "#6F221E".toColor().withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -107,13 +107,13 @@ class TransitChartWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.06),
+                    color: Colors.black.withValues(alpha: 0.06),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
                 border: Border.all(
-                  color: "#ed6f30".toColor().withOpacity(0.2),
+                  color: "#ed6f30".toColor().withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -134,7 +134,7 @@ class TransitChartWidget extends StatelessWidget {
                           fit: BoxFit.contain,
                           alignment: Alignment.center,
                           placeholderBuilder: (context) => Container(
-                            color: Colors.grey.withOpacity(0.08),
+                            color: Colors.grey.withValues(alpha: 0.08),
                             child: Center(
                               child: CircularProgressIndicator(
                                 color: "#ed6f30".toColor(),
@@ -159,3 +159,4 @@ class TransitChartWidget extends StatelessWidget {
     });
   }
 }
+

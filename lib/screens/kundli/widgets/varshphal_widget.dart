@@ -8,7 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-/// Varshphal widget – same design as KundliHeader (#6F221E / #ed6f30), tables like lal_kitab_planets_widget.
+/// Varshphal widget â€“ same design as KundliHeader (#6F221E / #ed6f30), tables like lal_kitab_planets_widget.
 /// Uses varshaphal-details and varshaphal-yearly-chart APIs; all fields displayed.
 class VarshphalWidget extends StatelessWidget {
   final KundliResultController controller;
@@ -37,10 +37,10 @@ class VarshphalWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
+        border: Border.all(color: '#ed6f30'.toColor().withValues(alpha: 0.2), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -54,7 +54,7 @@ class VarshphalWidget extends StatelessWidget {
           Container(
             width: 1,
             height: 40.h,
-            color: '#ed6f30'.toColor().withOpacity(0.2),
+            color: '#ed6f30'.toColor().withValues(alpha: 0.2),
           ),
           Expanded(
             child: _buildTabButton('Yearly Chart', 1, Icons.table_chart_rounded),
@@ -93,7 +93,7 @@ class VarshphalWidget extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: isSelected ? Colors.white : '#6F221E'.toColor().withOpacity(0.6),
+                color: isSelected ? Colors.white : '#6F221E'.toColor().withValues(alpha: 0.6),
                 size: 18.w,
               ),
               Spacing.w(8),
@@ -103,7 +103,7 @@ class VarshphalWidget extends StatelessWidget {
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                   style: MyTextTheme.smallBCB.copyWith(
-                    color: isSelected ? Colors.white : '#6F221E'.toColor().withOpacity(0.7),
+                    color: isSelected ? Colors.white : '#6F221E'.toColor().withValues(alpha: 0.7),
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                     fontSize: 12.sp,
                   ),
@@ -124,12 +124,12 @@ class VarshphalWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(color: '#ed6f30'.toColor().withOpacity(0.2), width: 1),
+        border: Border.all(color: '#ed6f30'.toColor().withValues(alpha: 0.2), width: 1),
       ),
       clipBehavior: Clip.antiAlias,
       child: child,
@@ -140,9 +140,9 @@ class VarshphalWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: '#ed6f30'.toColor().withOpacity(0.08),
+        color: '#ed6f30'.toColor().withValues(alpha: 0.08),
         border: Border(
-          bottom: BorderSide(color: '#ed6f30'.toColor().withOpacity(0.25), width: 1),
+          bottom: BorderSide(color: '#ed6f30'.toColor().withValues(alpha: 0.25), width: 1),
         ),
       ),
       child: Row(
@@ -175,7 +175,7 @@ class VarshphalWidget extends StatelessWidget {
         return Center(
           child: AutoTranslateText(
             'No Varshphal Details data available',
-            style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+            style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withValues(alpha: 0.6)),
           ),
         );
       }
@@ -185,7 +185,7 @@ class VarshphalWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.info_outline_rounded, size: 48.w, color: '#ed6f30'.toColor().withOpacity(0.5)),
+              Icon(Icons.info_outline_rounded, size: 48.w, color: '#ed6f30'.toColor().withValues(alpha: 0.5)),
               Spacing.h(12),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -271,9 +271,9 @@ class VarshphalWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: isEven ? '#ed6f30'.toColor().withOpacity(0.04) : Colors.white,
+        color: isEven ? '#ed6f30'.toColor().withValues(alpha: 0.04) : Colors.white,
         border: Border(
-          bottom: BorderSide(color: '#ed6f30'.toColor().withOpacity(0.12), width: 1),
+          bottom: BorderSide(color: '#ed6f30'.toColor().withValues(alpha: 0.12), width: 1),
         ),
       ),
       child: Row(
@@ -298,7 +298,7 @@ class VarshphalWidget extends StatelessWidget {
         return Center(
           child: AutoTranslateText(
             'No Varshphal Yearly Chart data available',
-            style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withOpacity(0.6)),
+            style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withValues(alpha: 0.6)),
           ),
         );
       }
@@ -308,7 +308,7 @@ class VarshphalWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.info_outline_rounded, size: 48.w, color: '#ed6f30'.toColor().withOpacity(0.5)),
+              Icon(Icons.info_outline_rounded, size: 48.w, color: '#ed6f30'.toColor().withValues(alpha: 0.5)),
               Spacing.h(12),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -348,7 +348,7 @@ class VarshphalWidget extends StatelessWidget {
                             AutoTranslateText(
                               'Varshphal Date',
                               style: MyTextTheme.smallBCB.copyWith(
-                                color: '#6F221E'.toColor().withOpacity(0.7),
+                                color: '#6F221E'.toColor().withValues(alpha: 0.7),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -467,9 +467,9 @@ class VarshphalWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: isEven ? '#ed6f30'.toColor().withOpacity(0.04) : Colors.white,
+        color: isEven ? '#ed6f30'.toColor().withValues(alpha: 0.04) : Colors.white,
         border: Border(
-          bottom: BorderSide(color: '#ed6f30'.toColor().withOpacity(0.12), width: 1),
+          bottom: BorderSide(color: '#ed6f30'.toColor().withValues(alpha: 0.12), width: 1),
         ),
       ),
       child: Row(
@@ -505,3 +505,4 @@ class VarshphalWidget extends StatelessWidget {
     }
   }
 }
+

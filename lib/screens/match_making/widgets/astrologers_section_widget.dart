@@ -128,7 +128,7 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
               borderRadius: BorderRadius.circular(25.r),
               boxShadow: [
                 BoxShadow(
-                  color: '#F38B3B'.toColor().withOpacity(0.3),
+                  color: '#F38B3B'.toColor().withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -184,7 +184,7 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -238,7 +238,7 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
                     borderRadius: BorderRadius.circular(4.r),
                     boxShadow: [
                       BoxShadow(
-                        color: '#F38B3B'.toColor().withOpacity(0.3),
+                        color: '#F38B3B'.toColor().withValues(alpha: 0.3),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -284,7 +284,7 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
                   AutoTranslateText(
                     '${astrologer.experienceYears} yrs exp',
                     style: MyTextTheme.smallBCN
-                        .copyWith(color: '#68171E'.toColor().withOpacity(0.7))
+                        .copyWith(color: '#68171E'.toColor().withValues(alpha: 0.7))
                         .merge(AppTypography.label),
                   ),
                   Spacing.h(3),
@@ -292,7 +292,7 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
                     child: AutoTranslateText(
                       astrologer.languages.join(', '),
                       style: MyTextTheme.smallBCN
-                          .copyWith(color: '#68171E'.toColor().withOpacity(0.7))
+                          .copyWith(color: '#68171E'.toColor().withValues(alpha: 0.7))
                           .merge(AppTypography.label),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -325,7 +325,7 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
                           borderRadius: BorderRadius.circular(12.r),
                           boxShadow: [
                             BoxShadow(
-                              color: '#F38B3B'.toColor().withOpacity(0.3),
+                              color: '#F38B3B'.toColor().withValues(alpha: 0.3),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
@@ -353,3 +353,4 @@ class _AstrologersSectionWidgetState extends State<AstrologersSectionWidget> {
     );
   }
 }
+

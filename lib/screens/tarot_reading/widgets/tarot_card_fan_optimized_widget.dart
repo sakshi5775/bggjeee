@@ -28,10 +28,10 @@ class TarotCardFanOptimizedWidget extends StatelessWidget {
       final theme = controller.selectedTheme.value;
       final backType = controller.selectedBackType.value;
       
-      debugPrint('🎴 FanWidget: showCards=$showCards, hasCards=$hasCards, progress=$progress, cardCount=${controller.cards.length}, theme=$theme, backType=$backType');
+      debugPrint('ðŸŽ´ FanWidget: showCards=$showCards, hasCards=$hasCards, progress=$progress, cardCount=${controller.cards.length}, theme=$theme, backType=$backType');
       
       if (!showCards || !hasCards) {
-        debugPrint('🎴 FanWidget: Returning SizedBox.shrink() - showCards=$showCards, hasCards=$hasCards');
+        debugPrint('ðŸŽ´ FanWidget: Returning SizedBox.shrink() - showCards=$showCards, hasCards=$hasCards');
         return const SizedBox.shrink();
       }
 
@@ -55,7 +55,7 @@ class TarotCardFanOptimizedWidget extends StatelessWidget {
           return a.compareTo(b);
         });
 
-      debugPrint('🎴 FanWidget: Building Stack with ${cards.length} cards, progress=$progress');
+      debugPrint('ðŸŽ´ FanWidget: Building Stack with ${cards.length} cards, progress=$progress');
       
       // Ensure progress is at least a small value so cards are visible
       final effectiveProgress = progress > 0 ? progress : 0.1;
@@ -77,7 +77,7 @@ class TarotCardFanOptimizedWidget extends StatelessWidget {
               );
               final inViewport = position.dx >= viewportLeft && position.dx <= viewportRight;
               if (index < 3) {
-                debugPrint('🎴 FanWidget: Card $index position=${position.dx}, inViewport=$inViewport');
+                debugPrint('ðŸŽ´ FanWidget: Card $index position=${position.dx}, inViewport=$inViewport');
               }
               return inViewport;
             }).map((index) {
@@ -234,13 +234,13 @@ class _OptimizedTarotCardWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
+            color: Colors.black.withValues(alpha: 0.4),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
           if (isRevealed)
             BoxShadow(
-              color: "#F38B3B".toColor().withOpacity(0.7),
+              color: "#F38B3B".toColor().withValues(alpha: 0.7),
               blurRadius: 25,
               spreadRadius: 8,
             ),
@@ -414,4 +414,5 @@ class _OptimizedTarotCardWidget extends StatelessWidget {
           );
   }
 }
+
 

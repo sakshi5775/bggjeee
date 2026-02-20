@@ -202,7 +202,7 @@ class DynamicMeshPainter extends CustomPainter {
     // Draw glow effect if enabled
     if (showGlow) {
       final glowPaint = Paint()
-        ..color = lineColor.withOpacity(0.4 * opacity)
+        ..color = lineColor.withValues(alpha: 0.4 * opacity)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 5.0
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10.0);
@@ -211,7 +211,7 @@ class DynamicMeshPainter extends CustomPainter {
 
     // Draw main line - make it more visible
     final linePaint = Paint()
-      ..color = lineColor.withOpacity(opacity)
+      ..color = lineColor.withValues(alpha: opacity)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.5
       ..strokeCap = StrokeCap.round
@@ -221,7 +221,7 @@ class DynamicMeshPainter extends CustomPainter {
     // Draw dots at each point - make them more visible with glow
     if (showGlow) {
       final dotGlowPaint = Paint()
-        ..color = dotColor.withOpacity(0.3 * opacity)
+        ..color = dotColor.withValues(alpha: 0.3 * opacity)
         ..style = PaintingStyle.fill
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6.0);
       for (final point in flutterPoints) {
@@ -230,7 +230,7 @@ class DynamicMeshPainter extends CustomPainter {
     }
     
     final dotPaint = Paint()
-      ..color = dotColor.withOpacity(opacity)
+      ..color = dotColor.withValues(alpha: opacity)
       ..style = PaintingStyle.fill;
     for (final point in flutterPoints) {
       canvas.drawCircle(point, 3.0, dotPaint);
@@ -245,4 +245,5 @@ class DynamicMeshPainter extends CustomPainter {
         oldDelegate.opacity != opacity;
   }
 }
+
 

@@ -28,10 +28,10 @@ class CartPriceSummaryWidget extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 18.w),
       padding: EdgeInsets.all(19.w),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.6),
+        color: Colors.white.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(18.24.r),
         border: Border.all(
-          color: '#E3B341'.toColor().withOpacity(0.2),
+          color: '#E3B341'.toColor().withValues(alpha: 0.2),
           width: 0.77.w,
         ),
       ),
@@ -56,7 +56,7 @@ class CartPriceSummaryWidget extends StatelessWidget {
           Divider(
             height: 24.h,
             thickness: 1,
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
           ),
           _SummaryRow(
             label: 'Total',
@@ -129,3 +129,4 @@ class _SummaryRow extends StatelessWidget {
     );
   }
 }
+

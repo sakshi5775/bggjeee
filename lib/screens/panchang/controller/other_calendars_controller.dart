@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
+import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,19 +12,19 @@ class OtherCalendarsController extends BaseController {
     {
       'title': 'Hindu Calendar',
       // 'icon': Icons.auto_awesome,
-      // 'symbol': '🕉',
+      // 'symbol': 'ðŸ•‰',
       'route': AppRoutes.hinduCalendarMonthlyPanchang,
     },
     {
       'title': 'Jain Calendar',
       // 'icon': Icons.pan_tool,
-      // 'symbol': '🕉',
+      // 'symbol': 'ðŸ•‰',
       'route': AppRoutes.jainCalendar,
     },
     {
       'title': 'Moon Calendar',
       // 'icon': Icons.nightlight_round,
-      // 'symbol': '🌙',
+      // 'symbol': 'ðŸŒ™',
       'route': AppRoutes.moonCalendar,
     },
   ];
@@ -52,3 +52,4 @@ class OtherCalendarsController extends BaseController {
     selectedYear.value = year;
   }
 }
+

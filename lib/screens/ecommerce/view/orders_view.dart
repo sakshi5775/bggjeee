@@ -1,4 +1,4 @@
-import 'package:astrobharataiuser/app_manager/network_image.dart';
+﻿import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/data_model/order_model.dart';
 import 'package:astrobharataiuser/screens/ecommerce/controller/orders_controller.dart';
@@ -63,7 +63,7 @@ class OrdersView extends GetView<OrdersController> {
               borderRadius: BorderRadius.circular(12.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
+                  color: Colors.black.withValues(alpha: 0.08),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -75,7 +75,7 @@ class OrdersView extends GetView<OrdersController> {
               decoration: InputDecoration(
                 hintText: 'Search by order ID',
                 hintStyle: TextStyle(
-                  color: AppColors.textSecondary.withOpacity(0.6),
+                  color: AppColors.textSecondary.withValues(alpha: 0.6),
                 ),
                 prefixIcon: Icon(Icons.search, color: AppColors.deepOrange),
                 filled: true,
@@ -112,7 +112,7 @@ class OrdersView extends GetView<OrdersController> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: AppColors.textSecondary.withOpacity(0.2),
+            color: AppColors.textSecondary.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -215,12 +215,12 @@ class _OrderCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
-              color: AppColors.deepOrange.withOpacity(0.15),
+              color: AppColors.deepOrange.withValues(alpha: 0.15),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -297,7 +297,7 @@ class _OrderCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12.r),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -354,7 +354,7 @@ class _OrderCard extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: AppColors.orangeGradient.colors.first
-                                  .withOpacity(0.1),
+                                  .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(6.r),
                             ),
                             child: AutoTranslateText(
@@ -508,7 +508,7 @@ class _StatusChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: AppColors.deepOrange.withOpacity(0.3),
+            color: AppColors.deepOrange.withValues(alpha: 0.3),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -582,7 +582,7 @@ class _TimelineNode extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = isCompleted
         ? AppColors.deepOrange
-        : AppColors.textSecondary.withOpacity(0.3);
+        : AppColors.textSecondary.withValues(alpha: 0.3);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -603,7 +603,7 @@ class _TimelineNode extends StatelessWidget {
                 boxShadow: isCompleted
                     ? [
                         BoxShadow(
-                          color: AppColors.deepOrange.withOpacity(0.4),
+                          color: AppColors.deepOrange.withValues(alpha: 0.4),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -649,8 +649,8 @@ class _TimelineNode extends StatelessWidget {
                   ? AppColors.orangeGradient
                   : LinearGradient(
                       colors: [
-                        AppColors.textSecondary.withOpacity(0.3),
-                        AppColors.textSecondary.withOpacity(0.3),
+                        AppColors.textSecondary.withValues(alpha: 0.3),
+                        AppColors.textSecondary.withValues(alpha: 0.3),
                       ],
                     ),
               borderRadius: BorderRadius.circular(1),
@@ -686,3 +686,4 @@ String? _resolveOrderImage(OrderItem? item) {
   }
   return null;
 }
+

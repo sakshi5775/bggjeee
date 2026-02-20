@@ -38,13 +38,13 @@ class MoonSignPredictionWidget extends StatelessWidget {
               Icon(
                 Icons.info_outline,
                 size: 48.w,
-                color: "#6F221E".toColor().withOpacity(0.5),
+                color: "#6F221E".toColor().withValues(alpha: 0.5),
               ),
               Spacing.h(16),
               AutoTranslateText(
                 'No data available',
                 style: MyTextTheme.mediumBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.6),
+                  color: "#6F221E".toColor().withValues(alpha: 0.6),
                 ),
               ),
               Spacing.h(8),
@@ -52,7 +52,7 @@ class MoonSignPredictionWidget extends StatelessWidget {
                 'Please select Moon Sign from the table',
                 textAlign: TextAlign.center,
                 style: MyTextTheme.smallBCN.copyWith(
-                  color: "#6F221E".toColor().withOpacity(0.5),
+                  color: "#6F221E".toColor().withValues(alpha: 0.5),
                 ),
               ),
             ],
@@ -66,7 +66,7 @@ class MoonSignPredictionWidget extends StatelessWidget {
           child: AutoTranslateText(
             'No data available',
             style: MyTextTheme.mediumBCN.copyWith(
-              color: "#6F221E".toColor().withOpacity(0.6),
+              color: "#6F221E".toColor().withValues(alpha: 0.6),
             ),
           ),
         );
@@ -90,7 +90,7 @@ class MoonSignPredictionWidget extends StatelessWidget {
                 gradient: AppColors.orangeGradient,
                 borderRadius: BorderRadius.circular(12.r),
                 boxShadow: [
-                  BoxShadow(color: AppColors.deepOrange.withOpacity(0.2), blurRadius: 6, offset: const Offset(0, 2)),
+                  BoxShadow(color: AppColors.deepOrange.withValues(alpha: 0.2), blurRadius: 6, offset: const Offset(0, 2)),
                 ],
               ),
               child: Row(
@@ -124,7 +124,7 @@ class MoonSignPredictionWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -191,20 +191,20 @@ class MoonSignPredictionWidget extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            "#ed6f30".toColor().withOpacity(0.1),
-            "#ed6f30".toColor().withOpacity(0.05),
+            "#ed6f30".toColor().withValues(alpha: 0.1),
+            "#ed6f30".toColor().withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: "#ed6f30".toColor().withOpacity(0.2),
+          color: "#ed6f30".toColor().withValues(alpha: 0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -242,4 +242,5 @@ class MoonSignPredictionWidget extends StatelessWidget {
     );
   }
 }
+
 
