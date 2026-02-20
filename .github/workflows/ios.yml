@@ -32,6 +32,7 @@ jobs:
       - name: Install CocoaPods
         run: |
           cd ios
+          export FLUTTER_ROOT=$HOME/hostedtoolcache/flutter/stable-3.41.2-arm64
           pod install --repo-update
 
       - name: Build iOS (No Code Sign)

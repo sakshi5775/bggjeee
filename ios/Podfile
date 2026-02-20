@@ -16,10 +16,12 @@ def flutter_root
   end
 
   File.foreach(generated_xcconfig_path) do |line|
-    matches = line.match(/\AFLUTTER_ROOT=(.*)\z/)
+    matches = line.match(/\AFLUTTER_ROOT=(.*)/)
     return matches[1].strip if matches
   end
-  raise "FLUTTER_ROOT not found in #{generated_xcconfig_path}. Try deleting Generated.xcconfig, then run \`flutter pub get\`"
+  
+  # If FLUTTER_ROOT not found, try to extract from environment or use default
+  ENV['FLUTTER_ROOT'] || raise("FLUTTER_ROOT not found. Please run `flutter pub get` first")
 end
 
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
