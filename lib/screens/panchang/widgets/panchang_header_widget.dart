@@ -1,0 +1,90 @@
+import 'package:astrobharataiuser/app_manager/ext/hex_color_ext.dart';
+import 'package:astrobharataiuser/app_manager/my_text_theme.dart';
+import 'package:astrobharataiuser/core/value/dimension.dart';
+import 'package:astrobharataiuser/screens/wallet/controller/wallet_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
+
+class PanchangHeaderWidget extends StatelessWidget {
+  const PanchangHeaderWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final walletController = Get.put(WalletController());
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            "#8B1925".toColor(), // rgba(139, 25, 37, 1)
+            "#5D1C21".toColor(), // rgba(93, 28, 33, 1)
+          ],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(12.r),
+          bottomRight: Radius.circular(12.r),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 5.75,
+            offset: const Offset(0, 3.83),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: AppPaddings.symmetric(h: 15, v: 15),
+          child: Row(
+            spacing: 15.w,
+            children: [
+              // Back button
+              GestureDetector(
+                onTap: () => Get.back(),
+                child: Container(
+                  width: 34.49.w,
+                  height: 34.49.h,
+                  padding: EdgeInsets.all(7.67.w),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(9.58.r),
+                  ),
+                  child: Icon(
+                    Icons.arrow_back,
+                    color: "#E3B341".toColor(), // White as per Figma image
+                    size: 20.w,
+                  ),
+                ),
+              ),
+
+              // Title - White text as per Figma image
+              AutoTranslateText(
+                'Panchang',
+                style: MyTextTheme.largeBCB.copyWith(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.48,
+                  color: "#E3B341".toColor(), // White as per image description
+                ),
+              ),
+              Spacer(),
+
+              IconButton(
+                onPressed: () => Get.toNamed('/search'),
+                icon: Icon(
+                  Icons.search,
+                  color: "#E3B341".toColor(), // White as per Figma image
+                  size: 24.w,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

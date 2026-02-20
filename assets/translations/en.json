@@ -1,0 +1,68 @@
+{
+  "common": {
+    "appName": "AstroBharatAI",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "ok": "OK",
+    "yes": "Yes",
+    "no": "No",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "filter": "Filter",
+    "apply": "Apply",
+    "reset": "Reset",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
+    "done": "Done",
+    "submit": "Submit",
+    "retry": "Retry",
+    "refresh": "Refresh"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "changePassword": "Change Password",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "phoneNumber": "Phone Number",
+    "otp": "OTP",
+    "sendOtp": "Send OTP",
+    "verifyOtp": "Verify OTP",
+    "resendOtp": "Resend OTP"
+  },
+  "dashboard": {
+    "home": "Home",
+    "profile": "Profile",
+    "wallet": "Wallet",
+    "settings": "Settings",
+    "notifications": "Notifications",
+    "help": "Help"
+  },
+  "astrology": {
+    "kundli": "Kundli",
+    "horoscope": "Horoscope",
+    "panchang": "Panchang",
+    "vastu": "Vastu",
+    "numerology": "Numerology",
+    "tarot": "Tarot",
+    "palmistry": "Palmistry"
+  },
+  "consultation": {
+    "chat": "Chat",
+    "call": "Call",
+    "videoCall": "Video Call",
+    "astrologers": "Astrologers",
+    "bookConsultation": "Book Consultation",
+    "history": "History"
+  }
+}

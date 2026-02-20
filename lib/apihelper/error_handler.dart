@@ -1,0 +1,86 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
+import 'package:astrobharataiuser/apihelper/api_response.dart';
+import 'package:astrobharataiuser/apihelper/api_provider/networkException/exception.dart';
+
+class ErrorHandler {
+  /// Maps any error object to a user-friendly message.
+  static String handle(dynamic error) {
+    if (kDebugMode) {
+      print('--- ERROR LOGGED ---');
+      print('Error: $error');
+      if (error is Error) {
+        print('Stacktrace: ${error.stackTrace}');
+      }
+      print('--------------------');
+    }
+
+    if (error is SocketException) {
+      return "Network connection unavailable. Please check your internet.";
+    } else if (error is TimeoutException) {
+      return "Request timed out. Please check your connection and try again.";
+    } else if (error is FormatException) {
+      return "Something went wrong. Please try again later.";
+    } else if (error is HttpException) {
+      return "Network error. Please try again.";
+    } else if (error is NetworkException) {
+      return error.message.toString();
+    } else if (error is Response) {
+      return _handleResponseError(error);
+    } else if (error is String) {
+      return error;
+    }
+
+    return "An unexpected error occurred. Please try again.";
+  }
+
+  /// Categorizes errors for logic handling.
+  static ErrorType getErrorType(dynamic error) {
+    if (error is SocketException) return ErrorType.network;
+    if (error is TimeoutException) return ErrorType.timeout;
+    if (error is Response) {
+      final status = error.statusCode;
+      if (status == 401) return ErrorType.unauthorized;
+      if (status == 404) return ErrorType.notFound;
+      if (status == 409) return ErrorType.conflict;
+      if (status == 422) return ErrorType.validation;
+      if (status != null && status >= 500) return ErrorType.server;
+      if (status != null && status >= 400) return ErrorType.validation;
+    }
+    if (error is NetworkException) {
+      if (error is BadRequestException) return ErrorType.validation;
+      if (error is UnauthorisedException) return ErrorType.unauthorized;
+    }
+    return ErrorType.unknown;
+  }
+
+  static String _handleResponseError(Response response) {
+    final status = response.statusCode;
+
+    switch (status) {
+      case 400:
+        return "Invalid request. Please check your details.";
+      case 401:
+        return "Session expired. Please login again.";
+      case 403:
+        return "You don't have permission to perform this action.";
+      case 404:
+        return "Requested resource not found.";
+      case 409:
+        return "This record already exists.";
+      case 422:
+        return "Validation failed. Please check your input.";
+      case 500:
+        return "Server error. We're working on it.";
+      case 503:
+        return "Service temporarily unavailable. Please try later.";
+      default:
+        if (status != null && status >= 500) {
+          return "Server is temporarily unavailable.";
+        }
+        return response.statusText ?? "Could not connect to server.";
+    }
+  }
+}
