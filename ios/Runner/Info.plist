@@ -90,7 +90,7 @@
     <!-- ========================= -->
     <key>BGTaskSchedulerPermittedIdentifiers</key>
     <array>
-        <string>com.astrobharatal.app.backgroundrefresh</string>
+        <string>com.astrobharatai.astrouser.backgroundrefresh</string>
     </array>
 
     <!-- ========================= -->
@@ -101,6 +101,12 @@
 
     <key>NSMicrophoneUsageDescription</key>
     <string>Microphone access is required for voice and video calls.</string>
+
+    <!-- ========================= -->
+    <!-- Motion / Sensors (Sensors Plus) -->
+    <!-- ========================= -->
+    <key>NSMotionUsageDescription</key>
+    <string>Motion access is required for compass and vastu features.</string>
 
     <!-- ========================= -->
     <!-- Photo Library -->
@@ -120,6 +126,9 @@
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>Location access improves astrological accuracy.</string>
 
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Location access is required for continuous astrological updates.</string>
+
     <!-- ========================= -->
     <!-- Speech Recognition -->
     <!-- ========================= -->
@@ -127,10 +136,13 @@
     <string>Speech recognition is required for voice-to-text features.</string>
 
     <!-- ========================= -->
-    <!-- Calendar -->
+    <!-- Calendar / Reminders -->
     <!-- ========================= -->
     <key>NSCalendarsUsageDescription</key>
     <string>Calendar access is required to schedule astrology sessions.</string>
+
+    <key>NSRemindersUsageDescription</key>
+    <string>Reminders access is required to notify you about upcoming sessions.</string>
 
     <!-- ========================= -->
     <!-- Bluetooth (Sensors / Device Info Safety) -->
