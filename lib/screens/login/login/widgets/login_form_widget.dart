@@ -220,6 +220,12 @@ class LoginFormWidget extends StatelessWidget {
                         GestureDetector(
                           onTap: () {
                             Get.toNamed(AppRoutes.userPrivacyPolicy);
+                            //  launchUrl(
+                            //   Uri.parse(
+                            //     'https://astrobharatai.com/privacypolicy',
+                            //   ),
+                            //   mode: LaunchMode.externalApplication,
+                            // );
                           },
                           child: AutoTranslateText(
                             'Terms of Service',

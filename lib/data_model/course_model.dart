@@ -8,6 +8,8 @@ class CourseModel {
   final bool isPublished;
   final List<String> lectureIds;
   final String slug;
+  final String? courseType;
+  final String? pillar;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -21,6 +23,8 @@ class CourseModel {
     required this.isPublished,
     required this.lectureIds,
     required this.slug,
+    this.courseType,
+    this.pillar,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -34,11 +38,14 @@ class CourseModel {
       thumbnail: json['thumbnail'] as String?,
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       isPublished: json['isPublished'] as bool? ?? false,
-      lectureIds: (json['lectures'] as List<dynamic>?)
+      lectureIds:
+          (json['lectures'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           [],
       slug: json['slug'] as String? ?? '',
+      courseType: json['courseType'] as String?,
+      pillar: json['pillar'] as String?,
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
           : DateTime.now(),
@@ -80,13 +87,14 @@ class LectureModel {
         courseId = json['course']['_id'] as String? ?? '';
       }
     }
-    
+
     return LectureModel(
       id: json['_id'] as String,
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
       courseId: courseId,
-      content: (json['content'] as List<dynamic>?)
+      content:
+          (json['content'] as List<dynamic>?)
               ?.map((e) => ContentModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
@@ -107,7 +115,8 @@ class ContentModel {
   final String type;
   final String url;
   final int duration; // in minutes
-  final bool isPreview; // Whether this content is preview (accessible without enrollment)
+  final bool
+  isPreview; // Whether this content is preview (accessible without enrollment)
 
   ContentModel({
     required this.id,
@@ -134,14 +143,11 @@ class CourseDetailModel {
   final CourseModel course;
   final List<LectureModel> lectures;
 
-  CourseDetailModel({
-    required this.course,
-    required this.lectures,
-  });
+  CourseDetailModel({required this.course, required this.lectures});
 
   factory CourseDetailModel.fromJson(Map<String, dynamic> json) {
     final courseData = json['data'] as Map<String, dynamic>;
-    
+
     // Extract lectures first before creating course model
     List<LectureModel> lectures = [];
     List<String> lectureIds = [];
@@ -158,16 +164,13 @@ class CourseDetailModel {
         }
       }
     }
-    
+
     // Create course model with lecture IDs
     final courseJson = Map<String, dynamic>.from(courseData);
     courseJson['lectures'] = lectureIds; // Replace with IDs for CourseModel
     final course = CourseModel.fromJson(courseJson);
 
-    return CourseDetailModel(
-      course: course,
-      lectures: lectures,
-    );
+    return CourseDetailModel(course: course, lectures: lectures);
   }
 }
 
@@ -175,10 +178,7 @@ class CourseResponse {
   final List<CourseModel> courses;
   final CoursePagination pagination;
 
-  CourseResponse({
-    required this.courses,
-    required this.pagination,
-  });
+  CourseResponse({required this.courses, required this.pagination});
 
   factory CourseResponse.fromJson(Map<String, dynamic> json) {
     final data = json['data'] as List<dynamic>;
@@ -227,4 +227,3 @@ class CoursePagination {
     );
   }
 }
-

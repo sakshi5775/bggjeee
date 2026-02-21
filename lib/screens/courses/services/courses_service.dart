@@ -14,6 +14,7 @@ class CoursesService {
     bool? isPublished,
     String? search,
     String? instructor,
+    String? courseType,
   }) async {
     final query = <String, dynamic>{
       'page': page.toString(),
@@ -30,6 +31,10 @@ class CoursesService {
 
     if (instructor != null && instructor.isNotEmpty) {
       query['instructor'] = instructor;
+    }
+
+    if (courseType != null && courseType.isNotEmpty) {
+      query['courseType'] = courseType;
     }
 
     final response = await _apiRepository.getApi(

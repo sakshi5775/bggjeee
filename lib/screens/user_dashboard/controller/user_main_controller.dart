@@ -8,13 +8,14 @@ import 'package:astrobharataiuser/screens/ecommerce/binding/profile_binding.dart
 import 'package:astrobharataiuser/screens/ecommerce/view/profile_view.dart';
 import 'package:astrobharataiuser/screens/live_astrologers/view/live_astrologers_view.dart';
 import 'package:astrobharataiuser/screens/user_dashboard/view/user_dashboard_view.dart';
+import 'package:astrobharataiuser/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 /// Model for a single bottom nav item (dynamic labels/icons).
 class BottomNavItem {
   final String label;
-  final IconData icon;
+  final String icon;
 
   const BottomNavItem({required this.label, required this.icon});
 }
@@ -24,11 +25,17 @@ class UserMainController extends GetxController {
 
   /// Bottom nav items: Home, Chat, Call, AI, Profile. Update this list to change nav dynamically.
   final RxList<BottomNavItem> navItems = <BottomNavItem>[
-    const BottomNavItem(label: 'Home', icon: Icons.home),
-    const BottomNavItem(label: 'Consult', icon: Icons.chat_bubble_outline),
-    const BottomNavItem(label: 'AstroStream', icon: Icons.live_tv_rounded),
-    const BottomNavItem(label: 'AI Guru', icon: Icons.smart_toy),
-    const BottomNavItem(label: 'Profile', icon: Icons.person),
+    const BottomNavItem(label: 'Home', icon: AppConstant.bottomHomeIcon),
+    const BottomNavItem(
+      label: 'Consult',
+      icon: AppConstant.bottomConsultationIcon,
+    ),
+    const BottomNavItem(
+      label: 'AstroStream',
+      icon: AppConstant.bottomLiveStreamIcon,
+    ),
+    const BottomNavItem(label: 'AI Guru', icon: ''),
+    const BottomNavItem(label: 'Profile', icon: ''),
   ].obs;
 
   final pages = [

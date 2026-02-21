@@ -8,7 +8,8 @@ import 'package:astrobharataiuser/data_model/banner_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class CoursesController extends BaseController {
+class CoursesController extends BaseController
+    with GetTickerProviderStateMixin {
   final CoursesService _coursesService = CoursesService();
   final WebinarService _webinarService = WebinarService();
   final BannerService _bannerService = BannerService(); // Added BannerService
@@ -45,20 +46,68 @@ class CoursesController extends BaseController {
   final RxInt eBooksCount = 0.obs; // Count courses with courseType = "E-Book"
   final RxInt studentsCount = 0.obs; // Will be fetched from API if available
 
+  // Course-type bottom sheet state
+  final RxList<CourseModel> courseTypeCourses = <CourseModel>[].obs;
+  final RxBool isCourseTypeLoading = false.obs;
+  final RxString courseTypeError = ''.obs;
+
+  // Description expanded state per course id (for Read More / Show Less)
+  final RxMap<String, bool> descExpandedMap = <String, bool>{}.obs;
+
+  // Bounce animation controllers — one per courseType step
+  static const List<String> _courseTypes = [
+    'introcourse',
+    'diplomacourse',
+    'bachelorcourse',
+    'mastercourse',
+    'grandmaster',
+  ];
+  final Map<String, AnimationController> _bounceControllers = {};
+  final RxMap<String, double> bounceScaleMap =
+      <String, double>{}.obs; // 0.0-1.0 for each courseType
+
   @override
   void onInit() {
     super.onInit();
-    loadBanners(); // Load banners
+    // Initialise one bounce AnimationController per courseType
+    for (final ct in _courseTypes) {
+      final ac = AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 120),
+        lowerBound: 0.94,
+        upperBound: 1.0,
+      )..value = 1.0;
+      _bounceControllers[ct] = ac;
+      bounceScaleMap[ct] = 1.0;
+      ac.addListener(() => bounceScaleMap[ct] = ac.value);
+    }
+    loadBanners();
     loadCourses(refresh: true);
     searchController.addListener(_performSearch);
-    _updateLiveWebinar(); // Fetch live webinar
+    _updateLiveWebinar();
   }
 
   @override
   void onClose() {
+    for (final ac in _bounceControllers.values) {
+      ac.dispose();
+    }
     searchController.removeListener(_performSearch);
     searchController.dispose();
     super.onClose();
+  }
+
+  // Toggle description expanded state for a course card
+  void toggleDescExpanded(String courseId) {
+    descExpandedMap[courseId] = !(descExpandedMap[courseId] ?? false);
+  }
+
+  // Trigger bounce animation for a journey card
+  Future<void> triggerBounce(String courseType) async {
+    final ac = _bounceControllers[courseType];
+    if (ac == null) return;
+    await ac.reverse();
+    await ac.forward();
   }
 
   // Load courses
@@ -126,6 +175,25 @@ class CoursesController extends BaseController {
     }
   }
 
+  // Fetch courses filtered by courseType (for the learning journey bottom sheet)
+  Future<void> fetchCoursesByType(String courseType) async {
+    isCourseTypeLoading.value = true;
+    courseTypeError.value = '';
+    courseTypeCourses.clear();
+    try {
+      final response = await _coursesService.getCourses(
+        isPublished: true,
+        courseType: courseType,
+        limit: 20,
+      );
+      courseTypeCourses.value = response?.courses ?? [];
+    } catch (e) {
+      courseTypeError.value = e.toString();
+    } finally {
+      isCourseTypeLoading.value = false;
+    }
+  }
+
   // Perform search
   void _performSearch() {
     searchQuery.value = searchController.text;
@@ -133,6 +201,7 @@ class CoursesController extends BaseController {
   }
 
   // Refresh
+  @override
   Future<void> refresh() async {
     await loadCourses(refresh: true);
   }

@@ -71,9 +71,11 @@ class ForgotPasswordService {
   /// Resend OTP
   Future<bool> resendOtp({required String identifier}) async {
     try {
-      final response = await _apiRepository.postApi(EndPoints.resendOtp, {
-        'identifier': identifier,
-      }, useAuthHeader: false);
+      final response = await _apiRepository.postApi(
+        EndPoints.resendPasswordOtp,
+        {'identifier': identifier},
+        useAuthHeader: false,
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;

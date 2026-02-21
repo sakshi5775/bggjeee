@@ -1,3 +1,4 @@
+import 'package:astrobharataiuser/app_manager/network_image.dart';
 import 'package:astrobharataiuser/theme/app_typography.dart';
 import 'package:astrobharataiuser/utils/app_colors.dart';
 import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
@@ -52,7 +53,7 @@ class UserBottomNav extends StatelessWidget {
   }
 
   Widget _buildNavItem({
-    required IconData icon,
+    required String icon,
     required String label,
     required int index,
     required int selectedIndex,
@@ -65,10 +66,11 @@ class UserBottomNav extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
           decoration: BoxDecoration(
-            gradient: isSelected ? AppColors.orangeGradient : null,
+            // gradient: isSelected ? AppColors.orangeGradient : null,
             color: isSelected
-                ? const Color(0xFFFFF8F0)
-                : Colors.transparent, // Light yellow/cream for active
+                ? const Color.fromARGB(255, 247, 219, 187)
+                : Colors.transparent,
+
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: Column(
@@ -76,17 +78,36 @@ class UserBottomNav extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               isSelected
-                  ? Icon(icon, color: Colors.white, size: 20.h)
+                  ? NetworkImageWithLoader(url: icon, height: 20.h, width: 20.w)
                   : ShaderMask(
                       shaderCallback: (bounds) =>
                           _inactiveGradient.createShader(bounds),
                       blendMode: BlendMode.srcIn,
-                      child: Icon(icon, color: Colors.white, size: 20.h),
+                      child: NetworkImageWithLoader(
+                        url: icon,
+                        height: 20.h,
+                        width: 20.w,
+                      ),
                     ),
               SizedBox(height: 2.h),
               Flexible(
-                child: isSelected
-                    ? AutoTranslateText(
+                child:
+                    // isSelected
+                    //     ? AutoTranslateText(
+                    //         label,
+                    //         style: AppTypography.label.copyWith(
+                    //           color: Colors.white,
+                    //           fontSize: 10.sp,
+                    //         ),
+                    //         maxLines: 1,
+                    //         overflow: TextOverflow.ellipsis,
+                    //       )
+                    //     :
+                    ShaderMask(
+                      shaderCallback: (bounds) =>
+                          _inactiveGradient.createShader(bounds),
+                      blendMode: BlendMode.srcIn,
+                      child: AutoTranslateText(
                         label,
                         style: AppTypography.label.copyWith(
                           color: Colors.white,
@@ -94,21 +115,8 @@ class UserBottomNav extends StatelessWidget {
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                      )
-                    : ShaderMask(
-                        shaderCallback: (bounds) =>
-                            _inactiveGradient.createShader(bounds),
-                        blendMode: BlendMode.srcIn,
-                        child: AutoTranslateText(
-                          label,
-                          style: AppTypography.label.copyWith(
-                            color: Colors.white,
-                            fontSize: 10.sp,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
                       ),
+                    ),
               ),
             ],
           ),

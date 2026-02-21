@@ -439,7 +439,7 @@ class _BannerCarouselWidgetState extends State<BannerCarouselWidget> {
       imageUrl: banner.mediaUrl,
       width: double.infinity,
       height: double.infinity,
-      fit: BoxFit.cover,
+      fit: BoxFit.fill,
       placeholder: (context, url) {
         print('🖼️ Loading image: $url');
         return const _BannerSkeletonShimmer();

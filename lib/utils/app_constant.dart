@@ -13,6 +13,13 @@ class AppConstant {
   static const String s3BaseUrl =
       'https://astrobharatai.s3.ap-south-1.amazonaws.com';
 
+  static const String bottomHomeIcon =
+      '$s3BaseUrl/Astro+Service/3D+Logos/Home+3d.png';
+  static const String bottomConsultationIcon =
+      '$s3BaseUrl/Astro+Service/3D+Logos/Consultation+3d+chat.png';
+  static const String bottomLiveStreamIcon =
+      '$s3BaseUrl/Astro+Service/3D+Logos/astro+tv+3d.png';
+
   // Google Maps API Key for Geocoding and Places Autocomplete
   static const String googleMapsApiKey =
       'AIzaSyBLAoT6aFAsHaFWBIvK3hha1BDbMzPFOb0';
