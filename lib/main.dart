@@ -61,92 +61,76 @@ void main() {
               defaultTargetPlatform == TargetPlatform.macOS);
 
       if (isFirebaseSupported) {
-        try {
-          await Firebase.initializeApp(
-            options: DefaultFirebaseOptions.currentPlatform,
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+
+        // Enforce collection enablement ONLY in release mode
+        await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+          kReleaseMode,
+        );
+
+        FlutterError.onError = (FlutterErrorDetails details) {
+          FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+        };
+
+        PlatformDispatcher.instance.onError = (error, stack) {
+          CrashlyticsService.recordError(
+            error,
+            stack,
+            fatal: true,
+            reason: "PLATFORM_DISPATCHER_ERROR",
+          );
+          return true;
+        };
+
+        // UI-level crash protection
+        ErrorWidget.builder = (FlutterErrorDetails details) {
+          CrashlyticsService.recordError(
+            details.exception,
+            details.stack ?? StackTrace.current,
+            fatal: true,
+            type: CrashErrorType.ui,
+            reason: "WIDGET_TREE_ERROR",
           );
 
-          // Enforce collection enablement ONLY in release mode
-          await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
-            kReleaseMode,
-          );
-
-          FlutterError.onError = (FlutterErrorDetails details) {
-            FirebaseCrashlytics.instance.recordFlutterFatalError(details);
-          };
-
-          PlatformDispatcher.instance.onError = (error, stack) {
-            CrashlyticsService.recordError(
-              error,
-              stack,
-              fatal: true,
-              reason: "PLATFORM_DISPATCHER_ERROR",
-            );
-            return true;
-          };
-
-          // UI-level crash protection
-          ErrorWidget.builder = (FlutterErrorDetails details) {
-            CrashlyticsService.recordError(
-              details.exception,
-              details.stack ?? StackTrace.current,
-              fatal: true,
-              type: CrashErrorType.ui,
-              reason: "WIDGET_TREE_ERROR",
-            );
-
-            return Material(
-              child: Container(
-                color: Colors.white,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        color: Colors.red,
-                        size: 48,
+          return Material(
+            child: Container(
+              color: Colors.white,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      "Something went wrong",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: "#6F221E".toColor(),
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        "Something went wrong",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: "#6F221E".toColor(),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            );
-          };
-
-          // Session Stitching & Cold Start Tracing
-          final packageInfo = await PackageInfo.fromPlatform();
-          await CrashlyticsService.initSession(
-            appVersion: packageInfo.version,
-            platform: defaultTargetPlatform.name,
-            buildMode: kReleaseMode ? "release" : "debug",
+            ),
           );
+        };
 
-          debugPrint("Crashlytics Hardened");
-        } catch (e, st) {
-          // Log the Firebase initialization error but allow the app to continue.
-          debugPrint('[main] Firebase initialization failed: $e');
-          debugPrint(st.toString());
+        // Session Stitching & Cold Start Tracing
+        final packageInfo = await PackageInfo.fromPlatform();
+        await CrashlyticsService.initSession(
+          appVersion: packageInfo.version,
+          platform: defaultTargetPlatform.name,
+          buildMode: kReleaseMode ? "release" : "debug",
+        );
 
-          // Fallback handlers when Crashlytics is not available
-          FlutterError.onError = (FlutterErrorDetails details) {
-            debugPrint('[main] FlutterError caught (Crashlytics disabled): ${details.exception}');
-          };
-
-          PlatformDispatcher.instance.onError = (error, stack) {
-            debugPrint('[main] Platform error caught (Crashlytics disabled): $error');
-            return true;
-          };
-        }
+        debugPrint("Crashlytics Hardened");
       }
 
       // 5. Downloader (Non-web platforms)
