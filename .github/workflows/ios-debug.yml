@@ -1,0 +1,261 @@
+name: iOS Deep Debug Build
+
+on:
+  push:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      verbose:
+        description: 'Enable verbose logging'
+        required: false
+        default: 'true'
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+      # ════════════════════════════════════════════════════════════════════════
+      # 1. CHECKOUT & SETUP
+      # ════════════════════════════════════════════════════════════════════════
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🔧 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          cache: true
+
+      # ════════════════════════════════════════════════════════════════════════
+      # 2. PRE-BUILD DIAGNOSTICS
+      # ════════════════════════════════════════════════════════════════════════
+      - name: 📋 Flutter Doctor Verbose
+        run: flutter doctor -v
+
+      - name: 📦 Check Dart/Flutter versions
+        run: |
+          echo "=== DART VERSION ===" 
+          dart --version
+          echo "=== FLUTTER VERSION ===" 
+          flutter --version
+          echo "=== XCODE INFO ===" 
+          xcode-select -p
+          xcodebuild -version
+
+      # ════════════════════════════════════════════════════════════════════════
+      # 3. CODE QUALITY CHECKS  
+      # ════════════════════════════════════════════════════════════════════════
+      - name: 📚 Get dependencies
+        run: flutter pub get
+
+      - name: 🔍 Run Flutter Analyze
+        run: flutter analyze --no-fatal-infos || true
+        
+      - name: 🛠️ Run Dart Fix (Dry Run)
+        run: dart fix --dry-run || true
+
+      - name: ✅ Check Dart Formatting
+        run: dart format --set-exit-if-changed lib/ --dry-run || true
+
+      # ════════════════════════════════════════════════════════════════════════
+      # 4. CLEAN & INITIALIZE
+      # ════════════════════════════════════════════════════════════════════════
+      - name: 🧹 Clean Flutter & build cache
+        run: |
+          flutter clean
+          rm -rf ios/Pods
+          rm -rf ios/Podfile.lock
+
+      - name: 📱 Get iOS dependencies
+        run: |
+          cd ios
+          pod install --repo-update
+          cd ..
+
+      # ════════════════════════════════════════════════════════════════════════
+      # 5. VALIDATION BEFORE BUILD
+      # ════════════════════════════════════════════════════════════════════════
+      - name: ✔️ Validate iOS project structure
+        run: |
+          echo "=== Checking Info.plist ===" 
+          if [ ! -f ios/Runner/Info.plist ]; then
+            echo "❌ CRITICAL: Info.plist NOT FOUND"
+            exit 1
+          fi
+          echo "✅ Info.plist found"
+          
+          echo "=== Checking GoogleService-Info.plist ===" 
+          if [ ! -f ios/Runner/GoogleService-Info.plist ]; then
+            echo "⚠️  GoogleService-Info.plist NOT FOUND - Firebase may not work"
+          else
+            echo "✅ GoogleService-Info.plist found"
+          fi
+          
+          echo "=== Checking Runner.xcodeproj ===" 
+          if [ ! -d ios/Runner.xcodeproj ]; then
+            echo "❌ CRITICAL: Runner.xcodeproj NOT FOUND"
+            exit 1
+          fi
+          echo "✅ Runner.xcodeproj found"
+
+      # ════════════════════════════════════════════════════════════════════════
+      # 6. iOS BUILD (VERBOSE)
+      # ════════════════════════════════════════════════════════════════════════
+      - name: 🏗️ Build iOS (Verbose - No CodeSign)
+        run: |
+          flutter build ios \
+            --no-codesign \
+            -v \
+            2>&1 | tee build-output.log
+        continue-on-error: true
+
+      # ════════════════════════════════════════════════════════════════════════
+      # 7. CRITICAL CRASH PATTERN DETECTION
+      # ════════════════════════════════════════════════════════════════════════
+      - name: 🔴 Parse for CRASH PATTERNS (Critical)
+        run: |
+          echo "=========================================="
+          echo "🔴 SEARCHING FOR CRASH INDICATORS..."
+          echo "=========================================="
+          
+          if grep -q "dyld.*Library not loaded" build-output.log 2>/dev/null; then
+            echo "❌ PLUGIN LINKING ERROR DETECTED"
+            echo "   Agora, OneSignal, or Firebase plugin not linked properly"
+            echo "   → Check Podfile, pod install, and build cache"
+          fi
+          
+          if grep -q "Null check operator used on a null value" build-output.log 2>/dev/null; then
+            echo "❌ DART NULL POINTER ERROR"
+            echo "   Your code has a null reference crash"
+            echo "   → Enable null safety checks"
+          fi
+          
+          if grep -q "Default FirebaseApp is not initialized" build-output.log 2>/dev/null; then
+            echo "❌ FIREBASE NOT INITIALIZED"
+            echo "   Firebase.initializeApp() not called or failed"
+            echo "   → Check main.dart and GoogleService-Info.plist"
+          fi
+          
+          if grep -q "OneSignal" build-output.log 2>/dev/null && grep -q "error" build-output.log 2>/dev/null; then
+            echo "❌ ONESIGNAL INITIALIZATION ERROR"
+            echo "   OneSignal not configured properly"
+            echo "   → Check AppDelegate, Info.plist, and OneSignal App ID"
+          fi
+          
+          if grep -q "Info.plist" build-output.log 2>/dev/null && grep -q "error" build-output.log 2>/dev/null; then
+            echo "❌ PLIST CONFIGURATION ERROR"
+            echo "   Info.plist has missing permissions or invalid values"
+            echo "   → Verify NSCameraUsageDescription, NSMicrophoneUsageDescription"
+          fi
+          
+          if grep -q "pod install" build-output.log 2>/dev/null && grep -q "error" build-output.log 2>/dev/null; then
+            echo "❌ COCOAPODS ERROR"
+            echo "   Pod installation failed"
+            echo "   → Run: cd ios && pod install --repo-update"
+          fi
+
+      # ════════════════════════════════════════════════════════════════════════
+      # 8. BINARY VALIDATION
+      # ════════════════════════════════════════════════════════════════════════
+      - name: ✅ Validate iOS App Binary
+        run: |
+          BUILD_PATH="build/ios/iphoneos/Runner.app"
+          
+          if [ -d "$BUILD_PATH" ]; then
+            echo "✅ iOS app binary built successfully: $BUILD_PATH"
+            echo ""
+            echo "📊 Binary contents:"
+            ls -lh "$BUILD_PATH" | head -20
+            
+            # Check for essential plugins
+            if [ -d "$BUILD_PATH/Frameworks" ]; then
+              echo ""
+              echo "📦 Linked Frameworks:"
+              ls -1 "$BUILD_PATH/Frameworks" 2>/dev/null | head -10
+            fi
+          else
+            echo "❌ iOS app binary NOT FOUND at $BUILD_PATH"
+            echo "   Build likely failed - check logs above"
+            exit 1
+          fi
+
+      # ════════════════════════════════════════════════════════════════════════
+      # 9. PLIST VALIDATION
+      # ════════════════════════════════════════════════════════════════════════
+      - name: 🔍 Validate Info.plist structure
+        run: |
+          PLIST_PATH="build/ios/iphoneos/Runner.app/Info.plist"
+          
+          if [ -f "$PLIST_PATH" ]; then
+            echo "✅ Info.plist found in built app"
+            echo ""
+            echo "🔑 Key Permissions Check:"
+            
+            # Check permissions using plutil (macOS built-in)
+            for key in "NSCameraUsageDescription" "NSMicrophoneUsageDescription" "NSPhotoLibraryUsageDescription" "NSLocationWhenInUseUsageDescription"; do
+              if plutil -extract "$key" raw "$PLIST_PATH" 2>/dev/null | grep -q "."; then
+                echo "   ✅ $key: PRESENT"
+              else
+                echo "   ⚠️  $key: MISSING"
+              fi
+            done
+            
+            # Check UIBackgroundModes for audio
+            echo ""
+            echo "🎵 Background Mode Check:"
+            if plutil -extract "UIBackgroundModes" raw "$PLIST_PATH" 2>/dev/null | grep -q "audio"; then
+              echo "   ✅ Audio background mode: ENABLED (for Agora/recording)"
+            else
+              echo "   ⚠️  Audio background mode: DISABLED"
+            fi
+          else
+            echo "❌ Info.plist NOT found in built app"
+          fi
+
+      # ════════════════════════════════════════════════════════════════════════
+      # 10. GENERATE BUILD ARTIFACTS FOR MANUAL INSPECTION
+      # ════════════════════════════════════════════════════════════════════════
+      - name: 📤 Upload Build Logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: iOS Build Logs
+          path: |
+            build-output.log
+            ios/Pods/build.log
+
+      - name: 📦 Upload iOS App (for manual testing)
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: iOS App Binary
+          path: build/ios/iphoneos/Runner.app
+          retention-days: 5
+
+      # ════════════════════════════════════════════════════════════════════════
+      # 11. FINAL STATUS
+      # ════════════════════════════════════════════════════════════════════════
+      - name: 📊 Build Summary
+        if: always()
+        run: |
+          echo ""
+          echo "=========================================="
+          echo "🎯 BUILD SUMMARY"
+          echo "=========================================="
+          echo "Build Status: $([ $? -eq 0 ] && echo '✅ SUCCESS' || echo '❌ FAILED')"
+          echo "Date: $(date)"
+          echo ""
+          echo "📋 NEXT STEPS:"
+          echo "1. Download 'iOS Build Logs' artifact"
+          echo "2. Search logs for crash indicators above"
+          echo "3. If binary built: install on iPhone for runtime testing"
+          echo "4. If crash occurs: tap Share on crash popup and provide log"
+          echo "5. Check Firebase Crashlytics dashboard"
+          echo ""
+          echo "❓ DEBUGGING HELP:"
+          echo "• Missing permissions? → Add to ios/Runner/Info.plist"
+          echo "• Plugin crash? → Comment out in pubspec.yaml + rebuild"
+          echo "• Firebase issue? → Ensure GoogleService-Info.plist exists"
+          echo "• OneSignal issue? → Check AppDelegate.swift initialization"
+          echo "=========================================="

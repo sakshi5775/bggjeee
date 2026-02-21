@@ -76,10 +76,11 @@
     </dict>
 
     <!-- ========================= -->
-    <!-- Background Modes (Downloader, Push) -->
+    <!-- Background Modes (Downloader, Push, Audio for Agora & Recording) -->
     <!-- ========================= -->
     <key>UIBackgroundModes</key>
     <array>
+        <string>audio</string>
         <string>fetch</string>
         <string>processing</string>
         <string>remote-notification</string>
@@ -144,6 +145,9 @@
     <key>NSRemindersUsageDescription</key>
     <string>Reminders access is required to notify you about upcoming sessions.</string>
 
+    <key>NSContactsUsageDescription</key>
+    <string>Contacts access is required to help you connect with others.</string>
+
     <!-- ========================= -->
     <!-- Bluetooth (Sensors / Device Info Safety) -->
     <!-- ========================= -->
@@ -165,10 +169,16 @@
     </array>
 
     <!-- ========================= -->
-    <!-- OneSignal / Firebase Safety -->
+    <!-- Firebase / OneSignal Configuration -->
     <!-- ========================= -->
+    <!-- CRITICAL: Enable Firebase method swizzling for proper AppDelegate integration -->
+    <!-- This allows Firebase, OneSignal, and other plugins to initialize correctly -->
     <key>FirebaseAppDelegateProxyEnabled</key>
-    <false/>
+    <true/>
+    
+    <!-- OneSignal requires this for proper notification delivery -->
+    <key>UIApplicationSupportsMultipleScenes</key>
+    <true/>
 
 </dict>
 </plist>

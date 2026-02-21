@@ -30,5 +30,20 @@ Future<void> init() async {
   Get.put(AiPricingController(), permanent: true);
 
   // Register notification service (permanent across app lifecycle)
-  await Get.putAsync(() => NotificationService().init(), permanent: true);
+  // ⚠️ CRITICAL: Wrap in try-catch to prevent app crash if notification init fails
+  try {
+    await Get.putAsync(
+      () => NotificationService().init(),
+      permanent: true,
+    );
+    print('[Dependencies] ✅ NotificationService initialized successfully');
+  } catch (e, stackTrace) {
+    print('[Dependencies] ❌ NotificationService init error: $e');
+    print('[Dependencies] Stack: $stackTrace');
+    
+    // Still register a dummy service so app doesn't crash
+    // The app will work, just without push notifications
+    Get.put(NotificationService(), permanent: true);
+    print('[Dependencies] Registered dummy NotificationService - app will continue');
+  }
 }

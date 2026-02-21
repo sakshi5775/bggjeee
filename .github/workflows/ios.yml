@@ -1,9 +1,8 @@
-name: iOS Build
+name: iOS Deep Debug
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -11,30 +10,32 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.41.2'
-          channel: 'stable'
+          flutter-version: '3.24.0'
 
-      - name: Verify Flutter
-        run: flutter doctor
+      - name: Flutter Doctor
+        run: flutter doctor -v
 
-      - name: Clean project
-        run: flutter clean
-
-      - name: Get dependencies
+      - name: Install Dependencies
         run: flutter pub get
 
-      - name: Install CocoaPods
+      - name: Analyze Code (IMPORTANT)
+        run: flutter analyze
+
+      - name: Run Dart Checks
+        run: dart fix --dry-run
+
+      - name: Clean Build
+        run: flutter clean
+
+      - name: Install Pods
         run: |
           cd ios
-          rm -rf Pods Podfile.lock
-          export FLUTTER_ROOT=$HOME/hostedtoolcache/flutter/stable-3.41.2-arm64
           pod install --repo-update
 
-      - name: Build iOS (No Code Sign)
+      - name: Build iOS (Verbose)
         run: flutter build ios --no-codesign -v

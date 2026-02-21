@@ -34,8 +34,12 @@ class NotificationService extends GetxService {
         OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
       }
 
-      // Initialise SDK
+      debugPrint('[NotificationService] 🔄 Initializing OneSignal...');
+
+      // Initialise SDK (synchronous, but setup continues in background)
       OneSignal.initialize(AppConstant.oneSignalAppId);
+      
+      debugPrint('[NotificationService] ✅ OneSignal SDK initialized');
 
       // Setup all notification handlers
       _setupNotificationHandlers();
@@ -46,10 +50,16 @@ class NotificationService extends GetxService {
       _syncInitialState();
 
       isInitialized.value = true;
-      debugPrint('[NotificationService] Initialised successfully');
+      debugPrint('[NotificationService] ✅ Initialised successfully');
     } catch (e, stackTrace) {
-      debugPrint('[NotificationService] Init error: $e');
+      debugPrint('[NotificationService] ❌ Init error: $e');
       debugPrint('[NotificationService] Stack: $stackTrace');
+      
+      // Mark as initialized anyway to prevent retry loops
+      isInitialized.value = false;
+      
+      // Don't rethrow - let app continue without notifications
+      // This is better than crashing entirely
     }
     return this;
   }
