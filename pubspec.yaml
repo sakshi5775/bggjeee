@@ -97,6 +97,8 @@ dependencies:
   # gif_view: ^1.0.3
   audioplayers: ^6.5.1
   firebase_crashlytics: ^4.3.10
+  http_parser: ^4.0.2
+  package_info_plus: ^8.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
