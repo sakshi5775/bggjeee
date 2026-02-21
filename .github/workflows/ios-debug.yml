@@ -113,6 +113,10 @@ jobs:
             2>&1 | tee build-output.log
         continue-on-error: true
 
+      - name: 📦 Build iOS IPA for Testing
+        run: flutter build ipa --no-codesign
+        continue-on-error: true
+
       # ════════════════════════════════════════════════════════════════════════
       # 7. CRITICAL CRASH PATTERN DETECTION
       # ════════════════════════════════════════════════════════════════════════
@@ -235,6 +239,14 @@ jobs:
           name: iOS App Binary
           path: build/ios/iphoneos/Runner.app
           retention-days: 5
+
+      - name: 📦 Upload iOS IPA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-app-ipa
+          path: build/ios/ipa/*.ipa
+          retention-days: 7
 
       # ════════════════════════════════════════════════════════════════════════
       # 11. FINAL STATUS

@@ -42,3 +42,13 @@ jobs:
 
       - name: Build iOS (Verbose)
         run: flutter build ios --no-codesign -v
+
+      - name: Build iOS IPA
+        run: flutter build ipa --no-codesign
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-app-ipa
+          path: build/ios/ipa/*.ipa
+          retention-days: 7
