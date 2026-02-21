@@ -35,27 +35,43 @@ class NotificationService extends GetxService {
       }
 
       debugPrint('[NotificationService] 🔄 Initializing OneSignal...');
+      debugPrint('[NotificationService] App ID: ${AppConstant.oneSignalAppId}');
 
       // Initialise SDK (synchronous, but setup continues in background)
-      OneSignal.initialize(AppConstant.oneSignalAppId);
-      
-      debugPrint('[NotificationService] ✅ OneSignal SDK initialized');
+      // Wrap in try-catch to isolate OneSignal failures
+      try {
+        OneSignal.initialize(AppConstant.oneSignalAppId);
+        debugPrint('[NotificationService] ✅ OneSignal.initialize() succeeded');
+      } catch (e) {
+        debugPrint('[NotificationService] ⚠️ OneSignal.initialize() failed: $e');
+        // Don't rethrow — proceed with handler setup anyway
+      }
 
-      // Setup all notification handlers
-      _setupNotificationHandlers();
-      _setupPermissionObserver();
-      _setupSubscriptionObserver();
+      // Setup all notification handlers (safe even without SDK init)
+      try {
+        _setupNotificationHandlers();
+        _setupPermissionObserver();
+        _setupSubscriptionObserver();
+        debugPrint('[NotificationService] ✅ Handlers registered');
+      } catch (e) {
+        debugPrint('[NotificationService] ⚠️ Handler setup failed: $e');
+      }
 
       // Fetch initial subscription / permission state
-      _syncInitialState();
+      try {
+        _syncInitialState();
+        debugPrint('[NotificationService] ✅ Initial state synced');
+      } catch (e) {
+        debugPrint('[NotificationService] ⚠️ State sync failed: $e');
+      }
 
       isInitialized.value = true;
-      debugPrint('[NotificationService] ✅ Initialised successfully');
+      debugPrint('[NotificationService] ✅ Initialised successfully (may be degraded)');
     } catch (e, stackTrace) {
-      debugPrint('[NotificationService] ❌ Init error: $e');
+      debugPrint('[NotificationService] ❌ FATAL Init error: $e');
       debugPrint('[NotificationService] Stack: $stackTrace');
       
-      // Mark as initialized anyway to prevent retry loops
+      // Mark as NOT initialized so we know init failed
       isInitialized.value = false;
       
       // Don't rethrow - let app continue without notifications

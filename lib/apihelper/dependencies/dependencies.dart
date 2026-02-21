@@ -32,18 +32,19 @@ Future<void> init() async {
   // Register notification service (permanent across app lifecycle)
   // ⚠️ CRITICAL: Wrap in try-catch to prevent app crash if notification init fails
   try {
+    debugPrint('[Dependencies] 📲 Starting NotificationService initialization...');
     await Get.putAsync(
       () => NotificationService().init(),
       permanent: true,
     );
-    print('[Dependencies] ✅ NotificationService initialized successfully');
+    debugPrint('[Dependencies] ✅ NotificationService initialized successfully');
   } catch (e, stackTrace) {
-    print('[Dependencies] ❌ NotificationService init error: $e');
-    print('[Dependencies] Stack: $stackTrace');
+    debugPrint('[Dependencies] ❌ NotificationService init error: $e');
+    debugPrint('[Dependencies] StackTrace: $stackTrace');
     
     // Still register a dummy service so app doesn't crash
-    // The app will work, just without push notifications
+    // The app will work normally, just without push notifications
     Get.put(NotificationService(), permanent: true);
-    print('[Dependencies] Registered dummy NotificationService - app will continue');
+    debugPrint('[Dependencies] Fallback: Registered NotificationService without notifications');
   }
 }
