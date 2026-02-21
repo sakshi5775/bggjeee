@@ -32,6 +32,9 @@ jobs:
       - name: Clean Build
         run: flutter clean
 
+      - name: Regenerate dependencies after clean
+        run: flutter pub get
+
       - name: Install Pods
         run: |
           cd ios
