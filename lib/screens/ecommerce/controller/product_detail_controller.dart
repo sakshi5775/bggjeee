@@ -619,13 +619,13 @@ class ProductDetailController extends BaseController {
       // Build share text
       final shareText =
           '''
-ðŸŒŸ $productName
+🌟 $productName
 
 $productDescription
 
-ðŸ’° Price: $priceText
+💰 Price: $priceText
 
-ðŸ”— View Product: $productLink
+🔗 View Product: $productLink
 
 Download AstroBharatAI App to explore more products!
 ''';
@@ -656,4 +656,3 @@ Download AstroBharatAI App to explore more products!
     return wishlistController.isInWishlist(currentProduct);
   }
 }
-

@@ -36,7 +36,7 @@ class FaceReadingView extends StatelessWidget {
               CommonHeader(
                 title: 'Face Reading',
                 subtitle: AutoTranslateText(
-                  'Ancient Chinese Physiognomy â€¢ AI-Powered',
+                  'Ancient Chinese Physiognomy • AI-Powered',
                   style: MyTextTheme.smallBCN.copyWith(
                     color: const Color(0xFF5F2221).withValues(alpha: 0.7),
                   ),
@@ -143,7 +143,7 @@ class FaceReadingView extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: AutoTranslateText(
-        'Ancient Chinese Physiognomy â€¢ AI-Powered Analysis',
+        'Ancient Chinese Physiognomy • AI-Powered Analysis',
         style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
         textAlign: TextAlign.center,
       ),
@@ -611,4 +611,3 @@ class FaceReadingView extends StatelessWidget {
     );
   }
 }
-

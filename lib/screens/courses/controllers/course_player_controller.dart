@@ -330,12 +330,12 @@ class CoursePlayerController extends BaseController {
     // Check if content has URL - if not, try to find it in all lectures
     if (finalContent.url == null || finalContent.url!.isEmpty) {
       debugPrint(
-        'âš ï¸ Content ${finalContent.id} has no URL, searching in all lectures...',
+        '⚠️ Content ${finalContent.id} has no URL, searching in all lectures...',
       );
       for (var l in lectures) {
         for (var c in l.content) {
           if (c.id == finalContent.id && c.url != null && c.url!.isNotEmpty) {
-            debugPrint('âœ… Found content with URL in lecture: ${l.title}');
+            debugPrint('✅ Found content with URL in lecture: ${l.title}');
             currentLecture.value = l;
             currentContent.value = c;
 
@@ -350,7 +350,7 @@ class CoursePlayerController extends BaseController {
           }
         }
       }
-      debugPrint('âŒ Content ${finalContent.id} has no URL in any lecture');
+      debugPrint('❌ Content ${finalContent.id} has no URL in any lecture');
       showErrorMessage(
         title: "Content Unavailable",
         message: "Content URL not available. Please try again later.",
@@ -643,7 +643,7 @@ class CoursePlayerController extends BaseController {
       if (nextContent.url != null && nextContent.url!.isNotEmpty) {
         selectContent(nextLecture, nextContent);
       } else {
-        debugPrint('âš ï¸ Next content has no URL, cannot autoplay');
+        debugPrint('⚠️ Next content has no URL, cannot autoplay');
       }
     } else {
       // Just store next content info without auto-playing
@@ -662,7 +662,7 @@ class CoursePlayerController extends BaseController {
         _pendingNextContent = null;
         _pendingNextLecture = null;
       } else {
-        debugPrint('âš ï¸ Next content has no URL, cannot play');
+        debugPrint('⚠️ Next content has no URL, cannot play');
         _pendingNextContent = null;
         _pendingNextLecture = null;
       }
@@ -737,4 +737,3 @@ class CoursePlayerController extends BaseController {
     await loadCoursePlayerData();
   }
 }
-

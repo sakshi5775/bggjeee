@@ -108,7 +108,9 @@ class SadeSatiView extends BasePage<SadeSatiController> {
                               borderRadius: BorderRadius.circular(12.r),
                               border: isSelected
                                   ? null
-                                  : Border.all(color: maroon.withValues(alpha: 0.2)),
+                                  : Border.all(
+                                      color: maroon.withValues(alpha: 0.2),
+                                    ),
                               boxShadow: isSelected
                                   ? [
                                       BoxShadow(
@@ -352,7 +354,7 @@ class SadeSatiView extends BasePage<SadeSatiController> {
                     Spacing.h(6),
                     _compactRow('Zodiac', zodiac),
                     _compactRow('Dhaiya', dhaiya),
-                    _compactRow('Period', '$startDate â€“ $endDate'),
+                    _compactRow('Period', '$startDate – $endDate'),
                     if (direction.isNotEmpty && direction != 'N/A')
                       _compactRow('Direction', direction),
                   ],
@@ -519,5 +521,3 @@ class SadeSatiView extends BasePage<SadeSatiController> {
     );
   }
 }
-
-

@@ -114,7 +114,9 @@ class PlanetsView extends BasePage<PlanetsController> {
                               borderRadius: BorderRadius.circular(12.r),
                               border: isSelected
                                   ? null
-                                  : Border.all(color: maroon.withValues(alpha: 0.2)),
+                                  : Border.all(
+                                      color: maroon.withValues(alpha: 0.2),
+                                    ),
                               boxShadow: isSelected
                                   ? [
                                       BoxShadow(
@@ -428,7 +430,7 @@ class PlanetsView extends BasePage<PlanetsController> {
                 : '';
             final globalDegrees = m['global_degrees'];
             final degStr = globalDegrees is num
-                ? '${globalDegrees.toStringAsFixed(1)}Â°'
+                ? '${globalDegrees.toStringAsFixed(1)}°'
                 : globalDegrees?.toString() ?? '';
             return Container(
               margin: EdgeInsets.only(bottom: 8.h),
@@ -515,7 +517,11 @@ class PlanetsView extends BasePage<PlanetsController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.public, size: 48.w, color: maroon.withValues(alpha: 0.5)),
+              Icon(
+                Icons.public,
+                size: 48.w,
+                color: maroon.withValues(alpha: 0.5),
+              ),
               Spacing.h(12),
               AutoTranslateText(
                 'Western planet details require birth data.',
@@ -604,10 +610,10 @@ class PlanetsView extends BasePage<PlanetsController> {
               final localDeg = m['local_degree'];
               final globalDeg = m['global_degree'];
               final localDegStr = localDeg is num
-                  ? '${localDeg.toStringAsFixed(1)}Â°'
+                  ? '${localDeg.toStringAsFixed(1)}°'
                   : '';
               final globalDegStr = globalDeg is num
-                  ? '${globalDeg.toStringAsFixed(1)}Â°'
+                  ? '${globalDeg.toStringAsFixed(1)}°'
                   : '';
               return Container(
                 margin: EdgeInsets.only(bottom: 8.h),
@@ -650,7 +656,7 @@ class PlanetsView extends BasePage<PlanetsController> {
                           ),
                           if (zodiac.isNotEmpty || house.isNotEmpty)
                             AutoTranslateText(
-                              '$zodiac${house.isNotEmpty ? ' â€¢ House $house' : ''}',
+                              '$zodiac${house.isNotEmpty ? ' • House $house' : ''}',
                               style: MyTextTheme.smallBCN.copyWith(
                                 color: maroon.withValues(alpha: 0.8),
                                 fontSize: 11.sp,
@@ -658,7 +664,7 @@ class PlanetsView extends BasePage<PlanetsController> {
                             ),
                           if (element.isNotEmpty || quality.isNotEmpty)
                             AutoTranslateText(
-                              '$element${quality.isNotEmpty ? ' â€¢ $quality' : ''}',
+                              '$element${quality.isNotEmpty ? ' • $quality' : ''}',
                               style: MyTextTheme.smallBCN.copyWith(
                                 color: maroon.withValues(alpha: 0.6),
                                 fontSize: 10.sp,
@@ -858,5 +864,3 @@ class PlanetsView extends BasePage<PlanetsController> {
     );
   }
 }
-
-

@@ -32,7 +32,7 @@ class CurrentRunningDashaWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// ðŸ”¶ Header
+          /// 🔸 Header
           Row(
             children: [
               Container(
@@ -41,10 +41,7 @@ class CurrentRunningDashaWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.r),
                   gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFFFF8A3D),
-                      Color(0xFFED6F30),
-                    ],
+                    colors: [Color(0xFFFF8A3D), Color(0xFFED6F30)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -68,7 +65,7 @@ class CurrentRunningDashaWidget extends StatelessWidget {
 
           SizedBox(height: 20.h),
 
-          /// ðŸ”¶ Dasha Cards
+          /// 🔸 Dasha Cards
           Row(
             children: [
               _dashaCard(title: "Mahadasha", value: mahadasha),
@@ -81,20 +78,14 @@ class CurrentRunningDashaWidget extends StatelessWidget {
     );
   }
 
-  Widget _dashaCard({
-    required String title,
-    required String value,
-  }) {
+  Widget _dashaCard({required String title, required String value}) {
     return Expanded(
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 6.w),
         padding: EdgeInsets.symmetric(vertical: 18.h),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: const Color(0xFFED6F30),
-            width: 1.2,
-          ),
+          border: Border.all(color: const Color(0xFFED6F30), width: 1.2),
         ),
         child: Column(
           children: [
@@ -123,4 +114,3 @@ class CurrentRunningDashaWidget extends StatelessWidget {
     );
   }
 }
-

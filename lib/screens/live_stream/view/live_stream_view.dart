@@ -40,7 +40,7 @@ class LiveStreamView extends StatelessWidget {
     ever(controller.isStreamEnded, (bool ended) {
       if (ended) {
         debugPrint(
-          'ðŸ“º View: Stream ended detected, waiting 2 seconds then navigating...',
+          '📺 View: Stream ended detected, waiting 2 seconds then navigating...',
         );
         // Wait 2 seconds to show the message, then navigate
         Future.delayed(const Duration(seconds: 2), () {
@@ -48,23 +48,23 @@ class LiveStreamView extends StatelessWidget {
             return; // Stream was resumed
           }
 
-          debugPrint('ðŸ“º View: Attempting navigation after 2 second delay');
-          debugPrint('ðŸ“º View: Current route: ${Get.currentRoute}');
-          debugPrint('ðŸ“º View: Previous route: ${Get.previousRoute}');
+          debugPrint('📺 View: Attempting navigation after 2 second delay');
+          debugPrint('📺 View: Current route: ${Get.currentRoute}');
+          debugPrint('📺 View: Previous route: ${Get.previousRoute}');
 
           // Try Navigator.pop() first (most reliable with BuildContext)
           if (Navigator.of(context).canPop()) {
-            debugPrint('ðŸ“º View: Using Navigator.pop() to go back');
+            debugPrint('📺 View: Using Navigator.pop() to go back');
             Navigator.of(context).pop();
           } else {
             // Fallback: Use Get.until() to navigate to previous route
-            debugPrint('ðŸ“º View: Cannot pop - using Get.until()');
+            debugPrint('📺 View: Cannot pop - using Get.until()');
             final previousRoute = Get.previousRoute;
             if (previousRoute.isNotEmpty &&
                 previousRoute != '/' &&
                 previousRoute != '/LiveStreamView') {
               debugPrint(
-                'ðŸ“º View: Navigating to previous route: $previousRoute',
+                '📺 View: Navigating to previous route: $previousRoute',
               );
               Get.until((route) {
                 final routeName = route.settings.name ?? '';
@@ -72,7 +72,7 @@ class LiveStreamView extends StatelessWidget {
               });
             } else {
               debugPrint(
-                'ðŸ“º View: No valid previous route - navigating to dashboard',
+                '📺 View: No valid previous route - navigating to dashboard',
               );
               Get.offAllNamed('/user-dashboard');
             }
@@ -263,7 +263,7 @@ class LiveStreamView extends StatelessWidget {
         // Show video if camera is on (even if mic is off)
         if (shouldShowVideo && controller.engine != null) {
           debugPrint(
-            'âœ“ Showing Agora video for remoteUid: ${controller.remoteUid}',
+            '✓ Showing Agora video for remoteUid: ${controller.remoteUid}',
           );
           return Stack(
             fit: StackFit.expand,
@@ -556,7 +556,7 @@ class LiveStreamView extends StatelessWidget {
 
           return ReactionAnimationWidget(
             key: ValueKey(reaction.messageId),
-            reactionIcon: reaction.reactionType ?? 'âœ¨',
+            reactionIcon: reaction.reactionType ?? '✨',
             senderName: reaction.senderName,
           );
         }),
@@ -1165,7 +1165,7 @@ class LiveStreamView extends StatelessWidget {
                     }
 
                     debugPrint(
-                      'ðŸŽ Displaying ${controller.availableGifts.length} gifts in gift panel',
+                      '🎁 Displaying ${controller.availableGifts.length} gifts in gift panel',
                     );
 
                     return GridView.builder(
@@ -1180,7 +1180,7 @@ class LiveStreamView extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final gift = controller.availableGifts[index];
                         debugPrint(
-                          'ðŸŽ Rendering gift ${index + 1}/${controller.availableGifts.length}: ${gift.name}',
+                          '🎁 Rendering gift ${index + 1}/${controller.availableGifts.length}: ${gift.name}',
                         );
                         return GestureDetector(
                           onTap: () => controller.sendGift(gift.type),
@@ -1256,7 +1256,7 @@ class LiveStreamView extends StatelessWidget {
                     }
 
                     debugPrint(
-                      'âœ¨ Displaying ${controller.availableReactions.length} reactions in gift panel',
+                      '✨ Displaying ${controller.availableReactions.length} reactions in gift panel',
                     );
 
                     return GridView.builder(
@@ -1272,7 +1272,7 @@ class LiveStreamView extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final reaction = controller.availableReactions[index];
                         debugPrint(
-                          'âœ¨ Rendering reaction ${index + 1}/${controller.availableReactions.length}: ${reaction.name}',
+                          '✨ Rendering reaction ${index + 1}/${controller.availableReactions.length}: ${reaction.name}',
                         );
                         return GestureDetector(
                           onTap: () => controller.sendReaction(reaction.type),
@@ -1668,4 +1668,3 @@ class LiveStreamView extends StatelessWidget {
     });
   }
 }
-

@@ -184,7 +184,7 @@ class _PaymentTile extends StatelessWidget {
               children: [
                 _InfoChip(
                   icon: Icons.account_balance_wallet_outlined,
-                  text: payment.paymentMethod?.toUpperCase() ?? 'â€”',
+                  text: payment.paymentMethod?.toUpperCase() ?? '—',
                 ),
                 if (order?.orderId != null)
                   _InfoChip(
@@ -257,4 +257,3 @@ class _InfoChip extends StatelessWidget {
     );
   }
 }
-

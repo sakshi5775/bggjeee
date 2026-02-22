@@ -248,7 +248,10 @@ class PalmReadingUploadView extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
             side: isPrimary
                 ? BorderSide.none
-                : BorderSide(color: Colors.grey.withValues(alpha: 0.3), width: 1),
+                : BorderSide(
+                    color: Colors.grey.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
           ),
           elevation: isPrimary ? 4 : 0,
         ),
@@ -455,37 +458,37 @@ class PalmReadingUploadView extends StatelessWidget {
           Positioned(
             top: 30.h,
             left: isLeftHand ? 60.w : 100.w,
-            child: _buildPlanetLabel('Jupiter', 'â™ƒ'),
+            child: _buildPlanetLabel('Jupiter', '♃'),
           ),
           // Saturn (Middle finger)
           Positioned(
             top: 30.h,
             left: isLeftHand ? 110.w : 130.w,
-            child: _buildPlanetLabel('Saturn', 'â™„'),
+            child: _buildPlanetLabel('Saturn', '♄'),
           ),
           // Sun (Ring finger)
           Positioned(
             top: 30.h,
             left: isLeftHand ? 160.w : 160.w,
-            child: _buildPlanetLabel('Sun', 'â˜‰'),
+            child: _buildPlanetLabel('Sun', '☉'),
           ),
           // Mercury (Pinky)
           Positioned(
             top: 30.h,
             left: isLeftHand ? 210.w : 190.w,
-            child: _buildPlanetLabel('Mercury', 'â˜¿'),
+            child: _buildPlanetLabel('Mercury', '☿'),
           ),
           // Venus (Thumb base)
           Positioned(
             top: 150.h,
             left: isLeftHand ? 10.w : 240.w,
-            child: _buildPlanetLabel('Venus', 'â™€'),
+            child: _buildPlanetLabel('Venus', '♀'),
           ),
           // Moon (Lower palm)
           Positioned(
             top: 240.h,
             left: isLeftHand ? 110.w : 130.w,
-            child: _buildPlanetLabel('Moon', 'â˜¾'),
+            child: _buildPlanetLabel('Moon', '☾'),
           ),
         ],
       ),
@@ -638,4 +641,3 @@ class HandDiagramPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-

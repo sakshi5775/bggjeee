@@ -131,9 +131,9 @@ class LagnaChartWidget extends StatelessWidget {
             children: [
               _buildLegendChip('*', 'Retro'),
               _buildLegendChip('^', 'Combust'),
-              _buildLegendChip('â–¡', 'Vargottama'),
-              _buildLegendChip('â†‘', 'Exalt'),
-              _buildLegendChip('â†“', 'Debil'),
+              _buildLegendChip('□', 'Vargottama'),
+              _buildLegendChip('↑', 'Exalt'),
+              _buildLegendChip('↓', 'Debil'),
             ],
           ),
         ],
@@ -563,7 +563,9 @@ class LagnaChartWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: isEven ? "#ed6f30".toColor().withValues(alpha: 0.04) : Colors.white,
+        color: isEven
+            ? "#ed6f30".toColor().withValues(alpha: 0.04)
+            : Colors.white,
         border: Border(
           bottom: BorderSide(
             color: "#ed6f30".toColor().withValues(alpha: 0.12),
@@ -603,9 +605,8 @@ class LagnaChartWidget extends StatelessWidget {
   String _formatDegree(dynamic degree) {
     if (degree == null) return '-';
     if (degree is num) {
-      return '${degree.toStringAsFixed(2)}Â°';
+      return '${degree.toStringAsFixed(2)}°';
     }
-    return '$degreeÂ°';
+    return '$degree°';
   }
 }
-

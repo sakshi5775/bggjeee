@@ -11,24 +11,19 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 class KpRasiChartWidget extends StatelessWidget {
   final KpSystemController controller;
 
-  const KpRasiChartWidget({
-    super.key,
-    required this.controller,
-  });
+  const KpRasiChartWidget({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingKpRasiChart.value) {
         return Center(
-          child: CircularProgressIndicator(
-            color: "#ed6f30".toColor(),
-          ),
+          child: CircularProgressIndicator(color: "#ed6f30".toColor()),
         );
       }
 
       final data = controller.kpRasiChartData.value;
-      
+
       if (data == null || data.isEmpty) {
         return Center(
           child: AutoTranslateText(
@@ -57,14 +52,16 @@ class KpRasiChartWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Chart Container â€“ same theme as KundliHeader (#6F221E / #ed6f30)
+            // Chart Container – same theme as KundliHeader (#6F221E / #ed6f30)
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
-                    color: '#ed6f30'.toColor().withValues(alpha: 0.2), width: 1),
+                  color: '#ed6f30'.toColor().withValues(alpha: 0.2),
+                  width: 1,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
@@ -99,5 +96,3 @@ class KpRasiChartWidget extends StatelessWidget {
     });
   }
 }
-
-

@@ -70,7 +70,7 @@ class StaggeredSlideFade extends StatelessWidget {
         return Opacity(
           opacity: value,
           child: Transform.translate(
-            offset: Offset(0, (1 - value) * 30), // bottom â†’ top
+            offset: Offset(0, (1 - value) * 30), // bottom → top
             child: child,
           ),
         );
@@ -78,4 +78,3 @@ class StaggeredSlideFade extends StatelessWidget {
     );
   }
 }
-

@@ -35,7 +35,7 @@ class CarrotAstrologyView extends StatelessWidget {
                 child: CommonHeader(
                   title: 'Carrot Astrology',
                   subtitle: AutoTranslateText(
-                    'Playful Insights â€¢ AI Wisdom',
+                    'Playful Insights • AI Wisdom',
                     style: MyTextTheme.smallBCN.copyWith(
                       color: const Color(0xFF6F221E).withValues(alpha: 0.7),
                     ),
@@ -138,7 +138,7 @@ class CarrotAstrologyView extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: AutoTranslateText(
-        'Discover Your Vegetable Essence â€¢ Zodiac-Based Wellness',
+        'Discover Your Vegetable Essence • Zodiac-Based Wellness',
         style: MyTextTheme.mediumBCN
             .copyWith(color: '#3E2723'.toColor())
             .merge(AppTypography.body1),
@@ -409,7 +409,9 @@ class CarrotAstrologyView extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      CarrotAstrologyColors.orangeColorDark.withValues(alpha: 0.35),
+                      CarrotAstrologyColors.orangeColorDark.withValues(
+                        alpha: 0.35,
+                      ),
                       CarrotAstrologyColors.orangeColor.withValues(alpha: 0.15),
                     ],
                     begin: Alignment.topLeft,
@@ -453,4 +455,3 @@ class CarrotAstrologyView extends StatelessWidget {
     );
   }
 }
-

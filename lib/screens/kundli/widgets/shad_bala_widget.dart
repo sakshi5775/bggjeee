@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-/// Shad Bala (Vedic) â€“ displays all bala sections from API in themed tables.
+/// Shad Bala (Vedic) – displays all bala sections from API in themed tables.
 class ShadBalaWidget extends StatelessWidget {
   final KundliResultController controller;
 
@@ -259,7 +259,9 @@ class ShadBalaWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: isEven ? '#ed6f30'.toColor().withValues(alpha: 0.04) : Colors.white,
+        color: isEven
+            ? '#ed6f30'.toColor().withValues(alpha: 0.04)
+            : Colors.white,
         border: Border(
           bottom: BorderSide(
             color: '#ed6f30'.toColor().withValues(alpha: 0.12),
@@ -290,4 +292,3 @@ class ShadBalaWidget extends StatelessWidget {
     );
   }
 }
-

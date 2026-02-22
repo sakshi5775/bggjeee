@@ -192,7 +192,7 @@ class MyBookingsController extends BaseController {
 
       if (verifyResponse != null && verifyResponse.success) {
         Get.snackbar(
-          'Payment Successful! ðŸŽ‰',
+          'Payment Successful! 🎉',
           'Your payment has been completed successfully',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green.withValues(alpha: 0.9),
@@ -274,4 +274,3 @@ class MyBookingsController extends BaseController {
     super.onClose();
   }
 }
-

@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 
 import '../../../utils/app_colors.dart';
 
-/// Consult an Astrologer card â€” same style as palm reading / carrot astrology.
+/// Consult an Astrologer card — same style as palm reading / carrot astrology.
 /// Place below chart or results.
 class ConsultAstrologerCard extends StatelessWidget {
   const ConsultAstrologerCard({super.key});
@@ -134,4 +134,3 @@ class ConsultAstrologerCard extends StatelessWidget {
     );
   }
 }
-

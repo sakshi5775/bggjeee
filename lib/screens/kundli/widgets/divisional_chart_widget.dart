@@ -218,7 +218,7 @@ class DivisionalChartWidget extends StatelessWidget {
           ),
           Spacing.h(8),
           AutoTranslateText(
-            'Select a division (D1â€“D60) to view chart data',
+            'Select a division (D1–D60) to view chart data',
             textAlign: TextAlign.center,
             style: MyTextTheme.smallBCN.copyWith(
               color: "#6F221E".toColor().withValues(alpha: 0.6),
@@ -262,7 +262,7 @@ class DivisionalChartWidget extends StatelessWidget {
             ),
             if (desc.isNotEmpty) ...[
               AutoTranslateText(
-                ' â€¢ ',
+                ' • ',
                 style: MyTextTheme.smallBCN.copyWith(
                   color: "#6F221E".toColor().withValues(alpha: 0.6),
                   fontSize: 12.sp,
@@ -452,7 +452,7 @@ class DivisionalChartWidget extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
         child: Center(
           child: AutoTranslateText(
-            'â€”',
+            '—',
             style: MyTextTheme.smallBCN.copyWith(
               color: "#6F221E".toColor().withValues(alpha: 0.35),
               fontSize: 11.sp,
@@ -559,4 +559,3 @@ class DivisionalChartWidget extends StatelessWidget {
     );
   }
 }
-

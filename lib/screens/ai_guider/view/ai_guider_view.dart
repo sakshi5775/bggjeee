@@ -16,7 +16,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class AiGuiderView extends StatefulWidget {
-  /// When true, header (back, sound, language) is hidden â€” e.g. when embedded below dashboard slider.
+  /// When true, header (back, sound, language) is hidden — e.g. when embedded below dashboard slider.
   final bool hideHeader;
 
   const AiGuiderView({super.key, this.hideHeader = false});
@@ -994,4 +994,3 @@ class _AiGuiderViewState extends State<AiGuiderView>
     }
   }
 }
-

@@ -256,7 +256,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
           height: 20.h,
           alignment: Alignment.topCenter,
           child: AutoTranslateText(
-            'âœ“',
+            '✓',
             style: MyTextTheme.mediumBCN.copyWith(
               fontSize: 14,
               fontWeight: FontWeight.w400,
@@ -330,7 +330,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
                 height: 20.h,
                 alignment: Alignment.topCenter,
                 child: AutoTranslateText(
-                  'âœ“',
+                  '✓',
                   style: MyTextTheme.mediumBCN.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
@@ -404,7 +404,7 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AutoTranslateText(
-                    'â€¢ ',
+                    '• ',
                     style: MyTextTheme.mediumBCN.copyWith(
                       color: "#6F221E".toColor(),
                       fontSize: 16,
@@ -442,5 +442,3 @@ class FestivalDetailView extends BasePage<FestivalDetailController> {
     }
   }
 }
-
-

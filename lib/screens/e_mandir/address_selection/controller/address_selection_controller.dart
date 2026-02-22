@@ -209,14 +209,13 @@ class AddressSelectionController extends BaseController {
   String getAddressTypeIcon(String? addressType) {
     switch (addressType?.toLowerCase()) {
       case 'home':
-        return 'ðŸ ';
+        return '🏠';
       case 'office':
-        return 'ðŸ¢';
+        return '🏢';
       case 'other':
-        return 'ðŸ“';
+        return '📍';
       default:
-        return 'ðŸ“';
+        return '📍';
     }
   }
 }
-

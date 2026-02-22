@@ -163,11 +163,11 @@ class BookPujaController extends BaseController {
     if (title.contains('ganesh') || title.contains('ganesha')) {
       return 'à¥';
     } else if (title.contains('rudra') || title.contains('shiva')) {
-      return 'ðŸ”±';
+      return '🕉️';
     } else if (title.contains('lakshmi')) {
-      return 'ðŸª”';
+      return '🪔';
     } else if (title.contains('navgrah') || title.contains('navgraha')) {
-      return 'â­';
+      return '⭐';
     }
     return 'à¥';
   }
@@ -193,4 +193,3 @@ class BookPujaController extends BaseController {
     return '30 mins'; // Default
   }
 }
-

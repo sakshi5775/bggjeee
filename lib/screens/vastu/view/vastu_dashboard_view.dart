@@ -210,7 +210,7 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: AutoTranslateText(
-        'Ancient Vastu Shastra â€¢ Intelligent Guidance System',
+        'Ancient Vastu Shastra • Intelligent Guidance System',
         style: MyTextTheme.mediumBCN
             .copyWith(color: '#3E2723'.toColor())
             .merge(AppTypography.body1),
@@ -320,4 +320,3 @@ class _VastuDashboardViewState extends State<VastuDashboardView>
     );
   }
 }
-

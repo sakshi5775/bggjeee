@@ -17,7 +17,7 @@ class WhyShopWithUsWidget extends StatelessWidget {
       },
       {
         'icon': Icons.temple_hindu,
-        'emoji': 'ðŸ•‰ï¸',
+        'emoji': '🕉️',
         'title': 'Temple\nBlessed',
         'subtitle': 'Vedic Rituals',
       },
@@ -142,4 +142,3 @@ class WhyShopWithUsWidget extends StatelessWidget {
     );
   }
 }
-

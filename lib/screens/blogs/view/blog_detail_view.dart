@@ -355,7 +355,7 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                 //     //     //       ),
                                 //     //     //       Spacing.h(4),
                                 //     //     //       AutoTranslateText(
-                                //     //     //         '${widget.blog.authorType?.toUpperCase() ?? "USER"} â€¢ ${_formatDate(widget.blog.publishDate ?? widget.blog.createdAt ?? "")}',
+                                //     //     //         '${widget.blog.authorType?.toUpperCase() ?? "USER"} • ${_formatDate(widget.blog.publishDate ?? widget.blog.createdAt ?? "")}',
                                 //     //     //         style: MyTextTheme.smallBCN
                                 //     //     //             .copyWith(
                                 //     //     //               color: '#3E2723'
@@ -570,7 +570,9 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                       borderRadius: BorderRadius.circular(12.r),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withValues(alpha: 0.1),
+                                          color: Colors.black.withValues(
+                                            alpha: 0.1,
+                                          ),
                                           blurRadius: 4,
                                           offset: const Offset(0, 2),
                                         ),
@@ -626,7 +628,9 @@ class _BlogDetailViewState extends State<BlogDetailView> {
                                     borderRadius: BorderRadius.circular(12.r),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.05),
+                                        color: Colors.black.withValues(
+                                          alpha: 0.05,
+                                        ),
                                         blurRadius: 4,
                                         offset: const Offset(0, 2),
                                       ),
@@ -908,4 +912,3 @@ class _BlogDetailViewState extends State<BlogDetailView> {
         lowerUrl.contains('video');
   }
 }
-

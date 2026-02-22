@@ -87,7 +87,9 @@ class LearningJourneySection extends StatelessWidget {
       decoration: BoxDecoration(
         color: isPremium ? const Color(0xFF3E1212) : Colors.white,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: const Color(0xFFD68D3C).withValues(alpha: 0.3)),
+        border: Border.all(
+          color: const Color(0xFFD68D3C).withValues(alpha: 0.3),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -171,7 +173,7 @@ class LearningJourneySection extends StatelessWidget {
                         'Build clarity, remove superstition, and introduce logic-based understanding',
                     icon: Icons.school_outlined,
                     whatYouWillLearn: [
-                      'Fundamentals of Core subject mastery (Astrology / Numerology / Vastu / Healing â€“ as selected)',
+                      'Fundamentals of Core subject mastery (Astrology / Numerology / Vastu / Healing – as selected)',
                       'Basic concepts of planets, numbers, directions, and human energy systems',
                       'Logical explanation of remedies, gemstones, and spiritual practices',
                       'Ethical awareness: what to do and what to avoid',
@@ -193,7 +195,7 @@ class LearningJourneySection extends StatelessWidget {
                     objective: 'Enable structured practice with confidence',
                     icon: Icons.emoji_events_outlined,
                     whatYouWillLearn: [
-                      'Core subject mastery (Astrology / Numerology / Vastu / Healing â€“ as selected)',
+                      'Core subject mastery (Astrology / Numerology / Vastu / Healing – as selected)',
                       'Practical tools: charts, grids, layouts, symbols, and indicators',
                       'Introduction to KP logic, Lal Kitab actions, and validation methods',
                       'Case studies and beginner-level consultation report writing',
@@ -282,4 +284,3 @@ class LearningJourneySection extends StatelessWidget {
     );
   }
 }
-

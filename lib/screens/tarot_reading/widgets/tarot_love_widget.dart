@@ -52,7 +52,7 @@ class TarotLoveWidget extends StatelessWidget {
           // Background overlay - tappable to close
           GestureDetector(
             onTap: () {
-              debugPrint('ðŸ”´ Background tapped - closing');
+              debugPrint('🔴 Background tapped - closing');
               controller.closeReading();
             },
             behavior: HitTestBehavior.opaque,
@@ -116,7 +116,7 @@ class TarotLoveWidget extends StatelessWidget {
                                       ),
                                       GestureDetector(
                                         onTap: () {
-                                          debugPrint('ðŸ”´ Close icon tapped');
+                                          debugPrint('🔴 Close icon tapped');
                                           controller.closeReading();
                                         },
                                         child: Container(
@@ -199,7 +199,7 @@ class TarotLoveWidget extends StatelessWidget {
                               Spacing.h(16),
                               GestureDetector(
                                 onTap: () {
-                                  debugPrint('ðŸ”´ Close button tapped');
+                                  debugPrint('🔴 Close button tapped');
                                   controller.closeReading();
                                 },
                                 child: Container(
@@ -246,11 +246,11 @@ class TarotLoveWidget extends StatelessWidget {
         // Explicitly watch the response to ensure reactivity
         final response = controller.loveTriangleResponse.value;
         debugPrint(
-          'ðŸ” Triangle Widget - isLoading: $isLoading, response: ${response != null ? "exists" : "null"}',
+          '🔍 Triangle Widget - isLoading: $isLoading, response: ${response != null ? "exists" : "null"}',
         );
         if (response != null) {
           debugPrint(
-            'ðŸ” Triangle Response - self: ${response.self.name}, lover1: ${response.lover1.name}, lover2: ${response.lover2.name}',
+            '🔍 Triangle Response - self: ${response.self.name}, lover1: ${response.lover1.name}, lover2: ${response.lover2.name}',
           );
         }
         // Show loading if currently loading API
@@ -267,7 +267,7 @@ class TarotLoveWidget extends StatelessWidget {
         if (response.self.name.isEmpty &&
             response.lover1.name.isEmpty &&
             response.lover2.name.isEmpty) {
-          debugPrint('âš ï¸ Triangle Response has empty data');
+          debugPrint('⚠️ Triangle Response has empty data');
           return const SizedBox.shrink(); // Don't show empty response
         }
         return _buildTriangleContent(response);
@@ -455,4 +455,3 @@ class TarotLoveWidget extends StatelessWidget {
     );
   }
 }
-

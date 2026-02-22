@@ -27,7 +27,7 @@ class DevotionalCardWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          /// ðŸŽ¼ MUSIC ICON
+          /// 🎵 MUSIC ICON
           Container(
             height: 50,
             width: 50,
@@ -61,7 +61,7 @@ class DevotionalCardWidget extends StatelessWidget {
             ),
           ),
 
-          /// â–¶ PLAY BUTTON
+          /// ▶ PLAY BUTTON
           Container(
             height: 36,
             width: 36,
@@ -73,11 +73,10 @@ class DevotionalCardWidget extends StatelessWidget {
           ),
           const SizedBox(width: 8),
 
-          /// â‹® MORE
+          /// ⋮ MORE
           const Icon(Icons.more_vert, color: AppColors.deepOrange),
         ],
       ),
     );
   }
 }
-

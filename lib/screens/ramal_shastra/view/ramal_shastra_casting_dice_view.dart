@@ -78,7 +78,7 @@ class _RamalShastraCastingDiceViewState
         }
       });
     } else {
-      // All 16 values collected (4 rounds Ã— 4 dice)
+      // All 16 values collected (4 rounds × 4 dice)
       controller.generatePointsFromDice(allDiceValues);
       Get.toNamed(AppRoutes.ramalShastraConfirmation);
     }
@@ -211,7 +211,7 @@ class _RamalShastraCastingDiceViewState
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -232,4 +232,3 @@ class _RamalShastraCastingDiceViewState
     );
   }
 }
-

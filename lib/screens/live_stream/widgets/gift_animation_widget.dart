@@ -258,7 +258,7 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                               );
                             },
                             child: AutoTranslateText(
-                              'ðŸŽ‰',
+                              '🎉',
                               style: AppTypography.h1,
                             ),
                           ),
@@ -273,7 +273,7 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                               );
                             },
                             child: AutoTranslateText(
-                              'âœ¨',
+                              '✨',
                               style: AppTypography.h1,
                             ),
                           ),
@@ -288,7 +288,7 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
                               );
                             },
                             child: AutoTranslateText(
-                              'ðŸŽŠ',
+                              '🎊',
                               style: AppTypography.h1,
                             ),
                           ),
@@ -326,4 +326,3 @@ class _GiftAnimationWidgetState extends State<GiftAnimationWidget>
     );
   }
 }
-

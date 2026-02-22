@@ -50,11 +50,11 @@ class TarotBreakupWidget extends StatelessWidget {
       final isLoading = controller.isLoadingReading.value;
 
       debugPrint(
-        'ðŸ” Breakup Widget (${isRomantic ? "romantic" : "business"}) - isLoading: $isLoading, response: ${response != null ? "exists" : "null"}, readingType: ${controller.selectedReadingType.value}',
+        '🔍 Breakup Widget (${isRomantic ? "romantic" : "business"}) - isLoading: $isLoading, response: ${response != null ? "exists" : "null"}, readingType: ${controller.selectedReadingType.value}',
       );
       if (response != null) {
         debugPrint(
-          'ðŸ” Breakup Response - cause: ${response.cause.name}, advise: ${response.advise.name}',
+          '🔍 Breakup Response - cause: ${response.cause.name}, advise: ${response.advise.name}',
         );
       }
 
@@ -83,7 +83,7 @@ class TarotBreakupWidget extends StatelessWidget {
           // Background overlay - tappable to close
           GestureDetector(
             onTap: () {
-              debugPrint('ðŸ”´ Background tapped - closing');
+              debugPrint('🔴 Background tapped - closing');
               controller.closeReading();
             },
             behavior: HitTestBehavior.opaque,
@@ -149,7 +149,7 @@ class TarotBreakupWidget extends StatelessWidget {
                                       ),
                                       GestureDetector(
                                         onTap: () {
-                                          debugPrint('ðŸ”´ Close icon tapped');
+                                          debugPrint('🔴 Close icon tapped');
                                           controller.closeReading();
                                         },
                                         child: Container(
@@ -182,7 +182,7 @@ class TarotBreakupWidget extends StatelessWidget {
                               Spacing.h(24),
                               GestureDetector(
                                 onTap: () {
-                                  debugPrint('ðŸ”´ Close button tapped');
+                                  debugPrint('🔴 Close button tapped');
                                   controller.closeReading();
                                 },
                                 child: Container(
@@ -277,4 +277,3 @@ class TarotBreakupWidget extends StatelessWidget {
     );
   }
 }
-

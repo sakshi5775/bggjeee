@@ -14,12 +14,12 @@ class CourseDetailController extends BaseController {
   final CoursesService _coursesService = CoursesService();
   final RazorpayPaymentService _razorpayService = RazorpayPaymentService();
   final String courseId;
-  
+
   // Lock to prevent double processing
   bool _processPaymentLocked = false;
 
   CourseDetailController({required this.courseId}) {}
-  
+
   @override
   void onClose() {
     _razorpayService.dispose();
@@ -28,41 +28,42 @@ class CourseDetailController extends BaseController {
 
   // Course detail
   final Rx<CourseDetailModel?> courseDetail = Rx<CourseDetailModel?>(null);
-  
+
   // Enrollment state (SOURCE OF TRUTH from API)
   final RxBool isEnrolled = false.obs;
-  
+
   // Selected content for playback
   final Rx<ContentModel?> selectedContent = Rx<ContentModel?>(null);
   final Rx<LectureModel?> selectedLecture = Rx<LectureModel?>(null);
-  
+
   // Course content expanded states
   final RxMap<String, bool> lectureExpandedStates = <String, bool>{}.obs;
-  
+
   // Description expanded state
   final RxBool isDescriptionExpanded = false.obs;
-  
+
   // Selected tab (0: Overview, 1: Curriculum, 2: Reviews)
   final RxInt selectedTab = 0.obs;
-  
+
   // Pending payment data (for Razorpay callbacks)
   String? _pendingOrderId;
   String? _pendingGatewayOrderId;
-  
+
   void toggleDescription() {
     isDescriptionExpanded.value = !isDescriptionExpanded.value;
   }
-  
+
   // Handle Razorpay payment success
   void _handleRazorpaySuccess(Map<String, dynamic> response) async {
     try {
       setLoadingState(true);
-      
+
       // Extract Razorpay response fields
       final razorpayPaymentId = response['paymentId'] as String?;
-      final razorpayOrderId = response['orderId'] as String?; // Razorpay order ID from callback
+      final razorpayOrderId =
+          response['orderId'] as String?; // Razorpay order ID from callback
       final razorpaySignature = response['signature'] as String?;
-      
+
       if (_pendingOrderId == null || _pendingGatewayOrderId == null) {
         showErrorMessage(
           title: "Error",
@@ -70,7 +71,7 @@ class CourseDetailController extends BaseController {
         );
         return;
       }
-      
+
       if (razorpayPaymentId == null || razorpayPaymentId.isEmpty) {
         showErrorMessage(
           title: "Payment Error",
@@ -78,7 +79,7 @@ class CourseDetailController extends BaseController {
         );
         return;
       }
-      
+
       if (razorpayOrderId == null || razorpayOrderId.isEmpty) {
         showErrorMessage(
           title: "Payment Error",
@@ -86,7 +87,7 @@ class CourseDetailController extends BaseController {
         );
         return;
       }
-      
+
       if (razorpaySignature == null || razorpaySignature.isEmpty) {
         showErrorMessage(
           title: "Payment Error",
@@ -94,10 +95,10 @@ class CourseDetailController extends BaseController {
         );
         return;
       }
-      
+
       // CRITICAL: Verify gatewayOrderId from initiate matches Razorpay order_id
       if (_pendingGatewayOrderId != razorpayOrderId) {
-        debugPrint('âš ï¸ gatewayOrderId mismatch!');
+        debugPrint('⚠️ gatewayOrderId mismatch!');
         debugPrint('  From initiate API: $_pendingGatewayOrderId');
         debugPrint('  From Razorpay: $razorpayOrderId');
         showErrorMessage(
@@ -106,16 +107,18 @@ class CourseDetailController extends BaseController {
         );
         return;
       }
-      
+
       // CRITICAL LOCK: Check right before API call to prevent double processing
       if (_processPaymentLocked) {
-        debugPrint('ðŸš« processPayment already executing â€” skipping duplicate call');
+        debugPrint(
+          '🚫 processPayment already executing — skipping duplicate call',
+        );
         return;
       }
-      
+
       // Lock right before API call
       _processPaymentLocked = true;
-      
+
       // PROCESS PAYMENT - Backend handles everything (verification, enrollment, etc.)
       // Request format: orderId, gatewayOrderId, razorpay_order_id, razorpay_payment_id, razorpay_signature
       final paymentData = await _coursesService.processPayment(
@@ -125,18 +128,20 @@ class CourseDetailController extends BaseController {
         razorpayPaymentId: razorpayPaymentId,
         razorpaySignature: razorpaySignature,
       );
-      
+
       // Check API response - if success is true, payment is complete
       if (paymentData == null || !paymentData.success) {
         // Reset lock on failure so user can retry
         _processPaymentLocked = false;
         showErrorMessage(
           title: "Payment Processing Failed",
-          message: paymentData?.message ?? "Failed to process payment. Please contact support.",
+          message:
+              paymentData?.message ??
+              "Failed to process payment. Please contact support.",
         );
         return;
       }
-      
+
       // API Response Structure:
       // {
       //   "success": true,
@@ -147,40 +152,43 @@ class CourseDetailController extends BaseController {
       //     "enrollment": { "accessStatus": "active" }
       //   }
       // }
-      
+
       final enrollmentInfo = paymentData.data.enrollment;
-      
+
       // If enrollment is active, course is unlocked
       if (enrollmentInfo.accessStatus == 'active') {
         // CRITICAL: Update enrollment status immediately so content is accessible
         isEnrolled.value = true;
-        
+
         // Refresh course detail to get updated enrollment status
         await loadCourseDetail();
-        
+
         // Double-check enrollment status after refresh
-        final enrollmentStatus = await _coursesService.checkEnrollment(courseId);
+        final enrollmentStatus = await _coursesService.checkEnrollment(
+          courseId,
+        );
         if (enrollmentStatus != null) {
           final enrolled = enrollmentStatus['isEnrolled'] as bool? ?? false;
           isEnrolled.value = enrolled;
         }
-        
-        debugPrint('âœ… Payment successful - Enrollment active, course unlocked');
-        debugPrint('âœ… isEnrolled.value set to: ${isEnrolled.value}');
-        
+
+        debugPrint('✅ Payment successful - Enrollment active, course unlocked');
+        debugPrint('✅ isEnrolled.value set to: ${isEnrolled.value}');
+
         // Show success modal
         _showPaymentSuccessModal(
-          message: paymentData.message.isNotEmpty 
-              ? paymentData.message 
+          message: paymentData.message.isNotEmpty
+              ? paymentData.message
               : 'Course purchased successfully! You can now access all content.',
         );
       } else {
         showErrorMessage(
           title: "Enrollment Issue",
-          message: "Payment successful but enrollment not activated. Please contact support.",
+          message:
+              "Payment successful but enrollment not activated. Please contact support.",
         );
       }
-      
+
       // Clear pending data and reset lock after successful payment
       _pendingOrderId = null;
       _pendingGatewayOrderId = null;
@@ -196,24 +204,23 @@ class CourseDetailController extends BaseController {
       setLoadingState(false);
     }
   }
-  
+
   // Handle Razorpay payment error
   void _handleRazorpayError(String error) {
     _processPaymentLocked = false;
     setLoadingState(false);
-    showErrorMessage(
-      title: "Payment Error",
-      message: error,
-    );
+    showErrorMessage(title: "Payment Error", message: error);
     _pendingOrderId = null;
     _pendingGatewayOrderId = null;
   }
-  
+
   // Handle Razorpay payment failure
   void _handleRazorpayFailure(dynamic response) {
     _processPaymentLocked = false;
     setLoadingState(false);
-    final message = response is Map ? response['message']?.toString() : 'Payment was cancelled';
+    final message = response is Map
+        ? response['message']?.toString()
+        : 'Payment was cancelled';
     showErrorMessage(
       title: "Payment Failed",
       message: message ?? "Payment was cancelled or failed. Please try again.",
@@ -222,7 +229,10 @@ class CourseDetailController extends BaseController {
     _pendingGatewayOrderId = null;
   }
 
-  void _showPaymentSuccessModal({String message = 'Course purchased successfully! You can now access all content.'}) {
+  void _showPaymentSuccessModal({
+    String message =
+        'Course purchased successfully! You can now access all content.',
+  }) {
     Get.dialog(
       PopScope(
         canPop: false, // Prevent back button from closing
@@ -253,7 +263,9 @@ class CourseDetailController extends BaseController {
                   padding: EdgeInsets.all(24.w),
                   decoration: BoxDecoration(
                     gradient: AppColors.primaryGradient,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(30.r),
+                    ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -339,22 +351,23 @@ class CourseDetailController extends BaseController {
     super.onInit();
     loadCourseDetail();
   }
-  
+
   // Select content to play/view
   void selectContent(LectureModel lecture, ContentModel content) {
     selectedLecture.value = lecture;
     selectedContent.value = content;
   }
-  
+
   // Toggle lecture expansion
   void toggleLecture(String lectureId) {
-    lectureExpandedStates[lectureId] = !(lectureExpandedStates[lectureId] ?? false);
+    lectureExpandedStates[lectureId] =
+        !(lectureExpandedStates[lectureId] ?? false);
   }
-  
+
   // Expand all lectures that have content
   void _expandAllLecturesWithContent() {
     if (courseDetail.value == null) return;
-    
+
     final lectures = courseDetail.value!.lectures;
     for (final lecture in lectures) {
       // Expand lecture if it has content
@@ -363,24 +376,24 @@ class CourseDetailController extends BaseController {
       }
     }
   }
-  
+
   // Step 2: Course Detail Flow (PREVIEW BEFORE ENROLL)
   Future<void> loadCourseDetail() async {
     try {
       setLoadingState(true);
-      
+
       // Step 2: Get course detail
       final detail = await _coursesService.getCourseById(courseId);
       if (detail != null) {
         courseDetail.value = detail;
-        
+
         // Step 4: Enrollment Check Flow (Security Layer) - updates isEnrolled
         await _verifyEnrollmentStatus();
-        
+
         // Step 3: Course Lectures Visibility Flow (UDEMY BEHAVIOR)
         // Fetch FULL lecture structure EVEN IF USER IS NOT ENROLLED
         await _loadLecturesStructure();
-        
+
         // Auto-expand all lectures with content when course detail loads
         _expandAllLecturesWithContent();
       } else {
@@ -400,7 +413,7 @@ class CourseDetailController extends BaseController {
   }
 
   // Step 3: Course Lectures Visibility Flow (UDEMY BEHAVIOR)
-  // âš ï¸ THIS IS WHAT MAKES IT UDEMY-LIKE
+  // ⚠️ THIS IS WHAT MAKES IT UDEMY-LIKE
   // This API is called EVEN IF USER IS NOT ENROLLED
   // Users can SEE everything (titles, descriptions, content titles) but ACCESS is restricted
   Future<void> _loadLecturesStructure() async {
@@ -464,31 +477,28 @@ class CourseDetailController extends BaseController {
     try {
       // Reset lock when starting a new payment flow
       _processPaymentLocked = false;
-      
+
       setLoadingState(true);
-      
-      // STEP 1 â€” ORDER INITIATION
+
+      // STEP 1 — ORDER INITIATION
       final orderData = await _coursesService.initiateOrder(
         courseId: courseId,
         paymentMethod: 'razorpay',
       );
-      
+
       if (orderData == null) {
-        showErrorMessage(
-          title: "Error",
-          message: "Failed to initiate order",
-        );
+        showErrorMessage(title: "Error", message: "Failed to initiate order");
         return;
       }
-      
+
       // Extract order, payment, and razorpay data
       final orderObj = orderData['order'] as Map<String, dynamic>?;
       final paymentObj = orderData['payment'] as Map<String, dynamic>?;
       final razorpayObj = orderData['razorpay'] as Map<String, dynamic>?;
-      
+
       final orderId = orderObj?['orderId'] as String?;
       final gatewayOrderId = paymentObj?['gatewayOrderId'] as String?;
-      
+
       if (orderId == null) {
         showErrorMessage(
           title: "Error",
@@ -496,7 +506,7 @@ class CourseDetailController extends BaseController {
         );
         return;
       }
-      
+
       if (gatewayOrderId == null) {
         showErrorMessage(
           title: "Error",
@@ -504,15 +514,16 @@ class CourseDetailController extends BaseController {
         );
         return;
       }
-      
+
       if (razorpayObj == null) {
         showErrorMessage(
           title: "Error",
-          message: "Invalid order data received. Missing Razorpay configuration.",
+          message:
+              "Invalid order data received. Missing Razorpay configuration.",
         );
         return;
       }
-      
+
       // Extract Razorpay configuration from API response
       final razorpayKey = razorpayObj['key'] as String?;
       final razorpayOrderId = razorpayObj['orderId'] as String?;
@@ -521,15 +532,17 @@ class CourseDetailController extends BaseController {
       final razorpayDescription = razorpayObj['description'] as String?;
       final razorpayPrefill = razorpayObj['prefill'] as Map<String, dynamic>?;
       final razorpayNotes = razorpayObj['notes'] as Map<String, dynamic>?;
-      
-      if (razorpayKey == null || razorpayOrderId == null || razorpayAmount == null) {
+
+      if (razorpayKey == null ||
+          razorpayOrderId == null ||
+          razorpayAmount == null) {
         showErrorMessage(
           title: "Error",
           message: "Invalid Razorpay configuration. Missing required fields.",
         );
         return;
       }
-      
+
       // Initialize Razorpay with the key from API response
       _razorpayService.initialize(
         keyId: razorpayKey,
@@ -537,10 +550,10 @@ class CourseDetailController extends BaseController {
         onError: _handleRazorpayError,
         onFailure: _handleRazorpayFailure,
       );
-      
-      // STEP 2 â€” OPEN RAZORPAY CHECKOUT
+
+      // STEP 2 — OPEN RAZORPAY CHECKOUT
       setLoadingState(false); // Close loading to show Razorpay
-      
+
       _razorpayService.openCheckout(
         orderId: orderId,
         gatewayOrderId: razorpayOrderId, // Use Razorpay order ID from response
@@ -553,7 +566,7 @@ class CourseDetailController extends BaseController {
         razorpayKey: razorpayKey,
         notes: razorpayNotes,
       );
-      
+
       // Store orderId and gatewayOrderId for callbacks
       _pendingOrderId = orderId;
       _pendingGatewayOrderId = gatewayOrderId;
@@ -573,5 +586,3 @@ class CourseDetailController extends BaseController {
     await loadCourseDetail();
   }
 }
-
-

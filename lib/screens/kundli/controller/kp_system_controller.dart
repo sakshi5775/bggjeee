@@ -7,31 +7,61 @@ import 'package:get/get.dart';
 class KpSystemController extends BaseController {
   // KP System table data for main page. Nakshatra Nadi commented out.
   final kpSystemTableData = [
-    {'left': 'KP Chart', 'right': 'Rasi Chart', 'hasApi': true, 'hasApiRight': true},
+    {
+      'left': 'KP Chart',
+      'right': 'Rasi Chart',
+      'hasApi': true,
+      'hasApiRight': true,
+    },
     {'left': 'Planets', 'right': 'Cusps', 'hasApi': true, 'hasApiRight': true},
-    {'left': 'Planet Signification', 'right': 'House Significators', 'hasApi': true, 'hasApiRight': true},
-    {'left': 'Planet Signification(View2)', 'right': '', 'hasApi': true, 'hasApiRight': false}, // 'Nakshatra Nadi' commented out
-    {'left': 'CIL (Sub Sub)', 'right': '4-Step', 'hasApi': false, 'hasApiRight': false},
-    {'left': 'CIL (Sub)', 'right': 'Ruling Planets', 'hasApi': false, 'hasApiRight': false},
-    {'left': 'Current Ruling Planets', 'right': 'Misc', 'hasApi': false, 'hasApiRight': false},
+    {
+      'left': 'Planet Signification',
+      'right': 'House Significators',
+      'hasApi': true,
+      'hasApiRight': true,
+    },
+    {
+      'left': 'Planet Signification(View2)',
+      'right': '',
+      'hasApi': true,
+      'hasApiRight': false,
+    }, // 'Nakshatra Nadi' commented out
+    {
+      'left': 'CIL (Sub Sub)',
+      'right': '4-Step',
+      'hasApi': false,
+      'hasApiRight': false,
+    },
+    {
+      'left': 'CIL (Sub)',
+      'right': 'Ruling Planets',
+      'hasApi': false,
+      'hasApiRight': false,
+    },
+    {
+      'left': 'Current Ruling Planets',
+      'right': 'Misc',
+      'hasApi': false,
+      'hasApiRight': false,
+    },
     {'left': 'KP Cusp', 'right': '', 'hasApi': false, 'hasApiRight': false},
   ];
 
   // Form data
   final formData = Rxn<Map<String, dynamic>>();
-  
+
   // Current tab index: 0 = Table (first page), 1-7 = KP Chart, Rasi Chart, Planets, etc. (like Predictions)
   final selectedTabIndex = 0.obs;
-  
+
   // PageController for swipeable tabs
   late PageController pageController;
-  
+
   // ScrollController for horizontal tab bar
   final ScrollController tabsScrollController = ScrollController();
-  
+
   // GlobalKeys for each tab (for scroll-into-view)
   final Map<int, GlobalKey> tabKeys = {};
-  
+
   // API data
   final kpChartData = Rxn<Map<String, dynamic>>();
   final kpRasiChartData = Rxn<Map<String, dynamic>>();
@@ -40,7 +70,7 @@ class KpSystemController extends BaseController {
   final kpHouseSignificatorsData = Rxn<Map<String, dynamic>>();
   final kpPlanetSignificatorsLevelWiseData = Rxn<Map<String, dynamic>>();
   final kpCuspsDetailsData = Rxn<Map<String, dynamic>>();
-  
+
   // Loading states
   final isLoadingKpChart = false.obs;
   final isLoadingKpRasiChart = false.obs;
@@ -49,7 +79,7 @@ class KpSystemController extends BaseController {
   final isLoadingKpHouseSignificators = false.obs;
   final isLoadingKpPlanetSignificatorsLevelWise = false.obs;
   final isLoadingKpCuspsDetails = false.obs;
-  
+
   // Service
   final _kundliService = KundliService();
 
@@ -60,21 +90,21 @@ class KpSystemController extends BaseController {
     pageController = PageController(initialPage: 0);
     _loadData();
   }
-  
+
   @override
   void onClose() {
     pageController.dispose();
     tabsScrollController.dispose();
     super.onClose();
   }
-  
-  // Handle page change from swipe â€“ update selection and fetch data for this page
+
+  // Handle page change from swipe – update selection and fetch data for this page
   void onPageChanged(int index) {
     selectedTabIndex.value = index;
     _fetchForPageIndex(index);
   }
 
-  // Called when user taps a tab â€“ update selection, fetch data, animate to page
+  // Called when user taps a tab – update selection, fetch data, animate to page
   void onTabSelected(int index) {
     selectedTabIndex.value = index;
     _fetchForPageIndex(index);
@@ -89,13 +119,20 @@ class KpSystemController extends BaseController {
 
   void _fetchForPageIndex(int index) {
     if (index <= 0) return; // Page 0 = Table, no fetch
-    if (index == 1 && kpChartData.value == null) fetchKpChart();
-    else if (index == 2 && kpRasiChartData.value == null) fetchKpRasiChart();
-    else if (index == 3 && kpPlanetDetailsData.value == null) fetchKpPlanetDetails();
-    else if (index == 4 && kpCuspsDetailsData.value == null) fetchKpCuspsDetails();
-    else if (index == 5 && kpPlanetSignificationsData.value == null) fetchKpPlanetSignifications();
-    else if (index == 6 && kpHouseSignificatorsData.value == null) fetchKpHouseSignificators();
-    else if (index == 7 && kpPlanetSignificatorsLevelWiseData.value == null) fetchKpPlanetSignificatorsLevelWise();
+    if (index == 1 && kpChartData.value == null)
+      fetchKpChart();
+    else if (index == 2 && kpRasiChartData.value == null)
+      fetchKpRasiChart();
+    else if (index == 3 && kpPlanetDetailsData.value == null)
+      fetchKpPlanetDetails();
+    else if (index == 4 && kpCuspsDetailsData.value == null)
+      fetchKpCuspsDetails();
+    else if (index == 5 && kpPlanetSignificationsData.value == null)
+      fetchKpPlanetSignifications();
+    else if (index == 6 && kpHouseSignificatorsData.value == null)
+      fetchKpHouseSignificators();
+    else if (index == 7 && kpPlanetSignificatorsLevelWiseData.value == null)
+      fetchKpPlanetSignificatorsLevelWise();
   }
 
   void _loadData() {
@@ -109,22 +146,34 @@ class KpSystemController extends BaseController {
   void navigateToTableView() {
     selectedTabIndex.value = 0;
     if (pageController.hasClients) {
-      pageController.animateToPage(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      pageController.animateToPage(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
   /// Page index: 0=Table, 1=KP Chart, 2=Rasi Chart, 3=Planets, 4=Cusps, 5=Planet Signification, 6=House Significators, 7=Planet Signification(View2)
   int _tabNameToPageIndex(String tabName) {
     switch (tabName) {
-      case 'KP Chart': return 1;
-      case 'Rasi Chart': return 2;
-      case 'Planets': return 3;
-      case 'Cusps': return 4;
-      case 'Planet Signification': return 5;
-      case 'House Significators': return 6;
-      case 'Planet Signification(View2)': return 7;
+      case 'KP Chart':
+        return 1;
+      case 'Rasi Chart':
+        return 2;
+      case 'Planets':
+        return 3;
+      case 'Cusps':
+        return 4;
+      case 'Planet Signification':
+        return 5;
+      case 'House Significators':
+        return 6;
+      case 'Planet Signification(View2)':
+        return 7;
       // Nakshatra Nadi commented out
-      default: return 0;
+      default:
+        return 0;
     }
   }
 
@@ -142,7 +191,7 @@ class KpSystemController extends BaseController {
     }
   }
 
-  // Tab names for display â€“ first is Table (like Predictions), then content tabs. Nakshatra Nadi commented out.
+  // Tab names for display – first is Table (like Predictions), then content tabs. Nakshatra Nadi commented out.
   final List<String> tabNames = [
     'Table',
     'KP Chart',
@@ -164,7 +213,7 @@ class KpSystemController extends BaseController {
 
     try {
       isLoadingKpChart.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -175,7 +224,11 @@ class KpSystemController extends BaseController {
       final style = form['style'] as String? ?? 'north';
       final coloredPlanets = form['colored_planets'] as bool? ?? true;
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for KP Chart');
         isLoadingKpChart.value = false;
         return;
@@ -216,7 +269,7 @@ class KpSystemController extends BaseController {
 
     try {
       isLoadingKpRasiChart.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -226,7 +279,11 @@ class KpSystemController extends BaseController {
       final lang = form['language'] as String? ?? 'en';
       final style = form['style'] as String? ?? 'north';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for KP Rasi Chart');
         isLoadingKpRasiChart.value = false;
         return;
@@ -267,7 +324,7 @@ class KpSystemController extends BaseController {
 
     try {
       isLoadingKpPlanetDetails.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -276,7 +333,11 @@ class KpSystemController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for KP Planet Details');
         isLoadingKpPlanetDetails.value = false;
         return;
@@ -314,7 +375,7 @@ class KpSystemController extends BaseController {
 
     try {
       isLoadingKpPlanetSignifications.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -323,7 +384,11 @@ class KpSystemController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for KP Planet Significations');
         isLoadingKpPlanetSignifications.value = false;
         return;
@@ -361,7 +426,7 @@ class KpSystemController extends BaseController {
 
     try {
       isLoadingKpHouseSignificators.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -370,7 +435,11 @@ class KpSystemController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for KP House Significators');
         isLoadingKpHouseSignificators.value = false;
         return;
@@ -402,13 +471,15 @@ class KpSystemController extends BaseController {
   // Fetch KP Planet Significators Level Wise
   Future<void> fetchKpPlanetSignificatorsLevelWise() async {
     if (formData.value == null) {
-      debugPrint('Form data is null, cannot fetch KP Planet Significators Level Wise');
+      debugPrint(
+        'Form data is null, cannot fetch KP Planet Significators Level Wise',
+      );
       return;
     }
 
     try {
       isLoadingKpPlanetSignificatorsLevelWise.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -417,8 +488,14 @@ class KpSystemController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
-        debugPrint('Missing required form data for KP Planet Significators Level Wise');
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
+        debugPrint(
+          'Missing required form data for KP Planet Significators Level Wise',
+        );
         isLoadingKpPlanetSignificatorsLevelWise.value = false;
         return;
       }
@@ -436,7 +513,9 @@ class KpSystemController extends BaseController {
 
       if (data != null) {
         kpPlanetSignificatorsLevelWiseData.value = data;
-        debugPrint('KP Planet Significators Level Wise data loaded successfully');
+        debugPrint(
+          'KP Planet Significators Level Wise data loaded successfully',
+        );
       } else {
         debugPrint('Failed to fetch KP Planet Significators Level Wise data');
       }
@@ -455,7 +534,7 @@ class KpSystemController extends BaseController {
 
     try {
       isLoadingKpCuspsDetails.value = true;
-      
+
       final form = formData.value!;
       final date = form['date'] as String?;
       final time = form['time'] as String?;
@@ -464,7 +543,11 @@ class KpSystemController extends BaseController {
       final tz = form['timezone'] as double?;
       final lang = form['language'] as String? ?? 'en';
 
-      if (date == null || time == null || latitude == null || longitude == null || tz == null) {
+      if (date == null ||
+          time == null ||
+          latitude == null ||
+          longitude == null ||
+          tz == null) {
         debugPrint('Missing required form data for KP Cusps Details');
         isLoadingKpCuspsDetails.value = false;
         return;
@@ -493,5 +576,3 @@ class KpSystemController extends BaseController {
     }
   }
 }
-
-

@@ -17,7 +17,7 @@ import 'package:get/get.dart';
 class AiChatView extends BasePage<AiChatController> {
   final bool showBackButton;
 
-  /// When true, header (logo, back, wallet, search) is hidden â€” e.g. when embedded below dashboard slider.
+  /// When true, header (logo, back, wallet, search) is hidden — e.g. when embedded below dashboard slider.
   final bool hideHeader;
 
   const AiChatView({
@@ -297,4 +297,3 @@ class AiChatView extends BasePage<AiChatController> {
     );
   }
 }
-

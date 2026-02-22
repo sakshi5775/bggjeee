@@ -316,7 +316,7 @@ class _HandwritingAstrologyHistoryViewState
     if (dateString == null) return '';
     try {
       final date = DateTime.parse(dateString);
-      return DateFormat('MMM dd, yyyy â€¢ hh:mm a').format(date);
+      return DateFormat('MMM dd, yyyy • hh:mm a').format(date);
     } catch (e) {
       return dateString;
     }
@@ -613,4 +613,3 @@ class _HandwritingAstrologyHistoryViewState
     );
   }
 }
-

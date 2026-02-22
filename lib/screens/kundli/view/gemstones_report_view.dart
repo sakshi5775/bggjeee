@@ -244,7 +244,7 @@ class GemstonesReportView extends BasePage<GemstonesReportController> {
                 ),
                 if (gem.isNotEmpty || planet.isNotEmpty || otherName.isNotEmpty)
                   AutoTranslateText(
-                    '${otherName.isNotEmpty ? '$otherName â€¢ ' : ''}$gem${planet.isNotEmpty ? ' â€¢ $planet' : ''}',
+                    '${otherName.isNotEmpty ? '$otherName • ' : ''}$gem${planet.isNotEmpty ? ' • $planet' : ''}',
                     style: MyTextTheme.smallBCN.copyWith(
                       color: Colors.white.withValues(alpha: 0.9),
                       fontSize: 11.sp,
@@ -481,5 +481,3 @@ class GemstonesReportView extends BasePage<GemstonesReportController> {
     );
   }
 }
-
-

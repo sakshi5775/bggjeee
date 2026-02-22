@@ -10,10 +10,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class MessageBubbleWidget extends StatelessWidget {
   final StreamMessage message;
 
-  const MessageBubbleWidget({
-    Key? key,
-    required this.message,
-  }) : super(key: key);
+  const MessageBubbleWidget({Key? key, required this.message})
+    : super(key: key);
 
   String _getInitials(String name) {
     if (name.isEmpty) return '?';
@@ -42,7 +40,7 @@ class MessageBubbleWidget extends StatelessWidget {
   String _formatTime(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inSeconds < 60) {
       return 'now';
     } else if (difference.inMinutes < 60) {
@@ -58,7 +56,7 @@ class MessageBubbleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (message.messageType == 'TEXT') {
       final senderColor = _getColorFromName(message.senderName);
-      
+
       return Container(
         margin: EdgeInsets.only(bottom: 6.h),
         child: Row(
@@ -74,10 +72,7 @@ class MessageBubbleWidget extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    senderColor,
-                    senderColor.withValues(alpha: 0.7),
-                  ],
+                  colors: [senderColor, senderColor.withValues(alpha: 0.7)],
                 ),
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -95,10 +90,12 @@ class MessageBubbleWidget extends StatelessWidget {
               child: Center(
                 child: AutoTranslateText(
                   _getInitials(message.senderName),
-                  style: MyTextTheme.smallBCB.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ).merge(AppTypography.label),
+                  style: MyTextTheme.smallBCB
+                      .copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      )
+                      .merge(AppTypography.label),
                 ),
               ),
             ),
@@ -169,11 +166,13 @@ class MessageBubbleWidget extends StatelessWidget {
                     // Message content
                     AutoTranslateText(
                       message.content ?? '',
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: Colors.white,
-                        height: 1.4,
-                        letterSpacing: 0.2,
-                      ).merge(AppTypography.body1),
+                      style: MyTextTheme.smallBCN
+                          .copyWith(
+                            color: Colors.white,
+                            height: 1.4,
+                            letterSpacing: 0.2,
+                          )
+                          .merge(AppTypography.body1),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -181,9 +180,9 @@ class MessageBubbleWidget extends StatelessWidget {
                     // Timestamp
                     AutoTranslateText(
                       _formatTime(message.sentAt),
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: Colors.white.withValues(alpha: 0.5),
-                      ).merge(AppTypography.label),
+                      style: MyTextTheme.smallBCN
+                          .copyWith(color: Colors.white.withValues(alpha: 0.5))
+                          .merge(AppTypography.label),
                     ),
                   ],
                 ),
@@ -237,7 +236,7 @@ class MessageBubbleWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: AutoTranslateText(
-                  message.reactionType ?? 'âœ¨',
+                  message.reactionType ?? '✨',
                   style: AppTypography.h1,
                 ),
               ),
@@ -249,23 +248,25 @@ class MessageBubbleWidget extends StatelessWidget {
                 children: [
                   AutoTranslateText(
                     message.senderName,
-                    style: MyTextTheme.smallBCB.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 4,
-                        ),
-                      ],
-                    ).merge(AppTypography.body1),
+                    style: MyTextTheme.smallBCB
+                        .copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        )
+                        .merge(AppTypography.body1),
                   ),
                   Spacing.h(2),
                   AutoTranslateText(
                     _formatTime(message.sentAt),
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: Colors.white.withValues(alpha: 0.7),
-                    ).merge(AppTypography.label),
+                    style: MyTextTheme.smallBCN
+                        .copyWith(color: Colors.white.withValues(alpha: 0.7))
+                        .merge(AppTypography.label),
                   ),
                 ],
               ),
@@ -321,7 +322,7 @@ class MessageBubbleWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14.r),
                     ),
                     child: AutoTranslateText(
-                      message.reactionType ?? 'ðŸŽ',
+                      message.reactionType ?? '🎁',
                       style: AppTypography.h1,
                     ),
                   ),
@@ -349,9 +350,9 @@ class MessageBubbleWidget extends StatelessWidget {
                   children: [
                     RichText(
                       text: TextSpan(
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: const Color(0xFF3E2723),
-                        ).merge(AppTypography.body1),
+                        style: MyTextTheme.smallBCN
+                            .copyWith(color: const Color(0xFF3E2723))
+                            .merge(AppTypography.body1),
                         children: [
                           TextSpan(
                             text: message.senderName,
@@ -363,7 +364,9 @@ class MessageBubbleWidget extends StatelessWidget {
                           TextSpan(
                             text: ' sent ',
                             style: MyTextTheme.smallBCN.copyWith(
-                              color: const Color(0xFF3E2723).withValues(alpha: 0.8),
+                              color: const Color(
+                                0xFF3E2723,
+                              ).withValues(alpha: 0.8),
                             ),
                           ),
                           TextSpan(
@@ -381,9 +384,13 @@ class MessageBubbleWidget extends StatelessWidget {
                     Spacing.h(4),
                     AutoTranslateText(
                       _formatTime(message.sentAt),
-                      style: MyTextTheme.smallBCN.copyWith(
-                        color: const Color(0xFF3E2723).withValues(alpha: 0.6),
-                      ).merge(AppTypography.label),
+                      style: MyTextTheme.smallBCN
+                          .copyWith(
+                            color: const Color(
+                              0xFF3E2723,
+                            ).withValues(alpha: 0.6),
+                          )
+                          .merge(AppTypography.label),
                     ),
                   ],
                 ),
@@ -393,9 +400,7 @@ class MessageBubbleWidget extends StatelessWidget {
         ),
       );
     }
-    
+
     return const SizedBox.shrink();
   }
 }
-
-

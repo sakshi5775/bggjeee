@@ -439,23 +439,23 @@ class CompatibilityReportWidget extends StatelessWidget {
   Widget _buildZodiacIcon(String sign) {
     // Map zodiac signs to emoji or icons (handle both lowercase and capitalized)
     final zodiacIcons = {
-      'aries': 'â™ˆ',
-      'taurus': 'â™‰',
-      'gemini': 'â™Š',
-      'cancer': 'â™‹',
-      'leo': 'â™Œ',
-      'virgo': 'â™',
-      'libra': 'â™Ž',
-      'scorpio': 'â™',
-      'sagittarius': 'â™',
-      'capricorn': 'â™‘',
-      'aquarius': 'â™’',
-      'pisces': 'â™“',
+      'aries': '♈',
+      'taurus': '♉',
+      'gemini': '♊',
+      'cancer': '♋',
+      'leo': '♌',
+      'virgo': '♍',
+      'libra': '♎',
+      'scorpio': '♏',
+      'sagittarius': '♐',
+      'capricorn': '♑',
+      'aquarius': '♒',
+      'pisces': '♓',
     };
 
     // Convert to lowercase for lookup
     final signLower = sign.toLowerCase();
-    final icon = zodiacIcons[signLower] ?? 'â­';
+    final icon = zodiacIcons[signLower] ?? '⭐';
 
     return Container(
       width: 24.w,
@@ -561,7 +561,9 @@ class CompatibilityReportWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFFFDF3E6),
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppColors.deepOrange.withValues(alpha: 0.3),
+              ),
             ),
             child: AutoTranslateText(
               'Total: $displayTotal',
@@ -1686,4 +1688,3 @@ class _ExpandableSectionState extends State<_ExpandableSection> {
     );
   }
 }
-

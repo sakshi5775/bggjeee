@@ -121,7 +121,7 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: AutoTranslateText(
-        'Ancient Horary Astrology â€¢ AI-Powered Insights',
+        'Ancient Horary Astrology • AI-Powered Insights',
         style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
         textAlign: TextAlign.center,
       ),
@@ -703,4 +703,3 @@ class PrashnaKundaliView extends GetView<PrashnaKundaliController> {
     );
   }
 }
-

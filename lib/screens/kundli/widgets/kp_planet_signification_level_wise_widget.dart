@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-/// KP Planet Significators Level Wise â€“ table (Planet | L1 | L2 | L3 | L4).
+/// KP Planet Significators Level Wise – table (Planet | L1 | L2 | L3 | L4).
 class KpPlanetSignificationLevelWiseWidget extends StatelessWidget {
   final KpSystemController controller;
 
@@ -30,8 +30,9 @@ class KpPlanetSignificationLevelWiseWidget extends StatelessWidget {
         return Center(
           child: AutoTranslateText(
             'No data available',
-            style: MyTextTheme.mediumBCN
-                .copyWith(color: '#6F221E'.toColor().withValues(alpha: 0.6)),
+            style: MyTextTheme.mediumBCN.copyWith(
+              color: '#6F221E'.toColor().withValues(alpha: 0.6),
+            ),
           ),
         );
       }
@@ -41,8 +42,9 @@ class KpPlanetSignificationLevelWiseWidget extends StatelessWidget {
         return Center(
           child: AutoTranslateText(
             'No data available',
-            style: MyTextTheme.mediumBCN
-                .copyWith(color: '#6F221E'.toColor().withValues(alpha: 0.6)),
+            style: MyTextTheme.mediumBCN.copyWith(
+              color: '#6F221E'.toColor().withValues(alpha: 0.6),
+            ),
           ),
         );
       }
@@ -55,22 +57,41 @@ class KpPlanetSignificationLevelWiseWidget extends StatelessWidget {
             constraints: BoxConstraints(minWidth: 600.w, maxWidth: 600.w),
             child: _planetCard(
               child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildTitleRow('Planet Significators (Level Wise)', Icons.layers),
-                _buildTableHeader(const ['Planet', 'L1', 'L2', 'L3', 'L4']),
-                ...response.entries.toList().asMap().entries.map((e) {
-                  final planet = e.value.key;
-                  final levels = e.value.value as Map<String, dynamic>? ?? {};
-                  final l1 = (levels['L1'] as List<dynamic>?)?.map((x) => x.toString()).join(', ') ?? '--';
-                  final l2 = (levels['L2'] as List<dynamic>?)?.map((x) => x.toString()).join(', ') ?? '--';
-                  final l3 = (levels['L3'] as List<dynamic>?)?.map((x) => x.toString()).join(', ') ?? '--';
-                  final l4 = (levels['L4'] as List<dynamic>?)?.map((x) => x.toString()).join(', ') ?? '--';
-                  return _buildTableRow(planet, l1, l2, l3, l4, e.key);
-                }),
-              ],
-            ),
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildTitleRow(
+                    'Planet Significators (Level Wise)',
+                    Icons.layers,
+                  ),
+                  _buildTableHeader(const ['Planet', 'L1', 'L2', 'L3', 'L4']),
+                  ...response.entries.toList().asMap().entries.map((e) {
+                    final planet = e.value.key;
+                    final levels = e.value.value as Map<String, dynamic>? ?? {};
+                    final l1 =
+                        (levels['L1'] as List<dynamic>?)
+                            ?.map((x) => x.toString())
+                            .join(', ') ??
+                        '--';
+                    final l2 =
+                        (levels['L2'] as List<dynamic>?)
+                            ?.map((x) => x.toString())
+                            .join(', ') ??
+                        '--';
+                    final l3 =
+                        (levels['L3'] as List<dynamic>?)
+                            ?.map((x) => x.toString())
+                            .join(', ') ??
+                        '--';
+                    final l4 =
+                        (levels['L4'] as List<dynamic>?)
+                            ?.map((x) => x.toString())
+                            .join(', ') ??
+                        '--';
+                    return _buildTableRow(planet, l1, l2, l3, l4, e.key);
+                  }),
+                ],
+              ),
             ),
           ),
         ),
@@ -85,11 +106,15 @@ class KpPlanetSignificationLevelWiseWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 6,
-              offset: const Offset(0, 2)),
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
         ],
-        border: Border.all(color: '#ed6f30'.toColor().withValues(alpha: 0.2), width: 1),
+        border: Border.all(
+          color: '#ed6f30'.toColor().withValues(alpha: 0.2),
+          width: 1,
+        ),
       ),
       clipBehavior: Clip.antiAlias,
       child: child,
@@ -102,8 +127,10 @@ class KpPlanetSignificationLevelWiseWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: '#ed6f30'.toColor().withValues(alpha: 0.08),
         border: Border(
-          bottom:
-              BorderSide(color: '#ed6f30'.toColor().withValues(alpha: 0.25), width: 1),
+          bottom: BorderSide(
+            color: '#ed6f30'.toColor().withValues(alpha: 0.25),
+            width: 1,
+          ),
         ),
       ),
       child: Row(
@@ -157,15 +184,26 @@ class KpPlanetSignificationLevelWiseWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTableRow(String planet, String l1, String l2, String l3, String l4, int index) {
+  Widget _buildTableRow(
+    String planet,
+    String l1,
+    String l2,
+    String l3,
+    String l4,
+    int index,
+  ) {
     final isEven = index.isEven;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: isEven ? '#ed6f30'.toColor().withValues(alpha: 0.04) : Colors.white,
+        color: isEven
+            ? '#ed6f30'.toColor().withValues(alpha: 0.04)
+            : Colors.white,
         border: Border(
           bottom: BorderSide(
-              color: '#ed6f30'.toColor().withValues(alpha: 0.12), width: 1),
+            color: '#ed6f30'.toColor().withValues(alpha: 0.12),
+            width: 1,
+          ),
         ),
       ),
       child: Row(
@@ -194,4 +232,3 @@ class KpPlanetSignificationLevelWiseWidget extends StatelessWidget {
     );
   }
 }
-

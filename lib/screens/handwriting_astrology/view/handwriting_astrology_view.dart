@@ -26,7 +26,7 @@ class HandwritingAstrologyView extends StatelessWidget {
             CommonHeader(
               title: 'Handwriting Astrology',
               subtitle: AutoTranslateText(
-                'Ancient Graphology â€¢ AI Analysis',
+                'Ancient Graphology • AI Analysis',
                 style: MyTextTheme.smallBCN.copyWith(
                   color: AppColors.saffron.withValues(alpha: 0.9),
                 ),
@@ -121,7 +121,7 @@ class HandwritingAstrologyView extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: AutoTranslateText(
-        'Ancient Graphology â€¢ AI-Powered Analysis',
+        'Ancient Graphology • AI-Powered Analysis',
         style: MyTextTheme.mediumBCN.copyWith(color: '#3E2723'.toColor()),
         textAlign: TextAlign.center,
       ),
@@ -592,4 +592,3 @@ class HandwritingAstrologyView extends StatelessWidget {
     );
   }
 }
-

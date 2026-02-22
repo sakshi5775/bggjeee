@@ -671,7 +671,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                         : 'Search horoscope, kundli, tarot...'),
                               hintStyle: MyTextTheme.mediumBCN
                                   .copyWith(
-                                    color: "#3D0C11".toColor().withValues(alpha: 0.5),
+                                    color: "#3D0C11".toColor().withValues(
+                                      alpha: 0.5,
+                                    ),
 
                                     fontWeight: FontWeight.w500,
                                   )
@@ -803,7 +805,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                 'Search horoscope, kundli, tarot, palm reading...',
                             hintStyle: MyTextTheme.mediumBCN
                                 .copyWith(
-                                  color: "#3D0C11".toColor().withValues(alpha: 0.5),
+                                  color: "#3D0C11".toColor().withValues(
+                                    alpha: 0.5,
+                                  ),
                                   fontWeight: FontWeight.w500,
                                 )
                                 .merge(AppTypography.body1),
@@ -2026,7 +2030,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 if (index == 0) {
                   return _buildPoojaCard(
                     'Anuj Kumar',
-                    'Hawan Pooja â€¢ Birthday Pooja',
+                    'Hawan Pooja • Birthday Pooja',
                     '10:25 AM, 15th Sep',
                     AppConstant.poojaAnuj,
                     235.w,
@@ -2034,7 +2038,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                 }
                 return _buildPoojaCard(
                   'Abhishek Singh',
-                  'Wedding Pooja â€¢ Rituals',
+                  'Wedding Pooja • Rituals',
                   '10:25 AM, 15th Sep',
                   AppConstant.poojaAbhishek,
                   207.19.w,
@@ -2056,7 +2060,7 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     String imagePath,
     double width,
   ) {
-    final List<String> parts = type.split(' â€¢ ');
+    final List<String> parts = type.split(' • ');
     final String primaryType = parts.isNotEmpty ? parts[0] : '';
     final String secondaryType = parts.length > 1 ? parts[1] : '';
     final Color titleColor = "#5B2A2A".toColor();
@@ -3723,10 +3727,14 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                       return Container(
                                         width: 255.99.w,
                                         height: 120.h,
-                                        color: Colors.grey.withValues(alpha: 0.3),
+                                        color: Colors.grey.withValues(
+                                          alpha: 0.3,
+                                        ),
                                         child: Icon(
                                           Icons.person,
-                                          color: Colors.white.withValues(alpha: 0.5),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.5,
+                                          ),
                                           size: 40.w,
                                         ),
                                       );
@@ -3738,7 +3746,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                     color: Colors.grey.withValues(alpha: 0.3),
                                     child: Icon(
                                       Icons.person,
-                                      color: Colors.white.withValues(alpha: 0.5),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.5,
+                                      ),
                                       size: 40.w,
                                     ),
                                   ),
@@ -3833,7 +3843,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                             child: AutoTranslateText(
                               subtitle,
                               style: MyTextTheme.smallBCN.copyWith(
-                                color: "#FFF6C2".toColor().withValues(alpha: 0.7),
+                                color: "#FFF6C2".toColor().withValues(
+                                  alpha: 0.7,
+                                ),
                                 fontWeight: FontWeight.w400,
                                 fontFamily: 'Poppins',
                                 height: 1.0,
@@ -3851,7 +3863,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                 height: 3.5.h,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: "#05DF72".toColor().withValues(alpha: 0.91),
+                                  color: "#05DF72".toColor().withValues(
+                                    alpha: 0.91,
+                                  ),
                                 ),
                               ),
                               Spacing.w(2),
@@ -4056,17 +4070,17 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     final name = persona.displayName.toLowerCase();
 
     if (category.contains('vedic') || name.contains('vedic')) {
-      return 'â™ˆ';
+      return '♈';
     } else if (category.contains('tarot') || name.contains('tarot')) {
-      return 'ðŸ”®';
+      return '🔮';
     } else if (category.contains('numerology') || name.contains('numero')) {
-      return 'ðŸ”¢';
+      return '🔢';
     } else if (category.contains('palm') || name.contains('palm')) {
-      return 'ðŸ¤š';
+      return '🤚';
     } else if (category.contains('astrology') || name.contains('astrolog')) {
-      return 'â­';
+      return '⭐';
     } else {
-      return 'âœ¨';
+      return '✨';
     }
   }
 
@@ -4178,7 +4192,9 @@ class UserDashboardView extends BasePage<UserDashboardController> {
                                     color: "#FFFFFF".toColor(),
                                     width: 2,
                                   ),
-                                  color: "#05DF72".toColor().withValues(alpha: 0.91),
+                                  color: "#05DF72".toColor().withValues(
+                                    alpha: 0.91,
+                                  ),
                                 ),
                               ),
                               Spacing.w(6),
@@ -5759,5 +5775,3 @@ class UserDashboardView extends BasePage<UserDashboardController> {
     );
   }
 }
-
-

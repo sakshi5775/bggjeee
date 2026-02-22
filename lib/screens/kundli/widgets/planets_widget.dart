@@ -134,8 +134,8 @@ class PlanetsWidget extends StatelessWidget {
     'Nak Lord',
     'Pada',
     'Zod Lord',
-    'LÂ°',
-    'GÂ°',
+    'L°',
+    'G°',
     'Prog%',
     'Set',
     'Avastha',
@@ -188,7 +188,9 @@ class PlanetsWidget extends StatelessWidget {
           for (int i = 0; i < planets.length; i++) ...[
             TableRow(
               decoration: BoxDecoration(
-                color: i.isOdd ? oc.withValues(alpha: 0.04) : Colors.transparent,
+                color: i.isOdd
+                    ? oc.withValues(alpha: 0.04)
+                    : Colors.transparent,
               ),
               children: _planetCells(planets[i], cellStyle),
             ),
@@ -200,34 +202,34 @@ class PlanetsWidget extends StatelessWidget {
 
   List<Widget> _planetCells(Map<String, dynamic> p, TextStyle cellStyle) {
     final av = (p['basic_avastha']?.toString() ?? '').trim().isEmpty
-        ? 'â€“'
-        : (p['basic_avastha']?.toString() ?? 'â€“');
+        ? '–'
+        : (p['basic_avastha']?.toString() ?? '–');
     final ls = (p['lord_status']?.toString() ?? '').trim().isEmpty
-        ? 'â€“'
-        : (p['lord_status']?.toString() ?? 'â€“');
+        ? '–'
+        : (p['lord_status']?.toString() ?? '–');
     final comb = (p['is_combust'] == null || p['is_combust'] == '-')
-        ? 'â€“'
-        : (p['is_combust']?.toString() ?? 'â€“');
+        ? '–'
+        : (p['is_combust']?.toString() ?? '–');
 
     return [
       _tableCell(
-        p['full_name']?.toString() ?? p['name']?.toString() ?? 'â€“',
+        p['full_name']?.toString() ?? p['name']?.toString() ?? '–',
         cellStyle,
         align: TextAlign.left,
       ),
-      _tableCell(p['zodiac']?.toString() ?? 'â€“', cellStyle),
-      _tableCell(p['house']?.toString() ?? 'â€“', cellStyle),
-      _tableCell(p['nakshatra']?.toString() ?? 'â€“', cellStyle),
-      _tableCell(p['nakshatra_lord']?.toString() ?? 'â€“', cellStyle),
-      _tableCell(p['nakshatra_pada']?.toString() ?? 'â€“', cellStyle),
-      _tableCell(p['zodiac_lord']?.toString() ?? 'â€“', cellStyle),
+      _tableCell(p['zodiac']?.toString() ?? '–', cellStyle),
+      _tableCell(p['house']?.toString() ?? '–', cellStyle),
+      _tableCell(p['nakshatra']?.toString() ?? '–', cellStyle),
+      _tableCell(p['nakshatra_lord']?.toString() ?? '–', cellStyle),
+      _tableCell(p['nakshatra_pada']?.toString() ?? '–', cellStyle),
+      _tableCell(p['zodiac_lord']?.toString() ?? '–', cellStyle),
       _tableCell(_formatDegree(p['local_degree']), cellStyle),
       _tableCell(_formatDegree(p['global_degree']), cellStyle),
       _tableCell(
         '${_formatPercentage(p['progress_in_percentage'])}%',
         cellStyle,
       ),
-      _tableCell(p['is_planet_set']?.toString() ?? 'â€“', cellStyle),
+      _tableCell(p['is_planet_set']?.toString() ?? '–', cellStyle),
       _tableCell(av, cellStyle),
       _tableCell(ls, cellStyle),
       _tableCell(comb, cellStyle),
@@ -252,7 +254,7 @@ class PlanetsWidget extends StatelessWidget {
   }
 
   String _formatPercentage(dynamic v) {
-    if (v == null) return 'â€“';
+    if (v == null) return '–';
     if (v is num) return v.toStringAsFixed(2);
     return v.toString();
   }
@@ -482,7 +484,7 @@ class PlanetsWidget extends StatelessWidget {
             ? (orb is num ? orb.toStringAsFixed(2) : orb.toString())
             : '-';
         rows.add(
-          _buildDetailRow('$planetOne â†” $planetTwo', '$aspect (orb: $orbStrÂ°)'),
+          _buildDetailRow('$planetOne ↔ $planetTwo', '$aspect (orb: $orbStr°)'),
         );
       }
     }
@@ -569,4 +571,3 @@ class PlanetsWidget extends StatelessWidget {
     return degree.toString();
   }
 }
-

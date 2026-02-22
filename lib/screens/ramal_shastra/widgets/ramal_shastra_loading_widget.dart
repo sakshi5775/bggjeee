@@ -82,7 +82,7 @@ class _RamalShastraLoadingWidgetState extends State<RamalShastraLoadingWidget>
           borderRadius: BorderRadius.circular(24.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 20,
               spreadRadius: 5,
             ),
@@ -121,7 +121,7 @@ class _RamalShastraLoadingWidgetState extends State<RamalShastraLoadingWidget>
                           width: 50.w,
                           height: 50.w,
                           decoration: BoxDecoration(
-                            color: '#EA632B'.toColor().withValues(alpha: 0.1),
+                            color: '#EA632B'.toColor().withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -146,7 +146,7 @@ class _RamalShastraLoadingWidgetState extends State<RamalShastraLoadingWidget>
                     return LinearGradient(
                       colors: [
                         '#EA632B'.toColor(),
-                        '#EA632B'.toColor().withValues(alpha: 0.5),
+                        '#EA632B'.toColor().withOpacity(0.5),
                         '#EA632B'.toColor(),
                       ],
                       stops: [
@@ -191,7 +191,7 @@ class _RamalShastraLoadingWidgetState extends State<RamalShastraLoadingWidget>
                       width: 8.w,
                       height: 8.w,
                       decoration: BoxDecoration(
-                        color: '#EA632B'.toColor().withValues(alpha: 0.3 + opacity * 0.7),
+                        color: '#EA632B'.toColor().withOpacity(0.3 + opacity * 0.7),
                         shape: BoxShape.circle,
                       ),
                     );
@@ -241,6 +241,5 @@ class _RamalLoaderPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
-
 
 

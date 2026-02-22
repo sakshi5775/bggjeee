@@ -270,7 +270,9 @@ class CartView extends GetView<CartController> {
                           border: Border.all(
                             color: isSelected
                                 ? AppColors.saffron
-                                : AppColors.textSecondary.withValues(alpha: 0.3),
+                                : AppColors.textSecondary.withValues(
+                                    alpha: 0.3,
+                                  ),
                             width: isSelected ? 2 : 1,
                           ),
                           borderRadius: BorderRadius.circular(12.r),
@@ -516,7 +518,7 @@ class _CouponSection extends StatelessWidget {
                     SizedBox(width: 8.w),
                     Expanded(
                       child: AutoTranslateText(
-                        'Coupon $couponCode applied â€¢ Saved ₹${(coupon.discount ?? 0).toStringAsFixed(0)}',
+                        'Coupon $couponCode applied • Saved ₹${(coupon.discount ?? 0).toStringAsFixed(0)}',
                         style: TextStyle(
                           color: AppColors.saffron,
                           fontWeight: FontWeight.w600,
@@ -733,7 +735,9 @@ class _AddressSection extends StatelessWidget {
                               border: Border.all(
                                 color: isSelected
                                     ? AppColors.saffron
-                                    : AppColors.textSecondary.withValues(alpha: 0.12),
+                                    : AppColors.textSecondary.withValues(
+                                        alpha: 0.12,
+                                      ),
                               ),
                               boxShadow: [
                                 BoxShadow(
@@ -1015,7 +1019,7 @@ class _EmptyCartWidget extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           AutoTranslateText(
-            'Looks like you havenâ€™t added anything yet.\nStart exploring our products.',
+            'Looks like you haven’t added anything yet.\nStart exploring our products.',
             textAlign: TextAlign.center,
             style: AppTypography.body1.copyWith(color: AppColors.textSecondary),
           ),
@@ -1040,4 +1044,3 @@ class _EmptyCartWidget extends StatelessWidget {
     );
   }
 }
-

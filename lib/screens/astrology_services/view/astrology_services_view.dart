@@ -586,7 +586,7 @@ class AstrologyServicesView extends StatelessWidget {
                 GestureDetector(
                   onTap: () => Get.toNamed('/all-astrologers'),
                   child: AutoTranslateText(
-                    'View All â†’',
+                    'View All →',
                     style: MyTextTheme.mediumBCN.copyWith(
                       color: const Color(0xFFFF6B35),
                     ),
@@ -674,7 +674,7 @@ class AstrologyServicesView extends StatelessWidget {
                 GestureDetector(
                   onTap: () => Get.toNamed('/all-astrologers', arguments: null),
                   child: AutoTranslateText(
-                    'View All â†’',
+                    'View All →',
                     style: MyTextTheme.mediumBCN.copyWith(
                       color: const Color(0xFFFF6B35),
                     ),
@@ -786,7 +786,7 @@ class AstrologyServicesView extends StatelessWidget {
                 GestureDetector(
                   onTap: () => Get.toNamed(AppRoutes.liveAstrologers),
                   child: AutoTranslateText(
-                    'View All â†’',
+                    'View All →',
                     style: MyTextTheme.mediumBCN.copyWith(
                       color: const Color(0xFFFF6B35),
                     ),
@@ -864,7 +864,7 @@ class AstrologyServicesView extends StatelessWidget {
                   onTap: () =>
                       Get.toNamed('/all-astrologers', arguments: 'Vedic'),
                   child: AutoTranslateText(
-                    'View All â†’',
+                    'View All →',
                     style: MyTextTheme.mediumBCN.copyWith(
                       color: const Color(0xFFFF6B35),
                     ),
@@ -1859,4 +1859,3 @@ class AstrologyServicesView extends StatelessWidget {
     );
   }
 }
-

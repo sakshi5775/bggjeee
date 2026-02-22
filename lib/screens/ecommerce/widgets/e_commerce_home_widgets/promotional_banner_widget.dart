@@ -9,14 +9,14 @@ class PromotionalBannerWidget extends StatelessWidget {
   const PromotionalBannerWidget({super.key});
 
   static const offers = [
-    {'icon': 'ðŸŽ', 'title': 'Flat 30% OFF', 'subtitle': 'On first purchase'},
+    {'icon': '🎁', 'title': 'Flat 30% OFF', 'subtitle': 'On first purchase'},
     {
-      'icon': 'ðŸšš',
+      'icon': '🚚',
       'title': 'Free Shipping',
       'subtitle': 'On orders above ₹999',
     },
     {
-      'icon': 'ðŸ•‰ï¸',
+      'icon': '🕉️',
       'title': 'Temple Blessed',
       'subtitle': 'All products energized',
     },
@@ -91,7 +91,7 @@ class PromotionalBannerWidget extends StatelessWidget {
           ),
         ),
         AutoTranslateText(
-          'â€¢ ${offer['subtitle']!}',
+          '• ${offer['subtitle']!}',
           style: TextStyle(
             color: Colors.white.withValues(alpha: 0.8),
             fontSize: 11.04.sp,
@@ -103,4 +103,3 @@ class PromotionalBannerWidget extends StatelessWidget {
     );
   }
 }
-

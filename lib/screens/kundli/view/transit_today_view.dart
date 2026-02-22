@@ -112,7 +112,9 @@ class TransitTodayView extends BasePage<TransitTodayController> {
                               borderRadius: BorderRadius.circular(12.r),
                               border: isSelected
                                   ? null
-                                  : Border.all(color: maroon.withValues(alpha: 0.2)),
+                                  : Border.all(
+                                      color: maroon.withValues(alpha: 0.2),
+                                    ),
                               boxShadow: isSelected
                                   ? [
                                       BoxShadow(
@@ -342,7 +344,7 @@ class TransitTodayView extends BasePage<TransitTodayController> {
             ? endDegree.toStringAsFixed(1)
             : endDegree?.toString() ?? '';
         final degreeStr = (sd.isNotEmpty || ed.isNotEmpty)
-            ? '${sd.isNotEmpty ? '$sdÂ°' : ''}${startDegreeZodiac.isNotEmpty ? ' $startDegreeZodiac' : ''}${sd.isNotEmpty && ed.isNotEmpty ? ' â€“ ' : ''}${ed.isNotEmpty ? '$edÂ°' : ''}${endDegreeZodiac.isNotEmpty ? ' $endDegreeZodiac' : ''}'
+            ? '${sd.isNotEmpty ? '$sd°' : ''}${startDegreeZodiac.isNotEmpty ? ' $startDegreeZodiac' : ''}${sd.isNotEmpty && ed.isNotEmpty ? ' – ' : ''}${ed.isNotEmpty ? '$ed°' : ''}${endDegreeZodiac.isNotEmpty ? ' $endDegreeZodiac' : ''}'
                   .trim()
             : '';
         return Container(
@@ -383,8 +385,8 @@ class TransitTodayView extends BasePage<TransitTodayController> {
                     ),
                     child: AutoTranslateText(
                       natalPlanetZodiac.isNotEmpty
-                          ? '$transitPlanet â†’ $natalPlanet ($natalPlanetZodiac)'
-                          : '$transitPlanet â†’ $natalPlanet',
+                          ? '$transitPlanet → $natalPlanet ($natalPlanetZodiac)'
+                          : '$transitPlanet → $natalPlanet',
                       style: MyTextTheme.smallBCB.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
@@ -405,7 +407,7 @@ class TransitTodayView extends BasePage<TransitTodayController> {
               if (startTime.isNotEmpty || endTime.isNotEmpty) ...[
                 Spacing.h(6),
                 AutoTranslateText(
-                  '$startTime â€“ $endTime',
+                  '$startTime – $endTime',
                   style: MyTextTheme.smallBCN.copyWith(
                     color: maroon.withValues(alpha: 0.8),
                     fontSize: 10.sp,
@@ -423,7 +425,7 @@ class TransitTodayView extends BasePage<TransitTodayController> {
                 ),
               ],
               if (degreeStr.isNotEmpty &&
-                  !degreeStr.contains('Â° â€“ Â°') &&
+                  !degreeStr.contains('° – °') &&
                   degreeStr.length > 2) ...[
                 Spacing.h(4),
                 AutoTranslateText(
@@ -560,5 +562,3 @@ class TransitTodayView extends BasePage<TransitTodayController> {
     );
   }
 }
-
-

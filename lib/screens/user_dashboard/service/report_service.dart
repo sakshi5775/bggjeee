@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'package:astrobharataiuser/apihelper/repositories/apirepository.dart';
 import 'package:astrobharataiuser/apihelper/api_provider/end_points.dart';
 import 'package:astrobharataiuser/data_model/report_model.dart';
 import 'package:astrobharataiuser/core/services/login_guard.dart';
+import 'package:astrobharataiuser/app_manager/user_data.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class ReportService {
   final ApiRepository _apiRepository = ApiRepository(apiClient: Get.find());
@@ -207,6 +210,68 @@ class ReportService {
       // Fallback: If it already looks like a path, use it, otherwise prepend prefix
       default:
         return key.startsWith(prefix) ? key : prefix + key;
+    }
+  }
+
+  /// Get report history (port 8010)
+  Future<ReportHistoryResponse?> getReportHistory({
+    int page = 1,
+    int limit = 10,
+    String? reportType,
+    String? email,
+  }) async {
+    try {
+      final token = UserData().accessToken;
+      final queryParams = {
+        'page': page.toString(),
+        'limit': limit.toString(),
+        if (reportType != null) 'reportType': reportType,
+        if (email != null) 'email': email,
+      };
+
+      final uri = Uri.parse(
+        'http://3.109.91.254:8010/api/pdf/history',
+      ).replace(queryParameters: queryParams);
+
+      final response = await Get.find<http.Client>().get(
+        uri,
+        headers: {'accept': '*/*', 'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        return ReportHistoryResponse.fromJson(jsonDecode(response.body));
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching report history: $e');
+      return null;
+    }
+  }
+
+  /// Get specific report download URL by ID
+  Future<String?> getReportUrl(String id) async {
+    try {
+      final token = UserData().accessToken;
+      final uri = Uri.parse('http://3.109.91.254:8010/api/pdf/history/$id');
+
+      final response = await Get.find<http.Client>().get(
+        uri,
+        headers: {'accept': '*/*', 'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        // Assuming the detailed history API returns the report object with its URL
+        // User said: "all pdf are you know it already implemented only user when click any download report so he can see it that report with same download url which he got from selected pdf api"
+        // Most likely the history item has the data, but if it needs a detail call, we handle it here.
+        if (data['success'] == true && data['data'] != null) {
+          return data['data']['downloadUrl'] ?? data['data']['url'];
+        }
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching report detail: $e');
+      return null;
     }
   }
 }

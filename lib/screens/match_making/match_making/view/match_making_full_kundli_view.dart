@@ -453,7 +453,9 @@ class MatchMakingFullKundliView extends StatelessWidget {
                                 height: 50.w,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: "#DFB343".toColor().withValues(alpha: 0.2),
+                                  color: "#DFB343".toColor().withValues(
+                                    alpha: 0.2,
+                                  ),
                                 ),
                                 child: Icon(
                                   Icons.person,
@@ -601,7 +603,7 @@ class MatchMakingFullKundliView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           AutoTranslateText(
-            '$degreeTextÂ°',
+            '$degreeText°',
             style: TextStyle(
               color: "#6F221E".toColor(),
               fontWeight: FontWeight.w500,
@@ -665,4 +667,3 @@ class _PlanetData {
     required this.isAscendant,
   });
 }
-

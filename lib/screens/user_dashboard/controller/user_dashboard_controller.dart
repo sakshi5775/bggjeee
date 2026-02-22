@@ -76,7 +76,7 @@ class UserDashboardController extends BaseController
       quoteDate: '',
       sanskrit: SanskritQuote(
         text:
-            'à¤‰à¤¦à¥à¤¯à¤®à¥‡à¤¨ à¤¹à¤¿ à¤¸à¤¿à¤¦à¥à¤§à¥à¤¯à¤¨à¥à¤¤à¤¿ à¤•à¤¾à¤°à¥à¤¯à¤¾à¤£à¤¿ à¤¨ à¤®à¤¨à¥‹à¤°à¤¥à¥ˆà¤ƒà¥¤\nà¤¨ à¤¹à¤¿ à¤¸à¥à¤ªà¥à¤¤à¤¸à¥à¤¯ à¤¸à¤¿à¤‚à¤¹à¤¸à¥à¤¯ à¤ªà¥à¤°à¤µà¤¿à¤¶à¤¨à¥à¤¤à¤¿ à¤®à¥à¤–à¥‡ à¤®à¥ƒà¤—à¤¾à¤ƒà¥¥',
+            'उद्यमेन हि सिध्यन्ति कार्याणि न मनोरथैः।\nन हि सुप्तस्य सिंहस्य प्रविशन्ति मुखे मृगाः॥',
         transliteration:
             'Udyamena hi siddhyanti karyani na manorathaih.\nNa hi suptasya simhasya pravishanti mukhe mrigah.',
         meaning:
@@ -91,7 +91,7 @@ class UserDashboardController extends BaseController
       quoteDate: '',
       sanskrit: SanskritQuote(
         text:
-            'à¤µà¤¿à¤¦à¥à¤¯à¤¾ à¤¦à¤¦à¤¾à¤¤à¤¿ à¤µà¤¿à¤¨à¤¯à¤‚ à¤µà¤¿à¤¨à¤¯à¤¾à¤¦à¥ à¤¯à¤¾à¤¤à¤¿ à¤ªà¤¾à¤¤à¥à¤°à¤¤à¤¾à¤®à¥à¥¤\nà¤ªà¤¾à¤¤à¥à¤°à¤¤à¥à¤µà¤¾à¤¤à¥ à¤§à¤¨à¤®à¤¾à¤ªà¥à¤¨à¥‹à¤¤à¤¿ à¤§à¤¨à¤¾à¤¤à¥ à¤§à¤°à¥à¤®à¤‚ à¤¤à¤¤à¤ƒ à¤¸à¥à¤–à¤®à¥à¥¥',
+            'विद्या ददाति विनयं विनयाद् याति पात्रताम्।\nपात्रत्वात् धनमाप्नोति धनात् धर्मं ततः सुखम्॥',
         transliteration:
             'Vidya dadati vinayam vinayad yati patratam.\nPatratvat dhanamapnoti dhanat dharmam tatah sukham.',
         meaning:
@@ -105,7 +105,7 @@ class UserDashboardController extends BaseController
     DailyQuoteData(
       quoteDate: '',
       sanskrit: SanskritQuote(
-        text: 'à¤¨ à¤¹à¤¿ à¤œà¥à¤žà¤¾à¤¨à¥‡à¤¨ à¤¸à¤¦à¥ƒà¤¶à¤‚ à¤ªà¤µà¤¿à¤¤à¥à¤°à¤®à¤¿à¤¹ à¤µà¤¿à¤¦à¥à¤¯à¤¤à¥‡à¥¤',
+        text: 'न हि ज्ञानेन सदृशं पवित्रमिह विद्यते।',
         transliteration: 'Na hi jnanena sadrisham pavitramiha vidyate.',
         meaning: 'Nothing in this world is as pure as true knowledge.',
         source: 'Bhagavad Gita',
@@ -118,7 +118,7 @@ class UserDashboardController extends BaseController
       quoteDate: '',
       sanskrit: SanskritQuote(
         text:
-            'à¤¸à¤°à¥à¤µà¥‡ à¤­à¤µà¤¨à¥à¤¤à¥ à¤¸à¥à¤–à¤¿à¤¨à¤ƒ à¤¸à¤°à¥à¤µà¥‡ à¤¸à¤¨à¥à¤¤à¥ à¤¨à¤¿à¤°à¤¾à¤®à¤¯à¤¾à¤ƒà¥¤\nà¤¸à¤°à¥à¤µà¥‡ à¤­à¤¦à¥à¤°à¤¾à¤£à¤¿ à¤ªà¤¶à¥à¤¯à¤¨à¥à¤¤à¥ à¤®à¤¾ à¤•à¤¶à¥à¤šà¤¿à¤¦à¥ à¤¦à¥à¤ƒà¤–à¤­à¤¾à¤—à¥à¤­à¤µà¥‡à¤¤à¥à¥¥',
+            'सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः।\nसर्वे भद्राणि पश्यन्तु मा कश्चिद् दुःखभाग्भवेत्॥',
         transliteration:
             'Sarve bhavantu sukhinah sarve santu niraamayah.\nSarve bhadrani pashyantu ma kashchid duhkhabhagbhavet.',
         meaning:
@@ -132,7 +132,7 @@ class UserDashboardController extends BaseController
     DailyQuoteData(
       quoteDate: '',
       sanskrit: SanskritQuote(
-        text: 'à¤¯à¤¤à¥à¤° à¤¨à¤¾à¤°à¥à¤¯à¤¸à¥à¤¤à¥ à¤ªà¥‚à¤œà¥à¤¯à¤¨à¥à¤¤à¥‡ à¤°à¤®à¤¨à¥à¤¤à¥‡ à¤¤à¤¤à¥à¤° à¤¦à¥‡à¤µà¤¤à¤¾à¤ƒà¥¤',
+        text: 'यत्र नार्यस्तु पूज्यन्ते रमन्ते तत्र देवताः।',
         transliteration: 'Yatra naryastu pujyante ramante tatra devatah.',
         meaning: 'Where women are respected, divinity resides.',
         source: 'Manusmriti',
@@ -197,7 +197,7 @@ class UserDashboardController extends BaseController
   final TextEditingController searchController = TextEditingController();
   bool _sttInitialized = false;
 
-  // Header search overlay (tap search icon â†’ opens overlay; same app-wide search as dashboard bar)
+  // Header search overlay (tap search icon → opens overlay; same app-wide search as dashboard bar)
   final TextEditingController headerSearchController = TextEditingController();
   final FocusNode headerSearchFocusNode = FocusNode();
   final RxBool isHeaderSearchOpen = false.obs;
@@ -1504,4 +1504,3 @@ class VideoIconController extends GetxController {
     super.onClose();
   }
 }
-

@@ -246,7 +246,7 @@ class PersonaVoiceHistoryView extends StatelessWidget {
                       ),
                       SizedBox(height: 2.h),
                       AutoTranslateText(
-                        'Created: $createdAt â€¢ Duration: ${duration}s',
+                        'Created: $createdAt • Duration: ${duration}s',
                         style: MyTextTheme.smallBCN.copyWith(
                           color: const Color(0xFF777777),
                         ),
@@ -273,4 +273,3 @@ class PersonaVoiceHistoryView extends StatelessWidget {
     });
   }
 }
-

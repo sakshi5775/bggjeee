@@ -36,16 +36,16 @@ class VastuHistoryTimeline extends StatelessWidget {
             Spacing.h(16),
             AutoTranslateText(
               'No History Yet',
-              style: MyTextTheme.mediumBCN.copyWith(
-                color: Colors.grey,
-              ).merge(AppTypography.body1),
+              style: MyTextTheme.mediumBCN
+                  .copyWith(color: Colors.grey)
+                  .merge(AppTypography.body1),
             ),
             Spacing.h(8),
             AutoTranslateText(
               'Save direction scans to view history',
-              style: MyTextTheme.smallBCN.copyWith(
-                color: Colors.grey.withValues(alpha: 0.7),
-              ).merge(AppTypography.body2),
+              style: MyTextTheme.smallBCN
+                  .copyWith(color: Colors.grey.withValues(alpha: 0.7))
+                  .merge(AppTypography.body2),
             ),
           ],
         ),
@@ -63,10 +63,12 @@ class VastuHistoryTimeline extends StatelessWidget {
             children: [
               AutoTranslateText(
                 'Vastu History',
-                style: MyTextTheme.largeBCB.copyWith(
-                  color: '#3E2723'.toColor(),
-                  fontWeight: FontWeight.bold,
-                ).merge(AppTypography.h2),
+                style: MyTextTheme.largeBCB
+                    .copyWith(
+                      color: '#3E2723'.toColor(),
+                      fontWeight: FontWeight.bold,
+                    )
+                    .merge(AppTypography.h2),
               ),
               if (onClear != null)
                 TextButton.icon(
@@ -78,15 +80,15 @@ class VastuHistoryTimeline extends StatelessWidget {
                   ),
                   label: AutoTranslateText(
                     'Clear',
-                    style: MyTextTheme.smallBCB.copyWith(
-                      color: '#C62828'.toColor(),
-                    ).merge(AppTypography.body2),
+                    style: MyTextTheme.smallBCB
+                        .copyWith(color: '#C62828'.toColor())
+                        .merge(AppTypography.body2),
                   ),
                 ),
             ],
           ),
         ),
-        
+
         // Timeline
         Expanded(
           child: ListView.builder(
@@ -105,14 +107,14 @@ class VastuHistoryTimeline extends StatelessWidget {
   Widget _buildHistoryItem(Map<String, dynamic> entry, bool isLast) {
     final timestamp = DateTime.tryParse(entry['timestamp'] ?? '');
     final dateStr = timestamp != null
-        ? DateFormat('MMM dd, yyyy â€¢ hh:mm a').format(timestamp)
+        ? DateFormat('MMM dd, yyyy • hh:mm a').format(timestamp)
         : 'Unknown date';
-    
+
     final direction = entry['direction'] ?? 'N';
     final heading = entry['heading'] ?? '0.0';
     final roomName = entry['roomName'] ?? 'Unknown Room';
     final accuracy = entry['accuracy'] ?? '0';
-    
+
     return GestureDetector(
       onTap: () => onItemTap?.call(entry),
       child: Container(
@@ -121,10 +123,7 @@ class VastuHistoryTimeline extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: '#F5D7B8'.toColor(),
-            width: 1.2,
-          ),
+          border: Border.all(color: '#F5D7B8'.toColor(), width: 1.2),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -144,22 +143,15 @@ class VastuHistoryTimeline extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: '#D4AF37'.toColor(),
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 2,
-                    ),
+                    border: Border.all(color: Colors.white, width: 2),
                   ),
                 ),
                 if (!isLast)
-                  Container(
-                    width: 2,
-                    height: 60.h,
-                    color: '#E6CBA8'.toColor(),
-                  ),
+                  Container(width: 2, height: 60.h, color: '#E6CBA8'.toColor()),
               ],
             ),
             Spacing.w(16),
-            
+
             // Content
             Expanded(
               child: Column(
@@ -170,24 +162,31 @@ class VastuHistoryTimeline extends StatelessWidget {
                       Expanded(
                         child: AutoTranslateText(
                           roomName,
-                          style: MyTextTheme.mediumBCB.copyWith(
-                            color: '#3E2723'.toColor(),
-                            fontWeight: FontWeight.bold,
-                          ).merge(AppTypography.body1),
+                          style: MyTextTheme.mediumBCB
+                              .copyWith(
+                                color: '#3E2723'.toColor(),
+                                fontWeight: FontWeight.bold,
+                              )
+                              .merge(AppTypography.body1),
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 4.h,
+                        ),
                         decoration: BoxDecoration(
                           color: '#D4AF37'.toColor().withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: AutoTranslateText(
                           direction,
-                          style: MyTextTheme.smallBCB.copyWith(
-                            color: '#D4AF37'.toColor(),
-                            fontWeight: FontWeight.bold,
-                          ).merge(AppTypography.body2),
+                          style: MyTextTheme.smallBCB
+                              .copyWith(
+                                color: '#D4AF37'.toColor(),
+                                fontWeight: FontWeight.bold,
+                              )
+                              .merge(AppTypography.body2),
                         ),
                       ),
                     ],
@@ -202,10 +201,10 @@ class VastuHistoryTimeline extends StatelessWidget {
                       ),
                       Spacing.w(4),
                       AutoTranslateText(
-                        '$headingÂ°',
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: '#666666'.toColor(),
-                        ).merge(AppTypography.body2),
+                        '$heading°',
+                        style: MyTextTheme.smallBCN
+                            .copyWith(color: '#666666'.toColor())
+                            .merge(AppTypography.body2),
                       ),
                       Spacing.w(16),
                       Icon(
@@ -216,42 +215,28 @@ class VastuHistoryTimeline extends StatelessWidget {
                       Spacing.w(4),
                       AutoTranslateText(
                         '$accuracy% Accuracy',
-                        style: MyTextTheme.smallBCN.copyWith(
-                          color: '#666666'.toColor(),
-                        ).merge(AppTypography.body2),
+                        style: MyTextTheme.smallBCN
+                            .copyWith(color: '#666666'.toColor())
+                            .merge(AppTypography.body2),
                       ),
                     ],
                   ),
                   Spacing.h(4),
                   AutoTranslateText(
                     dateStr,
-                    style: MyTextTheme.smallBCN.copyWith(
-                      color: Colors.grey,
-                    ).merge(AppTypography.body2),
+                    style: MyTextTheme.smallBCN
+                        .copyWith(color: Colors.grey)
+                        .merge(AppTypography.body2),
                   ),
                 ],
               ),
             ),
-            
+
             // Arrow
-            Icon(
-              Icons.chevron_right,
-              color: '#D4AF37'.toColor(),
-              size: 24.w,
-            ),
+            Icon(Icons.chevron_right, color: '#D4AF37'.toColor(), size: 24.w),
           ],
         ),
       ),
     );
   }
 }
-
-
-
-
-
-
-
-
-
-

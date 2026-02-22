@@ -48,7 +48,9 @@ class StreamReportsView extends StatelessWidget {
                         'My Reports',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF5D2B1F), // Dark brown/reddish-brown
+                          color: const Color(
+                            0xFF5D2B1F,
+                          ), // Dark brown/reddish-brown
                         ),
                       ),
                     ),
@@ -62,7 +64,8 @@ class StreamReportsView extends StatelessWidget {
                   child: ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: maxWidth),
                     child: Obx(() {
-                      if (controller.isLoading.value && controller.reports.isEmpty) {
+                      if (controller.isLoading.value &&
+                          controller.reports.isEmpty) {
                         return const Center(
                           child: CircularProgressIndicator(
                             color: Color(0xFFF38B3B),
@@ -70,7 +73,8 @@ class StreamReportsView extends StatelessWidget {
                         );
                       }
 
-                      if (controller.reports.isEmpty && !controller.isLoading.value) {
+                      if (controller.reports.isEmpty &&
+                          !controller.isLoading.value) {
                         return _buildEmptyState();
                       }
 
@@ -79,10 +83,12 @@ class StreamReportsView extends StatelessWidget {
                         color: const Color(0xFFF38B3B),
                         child: ListView.builder(
                           padding: EdgeInsets.all(16.w),
-                          itemCount: controller.reports.length +
+                          itemCount:
+                              controller.reports.length +
                               (controller.hasMore.value ? 1 : 0),
                           itemBuilder: (context, index) {
-                            if (index == controller.reports.length && controller.hasMore.value) {
+                            if (index == controller.reports.length &&
+                                controller.hasMore.value) {
                               return _buildLoadMoreButton(controller);
                             }
 
@@ -151,8 +157,8 @@ class StreamReportsView extends StatelessWidget {
   }
 
   Widget _buildReportItem(report, StreamReportsController controller) {
-    final dateFormat = DateFormat('MMM dd, yyyy â€¢ hh:mm a');
-    
+    final dateFormat = DateFormat('MMM dd, yyyy • hh:mm a');
+
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
@@ -185,9 +191,14 @@ class StreamReportsView extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
                   decoration: BoxDecoration(
-                    color: _getStatusColor(report.status).withValues(alpha: 0.2),
+                    color: _getStatusColor(
+                      report.status,
+                    ).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: AutoTranslateText(
@@ -227,14 +238,16 @@ class StreamReportsView extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    report.streamSnapshot!.wasLive ? Icons.live_tv : Icons.video_library,
+                    report.streamSnapshot!.wasLive
+                        ? Icons.live_tv
+                        : Icons.video_library,
                     size: 16.sp,
                     color: const Color(0xFF5D2B1F).withValues(alpha: 0.7),
                   ),
                   SizedBox(width: 8.w),
                   AutoTranslateText(
                     report.streamSnapshot!.wasLive
-                        ? 'Live Stream â€¢ ${report.streamSnapshot!.viewerCount} viewers'
+                        ? 'Live Stream • ${report.streamSnapshot!.viewerCount} viewers'
                         : 'Recorded Stream',
                     style: TextStyle(
                       color: const Color(0xFF5D2B1F).withValues(alpha: 0.6),
@@ -293,4 +306,3 @@ class StreamReportsView extends StatelessWidget {
     }
   }
 }
-

@@ -346,7 +346,7 @@ class PujaBookingFormController extends BaseController {
           (route) => route.settings.name == AppRoutes.bookPuja,
         );
         Get.snackbar(
-          'Payment Successful! ðŸŽ‰',
+          'Payment Successful! 🎉',
           'Your puja has been booked and payment completed successfully',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green.withValues(alpha: 0.9),
@@ -441,4 +441,3 @@ class PujaBookingFormController extends BaseController {
     super.onClose();
   }
 }
-

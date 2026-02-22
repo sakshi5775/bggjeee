@@ -195,7 +195,7 @@ class _VastuReadingViewState extends State<VastuReadingView>
                 ),
                 Spacing.h(8),
                 AutoTranslateText(
-                  'Heading: ${controller.heading.toStringAsFixed(1)}Â°',
+                  'Heading: ${controller.heading.toStringAsFixed(1)}°',
                   style: MyTextTheme.mediumBCN
                       .copyWith(color: '#666666'.toColor())
                       .merge(AppTypography.body1),
@@ -262,4 +262,3 @@ class _VastuReadingViewState extends State<VastuReadingView>
     );
   }
 }
-

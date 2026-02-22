@@ -20,7 +20,7 @@ class OnboardingView extends BasePage<OnboardingController> {
     return Scaffold(
       body: Stack(
         children: [
-          /// 1ï¸âƒ£ BACKGROUND IMAGE
+          /// 1️⃣ BACKGROUND IMAGE
           PageView(
             controller: controller.pageController,
             onPageChanged: controller.onPageChanged,
@@ -31,7 +31,7 @@ class OnboardingView extends BasePage<OnboardingController> {
             ],
           ),
 
-          /// 2ï¸âƒ£ TOP LINEAR GRADIENT
+          /// 2️⃣ TOP LINEAR GRADIENT
           Positioned(
             left: 0,
             right: 0,
@@ -53,7 +53,7 @@ class OnboardingView extends BasePage<OnboardingController> {
             ),
           ),
 
-          /// 3ï¸âƒ£ BOTTOM GRADIENT OVERLAY (70% HEIGHT)
+          /// 3️⃣ BOTTOM GRADIENT OVERLAY (70% HEIGHT)
           /// Note: BackdropFilter causes rendering issues on Flutter Web with CanvasKit
           /// Using gradient overlay instead for better compatibility
           Positioned(
@@ -78,7 +78,7 @@ class OnboardingView extends BasePage<OnboardingController> {
             ),
           ),
 
-          /// 4ï¸âƒ£ CONTENT
+          /// 4️⃣ CONTENT
           SafeArea(
             child: Column(
               children: [
@@ -359,5 +359,3 @@ Widget _btn({
     ),
   );
 }
-
-

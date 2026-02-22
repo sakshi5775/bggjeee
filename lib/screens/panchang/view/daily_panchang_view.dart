@@ -143,11 +143,15 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
       suffixIcon: suffix,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: AppColors.deepOrange.withValues(alpha: 0.2)),
+        borderSide: BorderSide(
+          color: AppColors.deepOrange.withValues(alpha: 0.2),
+        ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
-        borderSide: BorderSide(color: AppColors.deepOrange.withValues(alpha: 0.2)),
+        borderSide: BorderSide(
+          color: AppColors.deepOrange.withValues(alpha: 0.2),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
@@ -251,7 +255,9 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.2)),
+          border: Border.all(
+            color: AppColors.deepOrange.withValues(alpha: 0.2),
+          ),
           boxShadow: [
             BoxShadow(
               color: AppColors.deepOrange.withValues(alpha: 0.05),
@@ -837,7 +843,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           Icons.access_time,
           'Tithi',
           tithi?['name']?.toString() ?? '--',
-          '${_formatDateTime(tithi?['start'])} â†’ ${_formatDateTime(tithi?['end'])}',
+          '${_formatDateTime(tithi?['start'])} → ${_formatDateTime(tithi?['end'])}',
           details: {
             'Type': tithi?['type']?.toString(),
             'Number': tithi?['number']?.toString(),
@@ -853,7 +859,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           Icons.star,
           'Nakshatra',
           nakshatra?['name']?.toString() ?? '--',
-          '${_formatDateTime(nakshatra?['start'])} â†’ ${_formatDateTime(nakshatra?['end'])}',
+          '${_formatDateTime(nakshatra?['start'])} → ${_formatDateTime(nakshatra?['end'])}',
           details: {
             'Lord': nakshatra?['lord']?.toString(),
             'Diety': nakshatra?['diety']?.toString(),
@@ -872,7 +878,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           Icons.my_location,
           'Yoga',
           yoga?['name']?.toString() ?? '--',
-          '${_formatDateTime(yoga?['start'])} â†’ ${_formatDateTime(yoga?['end'])}',
+          '${_formatDateTime(yoga?['start'])} → ${_formatDateTime(yoga?['end'])}',
           details: {
             'Number': yoga?['number']?.toString(),
             'Next Yoga': yoga?['next_yoga']?.toString(),
@@ -886,7 +892,7 @@ class DailyPanchangView extends BasePage<DailyPanchangController> {
           Icons.grid_view,
           'Karana',
           karana?['name']?.toString() ?? '--',
-          '${_formatDateTime(karana?['start'])} â†’ ${_formatDateTime(karana?['end'])}',
+          '${_formatDateTime(karana?['start'])} → ${_formatDateTime(karana?['end'])}',
           details: {
             'Type': karana?['type']?.toString(),
             'Lord': karana?['lord']?.toString(),
@@ -1845,5 +1851,3 @@ class _ExpandableAstroItemState extends State<_ExpandableAstroItem> {
     );
   }
 }
-
-

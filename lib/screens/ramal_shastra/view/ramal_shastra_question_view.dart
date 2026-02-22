@@ -465,4 +465,3 @@ class RamalShastraQuestionView extends StatelessWidget {
     );
   }
 }
-

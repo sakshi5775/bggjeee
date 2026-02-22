@@ -108,7 +108,7 @@
 //               child: Row(
 //                 children: [
 //                   AutoTranslateText(
-//                     'ðŸ‘‘',
+//                     '👑',
 //                     style: AppTypography.h2,
 //                   ),
 //                   Spacing.w(12),

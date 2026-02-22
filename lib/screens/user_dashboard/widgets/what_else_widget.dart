@@ -262,7 +262,7 @@ class WhatElseWidget extends StatelessWidget {
       const message = '''
 Discover astrology, Kundli, and more with AstroBharatAI!
 
-ðŸ“± Download the app: https://astrobharatai.com
+📱 Download the app: https://astrobharatai.com
 
 Explore daily panchang, chat with astrologers, courses, and much more.
 ''';
@@ -281,4 +281,3 @@ Explore daily panchang, chat with astrologers, courses, and much more.
     }
   }
 }
-

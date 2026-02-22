@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-/// Lal Kitab view â€“ same design as Kundli Result: CommonHeader, gradient, drawer, horizontal tabs.
+/// Lal Kitab view – same design as Kundli Result: CommonHeader, gradient, drawer, horizontal tabs.
 class LalKitabView extends BasePage<LalKitabController> {
   const LalKitabView({super.key});
 
@@ -211,5 +211,3 @@ class LalKitabView extends BasePage<LalKitabController> {
     }
   }
 }
-
-

@@ -40,7 +40,7 @@ class LoginView extends BasePage<LoginController> {
                   padding: EdgeInsets.only(top: 0.h), // Added top spacing
                   child: Stack(
                     children: [
-                      /// ðŸ”¹ Main Image
+                      /// 🔹 Main Image
                       Positioned.fill(
                         child: Image.network(
                           AppConstant.cardConsultation,
@@ -63,7 +63,7 @@ class LoginView extends BasePage<LoginController> {
                         ),
                       ),
 
-                      /// ðŸ”¹ Welcome Text Overlay
+                      /// 🔹 Welcome Text Overlay
                       Positioned(
                         bottom: 0,
                         left: 0,
@@ -187,5 +187,3 @@ class LoginView extends BasePage<LoginController> {
     );
   }
 }
-
-

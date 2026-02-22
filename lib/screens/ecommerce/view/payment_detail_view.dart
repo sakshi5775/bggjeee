@@ -110,7 +110,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
               ),
               SizedBox(width: 6.w),
               AutoTranslateText(
-                payment.paymentMethod?.toUpperCase() ?? 'â€”',
+                payment.paymentMethod?.toUpperCase() ?? '—',
                 style: TextStyle(color: AppColors.textSecondary),
               ),
             ],
@@ -118,15 +118,15 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
           SizedBox(height: 12.h),
           _InfoRow(
             label: 'Payment provider',
-            value: payment.paymentProvider ?? 'â€”',
+            value: payment.paymentProvider ?? '—',
           ),
           _InfoRow(
             label: 'Transaction ID',
-            value: payment.transactionId ?? 'â€”',
+            value: payment.transactionId ?? '—',
           ),
           _InfoRow(
             label: 'Gateway order ID',
-            value: payment.gatewayOrderId ?? 'â€”',
+            value: payment.gatewayOrderId ?? '—',
           ),
           _InfoRow(
             label: 'Completed at',
@@ -217,14 +217,14 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _InfoRow(label: 'Refund status', value: refund.status ?? 'â€”'),
+                _InfoRow(label: 'Refund status', value: refund.status ?? '—'),
                 _InfoRow(
                   label: 'Refund amount',
                   value: refund.amount > 0
                       ? '₹${refund.amount.toStringAsFixed(0)}'
-                      : 'â€”',
+                      : '—',
                 ),
-                _InfoRow(label: 'Refund ID', value: refund.refundId ?? 'â€”'),
+                _InfoRow(label: 'Refund ID', value: refund.refundId ?? '—'),
                 _InfoRow(
                   label: 'Initiated at',
                   value: _formatDate(refund.initiatedAt),
@@ -233,7 +233,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
                   label: 'Completed at',
                   value: _formatDate(refund.completedAt),
                 ),
-                _InfoRow(label: 'Reason', value: refund.reason ?? 'â€”'),
+                _InfoRow(label: 'Reason', value: refund.reason ?? '—'),
               ],
             )
           else
@@ -274,8 +274,8 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
             ),
           ),
           SizedBox(height: 12.h),
-          _InfoRow(label: 'Order ID', value: order.orderId ?? 'â€”'),
-          _InfoRow(label: 'Status', value: order.status ?? 'â€”'),
+          _InfoRow(label: 'Order ID', value: order.orderId ?? '—'),
+          _InfoRow(label: 'Status', value: order.status ?? '—'),
           _InfoRow(
             label: 'Order total',
             value: '₹${order.totalAmount.toStringAsFixed(0)}',
@@ -320,7 +320,7 @@ class PaymentDetailView extends GetView<PaymentDetailController> {
   }
 
   String _formatDate(String? value) {
-    if (value == null || value.isEmpty) return 'â€”';
+    if (value == null || value.isEmpty) return '—';
     try {
       final date = DateTime.parse(value).toLocal();
       return DateFormat('dd MMM yyyy, hh:mm a').format(date);
@@ -385,4 +385,3 @@ class _InfoRow extends StatelessWidget {
     );
   }
 }
-

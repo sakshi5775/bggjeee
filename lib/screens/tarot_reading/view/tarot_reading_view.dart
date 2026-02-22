@@ -268,7 +268,7 @@ class TarotReadingView extends BasePage<TarotController> {
           final hasCards = controller.cards.isNotEmpty;
 
           debugPrint(
-            'ðŸŽ´ UI State: isShuffling=$isShuffling, showCards=$showCards, isLoading=$isLoading, hasCards=$hasCards',
+            '🃏 UI State: isShuffling=$isShuffling, showCards=$showCards, isLoading=$isLoading, hasCards=$hasCards',
           );
 
           return Container(
@@ -469,7 +469,9 @@ class TarotReadingView extends BasePage<TarotController> {
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: "#F38B3B".toColor().withValues(alpha: 0.3),
+                                  color: "#F38B3B".toColor().withValues(
+                                    alpha: 0.3,
+                                  ),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -548,7 +550,9 @@ class TarotReadingView extends BasePage<TarotController> {
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: "#F38B3B".toColor().withValues(alpha: 0.3),
+                                  color: "#F38B3B".toColor().withValues(
+                                    alpha: 0.3,
+                                  ),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -586,7 +590,7 @@ class TarotReadingView extends BasePage<TarotController> {
       final categoryName = controller.unsuitableCategoryName.value;
 
       debugPrint(
-        'ðŸ” Unsuitable Card Widget - showMessage: $showMessage, cardName: $cardName, categoryName: $categoryName',
+        '🔍 Unsuitable Card Widget - showMessage: $showMessage, cardName: $cardName, categoryName: $categoryName',
       );
 
       if (!showMessage || cardName.isEmpty || categoryName.isEmpty) {
@@ -605,7 +609,7 @@ class TarotReadingView extends BasePage<TarotController> {
             categoryName: categoryName,
             onAnimationComplete: () {
               debugPrint(
-                'âœ… Unsuitable card animation complete, calling auto-retry',
+                '✅ Unsuitable card animation complete, calling auto-retry',
               );
               controller.handleUnsuitableCardAutoRetry();
             },
@@ -615,5 +619,3 @@ class TarotReadingView extends BasePage<TarotController> {
     });
   }
 }
-
-

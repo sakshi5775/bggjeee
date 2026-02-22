@@ -9,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-/// Content widget for standalone Varshphal page â€“ uses VarshphalController.
+/// Content widget for standalone Varshphal page – uses VarshphalController.
 /// Same design as VarshphalWidget (#6F221E / #ed6f30).
 class VarshphalContentWidget extends StatelessWidget {
   final VarshphalController controller;
@@ -306,7 +306,9 @@ class VarshphalContentWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: isEven ? '#ed6f30'.toColor().withValues(alpha: 0.04) : Colors.white,
+        color: isEven
+            ? '#ed6f30'.toColor().withValues(alpha: 0.04)
+            : Colors.white,
         border: Border(
           bottom: BorderSide(
             color: '#ed6f30'.toColor().withValues(alpha: 0.12),
@@ -402,7 +404,9 @@ class VarshphalContentWidget extends StatelessWidget {
                             AutoTranslateText(
                               'Varshphal Date',
                               style: MyTextTheme.smallBCB.copyWith(
-                                color: '#6F221E'.toColor().withValues(alpha: 0.7),
+                                color: '#6F221E'.toColor().withValues(
+                                  alpha: 0.7,
+                                ),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -533,7 +537,9 @@ class VarshphalContentWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
       decoration: BoxDecoration(
-        color: isEven ? '#ed6f30'.toColor().withValues(alpha: 0.04) : Colors.white,
+        color: isEven
+            ? '#ed6f30'.toColor().withValues(alpha: 0.04)
+            : Colors.white,
         border: Border(
           bottom: BorderSide(
             color: '#ed6f30'.toColor().withValues(alpha: 0.12),
@@ -574,4 +580,3 @@ class VarshphalContentWidget extends StatelessWidget {
     }
   }
 }
-

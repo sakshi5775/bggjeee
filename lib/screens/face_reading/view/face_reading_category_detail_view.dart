@@ -339,7 +339,7 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
         children: [
           Row(
             children: [
-              AutoTranslateText('ðŸ’ª', style: TextStyle(fontSize: 20.w)),
+              AutoTranslateText('💪', style: TextStyle(fontSize: 20.w)),
               Spacing.w(8),
               AutoTranslateText(
                 'Strengths',
@@ -650,4 +650,3 @@ class FaceReadingCategoryDetailView extends StatelessWidget {
     );
   }
 }
-

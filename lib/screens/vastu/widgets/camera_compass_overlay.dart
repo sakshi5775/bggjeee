@@ -14,8 +14,9 @@ class CameraCompassOverlay extends StatefulWidget {
   final String direction;
   final bool isCalibrated;
   final VoidCallback onClose;
-  final VastuRoomConfig? roomConfig; // Optional room config for room-aware features
-  
+  final VastuRoomConfig?
+  roomConfig; // Optional room config for room-aware features
+
   const CameraCompassOverlay({
     Key? key,
     required this.heading,
@@ -52,29 +53,23 @@ class _CameraCompassOverlayState extends State<CameraCompassOverlay>
       duration: const Duration(milliseconds: 250),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeIn,
-    ));
-    
-    // Compass scale: 0.95 â†’ 1.0 (200ms per spec)
+    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeIn));
+
+    // Compass scale: 0.95 → 1.0 (200ms per spec)
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    
+
     _scaleAnimation = Tween<double>(
       begin: 0.95,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.easeOut,
-    ));
-    
+    ).animate(CurvedAnimation(parent: _scaleController, curve: Curves.easeOut));
+
     // Start both animations
     _fadeController.forward();
     _scaleController.forward();
@@ -89,9 +84,9 @@ class _CameraCompassOverlayState extends State<CameraCompassOverlay>
           ResolutionPreset.medium,
           enableAudio: false,
         );
-        
+
         await _cameraController!.initialize();
-        
+
         if (mounted) {
           setState(() {
             _isCameraInitialized = true;
@@ -141,12 +136,10 @@ class _CameraCompassOverlayState extends State<CameraCompassOverlay>
             Container(
               color: Colors.black,
               child: Center(
-                child: CircularProgressIndicator(
-                  color: "#F38B3B".toColor(),
-                ),
+                child: CircularProgressIndicator(color: "#F38B3B".toColor()),
               ),
             ),
-          
+
           // Royal Vastu Compass Overlay (Image-based, Premium)
           ScaleTransition(
             scale: _scaleAnimation,
@@ -161,13 +154,13 @@ class _CameraCompassOverlayState extends State<CameraCompassOverlay>
               ),
             ),
           ),
-          
+
           // Enhanced AR direction overlay (all 8 directions with room-aware indicators)
           ARDirectionOverlay(
             heading: widget.heading,
             roomConfig: widget.roomConfig,
           ),
-          
+
           // Current direction overlay (centered, for clarity)
           Positioned(
             top: 100.h,
@@ -178,7 +171,7 @@ class _CameraCompassOverlayState extends State<CameraCompassOverlay>
               heading: widget.heading,
             ),
           ),
-          
+
           // Close button
           Positioned(
             top: 50.h,
@@ -192,11 +185,7 @@ class _CameraCompassOverlayState extends State<CameraCompassOverlay>
                   color: Colors.black.withValues(alpha: 0.5),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.close,
-                  color: Colors.white,
-                  size: 24.w,
-                ),
+                child: Icon(Icons.close, color: Colors.white, size: 24.w),
               ),
             ),
           ),
@@ -205,5 +194,3 @@ class _CameraCompassOverlayState extends State<CameraCompassOverlay>
     );
   }
 }
-
-

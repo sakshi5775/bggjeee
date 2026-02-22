@@ -6,7 +6,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// Lal Kitab table â€“ same design as predictions_table_widget / kundli_result_view.
+/// Lal Kitab table – same design as predictions_table_widget / kundli_result_view.
 class LalKitabTableWidget extends StatelessWidget {
   final LalKitabController controller;
 
@@ -82,13 +82,19 @@ class LalKitabTableWidget extends StatelessWidget {
               child: _buildCard(
                 leftText,
                 hasApiLeft,
-                leftText.isNotEmpty ? () => controller.navigateToTab(leftText) : null,
+                leftText.isNotEmpty
+                    ? () => controller.navigateToTab(leftText)
+                    : null,
               ),
             ),
           if (hasApiLeft && hasApiRight && rightText.isNotEmpty) Spacing.w(8),
           if (rightText.isNotEmpty && hasApiRight)
             Expanded(
-              child: _buildCard(rightText, hasApiRight, () => controller.navigateToTab(rightText)),
+              child: _buildCard(
+                rightText,
+                hasApiRight,
+                () => controller.navigateToTab(rightText),
+              ),
             ),
         ],
       ),
@@ -104,7 +110,10 @@ class LalKitabTableWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.cardLight,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.35), width: 1),
+          border: Border.all(
+            color: AppColors.deepOrange.withValues(alpha: 0.35),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
               color: AppColors.shadowLight,
@@ -164,11 +173,15 @@ class LalKitabTableWidget extends StatelessWidget {
                 ],
               ),
             ),
-            if (hasApi) Icon(Icons.arrow_forward_ios, color: AppColors.deepOrange, size: 12.w),
+            if (hasApi)
+              Icon(
+                Icons.arrow_forward_ios,
+                color: AppColors.deepOrange,
+                size: 12.w,
+              ),
           ],
         ),
       ),
     );
   }
 }
-

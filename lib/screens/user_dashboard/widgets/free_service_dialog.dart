@@ -212,7 +212,7 @@ class FreeServiceDialog extends StatelessWidget {
               // AutoTranslateText - Flexible to prevent overflow
               Flexible(
                 child: AutoTranslateText(
-                  'â€¢ 10,000+ Consultations',
+                  '• 10,000+ Consultations',
                   style: MyTextTheme.mediumBCN.copyWith(
                     fontSize: AppTypography.body2.fontSize?.sp,
                     color: Color(0xFF666666), // Grey color
@@ -276,4 +276,3 @@ class AstrologicalChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-

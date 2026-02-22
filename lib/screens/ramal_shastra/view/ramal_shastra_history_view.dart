@@ -64,7 +64,7 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
     if (dateString == null) return '';
     try {
       final date = DateTime.parse(dateString);
-      return DateFormat('MMM dd, yyyy â€¢ hh:mm a').format(date);
+      return DateFormat('MMM dd, yyyy • hh:mm a').format(date);
     } catch (e) {
       return dateString;
     }
@@ -160,7 +160,7 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
         border: Border.all(color: '#F5D7B8'.toColor(), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -289,4 +289,3 @@ class _RamalShastraHistoryViewState extends State<RamalShastraHistoryView> {
     );
   }
 }
-

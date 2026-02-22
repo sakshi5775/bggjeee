@@ -217,7 +217,7 @@ class NumerologyResultView extends StatelessWidget {
               details.add(
                 _buildDescriptionCard(
                   key.toString(),
-                  value.join('\nâ€¢ '),
+                  value.join('\n• '),
                   AppColors.error,
                 ),
               );
@@ -248,7 +248,7 @@ class NumerologyResultView extends StatelessWidget {
               remedies.add(
                 _buildDescriptionCard(
                   'Remedies for $key',
-                  value.join('\nâ€¢ '),
+                  value.join('\n• '),
                   AppColors.green,
                 ),
               );
@@ -716,7 +716,7 @@ class NumerologyResultView extends StatelessWidget {
               spellings.add(
                 _buildDescriptionCard(
                   key.toString(),
-                  value.join('\nâ€¢ '),
+                  value.join('\n• '),
                   AppColors.deepOrange,
                 ),
               );
@@ -1198,11 +1198,11 @@ class NumerologyResultView extends StatelessWidget {
       if (kn['descriptions'] != null &&
           kn['descriptions'] is List &&
           (kn['descriptions'] as List).isNotEmpty) {
-        final karmicDesc = (kn['descriptions'] as List).join('\nâ€¢ ');
+        final karmicDesc = (kn['descriptions'] as List).join('\n• ');
         karmicCards.add(
           _buildDescriptionCard(
             'Details',
-            'â€¢ $karmicDesc',
+            '• $karmicDesc',
             AppColors.textColorMaroon,
           ),
         );
@@ -1263,11 +1263,11 @@ class NumerologyResultView extends StatelessWidget {
       if (md['descriptions'] != null &&
           md['descriptions'] is List &&
           (md['descriptions'] as List).isNotEmpty) {
-        final masterDesc = (md['descriptions'] as List).join('\nâ€¢ ');
+        final masterDesc = (md['descriptions'] as List).join('\n• ');
         driverCards.add(
           _buildDescriptionCard(
             'Characteristics',
-            'â€¢ $masterDesc',
+            '• $masterDesc',
             AppColors.saffron,
           ),
         );
@@ -1996,11 +1996,11 @@ class NumerologyResultView extends StatelessWidget {
       if (kn['descriptions'] != null &&
           kn['descriptions'] is List &&
           (kn['descriptions'] as List).isNotEmpty) {
-        final karmicDesc = (kn['descriptions'] as List).join('\nâ€¢ ');
+        final karmicDesc = (kn['descriptions'] as List).join('\n• ');
         insights.add(
           _buildDescriptionCard(
             'Karmic Details',
-            'â€¢ $karmicDesc',
+            '• $karmicDesc',
             AppColors.spiritualPurple,
           ),
         );
@@ -2031,11 +2031,11 @@ class NumerologyResultView extends StatelessWidget {
         if (md['descriptions'] != null &&
             md['descriptions'] is List &&
             (md['descriptions'] as List).isNotEmpty) {
-          final masterDesc = (md['descriptions'] as List).join('\nâ€¢ ');
+          final masterDesc = (md['descriptions'] as List).join('\n• ');
           insights.add(
             _buildDescriptionCard(
               'Master Driver Details',
-              'â€¢ $masterDesc',
+              '• $masterDesc',
               AppColors.saffron,
             ),
           );
@@ -2393,7 +2393,10 @@ class NumerologyResultView extends StatelessWidget {
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [color.withValues(alpha: 0.15), color.withValues(alpha: 0.05)],
+                colors: [
+                  color.withValues(alpha: 0.15),
+                  color.withValues(alpha: 0.05),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -2830,4 +2833,3 @@ class NumerologyResultView extends StatelessWidget {
     return widgets;
   }
 }
-

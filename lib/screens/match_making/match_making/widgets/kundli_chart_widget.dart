@@ -161,7 +161,9 @@ class KundliChartWidget extends StatelessWidget {
                             height: 50.w,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: AppColors.deepOrange.withValues(alpha: 0.2),
+                              color: AppColors.deepOrange.withValues(
+                                alpha: 0.2,
+                              ),
                             ),
                             child: Icon(
                               Icons.person,
@@ -332,7 +334,7 @@ class KundliChartWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           AutoTranslateText(
-            '$degreeTextÂ°',
+            '$degreeText°',
             style: TextStyle(
               color: '#68171E'.toColor(),
               fontWeight: FontWeight.w500,
@@ -396,4 +398,3 @@ class _PlanetData {
     required this.isAscendant,
   });
 }
-

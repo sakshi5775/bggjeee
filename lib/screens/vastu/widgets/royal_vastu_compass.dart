@@ -92,8 +92,8 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
     if (widget.isLocked) return;
 
     // Compass dial rotates opposite to heading (physics-based)
-    // When heading is 0Â° (North), dial rotation is 0Â°
-    // When heading is 90Â° (East), dial rotates -90Â° so East appears at bottom
+    // When heading is 0° (North), dial rotation is 0°
+    // When heading is 90° (East), dial rotates -90° so East appears at bottom
     // Needle stays fixed pointing North
     _targetRotation = -widget.heading * math.pi / 180.0;
 
@@ -153,13 +153,13 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
         child: Stack(
           alignment: Alignment.center,
           children: [
-            // 1ï¸âƒ£ Outer frame (fixed)
+            // 1️⃣ Outer frame (fixed)
             _buildLayer(
               AppConstant.outerFrame,
               size: size * outerScale,
               fixed: true,
             ),
-            // 2ï¸âƒ£ Rotating group
+            // 2️⃣ Rotating group
             Transform.rotate(
               angle: _currentRotation,
               alignment: Alignment.center,
@@ -201,7 +201,7 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
                 ],
               ),
             ),
-            // 3ï¸âƒ£ Needle (fixed on top)
+            // 3️⃣ Needle (fixed on top)
             _buildLayer(
               AppConstant.needle,
               size: size * needleScale,
@@ -289,7 +289,10 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.grey.withValues(alpha: 0.1),
-              border: Border.all(color: Colors.grey.withValues(alpha: 0.3), width: 1),
+              border: Border.all(
+                color: Colors.grey.withValues(alpha: 0.3),
+                width: 1,
+              ),
             ),
             child: Center(
               child: Icon(
@@ -317,7 +320,10 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.grey.withValues(alpha: 0.1),
-              border: Border.all(color: Colors.grey.withValues(alpha: 0.3), width: 1),
+              border: Border.all(
+                color: Colors.grey.withValues(alpha: 0.3),
+                width: 1,
+              ),
             ),
             child: Center(
               child: Icon(
@@ -332,4 +338,3 @@ class _RoyalVastuCompassState extends State<RoyalVastuCompass>
     }
   }
 }
-

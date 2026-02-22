@@ -331,7 +331,7 @@ class DailyPanchangWidget extends StatelessWidget {
             Icons.access_time,
             'Tithi',
             tithi['name']?.toString() ?? '--',
-            '${_formatDateTime(tithi['start'])} â†’ ${_formatDateTime(tithi['end'])}',
+            '${_formatDateTime(tithi['start'])} → ${_formatDateTime(tithi['end'])}',
             oc,
             details: {
               'Type': tithi['type']?.toString(),
@@ -349,7 +349,7 @@ class DailyPanchangWidget extends StatelessWidget {
             Icons.star,
             'Nakshatra',
             nakshatra['name']?.toString() ?? '--',
-            '${_formatDateTime(nakshatra['start'])} â†’ ${_formatDateTime(nakshatra['end'])}',
+            '${_formatDateTime(nakshatra['start'])} → ${_formatDateTime(nakshatra['end'])}',
             oc,
             details: {
               'Lord': nakshatra['lord']?.toString(),
@@ -370,7 +370,7 @@ class DailyPanchangWidget extends StatelessWidget {
             Icons.my_location,
             'Yoga',
             yoga['name']?.toString() ?? '--',
-            '${_formatDateTime(yoga['start'])} â†’ ${_formatDateTime(yoga['end'])}',
+            '${_formatDateTime(yoga['start'])} → ${_formatDateTime(yoga['end'])}',
             oc,
             details: {
               'Number': yoga['number']?.toString(),
@@ -386,7 +386,7 @@ class DailyPanchangWidget extends StatelessWidget {
             Icons.grid_view,
             'Karana',
             karana['name']?.toString() ?? '--',
-            '${_formatDateTime(karana['start'])} â†’ ${_formatDateTime(karana['end'])}',
+            '${_formatDateTime(karana['start'])} → ${_formatDateTime(karana['end'])}',
             oc,
             details: {
               'Type': karana['type']?.toString(),
@@ -939,4 +939,3 @@ class DailyPanchangWidget extends StatelessWidget {
     return dateStr;
   }
 }
-

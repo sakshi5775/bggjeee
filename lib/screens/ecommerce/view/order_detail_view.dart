@@ -456,12 +456,12 @@ class OrderDetailView extends GetView<OrderDetailController> {
               children: [
                 _InfoRow(
                   label: 'Payment method',
-                  value: payment?.method?.toUpperCase() ?? 'â€”',
+                  value: payment?.method?.toUpperCase() ?? '—',
                 ),
                 SizedBox(height: 12.h),
                 _InfoRow(
                   label: 'Payment status',
-                  value: payment?.status?.toUpperCase() ?? 'â€”',
+                  value: payment?.status?.toUpperCase() ?? '—',
                 ),
                 if (payment?.transactionId != null) ...[
                   SizedBox(height: 12.h),
@@ -1085,7 +1085,7 @@ class OrderDetailView extends GetView<OrderDetailController> {
   }
 
   String _formatDate(String? date) {
-    if (date == null) return 'â€”';
+    if (date == null) return '—';
     try {
       final dt = DateTime.parse(date).toLocal();
       return DateFormat('dd MMM yyyy, hh:mm a').format(dt);
@@ -1534,4 +1534,3 @@ class _HistoryTile extends StatelessWidget {
     );
   }
 }
-

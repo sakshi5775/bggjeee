@@ -675,5 +675,6 @@ class EndPoints {
   /// - vedic_five_year_predictions
   /// - vedic_ten_year_predictions
   /// - vedic_fifteen_year_predictions
-  /// - destiny_of_heart
+  static const String pdfHistory = 'pdf/history';
+  static String pdfHistoryDetail(String id) => 'pdf/history/$id';
 }

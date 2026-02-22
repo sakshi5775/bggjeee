@@ -190,7 +190,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
               child: _buildGenderButton(
                 controller: controller,
                 gender: 'Male',
-                emoji: 'ðŸ‘¨',
+                emoji: '👨',
               ),
             ),
             Spacing.w(12),
@@ -198,7 +198,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
               child: _buildGenderButton(
                 controller: controller,
                 gender: 'Female',
-                emoji: 'ðŸ‘©',
+                emoji: '👩',
               ),
             ),
             Spacing.w(12),
@@ -206,7 +206,7 @@ class PalmReadingHandGenderView extends StatelessWidget {
               child: _buildGenderButton(
                 controller: controller,
                 gender: 'Others',
-                emoji: 'ðŸ§‘',
+                emoji: '🧑',
               ),
             ),
           ],
@@ -324,4 +324,3 @@ class PalmReadingHandGenderView extends StatelessWidget {
     );
   }
 }
-

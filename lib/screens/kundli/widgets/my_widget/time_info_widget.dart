@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TimeInfoWidget extends StatelessWidget {
-  final IconData icon; // âœ… IconData instead of String
+  final IconData icon; // ✅ IconData instead of String
   final String title;
 
   const TimeInfoWidget({super.key, required this.icon, required this.title});
@@ -29,4 +29,3 @@ class TimeInfoWidget extends StatelessWidget {
     );
   }
 }
-

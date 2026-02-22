@@ -538,7 +538,7 @@ class _CallHistoryTab extends StatelessWidget {
                       ),
                     ),
                     AutoTranslateText(
-                      '${callType == 'VOICE' ? 'Voice' : 'Video'} Call â€¢ ${controller.formatDuration(session.durationSeconds)}',
+                      '${callType == 'VOICE' ? 'Voice' : 'Video'} Call • ${controller.formatDuration(session.durationSeconds)}',
                       style: MyTextTheme.smallBCN.copyWith(
                         color: '#6F221E'.toColor().withValues(alpha: 0.8),
                       ),
@@ -565,4 +565,3 @@ class _CallHistoryTab extends StatelessWidget {
     );
   }
 }
-

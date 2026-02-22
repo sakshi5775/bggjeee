@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:astrobharataiuser/data_model/report_model.dart';
 
 class ProfileView extends GetView<ProfileController> {
   final bool showBackButton;
@@ -100,6 +101,8 @@ class ProfileView extends GetView<ProfileController> {
                           _buildActionGrid(context),
                           SizedBox(height: 24.h),
                           _buildRecentOrders(),
+                          SizedBox(height: 24.h),
+                          _buildReportHistory(),
                           SizedBox(height: 24.h),
                           _buildHelpSection(),
                           SizedBox(height: 24.h),
@@ -914,6 +917,124 @@ class ProfileView extends GetView<ProfileController> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildReportHistory() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.deepOrange.withValues(alpha: 0.1),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+            spreadRadius: 0,
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with gradient
+          Container(
+            padding: EdgeInsets.all(18.w),
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.r),
+                topRight: Radius.circular(20.r),
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.templeGold.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  child: Icon(
+                    Icons.picture_as_pdf_outlined,
+                    color: AppColors.templeGold,
+                    size: 24.w,
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: AutoTranslateText(
+                    'Kundali Reports',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16.w),
+            child: controller.isHistoryLoading.value
+                ? Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(20.w),
+                      child: CircularProgressIndicator(
+                        color: AppColors.deepOrange,
+                      ),
+                    ),
+                  )
+                : controller.reportHistory.isEmpty
+                ? Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(24.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightBackground.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(
+                        color: AppColors.deepOrange.withValues(alpha: 0.1),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.history_edu_outlined,
+                          size: 40.w,
+                          color: AppColors.textSecondary.withValues(alpha: 0.5),
+                        ),
+                        SizedBox(height: 12.h),
+                        AutoTranslateText(
+                          'No reports found',
+                          style: TextStyle(
+                            color: AppColors.textColorMaroon,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Column(
+                    children: controller.reportHistory
+                        .map(
+                          (report) => _ReportHistoryTile(
+                            report: report,
+                            onTap: () => controller.viewReport(report),
+                          ),
+                        )
+                        .toList(),
+                  ),
+          ),
+        ],
       ),
     );
   }
@@ -1990,5 +2111,92 @@ class _RecentOrderTile extends StatelessWidget {
         ),
       );
     }
+  }
+}
+
+class _ReportHistoryTile extends StatelessWidget {
+  final ReportHistoryItem report;
+  final VoidCallback onTap;
+
+  const _ReportHistoryTile({required this.report, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12.h),
+      decoration: BoxDecoration(
+        color: AppColors.lightBackground.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.deepOrange.withValues(alpha: 0.05)),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12.r),
+          child: Padding(
+            padding: EdgeInsets.all(12.w),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.02),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.description_outlined,
+                    color: AppColors.deepOrange,
+                    size: 20.w,
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AutoTranslateText(
+                        report.reportName ?? 'Kundali Report',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          color: AppColors.textColorMaroon,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 2.h),
+                      Text(
+                        report.generatedAt != null
+                            ? DateFormat('dd MMM yyyy, hh:mm a').format(
+                                DateTime.parse(report.generatedAt!).toLocal(),
+                              )
+                            : '',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14.w,
+                  color: AppColors.textSecondary.withValues(alpha: 0.5),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

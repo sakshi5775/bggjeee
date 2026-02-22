@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-/// Lal Kitab Houses â€“ compact table form (House, Maalik, Pakka Ghar, Kismat, Soya, Exalt, Debilitated).
+/// Lal Kitab Houses – compact table form (House, Maalik, Pakka Ghar, Kismat, Soya, Exalt, Debilitated).
 class LalKitabHousesWidget extends StatelessWidget {
   final LalKitabController controller;
 
@@ -17,7 +17,9 @@ class LalKitabHousesWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoadingLalKitabHouses.value) {
-        return Center(child: CircularProgressIndicator(color: '#ed6f30'.toColor()));
+        return Center(
+          child: CircularProgressIndicator(color: '#ed6f30'.toColor()),
+        );
       }
       final data = controller.lalKitabHousesData.value;
       final response = data?['data']?['response'] as List<dynamic>?;
@@ -25,7 +27,9 @@ class LalKitabHousesWidget extends StatelessWidget {
         return Center(
           child: AutoTranslateText(
             'No data available',
-            style: MyTextTheme.mediumBCN.copyWith(color: '#6F221E'.toColor().withValues(alpha: 0.6)),
+            style: MyTextTheme.mediumBCN.copyWith(
+              color: '#6F221E'.toColor().withValues(alpha: 0.6),
+            ),
           ),
         );
       }
@@ -37,8 +41,18 @@ class LalKitabHousesWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildTitleRow('Lal Kitab Houses', Icons.home_rounded),
-              _buildTableHeader(const ['House', 'Maalik', 'Pakka', 'Kismat', 'Soya', 'Exalt', 'Debil']),
-              ...response.asMap().entries.map((e) => _buildTableRow(e.value as Map<String, dynamic>, e.key)),
+              _buildTableHeader(const [
+                'House',
+                'Maalik',
+                'Pakka',
+                'Kismat',
+                'Soya',
+                'Exalt',
+                'Debil',
+              ]),
+              ...response.asMap().entries.map(
+                (e) => _buildTableRow(e.value as Map<String, dynamic>, e.key),
+              ),
             ],
           ),
         ),
@@ -52,8 +66,17 @@ class LalKitabHousesWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 6, offset: const Offset(0, 2))],
-        border: Border.all(color: '#ed6f30'.toColor().withValues(alpha: 0.2), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(
+          color: '#ed6f30'.toColor().withValues(alpha: 0.2),
+          width: 1,
+        ),
       ),
       clipBehavior: Clip.antiAlias,
       child: child,
@@ -65,7 +88,12 @@ class LalKitabHousesWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
         color: '#ed6f30'.toColor().withValues(alpha: 0.08),
-        border: Border(bottom: BorderSide(color: '#ed6f30'.toColor().withValues(alpha: 0.25), width: 1)),
+        border: Border(
+          bottom: BorderSide(
+            color: '#ed6f30'.toColor().withValues(alpha: 0.25),
+            width: 1,
+          ),
+        ),
       ),
       child: Row(
         children: [
@@ -73,7 +101,11 @@ class LalKitabHousesWidget extends StatelessWidget {
           Spacing.w(8),
           AutoTranslateText(
             title,
-            style: MyTextTheme.mediumBCB.copyWith(color: '#6F221E'.toColor(), fontWeight: FontWeight.w600, fontSize: 14.sp),
+            style: MyTextTheme.mediumBCB.copyWith(
+              color: '#6F221E'.toColor(),
+              fontWeight: FontWeight.w600,
+              fontSize: 14.sp,
+            ),
           ),
         ],
       ),
@@ -84,25 +116,38 @@ class LalKitabHousesWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h),
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: ['#FF8A3D'.toColor(), '#ed6f30'.toColor()], begin: Alignment.centerLeft, end: Alignment.centerRight),
+        gradient: LinearGradient(
+          colors: ['#FF8A3D'.toColor(), '#ed6f30'.toColor()],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
       ),
       child: Row(
-        children: labels.map((l) => Expanded(
-          child: AutoTranslateText(
-            l,
-            style: MyTextTheme.smallBCB.copyWith(color: Colors.white, fontSize: 9.sp, fontWeight: FontWeight.w600),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
-        )).toList(),
+        children: labels
+            .map(
+              (l) => Expanded(
+                child: AutoTranslateText(
+                  l,
+                  style: MyTextTheme.smallBCB.copyWith(
+                    color: Colors.white,
+                    fontSize: 9.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
+            .toList(),
       ),
     );
   }
 
   String _formatList(dynamic v) {
     if (v == null) return '-';
-    if (v is List) return v.isEmpty ? '-' : v.map((e) => e.toString()).join(', ');
+    if (v is List)
+      return v.isEmpty ? '-' : v.map((e) => e.toString()).join(', ');
     if (v is String && v != '-') return v;
     return '-';
   }
@@ -119,8 +164,15 @@ class LalKitabHousesWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: isEven ? '#ed6f30'.toColor().withValues(alpha: 0.04) : Colors.white,
-        border: Border(bottom: BorderSide(color: '#ed6f30'.toColor().withValues(alpha: 0.12), width: 1)),
+        color: isEven
+            ? '#ed6f30'.toColor().withValues(alpha: 0.04)
+            : Colors.white,
+        border: Border(
+          bottom: BorderSide(
+            color: '#ed6f30'.toColor().withValues(alpha: 0.12),
+            width: 1,
+          ),
+        ),
       ),
       child: Row(
         children: [
@@ -139,12 +191,14 @@ class LalKitabHousesWidget extends StatelessWidget {
   Widget _cell(String text) {
     return AutoTranslateText(
       text,
-      style: MyTextTheme.smallBCB.copyWith(color: '#6F221E'.toColor(), fontWeight: FontWeight.w500, fontSize: 9.sp),
+      style: MyTextTheme.smallBCB.copyWith(
+        color: '#6F221E'.toColor(),
+        fontWeight: FontWeight.w500,
+        fontSize: 9.sp,
+      ),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
       textAlign: TextAlign.center,
     );
   }
 }
-
-

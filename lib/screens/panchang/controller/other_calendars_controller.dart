@@ -11,22 +11,15 @@ class OtherCalendarsController extends BaseController {
   final List<Map<String, dynamic>> calendarOptions = [
     {
       'title': 'Hindu Calendar',
-      // 'icon': Icons.auto_awesome,
-      // 'symbol': 'ðŸ•‰',
+      'symbol': '🕉️',
       'route': AppRoutes.hinduCalendarMonthlyPanchang,
     },
     {
       'title': 'Jain Calendar',
-      // 'icon': Icons.pan_tool,
-      // 'symbol': 'ðŸ•‰',
+      'symbol': '🕉️',
       'route': AppRoutes.jainCalendar,
     },
-    {
-      'title': 'Moon Calendar',
-      // 'icon': Icons.nightlight_round,
-      // 'symbol': 'ðŸŒ™',
-      'route': AppRoutes.moonCalendar,
-    },
+    {'title': 'Moon Calendar', 'symbol': '🌙', 'route': AppRoutes.moonCalendar},
   ];
 
   @override
@@ -52,4 +45,3 @@ class OtherCalendarsController extends BaseController {
     selectedYear.value = year;
   }
 }
-

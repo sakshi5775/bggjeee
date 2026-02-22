@@ -6,7 +6,7 @@ import 'package:astrobharataiuser/widgets/auto_translate_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// KP System table â€“ same design as predictions_table_widget / lal_kitab_table_widget.
+/// KP System table – same design as predictions_table_widget / lal_kitab_table_widget.
 class KpSystemTableWidget extends StatelessWidget {
   final KpSystemController controller;
 
@@ -91,7 +91,10 @@ class KpSystemTableWidget extends StatelessWidget {
           if (rightText.isNotEmpty && hasApiRight)
             Expanded(
               child: _buildCard(
-                  rightText, hasApiRight, () => controller.navigateToTab(rightText)),
+                rightText,
+                hasApiRight,
+                () => controller.navigateToTab(rightText),
+              ),
             ),
         ],
       ),
@@ -108,7 +111,9 @@ class KpSystemTableWidget extends StatelessWidget {
           color: AppColors.cardLight,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-              color: AppColors.deepOrange.withValues(alpha: 0.35), width: 1),
+            color: AppColors.deepOrange.withValues(alpha: 0.35),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
               color: AppColors.shadowLight,
@@ -135,11 +140,7 @@ class KpSystemTableWidget extends StatelessWidget {
                       ]
                     : null,
               ),
-              child: Icon(
-                Icons.grid_view,
-                color: Colors.white,
-                size: 14.w,
-              ),
+              child: Icon(Icons.grid_view, color: Colors.white, size: 14.w),
             ),
             Spacing.w(12),
             Expanded(
@@ -169,12 +170,14 @@ class KpSystemTableWidget extends StatelessWidget {
               ),
             ),
             if (hasApi)
-              Icon(Icons.arrow_forward_ios,
-                  color: AppColors.deepOrange, size: 12.w),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: AppColors.deepOrange,
+                size: 12.w,
+              ),
           ],
         ),
       ),
     );
   }
 }
-
