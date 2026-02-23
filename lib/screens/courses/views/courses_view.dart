@@ -1,5 +1,3 @@
-import 'package:astrobharataiuser/core/base/baseController.dart';
-import 'package:astrobharataiuser/core/base/base_controller.dart';
 import 'package:astrobharataiuser/core/routes/app_routes.dart';
 import 'package:astrobharataiuser/core/value/dimension.dart';
 import 'package:astrobharataiuser/screens/courses/controllers/courses_controller.dart';
@@ -24,7 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class CoursesView extends BasePage<CoursesController> {
+class CoursesView extends GetView<CoursesController> {
   final bool showBackButton;
   final bool hideHeader;
 
